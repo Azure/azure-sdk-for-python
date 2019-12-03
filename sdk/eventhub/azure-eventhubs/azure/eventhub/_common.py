@@ -4,8 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-import datetime
-import calendar
 import json
 import logging
 import six
@@ -18,11 +16,7 @@ from ._constants import (
     PROP_OFFSET,
     PROP_PARTITION_KEY,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
-    PROP_TIMESTAMP,
-    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
-    PROP_LAST_ENQUEUED_OFFSET,
-    PROP_LAST_ENQUEUED_TIME_UTC,
-    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
+    PROP_TIMESTAMP
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -32,8 +26,7 @@ _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
 
 class EventData(object):
-    """
-    The EventData class is a holder of event content.
+    """The EventData class is a container for event content.
 
     :param body: The data to send in a single message. body can be type of str or bytes.
     :type body: str or bytes
@@ -97,38 +90,12 @@ class EventData(object):
         event_data.message = message
         return event_data
 
-    def _get_last_enqueued_event_properties(self):
-        """Extracts the last enqueued event in from the received event delivery annotations.
-
-        :rtype: Dict[str, Any]
-        """
-        if self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties
-
-        if self.message.delivery_annotations:
-            sequence_number = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
-            enqueued_time_stamp = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
-            if enqueued_time_stamp:
-                enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp)/1000)
-            retrieval_time_stamp = self.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
-            if retrieval_time_stamp:
-                retrieval_time_stamp = utc_from_timestamp(float(retrieval_time_stamp)/1000)
-            offset_bytes = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
-            offset = offset_bytes.decode('UTF-8') if offset_bytes else None
-            self._last_enqueued_event_properties = {
-                "sequence_number": sequence_number,
-                "offset": offset,
-                "enqueued_time": enqueued_time_stamp,
-                "retrieval_time": retrieval_time_stamp
-            }
-            return self._last_enqueued_event_properties
-
-        return None
+    def _encode_message(self):
+        return self.message.encode_message()
 
     @property
     def sequence_number(self):
-        """
-        The sequence number of the event data object.
+        """The sequence number of the event.
 
         :rtype: int or long
         """
@@ -136,8 +103,7 @@ class EventData(object):
 
     @property
     def offset(self):
-        """
-        The offset of the event data object.
+        """The offset of the event.
 
         :rtype: str
         """
@@ -148,8 +114,7 @@ class EventData(object):
 
     @property
     def enqueued_time(self):
-        """
-        The enqueued timestamp of the event data object.
+        """The enqueued timestamp of the event.
 
         :rtype: datetime.datetime
         """
@@ -160,8 +125,7 @@ class EventData(object):
 
     @property
     def partition_key(self):
-        """
-        The partition key of the event data object.
+        """The partition key of the event.
 
         :rtype: bytes
         """
@@ -172,8 +136,7 @@ class EventData(object):
 
     @property
     def properties(self):
-        """
-        Application defined properties on the message.
+        """Application-defined properties on the event.
 
         :rtype: dict
         """
@@ -181,8 +144,7 @@ class EventData(object):
 
     @properties.setter
     def properties(self, value):
-        """
-        Application defined properties on the message.
+        """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.
         """
@@ -191,8 +153,7 @@ class EventData(object):
 
     @property
     def system_properties(self):
-        """
-        Metadata set by the Event Hubs Service associated with the EventData
+        """Metadata set by the Event Hubs Service associated with the event
 
         :rtype: dict
         """
@@ -200,38 +161,19 @@ class EventData(object):
 
     @property
     def body(self):
-        """
-        The body of the event data object.
+        """The content of the event.
 
         :rtype: bytes or Generator[bytes]
         """
         try:
             return self.message.get_data()
         except TypeError:
-            raise ValueError("Message data empty.")
-
-    @property
-    def last_enqueued_event_properties(self):
-        """
-        The latest enqueued event information. This property will be updated each time an event is received when
-        the receiver is created with `track_last_enqueued_event_properties` being `True`.
-        The dict includes following information of the partition:
-
-            - `sequence_number`
-            - `offset`
-            - `enqueued_time`
-            - `retrieval_time`
-
-        :rtype: dict or None
-        """
-        return self._get_last_enqueued_event_properties()
+            raise ValueError("Event content empty.")
 
     def body_as_str(self, encoding='UTF-8'):
-        """
-        The body of the event data as a string if the data is of a
-        compatible type.
+        """The content of the event as a string, if the data is of a compatible type.
 
-        :param encoding: The encoding to use for decoding message data.
+        :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: str
         """
@@ -248,10 +190,9 @@ class EventData(object):
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
     def body_as_json(self, encoding='UTF-8'):
-        """
-        The body of the event loaded as a JSON object is the data is compatible.
+        """The content of the event loaded as a JSON object, if the data is compatible.
 
-        :param encoding: The encoding to use for decoding message data.
+        :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: dict
         """
@@ -261,33 +202,48 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
+    @property
+    def application_properties(self):
+        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
+        # The gather() in uamqp.message of v1.2.3 depends on application_properties attribute,
+        # the livetest would all break if removing this property.
+        # It should be removed after uamqp v.1.2.4 is released
+        return self.properties
+
     def encode_message(self):
-        return self.message.encode_message()
+        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
+        # The gather() in uamqp.message of v1.2.3 depends on encode_message method,
+        # the livetest would all break if removing this method.
+        # It should be removed after uamqp v.1.2.4 is released
+        return self._encode_message()
 
 
 class EventDataBatch(object):
-    """
-    Sending events in batch get better performance than sending individual events.
+    """A batch of events.
+
+    Sending events in a batch is more performant than sending individual events.
     EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
 
-    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
-    a `ValueError` will be raised.
-    Use `send` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
+    Use the `add` method to add events until the maximum batch size limit in bytes has been reached -
+    at which point a `ValueError` will be raised.
+    Use the `send_batch` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
-    for sending. The `send` method accepts partition_key as a parameter for sending a particular partition.
+    for sending. The `create_batch` method accepts partition_key as a parameter for sending a particular partition.
 
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
-    :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
-    :param str partition_key: With the given partition_key, event data will land to a particular partition of the
+    :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
+    :param str partition_id: The specific partition ID to send to.
+    :param str partition_key: With the given partition_key, event data will be sent to a particular partition of the
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size=None, partition_key=None):
-        self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
-        self._partition_key = partition_key
+    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
+        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+        self._partition_id = partition_id
+        self._partition_key = partition_key
 
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
@@ -303,18 +259,21 @@ class EventDataBatch(object):
         return batch_data_instance
 
     @property
-    def size(self):
-        """The size of EventDataBatch object in bytes
+    def size_in_bytes(self):
+        """The combined size of the events in the batch, in bytes.
 
         :rtype: int
         """
         return self._size
 
-    def try_add(self, event_data):
-        """
-        Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
+    def add(self, event_data):
+        """Try to add an EventData to the batch.
 
-        :param event_data: The EventData object which is attempted to be added.
+        The total size of an added event is the sum of its body, properties, etc.
+        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
+        be raised.
+
+        :param event_data: The EventData to add to the batch.
         :type event_data: ~azure.eventhub.EventData
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
@@ -333,86 +292,9 @@ class EventDataBatch(object):
         size_after_add = self._size + event_data_size \
             + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
 
-        if size_after_add > self.max_size:
-            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size))
+        if size_after_add > self.max_size_in_bytes:
+            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size_in_bytes))
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
-
-
-class EventPosition(object):
-    """
-    The position(offset, sequence or timestamp) where a consumer starts.
-
-    :param value: The event position value. The value can be type of datetime.datetime or int or str.
-    :type value: int, str or datetime.datetime
-    :param bool inclusive: Whether to include the supplied value as the start point.
-
-    Examples:
-
-    Beginning of the event stream:
-      >>> event_pos = EventPosition("-1")
-    End of the event stream:
-      >>> event_pos = EventPosition("@latest")
-    Events after the specified offset:
-      >>> event_pos = EventPosition("12345")
-    Events from the specified offset:
-      >>> event_pos = EventPosition("12345", True)
-    Events after a datetime:
-      >>> event_pos = EventPosition(datetime.datetime.utcnow())
-    Events after a specific sequence number:
-      >>> event_pos = EventPosition(1506968696002)
-    """
-
-    def __init__(self, value, inclusive=False):
-        self.value = value if value is not None else "-1"
-        self.inclusive = inclusive
-
-    def __str__(self):
-        return str(self.value)
-
-    def _selector(self):
-        """
-        Creates a selector expression of the offset.
-
-        :rtype: bytes
-        """
-        operator = ">=" if self.inclusive else ">"
-        if isinstance(self.value, datetime.datetime):  # pylint:disable=no-else-return
-            timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
-            return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        elif isinstance(self.value, six.integer_types):
-            return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
-        return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
-
-
-# TODO: move some behaviors to these two classes.
-class EventHubSASTokenCredential(object):
-    """
-    SAS token used for authentication.
-
-    :param token: A SAS token or function that returns a SAS token. If a function is supplied,
-     it will be used to retrieve subsequent tokens in the case of token expiry. The function should
-     take no arguments. The token can be type of str or Callable object.
-    """
-    def __init__(self, token):
-        self.token = token
-
-    def get_sas_token(self):
-        if callable(self.token):  # pylint:disable=no-else-return
-            return self.token()
-        else:
-            return self.token
-
-
-class EventHubSharedKeyCredential(object):
-    """
-    The shared access key credential used for authentication.
-
-    :param str policy: The name of the shared access policy.
-    :param str key: The shared access key.
-    """
-    def __init__(self, policy, key):
-        self.policy = policy
-        self.key = key

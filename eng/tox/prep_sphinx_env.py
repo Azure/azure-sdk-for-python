@@ -10,7 +10,6 @@
 
 from m2r import parse_from_file
 
-import zipfile
 import glob
 import logging
 import shutil
@@ -20,7 +19,11 @@ import ast
 import os
 import textwrap
 import io
-from tox_helper_tasks import get_package_details
+from tox_helper_tasks import (
+    get_package_details,
+    unzip_sdist_to_directory,
+    move_and_rename
+)
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -65,23 +68,6 @@ def create_index_file(readme_location, package_rst):
     output += RST_EXTENSION_FOR_INDEX.format(package_rst)
 
     return output
-
-
-def unzip_sdist_to_directory(containing_folder):
-    # grab the first one
-    path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.zip"))[0]
-
-    # dump into an `unzipped` folder
-    with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
-        zip_ref.extractall(containing_folder)
-        return os.path.splitext(path_to_zip_file)[0]
-
-
-def move_and_rename(source_location):
-    new_location = os.path.join(os.path.dirname(source_location), "unzipped")
-    os.rename(source_location, new_location)
-
-    return new_location
 
 
 def copy_conf(doc_folder):

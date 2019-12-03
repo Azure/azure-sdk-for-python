@@ -11,6 +11,7 @@ import inspect
 import os
 import os.path
 import time
+from datetime import datetime, timedelta
 
 try:
     import unittest.mock as mock
@@ -20,6 +21,7 @@ except ImportError:
 import zlib
 import math
 import sys
+import string
 import random
 import re
 import logging
@@ -31,6 +33,7 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
+from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -254,6 +257,18 @@ class StorageTestCase(AzureMgmtTestCase):
                 self.get_settings_value("CLIENT_SECRET"),
             )
         return self.generate_fake_token()
+
+    def generate_sas_token(self):
+        fake_key = 'a'*30 + 'b'*30
+
+        return '?' + generate_account_sas(
+            account_name = 'test', # name of the storage account
+            account_key = fake_key, # key for the storage account
+            resource_types = ResourceTypes(object=True),
+            permission = AccountSasPermissions(read=True,list=True),
+            start = datetime.now() - timedelta(hours = 24),
+            expiry = datetime.now() + timedelta(days = 8)
+        )
 
     def generate_fake_token(self):
         return FakeTokenCredential()

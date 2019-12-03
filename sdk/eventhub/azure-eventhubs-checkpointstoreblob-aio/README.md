@@ -5,7 +5,7 @@ This Checkpoint Store package works as a plug-in package to `EventHubConsumerCli
 
 Please note that this is an async library, for sync version of the Azure EventHubs Checkpoint Store client library, please refer to [azure-eventhubs-checkpointstoreblob](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob).
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob-aio/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.aio.html#azure.eventhub.aio.PartitionManager) | [Azure Eventhubs documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob-aio/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.aio.html#azure.eventhub.aio.CheckpointStore) | [Azure Eventhubs documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
 
 ## Getting started
 
@@ -23,6 +23,7 @@ $ pip install --pre azure-eventhub-checkpointstoreblob-aio
 - **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 - **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. You may follow the guide [creating an Azure Block Blob Storage Account](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-create-account-block-blob).
+
 
 ## Key concepts
 
@@ -48,17 +49,8 @@ storing their own offset values outside of the Event Hubs service. Within a part
 sequence number and the timestamp of when it was enqueued.
 
 ## Examples
-- [Create an Azure Storage Blobs `ContainerClient`](#create-an-azure-storage-blobs-containerclient)
 - [Create an Azure EventHubs `EventHubConsumerClient`](#create-an-eventhubconsumerclient)
-- [Consume events using a `BlobPartitionManager`](#consume-events-using-a-blobpartitionmanager-to-do-checkpoint)
-
-### Create an Azure Storage Blobs `ContainerClient`
-The easiest way to create a `ContainerClient` is to use a connection string.
-```python
-from azure.storage.blob.aio import ContainerClient
-container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", "mycontainer")
-```
-For other ways of creating a `ContainerClient`, go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob) for more details.
+- [Consume events using a `BlobCheckpointStore`](#consume-events-using-a-blobcheckpointstore-to-do-checkpoint)
 
 ### Create an `EventHubConsumerClient`
 The easiest way to create a `EventHubConsumerClient` is to use a connection string.
@@ -68,33 +60,36 @@ eventhub_client = EventHubConsumerClient.from_connection_string("my_eventhub_nam
 ```
 For other ways of creating a `EventHubConsumerClient`, refer to [EventHubs library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
-### Consume events using a `BlobPartitionManager` to do checkpoint
+### Consume events using a `BlobCheckpointStore` to do checkpoint
 ```python
 import asyncio
 
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.storage.blob.aio import ContainerClient
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
-eventhub_connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_container_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
 storage_container_name = '<< STORAGE CONTAINER NAME>>'
 
-async def do_operation(events):
-    # do some operations to the events.
-    pass
-
-async def process_events(partition_context, events):
-    await do_operation(events)
-    await partition_context.update_checkpoint(events[-1])
+async def process_event(partition_context, event):
+    # do something
+    await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def main():
-    storage_container_client = ContainerClient.from_connection_string(storage_container_connection_str, storage_container_name)
-    partition_manager = BlobPartitionManager(storage_container_client)  # use the BlobPartitonManager to save 
-    client = EventHubConsumerClient.from_connection_string(eventhub_connection_str, partition_manager=partition_manager, receive_timeout=5, retry_total=3)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(
+        storage_container_connection_str,
+        storage_container_name
+    )
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str,
+        eventhub_name=eventhub_name,
+        checkpoint_store=checkpoint_store,
+    )
 
     try:
-        await client.receive(process_events, "$default")
+        await client.receive(process_event, "$default")
     except KeyboardInterrupt:
         await client.close()
 
@@ -112,11 +107,11 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 ## Next steps
 
 ### Examples
-- [./samples/event_processor_blob_storage_example.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio/samples/event_processor_blob_storage_example.py) - EventHubConsumerClient with blob partition manager example
+- [./samples/event_processor_blob_storage_example.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio/samples/event_processor_blob_storage_example.py) - EventHubConsumerClient with blob checkpoint store example
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.aio.html#azure.eventhub.aio.PartitionManager)
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.aio.html#azure.eventhub.aio.CheckpointStore)
 
 ### Logging
 

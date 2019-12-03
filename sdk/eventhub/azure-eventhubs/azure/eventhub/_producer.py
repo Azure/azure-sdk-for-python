@@ -74,6 +74,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
+        idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
         self.closed = False
@@ -83,6 +84,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._target = target
         self._partition = partition
         self._timeout = send_timeout
+        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
@@ -99,12 +101,13 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._lock = threading.Lock()
         self._link_properties = {types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))}
 
-    def _create_handler(self):
+    def _create_handler(self, auth):
         self._handler = SendClient(
             self._target,
-            auth=self._client._create_auth(),  # pylint:disable=protected-access
+            auth=auth,
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             msg_timeout=self._timeout * 1000,
+            idle_timeout=self._idle_timeout,
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
@@ -189,8 +192,12 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
          If not specified, the default wait time specified when the producer was created will be used.
         :type timeout: float
 
-        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
-                ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
+        :raises: ~azure.eventhub.exceptions.AuthenticationError,
+                 ~azure.eventhub.exceptions.ConnectError,
+                 ~azure.eventhub.exceptions.ConnectionLostError,
+                 ~azure.eventhub.exceptions.EventDataError,
+                 ~azure.eventhub.exceptions.EventDataSendError,
+                 ~azure.eventhub.exceptions.EventHubError
         :return: None
         :rtype: None
         """

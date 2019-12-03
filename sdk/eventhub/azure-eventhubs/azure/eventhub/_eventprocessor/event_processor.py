@@ -8,7 +8,6 @@ import time
 import threading
 from functools import partial
 
-from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
 from .ownership_manager import OwnershipManager
 from .common import CloseReason
@@ -34,23 +33,33 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._partition_initialize_handler = kwargs.get("on_partition_initialize", None)
         self._partition_close_handler = kwargs.get("on_partition_close", None)
         self._checkpoint_store = kwargs.get("checkpoint_store", None)
-        self._initial_event_position = kwargs.get("initial_event_position", EventPosition("-1"))
+        self._initial_event_position = kwargs.get("initial_event_position", "-1")
+        self._initial_event_position_inclusive = kwargs.get("initial_event_position_inclusive", False)
 
-        self._polling_interval = kwargs.get("polling_interval", 10.0)
-        self._ownership_timeout = self._polling_interval * 2
+        self._load_balancing_interval = kwargs.get("load_balancing_interval", 10.0)
+        self._ownership_timeout = self._load_balancing_interval * 2
 
         self._partition_contexts = {}
 
         # Receive parameters
         self._owner_level = kwargs.get("owner_level", None)
+        if self._checkpoint_store and self._owner_level is None:
+            self._owner_level = 0
         self._prefetch = kwargs.get("prefetch", None)
         self._track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        self._last_enqueued_event_properties = {}
         self._id = str(uuid.uuid4())
         self._running = False
         self._lock = threading.RLock()
 
         self._consumers = {}
+        self._ownership_manager = OwnershipManager(
+            self._eventhub_client,
+            self._consumer_group,
+            self._id,
+            self._checkpoint_store,
+            self._ownership_timeout,
+            self._partition_id
+        )
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
@@ -69,23 +78,26 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             for partition_id in claimed_partitions:
                 if partition_id not in self._consumers:
 
-                    if partition_id not in self._partition_contexts:
+                    if partition_id in self._partition_contexts:
+                        partition_context = self._partition_contexts[partition_id]
+                    else:
                         partition_context = PartitionContext(
                             self._namespace,
                             self._eventhub_name,
                             self._consumer_group,
                             partition_id,
-                            self._id,
                             self._checkpoint_store
                         )
                         self._partition_contexts[partition_id] = partition_context
 
                     checkpoint = checkpoints.get(partition_id) if checkpoints else None
-                    initial_event_position = self.get_init_event_position(partition_id, checkpoint)
+                    initial_event_position, event_postition_inclusive =\
+                        self.get_init_event_position(partition_id, checkpoint)
                     event_received_callback = partial(self._on_event_received, partition_context)
 
                     self._consumers[partition_id] = self.create_consumer(partition_id,
                                                                          initial_event_position,
+                                                                         event_postition_inclusive,
                                                                          event_received_callback)
 
                     if self._partition_initialize_handler:
@@ -106,7 +118,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                     " has another error during running process_error(). The exception is %r.",
-                    partition_context.owner_id,
+                    self._id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
                     partition_context.consumer_group,
@@ -115,6 +127,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     def _on_event_received(self, partition_context, event):
         with self._context(event):
+            if self._track_last_enqueued_event_properties:
+                partition_context._last_received_event = event  # pylint: disable=protected-access
             self._handle_callback([self._event_handler, partition_context, event])
 
     def _load_balancing(self):
@@ -126,12 +140,10 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         :return: None
 
         """
-        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group, self._id,
-                                             self._checkpoint_store, self._ownership_timeout, self._partition_id)
         while self._running:
             try:
-                checkpoints = ownership_manager.get_checkpoints() if self._checkpoint_store else None
-                claimed_partition_ids = ownership_manager.claim_ownership()
+                checkpoints = self._ownership_manager.get_checkpoints() if self._checkpoint_store else None
+                claimed_partition_ids = self._ownership_manager.claim_ownership()
                 if claimed_partition_ids:
                     to_cancel_list = set(self._consumers.keys()) - set(claimed_partition_ids)
                     self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
@@ -143,20 +155,15 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
-                                err, self._eventhub_name, self._consumer_group, self._polling_interval)
+                                err, self._eventhub_name, self._consumer_group, self._load_balancing_interval)
                 # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                 # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
-                # They're swallowed here to retry every self._polling_interval seconds.
+                # They're swallowed here to retry every self._load_balancing_interval seconds.
                 # Meanwhile this event processor won't lose the partitions it has claimed before.
                 # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                 # that this EventProcessor is working on. So two or multiple EventProcessors may be working
                 # on the same partition.
-            time.sleep(self._polling_interval)
-
-    def _get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._consumers and partition_id in self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties[partition_id]
-        raise ValueError("You're not receiving events from partition {}".format(partition_id))
+            time.sleep(self._load_balancing_interval)
 
     def _close_consumer(self, partition_id, consumer, reason):
         consumer.close()
@@ -166,7 +173,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         _LOGGER.info(
             "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
             " is being closed. Reason is: %r",
-            self._partition_contexts[partition_id].owner_id,
+            self._id,
             self._partition_contexts[partition_id].eventhub_name,
             self._partition_contexts[partition_id].partition_id,
             self._partition_contexts[partition_id].consumer_group,
@@ -175,6 +182,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         if self._partition_close_handler:
             self._handle_callback([self._partition_close_handler, self._partition_contexts[partition_id], reason])
+        self._ownership_manager.release_ownership(partition_id)
 
     def start(self):
         if self._running:
@@ -199,7 +207,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     _LOGGER.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has met an error. The exception is %r.",
-                        self._partition_contexts[partition_id].owner_id,
+                        self._id,
                         self._partition_contexts[partition_id].eventhub_name,
                         self._partition_contexts[partition_id].partition_id,
                         self._partition_contexts[partition_id].consumer_group,

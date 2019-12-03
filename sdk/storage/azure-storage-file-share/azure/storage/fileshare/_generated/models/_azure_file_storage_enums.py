@@ -74,6 +74,12 @@ class StorageErrorCode(str, Enum):
     share_snapshot_operation_not_supported = "ShareSnapshotOperationNotSupported"
     share_has_snapshots = "ShareHasSnapshots"
     container_quota_downgrade_not_allowed = "ContainerQuotaDowngradeNotAllowed"
+    authorization_source_ip_mismatch = "AuthorizationSourceIPMismatch"
+    authorization_protocol_mismatch = "AuthorizationProtocolMismatch"
+    authorization_permission_mismatch = "AuthorizationPermissionMismatch"
+    authorization_service_mismatch = "AuthorizationServiceMismatch"
+    authorization_resource_type_mismatch = "AuthorizationResourceTypeMismatch"
+    feature_version_mismatch = "FeatureVersionMismatch"
 
 
 class DeleteSnapshotsOptionType(str, Enum):

@@ -944,6 +944,31 @@ class StorageShareTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_transport_closed_only_once_async())
 
+    async def _test_delete_directory_from_share_async(self):
+        # Arrange
+        share = await self._create_share()
+        await share.create_directory('dir1')
+        await share.create_directory('dir2')
+        await share.create_directory('dir3')
+
+        # Act
+        resp = []
+        async for d in share.list_directories_and_files():
+            resp.append(d)
+        self.assertEqual(len(resp), 3)
+
+        await share.delete_directory('dir3')
+
+        # Assert
+        resp = []
+        async for d in share.list_directories_and_files():
+            resp.append(d)
+        self.assertEqual(len(resp), 2)
+
+    @record
+    def test_delete_directory_from_share_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_directory_from_share_async())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

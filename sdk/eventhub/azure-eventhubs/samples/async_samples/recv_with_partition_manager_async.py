@@ -8,8 +8,8 @@
 """
 An example to show receiving events from an Event Hub with partition manager asynchronously.
 In the `receive` method of `EventHubConsumerClient`:
-If no partition id is specified, the partition_manager are used for load-balance and checkpoint.
-If partition id is specified, the partition_manager can only be used for checkpoint.
+If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
+If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 
 import asyncio
@@ -41,7 +41,7 @@ async def receive(client):
         partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
         which also try to receive events from all partitions and use the same storage resource.
         """
-        await client.receive(on_event=on_event, consumer_group="$Default")
+        await client.receive(on_event=on_event)
         # With specified partition_id, load-balance will be disabled
         # await client.receive(on_event=on_event, consumer_group="$default", partition_id = '0'))
     except KeyboardInterrupt:
@@ -49,11 +49,11 @@ async def receive(client):
 
 
 async def main():
-    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
-    partition_manager = BlobPartitionManager(container_client)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
-        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        consumer_group="$Default",
+        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing
     )
     async with client:
         await receive(client)

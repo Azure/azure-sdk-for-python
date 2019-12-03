@@ -28,8 +28,7 @@ def get_live_storage_blob_client():
     container_str = str(uuid.uuid4())
     blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
     blob_service_client.create_container(container_str)
-    container_client = ContainerClient.from_connection_string(storage_connection_str, container_str)
-    return container_str, container_client
+    return storage_connection_str, container_str
 
 
 def remove_live_storage_blob_client(container_str):
@@ -42,14 +41,14 @@ def remove_live_storage_blob_client(container_str):
         warnings.warn(UserWarning("storage container teardown failed"))
 
 
-async def _claim_and_list_ownership(live_storage_blob_client):
+async def _claim_and_list_ownership(connection_str, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group = '$default'
     ownership_cnt = 8
-    async with live_storage_blob_client:
-        checkpoint_store = BlobCheckpointStore(container_client=live_storage_blob_client)
 
+    checkpoint_store = BlobCheckpointStore.from_connection_string(connection_str, container_name)
+    async with checkpoint_store:
         ownership_list = await checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
@@ -79,28 +78,34 @@ async def _claim_and_list_ownership(live_storage_blob_client):
 
 @pytest.mark.liveTest
 def test_claim_and_list_ownership():
-    container_str, live_storage_blob_client = get_live_storage_blob_client()
-    if not live_storage_blob_client:
+    connection_str, container_name = get_live_storage_blob_client()
+    if not connection_str:
         pytest.skip("Storage blob client can't be created")
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(_claim_and_list_ownership(live_storage_blob_client))
+        loop.run_until_complete(_claim_and_list_ownership(connection_str, container_name))
     finally:
-        remove_live_storage_blob_client(container_str)
+        remove_live_storage_blob_client(container_name)
 
 
-async def _update_checkpoint(live_storage_blob_client):
+async def _update_checkpoint(connection_str, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group = '$default'
     partition_cnt = 8
 
-    async with live_storage_blob_client:
-        checkpoint_store = BlobCheckpointStore(container_client=live_storage_blob_client)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(connection_str, container_name)
+    async with checkpoint_store:
         for i in range(partition_cnt):
-            await checkpoint_store.update_checkpoint(
-                fully_qualified_namespace, eventhub_name, consumer_group, str(i),
-                '2', 20)
+            checkpoint = {
+                'fully_qualified_namespace': fully_qualified_namespace,
+                'eventhub_name': eventhub_name,
+                'consumer_group': consumer_group,
+                'partition_id': str(i),
+                'offset': '2',
+                'sequence_number': 20
+            }
+            await checkpoint_store.update_checkpoint(checkpoint)
 
         checkpoint_list = await checkpoint_store.list_checkpoints(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -109,16 +114,16 @@ async def _update_checkpoint(live_storage_blob_client):
         assert len(checkpoint_list) == partition_cnt
         for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '2'
-            assert checkpoint['sequence_number'] == '20'
+            assert checkpoint['sequence_number'] == 20
 
 
 @pytest.mark.liveTest
 def test_update_checkpoint():
-    container_str, live_storage_blob_client = get_live_storage_blob_client()
-    if not live_storage_blob_client:
+    connection_str, container_name = get_live_storage_blob_client()
+    if not connection_str:
         pytest.skip("Storage blob client can't be created")
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(_update_checkpoint(live_storage_blob_client))
+        loop.run_until_complete(_update_checkpoint(connection_str, container_name))
     finally:
-        remove_live_storage_blob_client(container_str)
+        remove_live_storage_blob_client(container_name)

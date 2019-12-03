@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from uamqp import (
     authentication,
@@ -19,18 +19,31 @@ from uamqp import (
     AMQPClientAsync
 )
 
-from .._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
-from .._client_base import ClientBase
-from .._utils import parse_sas_token, utc_from_timestamp
+from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
+from .._utils import utc_from_timestamp
 from ..exceptions import ClientClosedError
 from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
-
 _LOGGER = logging.getLogger(__name__)
+
+
+class EventHubSharedKeyCredential(object):
+    """The shared access key credential used for authentication.
+
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    """
+    def __init__(self, policy, key):
+        self.policy = policy
+        self.key = key
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
 class ClientBaseAsync(ClientBase):
@@ -49,44 +62,55 @@ class ClientBaseAsync(ClientBase):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    def _create_auth(self):
+    @classmethod
+    def from_connection_string(cls, conn_str, **kwargs):
+        consumer_group = kwargs.pop("consumer_group", None)
+        host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
+
+        if consumer_group:  # Only consumer has the consumer_group arg
+            return cls(  # pylint:disable=too-many-function-args
+                fully_qualified_namespace=host,
+                eventhub_name=entity,
+                consumer_group=consumer_group,
+                credential=EventHubSharedKeyCredential(policy, key),
+                **kwargs
+            )
+        return cls(
+            fully_qualified_namespace=host,
+            eventhub_name=entity,
+            credential=EventHubSharedKeyCredential(policy, key),
+            **kwargs
+        )
+
+    async def _create_auth(self):
         """
-        Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
+        Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
 
         """
-        http_proxy = self._config.http_proxy
-        transport_type = self._config.transport_type
-        auth_timeout = self._config.auth_timeout
-
-        if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
-            username = self._credential.policy
-            password = self._credential.key
-            if "@sas.root" in username:
-                return authentication.SASLPlain(
-                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
-            return authentication.SASTokenAsync.from_shared_access_key(
-                self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
-                transport_type=transport_type)
-
-        elif isinstance(self._credential, EventHubSASTokenCredential):
-            token = self._credential.get_sas_token()
-            try:
-                expiry = int(parse_sas_token(token)['se'])
-            except (KeyError, TypeError, IndexError):
-                raise ValueError("Supplied SAS token has no valid expiry value.")
-            return authentication.SASTokenAsync(
-                self._auth_uri, self._auth_uri, token,
-                expires_at=expiry,
-                timeout=auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type)
-
-        else:
-            get_jwt_token = functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE)
-            return authentication.JWTTokenAsync(self._auth_uri, self._auth_uri,
-                                                get_jwt_token, http_proxy=http_proxy,
-                                                transport_type=transport_type)
+        try:
+            token_type = self._credential.token_type
+        except AttributeError:
+            token_type = b'jwt'
+        if token_type == b"servicebus.windows.net:sastoken":
+            auth = authentication.JWTTokenAsync(
+                self._auth_uri,
+                self._auth_uri,
+                functools.partial(self._credential.get_token, self._auth_uri),
+                token_type=token_type,
+                timeout=self._config.auth_timeout,
+                http_proxy=self._config.http_proxy,
+                transport_type=self._config.transport_type)
+            await auth.update_token()
+            return auth
+        return authentication.JWTTokenAsync(
+            self._auth_uri,
+            self._auth_uri,
+            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            timeout=self._config.auth_timeout,
+            http_proxy=self._config.http_proxy,
+            transport_type=self._config.transport_type)
 
     async def _close_connection(self):
         await self._conn_manager.reset_connection_if_broken()
@@ -107,7 +131,7 @@ class ClientBaseAsync(ClientBase):
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
-            mgmt_auth = self._create_auth()
+            mgmt_auth = await self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
                 conn = await self._conn_manager.get_connection(self._address.hostname, mgmt_auth)
@@ -131,16 +155,16 @@ class ClientBaseAsync(ClientBase):
 
     async def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        """
-        Get properties of the specified EventHub async.
-        Keys in the details dictionary include:
+        """Get properties of the Event Hub.
 
-            - eventhub_name
-            - created_at
-            - partition_ids
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
 
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
@@ -154,32 +178,31 @@ class ClientBaseAsync(ClientBase):
 
     async def get_partition_ids(self):
         # type:() -> List[str]
-        """
-        Get partition ids of the specified EventHub async.
+        """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return (await self.get_eventhub_properties())['partition_ids']
 
     async def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, str]
-        """
-        Get properties of the specified partition async.
-        Keys in the details dictionary include:
+        """Get properties of the specified partition.
 
-            - eventhub_name
-            - id
-            - beginning_sequence_number
-            - last_enqueued_sequence_number
-            - last_enqueued_offset
-            - last_enqueued_time_utc
-            - is_empty
+        Keys in the properties dictionary include:
 
-        :param partition_id: The target partition id.
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})
@@ -226,11 +249,11 @@ class ConsumerProducerMixin(object):
         if not self.running:
             if self._handler:
                 await self._handler.close_async()
-            self._create_handler()
-            await self._handler.open_async(connection=await self._client._conn_manager.get_connection(
-                self._client._address.hostname,
-                self._client._create_auth()
-            ))
+            auth = await self._client._create_auth()
+            self._create_handler(auth)
+            await self._handler.open_async(
+                connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
+            )
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \

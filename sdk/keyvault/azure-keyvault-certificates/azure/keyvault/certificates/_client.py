@@ -194,7 +194,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_certificate(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> DeletedCertificate
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
         When this method returns Key Vault has begun deleting the certificate. Deletion may take several seconds in a
@@ -204,7 +204,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the certificate to delete.
         :returns: A poller for the delete certificate operation. The poller's `result` method returns the
          :class:`~azure.keyvault.certificates.DeletedCertificate` without waiting for deletion to complete. If the vault
-         has soft-delete enabled and you want to permanently delete the certificate with
+         has soft-delete enabled and you want to immediately, permanently delete the certificate with
          :func:`purge_deleted_certificate`, call the poller's `wait` method first. It will block until the deletion is
          complete. The `wait` method requires certificates/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.DeletedCertificate]
@@ -272,12 +272,15 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def purge_deleted_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> None
-        """Permanently deletes the specified deleted certificate.
+        """Permanently deletes a deleted certificate. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified certificate, without
-        possibility for recovery. The operation is not available if the recovery
-        level does not specified 'Purgeable'. This operation requires the
-        certificate/purge permission.
+        possibility for recovery. The operation is not available if the
+        :py:attr:`~azure.keyvault.certificates.CertificateProperties.recovery_level` does not specify 'Purgeable'.
+        This method is only necessary for purging a certificate before its
+        :py:attr:`~azure.keyvault.certificates.DeletedCertificate.scheduled_purge_date`.
+
+        Requires certificates/purge permission.
 
         :param str certificate_name: The name of the certificate
         :return: None
@@ -290,7 +293,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_certificate(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> KeyVaultCertificate
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/recover permission.
@@ -379,7 +382,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_policy(self, certificate_name, **kwargs):
+    def get_certificate_policy(self, certificate_name, **kwargs):
         # type: (str, **Any) -> CertificatePolicy
         """Gets the policy for a certificate.
 
@@ -397,7 +400,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
-    def update_policy(self, certificate_name, policy, **kwargs):
+    def update_certificate_policy(self, certificate_name, policy, **kwargs):
         # type: (str, CertificatePolicy, **Any) -> CertificatePolicy
         """Updates the policy for a certificate.
 
@@ -626,7 +629,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def create_contacts(self, contacts, **kwargs):
+    def set_contacts(self, contacts, **kwargs):
         # type: (Iterable[CertificateContact], **Any) -> List[CertificateContact]
         """Sets the certificate contacts for the key vault.
 
@@ -641,8 +644,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START create_contacts]
-                :end-before: [END create_contacts]
+                :start-after: [START set_contacts]
+                :end-before: [END set_contacts]
                 :language: python
                 :caption: Create contacts
                 :dedent: 8
@@ -844,9 +847,9 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str account_id: The user name/account name/account id.
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
-        :keyword admin_details: Details of the organization administrators of the
+        :keyword admin_contacts: Contact details of the organization administrators of the
          certificate issuer.
-        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+        :paramtype admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -864,27 +867,27 @@ class CertificateClient(KeyVaultClientBase):
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
-        admin_details = kwargs.pop("admin_details", None)
+        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details and admin_details[0]:
-            admin_details_to_pass = [
+        if admin_contacts:
+            admin_details = [
                 self._client.models.AdministratorDetails(
-                    first_name=admin_detail.first_name,
-                    last_name=admin_detail.last_name,
-                    email_address=admin_detail.email,
-                    phone=admin_detail.phone,
+                    first_name=contact.first_name,
+                    last_name=contact.last_name,
+                    email_address=contact.email,
+                    phone=contact.phone,
                 )
-                for admin_detail in admin_details
+                for contact in admin_contacts
             ]
         else:
-            admin_details_to_pass = admin_details
+            admin_details = None
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details_to_pass
+                id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None
@@ -917,8 +920,8 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str account_id: The user name/account name/account id.
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
-        :keyword admin_details: Details of the organization administrators of the certificate issuer
-        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+        :keyword admin_contacts: Contact details of the organization administrators of the certificate issuer
+        :paramtype admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -929,27 +932,27 @@ class CertificateClient(KeyVaultClientBase):
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
-        admin_details = kwargs.pop("admin_details", None)
+        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details and admin_details[0]:
-            admin_details_to_pass = [
+        if admin_contacts:
+            admin_details = [
                 self._client.models.AdministratorDetails(
-                    first_name=admin_detail.first_name,
-                    last_name=admin_detail.last_name,
-                    email_address=admin_detail.email,
-                    phone=admin_detail.phone,
+                    first_name=contact.first_name,
+                    last_name=contact.last_name,
+                    email_address=contact.email,
+                    phone=contact.phone,
                 )
-                for admin_detail in admin_details
+                for contact in admin_contacts
             ]
         else:
-            admin_details_to_pass = admin_details
+            admin_details = None
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details_to_pass
+                id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None

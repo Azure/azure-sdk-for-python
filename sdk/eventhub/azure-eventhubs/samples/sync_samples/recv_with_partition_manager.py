@@ -8,8 +8,8 @@
 """
 An example to show receiving events from an Event Hub with partition manager.
 In the `receive` method of `EventHubConsumerClient`:
-If no partition id is specified, the partition_manager are used for load-balance and checkpoint.
-If partition id is specified, the partition_manager can only be used for checkpoint.
+If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
+If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 import os
 from azure.storage.blob import ContainerClient
@@ -32,11 +32,11 @@ def on_event(partition_context, event):
 
 
 if __name__ == '__main__':
-    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
-    partition_manager = BlobPartitionManager(container_client)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
-        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        consumer_group='$Default',
+        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing
     )
 
     try:
@@ -46,7 +46,7 @@ if __name__ == '__main__':
             partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
             which also try to receive events from all partitions and use the same storage resource.
             """
-            consumer_client.receive(on_event=on_event, consumer_group='$Default')
+            consumer_client.receive(on_event=on_event)
             # With specified partition_id, load-balance will be disabled
             # client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
     except KeyboardInterrupt:

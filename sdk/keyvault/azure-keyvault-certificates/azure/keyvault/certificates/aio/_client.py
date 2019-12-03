@@ -242,12 +242,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def purge_deleted_certificate(self, certificate_name: str, **kwargs: "**Any") -> None:
-        """Permanently deletes the specified deleted certificate.
+        """Permanently deletes a deleted certificate. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified certificate, without
-        possibility for recovery. The operation is not available if the recovery
-        level does not specified 'Purgeable'. This operation requires the
-        certificate/purge permission.
+        possibility for recovery. The operation is not available if the
+        :py:attr:`~azure.keyvault.certificates.CertificateProperties.recovery_level` does not specify 'Purgeable'.
+        This method is only necessary for purging a certificate before its
+        :py:attr:`~azure.keyvault.certificates.DeletedCertificate.scheduled_purge_date`.
+
+        Requires certificates/purge permission.
 
         :param str certificate_name: The name of the certificate
         :return: None
@@ -341,7 +344,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_policy(self, certificate_name: str, **kwargs: "**Any") -> CertificatePolicy:
+    async def get_certificate_policy(self, certificate_name: str, **kwargs: "**Any") -> CertificatePolicy:
         """Gets the policy for a certificate.
 
         Returns the specified certificate policy resources in the key
@@ -358,7 +361,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_policy(
+    async def update_certificate_policy(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any"
     ) -> CertificatePolicy:
         """Updates the policy for a certificate.
@@ -578,7 +581,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_contacts(
+    async def set_contacts(
         self, contacts: Iterable[CertificateContact], **kwargs: "**Any"
     ) -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
@@ -598,8 +601,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
-                :start-after: [START create_contacts]
-                :end-before: [END create_contacts]
+                :start-after: [START set_contacts]
+                :end-before: [END set_contacts]
                 :language: python
                 :caption: Create contacts
                 :dedent: 8
@@ -802,9 +805,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :keyword str account_id: The user name/account name/account id.
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
-        :keyword admin_details: Details of the organization administrators of the
+        :keyword admin_contacts: Contact details of the organization administrators of the
          certificate issuer.
-        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+        :paramtype admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -822,27 +825,27 @@ class CertificateClient(AsyncKeyVaultClientBase):
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
-        admin_details = kwargs.pop("admin_details", None)
+        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details and admin_details[0]:
-            admin_details_to_pass = list(
+        if admin_contacts:
+            admin_details = [
                 self._client.models.AdministratorDetails(
-                    first_name=admin_detail.first_name,
-                    last_name=admin_detail.last_name,
-                    email_address=admin_detail.email,
-                    phone=admin_detail.phone,
+                    first_name=contact.first_name,
+                    last_name=contact.last_name,
+                    email_address=contact.email,
+                    phone=contact.phone,
                 )
-                for admin_detail in admin_details
-            )
+                for contact in admin_contacts
+            ]
         else:
-            admin_details_to_pass = admin_details
+            admin_details = None
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details_to_pass
+                id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None
@@ -874,8 +877,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :keyword str account_id: The user name/account name/account id.
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
-        :keyword admin_details: Details of the organization administrators of the certificate issuer
-        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+        :keyword admin_contacts: Contact details of the organization administrators of
+         the certificate issuer
+        :paramtype admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -886,27 +890,27 @@ class CertificateClient(AsyncKeyVaultClientBase):
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
-        admin_details = kwargs.pop("admin_details", None)
+        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details and admin_details[0]:
-            admin_details_to_pass = list(
+        if admin_contacts:
+            admin_details = list(
                 self._client.models.AdministratorDetails(
-                    first_name=admin_detail.first_name,
-                    last_name=admin_detail.last_name,
-                    email_address=admin_detail.email,
-                    phone=admin_detail.phone,
+                    first_name=contact.first_name,
+                    last_name=contact.last_name,
+                    email_address=contact.email,
+                    phone=contact.phone,
                 )
-                for admin_detail in admin_details
+                for contact in admin_contacts
             )
         else:
-            admin_details_to_pass = admin_details
+            admin_details = None
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details_to_pass
+                id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None

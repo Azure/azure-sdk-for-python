@@ -9,15 +9,13 @@ import uuid
 import time
 import functools
 import collections
-from base64 import b64encode, b64decode
-from hashlib import sha256
-from hmac import HMAC
-from typing import Any, TYPE_CHECKING
+from typing import Any
+from datetime import timedelta
 try:
     from urlparse import urlparse  # type: ignore
-    from urllib import urlencode, quote_plus  # type: ignore
+    from urllib import quote_plus  # type: ignore
 except ImportError:
-    from urllib.parse import urlparse, urlencode, quote_plus
+    from urllib.parse import urlparse, quote_plus
 
 from uamqp import (
     AMQPClient,
@@ -25,13 +23,13 @@ from uamqp import (
     authentication,
     constants,
     errors,
-    compat
+    compat,
+    utils
 )
 
 from .exceptions import _handle_exception, ClientClosedError
 from ._configuration import Configuration
-from ._utils import parse_sas_token, utc_from_timestamp
-from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._utils import utc_from_timestamp
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
@@ -40,17 +38,17 @@ from ._constants import (
     MGMT_PARTITION_OPERATION
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
-
 _LOGGER = logging.getLogger(__name__)
+_Address = collections.namedtuple('Address', 'hostname path')
+_AccessToken = collections.namedtuple('AccessToken', 'token expires_on')
 
 
-def _parse_conn_str(conn_str):
+def _parse_conn_str(conn_str, kwargs):
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None
+    eventhub_name = kwargs.pop("eventhub_name", None)
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
@@ -67,7 +65,13 @@ def _parse_conn_str(conn_str):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
-    return endpoint, shared_access_key_name, shared_access_key, entity_path
+    entity = eventhub_name or entity_path
+    left_slash_pos = endpoint.find("//")
+    if left_slash_pos != -1:
+        host = endpoint[left_slash_pos + 2:]
+    else:
+        host = endpoint
+    return host, shared_access_key_name, shared_access_key, entity
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -76,18 +80,15 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     :rtype: str
     """
     if not expiry:
-        expiry = time.time() + 3600  # Default to 1 hour.
-    encoded_uri = quote_plus(uri)
-    ttl = int(expiry)
-    sign_key = '{}\n{}'.format(encoded_uri, ttl)
-    signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
-    result = {
-        'sr': uri,
-        'sig': signature,
-        'se': str(ttl)}
-    if policy:
-        result['skn'] = policy
-    return 'SharedAccessSignature ' + urlencode(result)
+        expiry = timedelta(hours=1)  # Default to 1 hour.
+
+    abs_expiry = int(time.time()) + expiry.seconds
+    encoded_uri = quote_plus(uri).encode('utf-8')  # pylint: disable=no-member
+    encoded_policy = quote_plus(policy).encode('utf-8')  # pylint: disable=no-member
+    encoded_key = key.encode('utf-8')
+
+    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    return _AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):
@@ -100,7 +101,21 @@ def _build_uri(address, entity):
     return address
 
 
-_Address = collections.namedtuple('Address', 'hostname path')
+class EventHubSharedKeyCredential(object):
+    """The shared access key credential used for authentication.
+
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    """
+    def __init__(self, policy, key):
+        self.policy = policy
+        self.key = key
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
@@ -119,6 +134,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
+        self._idle_timeout = kwargs.get("idle_timeout", None)
 
     def __enter__(self):
         return self
@@ -128,28 +144,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        eventhub_name = kwargs.pop("eventhub_name", None)
         consumer_group = kwargs.pop("consumer_group", None)
-        address, policy, key, entity = _parse_conn_str(conn_str)
-        entity = eventhub_name or entity
-        left_slash_pos = address.find("//")
-        if left_slash_pos != -1:
-            host = address[left_slash_pos + 2:]
-        else:
-            host = address
-
+        host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
         if consumer_group:  # Only consumer has the consumer_group arg
             return cls(  # pylint:disable=too-many-function-args
-                host,
-                entity,
-                consumer_group,
-                EventHubSharedKeyCredential(policy, key),
+                fully_qualified_namespace=host,
+                eventhub_name=entity,
+                consumer_group=consumer_group,
+                credential=EventHubSharedKeyCredential(policy, key),
                 **kwargs
             )
         return cls(
-            host,
-            entity,
-            EventHubSharedKeyCredential(policy, key),
+            fully_qualified_namespace=host,
+            eventhub_name=entity,
+            credential=EventHubSharedKeyCredential(policy, key),
             **kwargs
         )
 
@@ -158,39 +166,29 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
         """
-        http_proxy = self._config.http_proxy
-        transport_type = self._config.transport_type
-        auth_timeout = self._config.auth_timeout
-
-        # TODO: the following code can be refactored to create auth from classes directly instead of using if-else
-        if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
-            username = self._credential.policy
-            password = self._credential.key
-            if "@sas.root" in username:
-                return authentication.SASLPlain(
-                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
-            return authentication.SASTokenAuth.from_shared_access_key(
-                self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
-                transport_type=transport_type)
-
-        elif isinstance(self._credential, EventHubSASTokenCredential):
-            token = self._credential.get_sas_token()
-            try:
-                expiry = int(parse_sas_token(token)['se'])
-            except (KeyError, TypeError, IndexError):
-                raise ValueError("Supplied SAS token has no valid expiry value.")
-            return authentication.SASTokenAuth(
-                self._auth_uri, self._auth_uri, token,
-                expires_at=expiry,
-                timeout=auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type)
-
-        else:  # Azure credential
-            get_jwt_token = functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE)
-            return authentication.JWTTokenAuth(self._auth_uri, self._auth_uri,
-                                               get_jwt_token, http_proxy=http_proxy,
-                                               transport_type=transport_type)
+        try:
+            token_type = self._credential.token_type
+        except AttributeError:
+            token_type = b'jwt'
+        if token_type == b"servicebus.windows.net:sastoken":
+            auth = authentication.JWTTokenAuth(
+                self._auth_uri,
+                self._auth_uri,
+                functools.partial(self._credential.get_token, self._auth_uri),
+                token_type=token_type,
+                timeout=self._config.auth_timeout,
+                http_proxy=self._config.http_proxy,
+                transport_type=self._config.transport_type)
+            auth.update_token()
+            return auth
+        return authentication.JWTTokenAuth(
+            self._auth_uri,
+            self._auth_uri,
+            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            timeout=self._config.auth_timeout,
+            http_proxy=self._config.http_proxy,
+            transport_type=self._config.transport_type)
 
     def _close_connection(self):
         self._conn_manager.reset_connection_if_broken()
@@ -240,16 +238,16 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        """Get properties of the EventHub.
+        """Get properties of the Event Hub.
 
         Keys in the returned dictionary include:
 
-            - eventhub_name
-            - created_at
-            - partition_ids
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
 
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
@@ -263,11 +261,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def get_partition_ids(self):
         # type:() -> List[str]
-        """
-        Get partition ids of the specified EventHub.
+        """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return self.get_eventhub_properties()['partition_ids']
 
@@ -275,20 +272,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         # type:(str) -> Dict[str, Any]
         """Get properties of the specified partition.
 
-        Keys in the details dictionary include:
+        Keys in the properties dictionary include:
 
-            - eventhub_name
-            - id
-            - beginning_sequence_number
-            - last_enqueued_sequence_number
-            - last_enqueued_offset
-            - last_enqueued_time_utc
-            - is_empty
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
 
-        :param partition_id: The target partition id.
+        :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})
@@ -334,11 +331,11 @@ class ConsumerProducerMixin(object):
         if not self.running:
             if self._handler:
                 self._handler.close()
-            self._create_handler()
-            self._handler.open(connection=self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                self._client._address.hostname,
-                self._client._create_auth()
-            ))
+            auth = self._client._create_auth()
+            self._create_handler(auth)
+            self._handler.open(
+                connection=self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
+            )
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \

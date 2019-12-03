@@ -5,6 +5,10 @@
 
 ## 2019-12-xx Version 1.0.0b6
 
+### Features
+
+- Add sync-token support    #8418
+
 ### Breaking changes
 
 - Combine set_read_only & clear_read_only to be set_read_only(True/False)   #8453
