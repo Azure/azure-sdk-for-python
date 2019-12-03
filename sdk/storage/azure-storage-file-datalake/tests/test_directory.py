@@ -82,6 +82,21 @@ class DirectoryTest(StorageTestCase):
         self.assertTrue(created)
 
     @record
+    def test_create_directory_with_permission(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Act
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        created = directory_client.create_directory(permissions="rwxr--r--", umask="0000")
+
+        prop = directory_client.get_access_control()
+
+        # Assert
+        self.assertTrue(created)
+        self.assertEqual(prop['permissions'], 'rwxr--r--')
+
+    @record
     def test_create_directory_with_content_settings(self):
         # Arrange
         directory_name = self._get_directory_reference()
