@@ -34,13 +34,13 @@ The libraries released in the November 2019 GA release:
 
 The libraries released in the November 2019 preview:
 - [azure-cosmos](./sdk/cosmos/azure-cosmos)
-- [azure-eventhubs](./sdk/eventhub/azure-eventhubs)
+- [azure-eventhub](./sdk/eventhub/azure-eventhub)
 - [azure-storage-file-share](./sdk/storage/azure-storage-file-share)
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
 ### Client: Previous Versions
-Last stable versions of packages that have been provided for usage with Azure and are production-ready. These libraries provide you with similar functionalities to the Preview ones as they allow you to use and consume existing resources and interact with them, for example: upload a blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/python_introduction.html) or have the same feature set as the Novemeber releases. They do however offer wider coverage of services. 
+Last stable versions of packages that have been provided for usage with Azure and are production-ready. These libraries provide you with similar functionalities to the Preview ones as they allow you to use and consume existing resources and interact with them, for example: upload a blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/python_introduction.html) or have the same feature set as the Novemeber releases. They do however offer wider coverage of services.
 
 ### Management
 Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. The management libraries use the `azure-mgmt-<service name>` convention for their package names.

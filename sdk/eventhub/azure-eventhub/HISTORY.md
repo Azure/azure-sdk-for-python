@@ -100,7 +100,7 @@ after which the underlying connection will close if there is no further activity
 - Added `BlobPartitionManager` which implements `PartitionManager`.
     - Azure Blob Storage is applied for storing data used by `EventProcessor`.
     - Packaged separately as a plug-in to `EventProcessor`.
-    - For details, please refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio).
+    - For details, please refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio).
 - Added property `system_properties` on `EventData`.
 
 **Breaking changes**
@@ -294,4 +294,4 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 
 - Swapped out Proton dependency for uAMQP.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhubs/HISTORY.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
