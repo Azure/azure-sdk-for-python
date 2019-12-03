@@ -21,6 +21,7 @@ from ._models import LocationMode, DirectoryProperties
 from ._generated import DataLakeStorageClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated.models import StorageErrorException
+from ._deserialize import process_storage_error
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
@@ -175,7 +176,7 @@ class PathClient(StorageAccountHostsMixin):
         try:
             return self._client.path.create(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     @staticmethod
     def _delete_path_options(**kwargs):
@@ -230,7 +231,7 @@ class PathClient(StorageAccountHostsMixin):
         try:
             return self._client.path.delete(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     @staticmethod
     def _set_access_control_options(owner=None, group=None, permissions=None, acl=None, **kwargs):
@@ -310,7 +311,7 @@ class PathClient(StorageAccountHostsMixin):
         try:
             return self._client.path.set_access_control(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     @staticmethod
     def _get_access_control_options(upn=None,  # type: Optional[bool]
@@ -376,7 +377,7 @@ class PathClient(StorageAccountHostsMixin):
         try:
             return self._client.path.get_properties(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
@@ -492,7 +493,7 @@ class PathClient(StorageAccountHostsMixin):
         try:
             return self._client.path.create(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     def _get_path_properties(self, **kwargs):
         # type: (**Any) -> Union[FileProperties, DirectoryProperties]
