@@ -450,7 +450,7 @@ class EventHubClient(object):
         :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :param idle_timeout: An optionl timeout in seconds after which the underlying connection
+        :param idle_timeout: An optional timeout in seconds after which the underlying connection
          will close if there is no further activity.  Default is None.
         :type idle_timeout: int
         :rtype: ~azure.eventhub.receiver.Receiver
@@ -495,6 +495,9 @@ class EventHubClient(object):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
+        :param idle_timeout: An optional timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         :rtype: ~azure.eventhub.receiver.Receiver
 
         Example:

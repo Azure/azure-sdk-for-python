@@ -336,7 +336,7 @@ class AsyncReceiver(Receiver):
                 await self.close_async(exception=error)
                 raise error
 
-        if not reconnect_timeout is None and time.time() > time_out_at:
+        if reconnect_timeout is not None and time.time() > time_out_at:
             raise TimeoutError("Timeout exceeded when reconnecting receiver")      
 
         return data_batch

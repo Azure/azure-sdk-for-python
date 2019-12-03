@@ -9,6 +9,8 @@ Release History
 **Features**
 
 - Updated UAMQP version to 1.2.3
+- Added `idle_timeout` parameter to the `add_receiver` functions and `EPHOptions` for optionally closing idle connections.
+- Added `reconnect_timeout` and `max_reconnect_tries` parameters to `receive` functions for better control of connection behaviour during receive.
 
 **BugFixes**
 
@@ -17,7 +19,10 @@ Release History
   instruct the EventProcessorHost to fail fast on a checkpoint failure and proactively release the partition.
   This should reduce spurious reprocessing of non-checkpointed events, at the cost of a small amount of 
   additional latency if the checkpoint interruption was actually transient.
-
+- Fixed send timeout threadthrough to sender so it is now passed in proper units and leveraged within UAMQP.
+- Fixed bug where on reconnect, `receive` functions returned an empty list.
+- Fixed bug in partition pump logger interfering with certain failure mode logs.
+- Fixed bug to pass proper args to process_error_async within EventHubPartitionPump.
 
 1.3.2 (2019-09-18)
 ------------------
