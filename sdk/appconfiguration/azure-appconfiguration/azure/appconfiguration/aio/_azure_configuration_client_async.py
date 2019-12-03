@@ -10,6 +10,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    AsyncBearerTokenCredentialPolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -64,6 +65,9 @@ class AzureAppConfigurationClient:
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
+        if not credential:
+            raise ValueError("Missing credential")
+
         self._config = AzureAppConfigurationConfiguration(credential, base_url, **kwargs)
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -75,7 +79,10 @@ class AzureAppConfigurationClient:
             if isinstance(credential, AppConfigConnectionStringCredential):
                 pipeline = self._create_appconfig_pipeline(**kwargs)
             else:
-                pipeline = self._create_appconfig_aad_pipeline(**kwargs)
+                pipeline = self._create_appconfig_aad_pipeline(
+                    credential=credential,
+                    base_url=base_url,
+                    **kwargs)
 
         self._impl = AzureAppConfiguration(
             credentials=credential, endpoint=base_url, pipeline=pipeline
@@ -137,16 +144,24 @@ class AzureAppConfigurationClient:
             policies,
         )
 
-    def _create_appconfig_aad_pipeline(self, **kwargs):
+    def _create_appconfig_aad_pipeline(self, base_url, credential, **kwargs):
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
+        if base_url.endswith('/'):
+            scope = base_url + '.default'
+        else:
+            scope = base_url + '/.default'
 
         if policies is None:  # [] is a valid policy list
+            if hasattr(credential, "get_token"):
+                credential_policy = AsyncBearerTokenCredentialPolicy(credential, scope)
+            else:
+                raise TypeError("Unsupported credential: {}".format(credential))
             policies = [
                 self._config.headers_policy,
                 self._config.user_agent_policy,
                 self._config.retry_policy,
-                self._config.authentication_policy,
+                credential_policy,
                 SyncTokenPolicy(),
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
