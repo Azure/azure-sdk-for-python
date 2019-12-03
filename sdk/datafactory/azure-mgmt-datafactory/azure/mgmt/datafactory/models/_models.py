@@ -17392,12 +17392,16 @@ class IntegrationRuntimeVNetProperties(Model):
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
     :type subnet: str
+    :param public_ips: Resource IDs of the public IP addresses that this
+     integration runtime will use.
+    :type public_ips: list[str]
     """
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'v_net_id': {'key': 'vNetId', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'str'},
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -17405,6 +17409,7 @@ class IntegrationRuntimeVNetProperties(Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.v_net_id = kwargs.get('v_net_id', None)
         self.subnet = kwargs.get('subnet', None)
+        self.public_ips = kwargs.get('public_ips', None)
 
 
 class JiraLinkedService(LinkedService):
@@ -24249,6 +24254,9 @@ class SalesforceLinkedService(LinkedService):
     :param security_token: The security token is required to remotely access
      Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param api_version: The Salesforce API version used in ADF. Type: string
+     (or Expression with resultType string).
+    :type api_version: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -24270,6 +24278,7 @@ class SalesforceLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
+        'api_version': {'key': 'typeProperties.apiVersion', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -24279,6 +24288,7 @@ class SalesforceLinkedService(LinkedService):
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.security_token = kwargs.get('security_token', None)
+        self.api_version = kwargs.get('api_version', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Salesforce'
 

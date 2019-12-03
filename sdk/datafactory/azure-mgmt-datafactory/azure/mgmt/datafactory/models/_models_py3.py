@@ -17392,19 +17392,24 @@ class IntegrationRuntimeVNetProperties(Model):
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
     :type subnet: str
+    :param public_ips: Resource IDs of the public IP addresses that this
+     integration runtime will use.
+    :type public_ips: list[str]
     """
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'v_net_id': {'key': 'vNetId', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'str'},
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
     }
 
-    def __init__(self, *, additional_properties=None, v_net_id: str=None, subnet: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, v_net_id: str=None, subnet: str=None, public_ips=None, **kwargs) -> None:
         super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.v_net_id = v_net_id
         self.subnet = subnet
+        self.public_ips = public_ips
 
 
 class JiraLinkedService(LinkedService):
@@ -24249,6 +24254,9 @@ class SalesforceLinkedService(LinkedService):
     :param security_token: The security token is required to remotely access
      Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param api_version: The Salesforce API version used in ADF. Type: string
+     (or Expression with resultType string).
+    :type api_version: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -24270,15 +24278,17 @@ class SalesforceLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
+        'api_version': {'key': 'typeProperties.apiVersion', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, environment_url=None, username=None, password=None, security_token=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, environment_url=None, username=None, password=None, security_token=None, api_version=None, encrypted_credential=None, **kwargs) -> None:
         super(SalesforceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.environment_url = environment_url
         self.username = username
         self.password = password
         self.security_token = security_token
+        self.api_version = api_version
         self.encrypted_credential = encrypted_credential
         self.type = 'Salesforce'
 
