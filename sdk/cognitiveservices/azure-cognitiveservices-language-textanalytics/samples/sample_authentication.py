@@ -45,8 +45,8 @@ class AuthenticationSample(object):
         doc = ["I need to take my cat to the veterinarian."]
         result = text_analytics_client.detect_language(doc)
 
-        print("Language detected: {}".format(result[0].detected_language.name))
-        print("Confidence score: {}".format(result[0].detected_language.score))
+        print("Language detected: {}".format(result[0].detected_languages[0].name))
+        print("Confidence score: {}".format(result[0].detected_languages[0].score))
 
     def authentication_with_azure_active_directory(self):
         """DefaultAzureCredential will use the values from the environment
@@ -60,8 +60,8 @@ class AuthenticationSample(object):
         doc = ["I need to take my cat to the veterinarian."]
         result = text_analytics_client.detect_language(doc)
 
-        print("Language detected: {}".format(result[0].detected_language.name))
-        print("Confidence score: {}".format(result[0].detected_language.score))
+        print("Language detected: {}".format(result[0].detected_languages[0].name))
+        print("Confidence score: {}".format(result[0].detected_languages[0].score))
 
 
 if __name__ == '__main__':

@@ -46,9 +46,9 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             country_hint="US"
         )
 
-        self.assertEqual(response.detected_language.name, "English")
-        self.assertEqual(response.detected_language.iso6391_name, "en")
-        self.assertEqual(response.detected_language.score, 1.0)
+        self.assertEqual(response.detected_languages[0].name, "English")
+        self.assertEqual(response.detected_languages[0].iso6391_name, "en")
+        self.assertEqual(response.detected_languages[0].score, 1.0)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

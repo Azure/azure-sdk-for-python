@@ -113,9 +113,9 @@ class DocumentLanguage(DictMixin):
 
     :param id: Unique, non-empty document identifier.
     :type id: str
-    :param detected_language: The extracted language.
-    :type detected_language:
-     ~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage
+    :param detected_languages: A list of extracted languages.
+    :type detected_languages:
+     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
@@ -126,7 +126,7 @@ class DocumentLanguage(DictMixin):
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
-        self.detected_language = kwargs.get("detected_language", None)
+        self.detected_languages = kwargs.get("detected_languages", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
