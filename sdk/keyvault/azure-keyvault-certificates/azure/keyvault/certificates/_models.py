@@ -21,7 +21,8 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, Union, List
+    from datetime import datetime
 
 
 class AdministratorContact(object):
@@ -92,7 +93,7 @@ class CertificateOperationError(object):
     """
 
     def __init__(self, code, message, inner_error):
-        # type: (str, str, models.Error, **Any) -> None
+        # type: (str, str, CertificateOperationError) -> None
         self._code = code
         self._message = message
         self._inner_error = inner_error
@@ -103,6 +104,7 @@ class CertificateOperationError(object):
 
     @classmethod
     def _from_error_bundle(cls, error_bundle):
+        # type: (models.Error) -> CertificateOperationError
         return cls(
             code=error_bundle.code,
             message=error_bundle.message,
@@ -129,10 +131,10 @@ class CertificateOperationError(object):
 
     @property
     def inner_error(self):
-        # type: () -> models.Error
+        # type: () -> CertificateOperationError
         """The error itself
 
-        :return models.Error:
+        :return ~azure.keyvault.certificates.CertificateOperationError:
         """
         return self._inner_error
 
@@ -196,7 +198,7 @@ class CertificateProperties(object):
         # type: () -> datetime
         """The datetime before which the certificate is not valid.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.not_before if self._attributes else None
 
@@ -205,7 +207,7 @@ class CertificateProperties(object):
         # type: () -> datetime
         """The datetime when the certificate expires.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.expires if self._attributes else None
 
@@ -214,7 +216,7 @@ class CertificateProperties(object):
         # type: () -> datetime
         """The datetime when the certificate is created.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created if self._attributes else None
 
@@ -223,7 +225,7 @@ class CertificateProperties(object):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated if self._attributes else None
 
@@ -337,7 +339,7 @@ class KeyVaultCertificate(object):
         # type: () -> CertificateProperties
         """The certificate's properties
 
-        :rtype: ~azure.keyvault.certificates.CertificateAttributes
+        :rtype: ~azure.keyvault.certificates.CertificateProperties
         """
         return self._properties
 
@@ -374,7 +376,7 @@ class KeyVaultCertificate(object):
 
 class CertificateOperation(object):
     # pylint:disable=too-many-instance-attributes
-    """A certificate operation is returned in case of asynchronous requests.
+    """A certificate operation is returned in case of long running requests.
 
     :param str cert_operation_id: The certificate id.
     :param issuer_name: Name of the operation's issuer object or reserved names.
@@ -527,8 +529,8 @@ class CertificateOperation(object):
 
     @property
     def error(self):
-        # type: () -> models.Error
-        """:rtype: models.Error"""
+        # type: () -> CertificateOperationError
+        """:rtype: ~azure.keyvault.certificates.CertificateOperationError"""
         return self._error
 
     @property
@@ -579,7 +581,7 @@ class CertificatePolicy(object):
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
     :keyword content_type: The media type (MIME type) of the secret backing the certificate.
-    :paramtype content_type: ~azure.keyvault.certificates.CertificateContentType or str
+    :paramtype content_type: str or ~azure.keyvault.certificates.CertificateContentType
     :keyword int validity_in_months: The duration that the certificate is valid in months.
     :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
@@ -594,7 +596,7 @@ class CertificatePolicy(object):
     def __init__(
         self,
         issuer_name,  # type: str
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self._issuer_name = issuer_name
@@ -858,7 +860,7 @@ class CertificatePolicy(object):
 
     @property
     def enhanced_key_usage(self):
-        # type: () -> list[str]
+        # type: () -> List[str]
         """The enhanced key usage.
 
         :rtype: list[str]
@@ -867,7 +869,7 @@ class CertificatePolicy(object):
 
     @property
     def key_usage(self):
-        # type: () -> list[KeyUsageType]
+        # type: () -> List[KeyUsageType]
         """List of key usages.
 
         :rtype: list[~azure.keyvault.certificates.KeyUsageType]
@@ -894,7 +896,7 @@ class CertificatePolicy(object):
 
     @property
     def san_emails(self):
-        # type: () -> list[str]
+        # type: () -> List[str]
         """The subject alternative email addresses.
 
         :rtype: list[str]
@@ -903,7 +905,7 @@ class CertificatePolicy(object):
 
     @property
     def san_dns_names(self):
-        # type: () -> list[str]
+        # type: () -> List[str]
         """The subject alternative domain names.
 
         :rtype: list[str]
@@ -912,7 +914,7 @@ class CertificatePolicy(object):
 
     @property
     def san_user_principal_names(self):
-        # type: () -> list[str]
+        # type: () -> List[str]
         """The subject alternative user principal names.
 
         :rtype: list[str]
@@ -930,7 +932,7 @@ class CertificatePolicy(object):
 
     @property
     def lifetime_actions(self):
-        # type: () -> list[LifetimeAction]
+        # type: () -> List[LifetimeAction]
         """Actions and their triggers that will be performed by Key Vault over
         the lifetime of the certificate.
 
@@ -981,7 +983,7 @@ class CertificatePolicy(object):
         # type: () -> datetime
         """The datetime before which the certificate is not valid.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.not_before if self._attributes else None
 
@@ -990,7 +992,7 @@ class CertificatePolicy(object):
         # type: () -> datetime
         """The datetime when the certificate expires.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.expires if self._attributes else None
 
@@ -999,7 +1001,7 @@ class CertificatePolicy(object):
         # type: () -> datetime
         """The datetime when the certificate is created.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created if self._attributes else None
 
@@ -1008,7 +1010,7 @@ class CertificatePolicy(object):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated if self._attributes else None
 
@@ -1225,7 +1227,7 @@ class CertificateIssuer(object):
         # type: () -> datetime
         """The datetime when the certificate is created.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created if self._attributes else None
 
@@ -1234,7 +1236,7 @@ class CertificateIssuer(object):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated if self._attributes else None
 
@@ -1317,11 +1319,11 @@ class LifetimeAction(object):
 
     @property
     def action(self):
-        # type: () -> str
+        # type: () -> CertificatePolicyAction
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
 
-        :rtype: str or ~azure.keyvault.certificates.CertificatePolicyAction
+        :rtype: ~azure.keyvault.certificates.CertificatePolicyAction
         """
         return self._action
 
@@ -1345,7 +1347,7 @@ class DeletedCertificate(KeyVaultCertificate):
         properties=None,  # type: Optional[CertificateProperties]
         policy=None,  # type: Optional[CertificatePolicy]
         cer=None,  # type: Optional[bytes]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
@@ -1395,7 +1397,7 @@ class DeletedCertificate(KeyVaultCertificate):
         # type: () -> datetime
         """The datetime that the certificate was deleted.
 
-        :rtype: datetime
+        :rtype: ~datetime.datetime
         """
         return self._deleted_on
 
