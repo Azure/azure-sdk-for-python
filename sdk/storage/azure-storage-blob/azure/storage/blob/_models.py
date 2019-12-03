@@ -243,6 +243,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             error_document404_path=generated.error_document404_path,
         )
 
+
 class CorsRule(GeneratedCorsRule):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a

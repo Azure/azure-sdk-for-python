@@ -10,9 +10,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from ._generated.models import Metrics, CorsRule, RetentionPolicy, StaticWebsite
 from ._shared.response_handlers import deserialize_metadata
-from ._models import BlobProperties, ContainerProperties, BlobAnalyticsLogging
+from ._models import BlobProperties, ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
+    StaticWebsite
 
 if TYPE_CHECKING:
     from azure.storage.blob._generated.models import PageList
