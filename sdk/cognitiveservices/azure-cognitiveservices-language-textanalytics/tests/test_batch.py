@@ -400,12 +400,13 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    def test_whole_batch_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+    def test_whole_batch_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         def callback(resp):
-            lang = resp.http_request.body.count("language")
-            self.assertEqual(lang, 3)
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 3)
 
         docs = [
             u"This was the best day of my life.",
@@ -413,54 +414,250 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    def test_whole_batch_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+    def test_whole_batch_dont_use_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         def callback(resp):
-            country = resp.http_request.body.count("countryHint")
+            country_str = "\"countryHint\": \"\""
+            country = resp.http_request.body.count(country_str)
             self.assertEqual(country, 3)
 
         docs = [
             u"This was the best day of my life.",
             u"I did not like the hotel we stayed it. It was too expensive.",
             u"The restaurant was not as good as I hoped."
+        ]
+
+        response = text_analytics.detect_language(docs, country_hint="", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_per_item_dont_use_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            country_str = "\"countryHint\": \"\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 2)
+            country_str = "\"countryHint\": \"US\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+
+        docs = [{"id": "1", "country_hint": "", "text": "I will go to the park."},
+                {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.detect_language(docs, response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_country_hint_and_obj_input(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 3)
+
+        docs = [
+            LanguageInput(id="1", text="I should take my cat to the veterinarian."),
+            LanguageInput(id="2", text="Este es un document escrito en Español."),
+            LanguageInput(id="3", text="猫は幸せ"),
+        ]
+
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_country_hint_and_dict_input(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 3)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_country_hint_and_obj_per_item_hints(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 2)
+            country_str = "\"countryHint\": \"US\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+        docs = [
+            LanguageInput(id="1", text="I should take my cat to the veterinarian.", country_hint="CA"),
+            LanguageInput(id="4", text="Este es un document escrito en Español.", country_hint="CA"),
+            LanguageInput(id="3", text="猫は幸せ"),
         ]
 
         response = text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    def test_whole_batch_language_hint_and_per_item_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+    def test_whole_batch_country_hint_and_dict_per_item_hints(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         def callback(resp):
-            lang = resp.http_request.body.count("fr")
-            self.assertEqual(lang, 3)
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+            country_str = "\"countryHint\": \"US\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 2)
 
-        docs = [{"id": "1", "language": "fr", "text": "I will go to the park."},
-                {"id": "2", "language": "fr", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "language": "fr", "text": "The restaurant had really good food."}]
+        docs = [{"id": "1", "country_hint": "US", "text": "I will go to the park."},
+                {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            language_str = "\"language\": \"fr\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 3)
+
+        docs = [
+            u"This was the best day of my life.",
+            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"The restaurant was not as good as I hoped."
+        ]
+
+        response = text_analytics.analyze_sentiment(docs, language="fr", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_dont_use_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            language_str = "\"language\": \"\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 3)
+
+        docs = [
+            u"This was the best day of my life.",
+            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"The restaurant was not as good as I hoped."
+        ]
+
+        response = text_analytics.analyze_sentiment(docs, language="", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_per_item_dont_use_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            language_str = "\"language\": \"\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 2)
+            language_str = "\"language\": \"en\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 1)
+
+
+        docs = [{"id": "1", "language": "", "text": "I will go to the park."},
+                {"id": "2", "language": "", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_language_hint_and_obj_input(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            language_str = "\"language\": \"de\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 3)
+
+        docs = [
+            MultiLanguageInput(id="1", text="I should take my cat to the veterinarian."),
+            MultiLanguageInput(id="4", text="Este es un document escrito en Español."),
+            MultiLanguageInput(id="3", text="猫は幸せ"),
+        ]
+
+        response = text_analytics.analyze_sentiment(docs, language="de", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_language_hint_and_dict_input(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            language_str = "\"language\": \"es\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 3)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.analyze_sentiment(docs, language="es", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_language_hint_and_obj_per_item_hints(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            language_str = "\"language\": \"es\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 2)
+            language_str = "\"language\": \"en\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 1)
+
+        docs = [
+            MultiLanguageInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
+            MultiLanguageInput(id="2", text="Este es un document escrito en Español.", language="es"),
+            MultiLanguageInput(id="3", text="猫は幸せ"),
+        ]
 
         response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    def test_whole_batch_country_hint_and_per_item_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+    def test_whole_batch_language_hint_and_dict_per_item_hints(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         def callback(resp):
-            country = resp.http_request.body.count("US")
-            self.assertEqual(country, 3)
+            language_str = "\"language\": \"es\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 2)
+            language_str = "\"language\": \"en\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 1)
 
-        docs = [{"id": "1", "country_hint": "US", "text": "I will go to the park."},
-                {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "country_hint": "US", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
+                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

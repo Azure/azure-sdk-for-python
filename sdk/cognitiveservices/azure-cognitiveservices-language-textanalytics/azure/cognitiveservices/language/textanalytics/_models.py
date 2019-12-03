@@ -357,8 +357,8 @@ class LanguageInput(GeneratedLanguageInput):
     :type text: str
     :param country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
-     specified by ISO 3166-1 alpha-2. If empty string specified
-     will default to "US".
+     specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
+     in the empty string "" to not use a country_hint.
     :type country_hint: str
     """
 
@@ -452,7 +452,7 @@ class MultiLanguageInput(GeneratedMultiLanguageInput):
     :type text: str
     :param language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc. If
-     not set, use "en" for English as default.
+     not set, uses "en" for English as default.
     :type language: str
     """
 

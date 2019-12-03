@@ -1,14 +1,18 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "US"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
-      "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      ""}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      ""}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
-      - '249'
+      - '245'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -21,24 +25,25 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 1b1709c9-3aa9-4dcb-94a2-097fd157f540
-      content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 22 Nov 2019 01:07:44 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-aml-ta-request-id: e17d1037-da55-41db-8453-adb97360b004
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      apim-request-id:
+      - 641894c1-d263-458b-b573-f5045d27283b
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Mon, 02 Dec 2019 22:06:08 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - cd4700f0-bf5d-4b26-b74e-1d9b8a2fc278
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '4'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - westus2.api.cognitive.microsoft.com
-        - //text/analytics/v3.0-preview.1/languages
-        - showStats=false
-        - ''
 version: 1

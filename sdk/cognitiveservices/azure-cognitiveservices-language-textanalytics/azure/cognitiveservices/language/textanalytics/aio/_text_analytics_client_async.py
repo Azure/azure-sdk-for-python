@@ -16,8 +16,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.models import ErrorException
 from .._generated.aio._text_analytics_client_async import TextAnalyticsClient as TextAnalytics
 from ._base_client_async import AsyncTextAnalyticsClientBase
+from .._request_handlers import _validate_batch_input
 from .._response_handlers import (
-    _validate_batch_input,
     process_batch_error,
     entities_result,
     linked_entities_result,
@@ -70,7 +70,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
-        country_hint=None,  # type: Optional[str]
+        country_hint="US",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
@@ -88,8 +88,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document
             level statistics.
-        :param str country_hint: A country hint for the entire batch. Per-document
-            country hints will take precedence over whole batch hints.
+        :param str country_hint: A country hint for the entire batch. Accepts two
+            letter country codes specified by ISO 3166-1 alpha-2. Per-document
+            country hints will take precedence over whole batch hints. Defaults to
+            "US". If you don't want to use a country hint, pass the empty string "".
         :return: The combined list of DocumentLanguage and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLanguage,
@@ -114,7 +116,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
@@ -131,8 +133,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
-        :param str language: The language for the entire batch. Per-document
-            language hints will take precedence over whole batch hints.
+        :param str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language.
         :return: The combined list of DocumentEntities and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
@@ -157,7 +161,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
@@ -175,8 +179,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
-        :param str language: The language for the entire batch. Per-document
-            language hints will take precedence over whole batch hints.
+        :param str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language.
         :return: The combined list of DocumentEntities and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
@@ -201,7 +207,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
@@ -218,8 +224,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
-        :param str language: The language for the entire batch. Per-document
-            language hints will take precedence over whole batch hints.
+        :param str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language.
         :return: The combined list of DocumentLinkedEntities and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities,
@@ -244,7 +252,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
@@ -261,8 +269,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
-        :param str language: The language for the entire batch. Per-document
-            language hints will take precedence over whole batch hints.
+        :param str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language.
         :return: The combined list of DocumentKeyPhrases and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases,
@@ -287,7 +297,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
@@ -305,8 +315,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
-        :param str language: The language for the entire batch. Per-document
-            language hints will take precedence over whole batch hints.
+        :param str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language.
         :return: The combined list of DocumentSentiment and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentSentiment,

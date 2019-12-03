@@ -1,14 +1,14 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "countryHint": "CA"}, {"id": "1", "text": "I did not like the hotel we stayed
-      it. It was too expensive.", "countryHint": "CA"}, {"id": "2", "text": "The restaurant
-      was not as good as I hoped.", "countryHint": "CA"}]}'
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      ""}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      ""}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "US"}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '288'
+      - '245'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -19,17 +19,17 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 3af1a90a-3637-4677-94de-47d53648f8cf
+      apim-request-id: 02e91bef-e3f5-4575-a3a2-17d09c2402ae
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 02 Dec 2019 23:24:24 GMT
+      date: Mon, 02 Dec 2019 23:32:39 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
-      x-aml-ta-request-id: cb130ec2-86b3-42b0-89a8-523932b06c7e
+      x-aml-ta-request-id: 87e24caa-9684-4366-bd70-e9e4de1a7295
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 200
       message: OK

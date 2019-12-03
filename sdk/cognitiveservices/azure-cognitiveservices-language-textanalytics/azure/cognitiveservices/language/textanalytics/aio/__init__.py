@@ -5,7 +5,8 @@
 # ------------------------------------
 
 from typing import Any, Optional, TYPE_CHECKING  # pylint: disable=unused-import
-from .._response_handlers import _validate_single_input, process_single_error
+from .._request_handlers import _validate_single_input
+from .._response_handlers import process_single_error
 from ._text_analytics_client_async import TextAnalyticsClient
 
 if TYPE_CHECKING:
@@ -32,7 +33,7 @@ async def single_detect_language(
             endpoint,  # type: str
             credential,  # type: str
             text,  # type: str
-            country_hint=None,  # type: Optional[str]
+            country_hint="US",  # type: Optional[str]
             show_stats=False,   # type: Optional[bool]
             model_version=None,  # type: Optional[str]
             **kwargs  # type: Any
@@ -53,6 +54,8 @@ async def single_detect_language(
     :param str text: The single string to detect language from.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
+        Defaults to "US". If you don't want to use a country hint,
+        pass the empty string "".
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
@@ -79,7 +82,7 @@ async def single_recognize_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -98,7 +101,9 @@ async def single_recognize_entities(
         from azure.identity.
     :type credential: str or token credential
     :param str text: The single string to recognize entities from.
-    :param str language: The language hint for the text.
+    :param str language: This is the 2 letter ISO 639-1 representation
+        of a language. For example, use "en" for English; "es" for Spanish etc. If
+        not set, uses "en" for English as default.
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
@@ -125,7 +130,7 @@ async def single_recognize_pii_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -145,7 +150,9 @@ async def single_recognize_pii_entities(
         from azure.identity.
     :type credential: str or token credential
     :param str text: The single string to recognize entities from.
-    :param str language: The language hint for the text.
+    :param str language: This is the 2 letter ISO 639-1 representation
+        of a language. For example, use "en" for English; "es" for Spanish etc. If
+        not set, uses "en" for English as default.
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
@@ -172,7 +179,7 @@ async def single_recognize_linked_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -192,7 +199,9 @@ async def single_recognize_linked_entities(
         from azure.identity.
     :type credential: str or token credential
     :param str text: The single string to recognize entities from.
-    :param str language: The optional language hint for the text.
+    :param str language: This is the 2 letter ISO 639-1 representation
+        of a language. For example, use "en" for English; "es" for Spanish etc. If
+        not set, uses "en" for English as default.
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
@@ -219,7 +228,7 @@ async def single_extract_key_phrases(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -238,7 +247,9 @@ async def single_extract_key_phrases(
         from azure.identity.
     :type credential: str or token credential
     :param str text: The single string to extract key phrases from.
-    :param str language: The optional language hint for the text.
+    :param str language: This is the 2 letter ISO 639-1 representation
+        of a language. For example, use "en" for English; "es" for Spanish etc. If
+        not set, uses "en" for English as default.
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
@@ -265,7 +276,7 @@ async def single_analyze_sentiment(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language=None,  # type: Optional[str]
+        language="en",  # type: Optional[str]
         show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -285,7 +296,9 @@ async def single_analyze_sentiment(
         from azure.identity.
     :type credential: str or token credential
     :param str text: The single string to analyze sentiment from.
-    :param str language: The optional language hint for the text.
+    :param str language: This is the 2 letter ISO 639-1 representation
+        of a language. For example, use "en" for English; "es" for Spanish etc. If
+        not set, uses "en" for English as default.
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will

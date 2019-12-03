@@ -147,6 +147,53 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response_hook=callback
         )
 
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_language_detection_dont_use_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        def callback(resp):
+            country_str = "\"countryHint\": \"\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+        response = single_detect_language(
+            endpoint=cognitiveservices_account,
+            credential=cognitiveservices_account_key,
+            text="Este es un document escrito en Español.",
+            country_hint="",
+            response_hook=callback
+        )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_language_detection_given_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        def callback(resp):
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+        response = single_detect_language(
+            endpoint=cognitiveservices_account,
+            credential=cognitiveservices_account_key,
+            text="Este es un document escrito en Español.",
+            country_hint="CA",
+            response_hook=callback
+        )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_language_detection_default_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        def callback(resp):
+            country_str = "\"countryHint\": \"US\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+        response = single_detect_language(
+            endpoint=cognitiveservices_account,
+            credential=cognitiveservices_account_key,
+            text="Este es un document escrito en Español.",
+            response_hook=callback
+        )
+
     # single_recognize_entities ------------------------------------------------------
 
     @ResourceGroupPreparer()
@@ -796,5 +843,52 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             text="I was unhappy with the food at the restaurant.",
             show_stats=True,
             model_version="latest",
+            response_hook=callback
+        )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_analyze_sentiment_dont_use_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        def callback(resp):
+            language_str = "\"language\": \"\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 1)
+
+        response = single_analyze_sentiment(
+            endpoint=cognitiveservices_account,
+            credential=cognitiveservices_account_key,
+            text="Este es un document escrito en Español.",
+            language="",
+            response_hook=callback
+        )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_analyze_sentiment_given_language(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        def callback(resp):
+            language_str = "\"language\": \"es\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 1)
+
+        response = single_analyze_sentiment(
+            endpoint=cognitiveservices_account,
+            credential=cognitiveservices_account_key,
+            text="Este es un document escrito en Español.",
+            language="es",
+            response_hook=callback
+        )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_analyze_sentiment_default_language(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        def callback(resp):
+            language_str = "\"language\": \"en\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 1)
+
+        response = single_analyze_sentiment(
+            endpoint=cognitiveservices_account,
+            credential=cognitiveservices_account_key,
+            text="Este es un document escrito en Español.",
             response_hook=callback
         )

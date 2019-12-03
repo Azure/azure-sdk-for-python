@@ -1,9 +1,7 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "countryHint": "CA"}, {"id": "1", "text": "I did not like the hotel we stayed
-      it. It was too expensive.", "countryHint": "CA"}, {"id": "2", "text": "The restaurant
-      was not as good as I hoped.", "countryHint": "CA"}]}'
+    body: '{"documents": [{"id": "0", "text": "Este es un document escrito en Espa\u00f1ol.",
+      "countryHint": ""}]}'
     headers:
       Accept:
       - application/json
@@ -12,7 +10,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '288'
+      - '103'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -23,26 +21,26 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 62150d3f-1bd6-482e-95ab-068fc55cd5f2
+      - 5ada0dfe-ec0a-4bfb-bdea-ed90cefe8644
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
+      - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Mon, 02 Dec 2019 22:03:03 GMT
+      - Mon, 02 Dec 2019 22:48:57 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 908820d5-3525-48dd-b464-2231193ec54c
+      - ee46d66a-9436-4a0e-9f11-7e0365994adc
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '5'
     status:
       code: 200
       message: OK

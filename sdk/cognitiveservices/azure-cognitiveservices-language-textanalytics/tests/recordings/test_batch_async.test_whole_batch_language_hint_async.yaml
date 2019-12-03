@@ -1,9 +1,9 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "language": "en"}, {"id": "1", "text": "I did not like the hotel we stayed it.
-      It was too expensive.", "language": "en"}, {"id": "2", "text": "The restaurant
-      was not as good as I hoped.", "language": "en"}]}'
+      "language": "fr"}, {"id": "1", "text": "I did not like the hotel we stayed it.
+      It was too expensive.", "language": "fr"}, {"id": "2", "text": "The restaurant
+      was not as good as I hoped.", "language": "fr"}]}'
     headers:
       Accept:
       - application/json
@@ -19,17 +19,17 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"positive","documentScores":{"positive":0.99987530708312988,"neutral":0.0001034481538227,"negative":2.12214763451E-05},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99987530708312988,"neutral":0.0001034481538227,"negative":2.12214763451E-05},"offset":0,"length":33}]},{"id":"1","sentiment":"negative","documentScores":{"positive":0.0094401380047202,"neutral":0.20717787742614749,"negative":0.78338205814361572},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0186765640974045,"neutral":0.41426122188568121,"negative":0.567062258720398},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0002037113154074,"neutral":9.45370848058E-05,"negative":0.99970179796218872},"offset":39,"length":21}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0053936247713864,"neutral":0.0011164888273925,"negative":0.99348998069763184},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0053936247713864,"neutral":0.0011164888273925,"negative":0.99348998069763184},"offset":0,"length":42}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"neutral","documentScores":{"positive":0.0705283433198929,"neutral":0.92555731534957886,"negative":0.0039143310859799},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0705283433198929,"neutral":0.92555731534957886,"negative":0.0039143310859799},"offset":0,"length":33}]},{"id":"1","sentiment":"negative","documentScores":{"positive":0.0046974997967482,"neutral":0.43726766109466553,"negative":0.55803483724594116},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0050029149278998,"neutral":0.84634476900100708,"negative":0.14865224063396451},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0043920851312578,"neutral":0.0281905811280012,"negative":0.96741741895675659},"offset":39,"length":21}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0138949928805232,"neutral":0.31579312682151789,"negative":0.67031186819076538},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0138949928805232,"neutral":0.31579312682151789,"negative":0.67031186819076538},"offset":0,"length":42}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 0f94d5b4-43cc-461c-90d1-ea022909c137
+      apim-request-id: 07979ee1-a9d3-4928-b292-0756b8798caf
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 21 Nov 2019 19:52:33 GMT
+      date: Mon, 02 Dec 2019 23:25:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
-      x-aml-ta-request-id: 58886a06-4724-4ecd-adbd-a7658e5df506
+      x-aml-ta-request-id: d8ca8887-b14c-474a-a031-e327c3cf0774
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '76'
+      x-envoy-upstream-service-time: '70'
     status:
       code: 200
       message: OK

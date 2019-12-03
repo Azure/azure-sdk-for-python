@@ -1,9 +1,9 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "countryHint": "CA"}, {"id": "1", "text": "I did not like the hotel we stayed
-      it. It was too expensive.", "countryHint": "CA"}, {"id": "2", "text": "The restaurant
-      was not as good as I hoped.", "countryHint": "CA"}]}'
+      "countryHint": ""}, {"id": "1", "text": "I did not like the hotel we stayed
+      it. It was too expensive.", "countryHint": ""}, {"id": "2", "text": "The restaurant
+      was not as good as I hoped.", "countryHint": ""}]}'
     headers:
       Accept:
       - application/json
@@ -12,7 +12,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '288'
+      - '282'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -26,23 +26,23 @@ interactions:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 62150d3f-1bd6-482e-95ab-068fc55cd5f2
+      - fb79df8f-9a7b-448d-a006-0ac713866444
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Mon, 02 Dec 2019 22:03:03 GMT
+      - Mon, 02 Dec 2019 22:04:27 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 908820d5-3525-48dd-b464-2231193ec54c
+      - b4219281-1a98-4d30-a0e5-369620a7287d
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '4'
     status:
       code: 200
       message: OK

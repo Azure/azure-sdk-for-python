@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import json
-import six
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
     HttpResponseError,
@@ -13,8 +12,6 @@ from azure.core.exceptions import (
     DecodeError,
 )
 from ._models import (
-    LanguageInput,
-    MultiLanguageInput,
     DocumentEntities,
     Entity,
     DocumentStatistics,
@@ -67,50 +64,6 @@ def process_batch_error(error):
     error = raise_error(message=error_message, response=error.response)
     error.error_code = error_code
     raise error
-
-
-def _validate_single_input(text, hint, hint_value):
-    """Validate text input is string. Let service handle
-    validity of hint and hint value.
-
-    :param str text: A single text document.
-    :param str hint: Could be country_hint or language
-    :param str hint_value: The user passed country_hint or language
-    :return: A LanguageInput or MultiLanguageInput
-    """
-    if isinstance(text, six.string_types):
-        document = {"id": "0", "text": text}
-        if hint_value:
-            document[hint] = hint_value
-        return [document]
-    raise TypeError("Text parameter must be string.")
-
-
-def _validate_batch_input(documents, hint, hint_value):
-    """Validate that batch input has either all string docs
-    or dict/LanguageInput/MultiLanguageInput, not a mix of both.
-
-    :param list documents: The input documents.
-    :return: A list of LanguageInput or MultiLanguageInput
-    """
-    if not isinstance(documents, list):
-        raise TypeError("Documents parameter must be a list.")
-
-    string_input, nonstring_input = False, False
-    string_batch = []
-    for idx, doc in enumerate(documents):
-        if isinstance(doc, six.string_types):
-            document = {"id": str(idx), "text": doc}
-            if hint_value:
-                document[hint] = hint_value
-            string_batch.append(document)
-            string_input = True
-        if isinstance(doc, (dict, MultiLanguageInput, LanguageInput)):
-            nonstring_input = True
-
-    if string_input and nonstring_input:
-        raise TypeError("Mixing string and dictionary/object input unsupported.")
-    return string_batch if string_batch != [] else documents
 
 
 def order_results(response, combined):
