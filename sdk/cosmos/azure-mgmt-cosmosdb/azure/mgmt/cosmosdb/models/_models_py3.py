@@ -4014,13 +4014,63 @@ class TableResource(Model):
         self.id = id
 
 
-class ThroughputSettingsGetResults(ARMResourceProperties):
-    """An Azure Cosmos DB resource throughput.
+class ThroughputSettingsGetPropertiesResource(Model):
+    """ThroughputSettingsGetPropertiesResource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
+
+    :param throughput: Required. Value of the Cosmos DB resource throughput
+    :type throughput: int
+    :ivar minimum_throughput: The minimum throughput of the resource
+    :vartype minimum_throughput: str
+    :ivar offer_replace_pending: The throughput replace is pending
+    :vartype offer_replace_pending: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'throughput': {'required': True},
+        'minimum_throughput': {'readonly': True},
+        'offer_replace_pending': {'readonly': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'throughput': {'key': 'throughput', 'type': 'int'},
+        'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
+        'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
+        '_rid': {'key': '_rid', 'type': 'str'},
+        '_ts': {'key': '_ts', 'type': 'object'},
+        '_etag': {'key': '_etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, throughput: int, **kwargs) -> None:
+        super(ThroughputSettingsGetPropertiesResource, self).__init__(**kwargs)
+        self.throughput = throughput
+        self.minimum_throughput = None
+        self.offer_replace_pending = None
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class ThroughputSettingsGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB resource throughput.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
@@ -4033,21 +4083,15 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param throughput: Required. Value of the Cosmos DB resource throughput
-    :type throughput: int
-    :ivar minimum_throughput: The minimum throughput of the resource
-    :vartype minimum_throughput: str
-    :ivar offer_replace_pending: The throughput replace is pending
-    :vartype offer_replace_pending: str
+    :param resource:
+    :type resource:
+     ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetPropertiesResource
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'throughput': {'required': True},
-        'minimum_throughput': {'readonly': True},
-        'offer_replace_pending': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4056,16 +4100,12 @@ class ThroughputSettingsGetResults(ARMResourceProperties):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'throughput': {'key': 'properties.throughput', 'type': 'int'},
-        'minimum_throughput': {'key': 'properties.minimumThroughput', 'type': 'str'},
-        'offer_replace_pending': {'key': 'properties.offerReplacePending', 'type': 'str'},
+        'resource': {'key': 'properties.resource', 'type': 'ThroughputSettingsGetPropertiesResource'},
     }
 
-    def __init__(self, *, throughput: int, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, resource=None, **kwargs) -> None:
         super(ThroughputSettingsGetResults, self).__init__(location=location, tags=tags, **kwargs)
-        self.throughput = throughput
-        self.minimum_throughput = None
-        self.offer_replace_pending = None
+        self.resource = resource
 
 
 class ThroughputSettingsResource(Model):
