@@ -24254,6 +24254,9 @@ class SalesforceLinkedService(LinkedService):
     :param security_token: The security token is required to remotely access
      Salesforce instance.
     :type security_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param api_version: The Salesforce API version used in ADF. Type: string
+     (or Expression with resultType string).
+    :type api_version: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -24275,6 +24278,7 @@ class SalesforceLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'security_token': {'key': 'typeProperties.securityToken', 'type': 'SecretBase'},
+        'api_version': {'key': 'typeProperties.apiVersion', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -24284,6 +24288,7 @@ class SalesforceLinkedService(LinkedService):
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.security_token = kwargs.get('security_token', None)
+        self.api_version = kwargs.get('api_version', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Salesforce'
 
