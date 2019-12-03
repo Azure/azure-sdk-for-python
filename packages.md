@@ -36,7 +36,7 @@
 | [`azure-cosmos`]( sdk/cosmos/azure-cosmos/setup.py )| [Readme](sdk/cosmos/azure-cosmos/README.md) | [Changelog](sdk/cosmos/azure-cosmos/changelog.md) | [PyPI]( https://pypi.org/project/azure-cosmos ) |
 | [`azure-devtools`]( tools/azure-devtools/setup.py )| [Readme](tools/azure-devtools/README.rst) |  N/A  | [PyPI]( https://pypi.org/project/azure-devtools ) |
 | [`azure-eventgrid`]( sdk/eventgrid/azure-eventgrid/setup.py )| [Readme](sdk/eventgrid/azure-eventgrid/README.rst) | [Changelog](sdk/eventgrid/azure-eventgrid/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-eventgrid ) |
-| [`azure-eventhub`]( sdk/eventhub/azure-eventhubs/setup.py )| [Readme](sdk/eventhub/azure-eventhubs/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-eventhub ) |
+| [`azure-eventhub`]( sdk/eventhub/azure-eventhub/setup.py )| [Readme](sdk/eventhub/azure-eventhub/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-eventhub ) |
 | [`azure-graphrbac`]( sdk/graphrbac/azure-graphrbac/setup.py )| [Readme](sdk/graphrbac/azure-graphrbac/README.rst) | [Changelog](sdk/graphrbac/azure-graphrbac/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-graphrbac ) |
 | [`azure-identity`]( sdk/identity/azure-identity/setup.py )| [Readme](sdk/identity/azure-identity/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-identity ) |
 | [`azure-keyvault`]( sdk/keyvault/azure-keyvault/setup.py )| [Readme](sdk/keyvault/azure-keyvault/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-keyvault ) |

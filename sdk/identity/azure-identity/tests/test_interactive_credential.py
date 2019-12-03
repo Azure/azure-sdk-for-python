@@ -40,7 +40,7 @@ def test_interactive_credential(mock_open):
     )
     transport = validating_transport(
         requests=[Request(url_substring=endpoint)] * 3
-        + [Request(url_substring=endpoint, required_data={"refresh_token": expected_refresh_token})],
+        + [Request(authority=authority, url_substring=endpoint, required_data={"refresh_token": expected_refresh_token})],
         responses=[
             discovery_response,  # instance discovery
             discovery_response,  # tenant discovery

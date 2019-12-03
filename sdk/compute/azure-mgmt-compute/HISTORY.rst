@@ -3,6 +3,18 @@
 Release History
 ===============
 
+10.0.0 (2019-11-18)
++++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdate has a new parameter proximity_placement_group
+- Enum VirtualMachinePriorityTypes has new value Spot
+
+**Breaking changes**
+
+- Operation ProximityPlacementGroupsOperations.get has a new signature
+
 9.0.0 (2019-10-22)
 ++++++++++++++++++
 

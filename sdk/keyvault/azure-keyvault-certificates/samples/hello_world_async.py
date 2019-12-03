@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -53,15 +53,15 @@ async def run_sample():
         # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
         # our certificate creation method
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
-            issuer_name=WellKnownIssuerNames.Self,
-            subject_name="CN=*.microsoft.com",
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
         cert_name = "HelloWorldCertificate"
 

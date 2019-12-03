@@ -1,0 +1,9 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+-e ../../identity/azure-identity
+-e ../../servicebus/azure-servicebus
+aiohttp>=3.0; python_version >= '3.5'
+docutils>=0.14
+pygments>=2.2.0
+behave==1.2.6
+wheel

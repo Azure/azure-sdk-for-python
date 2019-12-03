@@ -39,7 +39,7 @@ credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     # First we specify the AdministratorContact for our issuers.
-    admin_details = [
+    admin_contacts = [
         AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
     ]
 
@@ -47,33 +47,33 @@ try:
     # The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
     # The provider for your issuer must exist for your vault location and tenant id.
     client.create_issuer(
-        issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+        issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
     )
 
     # Now we get this issuer by name
     issuer1 = client.get_issuer(issuer_name="issuer1")
 
     print(issuer1.name)
-    print(issuer1.properties.provider)
+    print(issuer1.provider)
     print(issuer1.account_id)
 
-    for admin_detail in issuer1.admin_details:
-        print(admin_detail.first_name)
-        print(admin_detail.last_name)
-        print(admin_detail.email)
-        print(admin_detail.phone)
+    for contact in issuer1.admin_contacts:
+        print(contact.first_name)
+        print(contact.last_name)
+        print(contact.email)
+        print(contact.phone)
 
     # Now we update the admnistrator contact for this issuer
-    admin_details = [
+    admin_contacts = [
         AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
     ]
-    issuer1 = client.update_issuer(issuer_name="issuer1", admin_details=admin_details)
+    issuer1 = client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
 
-    for admin_detail in issuer1.admin_details:
-        print(admin_detail.first_name)
-        print(admin_detail.last_name)
-        print(admin_detail.email)
-        print(admin_detail.phone)
+    for contact in issuer1.admin_contacts:
+        print(contact.first_name)
+        print(contact.last_name)
+        print(contact.email)
+        print(contact.phone)
 
     # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
     client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)

@@ -12,6 +12,7 @@ import os
 import os.path
 import time
 from unittest import SkipTest
+from datetime import datetime, timedelta
 
 import adal
 import vcr
@@ -19,10 +20,13 @@ import zlib
 import math
 import uuid
 import unittest
+import string
 import sys
 import random
 import file_settings_fake as fake_settings
 import logging
+
+from azure.storage.fileshare import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
     from cStringIO import StringIO      # Python 2
@@ -157,6 +161,19 @@ class FileTestCase(unittest.TestCase):
             self.settings.PROTOCOL,
             self.settings.REMOTE_STORAGE_ACCOUNT_NAME
         )
+
+    def generate_sas_token(self):
+        fake_key = 'a'*30 + 'b'*30
+
+        return '?' + generate_account_sas(
+            account_name = 'test', # name of the storage account
+            account_key = fake_key, # key for the storage account
+            resource_types = ResourceTypes(object=True),
+            permission = AccountSasPermissions(read=True,list=True),
+            start = datetime.now() - timedelta(hours = 24),
+            expiry = datetime.now() + timedelta(days = 8)
+        )
+
 
     def get_random_bytes(self, size):
         if self.test_mode.lower() == TestMode.run_live_no_record.lower():

@@ -8,7 +8,7 @@ This library currently supports:
   - [Managed identity authentication](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
   - User authentication
 
-  [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity/azure/identity)
+  [Source code](./)
   | [Package (PyPI)](https://pypi.org/project/azure-identity/)
   | [API reference documentation][ref_docs]
   | [Azure Active Directory documentation](https://docs.microsoft.com/en-us/azure/active-directory/)
@@ -87,7 +87,8 @@ principal, managed identity, or user, and can be configured for local
 development and production environments without code changes.
 
 To authenticate as a service principal, provide configuration in
-[environment variables](#environment-variables "environment variables") as described in the next section.
+[environment variables](#environment-variables "environment variables") as
+described in the next section.
 
 Authenticating as a managed identity requires no configuration but is only
 possible in a supported hosting environment. See Azure Active Directory's
@@ -98,9 +99,9 @@ for more information.
 During local development on Windows, [DefaultAzureCredential][default_cred_ref]
 can authenticate using a single sign-on shared with Microsoft applications, for
 example Visual Studio 2019. This may require additional configuration when
-multiple identities have signed in. In that case, set the environment variable
-`AZURE_USERNAME` with the desired identity's username (typically an email
-address).
+multiple identities have signed in. In that case, set the environment variables
+`AZURE_USERNAME` (typically an email address) and `AZURE_TENANT_ID` to select
+the desired identity. Either, or both, may be set.
 
 ## Environment variables
 [DefaultAzureCredential][default_cred_ref] and
@@ -187,7 +188,7 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 to be tried sequentially when authenticating. The following example demonstrates
 creating a credential which will attempt to authenticate using managed identity,
 and fall back to a service principal if a managed identity is unavailable. This
-example uses the `EventHubClient` from the [azure-eventhubs][azure_eventhubs]
+example uses the `EventHubClient` from the [azure-eventhub][azure_eventhub]
 client library.
 
 ```py
@@ -209,7 +210,7 @@ client = EventHubClient(host, event_hub_path, credential_chain)
 This library includes an async API supported on Python 3.5+. To use the async
 credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](../../core/azure-core/README.md#transport)
 for more information.
 
 This example demonstrates authenticating the asynchronous `SecretClient` from
@@ -245,13 +246,13 @@ Azure Active Directory
 This is an incomplete list of client libraries accepting Azure Identity
 credentials. You can learn more about these libraries, and find additional
 documentation of them, at the links below.
-- [azure-appconfiguration](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-appconfiguration)
-- [azure-eventhubs][azure_eventhubs]
-- [azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)
+- [azure-appconfiguration](../../appconfiguration/azure-appconfiguration)
+- [azure-eventhub][azure_eventhub]
+- [azure-keyvault-certificates](../../keyvault/azure-keyvault-certificates)
 - [azure-keyvault-keys][azure_keyvault_keys]
 - [azure-keyvault-secrets][azure_keyvault_secrets]
 - [azure-storage-blob][azure_storage_blob]
-- [azure-storage-queue](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue)
+- [azure-storage-queue](../../storage/azure-storage-queue)
 
 ## Provide Feedback
 If you encounter bugs or have suggestions, please
@@ -276,10 +277,10 @@ For more information, see the
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any
 additional questions or comments.
 
-[azure_eventhubs]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs
-[azure_keyvault_keys]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys
-[azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets
-[azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+[azure_eventhubs]: ../../eventhub/azure-eventhub
+[azure_keyvault_keys]: ../../keyvault/azure-keyvault-keys
+[azure_keyvault_secrets]: ../../keyvault/azure-keyvault-secrets
+[azure_storage_blob]: ../../storage/azure-storage-blob
 
 [ref_docs]: https://aka.ms/azsdk-python-identity-docs
 [ref_docs_aio]: https://aka.ms/azsdk-python-identity-aio-docs

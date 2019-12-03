@@ -10,169 +10,285 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .sku_py3 import Sku
-    from .profile_py3 import Profile
-    from .profile_update_parameters_py3 import ProfileUpdateParameters
-    from .sso_uri_py3 import SsoUri
-    from .supported_optimization_types_list_result_py3 import SupportedOptimizationTypesListResult
-    from .deep_created_origin_py3 import DeepCreatedOrigin
-    from .endpoint_py3 import Endpoint
-    from .geo_filter_py3 import GeoFilter
-    from .delivery_rule_action_py3 import DeliveryRuleAction
-    from .delivery_rule_condition_py3 import DeliveryRuleCondition
-    from .delivery_rule_py3 import DeliveryRule
-    from .endpoint_properties_update_parameters_delivery_policy_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
-    from .endpoint_update_parameters_py3 import EndpointUpdateParameters
-    from .url_path_condition_parameters_py3 import UrlPathConditionParameters
-    from .delivery_rule_url_path_condition_py3 import DeliveryRuleUrlPathCondition
-    from .url_file_extension_condition_parameters_py3 import UrlFileExtensionConditionParameters
-    from .delivery_rule_url_file_extension_condition_py3 import DeliveryRuleUrlFileExtensionCondition
-    from .cache_expiration_action_parameters_py3 import CacheExpirationActionParameters
-    from .delivery_rule_cache_expiration_action_py3 import DeliveryRuleCacheExpirationAction
-    from .purge_parameters_py3 import PurgeParameters
-    from .load_parameters_py3 import LoadParameters
-    from .origin_py3 import Origin
-    from .origin_update_parameters_py3 import OriginUpdateParameters
-    from .custom_domain_py3 import CustomDomain
-    from .custom_domain_parameters_py3 import CustomDomainParameters
-    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
-    from .cdn_certificate_source_parameters_py3 import CdnCertificateSourceParameters
-    from .cdn_managed_https_parameters_py3 import CdnManagedHttpsParameters
-    from .key_vault_certificate_source_parameters_py3 import KeyVaultCertificateSourceParameters
-    from .user_managed_https_parameters_py3 import UserManagedHttpsParameters
-    from .validate_custom_domain_input_py3 import ValidateCustomDomainInput
-    from .validate_custom_domain_output_py3 import ValidateCustomDomainOutput
-    from .check_name_availability_input_py3 import CheckNameAvailabilityInput
-    from .check_name_availability_output_py3 import CheckNameAvailabilityOutput
-    from .validate_probe_input_py3 import ValidateProbeInput
-    from .validate_probe_output_py3 import ValidateProbeOutput
-    from .resource_usage_py3 import ResourceUsage
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .cidr_ip_address_py3 import CidrIpAddress
-    from .ip_address_group_py3 import IpAddressGroup
-    from .edge_node_py3 import EdgeNode
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .proxy_resource_py3 import ProxyResource
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import CacheExpirationActionParameters
+    from ._models_py3 import CacheKeyQueryStringActionParameters
+    from ._models_py3 import CdnCertificateSourceParameters
+    from ._models_py3 import CdnManagedHttpsParameters
+    from ._models_py3 import CheckNameAvailabilityInput
+    from ._models_py3 import CheckNameAvailabilityOutput
+    from ._models_py3 import CidrIpAddress
+    from ._models_py3 import CookiesMatchConditionParameters
+    from ._models_py3 import CustomDomain
+    from ._models_py3 import CustomDomainHttpsParameters
+    from ._models_py3 import CustomDomainParameters
+    from ._models_py3 import DeepCreatedOrigin
+    from ._models_py3 import DeliveryRule
+    from ._models_py3 import DeliveryRuleAction
+    from ._models_py3 import DeliveryRuleCacheExpirationAction
+    from ._models_py3 import DeliveryRuleCacheKeyQueryStringAction
+    from ._models_py3 import DeliveryRuleCondition
+    from ._models_py3 import DeliveryRuleCookiesCondition
+    from ._models_py3 import DeliveryRuleHttpVersionCondition
+    from ._models_py3 import DeliveryRuleIsDeviceCondition
+    from ._models_py3 import DeliveryRulePostArgsCondition
+    from ._models_py3 import DeliveryRuleQueryStringCondition
+    from ._models_py3 import DeliveryRuleRemoteAddressCondition
+    from ._models_py3 import DeliveryRuleRequestBodyCondition
+    from ._models_py3 import DeliveryRuleRequestHeaderAction
+    from ._models_py3 import DeliveryRuleRequestHeaderCondition
+    from ._models_py3 import DeliveryRuleRequestMethodCondition
+    from ._models_py3 import DeliveryRuleRequestSchemeCondition
+    from ._models_py3 import DeliveryRuleRequestUriCondition
+    from ._models_py3 import DeliveryRuleResponseHeaderAction
+    from ._models_py3 import DeliveryRuleUrlFileExtensionCondition
+    from ._models_py3 import DeliveryRuleUrlFileNameCondition
+    from ._models_py3 import DeliveryRuleUrlPathCondition
+    from ._models_py3 import EdgeNode
+    from ._models_py3 import Endpoint
+    from ._models_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
+    from ._models_py3 import EndpointUpdateParameters
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import GeoFilter
+    from ._models_py3 import HeaderActionParameters
+    from ._models_py3 import HttpVersionMatchConditionParameters
+    from ._models_py3 import IpAddressGroup
+    from ._models_py3 import IsDeviceMatchConditionParameters
+    from ._models_py3 import KeyVaultCertificateSourceParameters
+    from ._models_py3 import LoadParameters
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Origin
+    from ._models_py3 import OriginUpdateParameters
+    from ._models_py3 import PostArgsMatchConditionParameters
+    from ._models_py3 import Profile
+    from ._models_py3 import ProfileUpdateParameters
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import PurgeParameters
+    from ._models_py3 import QueryStringMatchConditionParameters
+    from ._models_py3 import RemoteAddressMatchConditionParameters
+    from ._models_py3 import RequestBodyMatchConditionParameters
+    from ._models_py3 import RequestHeaderMatchConditionParameters
+    from ._models_py3 import RequestMethodMatchConditionParameters
+    from ._models_py3 import RequestSchemeMatchConditionParameters
+    from ._models_py3 import RequestUriMatchConditionParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceUsage
+    from ._models_py3 import Sku
+    from ._models_py3 import SsoUri
+    from ._models_py3 import SupportedOptimizationTypesListResult
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import UrlFileExtensionMatchConditionParameters
+    from ._models_py3 import UrlFileNameMatchConditionParameters
+    from ._models_py3 import UrlPathMatchConditionParameters
+    from ._models_py3 import UrlRedirectAction
+    from ._models_py3 import UrlRedirectActionParameters
+    from ._models_py3 import UrlRewriteAction
+    from ._models_py3 import UrlRewriteActionParameters
+    from ._models_py3 import UserManagedHttpsParameters
+    from ._models_py3 import ValidateCustomDomainInput
+    from ._models_py3 import ValidateCustomDomainOutput
+    from ._models_py3 import ValidateProbeInput
+    from ._models_py3 import ValidateProbeOutput
 except (SyntaxError, ImportError):
-    from .sku import Sku
-    from .profile import Profile
-    from .profile_update_parameters import ProfileUpdateParameters
-    from .sso_uri import SsoUri
-    from .supported_optimization_types_list_result import SupportedOptimizationTypesListResult
-    from .deep_created_origin import DeepCreatedOrigin
-    from .endpoint import Endpoint
-    from .geo_filter import GeoFilter
-    from .delivery_rule_action import DeliveryRuleAction
-    from .delivery_rule_condition import DeliveryRuleCondition
-    from .delivery_rule import DeliveryRule
-    from .endpoint_properties_update_parameters_delivery_policy import EndpointPropertiesUpdateParametersDeliveryPolicy
-    from .endpoint_update_parameters import EndpointUpdateParameters
-    from .url_path_condition_parameters import UrlPathConditionParameters
-    from .delivery_rule_url_path_condition import DeliveryRuleUrlPathCondition
-    from .url_file_extension_condition_parameters import UrlFileExtensionConditionParameters
-    from .delivery_rule_url_file_extension_condition import DeliveryRuleUrlFileExtensionCondition
-    from .cache_expiration_action_parameters import CacheExpirationActionParameters
-    from .delivery_rule_cache_expiration_action import DeliveryRuleCacheExpirationAction
-    from .purge_parameters import PurgeParameters
-    from .load_parameters import LoadParameters
-    from .origin import Origin
-    from .origin_update_parameters import OriginUpdateParameters
-    from .custom_domain import CustomDomain
-    from .custom_domain_parameters import CustomDomainParameters
-    from .custom_domain_https_parameters import CustomDomainHttpsParameters
-    from .cdn_certificate_source_parameters import CdnCertificateSourceParameters
-    from .cdn_managed_https_parameters import CdnManagedHttpsParameters
-    from .key_vault_certificate_source_parameters import KeyVaultCertificateSourceParameters
-    from .user_managed_https_parameters import UserManagedHttpsParameters
-    from .validate_custom_domain_input import ValidateCustomDomainInput
-    from .validate_custom_domain_output import ValidateCustomDomainOutput
-    from .check_name_availability_input import CheckNameAvailabilityInput
-    from .check_name_availability_output import CheckNameAvailabilityOutput
-    from .validate_probe_input import ValidateProbeInput
-    from .validate_probe_output import ValidateProbeOutput
-    from .resource_usage import ResourceUsage
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .cidr_ip_address import CidrIpAddress
-    from .ip_address_group import IpAddressGroup
-    from .edge_node import EdgeNode
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .proxy_resource import ProxyResource
-    from .error_response import ErrorResponse, ErrorResponseException
-from .profile_paged import ProfilePaged
-from .resource_usage_paged import ResourceUsagePaged
-from .endpoint_paged import EndpointPaged
-from .origin_paged import OriginPaged
-from .custom_domain_paged import CustomDomainPaged
-from .operation_paged import OperationPaged
-from .edge_node_paged import EdgeNodePaged
-from .cdn_management_client_enums import (
+    from ._models import CacheExpirationActionParameters
+    from ._models import CacheKeyQueryStringActionParameters
+    from ._models import CdnCertificateSourceParameters
+    from ._models import CdnManagedHttpsParameters
+    from ._models import CheckNameAvailabilityInput
+    from ._models import CheckNameAvailabilityOutput
+    from ._models import CidrIpAddress
+    from ._models import CookiesMatchConditionParameters
+    from ._models import CustomDomain
+    from ._models import CustomDomainHttpsParameters
+    from ._models import CustomDomainParameters
+    from ._models import DeepCreatedOrigin
+    from ._models import DeliveryRule
+    from ._models import DeliveryRuleAction
+    from ._models import DeliveryRuleCacheExpirationAction
+    from ._models import DeliveryRuleCacheKeyQueryStringAction
+    from ._models import DeliveryRuleCondition
+    from ._models import DeliveryRuleCookiesCondition
+    from ._models import DeliveryRuleHttpVersionCondition
+    from ._models import DeliveryRuleIsDeviceCondition
+    from ._models import DeliveryRulePostArgsCondition
+    from ._models import DeliveryRuleQueryStringCondition
+    from ._models import DeliveryRuleRemoteAddressCondition
+    from ._models import DeliveryRuleRequestBodyCondition
+    from ._models import DeliveryRuleRequestHeaderAction
+    from ._models import DeliveryRuleRequestHeaderCondition
+    from ._models import DeliveryRuleRequestMethodCondition
+    from ._models import DeliveryRuleRequestSchemeCondition
+    from ._models import DeliveryRuleRequestUriCondition
+    from ._models import DeliveryRuleResponseHeaderAction
+    from ._models import DeliveryRuleUrlFileExtensionCondition
+    from ._models import DeliveryRuleUrlFileNameCondition
+    from ._models import DeliveryRuleUrlPathCondition
+    from ._models import EdgeNode
+    from ._models import Endpoint
+    from ._models import EndpointPropertiesUpdateParametersDeliveryPolicy
+    from ._models import EndpointUpdateParameters
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import GeoFilter
+    from ._models import HeaderActionParameters
+    from ._models import HttpVersionMatchConditionParameters
+    from ._models import IpAddressGroup
+    from ._models import IsDeviceMatchConditionParameters
+    from ._models import KeyVaultCertificateSourceParameters
+    from ._models import LoadParameters
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Origin
+    from ._models import OriginUpdateParameters
+    from ._models import PostArgsMatchConditionParameters
+    from ._models import Profile
+    from ._models import ProfileUpdateParameters
+    from ._models import ProxyResource
+    from ._models import PurgeParameters
+    from ._models import QueryStringMatchConditionParameters
+    from ._models import RemoteAddressMatchConditionParameters
+    from ._models import RequestBodyMatchConditionParameters
+    from ._models import RequestHeaderMatchConditionParameters
+    from ._models import RequestMethodMatchConditionParameters
+    from ._models import RequestSchemeMatchConditionParameters
+    from ._models import RequestUriMatchConditionParameters
+    from ._models import Resource
+    from ._models import ResourceUsage
+    from ._models import Sku
+    from ._models import SsoUri
+    from ._models import SupportedOptimizationTypesListResult
+    from ._models import TrackedResource
+    from ._models import UrlFileExtensionMatchConditionParameters
+    from ._models import UrlFileNameMatchConditionParameters
+    from ._models import UrlPathMatchConditionParameters
+    from ._models import UrlRedirectAction
+    from ._models import UrlRedirectActionParameters
+    from ._models import UrlRewriteAction
+    from ._models import UrlRewriteActionParameters
+    from ._models import UserManagedHttpsParameters
+    from ._models import ValidateCustomDomainInput
+    from ._models import ValidateCustomDomainOutput
+    from ._models import ValidateProbeInput
+    from ._models import ValidateProbeOutput
+from ._paged_models import CustomDomainPaged
+from ._paged_models import EdgeNodePaged
+from ._paged_models import EndpointPaged
+from ._paged_models import OperationPaged
+from ._paged_models import OriginPaged
+from ._paged_models import ProfilePaged
+from ._paged_models import ResourceUsagePaged
+from ._cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
     OptimizationType,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
+    RemoteAddressOperator,
+    Transform,
+    QueryStringOperator,
+    PostArgsOperator,
+    RequestUriOperator,
+    RequestHeaderOperator,
+    RequestBodyOperator,
+    UrlPathOperator,
+    UrlFileExtensionOperator,
+    UrlFileNameOperator,
+    CookiesOperator,
+    RedirectType,
+    DestinationProtocol,
+    HeaderAction,
+    CacheBehavior,
+    QueryStringBehavior,
     OriginResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
     ProtocolType,
+    MinimumTlsVersion,
     CertificateType,
     ResourceType,
 )
 
 __all__ = [
-    'Sku',
-    'Profile',
-    'ProfileUpdateParameters',
-    'SsoUri',
-    'SupportedOptimizationTypesListResult',
-    'DeepCreatedOrigin',
-    'Endpoint',
-    'GeoFilter',
-    'DeliveryRuleAction',
-    'DeliveryRuleCondition',
-    'DeliveryRule',
-    'EndpointPropertiesUpdateParametersDeliveryPolicy',
-    'EndpointUpdateParameters',
-    'UrlPathConditionParameters',
-    'DeliveryRuleUrlPathCondition',
-    'UrlFileExtensionConditionParameters',
-    'DeliveryRuleUrlFileExtensionCondition',
     'CacheExpirationActionParameters',
-    'DeliveryRuleCacheExpirationAction',
-    'PurgeParameters',
-    'LoadParameters',
-    'Origin',
-    'OriginUpdateParameters',
-    'CustomDomain',
-    'CustomDomainParameters',
-    'CustomDomainHttpsParameters',
+    'CacheKeyQueryStringActionParameters',
     'CdnCertificateSourceParameters',
     'CdnManagedHttpsParameters',
+    'CheckNameAvailabilityInput',
+    'CheckNameAvailabilityOutput',
+    'CidrIpAddress',
+    'CookiesMatchConditionParameters',
+    'CustomDomain',
+    'CustomDomainHttpsParameters',
+    'CustomDomainParameters',
+    'DeepCreatedOrigin',
+    'DeliveryRule',
+    'DeliveryRuleAction',
+    'DeliveryRuleCacheExpirationAction',
+    'DeliveryRuleCacheKeyQueryStringAction',
+    'DeliveryRuleCondition',
+    'DeliveryRuleCookiesCondition',
+    'DeliveryRuleHttpVersionCondition',
+    'DeliveryRuleIsDeviceCondition',
+    'DeliveryRulePostArgsCondition',
+    'DeliveryRuleQueryStringCondition',
+    'DeliveryRuleRemoteAddressCondition',
+    'DeliveryRuleRequestBodyCondition',
+    'DeliveryRuleRequestHeaderAction',
+    'DeliveryRuleRequestHeaderCondition',
+    'DeliveryRuleRequestMethodCondition',
+    'DeliveryRuleRequestSchemeCondition',
+    'DeliveryRuleRequestUriCondition',
+    'DeliveryRuleResponseHeaderAction',
+    'DeliveryRuleUrlFileExtensionCondition',
+    'DeliveryRuleUrlFileNameCondition',
+    'DeliveryRuleUrlPathCondition',
+    'EdgeNode',
+    'Endpoint',
+    'EndpointPropertiesUpdateParametersDeliveryPolicy',
+    'EndpointUpdateParameters',
+    'ErrorResponse', 'ErrorResponseException',
+    'GeoFilter',
+    'HeaderActionParameters',
+    'HttpVersionMatchConditionParameters',
+    'IpAddressGroup',
+    'IsDeviceMatchConditionParameters',
     'KeyVaultCertificateSourceParameters',
+    'LoadParameters',
+    'Operation',
+    'OperationDisplay',
+    'Origin',
+    'OriginUpdateParameters',
+    'PostArgsMatchConditionParameters',
+    'Profile',
+    'ProfileUpdateParameters',
+    'ProxyResource',
+    'PurgeParameters',
+    'QueryStringMatchConditionParameters',
+    'RemoteAddressMatchConditionParameters',
+    'RequestBodyMatchConditionParameters',
+    'RequestHeaderMatchConditionParameters',
+    'RequestMethodMatchConditionParameters',
+    'RequestSchemeMatchConditionParameters',
+    'RequestUriMatchConditionParameters',
+    'Resource',
+    'ResourceUsage',
+    'Sku',
+    'SsoUri',
+    'SupportedOptimizationTypesListResult',
+    'TrackedResource',
+    'UrlFileExtensionMatchConditionParameters',
+    'UrlFileNameMatchConditionParameters',
+    'UrlPathMatchConditionParameters',
+    'UrlRedirectAction',
+    'UrlRedirectActionParameters',
+    'UrlRewriteAction',
+    'UrlRewriteActionParameters',
     'UserManagedHttpsParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
-    'CheckNameAvailabilityInput',
-    'CheckNameAvailabilityOutput',
     'ValidateProbeInput',
     'ValidateProbeOutput',
-    'ResourceUsage',
-    'OperationDisplay',
-    'Operation',
-    'CidrIpAddress',
-    'IpAddressGroup',
-    'EdgeNode',
-    'Resource',
-    'TrackedResource',
-    'ProxyResource',
-    'ErrorResponse', 'ErrorResponseException',
     'ProfilePaged',
     'ResourceUsagePaged',
     'EndpointPaged',
@@ -186,11 +302,28 @@ __all__ = [
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
+    'RemoteAddressOperator',
+    'Transform',
+    'QueryStringOperator',
+    'PostArgsOperator',
+    'RequestUriOperator',
+    'RequestHeaderOperator',
+    'RequestBodyOperator',
+    'UrlPathOperator',
+    'UrlFileExtensionOperator',
+    'UrlFileNameOperator',
+    'CookiesOperator',
+    'RedirectType',
+    'DestinationProtocol',
+    'HeaderAction',
+    'CacheBehavior',
+    'QueryStringBehavior',
     'OriginResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
     'ProtocolType',
+    'MinimumTlsVersion',
     'CertificateType',
     'ResourceType',
 ]

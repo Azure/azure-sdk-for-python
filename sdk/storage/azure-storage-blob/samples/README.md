@@ -1,17 +1,18 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-storage-blob
+  - azure-storage
+urlFragment: storage-blob-samples
 ---
 
 # Azure Storage Blob client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Storage Blob client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations 
-and require Python 3.5 or later. 
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations, 
+and require Python 3.5 or later.
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 

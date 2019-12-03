@@ -31,12 +31,11 @@ except ImportError:
     import mock
 
 import requests
-
 import pytest
 
-from azure.core.exceptions import DecodeError
-from azure.core.configuration import Configuration
+from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import (
+    Pipeline,
     PipelineResponse,
     PipelineRequest,
     PipelineContext
@@ -53,6 +52,8 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HttpLoggingPolicy,
     RequestHistory,
+    RetryPolicy,
+    HTTPPolicy,
 )
 
 def test_user_agent():
@@ -143,6 +144,16 @@ def test_no_log(mock_http_logger):
 
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
+
+def test_retry_without_http_response():
+    class NaughtyPolicy(HTTPPolicy):
+        def send(*args):
+            raise AzureError('boo')
+
+    policies = [RetryPolicy(), NaughtyPolicy()]
+    pipeline = Pipeline(policies=policies, transport=None)
+    with pytest.raises(AzureError):
+        pipeline.run(HttpRequest('GET', url='https://foo.bar'))
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()

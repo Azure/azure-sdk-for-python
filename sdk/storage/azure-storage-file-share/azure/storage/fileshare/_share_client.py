@@ -659,3 +659,18 @@ class ShareClient(StorageAccountHostsMixin):
         kwargs.setdefault('merge_span', True)
         directory.create_directory(**kwargs)
         return directory # type: ignore
+
+    @distributed_trace
+    def delete_directory(self, directory_name, **kwargs):
+        # type: (str, Any) -> None
+        """Marks the directory for deletion. The directory is
+        later deleted during garbage collection.
+
+        :param str directory_name:
+            The name of the directory.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        directory = self.get_directory_client(directory_name)
+        directory.delete_directory(**kwargs)

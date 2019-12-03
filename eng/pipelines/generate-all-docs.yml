@@ -41,5 +41,5 @@ jobs:
 
       - task: PublishPipelineArtifact@0
         inputs:
-          artifactName: 'docs' 
+          artifactName: 'documentation' 
           targetPath: '$(Build.SourcesDirectory)/_docs'

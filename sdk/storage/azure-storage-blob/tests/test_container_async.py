@@ -1360,4 +1360,19 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
             # delete container
             await container.delete_container()
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_download_blob_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, transport=AiohttpTestTransport())
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        blob_name =  self.get_resource_name("blob")
+
+        blob = container.get_blob_client(blob_name)
+        await blob.upload_blob(data)
+
+        # Act
+        downloaded = await container.download_blob(blob_name)
+        raw = await downloaded.readall()
+        assert raw == data
 #------------------------------------------------------------------------------

@@ -84,6 +84,8 @@ class RetryPolicy(HTTPPolicy):
 
     #: Maximum backoff time.
     BACKOFF_MAX = 120
+    _SAFE_CODES = set(range(506)) - set([408, 500, 502, 503, 504])
+    _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
     def __init__(self, **kwargs):
         self.total_retries = kwargs.pop('retry_total', 10)
@@ -93,10 +95,9 @@ class RetryPolicy(HTTPPolicy):
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
 
-        safe_codes = [i for i in range(500) if i != 408] + [501, 505]
-        retry_codes = [i for i in range(999) if i not in safe_codes]
+        retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
-        self._retry_on_status_codes = set(status_codes + retry_codes)
+        self._retry_on_status_codes = set(status_codes) | retry_codes
         self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
         self._respect_retry_after_header = True
         super(RetryPolicy, self).__init__()
@@ -291,8 +292,8 @@ class RetryPolicy(HTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         :param error: An error encountered during the request, or
          None if the response was received successfully.
-        :return: Whether the retry attempts are exhausted.
-         False if exhausted; True if more retry attempts available.
+        :return: Whether any retry attempt is available
+         True if more retry attempts available, False otherwise
         :rtype: bool
         """
         settings['total'] -= 1
@@ -308,14 +309,21 @@ class RetryPolicy(HTTPPolicy):
         elif error and self._is_read_error(error):
             # Read retry?
             settings['read'] -= 1
-            settings['history'].append(RequestHistory(response.http_request, error=error))
+            if hasattr(response, 'http_request'):
+                settings['history'].append(RequestHistory(response.http_request, error=error))
 
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the whitelist
             if response:
                 settings['status'] -= 1
-                settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
+                if hasattr(response, 'http_request') and hasattr(response, 'http_response'):
+                    settings['history'].append(
+                        RequestHistory(
+                            response.http_request,
+                            http_response=response.http_response
+                        )
+                    )
 
         return not self.is_exhausted(settings)
 
