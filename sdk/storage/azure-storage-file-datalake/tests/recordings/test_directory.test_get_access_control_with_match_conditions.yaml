@@ -13,15 +13,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d7786b8a-16b1-11ea-b75f-001a7dda7113
+      - c0733334-16b1-11ea-89d6-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:26 GMT
+      - Wed, 04 Dec 2019 16:18:48 GMT
+      x-ms-permissions:
+      - '0777'
       x-ms-properties:
       - ''
+      x-ms-umask:
+      - '0000'
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystema5631265/filea5631265?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystemf35018d3/directoryf35018d3?resource=directory
   response:
     body:
       string: ''
@@ -29,15 +33,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 04 Dec 2019 16:19:26 GMT
+      - Wed, 04 Dec 2019 16:18:48 GMT
       ETag:
-      - '"0x8D778D5BBCF5439"'
+      - '"0x8D778D5A4C847DF"'
       Last-Modified:
-      - Wed, 04 Dec 2019 16:19:27 GMT
+      - Wed, 04 Dec 2019 16:18:48 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 348b2aa3-301f-002b-0abe-aacd58000000
+      - b2b22b4d-501f-0060-1cbe-aa310b000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -52,42 +56,43 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
-      If-None-Match:
-      - '*'
+      If-Match:
+      - '"0x8D778D5A4C847DF"'
       User-Agent:
       - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d7ae2a7a-16b1-11ea-9728-001a7dda7113
+      - c0a7763e-16b1-11ea-91c2-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:27 GMT
-      x-ms-properties:
-      - ''
+      - Wed, 04 Dec 2019 16:18:48 GMT
       x-ms-version:
       - '2019-02-02'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystema5631265/filea5631265?resource=file
+    method: HEAD
+    uri: https://storagename.dfs.core.windows.net/filesystemf35018d3/directoryf35018d3?action=getAccessControl&upn=false
   response:
     body:
-      string: '{"error":{"code":"PathAlreadyExists","message":"The specified path
-        already exists.\nRequestId:348b2aa4-301f-002b-0bbe-aacd58000000\nTime:2019-12-04T16:19:27.1411630Z"}}'
+      string: ''
     headers:
-      Content-Length:
-      - '168'
-      Content-Type:
-      - application/json;charset=utf-8
       Date:
-      - Wed, 04 Dec 2019 16:19:26 GMT
+      - Wed, 04 Dec 2019 16:18:48 GMT
+      ETag:
+      - '"0x8D778D5A4C847DF"'
+      Last-Modified:
+      - Wed, 04 Dec 2019 16:18:48 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - PathAlreadyExists
+      x-ms-acl:
+      - user::rwx,group::rwx,other::rwx
+      x-ms-group:
+      - $superuser
+      x-ms-owner:
+      - $superuser
+      x-ms-permissions:
+      - rwxrwxrwx
       x-ms-request-id:
-      - 348b2aa4-301f-002b-0bbe-aacd58000000
+      - b2b22b4e-501f-0060-1dbe-aa310b000000
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 409
-      message: The specified path already exists.
+      code: 200
+      message: OK
 version: 1
