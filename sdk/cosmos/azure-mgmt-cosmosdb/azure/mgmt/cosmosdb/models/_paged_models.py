@@ -272,6 +272,19 @@ class GremlinGraphGetResultsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(GremlinGraphGetResultsPaged, self).__init__(*args, **kwargs)
+class NotebookWorkspacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NotebookWorkspace <azure.mgmt.cosmosdb.models.NotebookWorkspace>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NotebookWorkspace]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NotebookWorkspacePaged, self).__init__(*args, **kwargs)
 class PrivateLinkResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateLinkResource <azure.mgmt.cosmosdb.models.PrivateLinkResource>` object

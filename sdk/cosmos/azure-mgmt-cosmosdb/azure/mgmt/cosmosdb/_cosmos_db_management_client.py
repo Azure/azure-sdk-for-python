@@ -31,6 +31,7 @@ from .operations import MongoDBResourcesOperations
 from .operations import TableResourcesOperations
 from .operations import CassandraResourcesOperations
 from .operations import GremlinResourcesOperations
+from .operations import NotebookWorkspacesOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from . import models
@@ -78,6 +79,8 @@ class CosmosDBManagementClient(SDKClient):
     :vartype cassandra_resources: azure.mgmt.cosmosdb.operations.CassandraResourcesOperations
     :ivar gremlin_resources: GremlinResources operations
     :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
+    :ivar notebook_workspaces: NotebookWorkspaces operations
+    :vartype notebook_workspaces: azure.mgmt.cosmosdb.operations.NotebookWorkspacesOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.cosmosdb.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
@@ -138,6 +141,8 @@ class CosmosDBManagementClient(SDKClient):
         self.cassandra_resources = CassandraResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.gremlin_resources = GremlinResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.notebook_workspaces = NotebookWorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

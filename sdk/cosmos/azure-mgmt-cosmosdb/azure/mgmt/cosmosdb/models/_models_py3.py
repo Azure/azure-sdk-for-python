@@ -2431,6 +2431,99 @@ class MongoIndexOptions(Model):
         self.unique = unique
 
 
+class NotebookWorkspace(ARMProxyResource):
+    """A notebook workspace resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar notebook_server_endpoint: Specifies the endpoint of Notebook server.
+    :vartype notebook_server_endpoint: str
+    :ivar status: Status of the notebook workspace. Possible values are:
+     Creating, Online, Deleting, Failed, Updating.
+    :vartype status: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'notebook_server_endpoint': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'notebook_server_endpoint': {'key': 'properties.notebookServerEndpoint', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NotebookWorkspace, self).__init__(**kwargs)
+        self.notebook_server_endpoint = None
+        self.status = None
+
+
+class NotebookWorkspaceConnectionInfoResult(Model):
+    """The connection info for the given notebook workspace.
+
+    :param authtoken: Specifies auth token used for connecting to Notebook
+     server (uses token-based auth).
+    :type authtoken: str
+    :param notebook_server_endpoint: Specifies the endpoint of Notebook
+     server.
+    :type notebook_server_endpoint: str
+    """
+
+    _attribute_map = {
+        'authtoken': {'key': 'authtoken', 'type': 'str'},
+        'notebook_server_endpoint': {'key': 'notebookServerEndpoint', 'type': 'str'},
+    }
+
+    def __init__(self, *, authtoken: str=None, notebook_server_endpoint: str=None, **kwargs) -> None:
+        super(NotebookWorkspaceConnectionInfoResult, self).__init__(**kwargs)
+        self.authtoken = authtoken
+        self.notebook_server_endpoint = notebook_server_endpoint
+
+
+class NotebookWorkspaceCreateParameters(ARMProxyResource):
+    """Parameters to create a notebook workspace resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NotebookWorkspaceCreateParameters, self).__init__(**kwargs)
+
+
 class Operation(Model):
     """REST API operation.
 

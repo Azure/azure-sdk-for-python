@@ -71,6 +71,9 @@ try:
     from ._models_py3 import MongoIndex
     from ._models_py3 import MongoIndexKeys
     from ._models_py3 import MongoIndexOptions
+    from ._models_py3 import NotebookWorkspace
+    from ._models_py3 import NotebookWorkspaceConnectionInfoResult
+    from ._models_py3 import NotebookWorkspaceCreateParameters
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PartitionMetric
@@ -179,6 +182,9 @@ except (SyntaxError, ImportError):
     from ._models import MongoIndex
     from ._models import MongoIndexKeys
     from ._models import MongoIndexOptions
+    from ._models import NotebookWorkspace
+    from ._models import NotebookWorkspaceConnectionInfoResult
+    from ._models import NotebookWorkspaceCreateParameters
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PartitionMetric
@@ -234,6 +240,7 @@ from ._paged_models import MetricDefinitionPaged
 from ._paged_models import MetricPaged
 from ._paged_models import MongoDBCollectionGetResultsPaged
 from ._paged_models import MongoDBDatabaseGetResultsPaged
+from ._paged_models import NotebookWorkspacePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PartitionMetricPaged
 from ._paged_models import PartitionUsagePaged
@@ -328,6 +335,9 @@ __all__ = [
     'MongoIndex',
     'MongoIndexKeys',
     'MongoIndexOptions',
+    'NotebookWorkspace',
+    'NotebookWorkspaceConnectionInfoResult',
+    'NotebookWorkspaceCreateParameters',
     'Operation',
     'OperationDisplay',
     'PartitionMetric',
@@ -394,6 +404,7 @@ __all__ = [
     'CassandraTableGetResultsPaged',
     'GremlinDatabaseGetResultsPaged',
     'GremlinGraphGetResultsPaged',
+    'NotebookWorkspacePaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
