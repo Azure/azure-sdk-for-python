@@ -148,7 +148,8 @@ class FileSharesOperations(object):
          metadata.
         :type metadata: dict[str, str]
         :param share_quota: The maximum size of the share, in gigabytes. Must
-         be greater than 0, and less than or equal to 5TB (5120).
+         be greater than 0, and less than or equal to 5TB (5120). For Large
+         File Shares, the maximum size is 102400.
         :type share_quota: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -235,7 +236,8 @@ class FileSharesOperations(object):
          metadata.
         :type metadata: dict[str, str]
         :param share_quota: The maximum size of the share, in gigabytes. Must
-         be greater than 0, and less than or equal to 5TB (5120).
+         be greater than 0, and less than or equal to 5TB (5120). For Large
+         File Shares, the maximum size is 102400.
         :type share_quota: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
