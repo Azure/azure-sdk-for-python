@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b6 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://vault458ad70cc7a90b1252.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 31 Oct 2019 16:48:30 GMT
+      - Wed, 04 Dec 2019 00:26:12 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.879
+      - 1.1.0.883
       x-powered-by:
       - ASP.NET
     status:
@@ -69,12 +69,12 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b6 Python/3.5.4 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://vault458ad70cc7a90b1252.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc7a90b1252.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1572540511,"updated":1572540511}}'
+      string: '{"id":"https://vault458ad70cc7a90b1252.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1575419173,"updated":1575419173}}'
     headers:
       cache-control:
       - no-cache
@@ -83,7 +83,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 31 Oct 2019 16:48:30 GMT
+      - Wed, 04 Dec 2019 00:26:12 GMT
       expires:
       - '-1'
       pragma:
@@ -101,7 +101,7 @@ interactions:
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.879
+      - 1.1.0.883
       x-powered-by:
       - ASP.NET
     status:
