@@ -72,7 +72,7 @@ class EventHubProducerClient(ClientBaseAsync):
             **kwargs
         )
         self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
-        self._lock = asyncio.Lock()  # sync the creation of self._producers
+        self._lock = asyncio.Lock(loop=self._loop)  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
 
@@ -112,8 +112,7 @@ class EventHubProducerClient(ClientBaseAsync):
     def _create_producer(
             self, *,
             partition_id: Optional[str] = None,
-            send_timeout: Optional[Union[int, float]] = None,
-            loop: Optional[asyncio.AbstractEventLoop] = None
+            send_timeout: Optional[Union[int, float]] = None
     ) -> EventHubProducer:
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
@@ -124,7 +123,7 @@ class EventHubProducerClient(ClientBaseAsync):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
-            loop=loop
+            loop=self._loop
         )
         return handler
 

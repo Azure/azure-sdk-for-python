@@ -19,6 +19,7 @@ from ..exceptions import _error_handler, OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import create_properties, set_message_partition_key, trace_message
 from .._constants import TIMEOUT_SYMBOL
+from ._eventprocessor.utils import get_running_loop
 from ._client_base_async import ConsumerProducerMixin
 
 _LOGGER = logging.getLogger(__name__)
@@ -68,7 +69,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self.running = False
         self.closed = False
 
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or get_running_loop()
         self._max_message_size_on_link = None
         self._client = client
         self._target = target
@@ -89,7 +90,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._handler = None
         self._outcome = None
         self._condition = None
-        self._lock = asyncio.Lock()
+        self._lock = asyncio.Lock(loop=self._loop)
         self._link_properties = {types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))}
 
     def _create_handler(self, auth):

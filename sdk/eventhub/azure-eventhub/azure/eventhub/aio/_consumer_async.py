@@ -15,6 +15,7 @@ from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
 from ..exceptions import _error_handler
 from .._utils import create_properties, trace_link_message, event_position_selector
+from ._eventprocessor.utils import get_running_loop
 from .._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -81,7 +82,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self.closed = False
 
         self._on_event_received = kwargs.get("on_event_received")
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or get_running_loop()
         self._client = client
         self._source = source
         self._offset = event_position

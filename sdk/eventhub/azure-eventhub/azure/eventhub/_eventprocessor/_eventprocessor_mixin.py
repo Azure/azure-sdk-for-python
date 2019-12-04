@@ -41,7 +41,8 @@ class EventProcessorMixin(object):
             partition_id,
             initial_event_position,
             initial_event_position_inclusive,
-            on_event_received
+            on_event_received,
+            **kwargs
     ):
         consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
             self._consumer_group,
@@ -52,6 +53,7 @@ class EventProcessorMixin(object):
             owner_level=self._owner_level,
             track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,
             prefetch=self._prefetch,
+            **kwargs
         )
         return consumer
 

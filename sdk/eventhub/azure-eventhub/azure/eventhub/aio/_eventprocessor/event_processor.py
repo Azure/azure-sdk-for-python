@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
-from typing import Dict, Callable, List, Any, TYPE_CHECKING
+from typing import Dict, Callable, List, Any, TYPE_CHECKING, Optional
 import uuid
 import asyncio
 import logging
@@ -34,14 +34,17 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             event_handler: Callable[[PartitionContext, EventData], None],
             *,
             partition_id: str = None,
-            checkpoint_store: CheckpointStore = None,
-            initial_event_position="-1",
-            initial_event_position_inclusive=False,
+            checkpoint_store: Optional[CheckpointStore] = None,
+            initial_event_position: ="-1",
+            initial_event_position_inclusive: bool = False,
             load_balancing_interval: float = 10.0,
-            owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
-            error_handler,
-            partition_initialize_handler,
-            partition_close_handler
+            owner_level: Optional[int] = None,
+            prefetch: Optional[int] = None,
+            track_last_enqueued_event_properties: bool = False,
+            error_handler: Optional[Callable[[PartitionContext, Exception], None]] = None,
+            partition_initialize_handler: Optional[Callable[[PartitionContext], None]] = None,
+            partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], None]] = None,
+            loop: Optional[asyncio.AbstractEventLoop] = None
     ):
         self._consumer_group = consumer_group
         self._eventhub_client = eventhub_client
@@ -65,6 +68,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._prefetch = prefetch
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._id = str(uuid.uuid4())
+        self._loop = loop or get_running_loop()
         self._running = False
 
         self._consumers = {}  # type: Dict[str, EventHubConsumer]
@@ -92,7 +96,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         for partition_id in claimed_partitions:
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
-                self._tasks[partition_id] = get_running_loop().create_task(self._receive(partition_id, checkpoint))
+                self._tasks[partition_id] = self._loop.create_task(self._receive(partition_id, checkpoint))
 
     async def _process_error(self, partition_context, err):
         _LOGGER.warning(
@@ -249,7 +253,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                     "eventhub %r consumer group %r. Retrying after %r seconds",
                                     err, self._eventhub_name, self._consumer_group, self._load_balancing_interval)
-                await asyncio.sleep(self._load_balancing_interval)
+                await asyncio.sleep(self._load_balancing_interval, loop=self._loop)
 
     async def stop(self):
         """Stop the EventProcessor.
@@ -268,5 +272,5 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         await self._cancel_tasks_for_partitions(pids)
         _LOGGER.info("EventProcessor %r tasks have been cancelled.", self._id)
         while self._tasks:
-            await asyncio.sleep(1)
+            await asyncio.sleep(1, loop=self._loop)
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)

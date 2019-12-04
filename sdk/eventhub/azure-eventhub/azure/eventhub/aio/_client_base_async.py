@@ -57,13 +57,14 @@ class ClientBaseAsync(ClientBase):
             credential: 'TokenCredential',
             **kwargs: Any
             ) -> None:
+        self._loop = kwargs.pop("loop", None)
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential,
             **kwargs
         )
-        self._conn_manager = get_connection_manager(**kwargs)
+        self._conn_manager = get_connection_manager(loop=self.loop, **kwargs)
 
     def __enter__(self):
         raise TypeError("Asynchronous client must be opened with async context manager.")
@@ -120,7 +121,7 @@ class ClientBaseAsync(ClientBase):
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
                 timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
-            await asyncio.sleep(backoff)
+            await asyncio.sleep(backoff, loop=self._loop)
             _LOGGER.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
         else:
             _LOGGER.info("%r operation has timed out. Last exception before timeout is (%r)",
@@ -219,7 +220,7 @@ class ConsumerProducerMixin(object):
                 connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # type: ignore
             )
             while not await self._handler.client_ready_async():  # type: ignore
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(0.05, loop=self._loop)
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
             self.running = True
 

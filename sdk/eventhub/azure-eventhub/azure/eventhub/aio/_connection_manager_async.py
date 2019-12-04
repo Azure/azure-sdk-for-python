@@ -11,7 +11,8 @@ from .._connection_manager import _ConnectionMode
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
-        self._lock = Lock()
+        self._loop = kwargs.get('loop')
+        self._lock = Lock(loop=self._loop)
         self._conn = None
 
         self._container_id = kwargs.get("container_id")
@@ -41,6 +42,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                     remote_idle_timeout_empty_frame_send_ratio=self._remote_idle_timeout_empty_frame_send_ratio,
                     error_policy=self._error_policy,
                     debug=self._debug,
+                    loop=self._loop,
                     encoding=self._encoding)
             return self._conn
 
