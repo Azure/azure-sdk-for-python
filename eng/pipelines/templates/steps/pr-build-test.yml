@@ -4,15 +4,16 @@ parameters:
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
   TestTimeoutInMinutes: 0
-  
-- job: 'Test'
+
+jobs:
+  - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
 
     dependsOn:
-       - 'Build'
+      - 'Build'
 
     strategy:
       matrix:
