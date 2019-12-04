@@ -33,7 +33,7 @@ class MgmtMaintenanceTest(AzureMgmtTestCase):
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_maintenance(self, resource_group):
-
+        raise unittest.SkipTest("Skipping WebApp test")
         SERVICE_NAME = "myapimrndxyz"
 
         # MaintenanceConfigurations_CreateOrUpdateForResource[put]
