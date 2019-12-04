@@ -5,7 +5,7 @@
 import hashlib
 import os
 
-from devtools_testutils import ResourceGroupPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
 from keys_preparer import VaultClientPreparer
 from keys_test_case import KeyVaultTestCase
 
@@ -13,10 +13,8 @@ from keys_test_case import KeyVaultTestCase
 class TestCryptoExamples(KeyVaultTestCase):
     # pylint:disable=unused-variable
 
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultAccountPreparer()
     @VaultClientPreparer()
     def test_encrypt_decrypt(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -47,7 +45,8 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         pass
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultAccountPreparer()
     @VaultClientPreparer()
     def test_wrap_unwrap(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -77,7 +76,8 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         # [END unwrap]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultAccountPreparer()
     @VaultClientPreparer()
     def test_sign_verify(self, vault_client, **kwargs):
         key_client = vault_client.keys
