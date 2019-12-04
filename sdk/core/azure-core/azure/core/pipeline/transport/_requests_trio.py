@@ -39,11 +39,11 @@ from azure.core.exceptions import (
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
 from ._base_async import (
-    AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransport, RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse
+from ._base_requests_async import RequestsAsyncTransportBase
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,7 +131,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         return TrioStreamDownloadGenerator(pipeline, self) # type: ignore
 
 
-class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
+class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the third party trio event loop.
 
@@ -169,6 +169,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        data_to_send = await self._retrieve_request_data(request)
         try:
             try:
                 response = await trio.to_thread.run_sync(
@@ -177,7 +178,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
                         request.method,
                         request.url,
                         headers=request.headers,
-                        data=request.data,
+                        data=data_to_send,
                         files=request.files,
                         verify=kwargs.pop('connection_verify', self.connection_config.verify),
                         timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
