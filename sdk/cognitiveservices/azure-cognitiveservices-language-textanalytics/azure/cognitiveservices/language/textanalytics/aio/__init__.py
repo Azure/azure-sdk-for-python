@@ -76,7 +76,7 @@ async def single_detect_language(
     """
     doc = _validate_single_input(text, "country_hint", country_hint)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
-        response = await client.detect_language(
+        response = await client.detect_languages(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,

@@ -106,7 +106,7 @@ def single_detect_language(
     """
     doc = _validate_single_input(text, "country_hint", country_hint)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
-        response = client.detect_language(
+        response = client.detect_languages(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,

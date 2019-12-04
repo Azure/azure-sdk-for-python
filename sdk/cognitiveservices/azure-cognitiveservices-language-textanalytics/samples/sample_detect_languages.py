@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_detect_language_async.py
+FILE: sample_detect_languages.py
 
 DESCRIPTION:
     This sample demonstrates how to detect language in a batch of different
     documents.
 
 USAGE:
-    python sample_detect_language_async.py
+    python sample_detect_languages.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
@@ -48,17 +48,16 @@ OUTPUT:
 """
 
 import os
-import asyncio
 
 
-class DetectLanguageSampleAsync(object):
+class DetectLanguagesSample(object):
 
     endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
-    async def detect_language_async(self):
-        # [START batch_detect_language_async]
-        from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
+    def detect_languages(self):
+        # [START batch_detect_languages]
+        from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
             "This document is written in English.",
@@ -67,8 +66,8 @@ class DetectLanguageSampleAsync(object):
             "Dies ist ein Dokument in englischer Sprache.",
             "Detta är ett dokument skrivet på engelska."
         ]
-        async with text_analytics_client:
-            result = await text_analytics_client.detect_language(documents)
+
+        result = text_analytics_client.detect_languages(documents)
 
         for idx, doc in enumerate(result):
             if not doc.is_error:
@@ -78,9 +77,9 @@ class DetectLanguageSampleAsync(object):
                 print("Confidence score: {}\n".format(doc.detected_languages[0].score))
             if doc.is_error:
                 print(doc.id, doc.error)
-        # [END batch_detect_language_async]
+        # [END batch_detect_languages]
 
-    async def alternative_scenario_detect_language_async(self):
+    def alternative_scenario_detect_languages(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -88,7 +87,7 @@ class DetectLanguageSampleAsync(object):
         using a list[LanguageInput] and supplying your own IDs and country hints along
         with the text.
         """
-        from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
+        from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
 
         documents = [
@@ -106,21 +105,15 @@ class DetectLanguageSampleAsync(object):
             extras.append(resp.model_version)
             extras.append(resp.raw_response)
 
-        async with text_analytics_client:
-            result = await text_analytics_client.detect_language(
-                documents,
-                show_stats=True,
-                model_version="latest",
-                response_hook=callback
-            )
-
-
-async def main():
-    sample = DetectLanguageSampleAsync()
-    await sample.detect_language_async()
-    await sample.alternative_scenario_detect_language_async()
+        result = text_analytics_client.detect_languages(
+            documents,
+            show_stats=True,
+            model_version="latest",
+            response_hook=callback
+        )
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    sample = DetectLanguagesSample()
+    sample.detect_languages()
+    sample.alternative_scenario_detect_languages()

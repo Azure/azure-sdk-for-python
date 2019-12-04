@@ -17,7 +17,7 @@ class TextAnalyticsTest(CognitiveServiceTest):
     def test_detect_language(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
-        response = text_analytics.detect_language(
+        response = text_analytics.detect_languages(
             documents=[{
                 'id': 1,
                 'text': 'I had a wonderful experience! The rooms were wonderful and the staff was helpful.'

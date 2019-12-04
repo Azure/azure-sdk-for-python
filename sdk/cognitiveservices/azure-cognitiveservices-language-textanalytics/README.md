@@ -212,7 +212,7 @@ The following section provides several code snippets covering some of the most c
 * [Analyze Sentiment](#analyze-sentient "Analyze sentiment")
 * [Recognize Entities](#recognize-entities "Recognize entities")
 * [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
-* [Detect Language](#detect-language "Detect language")
+* [Detect Languages](#detect-languages "Detect languages")
 
 ### Analyze sentiment
 Analyze sentiment in a batch of documents.
@@ -274,7 +274,7 @@ for text in result:
     print(text.key_phrases)
 ```
 
-### Detect language
+### Detect languages
 Detect language in a batch of documents.
 
 ```python
@@ -284,11 +284,11 @@ text_analytics_client = TextAnalyticsClient(endpoint, key)
 
 documents = [
     "This is written in English.",
-    "Este es un document escrito en Español.",
+    "Il documento scritto in italiano.",
     "Dies ist in englischer Sprache verfasst."
 ]
 
-result = text_analytics_client.detect_language(documents)
+result = text_analytics_client.detect_languages(documents)
 
 for text in result:
     print(text.detected_languages[0].name)
@@ -343,7 +343,7 @@ Authenticate the client with a Cognitive Services/Text Analytics subscription ke
 * [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_authentication_async.py))
 
 In a batch of documents:
-* Detect language: [sample_detect_language.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_detect_language.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_detect_language_async.py))
+* Detect languages: [sample_detect_languages.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_detect_languages.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_detect_languages_async.py))
 * Recognize entities: [sample_recognize_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_recognize_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_recognize_entities_async.py))
 * Recognize linked entities: [sample_recognize_linked_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_recognize_linked_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py))
 * Recognize personally identifiable information: [sample_recognize_pii_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_recognize_pii_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py))

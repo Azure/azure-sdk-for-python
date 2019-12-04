@@ -47,7 +47,7 @@ class AuthenticationSampleAsync(object):
 
         doc = ["I need to take my cat to the veterinarian."]
         async with text_analytics_client:
-            result = await text_analytics_client.detect_language(doc)
+            result = await text_analytics_client.detect_languages(doc)
 
         print("Language detected: {}".format(result[0].detected_languages[0].name))
         print("Confidence score: {}".format(result[0].detected_languages[0].score))
@@ -68,7 +68,7 @@ class AuthenticationSampleAsync(object):
 
         doc = ["I need to take my cat to the veterinarian."]
         async with text_analytics_client:
-            result = await text_analytics_client.detect_language(doc)
+            result = await text_analytics_client.detect_languages(doc)
 
         print("Language detected: {}".format(result[0].detected_languages[0].name))
         print("Confidence score: {}".format(result[0].detected_languages[0].score))

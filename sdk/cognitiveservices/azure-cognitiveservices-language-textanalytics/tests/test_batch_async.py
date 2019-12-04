@@ -43,7 +43,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.detect_languages(docs)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -56,7 +56,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.detect_languages(docs)
 
         self.assertEqual(response[0].detected_languages[0].name, "English")
         self.assertEqual(response[1].detected_languages[0].name, "Spanish")
@@ -74,7 +74,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.detect_languages(docs)
 
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -95,7 +95,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": text}]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.detect_languages(docs)
 
         for resp in response:
             self.assertTrue(resp.is_error)
@@ -328,7 +328,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             ""
         ]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.detect_languages(docs)
         self.assertEqual(response[0].detected_languages[0].name, "English")
         self.assertEqual(response[1].detected_languages[0].name, "Spanish")
         self.assertEqual(response[2].detected_languages[0].name, "Japanese")
@@ -348,7 +348,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             LanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.detect_languages(docs)
         self.assertEqual(response[0].detected_languages[0].name, "English")
         self.assertEqual(response[1].detected_languages[0].name, "Spanish")
         self.assertEqual(response[2].detected_languages[0].name, "Japanese")
@@ -436,7 +436,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
         docs = ["hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await text_analytics.detect_language(docs)
+            response = await text_analytics.detect_languages(docs)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -455,7 +455,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -474,7 +474,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await text_analytics.detect_language(docs, country_hint="", response_hook=callback)
+        response = await text_analytics.detect_languages(docs, country_hint="", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -495,7 +495,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_language(docs, response_hook=callback)
+        response = await text_analytics.detect_languages(docs, response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -514,7 +514,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             LanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -531,7 +531,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -553,7 +553,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             LanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
+        response = await text_analytics.detect_languages(docs, country_hint="US", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -573,7 +573,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
                 {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

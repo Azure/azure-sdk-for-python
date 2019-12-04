@@ -81,7 +81,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def detect_language(  # type: ignore
+    def detect_languages(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -90,7 +90,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
-        """Detect Language for a batch of documents.
+        """Detects Language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
         one. Scores close to one indicate 100% certainty that the identified
@@ -119,9 +119,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detect_language.py
-                :start-after: [START batch_detect_language]
-                :end-before: [END batch_detect_language]
+            .. literalinclude:: ../samples/sample_detect_languages.py
+                :start-after: [START batch_detect_languages]
+                :end-before: [END batch_detect_languages]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.

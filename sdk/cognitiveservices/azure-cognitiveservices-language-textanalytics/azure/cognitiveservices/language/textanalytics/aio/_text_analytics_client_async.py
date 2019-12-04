@@ -81,7 +81,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def detect_language(  # type: ignore
+    async def detect_languages(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -90,7 +90,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
-        """Detect Language for a batch of documents.
+        """Detects Language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
         one. Scores close to one indicate 100% certainty that the identified
@@ -119,9 +119,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
-                :start-after: [START batch_detect_language_async]
-                :end-before: [END batch_detect_language_async]
+            .. literalinclude:: ../samples/async_samples/sample_detect_languages_async.py
+                :start-after: [START batch_detect_languages_async]
+                :end-before: [END batch_detect_languages_async]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
