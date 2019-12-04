@@ -249,9 +249,9 @@ class PolicyOperations(object):
         return deserialized
     set.metadata = {'url': '/operations/policy/current'}
 
-    def delete(
+    def reset(
             self, tenant_base_url, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
-        """Deletes the attestation policy for the specified tenant and reverts to
+        """Resets the attestation policy for the specified tenant and reverts to
         the default policy.
 
         :param tenant_base_url: The tenant name, for example
@@ -273,7 +273,7 @@ class PolicyOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.reset.metadata['url']
         path_format_arguments = {
             'tenantBaseUrl': self._serialize.url("tenant_base_url", tenant_base_url, 'str', skip_quote=True)
         }
@@ -299,7 +299,7 @@ class PolicyOperations(object):
         body_content = self._serialize.body(policy_jws, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 400, 401]:
@@ -320,4 +320,4 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/operations/policy/current'}
+    reset.metadata = {'url': '/operations/policy/current'}
