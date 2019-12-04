@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import copy
+
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
@@ -57,7 +59,7 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
                 # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
                 no_body.headers["Content-Length"] = "0"
 
-            challenger = self.next.send(PipelineRequest(http_request=no_body, context=request.context))
+            challenger = self.next.send(PipelineRequest(http_request=no_body, context=copy.deepcopy(request.context)))
             try:
                 challenge = self._update_challenge(request, challenger)
             except ValueError:

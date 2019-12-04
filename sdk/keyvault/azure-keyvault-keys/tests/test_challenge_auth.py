@@ -16,6 +16,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 
@@ -167,6 +168,7 @@ def test_token_expiration():
     second_token = "**"
 
     token = AccessToken(first_token, expires_on)
+
     def get_token(*_, **__):
         return token
 
@@ -195,3 +197,69 @@ def test_token_expiration():
     with patch("time.time", lambda: expires_on):
         pipeline.run(HttpRequest("GET", "https://a/b"))
     assert credential.get_token.call_count == 2
+
+
+@empty_challenge_cache
+def test_preserves_request_context():
+    """After a challenge, the original request should be sent with its options preserved.
+
+    If a policy mutates the options of the challenge (unauthorized) request, the options of the service request should
+    be present when that request is sent with authorization.
+    """
+
+    token = "**"
+    def get_token(*_, **__):
+        return AccessToken(token, 0)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+
+    transport = validating_transport(
+        requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+            )
+        ]
+        + [mock_response()] * 2,
+    )
+    challenge_policy = ChallengeAuthPolicy(credential=credential)
+    policies = get_option_verifying_policies(challenge_policy)
+    pipeline = Pipeline(policies=policies, transport=transport)
+
+    response = pipeline.run(HttpRequest("GET", "https://a/b"))
+
+    # ensure the mock sans I/O policies were called
+    for policy in policies:
+        if hasattr(policy, "on_request"):
+            assert policy.on_request.called, "mock policy wasn't invoked"
+
+
+def get_option_verifying_policies(challenge_policy):
+    # create mock policies to add, remove, and verify context options
+    option = "foo"
+    value = "bar"
+    do_not_handle = lambda _: False
+
+    def add_option(request):
+        # add the expected option to request
+        request.context.options[option] = value
+
+    option_adder = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=add_option), on_exception=do_not_handle)
+
+    def gobble_options(request):
+        # gobble the options of unauthorized (challenge) requests
+        if not request.http_request.headers.get("Authorization"):
+            request.context.options = {}
+
+    option_gobbler = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=gobble_options), on_exception=do_not_handle)
+
+    def verify_option(request):
+        # authorized (non-challenge) requests should have the expected option
+        if request.http_request.headers.get("Authorization"):
+            assert request.context.options.get(option) == value, "request options not preserved across a challenge"
+
+    option_verifier = Mock(spec=SansIOHTTPPolicy, on_request=Mock(wraps=verify_option))
+
+    # add option -> challenge auth -> remove option from unauthorized request -> verify option on authorized request
+    # i.e. option_gobbler mutating the context of the challenge request shouldn't affect the authorized request
+    return [option_adder, challenge_policy, option_gobbler, option_verifier]

@@ -20,7 +20,7 @@ from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge,
 import pytest
 
 from keys_helpers import async_validating_transport, mock_response, Request
-from test_challenge_auth import empty_challenge_cache
+from test_challenge_auth import empty_challenge_cache, get_option_verifying_policies
 
 
 @pytest.mark.asyncio
@@ -164,3 +164,39 @@ async def test_token_expiration():
     with patch("time.time", lambda: expires_on):
         await pipeline.run(HttpRequest("GET", "https://a/b"))
     assert credential.get_token.call_count == 2
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+async def test_preserves_request_context():
+    """After a challenge, the original request should be sent with its options preserved.
+
+    If a policy mutates the options of the challenge (unauthorized) request, the options of the service request should
+    be present when that request is sent with authorization.
+    """
+
+    token = "**"
+    async def get_token(*_, **__):
+        return AccessToken(token, 0)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+
+    transport = async_validating_transport(
+        requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+            )
+        ]
+        + [mock_response()] * 2,
+    )
+    challenge_policy = AsyncChallengeAuthPolicy(credential=credential)
+    policies = get_option_verifying_policies(challenge_policy)
+    pipeline = AsyncPipeline(policies=policies, transport=transport)
+
+    response = await pipeline.run(HttpRequest("GET", "https://a/b"))
+
+    # ensure the mock sans I/O policies were used
+    for policy in policies:
+        if hasattr(policy, "on_request"):
+            assert policy.on_request.called, "mock policy wasn't invoked"
