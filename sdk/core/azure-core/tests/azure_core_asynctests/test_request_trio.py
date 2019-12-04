@@ -12,8 +12,6 @@ import pytest
 
 @pytest.mark.trio
 async def test_async_gen_data():
-    transport = TrioRequestsTransport()
-
     class AsyncGen:
         def __init__(self):
             self._range = iter([b"azerty"])
@@ -27,14 +25,15 @@ async def test_async_gen_data():
             except StopIteration:
                 raise StopAsyncIteration
 
-    req = HttpRequest('GET', 'http://httpbin.org/anything', data=AsyncGen())
-    response = await transport.send(req)
-    assert json.loads(response.text())['data'] == "azerty"
+    async with TrioRequestsTransport() as transport:
+        req = HttpRequest('GET', 'http://httpbin.org/anything', data=AsyncGen())
+        response = await transport.send(req)
+        assert json.loads(response.text())['data'] == "azerty"
 
 @pytest.mark.trio
 async def test_send_data():
-    transport = TrioRequestsTransport()
-    req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
-    response = await transport.send(req)
+    async with TrioRequestsTransport() as transport:
+        req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
+        response = await transport.send(req)
 
-    assert json.loads(response.text())['data'] == "azerty"
+        assert json.loads(response.text())['data'] == "azerty"
