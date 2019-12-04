@@ -9,60 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
+import uuid
 
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
+class AzureMachineLearningWorkspacesOperationsMixin(object):
 
-    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+    def list_skus(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all skus with associated features.
 
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2020-01-01".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2020-01-01"
-
-        self.config = config
-
-    def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets the current usage information as well as limits for AML resources
-        for given subscription and location.
-
-        :param location: The location for which resource usage is queried.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Usage
+        :return: An iterator like instance of WorkspaceSku
         :rtype:
-         ~azure.mgmt.machinelearningservices.models.UsagePaged[~azure.mgmt.machinelearningservices.models.Usage]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.machinelearningservices.models.WorkspaceSkuPaged[~azure.mgmt.machinelearningservices.models.WorkspaceSku]
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_skus.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,9 +71,7 @@ class UsagesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
             return response
 
@@ -104,7 +79,7 @@ class UsagesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.WorkspaceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/usages'}
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/workspaces/skus'}

@@ -607,6 +607,30 @@ class AmlComputeProperties(Model):
         self.node_state_counts = None
 
 
+class AmlUserFeature(Model):
+    """Features enabled for a workspace.
+
+    :param id: Specifies the feature ID
+    :type id: str
+    :param display_name: Specifies the feature name
+    :type display_name: str
+    :param description: Describes the feature for user experience
+    :type description: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, display_name: str=None, description: str=None, **kwargs) -> None:
+        super(AmlUserFeature, self).__init__(**kwargs)
+        self.id = id
+        self.display_name = display_name
+        self.description = description
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -651,6 +675,8 @@ class Resource(Model):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     """
 
     _validation = {
@@ -667,9 +693,10 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, sku=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -677,6 +704,7 @@ class Resource(Model):
         self.location = location
         self.type = None
         self.tags = tags
+        self.sku = sku
 
 
 class ComputeResource(Resource):
@@ -697,6 +725,8 @@ class ComputeResource(Resource):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     :param properties: Compute properties
     :type properties: ~azure.mgmt.machinelearningservices.models.Compute
     """
@@ -715,11 +745,12 @@ class ComputeResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'properties': {'key': 'properties', 'type': 'Compute'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, properties=None, **kwargs) -> None:
-        super(ComputeResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, sku=None, properties=None, **kwargs) -> None:
+        super(ComputeResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.properties = properties
 
 
@@ -1539,6 +1570,109 @@ class ResourceQuota(Model):
         self.unit = None
 
 
+class ResourceSkuLocationInfo(Model):
+    """ResourceSkuLocationInfo.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar location: Location of the SKU
+    :vartype location: str
+    :ivar zones: List of availability zones where the SKU is supported.
+    :vartype zones: list[str]
+    :ivar zone_details: Details of capabilities available to a SKU in specific
+     zones.
+    :vartype zone_details:
+     list[~azure.mgmt.machinelearningservices.models.ResourceSkuZoneDetails]
+    """
+
+    _validation = {
+        'location': {'readonly': True},
+        'zones': {'readonly': True},
+        'zone_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'zone_details': {'key': 'zoneDetails', 'type': '[ResourceSkuZoneDetails]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
+        self.location = None
+        self.zones = None
+        self.zone_details = None
+
+
+class ResourceSkuZoneDetails(Model):
+    """Describes The zonal capabilities of a SKU.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The set of zones that the SKU is available in with the
+     specified capabilities.
+    :vartype name: list[str]
+    :ivar capabilities: A list of capabilities that are available for the SKU
+     in the specified list of zones.
+    :vartype capabilities:
+     list[~azure.mgmt.machinelearningservices.models.SKUCapability]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceSkuZoneDetails, self).__init__(**kwargs)
+        self.name = None
+        self.capabilities = None
+
+
+class Restriction(Model):
+    """The restriction because of which SKU cannot be used.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The type of restrictions. As of now only possible value for
+     this is location.
+    :vartype type: str
+    :ivar values: The value of restrictions. If the restriction type is set to
+     location. This would be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :param reason_code: The reason for the restriction. Possible values
+     include: 'NotSpecified', 'NotAvailableForRegion',
+     'NotAvailableForSubscription'
+    :type reason_code: str or
+     ~azure.mgmt.machinelearningservices.models.ReasonCode
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'values': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason_code=None, **kwargs) -> None:
+        super(Restriction, self).__init__(**kwargs)
+        self.type = None
+        self.values = None
+        self.reason_code = reason_code
+
+
 class ScaleSettings(Model):
     """scale settings for AML Compute.
 
@@ -1595,6 +1729,46 @@ class ServicePrincipalCredentials(Model):
         super(ServicePrincipalCredentials, self).__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
+
+
+class Sku(Model):
+    """Sku of the resource.
+
+    :param name: Name of the sku
+    :type name: str
+    :param tier: Tier of the sku like Basic or Enterprise
+    :type tier: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, tier: str=None, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
+        self.tier = tier
+
+
+class SKUCapability(Model):
+    """Features/user capabilities associated with the sku.
+
+    :param name: Capability/Feature ID
+    :type name: str
+    :param value: Details about the feature/capability
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(SKUCapability, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
 
 
 class SslConfiguration(Model):
@@ -1677,7 +1851,8 @@ class UpdateWorkspaceQuotas(Model):
     :param status: Update Workspace Quota Status. Status of update workspace
      quota. Possible values include: 'Undefined', 'Success', 'Failure',
      'InvalidQuotaBelowClusterMinimum', 'InvalidQuotaExceedsSubscriptionLimit',
-     'InvalidVMFamilyName'
+     'InvalidVMFamilyName', 'OperationNotSupportedForSku',
+     'OperationNotEnabledForRegion'
     :type status: str or ~azure.mgmt.machinelearningservices.models.Status
     """
 
@@ -2104,6 +2279,8 @@ class Workspace(Resource):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     :ivar workspace_id: The immutable id associated with this workspace.
     :vartype workspace_id: str
     :param description: The description of this workspace.
@@ -2156,6 +2333,7 @@ class Workspace(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -2168,8 +2346,8 @@ class Workspace(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, description: str=None, friendly_name: str=None, key_vault: str=None, application_insights: str=None, container_registry: str=None, storage_account: str=None, discovery_url: str=None, **kwargs) -> None:
-        super(Workspace, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, sku=None, description: str=None, friendly_name: str=None, key_vault: str=None, application_insights: str=None, container_registry: str=None, storage_account: str=None, discovery_url: str=None, **kwargs) -> None:
+        super(Workspace, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.workspace_id = None
         self.description = description
         self.friendly_name = friendly_name
@@ -2182,11 +2360,73 @@ class Workspace(Resource):
         self.provisioning_state = None
 
 
+class WorkspaceSku(Model):
+    """Describes Workspace Sku details and features.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar locations: The set of locations that the SKU is available. This will
+     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     Southeast Asia, etc.).
+    :vartype locations: list[str]
+    :ivar location_info: A list of locations and availability zones in those
+     locations where the SKU is available.
+    :vartype location_info:
+     list[~azure.mgmt.machinelearningservices.models.ResourceSkuLocationInfo]
+    :ivar tier: Sku Tier like Basic or Enterprise
+    :vartype tier: str
+    :ivar resource_type:
+    :vartype resource_type: str
+    :ivar name:
+    :vartype name: str
+    :ivar capabilities: List of features/user capabilities associated with the
+     sku
+    :vartype capabilities:
+     list[~azure.mgmt.machinelearningservices.models.SKUCapability]
+    :param restrictions: The restrictions because of which SKU cannot be used.
+     This is empty if there are no restrictions.
+    :type restrictions:
+     list[~azure.mgmt.machinelearningservices.models.Restriction]
+    """
+
+    _validation = {
+        'locations': {'readonly': True},
+        'location_info': {'readonly': True},
+        'tier': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'location_info': {'key': 'locationInfo', 'type': '[ResourceSkuLocationInfo]'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+    }
+
+    def __init__(self, *, restrictions=None, **kwargs) -> None:
+        super(WorkspaceSku, self).__init__(**kwargs)
+        self.locations = None
+        self.location_info = None
+        self.tier = None
+        self.resource_type = None
+        self.name = None
+        self.capabilities = None
+        self.restrictions = restrictions
+
+
 class WorkspaceUpdateParameters(Model):
     """The parameters for updating a machine learning workspace.
 
     :param tags: The resource tags for the machine learning workspace.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     :param description: The description of this workspace.
     :type description: str
     :param friendly_name: The friendly name for this workspace.
@@ -2195,12 +2435,14 @@ class WorkspaceUpdateParameters(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, description: str=None, friendly_name: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, description: str=None, friendly_name: str=None, **kwargs) -> None:
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+        self.sku = sku
         self.description = description
         self.friendly_name = friendly_name

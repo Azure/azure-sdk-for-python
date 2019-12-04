@@ -41,6 +41,8 @@ class Status(str, Enum):
     invalid_quota_below_cluster_minimum = "InvalidQuotaBelowClusterMinimum"
     invalid_quota_exceeds_subscription_limit = "InvalidQuotaExceedsSubscriptionLimit"
     invalid_vm_family_name = "InvalidVMFamilyName"
+    operation_not_supported_for_sku = "OperationNotSupportedForSku"
+    operation_not_enabled_for_region = "OperationNotEnabledForRegion"
 
 
 class ResourceIdentityType(str, Enum):
@@ -86,6 +88,13 @@ class ComputeType(str, Enum):
     hd_insight = "HDInsight"
     databricks = "Databricks"
     data_lake_analytics = "DataLakeAnalytics"
+
+
+class ReasonCode(str, Enum):
+
+    not_specified = "NotSpecified"
+    not_available_for_region = "NotAvailableForRegion"
+    not_available_for_subscription = "NotAvailableForSubscription"
 
 
 class UnderlyingResourceAction(str, Enum):
