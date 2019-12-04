@@ -68,7 +68,7 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         'azure-storage-blob<13.0.0,>=12.0.0',
-        'azure-eventhub<6.0.0,>=5.0.0b5',
+        'azure-eventhub<6.0.0,>=5.0.0b6',
     ],
     extras_require={
 
