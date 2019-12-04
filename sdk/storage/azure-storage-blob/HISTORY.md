@@ -4,7 +4,7 @@
 
 **New features**
 - Added `download_blob` method to the `container_client`.
-- All the clients now have a `close()` method to close the sockets opened by the client.
+- All the clients now have a `close()` method to close the sockets opened by the client when using without a context manager.
 
 **Fixes and improvements**
 - Fixes a bug where determining length breaks while uploading a blob when provided with an invalid fileno.

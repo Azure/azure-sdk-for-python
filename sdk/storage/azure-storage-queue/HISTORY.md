@@ -3,7 +3,7 @@
 ## 12.1.0
 
  **New features**
-- All the clients now have a `close()` method to close the sockets opened by the client.
+- All the clients now have a `close()` method to close the sockets opened by the client when using without a context manager.
 
 ## 2019-10-31 12.0.0
 
