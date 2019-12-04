@@ -200,14 +200,15 @@ def test_token_expiration():
 
 
 @empty_challenge_cache
-def test_preserves_request_context():
-    """After a challenge, the original request should be sent with its options preserved.
+def test_preserves_options_and_headers():
+    """After a challenge, the original request should be sent with its options and headers preserved.
 
-    If a policy mutates the options of the challenge (unauthorized) request, the options of the service request should
-    be present when that request is sent with authorization.
+    If a policy mutates the options or headers of the challenge (unauthorized) request, the options of the service
+    request should be present when it is sent with authorization.
     """
 
     token = "**"
+
     def get_token(*_, **__):
         return AccessToken(token, 0)
 
@@ -223,7 +224,7 @@ def test_preserves_request_context():
         + [mock_response()] * 2,
     )
     challenge_policy = ChallengeAuthPolicy(credential=credential)
-    policies = get_option_verifying_policies(challenge_policy)
+    policies = get_policies_for_request_mutation_test(challenge_policy)
     pipeline = Pipeline(policies=policies, transport=transport)
 
     response = pipeline.run(HttpRequest("GET", "https://a/b"))
@@ -234,32 +235,39 @@ def test_preserves_request_context():
             assert policy.on_request.called, "mock policy wasn't invoked"
 
 
-def get_option_verifying_policies(challenge_policy):
-    # create mock policies to add, remove, and verify context options
-    option = "foo"
+def get_policies_for_request_mutation_test(challenge_policy):
+    # create mock policies to add, remove, and verify an option and header
+    key = "foo"
     value = "bar"
     do_not_handle = lambda _: False
 
-    def add_option(request):
-        # add the expected option to request
-        request.context.options[option] = value
+    def add(request):
+        # add the expected option and header
+        request.context.options[key] = value
+        request.http_request.headers[key] = value
 
-    option_adder = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=add_option), on_exception=do_not_handle)
+    adder = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=add), on_exception=do_not_handle)
 
-    def gobble_options(request):
-        # gobble the options of unauthorized (challenge) requests
+    def remove(request):
+        # remove expected header and all options of unauthorized (challenge) requests
         if not request.http_request.headers.get("Authorization"):
+            request.http_request.headers.pop(key, None)
             request.context.options = {}
 
-    option_gobbler = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=gobble_options), on_exception=do_not_handle)
+    remover = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(wraps=remove), on_exception=do_not_handle)
 
-    def verify_option(request):
-        # authorized (non-challenge) requests should have the expected option
+    def verify(request):
+        # authorized (non-challenge) requests should have the expected option and header
         if request.http_request.headers.get("Authorization"):
-            assert request.context.options.get(option) == value, "request options not preserved across a challenge"
+            assert request.context.options.get(key) == value, "request option not preserved across challenge"
+            assert request.http_request.headers.get(key) == value, "headers not preserved across challenge"
 
-    option_verifier = Mock(spec=SansIOHTTPPolicy, on_request=Mock(wraps=verify_option))
+    verifier = Mock(spec=SansIOHTTPPolicy, on_request=Mock(wraps=verify))
 
-    # add option -> challenge auth -> remove option from unauthorized request -> verify option on authorized request
-    # i.e. option_gobbler mutating the context of the challenge request shouldn't affect the authorized request
-    return [option_adder, challenge_policy, option_gobbler, option_verifier]
+    # Mutating the challenge request shouldn't affect the authorized request.
+    # This is the pipeline flow:
+    #  1. add option and header
+    #  2. challenge auth
+    #  3. remove option, header from unauthorized request
+    #  4. verify option, header on authorized request
+    return [adder, challenge_policy, remover, verifier]

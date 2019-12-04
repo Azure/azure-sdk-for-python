@@ -20,7 +20,7 @@ from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge,
 import pytest
 
 from keys_helpers import async_validating_transport, mock_response, Request
-from test_challenge_auth import empty_challenge_cache, get_option_verifying_policies
+from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test
 
 
 @pytest.mark.asyncio
@@ -168,11 +168,11 @@ async def test_token_expiration():
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_preserves_request_context():
-    """After a challenge, the original request should be sent with its options preserved.
+async def test_preserves_options_and_headers():
+    """After a challenge, the original request should be sent with its options and headers preserved.
 
-    If a policy mutates the options of the challenge (unauthorized) request, the options of the service request should
-    be present when that request is sent with authorization.
+    If a policy mutates the options or headers of the challenge (unauthorized) request, the options of the service
+    request should be present when it is sent with authorization.
     """
 
     token = "**"
@@ -191,7 +191,7 @@ async def test_preserves_request_context():
         + [mock_response()] * 2,
     )
     challenge_policy = AsyncChallengeAuthPolicy(credential=credential)
-    policies = get_option_verifying_policies(challenge_policy)
+    policies = get_policies_for_request_mutation_test(challenge_policy)
     pipeline = AsyncPipeline(policies=policies, transport=transport)
 
     response = await pipeline.run(HttpRequest("GET", "https://a/b"))
