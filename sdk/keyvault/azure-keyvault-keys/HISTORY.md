@@ -1,6 +1,7 @@
 # Release History
 
 ## 4.1.0b1 Unreleased
+- Updated `msrest` requirement to >=0.6.0
 
 
 ## 2019-10-31 4.0.0

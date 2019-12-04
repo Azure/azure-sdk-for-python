@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+import warnings
 import json
 import logging
 from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
@@ -253,18 +254,22 @@ class EventData(object):
     @property
     def application_properties(self):
         # type: () -> Dict[str, Any]
-        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
-        # The gather() in uamqp.message of v1.2.3 depends on application_properties attribute,
-        # the livetest would all break if removing this property.
-        # It should be removed after uamqp v.1.2.4 is released
+        """This method is deprecated. Will be removed in the next release. Use EventData.properties instead.
+        """
+        warnings.warn(
+            "azure.eventhub.EventData.application_properties is deprecated, use EventData.properties instead.",
+            DeprecationWarning
+        )
         return self.properties
 
     def encode_message(self):
         # type: () -> bytes
-        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
-        # The gather() in uamqp.message of v1.2.3 depends on encode_message method,
-        # the livetest would all break if removing this method.
-        # It should be removed after uamqp v.1.2.4 is released
+        """This method is deprecated. Will be removed in the next release.
+        """
+        warnings.warn(
+            "azure.eventhub.EventData.encode_message() is deprecated. It will be removed in 5.0.0",
+            DeprecationWarning
+        )
         return self._encode_message()
 
 

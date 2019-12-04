@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_media_services import AzureMediaServices
-from .version import VERSION
+from ._configuration import AzureMediaServicesConfiguration
+from ._azure_media_services import AzureMediaServices
+__all__ = ['AzureMediaServices', 'AzureMediaServicesConfiguration']
 
-__all__ = ['AzureMediaServices']
+from .version import VERSION
 
 __version__ = VERSION
 

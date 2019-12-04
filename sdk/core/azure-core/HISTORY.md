@@ -2,7 +2,12 @@
 # Release History
 
 -------------------
-## Version 1.1.1 Unreleased
+## 2019-12-03 Version 1.1.1
+
+### Bug fixes
+
+- Bearer token authorization requires HTTPS
+- Rewind the body position in retry #8307
 
 ## 2019-11-25 Version 1.1.0
 

@@ -1,6 +1,6 @@
 # Change Log azure-storage-file
 
-## 12.0.0
+## Version 12.0.0:
 
 **New features**
 - Added `delete_directory` method to the `share_client`.
@@ -9,6 +9,8 @@
 **Fixes and improvements**
 - Fixes a bug where determining length breaks while uploading a file when provided with an invalid fileno.
 
+**Breaking changes**
+- `close_handle(handle)` and `close_all_handles()` no longer return int. These functions return a dictionary which has the number of handles closed and number of handles failed to be closed.
 
 ## Version 12.0.0b5:
 

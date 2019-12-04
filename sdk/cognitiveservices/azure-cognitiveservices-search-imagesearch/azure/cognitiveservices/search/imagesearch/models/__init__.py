@@ -10,157 +10,157 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .organization_py3 import Organization
-    from .aggregate_rating_py3 import AggregateRating
-    from .offer_py3 import Offer
-    from .aggregate_offer_py3 import AggregateOffer
-    from .images_image_metadata_py3 import ImagesImageMetadata
-    from .image_object_py3 import ImageObject
-    from .query_py3 import Query
-    from .pivot_suggestions_py3 import PivotSuggestions
-    from .images_py3 import Images
-    from .search_results_answer_py3 import SearchResultsAnswer
-    from .answer_py3 import Answer
-    from .media_object_py3 import MediaObject
-    from .response_py3 import Response
-    from .thing_py3 import Thing
-    from .creative_work_py3 import CreativeWork
-    from .identifiable_py3 import Identifiable
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .image_insights_image_caption_py3 import ImageInsightsImageCaption
-    from .image_gallery_py3 import ImageGallery
-    from .related_collections_module_py3 import RelatedCollectionsModule
-    from .images_module_py3 import ImagesModule
-    from .related_searches_module_py3 import RelatedSearchesModule
-    from .recipe_py3 import Recipe
-    from .recipes_module_py3 import RecipesModule
-    from .normalized_rectangle_py3 import NormalizedRectangle
-    from .recognized_entity_py3 import RecognizedEntity
-    from .recognized_entity_region_py3 import RecognizedEntityRegion
-    from .recognized_entity_group_py3 import RecognizedEntityGroup
-    from .recognized_entities_module_py3 import RecognizedEntitiesModule
-    from .insights_tag_py3 import InsightsTag
-    from .image_tags_module_py3 import ImageTagsModule
-    from .image_insights_py3 import ImageInsights
-    from .trending_images_tile_py3 import TrendingImagesTile
-    from .trending_images_category_py3 import TrendingImagesCategory
-    from .trending_images_py3 import TrendingImages
-    from .properties_item_py3 import PropertiesItem
-    from .web_page_py3 import WebPage
-    from .response_base_py3 import ResponseBase
-    from .person_py3 import Person
-    from .intangible_py3 import Intangible
-    from .rating_py3 import Rating
-    from .collection_page_py3 import CollectionPage
-    from .structured_value_py3 import StructuredValue
+    from ._models_py3 import AggregateOffer
+    from ._models_py3 import AggregateRating
+    from ._models_py3 import Answer
+    from ._models_py3 import CollectionPage
+    from ._models_py3 import CreativeWork
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Identifiable
+    from ._models_py3 import ImageGallery
+    from ._models_py3 import ImageInsights
+    from ._models_py3 import ImageInsightsImageCaption
+    from ._models_py3 import ImageObject
+    from ._models_py3 import Images
+    from ._models_py3 import ImagesImageMetadata
+    from ._models_py3 import ImagesModule
+    from ._models_py3 import ImageTagsModule
+    from ._models_py3 import InsightsTag
+    from ._models_py3 import Intangible
+    from ._models_py3 import MediaObject
+    from ._models_py3 import NormalizedRectangle
+    from ._models_py3 import Offer
+    from ._models_py3 import Organization
+    from ._models_py3 import Person
+    from ._models_py3 import PivotSuggestions
+    from ._models_py3 import PropertiesItem
+    from ._models_py3 import Query
+    from ._models_py3 import Rating
+    from ._models_py3 import Recipe
+    from ._models_py3 import RecipesModule
+    from ._models_py3 import RecognizedEntitiesModule
+    from ._models_py3 import RecognizedEntity
+    from ._models_py3 import RecognizedEntityGroup
+    from ._models_py3 import RecognizedEntityRegion
+    from ._models_py3 import RelatedCollectionsModule
+    from ._models_py3 import RelatedSearchesModule
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import SearchResultsAnswer
+    from ._models_py3 import StructuredValue
+    from ._models_py3 import Thing
+    from ._models_py3 import TrendingImages
+    from ._models_py3 import TrendingImagesCategory
+    from ._models_py3 import TrendingImagesTile
+    from ._models_py3 import WebPage
 except (SyntaxError, ImportError):
-    from .organization import Organization
-    from .aggregate_rating import AggregateRating
-    from .offer import Offer
-    from .aggregate_offer import AggregateOffer
-    from .images_image_metadata import ImagesImageMetadata
-    from .image_object import ImageObject
-    from .query import Query
-    from .pivot_suggestions import PivotSuggestions
-    from .images import Images
-    from .search_results_answer import SearchResultsAnswer
-    from .answer import Answer
-    from .media_object import MediaObject
-    from .response import Response
-    from .thing import Thing
-    from .creative_work import CreativeWork
-    from .identifiable import Identifiable
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .image_insights_image_caption import ImageInsightsImageCaption
-    from .image_gallery import ImageGallery
-    from .related_collections_module import RelatedCollectionsModule
-    from .images_module import ImagesModule
-    from .related_searches_module import RelatedSearchesModule
-    from .recipe import Recipe
-    from .recipes_module import RecipesModule
-    from .normalized_rectangle import NormalizedRectangle
-    from .recognized_entity import RecognizedEntity
-    from .recognized_entity_region import RecognizedEntityRegion
-    from .recognized_entity_group import RecognizedEntityGroup
-    from .recognized_entities_module import RecognizedEntitiesModule
-    from .insights_tag import InsightsTag
-    from .image_tags_module import ImageTagsModule
-    from .image_insights import ImageInsights
-    from .trending_images_tile import TrendingImagesTile
-    from .trending_images_category import TrendingImagesCategory
-    from .trending_images import TrendingImages
-    from .properties_item import PropertiesItem
-    from .web_page import WebPage
-    from .response_base import ResponseBase
-    from .person import Person
-    from .intangible import Intangible
-    from .rating import Rating
-    from .collection_page import CollectionPage
-    from .structured_value import StructuredValue
-from .image_search_api_enums import (
+    from ._models import AggregateOffer
+    from ._models import AggregateRating
+    from ._models import Answer
+    from ._models import CollectionPage
+    from ._models import CreativeWork
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Identifiable
+    from ._models import ImageGallery
+    from ._models import ImageInsights
+    from ._models import ImageInsightsImageCaption
+    from ._models import ImageObject
+    from ._models import Images
+    from ._models import ImagesImageMetadata
+    from ._models import ImagesModule
+    from ._models import ImageTagsModule
+    from ._models import InsightsTag
+    from ._models import Intangible
+    from ._models import MediaObject
+    from ._models import NormalizedRectangle
+    from ._models import Offer
+    from ._models import Organization
+    from ._models import Person
+    from ._models import PivotSuggestions
+    from ._models import PropertiesItem
+    from ._models import Query
+    from ._models import Rating
+    from ._models import Recipe
+    from ._models import RecipesModule
+    from ._models import RecognizedEntitiesModule
+    from ._models import RecognizedEntity
+    from ._models import RecognizedEntityGroup
+    from ._models import RecognizedEntityRegion
+    from ._models import RelatedCollectionsModule
+    from ._models import RelatedSearchesModule
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import SearchResultsAnswer
+    from ._models import StructuredValue
+    from ._models import Thing
+    from ._models import TrendingImages
+    from ._models import TrendingImagesCategory
+    from ._models import TrendingImagesTile
+    from ._models import WebPage
+from ._image_search_client_enums import (
     Currency,
-    ItemAvailability,
     ErrorCode,
     ErrorSubCode,
+    Freshness,
     ImageAspect,
     ImageColor,
-    Freshness,
     ImageContent,
-    ImageType,
-    ImageLicense,
-    SafeSearch,
-    ImageSize,
     ImageCropType,
     ImageInsightModule,
+    ImageLicense,
+    ImageSize,
+    ImageType,
+    ItemAvailability,
+    SafeSearch,
 )
 
 __all__ = [
-    'Organization',
-    'AggregateRating',
-    'Offer',
     'AggregateOffer',
-    'ImagesImageMetadata',
-    'ImageObject',
-    'Query',
-    'PivotSuggestions',
-    'Images',
-    'SearchResultsAnswer',
+    'AggregateRating',
     'Answer',
-    'MediaObject',
-    'Response',
-    'Thing',
+    'CollectionPage',
     'CreativeWork',
-    'Identifiable',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'ImageInsightsImageCaption',
+    'Identifiable',
     'ImageGallery',
-    'RelatedCollectionsModule',
+    'ImageInsights',
+    'ImageInsightsImageCaption',
+    'ImageObject',
+    'Images',
+    'ImagesImageMetadata',
     'ImagesModule',
-    'RelatedSearchesModule',
+    'ImageTagsModule',
+    'InsightsTag',
+    'Intangible',
+    'MediaObject',
+    'NormalizedRectangle',
+    'Offer',
+    'Organization',
+    'Person',
+    'PivotSuggestions',
+    'PropertiesItem',
+    'Query',
+    'Rating',
     'Recipe',
     'RecipesModule',
-    'NormalizedRectangle',
-    'RecognizedEntity',
-    'RecognizedEntityRegion',
-    'RecognizedEntityGroup',
     'RecognizedEntitiesModule',
-    'InsightsTag',
-    'ImageTagsModule',
-    'ImageInsights',
-    'TrendingImagesTile',
-    'TrendingImagesCategory',
-    'TrendingImages',
-    'PropertiesItem',
-    'WebPage',
+    'RecognizedEntity',
+    'RecognizedEntityGroup',
+    'RecognizedEntityRegion',
+    'RelatedCollectionsModule',
+    'RelatedSearchesModule',
+    'Response',
     'ResponseBase',
-    'Person',
-    'Intangible',
-    'Rating',
-    'CollectionPage',
+    'SearchResultsAnswer',
     'StructuredValue',
+    'Thing',
+    'TrendingImages',
+    'TrendingImagesCategory',
+    'TrendingImagesTile',
+    'WebPage',
     'Currency',
     'ItemAvailability',
     'ErrorCode',
