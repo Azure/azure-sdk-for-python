@@ -48,15 +48,10 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
 
         # The challenge request is intended to provoke an authentication challenge from Key Vault, to learn how the
         # service request should be authenticated. It should be identical to the service request but with no body.
-        # (Sending the body would be a waste because the challenge request is unauthorized--it's certain to fail.)
         challenge_request = HttpRequest(
             request.http_request.method, request.http_request.url, headers=request.http_request.headers
         )
         challenge_request.headers["Content-Length"] = "0"
-
-        if request.http_request.body:
-            # challenge_request has service_request's headers, including Content-Length, if any
-            challenge_request.headers["Content-Length"] = "0"
 
         options = copy.deepcopy(request.context.options)
         context = PipelineContext(request.context.transport, **options)

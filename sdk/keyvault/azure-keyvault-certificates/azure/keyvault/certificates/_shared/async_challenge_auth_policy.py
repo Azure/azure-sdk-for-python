@@ -4,7 +4,7 @@
 # ------------------------------------
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
 
 from . import ChallengeAuthPolicyBase, HttpChallenge, HttpChallengeCache
 
@@ -15,15 +15,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     async def send(self, request: PipelineRequest) -> HttpResponse:
         challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
-            # provoke a challenge with an unauthorized, bodiless request
-            no_body = HttpRequest(
-                request.http_request.method, request.http_request.url, headers=request.http_request.headers
-            )
-            if request.http_request.body:
-                # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
-                no_body.headers["Content-Length"] = "0"
-
-            challenger = await self.next.send(PipelineRequest(http_request=no_body, context=request.context))
+            challenge_request = self._get_challenge_request(request)
+            challenger = await self.next.send(challenge_request)
             try:
                 challenge = self._update_challenge(request, challenger)
             except ValueError:
@@ -34,6 +27,9 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
         response = await self.next.send(request)
 
         if response.http_response.status_code == 401:
+            # any cached token must be invalid
+            self._token = None
+
             # cached challenge could be outdated; maybe this response has a new one?
             try:
                 challenge = self._update_challenge(request, response)
@@ -53,5 +49,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
         if not scope.endswith("/.default"):
             scope += "/.default"
 
-        access_token = await self._credential.get_token(scope)
-        self._update_headers(request.http_request.headers, access_token.token)
+        if self._need_new_token:
+            self._token = await self._credential.get_token(scope)
+
+        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
+        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
