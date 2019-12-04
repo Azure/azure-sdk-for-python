@@ -28,6 +28,10 @@ class ActionRequest(ResourceWithEtag):
     :type etag: str
     :param trigger_uri: Logic App Callback URL for this specific workflow.
     :type trigger_uri: str
+    :param logic_app_resource_id: Logic App Resource Id,
+     providers/Microsoft.Logic/workflows/{WorkflowID}. This property is
+     currently optional
+    :type logic_app_resource_id: str
     """
 
     _validation = {
@@ -42,8 +46,10 @@ class ActionRequest(ResourceWithEtag):
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'trigger_uri': {'key': 'properties.triggerUri', 'type': 'str'},
+        'logic_app_resource_id': {'key': 'properties.LogicAppResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, trigger_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, etag: str=None, trigger_uri: str=None, logic_app_resource_id: str=None, **kwargs) -> None:
         super(ActionRequest, self).__init__(etag=etag, **kwargs)
         self.trigger_uri = trigger_uri
+        self.logic_app_resource_id = logic_app_resource_id

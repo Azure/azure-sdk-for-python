@@ -28,6 +28,8 @@ class ActionResponse(Resource):
     :type etag: str
     :param workflow_id: The name of the logic app's workflow.
     :type workflow_id: str
+    :param logic_app_resource_id: The logic app's resource id.
+    :type logic_app_resource_id: str
     """
 
     _validation = {
@@ -42,9 +44,11 @@ class ActionResponse(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'workflow_id': {'key': 'properties.workflowId', 'type': 'str'},
+        'logic_app_resource_id': {'key': 'properties.LogicAppResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, workflow_id: str=None, **kwargs) -> None:
+    def __init__(self, *, etag: str=None, workflow_id: str=None, logic_app_resource_id: str=None, **kwargs) -> None:
         super(ActionResponse, self).__init__(**kwargs)
         self.etag = etag
         self.workflow_id = workflow_id
+        self.logic_app_resource_id = logic_app_resource_id
