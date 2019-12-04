@@ -332,7 +332,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
         data = requests.get(uri, stream=True)
         blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
-        resp = await blob.upload_blob(data=data.raw)
+        resp = await blob.upload_blob(data=data.raw, overwrtie=True)
 
         self.assertIsNotNone(resp.get('etag'))
 
@@ -347,7 +347,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         async with aiohttp.ClientSession() as session:
             async with session.get(uri) as data:
                 async for text, _ in data.content.iter_chunks():
-                    resp = await blob.upload_blob(data=text)
+                    resp = await blob.upload_blob(data=text, overwrtie=True)
                     self.assertIsNotNone(resp.get('etag'))
 
     @GlobalStorageAccountPreparer()
