@@ -1,6 +1,15 @@
 # Change Log azure-storage-blob
 
-## 12.1.0b1 Unreleased
+## 12.1.0
+
+**New features**
+- Added `download_blob` method to the `container_client`.
+- All the clients now have a `close()` method to close the sockets opened by the client when using without a context manager.
+
+**Fixes and improvements**
+- Fixes a bug where determining length breaks while uploading a blob when provided with an invalid fileno.
+- Fix metadata not being included in `commit_block_list` operation.
+
 
 ## 2019-10-31 12.0.0
 
