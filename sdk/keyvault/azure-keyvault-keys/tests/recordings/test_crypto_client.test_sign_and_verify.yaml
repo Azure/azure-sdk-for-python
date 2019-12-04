@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vaultstorname.vault.azure.net/keys/keysign44471023?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/keysign44471023?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -48,9 +48,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vaultstorname.vault.azure.net/keys/keysign44471023?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/keysign44471023?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1575489200,"updated":1575489200,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1575489200,"updated":1575489200,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['663']
@@ -77,9 +77,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0/sign?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0/sign?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0","value":"YX0IOuHlYW7IEVboW0c8M_geUfp2pKoCw7ujVZfXZOy0890603_QcjCSzuw_qUWehJ8IYVlfaXeF3Ebu36oB6cD8oG8OfI6rLM9BKQUR2KE5VoCBKAGit7FxhAnLRFGP69dF6gyO_wv_-zCJnXLIOg1Pu0K80WVSYkj6Wzczj35OQHEptDqRmxdwQoDYoEk5iYcb3JOeWC1frcGVEf9qs0yzwx1AbgkAOPElweovZZlleS6MALP0HTt7L5zJg7kjnCsuksVsEfM2R0_Mzt8nT24LczCNyZac50hHVkCepaZDRs26KodYnSs3doFlYOUJpCu8sxil7VBTEtFY38dENg"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0","value":"YX0IOuHlYW7IEVboW0c8M_geUfp2pKoCw7ujVZfXZOy0890603_QcjCSzuw_qUWehJ8IYVlfaXeF3Ebu36oB6cD8oG8OfI6rLM9BKQUR2KE5VoCBKAGit7FxhAnLRFGP69dF6gyO_wv_-zCJnXLIOg1Pu0K80WVSYkj6Wzczj35OQHEptDqRmxdwQoDYoEk5iYcb3JOeWC1frcGVEf9qs0yzwx1AbgkAOPElweovZZlleS6MALP0HTt7L5zJg7kjnCsuksVsEfM2R0_Mzt8nT24LczCNyZac50hHVkCepaZDRs26KodYnSs3doFlYOUJpCu8sxil7VBTEtFY38dENg"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['465']
@@ -104,11 +104,11 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Forbidden","message":"Operation is not allowed.\r\nOperation:
         \"get\"\r\nCaller: appid=3640fa99-2ed4-4816-92c9-3c61066adca2;oid=00000000-0000-0000-0000-000000000000;numgroups=0;iss=https://sts.windows.net/00000000-0000-0000-0000-000000000000/\r\nVault:
-        vaultstorname;location=westus","innererror":{"code":"ForbiddenByPolicy"}}}'}
+        vault;location=westus","innererror":{"code":"ForbiddenByPolicy"}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['356']
@@ -136,7 +136,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0/verify?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/keysign44471023/0a484a85e9f84ac4a5e3d007269e16e0/verify?api-version=7.0
   response:
     body: {string: '{"value":true}'}
     headers:

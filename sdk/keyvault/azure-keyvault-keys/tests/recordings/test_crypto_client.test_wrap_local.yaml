@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/wrap-local/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/wrap-local/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -41,9 +41,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/wrap-local/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/wrap-local/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rsKEsGeDAYcyg07e8W4ET77oW-sJCqOGC6p5cH0ze3MVTWNgZcVMDeetm5VUyREbev3GSo8RmLfE-6UPswNTE_tn9glx0ACsAdx3H_Vkx9OCLbkvEcwweE5OT_ZNSNUISJrL4imZ7F3fDT6o-s8o9FHQ-Dr7o0gODNK2MMIZO1LbJtiWKbC4a2eon3g6guKUghOJKGhPrShDG9TLh3CV8C0nPLwAHSH5Qgu5ts7H4xuIwAG-_phcwV2yW8UT4WPxFl-reKYZv-5KCZUpjQcGbuHumlD_NxfN7uEbAJdqvGnwLcSxwswpOa5c197KmF_DnC3Y3YI3zUStaehLRBhvmByow3IkgLoPfzFf-Kx14cpOFT618ikmjuJL4fp1fJU3dUaNxNRWNCpoAfhYlkhJ8PfVVXOv2zq3HmukwpJ8bXIMJzJnNp4cgzeaP_OlxFQRLhiQB4-4mwoKlkSrrbDPKm_ZbOkLk6dh2eoEHbxPHqI9YhxMc85DuXOvngLMm753vLtFxs5Z6LACGXcYzHUUgEImKAOYZPN1Ok9L_DVNwRx04FuEMp5624w4DvsTOIpBZt6ruliEPABU8eHzobxV74srbZjSFn5SRfzKu9tKWJv1z4cDGLIiC-Ts22za7K_whYLdOmZeO09EY2ZrYXVMPqq96pPKmpGtoeBldVCN1g0","e":"AQAB"},"attributes":{"enabled":true,"created":1575489203,"updated":1575489203,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rsKEsGeDAYcyg07e8W4ET77oW-sJCqOGC6p5cH0ze3MVTWNgZcVMDeetm5VUyREbev3GSo8RmLfE-6UPswNTE_tn9glx0ACsAdx3H_Vkx9OCLbkvEcwweE5OT_ZNSNUISJrL4imZ7F3fDT6o-s8o9FHQ-Dr7o0gODNK2MMIZO1LbJtiWKbC4a2eon3g6guKUghOJKGhPrShDG9TLh3CV8C0nPLwAHSH5Qgu5ts7H4xuIwAG-_phcwV2yW8UT4WPxFl-reKYZv-5KCZUpjQcGbuHumlD_NxfN7uEbAJdqvGnwLcSxwswpOa5c197KmF_DnC3Y3YI3zUStaehLRBhvmByow3IkgLoPfzFf-Kx14cpOFT618ikmjuJL4fp1fJU3dUaNxNRWNCpoAfhYlkhJ8PfVVXOv2zq3HmukwpJ8bXIMJzJnNp4cgzeaP_OlxFQRLhiQB4-4mwoKlkSrrbDPKm_ZbOkLk6dh2eoEHbxPHqI9YhxMc85DuXOvngLMm753vLtFxs5Z6LACGXcYzHUUgEImKAOYZPN1Ok9L_DVNwRx04FuEMp5624w4DvsTOIpBZt6ruliEPABU8eHzobxV74srbZjSFn5SRfzKu9tKWJv1z4cDGLIiC-Ts22za7K_whYLdOmZeO09EY2ZrYXVMPqq96pPKmpGtoeBldVCN1g0","e":"AQAB"},"attributes":{"enabled":true,"created":1575489203,"updated":1575489203,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['998']
@@ -70,9 +70,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4/unwrapkey?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4/unwrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['385']
@@ -99,9 +99,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4/unwrapkey?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4/unwrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['385']
@@ -128,9 +128,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4/unwrapkey?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4/unwrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/wrap-local/09f91a8aaf6d4a4f97e7326af728aab4","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['385']

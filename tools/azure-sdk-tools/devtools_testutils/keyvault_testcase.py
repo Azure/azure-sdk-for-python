@@ -64,7 +64,7 @@ class KeyVaultAccountPreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
         if random_name_enabled:
-            self.resource_moniker = self.name_prefix + "storname"
+            self.resource_moniker = self.name_prefix
         self.client_oid = None
 
     def create_resource(self, name, **kwargs):

@@ -7,7 +7,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/crypto-test-wrapping-keyec147c/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/crypto-test-wrapping-keyec147c/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -31,9 +31,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/crypto-test-wrapping-keyec147c/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/crypto-test-wrapping-keyec147c/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/crypto-test-wrapping-keyec147c/a00fe84579b743d0bc901cc6570b0b6e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xTKB9PAwFPZAJkkfzKd5meT2gmQgzs_lxcnx2OpG1jIqAeMEd0AWmf1K8IRvTCGgFhXvyqpnEAnDo9_cr_KR0Ap3FajX6WORAVbz4aJho8l6k5f5Fc08XK--bdXj3P-rWo-zd-t4EE1j0MuppgwarPKZ0CUE89jgY_iccu2KCF11aDHkvb4xyfFcg5VKtt6b9PlATH8zOtQC-6W-AItWrN_FvysQ-qLU7v26Un7mUJ8FWtESG6ox_N83hvVAz6GQ8rlyiPfR1kboQPzjzBqtqbMgK6ENm6b885n3IhRWAB0kc502IBp6PmUmqgSjBsYoHYsflApEXm_nYFrioJRbIw","e":"AQAB"},"attributes":{"enabled":true,"created":1575492967,"updated":1575492967,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/crypto-test-wrapping-keyec147c/a00fe84579b743d0bc901cc6570b0b6e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xTKB9PAwFPZAJkkfzKd5meT2gmQgzs_lxcnx2OpG1jIqAeMEd0AWmf1K8IRvTCGgFhXvyqpnEAnDo9_cr_KR0Ap3FajX6WORAVbz4aJho8l6k5f5Fc08XK--bdXj3P-rWo-zd-t4EE1j0MuppgwarPKZ0CUE89jgY_iccu2KCF11aDHkvb4xyfFcg5VKtt6b9PlATH8zOtQC-6W-AItWrN_FvysQ-qLU7v26Un7mUJ8FWtESG6ox_N83hvVAz6GQ8rlyiPfR1kboQPzjzBqtqbMgK6ENm6b885n3IhRWAB0kc502IBp6PmUmqgSjBsYoHYsflApEXm_nYFrioJRbIw","e":"AQAB"},"attributes":{"enabled":true,"created":1575492967,"updated":1575492967,"recoveryLevel":"Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '677', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 20:56:07 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -52,9 +52,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/crypto-test-wrapping-keyec147c/a00fe84579b743d0bc901cc6570b0b6e/unwrapkey?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/crypto-test-wrapping-keyec147c/a00fe84579b743d0bc901cc6570b0b6e/unwrapkey?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/crypto-test-wrapping-keyec147c/a00fe84579b743d0bc901cc6570b0b6e","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/crypto-test-wrapping-keyec147c/a00fe84579b743d0bc901cc6570b0b6e","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'}
     headers: {cache-control: no-cache, content-length: '405', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 20:56:07 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,

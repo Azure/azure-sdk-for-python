@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -41,9 +41,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/9c732b49e9514a75b908bf4733159968","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jHQm2uUuYLeaLclbGkFDYMDxnrlE6VW-mhBHxWPp_TaEEhJVs6murTJLF93JKlm7tSTHTtVwDtvkXD9uWNF_Jz4FbSHyU1fyvnp_3NMSbfB4ytVZWzjMlyvbsqbFNaM67eLs-U2zGo1Fmm5eG5nULhXURTyR4eM4eaLN7_HgrQ0EuFWMuFwsJM9YDFU8dl3nfFmM-38WGFoMdqO-oeU5IPEwK3ZV5UpblNt9fVCfjfJMHft20mAtRcNLLU4DrN0t-fUr8VKM7L5dJFh_7tmsbetDrjGOpgGQQf90HE6PAtZ07Y3sXP1i7qCa0NsuykPNRcUxwojyTmsu-QhmozezZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489237,"updated":1575489237,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/9c732b49e9514a75b908bf4733159968","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jHQm2uUuYLeaLclbGkFDYMDxnrlE6VW-mhBHxWPp_TaEEhJVs6murTJLF93JKlm7tSTHTtVwDtvkXD9uWNF_Jz4FbSHyU1fyvnp_3NMSbfB4ytVZWzjMlyvbsqbFNaM67eLs-U2zGo1Fmm5eG5nULhXURTyR4eM4eaLN7_HgrQ0EuFWMuFwsJM9YDFU8dl3nfFmM-38WGFoMdqO-oeU5IPEwK3ZV5UpblNt9fVCfjfJMHft20mAtRcNLLU4DrN0t-fUr8VKM7L5dJFh_7tmsbetDrjGOpgGQQf90HE6PAtZ07Y3sXP1i7qCa0NsuykPNRcUxwojyTmsu-QhmozezZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489237,"updated":1575489237,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['678']
@@ -70,9 +70,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/9c732b49e9514a75b908bf4733159968/decrypt?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/9c732b49e9514a75b908bf4733159968/decrypt?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/9c732b49e9514a75b908bf4733159968","value":"cGxhaW50ZXh0"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/crypto-test-encrypt-key67c4112b/9c732b49e9514a75b908bf4733159968","value":"cGxhaW50ZXh0"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['151']

@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -41,9 +41,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/rsa-key-name/e12c314ad7c344198d0a173d8210028c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oT5eU9nNLLQbPmXrytKClSwH5kEqLXxmFT7zk2hUsWxbRyEcFGVMl8QzTReVk8eWOaE3jINGSJtg-S8EYJ8EpUZ2tv6DLKvvR_41KqXlgpAWfOH3ooE1H9xdN5arqUIUhoe_pfPDZA0JIVQ3ZfnG_ATUx8cDjdkvJxKEsoqq6yzfmMtv1NrOfHKoJw7lUjuyjKuk48_eFLFy1yk7hkgYqctQNjloYjD9EPIew43TZ2K790EUmYypX6plk93WGJJJfpUWX3zqh5bUVp6VJHzp14E4IU5vE9wZOORiQdPkx7rVuW5TnipSSGQ4Lf2n_ADLG5W8YrE8qoeifrNa9c48Sw","e":"AQAB"},"attributes":{"enabled":true,"created":1575492736,"updated":1575492736,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/rsa-key-name/e12c314ad7c344198d0a173d8210028c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oT5eU9nNLLQbPmXrytKClSwH5kEqLXxmFT7zk2hUsWxbRyEcFGVMl8QzTReVk8eWOaE3jINGSJtg-S8EYJ8EpUZ2tv6DLKvvR_41KqXlgpAWfOH3ooE1H9xdN5arqUIUhoe_pfPDZA0JIVQ3ZfnG_ATUx8cDjdkvJxKEsoqq6yzfmMtv1NrOfHKoJw7lUjuyjKuk48_eFLFy1yk7hkgYqctQNjloYjD9EPIew43TZ2K790EUmYypX6plk93WGJJJfpUWX3zqh5bUVp6VJHzp14E4IU5vE9wZOORiQdPkx7rVuW5TnipSSGQ4Lf2n_ADLG5W8YrE8qoeifrNa9c48Sw","e":"AQAB"},"attributes":{"enabled":true,"created":1575492736,"updated":1575492736,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['659']

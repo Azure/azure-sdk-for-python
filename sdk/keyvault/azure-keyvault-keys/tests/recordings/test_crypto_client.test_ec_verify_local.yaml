@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -41,9 +41,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-256/4730995cca914f5ab07701b54b0012d4","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"O8ZFSv3onhabNJ2orfBRD5-MMk0KiwxAFX5f2V5j_0s","y":"mn3iUio9U2Xd0AFIcg3NBmOT2Ygm_rYpAJBSBMauzTw"},"attributes":{"enabled":true,"created":1575489200,"updated":1575489200,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-256/4730995cca914f5ab07701b54b0012d4","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"O8ZFSv3onhabNJ2orfBRD5-MMk0KiwxAFX5f2V5j_0s","y":"mn3iUio9U2Xd0AFIcg3NBmOT2Ygm_rYpAJBSBMauzTw"},"attributes":{"enabled":true,"created":1575489200,"updated":1575489200,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['373']
@@ -70,9 +70,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-256/4730995cca914f5ab07701b54b0012d4/sign?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-256/4730995cca914f5ab07701b54b0012d4/sign?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-256/4730995cca914f5ab07701b54b0012d4","value":"kFQ1BMYZrslGLaeidetjc0GKHi585Hz278esu3B6DJniZizg28mM-vshgs39miK0E-7hBET13ehVajVeNHdGrQ"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-256/4730995cca914f5ab07701b54b0012d4","value":"kFQ1BMYZrslGLaeidetjc0GKHi585Hz278esu3B6DJniZizg28mM-vshgs39miK0E-7hBET13ehVajVeNHdGrQ"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['209']
@@ -99,9 +99,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-256K/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-256K/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-256K/4b7440d5e849409497e1b959a51d4de0","kty":"EC","key_ops":["sign","verify"],"crv":"P-256K","x":"O342QWYvCEzdZhjj8FwpvsooEVv5n1FxSnqgsVy6bPA","y":"IN6e3Hj5W6-tU0M44MuK7j0WA8PI9D4JQZM4aUn9Qg0"},"attributes":{"enabled":true,"created":1575489200,"updated":1575489200,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-256K/4b7440d5e849409497e1b959a51d4de0","kty":"EC","key_ops":["sign","verify"],"crv":"P-256K","x":"O342QWYvCEzdZhjj8FwpvsooEVv5n1FxSnqgsVy6bPA","y":"IN6e3Hj5W6-tU0M44MuK7j0WA8PI9D4JQZM4aUn9Qg0"},"attributes":{"enabled":true,"created":1575489200,"updated":1575489200,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['375']
@@ -128,9 +128,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-256K/4b7440d5e849409497e1b959a51d4de0/sign?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-256K/4b7440d5e849409497e1b959a51d4de0/sign?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-256K/4b7440d5e849409497e1b959a51d4de0","value":"eKVOwsLVuqThppa9ftK6YbJ6UfqRO1qY8Drr4UDOVFBBWucuBdX_nlzGjLaeVpy2Ey7wYjdgqybrJQVsu3ARFA"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-256K/4b7440d5e849409497e1b959a51d4de0","value":"eKVOwsLVuqThppa9ftK6YbJ6UfqRO1qY8Drr4UDOVFBBWucuBdX_nlzGjLaeVpy2Ey7wYjdgqybrJQVsu3ARFA"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['210']
@@ -157,9 +157,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-384/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-384/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-384/798891eed22b4bd2b5a217a7b0d7fa2f","kty":"EC","key_ops":["sign","verify"],"crv":"P-384","x":"uea-TwpSDqf8KXCNBa9wz2EkHKkDti1RJXh_UdBPQQomSMiMYj5JpTkDf8EDl1Yf","y":"fQBSvA35lK2Ltn_s-Wdjl_atu28_m6i_1oV0QKZLYsf1_wP4elY4ZwLa1fD8ee-v"},"attributes":{"enabled":true,"created":1575489201,"updated":1575489201,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-384/798891eed22b4bd2b5a217a7b0d7fa2f","kty":"EC","key_ops":["sign","verify"],"crv":"P-384","x":"uea-TwpSDqf8KXCNBa9wz2EkHKkDti1RJXh_UdBPQQomSMiMYj5JpTkDf8EDl1Yf","y":"fQBSvA35lK2Ltn_s-Wdjl_atu28_m6i_1oV0QKZLYsf1_wP4elY4ZwLa1fD8ee-v"},"attributes":{"enabled":true,"created":1575489201,"updated":1575489201,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['415']
@@ -186,9 +186,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-384/798891eed22b4bd2b5a217a7b0d7fa2f/sign?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-384/798891eed22b4bd2b5a217a7b0d7fa2f/sign?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-384/798891eed22b4bd2b5a217a7b0d7fa2f","value":"McfACGCYJkjbMRh4V7LRAqU4tIYPcb7YGx35wR9q_kd2l3m7l5uIgfVKRlSTrP8tHUJC5nKMrMva9QWwTmYqeb_Mz80K4AHn1Qi21wJ0B-OVhPZRD7ZMbah6ZxyxHZNB"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-384/798891eed22b4bd2b5a217a7b0d7fa2f","value":"McfACGCYJkjbMRh4V7LRAqU4tIYPcb7YGx35wR9q_kd2l3m7l5uIgfVKRlSTrP8tHUJC5nKMrMva9QWwTmYqeb_Mz80K4AHn1Qi21wJ0B-OVhPZRD7ZMbah6ZxyxHZNB"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['251']
@@ -215,9 +215,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-521/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-521/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-521/d09c6e9d216d412792f2d8c3bc1e9a00","kty":"EC","key_ops":["sign","verify"],"crv":"P-521","x":"AVSff7Bb3BQspOX_QDbt2ghTTLK16UCkwjexFZLGdvr3ZIRYzhzrsi6Voqcts8s6Hs1lYOWTPBeyR-dUg_GOE3y9","y":"AaIpVPKjbLjOEjnoS6R7AE5dUw4mH0O4wlOYte1xlfA9aR_kNjNIfJ860L9vWM5c2UiK6nayaVKp0ZG2eRPjD89R"},"attributes":{"enabled":true,"created":1575489201,"updated":1575489201,"recoveryLevel":"Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-521/d09c6e9d216d412792f2d8c3bc1e9a00","kty":"EC","key_ops":["sign","verify"],"crv":"P-521","x":"AVSff7Bb3BQspOX_QDbt2ghTTLK16UCkwjexFZLGdvr3ZIRYzhzrsi6Voqcts8s6Hs1lYOWTPBeyR-dUg_GOE3y9","y":"AaIpVPKjbLjOEjnoS6R7AE5dUw4mH0O4wlOYte1xlfA9aR_kNjNIfJ860L9vWM5c2UiK6nayaVKp0ZG2eRPjD89R"},"attributes":{"enabled":true,"created":1575489201,"updated":1575489201,"recoveryLevel":"Purgeable"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['463']
@@ -244,9 +244,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/ec-verify-P-521/d09c6e9d216d412792f2d8c3bc1e9a00/sign?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/ec-verify-P-521/d09c6e9d216d412792f2d8c3bc1e9a00/sign?api-version=7.0
   response:
-    body: {string: '{"kid":"https://vaultstorname.vault.azure.net/keys/ec-verify-P-521/d09c6e9d216d412792f2d8c3bc1e9a00","value":"AZNjaFOsu-yJmbc680rqZ_cKkyQ4Jqy3pWox-dz9CzU3Cfl3FFfN8H7_2RAJMeZsPt_CiwwJiqLNk16kpmafFObiAVj3O2MUOd6xiImrL31iFTbvwMpt3S57dtuu1NnPAsK1W-VueRaplIPxuM3UojUA4fcLYO6eQBZ6ozyTwmJ_YjwD"}'}
+    body: {string: '{"kid":"https://vault.vault.azure.net/keys/ec-verify-P-521/d09c6e9d216d412792f2d8c3bc1e9a00","value":"AZNjaFOsu-yJmbc680rqZ_cKkyQ4Jqy3pWox-dz9CzU3Cfl3FFfN8H7_2RAJMeZsPt_CiwwJiqLNk16kpmafFObiAVj3O2MUOd6xiImrL31iFTbvwMpt3S57dtuu1NnPAsK1W-VueRaplIPxuM3UojUA4fcLYO6eQBZ6ozyTwmJ_YjwD"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['299']

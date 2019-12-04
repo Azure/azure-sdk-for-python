@@ -7,7 +7,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key0/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -31,9 +31,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key0/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -52,9 +52,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key1/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -73,9 +73,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key2/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -94,9 +94,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key3/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -115,9 +115,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key4/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -136,9 +136,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key5/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -157,9 +157,9 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/keys/key6/create?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/create?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -176,9 +176,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key0","deletedDate":1575489278,"scheduledPurgeDate":1583265278,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key0","deletedDate":1575489278,"scheduledPurgeDate":1583265278,"key":{"kid":"https://vault.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:38 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -195,7 +195,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -215,7 +215,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -235,7 +235,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -255,7 +255,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -275,7 +275,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -295,7 +295,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -315,7 +315,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -335,7 +335,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -355,7 +355,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -375,7 +375,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key0"}}'}
@@ -395,9 +395,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key0","deletedDate":1575489278,"scheduledPurgeDate":1583265278,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key0","deletedDate":1575489278,"scheduledPurgeDate":1583265278,"key":{"kid":"https://vault.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:54:58 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -414,9 +414,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key1","deletedDate":1575489300,"scheduledPurgeDate":1583265300,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key1","deletedDate":1575489300,"scheduledPurgeDate":1583265300,"key":{"kid":"https://vault.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:55:00 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -433,7 +433,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -453,7 +453,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -473,7 +473,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -493,7 +493,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -513,7 +513,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -533,7 +533,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -553,7 +553,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -573,7 +573,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -593,7 +593,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key1"}}'}
@@ -613,9 +613,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key1","deletedDate":1575489300,"scheduledPurgeDate":1583265300,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key1","deletedDate":1575489300,"scheduledPurgeDate":1583265300,"key":{"kid":"https://vault.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:55:18 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -632,9 +632,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key2","deletedDate":1575489321,"scheduledPurgeDate":1583265321,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key2","deletedDate":1575489321,"scheduledPurgeDate":1583265321,"key":{"kid":"https://vault.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:55:20 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -651,7 +651,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -671,7 +671,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -691,7 +691,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -711,7 +711,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -731,7 +731,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -751,7 +751,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -771,7 +771,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -791,7 +791,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key2"}}'}
@@ -811,9 +811,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key2","deletedDate":1575489321,"scheduledPurgeDate":1583265321,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key2","deletedDate":1575489321,"scheduledPurgeDate":1583265321,"key":{"kid":"https://vault.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:55:37 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -830,9 +830,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key3","deletedDate":1575489340,"scheduledPurgeDate":1583265340,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key3","deletedDate":1575489340,"scheduledPurgeDate":1583265340,"key":{"kid":"https://vault.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:55:40 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -849,7 +849,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -869,7 +869,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -889,7 +889,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -909,7 +909,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -929,7 +929,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -949,7 +949,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -969,7 +969,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -989,7 +989,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -1009,7 +1009,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -1029,7 +1029,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -1049,7 +1049,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -1069,7 +1069,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key3"}}'}
@@ -1089,9 +1089,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key3","deletedDate":1575489340,"scheduledPurgeDate":1583265340,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key3","deletedDate":1575489340,"scheduledPurgeDate":1583265340,"key":{"kid":"https://vault.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:56:04 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1108,9 +1108,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key4","deletedDate":1575489367,"scheduledPurgeDate":1583265367,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key4","deletedDate":1575489367,"scheduledPurgeDate":1583265367,"key":{"kid":"https://vault.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:56:07 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1127,7 +1127,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1147,7 +1147,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1167,7 +1167,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1187,7 +1187,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1207,7 +1207,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1227,7 +1227,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1247,7 +1247,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key4"}}'}
@@ -1267,9 +1267,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key4","deletedDate":1575489367,"scheduledPurgeDate":1583265367,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key4","deletedDate":1575489367,"scheduledPurgeDate":1583265367,"key":{"kid":"https://vault.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:56:21 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1286,9 +1286,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key5","deletedDate":1575489384,"scheduledPurgeDate":1583265384,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key5","deletedDate":1575489384,"scheduledPurgeDate":1583265384,"key":{"kid":"https://vault.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:56:24 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1305,7 +1305,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key5"}}'}
@@ -1325,7 +1325,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key5"}}'}
@@ -1345,7 +1345,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key5"}}'}
@@ -1365,7 +1365,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key5"}}'}
@@ -1385,7 +1385,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key5"}}'}
@@ -1405,7 +1405,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key5"}}'}
@@ -1425,9 +1425,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key5","deletedDate":1575489384,"scheduledPurgeDate":1583265384,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key5","deletedDate":1575489384,"scheduledPurgeDate":1583265384,"key":{"kid":"https://vault.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:56:36 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1444,9 +1444,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: DELETE
-    uri: https://vaultstorname.vault.azure.net/keys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key6","deletedDate":1575489398,"scheduledPurgeDate":1583265398,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key6","deletedDate":1575489398,"scheduledPurgeDate":1583265398,"key":{"kid":"https://vault.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:56:38 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1463,7 +1463,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1483,7 +1483,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1503,7 +1503,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1523,7 +1523,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1543,7 +1543,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1563,7 +1563,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1583,7 +1583,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1603,7 +1603,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1623,7 +1623,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1643,7 +1643,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1663,7 +1663,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1683,7 +1683,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1703,7 +1703,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1723,7 +1723,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found:
         key6"}}'}
@@ -1743,9 +1743,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6?api-version=7.0
   response:
-    body: {string: '{"recoveryId":"https://vaultstorname.vault.azure.net/deletedkeys/key6","deletedDate":1575489398,"scheduledPurgeDate":1583265398,"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"recoveryId":"https://vault.vault.azure.net/deletedkeys/key6","deletedDate":1575489398,"scheduledPurgeDate":1583265398,"key":{"kid":"https://vault.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '801', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:57:06 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1762,9 +1762,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key0/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key0/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:57:08 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1781,7 +1781,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key0"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1800,7 +1800,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key0"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1819,7 +1819,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key0"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1838,7 +1838,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key0"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1857,7 +1857,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key0"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1876,7 +1876,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key0"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1895,9 +1895,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:57:22 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1914,9 +1914,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key1/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key1/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:57:24 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -1933,7 +1933,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1952,7 +1952,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1971,7 +1971,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -1990,7 +1990,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2009,7 +2009,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2028,7 +2028,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2047,7 +2047,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key1"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2066,9 +2066,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:57:38 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2085,9 +2085,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key2/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key2/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:57:40 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2104,7 +2104,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2123,7 +2123,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2142,7 +2142,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2161,7 +2161,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2180,7 +2180,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2199,7 +2199,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2218,7 +2218,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2237,7 +2237,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2256,7 +2256,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2275,7 +2275,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key2"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2294,9 +2294,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:58:01 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2313,9 +2313,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key3/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key3/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:58:03 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2332,7 +2332,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2351,7 +2351,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2370,7 +2370,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2389,7 +2389,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2408,7 +2408,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2427,7 +2427,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2446,7 +2446,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2465,7 +2465,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2484,7 +2484,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2503,7 +2503,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key3"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2522,9 +2522,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:58:24 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2541,9 +2541,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key4/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key4/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:58:26 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2560,7 +2560,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2579,7 +2579,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2598,7 +2598,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2617,7 +2617,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2636,7 +2636,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2655,7 +2655,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2674,7 +2674,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2693,7 +2693,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key4"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2712,9 +2712,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:58:43 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2731,9 +2731,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key5/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key5/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:58:45 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2750,7 +2750,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2769,7 +2769,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2788,7 +2788,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2807,7 +2807,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2826,7 +2826,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2845,7 +2845,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2864,7 +2864,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2883,7 +2883,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2902,7 +2902,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2921,7 +2921,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2940,7 +2940,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key5"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -2959,9 +2959,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:07 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2978,9 +2978,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vaultstorname.vault.azure.net/deletedkeys/key6/recover?api-version=7.0
+    uri: https://vault.vault.azure.net/deletedkeys/key6/recover?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:09 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -2997,7 +2997,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3016,7 +3016,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3035,7 +3035,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3054,7 +3054,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3073,7 +3073,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3092,7 +3092,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3111,7 +3111,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3130,7 +3130,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3149,7 +3149,7 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
     body: {string: '{"error":{"code":"KeyNotFound","message":"Key not found: key6"}}'}
     headers: {cache-control: no-cache, content-length: '64', content-type: application/json;
@@ -3168,9 +3168,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:29 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3187,9 +3187,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key0/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key0/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key0/5cd2929b6d3a427d96b3f042d4961b82","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uNMMl8ieBDSBop_sHpGjPWCaMItbT1qzZER7MaUM0lvRe1kT7wWIqgyvg82C9nRP5UnPJViom0sm4WPON8WCFiEDzqsFqxU1XOfvU-eMtMtnIMX95fUNNhLi-3k6j_gJXNBskwnwLhjqfnGuurA4bCb9vcQHqf45rdINCqOwiVANVsDeldj3nuVzKA5fsMFKdiruM_-bUorp1FNLBKuvDt3nJcvpoPanlim24oi_1br1uxDGGPe5wtRVcEnWSTiMfDfIyCErmBlyqL6XFib6M9fAdA7HPfeaN5_gxsQP-yeVrNGYUM1RUIofjD7ryVXxWS2wxubNOUc9NSvkc0oSAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3206,9 +3206,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key1/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key1/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key1/0ee61dbd6e084d16981ad9876f1b13a8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rwKycH40MX-U57IrDu38ZNqN-_dC19ShOXCYDgG-ddTelCwZfH-LkV4Ap59Eajx5wgLu1bk8Yz-0Q_B3qO-kj_3vfVGy2iViET5p2-fpusTNjUqA7TuCYSjA1sg5ss3q22dMx0jSEdZmPZFJSWMjcL9ert96LCVbUEzD7JQZu_I_EaneBgH7YHbxDYNlNeC7DJP9Vy6hCgGjBFYeTOhgDlAWVSr3qPi_qilNbS1jI0r4MWeU8KnamhFM3Fxr0WW22pmc43Fo1ZXLMdZWFLsHXZglcPBBlmtS0UixgqBV70pGKd17rMWeNKeDpOi4EooPNmdFq7nw3N8Amg3j6QvyLw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3225,9 +3225,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key2/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key2/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key2/2cb72a378af04ed8acba66f55649c341","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umOCkATNvfHJ1micqfayfBlvBPC2BOAhFiMENoXfUgZKbNelRN7gWN_mlp2E-T4vb3g0ngX1bF5BspDERuHhviupnm8sACT0Xz0R2AMqLTU8HlbDAMt8kad5o533IYeNsYCZuVkaADnYCrDxhZjKjAUASInWALPj0gDYvRQyHhU7JO73kTUwo6e3IVuAyNYY-Tec47ZQlw3ElcGp6U1e4ZJ0ccNJ7O8bKPtyx0-9w1LPc5PSnVKq4xTOj6Vr76stLTdGlu6wr_avy5YPnDrrFdIJxSckNKiLevsosYUVtPjdA7N8DYVGVw5Q5f-lkoHU8pwnC7P-x8g4OVID9PhgPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3244,9 +3244,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key3/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key3/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key3/2752e38db3574286966e7d58020c11a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfNEkhkGyazYOL4F0sFqcTbdj9J_XW2usM63sIF1y7qSzcC9gbNlyf0VA_sDBJ20eTM79B5440GV8Ppv25J41f56e23fZVuEM6JHOrylObBFYuCP-k1vKH2vrYHEd58DkhCGjMeqUT43Obg7zfZrNdv60cKK24XS_bjnt4bQtdAXmFlgAXN_wABOLxJetuM2TwYa5JxIhLBOmAlkQLXjr2bcwpLB3-FbaTPnVzjDqXpaqnQSP61UUAenKfitvnomci31XhiNMnK2VUY2UVODMX-_cyKHNkV9lspGxef1EDA965Dk8_XioVl5eL2VlwVSgG7HHTpIGjQwWjF5R_K0vQ","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3263,9 +3263,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key4/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key4/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key4/c3631866af2144d5b5838666bf820b04","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pCtbbM8gzR4gAGxqo45shNksucpqr6UqpoLPfcjjv3YgwJQKBhMRixRMnUrJCw1CxlS2Pt0kxDz-AirdFHblSj5TPf8tWfzrPLHkW9lD-MikJVC6WE8IdIIqLWkkKDeuDMXJ1TMTVKDVkElXaDk5hNUliIqUplGvXna60L1k0_3pMV7ATqMUncfZ2K7Mn0_jG_5Xgu3BBh4pVd1nO8ZZ0I6Tmuatsc2XYrXnlzCLAk7RI5w-2bHzF2tJPmNQwgNErEKqFB7tUkLmem7_Tto-9QJKX95A-Eg2BYbU762nnQC5tySqeJPDmsuYzzGDHXrAbmazmBMbaNNGWIkGKfH6Gw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3282,9 +3282,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key5/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key5/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key5/e3a448dd5b10468082564010d917e9c6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"slCKLkQyOGuKQ40bAyE41gbdgVK5Bsa_6a0oIVyAsHwWW3_HpNxJElX8jw02HtegdMV9ti4przqlgkUjx-rIgw5xBewmw_w3fRD1Hm7lYEMTKtE7nSms1Qf54v2YYxU_SCNtSRsz1FUwnOOAFGs2Nrhb0IBk9uzPN2ib5kBFV9x7sMGBStWJ-rxrbnYhwsyc9_dkMbtKCota9tMIIxIXgxRZoyC92RRoSKgax8AfZMI82SfY5o2Gjfamdc1pRdXBQviNuYuVzA1wdC6LfcIspiCDAeuEPHF58DhUsgoVT3S92uzcI-jvPIs8P3UySM9uxHpVHP02ejnrSG9iVp3KYw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
@@ -3301,9 +3301,9 @@ interactions:
       Accept: [application/json]
       User-Agent: [azsdk-python-keyvault-keys/4.1.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: GET
-    uri: https://vaultstorname.vault.azure.net/keys/key6/?api-version=7.0
+    uri: https://vault.vault.azure.net/keys/key6/?api-version=7.0
   response:
-    body: {string: '{"key":{"kid":"https://vaultstorname.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    body: {string: '{"key":{"kid":"https://vault.vault.azure.net/keys/key6/9e8891cc525b4a1d9fb1e5c904dc5144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ue8aqAHMl50MACXz0l19Iga9mNvAGWHL2tBpT86s8ChrXCjb8atB5g4i8Bb7sYhgg2Df2dSVV5WlHFwMBxpkLAZ_2sSIclmDnOW1W_9HuCVTDJeesiBu-ceovhC4hHoMXEkAaL1_GhaDZ2AhZ7LekcevX_3aXcH03vnDKFoGzrGEo8PAq7GXzYHmcbybk4frZZSDvBAo3tCzSKcdOwReJ4e5q1Njs8XWyOhScauKXZzoz-6H08vny4eo_IcbLJ99pdSQmtEN9iowXkpADhvPXbJFS9wMmNHZDcyhQPDR6fFwSQf3pKywxr_C5xSGRomaX2PdihHy_VtugFXU1Y6oEw","e":"AQAB"},"attributes":{"enabled":true,"created":1575489277,"updated":1575489277,"recoveryLevel":"Recoverable+Purgeable"}}'}
     headers: {cache-control: no-cache, content-length: '663', content-type: application/json;
         charset=utf-8, date: 'Wed, 04 Dec 2019 19:59:31 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
