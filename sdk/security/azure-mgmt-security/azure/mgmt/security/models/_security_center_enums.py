@@ -40,6 +40,12 @@ class SettingKind(str, Enum):
     alert_suppression_setting = "AlertSuppressionSetting"
 
 
+class ValueType(str, Enum):
+
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
+
+
 class SecuritySolutionStatus(str, Enum):
 
     enabled = "Enabled"
@@ -80,6 +86,12 @@ class RecommendationConfigStatus(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
+
+
+class UnmaskedIpLoggingStatus(str, Enum):
+
+    disabled = "Disabled"  #: Unmasked IP logging is disabled
+    enabled = "Enabled"  #: Unmasked IP logging is enabled
 
 
 class SecurityFamily(str, Enum):
@@ -150,7 +162,61 @@ class State(str, Enum):
     unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
 
 
+class SubAssessmentStatusCode(str, Enum):
+
+    healthy = "Healthy"  #: The resource is healthy
+    unhealthy = "Unhealthy"  #: The resource has a security issue that needs to be addressed
+    not_applicable = "NotApplicable"  #: Assessment for this resource did not happen
+
+
+class Severity(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class EventSource(str, Enum):
+
+    assessments = "Assessments"
+    alerts = "Alerts"
+
+
+class PropertyType(str, Enum):
+
+    string = "String"
+    integer = "Integer"
+    number = "Number"
+    boolean = "Boolean"
+
+
+class Operator(str, Enum):
+
+    equals = "Equals"
+    greater_than = "GreaterThan"
+    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+    lesser_than = "LesserThan"
+    lesser_than_or_equal_to = "LesserThanOrEqualTo"
+    not_equals = "NotEquals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+
+
+class AssessmentStatusCode(str, Enum):
+
+    healthy = "Healthy"  #: The resource is healthy
+    unhealthy = "Unhealthy"  #: The resource has a security issue that needs to be addressed
+    not_applicable = "NotApplicable"  #: Assessment for this resource did not happen
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"
     external = "External"
+
+
+class ExpandEnum(str, Enum):
+
+    links = "links"  #: All links associated with an assessment
+    metadata = "metadata"  #: Assessment metadata
