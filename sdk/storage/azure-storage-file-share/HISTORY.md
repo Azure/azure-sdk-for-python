@@ -1,5 +1,10 @@
 # Change Log azure-storage-file
 
+## Version 12.0.0:
+
+**Breaking changes**
+- `close_handle(handle)` and `close_all_handles()` no longer return int. These functions return a dictionary which has the number of handles closed and number of handles failed to be closed.
+
 ## Version 12.0.0b5:
 
 **Important: This package was previously named azure-storage-file**
