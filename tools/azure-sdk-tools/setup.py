@@ -21,7 +21,8 @@ DEPENDENCIES = [
     'azure-storage-common<1.4.1',
     'pyopenssl',
     'azure-mgmt-resource',
-    'azure-mgmt-storage'
+    'azure-mgmt-storage',
+    'azure-mgmt-keyvault'
 ]
 
 setup(
