@@ -10,7 +10,7 @@ resources:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      MaxParallel: 1
+      MaxParallel: 5
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
       JobName: Test_Keys
@@ -25,7 +25,7 @@ jobs:
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      MaxParallel: 1
+      MaxParallel: 5
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-secrets
       JobName: Test_Secrets
@@ -40,7 +40,7 @@ jobs:
 
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      MaxParallel: 1
+      MaxParallel: 5
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-certificates
       JobName: Test_Certificates
