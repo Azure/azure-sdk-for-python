@@ -247,7 +247,7 @@ class PathProperties(object):
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
         path_prop.last_modified = generated.last_modified
-        path_prop.is_directory = True if generated.is_directory else False
+        path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
         return path_prop
