@@ -1120,7 +1120,7 @@ class AutomationActionEventHub(AutomationAction):
     }
 
     _subtype_map = {
-        'action_type': {'EventHub': 'AutomationActionEventHubInput', 'EventHub': 'AutomationActionEventHubOutput'}
+        'action_type': {'AutomationActionEventHubInput': 'AutomationActionEventHubInput', 'AutomationActionEventHubOutput': 'AutomationActionEventHubOutput'}
     }
 
     def __init__(self, *, event_hub_resource_id: str=None, **kwargs) -> None:
@@ -1155,7 +1155,7 @@ class AutomationActionEventHubInput(AutomationActionEventHub):
     def __init__(self, *, event_hub_resource_id: str=None, connection_string: str=None, **kwargs) -> None:
         super(AutomationActionEventHubInput, self).__init__(event_hub_resource_id=event_hub_resource_id, **kwargs)
         self.connection_string = connection_string
-        self.action_type = 'EventHub'
+        self.action_type = 'AutomationActionEventHubInput'
 
 
 class AutomationActionEventHubOutput(AutomationActionEventHub):
@@ -1184,7 +1184,7 @@ class AutomationActionEventHubOutput(AutomationActionEventHub):
     def __init__(self, *, event_hub_resource_id: str=None, sas_policy_name: str=None, **kwargs) -> None:
         super(AutomationActionEventHubOutput, self).__init__(event_hub_resource_id=event_hub_resource_id, **kwargs)
         self.sas_policy_name = sas_policy_name
-        self.action_type = 'EventHub'
+        self.action_type = 'AutomationActionEventHubOutput'
 
 
 class AutomationActionLogicApp(AutomationAction):
@@ -1214,7 +1214,7 @@ class AutomationActionLogicApp(AutomationAction):
     }
 
     _subtype_map = {
-        'action_type': {'LogicApp': 'AutomationActionLogicAppInput', 'LogicApp': 'AutomationActionLogicAppOutput'}
+        'action_type': {'AutomationActionLogicAppInput': 'AutomationActionLogicAppInput', 'AutomationActionLogicAppOutput': 'AutomationActionLogicAppOutput'}
     }
 
     def __init__(self, *, logic_app_resource_id: str=None, **kwargs) -> None:
@@ -1251,7 +1251,7 @@ class AutomationActionLogicAppInput(AutomationActionLogicApp):
     def __init__(self, *, logic_app_resource_id: str=None, uri: str=None, **kwargs) -> None:
         super(AutomationActionLogicAppInput, self).__init__(logic_app_resource_id=logic_app_resource_id, **kwargs)
         self.uri = uri
-        self.action_type = 'LogicApp'
+        self.action_type = 'AutomationActionLogicAppInput'
 
 
 class AutomationActionLogicAppOutput(AutomationActionLogicApp):
@@ -1278,7 +1278,7 @@ class AutomationActionLogicAppOutput(AutomationActionLogicApp):
 
     def __init__(self, *, logic_app_resource_id: str=None, **kwargs) -> None:
         super(AutomationActionLogicAppOutput, self).__init__(logic_app_resource_id=logic_app_resource_id, **kwargs)
-        self.action_type = 'LogicApp'
+        self.action_type = 'AutomationActionLogicAppOutput'
 
 
 class AutomationActionWorkspace(AutomationAction):

@@ -1120,7 +1120,7 @@ class AutomationActionEventHub(AutomationAction):
     }
 
     _subtype_map = {
-        'action_type': {'EventHub': 'AutomationActionEventHubInput', 'EventHub': 'AutomationActionEventHubOutput'}
+        'action_type': {'AutomationActionEventHubInput': 'AutomationActionEventHubInput', 'AutomationActionEventHubOutput': 'AutomationActionEventHubOutput'}
     }
 
     def __init__(self, **kwargs):
@@ -1155,7 +1155,7 @@ class AutomationActionEventHubInput(AutomationActionEventHub):
     def __init__(self, **kwargs):
         super(AutomationActionEventHubInput, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
-        self.action_type = 'EventHub'
+        self.action_type = 'AutomationActionEventHubInput'
 
 
 class AutomationActionEventHubOutput(AutomationActionEventHub):
@@ -1184,7 +1184,7 @@ class AutomationActionEventHubOutput(AutomationActionEventHub):
     def __init__(self, **kwargs):
         super(AutomationActionEventHubOutput, self).__init__(**kwargs)
         self.sas_policy_name = kwargs.get('sas_policy_name', None)
-        self.action_type = 'EventHub'
+        self.action_type = 'AutomationActionEventHubOutput'
 
 
 class AutomationActionLogicApp(AutomationAction):
@@ -1214,7 +1214,7 @@ class AutomationActionLogicApp(AutomationAction):
     }
 
     _subtype_map = {
-        'action_type': {'LogicApp': 'AutomationActionLogicAppInput', 'LogicApp': 'AutomationActionLogicAppOutput'}
+        'action_type': {'AutomationActionLogicAppInput': 'AutomationActionLogicAppInput', 'AutomationActionLogicAppOutput': 'AutomationActionLogicAppOutput'}
     }
 
     def __init__(self, **kwargs):
@@ -1251,7 +1251,7 @@ class AutomationActionLogicAppInput(AutomationActionLogicApp):
     def __init__(self, **kwargs):
         super(AutomationActionLogicAppInput, self).__init__(**kwargs)
         self.uri = kwargs.get('uri', None)
-        self.action_type = 'LogicApp'
+        self.action_type = 'AutomationActionLogicAppInput'
 
 
 class AutomationActionLogicAppOutput(AutomationActionLogicApp):
@@ -1278,7 +1278,7 @@ class AutomationActionLogicAppOutput(AutomationActionLogicApp):
 
     def __init__(self, **kwargs):
         super(AutomationActionLogicAppOutput, self).__init__(**kwargs)
-        self.action_type = 'LogicApp'
+        self.action_type = 'AutomationActionLogicAppOutput'
 
 
 class AutomationActionWorkspace(AutomationAction):
