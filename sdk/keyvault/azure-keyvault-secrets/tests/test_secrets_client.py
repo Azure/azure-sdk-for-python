@@ -26,10 +26,6 @@ class MockHandler(logging.Handler):
 
 
 class SecretClientTests(KeyVaultTestCase):
-
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "keyvault" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_url, s2.vault_url)
@@ -310,8 +306,8 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(client_kwargs={'logging_enable': True})
-    @VaultClientPreparer()
+    @KeyVaultAccountPreparer()
+    @VaultClientPreparer(client_kwargs={'logging_enable': True})
     def test_logging_enabled(self, vault_client, **kwargs):
         client = vault_client.secrets
         mock_handler = MockHandler()
@@ -335,7 +331,7 @@ class SecretClientTests(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(client_kwargs={'logging_enable': True})
+    @KeyVaultAccountPreparer()
     @VaultClientPreparer()
     def test_logging_disabled(self, vault_client, **kwargs):
         client = vault_client.secrets

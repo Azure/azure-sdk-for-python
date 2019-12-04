@@ -101,6 +101,10 @@ class KeyVaultAccountPreparer(AzureMgmtPreparer):
                     if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
                         raise
                     time.sleep(3)
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
             vault_uri = vault.properties.vault_uri
         else:
             # playback => we need only the uri used in the recording

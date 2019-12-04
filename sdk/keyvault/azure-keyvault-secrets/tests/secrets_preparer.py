@@ -41,10 +41,12 @@ class VaultClientPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
 
     def create_resource(self, name, **kwargs):
+        client = self.create_vault_client(kwargs.get("vault_uri"))
+        return {self.parameter_name: client}
+
+    def create_vault_client(self, vault_uri):
         if self.is_live:
             credential = EnvironmentCredential()
         else:
             credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
-        client = VaultClient(kwargs.get("vault_uri"), credential, **self.client_kwargs)
-        raise ValueError(kwargs.get("vault_uri"))
-        return {self.parameter_name: client}
+        return VaultClient(vault_uri, credential, **self.client_kwargs)

@@ -27,10 +27,6 @@ class MockHandler(logging.Handler):
 
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
-
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_url, s2.vault_url)
@@ -306,8 +302,8 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             await client.purge_deleted_secret(secret_name)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(client_kwargs={'logging_enable': True})
-    @AsyncVaultClientPreparer()
+    @KeyVaultAccountPreparer()
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, vault_client, **kwargs):
         client = vault_client.secrets
@@ -332,7 +328,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(client_kwargs={'logging_enable': True})
+    @KeyVaultAccountPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, vault_client, **kwargs):
