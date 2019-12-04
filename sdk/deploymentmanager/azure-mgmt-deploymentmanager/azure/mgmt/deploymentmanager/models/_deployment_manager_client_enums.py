@@ -16,3 +16,21 @@ class DeploymentMode(str, Enum):
 
     incremental = "Incremental"
     complete = "Complete"
+
+
+class RestRequestMethod(str, Enum):
+
+    get = "GET"
+    post = "POST"
+
+
+class RestAuthLocation(str, Enum):
+
+    query = "Query"
+    header = "Header"
+
+
+class RestMatchQuantifier(str, Enum):
+
+    all = "All"
+    any = "Any"
