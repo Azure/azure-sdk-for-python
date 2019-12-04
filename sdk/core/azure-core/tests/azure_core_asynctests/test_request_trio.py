@@ -5,12 +5,12 @@
 # -------------------------------------------------------------------------
 import json
 
-from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpRequest
+from azure.core.pipeline.transport import TrioRequestsTransport, HttpRequest
 
 import pytest
 
 
-@pytest.mark.asyncio
+@pytest.mark.trio
 async def test_async_gen_data():
     class AsyncGen:
         def __init__(self):
@@ -25,13 +25,14 @@ async def test_async_gen_data():
             except StopIteration:
                 raise StopAsyncIteration
 
-    async with AsyncioRequestsTransport() as transport:
-        req = HttpRequest('GET', 'http://httpbin.org/post', data=AsyncGen())
-        await transport.send(req)
+    async with TrioRequestsTransport() as transport:
+        req = HttpRequest('GET', 'http://httpbin.org/anything', data=AsyncGen())
+        response = await transport.send(req)
+        assert json.loads(response.text())['data'] == "azerty"
 
-@pytest.mark.asyncio
+@pytest.mark.trio
 async def test_send_data():
-    async with AsyncioRequestsTransport() as transport:
+    async with TrioRequestsTransport() as transport:
         req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
         response = await transport.send(req)
 
