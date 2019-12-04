@@ -4,7 +4,7 @@
 # ------------------------------------
 import copy
 
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineContext, PipelineRequest
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 from azure.core.pipeline.transport import HttpRequest
@@ -57,7 +57,10 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
             # challenge_request has service_request's headers, including Content-Length, if any
             challenge_request.headers["Content-Length"] = "0"
 
-        return PipelineRequest(http_request=challenge_request, context=copy.deepcopy(request.context))
+        options = copy.deepcopy(request.context.options)
+        context = PipelineContext(request.context.transport, **options)
+
+        return PipelineRequest(http_request=challenge_request, context=context)
 
 
 class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
