@@ -37,10 +37,11 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-  - ${{if eq(variables['Build.Reason'], 'PullRequest')}}:
-    - template: ../steps/pr-build-test.yml
-  - ${{if ne(variables['Build.Reason'], 'PullRequest')}}:
-    - template: ../steps/ci-build-test.yml
+  - job: 'Test'
+    - ${{if eq(variables['Build.Reason'], 'PullRequest')}}:
+      - template: ../steps/pr-build-test.yml
+    - ${{if ne(variables['Build.Reason'], 'PullRequest')}}:
+      - template: ../steps/ci-build-test.yml
 
   - job: 'RunMyPy'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))

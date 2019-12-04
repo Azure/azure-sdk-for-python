@@ -1,3 +1,10 @@
+parameters:
+  ServiceDirectory: ''
+  BeforePublishSteps: []
+  TestMarkArgument: ''
+  BuildTargetingString: 'azure-*'
+  TestTimeoutInMinutes: 0
+  
 - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
