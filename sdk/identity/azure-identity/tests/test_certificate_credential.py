@@ -21,12 +21,11 @@ CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
+    def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
     credential = CertificateCredential(
-        "tenant-id",
-        "client-id",
-        CERT_PATH,
-        policies=[ContentDecodePolicy(), policy],
-        transport=Mock(send=lambda *_, **__: mock_response(json_payload=build_aad_response(access_token="**"))),
+        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=Mock(send=send)
     )
 
     credential.get_token("scope")

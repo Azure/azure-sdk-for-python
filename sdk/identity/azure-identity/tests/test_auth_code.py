@@ -17,13 +17,11 @@ except ImportError:  # python < 3.3
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
+    def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
     credential = AuthorizationCodeCredential(
-        "tenant-id",
-        "client-id",
-        "auth-code",
-        "http://localhost",
-        policies=[policy],
-        transport=Mock(send=lambda *_, **__: mock_response(json_payload=build_aad_response(access_token="**"))),
+        "tenant-id", "client-id", "auth-code", "http://localhost", policies=[policy], transport=Mock(send=send)
     )
 
     credential.get_token("scope")

@@ -26,10 +26,13 @@ from helpers import build_aad_response, build_id_token, mock_response, Request, 
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
+    def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
     credential = SharedTokenCacheCredential(
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
         policies=[policy],
-        transport=Mock(send=lambda *_, **__: mock_response(json_payload=build_aad_response(access_token="**"))),
+        transport=Mock(send=send),
     )
 
     credential.get_token("scope")
