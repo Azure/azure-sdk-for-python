@@ -10,58 +10,36 @@
 # --------------------------------------------------------------------------
 
 from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
-from .operations.images_operations import ImagesOperations
+from msrest import Serializer, Deserializer
+
+from ._configuration import ImageSearchClientConfiguration
+from .operations import ImagesOperations
 from . import models
 
 
-class ImageSearchAPIConfiguration(Configuration):
-    """Configuration for ImageSearchAPI
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
-
-        super(ImageSearchAPIConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-search-imagesearch/{}'.format(VERSION))
-
-        self.credentials = credentials
-
-
-class ImageSearchAPI(SDKClient):
+class ImageSearchClient(SDKClient):
     """The Image Search API lets you send a search query to Bing and get back a list of relevant images. This section provides technical details about the query parameters and headers that you use to request images and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the Web for Images](https://docs.microsoft.com/azure/cognitive-services/bing-image-search/search-the-web).
 
     :ivar config: Configuration for client.
-    :vartype config: ImageSearchAPIConfiguration
+    :vartype config: ImageSearchClientConfiguration
 
     :ivar images: Images operations
     :vartype images: azure.cognitiveservices.search.imagesearch.operations.ImagesOperations
 
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: "https://westus.api.cognitive.microsoft.com",
+     "https://api.cognitive.microsoft.com").
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, endpoint, credentials):
 
-        self.config = ImageSearchAPIConfiguration(credentials, base_url)
-        super(ImageSearchAPI, self).__init__(self.config.credentials, self.config)
+        self.config = ImageSearchClientConfiguration(endpoint, credentials)
+        super(ImageSearchClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
