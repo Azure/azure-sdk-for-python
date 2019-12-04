@@ -10,13 +10,14 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrest.exceptions import HttpOperationError
 
 from .. import models
 
 
 class EventsOperations(object):
     """EventsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,8 +37,10 @@ class EventsOperations(object):
 
     def reward(
             self, event_id, value, custom_headers=None, raw=False, **operation_config):
-        """Report reward to allocate to the top ranked action for the specified
-        event.
+        """Post Reward.
+
+        Report reward that resulted from using the action specified in
+        rewardActionId for the specified event.
 
         :param event_id: The event id this reward applies to.
         :type event_id: str
@@ -52,7 +55,7 @@ class EventsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.personalizer.models.ErrorResponseException>`
         """
         reward1 = models.RewardRequest(value=value)
 
@@ -81,7 +84,7 @@ class EventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -90,7 +93,9 @@ class EventsOperations(object):
 
     def activate(
             self, event_id, custom_headers=None, raw=False, **operation_config):
-        """Report that the specified event was actually displayed to the user and
+        """Activate Event.
+
+        Report that the specified event was actually displayed to the user and
         a reward should be expected for it.
 
         :param event_id: The event ID this activation applies to.
@@ -103,7 +108,7 @@ class EventsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.personalizer.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.activate.metadata['url']
@@ -126,7 +131,7 @@ class EventsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
