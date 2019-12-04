@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub with partition manager asynchronously.
+An example to show receiving events from an Event Hub with checkpoint store asynchronously.
 In the `receive` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
@@ -38,7 +38,7 @@ async def receive(client):
     try:
         """
         Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
-        partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+        a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
         which also try to receive events from all partitions and use the same storage resource.
         """
         await client.receive(on_event=on_event)
