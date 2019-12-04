@@ -114,16 +114,13 @@ class NotebookWorkspacesOperations(object):
     list_by_database_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces'}
 
     def get(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the notework workspace for a Cosmos DB account.
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the notebook workspace for a Cosmos DB account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param notebook_workspace_name: The name of the notebook workspace
-         resource.
-        :type notebook_workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -139,8 +136,7 @@ class NotebookWorkspacesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -176,11 +172,11 @@ class NotebookWorkspacesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/default'}
 
 
     def _create_initial(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         create_parameters = None
 
         # Construct URL
@@ -188,8 +184,7 @@ class NotebookWorkspacesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -232,16 +227,13 @@ class NotebookWorkspacesOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates the notebook workspace for a Cosmos DB account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param notebook_workspace_name: The name of the notebook workspace
-         resource.
-        :type notebook_workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -258,7 +250,6 @@ class NotebookWorkspacesOperations(object):
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            notebook_workspace_name=notebook_workspace_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -280,18 +271,17 @@ class NotebookWorkspacesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/default'}
 
 
     def _delete_initial(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -322,16 +312,13 @@ class NotebookWorkspacesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the notebook workspace for a Cosmos DB account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param notebook_workspace_name: The name of the notebook workspace
-         resource.
-        :type notebook_workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -346,7 +333,6 @@ class NotebookWorkspacesOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            notebook_workspace_name=notebook_workspace_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -364,19 +350,16 @@ class NotebookWorkspacesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/default'}
 
     def get_connection_info(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the connection info for the notebook workspace.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param notebook_workspace_name: The name of the notebook workspace
-         resource.
-        :type notebook_workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -394,8 +377,7 @@ class NotebookWorkspacesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -431,19 +413,16 @@ class NotebookWorkspacesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_connection_info.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/getConnectionInfo'}
+    get_connection_info.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/default/getConnectionInfo'}
 
     def regenerate_auth_token(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Regenerates the auth token for the notebook workspace.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param notebook_workspace_name: The name of the notebook workspace
-         resource.
-        :type notebook_workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -458,8 +437,7 @@ class NotebookWorkspacesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -488,19 +466,16 @@ class NotebookWorkspacesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    regenerate_auth_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/regenerateAuthToken'}
+    regenerate_auth_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/default/regenerateAuthToken'}
 
     def start(
-            self, resource_group_name, account_name, notebook_workspace_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Starts the notebook workspace.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param notebook_workspace_name: The name of the notebook workspace
-         resource.
-        :type notebook_workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -515,8 +490,7 @@ class NotebookWorkspacesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -545,4 +519,4 @@ class NotebookWorkspacesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/start'}
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/default/start'}

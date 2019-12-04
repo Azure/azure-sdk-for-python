@@ -112,6 +112,7 @@ try:
     from ._models_py3 import TableGetPropertiesResource
     from ._models_py3 import TableGetResults
     from ._models_py3 import TableResource
+    from ._models_py3 import ThroughputSettingsGetPropertiesResource
     from ._models_py3 import ThroughputSettingsGetResults
     from ._models_py3 import ThroughputSettingsResource
     from ._models_py3 import ThroughputSettingsUpdateParameters
@@ -223,6 +224,7 @@ except (SyntaxError, ImportError):
     from ._models import TableGetPropertiesResource
     from ._models import TableGetResults
     from ._models import TableResource
+    from ._models import ThroughputSettingsGetPropertiesResource
     from ._models import ThroughputSettingsGetResults
     from ._models import ThroughputSettingsResource
     from ._models import ThroughputSettingsUpdateParameters
@@ -376,6 +378,7 @@ __all__ = [
     'TableGetPropertiesResource',
     'TableGetResults',
     'TableResource',
+    'ThroughputSettingsGetPropertiesResource',
     'ThroughputSettingsGetResults',
     'ThroughputSettingsResource',
     'ThroughputSettingsUpdateParameters',
