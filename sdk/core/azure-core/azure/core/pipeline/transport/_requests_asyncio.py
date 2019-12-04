@@ -39,11 +39,11 @@ from azure.core.exceptions import (
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
 from ._base_async import (
-    AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransport, RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse
+from ._base_requests_async import RequestsAsyncTransportBase
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ def _get_running_loop():
 
 
 #pylint: disable=too-many-ancestors
-class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
+class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
 
@@ -98,16 +98,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if hasattr(request.data, '__aiter__'):
-            # Need to consume that async generator, since requests can't do anything with it
-            # That's not ideal, but a list is our only choice. Memory not optimal here,
-            # but providing an async generator to a requests based transport is not optimal too
-            new_data = []
-            async for part in request.data:  # type: ignore
-                new_data.append(part)
-            data_to_send = iter(new_data)
-        else:
-            data_to_send = request.data  # type: ignore
+        data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(
                 None,
