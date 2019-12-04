@@ -42,60 +42,115 @@ class CloudError(Model):
     }
 
 
-class ConfigData(Model):
-    """The Advisor configuration data structure.
+class Resource(Model):
+    """An Azure resource.
 
-    :param id: The resource Id of the configuration resource.
-    :type id: str
-    :param type: The type of the configuration resource.
-    :type type: str
-    :param name: The name of the configuration resource.
-    :type name: str
-    :param properties: The list of property name/value pairs.
-    :type properties: ~azure.mgmt.advisor.models.ConfigDataProperties
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ConfigDataProperties'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ConfigData, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
 
 
-class ConfigDataProperties(Model):
-    """The list of property name/value pairs.
+class ConfigData(Resource):
+    """The Advisor configuration data structure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     :param exclude: Exclude the resource from Advisor evaluations. Valid
      values: False (default) or True.
     :type exclude: bool
     :param low_cpu_threshold: Minimum percentage threshold for Advisor low CPU
      utilization evaluation. Valid only for subscriptions. Valid values: 5
-     (default), 10, 15 or 20.
-    :type low_cpu_threshold: str
+     (default), 10, 15 or 20. Possible values include: '5', '10', '15', '20'
+    :type low_cpu_threshold: str or ~azure.mgmt.advisor.models.CpuThreshold
+    :param digests: Advisor digest configuration. Valid only for subscriptions
+    :type digests: list[~azure.mgmt.advisor.models.DigestConfig]
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'exclude': {'key': 'exclude', 'type': 'bool'},
-        'low_cpu_threshold': {'key': 'low_cpu_threshold', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'exclude': {'key': 'properties.exclude', 'type': 'bool'},
+        'low_cpu_threshold': {'key': 'properties.low_cpu_threshold', 'type': 'str'},
+        'digests': {'key': 'properties.digests', 'type': '[DigestConfig]'},
     }
 
     def __init__(self, **kwargs):
-        super(ConfigDataProperties, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
+        super(ConfigData, self).__init__(**kwargs)
         self.exclude = kwargs.get('exclude', None)
         self.low_cpu_threshold = kwargs.get('low_cpu_threshold', None)
+        self.digests = kwargs.get('digests', None)
+
+
+class DigestConfig(Model):
+    """Advisor Digest configuration entity.
+
+    :param action_group_resource_id: Action group resource id used by digest.
+    :type action_group_resource_id: str
+    :param frequency: Frequency that digest will be triggered. Value must
+     conform to ISO 8601 standard and must be greater than equal to 7 day and
+     less than or equal to 30 days.
+    :type frequency: str
+    :param categories: Categories to send digest for. If categories are not
+     provided, then digest will be sent for all categories.
+    :type categories: list[str or ~azure.mgmt.advisor.models.Category]
+    :param language: Language for digest content body. Value must be ISO 639-1
+     code for one of Azure portal supported languages. Otherwise, it will be
+     converted into one. Default value is English (en).
+    :type language: str
+    """
+
+    _attribute_map = {
+        'action_group_resource_id': {'key': 'actionGroupResourceId', 'type': 'str'},
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'language': {'key': 'language', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DigestConfig, self).__init__(**kwargs)
+        self.action_group_resource_id = kwargs.get('action_group_resource_id', None)
+        self.frequency = kwargs.get('frequency', None)
+        self.categories = kwargs.get('categories', None)
+        self.language = kwargs.get('language', None)
 
 
 class MetadataEntity(Model):
@@ -208,39 +263,6 @@ class OperationEntity(Model):
         super(OperationEntity, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
-
-
-class Resource(Model):
-    """An Azure resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class ResourceRecommendationBase(Resource):

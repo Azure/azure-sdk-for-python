@@ -25,7 +25,8 @@ class ConfigurationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-01-01".
+    :ivar configuration_name: Advisor configuration name. Value must be 'default'. Constant value: "default".
     """
 
     models = models
@@ -35,7 +36,8 @@ class ConfigurationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-19"
+        self.api_version = "2020-01-01"
+        self.configuration_name = "default"
 
         self.config = config
 
@@ -123,15 +125,15 @@ class ConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ARMErrorResponseBody or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.advisor.models.ARMErrorResponseBody or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.create_in_subscription.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'configurationName': self._serialize.url("self.configuration_name", self.configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -157,12 +159,14 @@ class ConfigurationsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 400]:
+        if response.status_code not in [200, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConfigData', response)
         if response.status_code == 400:
             deserialized = self._deserialize('ARMErrorResponseBody', response)
 
@@ -171,7 +175,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_in_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
+    create_in_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations/{configurationName}'}
 
     def list_by_resource_group(
             self, resource_group, custom_headers=None, raw=False, **operation_config):
@@ -256,15 +260,15 @@ class ConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ARMErrorResponseBody or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.advisor.models.ARMErrorResponseBody or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.create_in_resource_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'configurationName': self._serialize.url("self.configuration_name", self.configuration_name, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -291,12 +295,14 @@ class ConfigurationsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 400]:
+        if response.status_code not in [200, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConfigData', response)
         if response.status_code == 400:
             deserialized = self._deserialize('ARMErrorResponseBody', response)
 
@@ -305,4 +311,4 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}
+    create_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations/{configurationName}'}

@@ -12,7 +12,7 @@
 try:
     from ._models_py3 import ARMErrorResponseBody
     from ._models_py3 import ConfigData
-    from ._models_py3 import ConfigDataProperties
+    from ._models_py3 import DigestConfig
     from ._models_py3 import MetadataEntity
     from ._models_py3 import MetadataSupportedValueDetail
     from ._models_py3 import OperationDisplayInfo
@@ -24,7 +24,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMErrorResponseBody
     from ._models import ConfigData
-    from ._models import ConfigDataProperties
+    from ._models import DigestConfig
     from ._models import MetadataEntity
     from ._models import MetadataSupportedValueDetail
     from ._models import OperationDisplayInfo
@@ -40,6 +40,7 @@ from ._paged_models import ResourceRecommendationBasePaged
 from ._paged_models import SuppressionContractPaged
 from ._advisor_management_client_enums import (
     Scenario,
+    CpuThreshold,
     Category,
     Impact,
     Risk,
@@ -48,7 +49,7 @@ from ._advisor_management_client_enums import (
 __all__ = [
     'ARMErrorResponseBody',
     'ConfigData',
-    'ConfigDataProperties',
+    'DigestConfig',
     'MetadataEntity',
     'MetadataSupportedValueDetail',
     'OperationDisplayInfo',
@@ -63,6 +64,7 @@ __all__ = [
     'OperationEntityPaged',
     'SuppressionContractPaged',
     'Scenario',
+    'CpuThreshold',
     'Category',
     'Impact',
     'Risk',
