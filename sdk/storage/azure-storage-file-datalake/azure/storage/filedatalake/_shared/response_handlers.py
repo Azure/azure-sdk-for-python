@@ -34,9 +34,9 @@ _LOGGER = logging.getLogger(__name__)
 class PartialBatchErrorException(HttpResponseError):
     """There is a partial failure in batch operations.
 
-    :param message: The message of the exception.
+    :param str message: The message of the exception.
     :param response: Server response to be deserialized.
-    :param parts: A list of the parts in multipart response.
+    :param list parts: A list of the parts in multipart response.
     """
 
     def __init__(self, message, response, parts):
