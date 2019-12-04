@@ -43,7 +43,8 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransport, RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse
+from ._base_requests_async import RequestsAsyncTransportBase
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,7 +132,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         return TrioStreamDownloadGenerator(pipeline, self) # type: ignore
 
 
-class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
+class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the third party trio event loop.
 

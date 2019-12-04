@@ -43,7 +43,8 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransport, RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse
+from ._base_requests_async import RequestsAsyncTransportBase
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ def _get_running_loop():
 
 
 #pylint: disable=too-many-ancestors
-class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
+class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
 
