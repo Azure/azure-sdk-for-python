@@ -369,7 +369,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> int
+        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:
@@ -378,9 +378,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
-            The total number of handles closed. This could be 0 if the supplied
-            handle was not found.
-        :rtype: int
+            The number of handles closed (this may be 0 if the specified handle was not found)
+            and the number of handles failed to close in a dict.
+        :rtype: dict[str, int]
         """
         try:
             handle_id = handle.id # type: ignore
@@ -397,13 +397,16 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 **kwargs
             )
-            return response.get('number_of_handles_closed', 0)
+            return {
+                'handles_closed': response.get('number_of_handles_closed', 0),
+                'handles_failed': response.get('number_of_handles_failed', 0)
+            }
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
     def close_all_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> int
+        # type: (bool, Any) -> Dict[str, int]
         """Close any open file handles.
 
         This operation will block until the service has closed all open handles.
@@ -413,15 +416,17 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: The total number of handles closed.
-        :rtype: int
+        :returns: The number of handles closed (this may be 0 if the specified handle was not found)
+            and the number of handles failed to close in a dict.
+        :rtype: dict[str, int]
         """
         timeout = kwargs.pop('timeout', None)
         start_time = time.time()
 
         try_close = True
         continuation_token = None
-        total_handles = 0
+        total_closed = 0
+        total_failed = 0
         while try_close:
             try:
                 response = self._client.directory.force_close_handles(
@@ -437,10 +442,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 process_storage_error(error)
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
-            total_handles += response.get('number_of_handles_closed', 0)
+            total_closed += response.get('number_of_handles_closed', 0)
+            total_failed += response.get('number_of_handles_failed', 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
-        return total_handles
+        return {
+            'handles_closed': total_closed,
+            'handles_failed': total_failed
+        }
 
     @distributed_trace
     def get_directory_properties(self, **kwargs):
