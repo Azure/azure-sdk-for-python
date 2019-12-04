@@ -11,8 +11,8 @@ from ._generated.models import SourceModifiedAccessConditions
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # TODO: extract this method to shared folder also add some comments, so that share, datalake and blob can use it.
     # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # TODO: extract this method to shared folder also add some comments, so that share, datalake and blob can use it.
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
