@@ -44,7 +44,7 @@ class ActionResponse(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'workflow_id': {'key': 'properties.workflowId', 'type': 'str'},
-        'logic_app_resource_id': {'key': 'properties.LogicAppResourceId', 'type': 'str'},
+        'logic_app_resource_id': {'key': 'properties.logicAppResourceId', 'type': 'str'},
     }
 
     def __init__(self, *, etag: str=None, workflow_id: str=None, logic_app_resource_id: str=None, **kwargs) -> None:
