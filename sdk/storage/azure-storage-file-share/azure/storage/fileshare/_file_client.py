@@ -12,8 +12,6 @@ from typing import ( # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from azure.storage.fileshare._serialize import get_source_conditions
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -21,7 +19,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.paging import ItemPaged
+from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
@@ -33,6 +31,7 @@ from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
+from ._serialize import get_source_conditions
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
