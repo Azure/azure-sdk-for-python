@@ -39,8 +39,21 @@ jobs:
 
   - ${{if eq(variables['Build.Reason'], 'PullRequest')}}:
     - template: ../steps/pr-build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}        
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+
   - ${{if ne(variables['Build.Reason'], 'PullRequest')}}:
     - template: ../steps/ci-build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}        
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}        
 
   - job: 'RunMyPy'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
