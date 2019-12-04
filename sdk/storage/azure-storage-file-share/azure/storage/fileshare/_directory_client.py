@@ -398,8 +398,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 **kwargs
             )
             return {
-                'handles_closed': response.get('number_of_handles_closed', 0),
-                'handles_failed': response.get('number_of_handles_failed', 0)
+                'closed_handles_count': response.get('number_of_handles_closed', 0),
             }
         except StorageErrorException as error:
             process_storage_error(error)
@@ -426,7 +425,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         try_close = True
         continuation_token = None
         total_closed = 0
-        total_failed = 0
         while try_close:
             try:
                 response = self._client.directory.force_close_handles(
@@ -443,12 +441,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
             total_closed += response.get('number_of_handles_closed', 0)
-            total_failed += response.get('number_of_handles_failed', 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
         return {
-            'handles_closed': total_closed,
-            'handles_failed': total_failed
+            'closed_handles_count': total_closed,
         }
 
     @distributed_trace
