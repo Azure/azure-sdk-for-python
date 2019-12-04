@@ -8,8 +8,10 @@
 import unittest
 from datetime import datetime, timedelta
 
+from azure.core import MatchConditions
+
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ClientAuthenticationError
+    ClientAuthenticationError, ResourceModifiedError
 from azure.storage.filedatalake import ContentSettings, generate_account_sas, generate_file_sas, \
     ResourceTypes, AccountSasPermissions, \
     DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions
@@ -98,6 +100,21 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @record
+    def test_create_file_using_oauth_token_credential(self):
+        # Arrange
+        file_name = self._get_file_reference()
+        token_credential = self.generate_oauth_token()
+
+        # Create a directory to put the file under that
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name,
+                                         credential=token_credential)
+
+        response = file_client.create_file()
+
+        # Assert
+        self.assertIsNotNone(response)
+
+    @record
     def test_create_file_with_existing_name(self):
         # Arrange
         file_client = self._create_file_and_return_client()
@@ -105,7 +122,7 @@ class FileTest(StorageTestCase):
         with self.assertRaises(ResourceExistsError):
             # if the file exists then throw error
             # if_none_match='*' is to make sure no existing file
-            file_client.create_file(if_none_match='*')
+            file_client.create_file(match_condition=MatchConditions.IfMissing)
 
     @record
     def test_create_file_with_lease_id(self):
@@ -184,6 +201,28 @@ class FileTest(StorageTestCase):
         self.assertEqual(prop['size'], 3)
 
     @record
+    def test_flush_data_with_match_condition(self):
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        resp = file_client.create_file()
+
+        # Act
+        file_client.append_data(b'abc', 0, 3)
+
+        # flush is successful because it isn't touched
+        response = file_client.flush_data(3, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
+
+        file_client.append_data(b'abc', 3, 3)
+        with self.assertRaises(ResourceModifiedError):
+            # flush is unsuccessful because extra data were appended.
+            file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
+
+    @record
     def test_read_file(self):
         file_client = self._create_file_and_return_client()
         data = self.get_random_bytes(1024)
@@ -194,6 +233,42 @@ class FileTest(StorageTestCase):
 
         # doanload the data and make sure it is the same as uploaded data
         downloaded_data = file_client.read_file()
+        self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_read_file_with_user_delegation_key(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Create file
+        file_client = self._create_file_and_return_client()
+        data = self.get_random_bytes(1024)
+        # Upload data to file
+        file_client.append_data(data, 0, len(data))
+        file_client.flush_data(len(data))
+
+        # Get user delegation key
+        token_credential = self.generate_oauth_token()
+        service_client = DataLakeServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
+                                                                     datetime.utcnow() + timedelta(hours=1))
+
+        sas_token = generate_file_sas(file_client.account_name,
+                                      file_client.file_system_name,
+                                      None,
+                                      file_client.path_name,
+                                      user_delegation_key=user_delegation_key,
+                                      permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                      expiry=datetime.utcnow() + timedelta(hours=1),
+                                      )
+
+        # doanload the data and make sure it is the same as uploaded data
+        new_file_client = DataLakeFileClient(self._get_account_url(),
+                                             file_client.file_system_name,
+                                             file_client.path_name,
+                                             credential=sas_token)
+        downloaded_data = new_file_client.read_file()
         self.assertEqual(data, downloaded_data)
 
     @record
@@ -316,13 +391,32 @@ class FileTest(StorageTestCase):
             file_client.get_file_properties()
 
     @record
+    def test_delete_file_with_if_unmodified_since(self):
+        # Arrange
+        file_client = self._create_file_and_return_client()
+
+        prop = file_client.get_file_properties()
+        file_client.delete_file(if_unmodified_since=prop['last_modified'])
+
+        # Make sure the file was deleted
+        with self.assertRaises(ResourceNotFoundError):
+            file_client.get_file_properties()
+
+    @record
     def test_set_access_control(self):
         file_client = self._create_file_and_return_client()
 
-        response = file_client.set_access_control(permissions='0777')\
+        response = file_client.set_access_control(permissions='0777')
 
         # Assert
         self.assertIsNotNone(response)
+
+    @record
+    def test_set_access_control_with_match_conditions(self):
+        file_client = self._create_file_and_return_client()
+
+        with self.assertRaises(ResourceModifiedError):
+            file_client.set_access_control(permissions='0777', match_condition=MatchConditions.IfMissing)
 
     @record
     def test_get_access_control(self):
@@ -331,6 +425,19 @@ class FileTest(StorageTestCase):
 
         # Act
         response = file_client.get_access_control()
+
+        # Assert
+        self.assertIsNotNone(response)
+
+    @record
+    def test_get_access_control_with_if_modified_since(self):
+        file_client = self._create_file_and_return_client()
+        file_client.set_access_control(permissions='0777')
+
+        prop = file_client.get_file_properties()
+
+        # Act
+        response = file_client.get_access_control(if_modified_since=prop['last_modified']-timedelta(minutes=15))
 
         # Assert
         self.assertIsNotNone(response)

@@ -235,7 +235,7 @@ class PathProperties(object):
         self.group = kwargs.get('group', None)
         self.permissions = kwargs.get('permissions', None)
         self.last_modified = kwargs.get('last_modified', None)
-        self.is_directory = kwargs.get('is_directory', None)
+        self.is_directory = kwargs.get('is_directory', False)
         self.etag = kwargs.get('etag', None)
         self.content_length = kwargs.get('content_length', None)
 
@@ -247,7 +247,7 @@ class PathProperties(object):
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
         path_prop.last_modified = generated.last_modified
-        path_prop.is_directory = generated.is_directory
+        path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
         return path_prop

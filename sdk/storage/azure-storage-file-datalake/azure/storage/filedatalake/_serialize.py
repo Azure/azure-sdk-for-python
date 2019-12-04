@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from azure.storage.blob._serialize import _get_match_headers  # pylint: disable=protected-access
 from ._shared import encode_base64
 from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
     SourceModifiedAccessConditions, LeaseAccessConditions
@@ -28,21 +29,25 @@ def add_metadata_headers(metadata=None):
 
 
 def get_mod_conditions(kwargs):
-    mod_conditions = ModifiedAccessConditions(
+    # type: (Dict[str, Any]) -> ModifiedAccessConditions
+    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
+    return ModifiedAccessConditions(
         if_modified_since=kwargs.pop('if_modified_since', None),
         if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=kwargs.pop('if_match', None),
-        if_none_match=kwargs.pop('if_none_match', None))
-    return mod_conditions
+        if_match=if_match or kwargs.pop('if_match', None),
+        if_none_match=if_none_match or kwargs.pop('if_none_match', None)
+    )
 
 
 def get_source_mod_conditions(kwargs):
-    mod_conditions = SourceModifiedAccessConditions(
+    # type: (Dict[str, Any]) -> SourceModifiedAccessConditions
+    if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
+    return SourceModifiedAccessConditions(
         source_if_modified_since=kwargs.pop('source_if_modified_since', None),
         source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_if_match=kwargs.pop('source_if_match', None),
-        source_if_none_match=kwargs.pop('source_if_none_match', None))
-    return mod_conditions
+        source_if_match=if_match or kwargs.pop('source_if_match', None),
+        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
+    )
 
 
 def get_path_http_headers(content_settings):
