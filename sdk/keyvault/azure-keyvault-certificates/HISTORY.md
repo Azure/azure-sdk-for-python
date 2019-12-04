@@ -1,6 +1,7 @@
 # Release History
 
 ### 4.0.0b6
+- Updated `msrest` requirement to >=0.6.0
 - Renamed `get_policy` to `get_certificate_policy`
 - Renamed `update_policy` to `update_certificate_policy`
 - Renamed `create_contacts` to `set_contacts`
@@ -19,7 +20,6 @@ directly onto `CertificateIssuer`
 - Renamed the `thumbprint` property of `CertificateProperties` to `x509_thumbprint`
 - Added `WellKnownIssuerNames` enum class that holds popular issuer names
 - Renamed `SecretContentType` enum class to `CertificateContentType`
-
 
 
 ### 4.0.0b5
