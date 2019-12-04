@@ -364,7 +364,7 @@ class BlobServiceProperties(Resource):
      request’s version is not specified. Possible values include version
      2008-10-27 and all more recent versions.
     :type default_service_version: str
-    :param delete_retention_policy: The blob service properties for soft
+    :param delete_retention_policy: The blob service properties for blob soft
      delete.
     :type delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
@@ -373,12 +373,15 @@ class BlobServiceProperties(Resource):
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
+    :ivar sku: Sku name and tier.
+    :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -390,6 +393,7 @@ class BlobServiceProperties(Resource):
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, **kwargs):
@@ -399,6 +403,7 @@ class BlobServiceProperties(Resource):
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
         self.change_feed = kwargs.get('change_feed', None)
+        self.sku = None
 
 
 class ChangeFeed(Model):
@@ -823,6 +828,12 @@ class Endpoints(Model):
     :vartype web: str
     :ivar dfs: Gets the dfs endpoint.
     :vartype dfs: str
+    :param microsoft_endpoints: Gets the microsoft routing storage endpoints.
+    :type microsoft_endpoints:
+     ~azure.mgmt.storage.v2019_06_01.models.StorageAccountMicrosoftEndpoints
+    :param internet_endpoints: Gets the internet routing storage endpoints
+    :type internet_endpoints:
+     ~azure.mgmt.storage.v2019_06_01.models.StorageAccountInternetEndpoints
     """
 
     _validation = {
@@ -841,6 +852,8 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
         'web': {'key': 'web', 'type': 'str'},
         'dfs': {'key': 'dfs', 'type': 'str'},
+        'microsoft_endpoints': {'key': 'microsoftEndpoints', 'type': 'StorageAccountMicrosoftEndpoints'},
+        'internet_endpoints': {'key': 'internetEndpoints', 'type': 'StorageAccountInternetEndpoints'},
     }
 
     def __init__(self, **kwargs):
@@ -851,6 +864,8 @@ class Endpoints(Model):
         self.file = None
         self.web = None
         self.dfs = None
+        self.microsoft_endpoints = kwargs.get('microsoft_endpoints', None)
+        self.internet_endpoints = kwargs.get('internet_endpoints', None)
 
 
 class ErrorResponse(Model):
@@ -930,12 +945,19 @@ class FileServiceProperties(Resource):
      included in the request body, all CORS rules will be deleted, and CORS
      will be disabled for the File service.
     :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    :param share_delete_retention_policy: The file service properties for
+     share soft delete.
+    :type share_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
+    :ivar sku: Sku name and tier.
+    :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -943,11 +965,15 @@ class FileServiceProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+        'share_delete_retention_policy': {'key': 'properties.shareDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, **kwargs):
         super(FileServiceProperties, self).__init__(**kwargs)
         self.cors = kwargs.get('cors', None)
+        self.share_delete_retention_policy = kwargs.get('share_delete_retention_policy', None)
+        self.sku = None
 
 
 class FileShare(AzureEntityResource):
@@ -2218,6 +2244,37 @@ class Restriction(Model):
         self.reason_code = kwargs.get('reason_code', None)
 
 
+class RoutingPreference(Model):
+    """Routing preference defines the type of network, either microsoft or
+    internet routing to be used to deliver the user data, the default option is
+    microsoft routing.
+
+    :param routing_choice: Routing Choice defines the kind of network routing
+     opted by the user. Possible values include: 'MicrosoftRouting',
+     'InternetRouting'
+    :type routing_choice: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingChoice
+    :param publish_microsoft_endpoints: A boolean flag which indicates whether
+     microsoft routing storage endpoints are to be published
+    :type publish_microsoft_endpoints: bool
+    :param publish_internet_endpoints: A boolean flag which indicates whether
+     internet routing storage endpoints are to be published
+    :type publish_internet_endpoints: bool
+    """
+
+    _attribute_map = {
+        'routing_choice': {'key': 'routingChoice', 'type': 'str'},
+        'publish_microsoft_endpoints': {'key': 'publishMicrosoftEndpoints', 'type': 'bool'},
+        'publish_internet_endpoints': {'key': 'publishInternetEndpoints', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RoutingPreference, self).__init__(**kwargs)
+        self.routing_choice = kwargs.get('routing_choice', None)
+        self.publish_microsoft_endpoints = kwargs.get('publish_microsoft_endpoints', None)
+        self.publish_internet_endpoints = kwargs.get('publish_internet_endpoints', None)
+
+
 class ServiceSasParameters(Model):
     """The parameters to list service SAS credentials of a specific resource.
 
@@ -2346,69 +2403,29 @@ class ServiceSpecification(Model):
 class Sku(Model):
     """The SKU of the storage account.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Gets or sets the SKU name. Required for account
-     creation; optional for update. Note that in older versions, SKU name was
-     called accountType. Possible values include: 'Standard_LRS',
+    :param name: Required. Possible values include: 'Standard_LRS',
      'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS',
      'Premium_ZRS', 'Standard_GZRS', 'Standard_RAGZRS'
     :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
-    :ivar tier: Gets the SKU tier. This is based on the SKU name. Possible
-     values include: 'Standard', 'Premium'
-    :vartype tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
-    :ivar resource_type: The type of the resource, usually it is
-     'storageAccounts'.
-    :vartype resource_type: str
-    :ivar kind: Indicates the type of storage account. Possible values
-     include: 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage',
-     'BlockBlobStorage'
-    :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
-    :ivar locations: The set of locations that the SKU is available. This will
-     be supported and registered Azure Geo Regions (e.g. West US, East US,
-     Southeast Asia, etc.).
-    :vartype locations: list[str]
-    :ivar capabilities: The capability information in the specified SKU,
-     including file encryption, network ACLs, change notification, etc.
-    :vartype capabilities:
-     list[~azure.mgmt.storage.v2019_06_01.models.SKUCapability]
-    :param restrictions: The restrictions because of which SKU cannot be used.
-     This is empty if there are no restrictions.
-    :type restrictions:
-     list[~azure.mgmt.storage.v2019_06_01.models.Restriction]
+    :param tier: Possible values include: 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
     """
 
     _validation = {
         'name': {'required': True},
-        'tier': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'kind': {'readonly': True},
-        'locations': {'readonly': True},
-        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'SkuTier'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
-        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
     }
 
     def __init__(self, **kwargs):
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.tier = None
-        self.resource_type = None
-        self.kind = None
-        self.locations = None
-        self.capabilities = None
-        self.restrictions = kwargs.get('restrictions', None)
+        self.tier = kwargs.get('tier', None)
 
 
 class SKUCapability(Model):
@@ -2441,6 +2458,70 @@ class SKUCapability(Model):
         super(SKUCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
+
+
+class SkuInformation(Model):
+    """Storage SKU and its properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Possible values include: 'Standard_LRS',
+     'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS',
+     'Premium_ZRS', 'Standard_GZRS', 'Standard_RAGZRS'
+    :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
+    :param tier: Possible values include: 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
+    :ivar resource_type: The type of the resource, usually it is
+     'storageAccounts'.
+    :vartype resource_type: str
+    :ivar kind: Indicates the type of storage account. Possible values
+     include: 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage',
+     'BlockBlobStorage'
+    :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
+    :ivar locations: The set of locations that the SKU is available. This will
+     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     Southeast Asia, etc.).
+    :vartype locations: list[str]
+    :ivar capabilities: The capability information in the specified SKU,
+     including file encryption, network ACLs, change notification, etc.
+    :vartype capabilities:
+     list[~azure.mgmt.storage.v2019_06_01.models.SKUCapability]
+    :param restrictions: The restrictions because of which SKU cannot be used.
+     This is empty if there are no restrictions.
+    :type restrictions:
+     list[~azure.mgmt.storage.v2019_06_01.models.Restriction]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'resource_type': {'readonly': True},
+        'kind': {'readonly': True},
+        'locations': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'SkuTier'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuInformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.resource_type = None
+        self.kind = None
+        self.locations = None
+        self.capabilities = None
+        self.restrictions = kwargs.get('restrictions', None)
 
 
 class TrackedResource(Resource):
@@ -2595,6 +2676,10 @@ class StorageAccount(TrackedResource):
      associated with the specified storage account
     :vartype private_endpoint_connections:
      list[~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection]
+    :param routing_preference: Maintains information about the network routing
+     choice opted by the user for data transfer
+    :type routing_preference:
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
     _validation = {
@@ -2651,6 +2736,7 @@ class StorageAccount(TrackedResource):
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
     }
 
     def __init__(self, **kwargs):
@@ -2678,6 +2764,7 @@ class StorageAccount(TrackedResource):
         self.failover_in_progress = None
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.private_endpoint_connections = None
+        self.routing_preference = kwargs.get('routing_preference', None)
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -2770,6 +2857,10 @@ class StorageAccountCreateParameters(Model):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
+    :param routing_preference: Maintains information about the network routing
+     choice opted by the user for data transfer
+    :type routing_preference:
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
     _validation = {
@@ -2792,6 +2883,7 @@ class StorageAccountCreateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
     }
 
     def __init__(self, **kwargs):
@@ -2809,6 +2901,46 @@ class StorageAccountCreateParameters(Model):
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
+        self.routing_preference = kwargs.get('routing_preference', None)
+
+
+class StorageAccountInternetEndpoints(Model):
+    """The URIs that are used to perform a retrieval of a public blob, file, web
+    or dfs object via a internet routing endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar blob: Gets the blob endpoint.
+    :vartype blob: str
+    :ivar file: Gets the file endpoint.
+    :vartype file: str
+    :ivar web: Gets the web endpoint.
+    :vartype web: str
+    :ivar dfs: Gets the dfs endpoint.
+    :vartype dfs: str
+    """
+
+    _validation = {
+        'blob': {'readonly': True},
+        'file': {'readonly': True},
+        'web': {'readonly': True},
+        'dfs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'blob': {'key': 'blob', 'type': 'str'},
+        'file': {'key': 'file', 'type': 'str'},
+        'web': {'key': 'web', 'type': 'str'},
+        'dfs': {'key': 'dfs', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageAccountInternetEndpoints, self).__init__(**kwargs)
+        self.blob = None
+        self.file = None
+        self.web = None
+        self.dfs = None
 
 
 class StorageAccountKey(Model):
@@ -2869,6 +3001,55 @@ class StorageAccountListKeysResult(Model):
     def __init__(self, **kwargs):
         super(StorageAccountListKeysResult, self).__init__(**kwargs)
         self.keys = None
+
+
+class StorageAccountMicrosoftEndpoints(Model):
+    """The URIs that are used to perform a retrieval of a public blob, queue,
+    table, web or dfs object via a microsoft routing endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar blob: Gets the blob endpoint.
+    :vartype blob: str
+    :ivar queue: Gets the queue endpoint.
+    :vartype queue: str
+    :ivar table: Gets the table endpoint.
+    :vartype table: str
+    :ivar file: Gets the file endpoint.
+    :vartype file: str
+    :ivar web: Gets the web endpoint.
+    :vartype web: str
+    :ivar dfs: Gets the dfs endpoint.
+    :vartype dfs: str
+    """
+
+    _validation = {
+        'blob': {'readonly': True},
+        'queue': {'readonly': True},
+        'table': {'readonly': True},
+        'file': {'readonly': True},
+        'web': {'readonly': True},
+        'dfs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'blob': {'key': 'blob', 'type': 'str'},
+        'queue': {'key': 'queue', 'type': 'str'},
+        'table': {'key': 'table', 'type': 'str'},
+        'file': {'key': 'file', 'type': 'str'},
+        'web': {'key': 'web', 'type': 'str'},
+        'dfs': {'key': 'dfs', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageAccountMicrosoftEndpoints, self).__init__(**kwargs)
+        self.blob = None
+        self.queue = None
+        self.table = None
+        self.file = None
+        self.web = None
+        self.dfs = None
 
 
 class StorageAccountRegenerateKeyParameters(Model):
@@ -2938,6 +3119,10 @@ class StorageAccountUpdateParameters(Model):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
+    :param routing_preference: Maintains information about the network routing
+     choice opted by the user for data transfer
+    :type routing_preference:
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -2955,6 +3140,7 @@ class StorageAccountUpdateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -2970,6 +3156,7 @@ class StorageAccountUpdateParameters(Model):
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
+        self.routing_preference = kwargs.get('routing_preference', None)
         self.kind = kwargs.get('kind', None)
 
 
