@@ -395,7 +395,7 @@ class AlertRulesOperations(object):
     get_action.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}'}
 
     def create_or_update_action(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, action_id, etag=None, trigger_uri=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, action_id, action, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the action of alert rule.
 
         :param resource_group_name: The name of the resource group within the
@@ -410,10 +410,8 @@ class AlertRulesOperations(object):
         :type rule_id: str
         :param action_id: Action ID
         :type action_id: str
-        :param etag: Etag of the azure resource
-        :type etag: str
-        :param trigger_uri: Logic App Callback URL for this specific workflow.
-        :type trigger_uri: str
+        :param action: The action
+        :type action: ~azure.mgmt.securityinsight.models.ActionRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -424,8 +422,6 @@ class AlertRulesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        action = models.ActionRequest(etag=etag, trigger_uri=trigger_uri)
-
         # Construct URL
         url = self.create_or_update_action.metadata['url']
         path_format_arguments = {
