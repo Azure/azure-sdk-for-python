@@ -51,26 +51,26 @@ if __name__ == "__main__":
         help="The path to the setup.py (not including the file) for the package we want to package into a wheel and install.",
         required=True,
     )
-    
+
     parser.add_argument(
         "-s",
         "--skip-install",
         dest="skip_install",
         help="Create whl in distribution directory and skip installing it",
-        default=False
+        default=False,
     )
 
     parser.add_argument(
         "-e",
         "--extra-index-url",
         dest="extra_index_url",
-        help="Index URL to search for packages. This can be set to install package from azure devops feed"
+        help="Index URL to search for packages. This can be set to install package from azure devops feed",
     )
 
     parser.add_argument(
-         "--install-preview",
+        "--install-preview",
         dest="install_preview",
-        help="Install preview version of dependent packages. This is helpful when installing dev build version of packages from alternate package location"
+        help="Install preview version of dependent packages. This is helpful when installing dev build version of packages from alternate package location",
     )
 
     args = parser.parse_args()
@@ -92,12 +92,14 @@ if __name__ == "__main__":
     cleanup_build_artifacts(args.target_setup)
 
     if args.skip_install:
-        logging.info("Flag to skip install whl is passed. Skipping package installation")
-    else:        
+        logging.info(
+            "Flag to skip install whl is passed. Skipping package installation"
+        )
+    else:
         for wheel in discovered_wheels:
             # if the environment variable is set, that means that this is running where we
             # want to use the pre-built wheels
-            pkg_wheel_path =''
+            pkg_wheel_path = ""
             if os.getenv("PREBUILT_WHEEL_DIR") is not None:
                 # find the wheel in the set of prebuilt wheels
                 whl_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
@@ -113,16 +115,16 @@ if __name__ == "__main__":
                     )
                     exit(1)
             else:
-                pkg_wheel_path = os.path.join(args.distribution_directory, wheel)                
+                pkg_wheel_path = os.path.join(args.distribution_directory, wheel)
                 logging.info("Installing {w} from fresh wheel.".format(w=wheel))
 
-            commands =  [
-                            sys.executable,
-                            "-m",
-                            "pip",
-                            "install",
-                            pkg_wheel_path,
-                        ]
+            commands = [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                pkg_wheel_path,
+            ]
 
             # If extra index URL is passed then set it as argument to pip command
             if args.extra_index_url:
