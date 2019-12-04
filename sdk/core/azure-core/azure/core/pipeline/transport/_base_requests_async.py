@@ -40,3 +40,9 @@ class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):
         else:
             data_to_send = request.data  # type: ignore
         return data_to_send
+
+    async def __aenter__(self):
+        return super(RequestsAsyncTransportBase, self).__enter__()
+
+    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
+        return super(RequestsAsyncTransportBase, self).__exit__()
