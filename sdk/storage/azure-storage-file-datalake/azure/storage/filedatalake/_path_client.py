@@ -155,15 +155,11 @@ class PathClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Dict[str, Union[str, datetime]]
@@ -214,15 +210,11 @@ class PathClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
@@ -271,12 +263,14 @@ class PathClient(StorageAccountHostsMixin):
          read, write, or execute permission.  The sticky bit is also supported.
          Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
          supported.
+         permissions and acl are mutually exclusive.
         :type permissions: str
         :param acl: Sets POSIX access control rights on files and directories.
          The value is a comma-separated list of access control entries. Each
          access control entry (ACE) consists of a scope, a type, a user or
          group identifier, and permissions in the format
          "[scope:][type]:[id]:[permissions]".
+         permissions and acl are mutually exclusive.
         :type acl: str
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
@@ -294,15 +288,11 @@ class PathClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword: response dict (Etag and last modified).
@@ -360,15 +350,11 @@ class PathClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :keyword str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword: response dict.
@@ -453,15 +439,11 @@ class PathClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
         :param ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -474,15 +456,11 @@ class PathClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str source_if_match:
-            An ETag value, or the wildcard character (*). Specify this header to perform
-            the operation only if the resource's ETag matches the value specified.
-        :param str source_if_none_match:
-            An ETag value, or the wildcard character (*). Specify this header
-            to perform the operation only if the resource's ETag does not match
-            the value specified. Specify the wildcard character (*) to perform
-            the operation only if the resource does not exist, and fail the
-            operation if it does exist.
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions source_match_condition:
+            The source match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return:
@@ -519,7 +497,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -568,7 +546,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -612,7 +590,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -653,7 +631,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

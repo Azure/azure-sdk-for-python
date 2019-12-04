@@ -13,15 +13,15 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d7786b8a-16b1-11ea-b75f-001a7dda7113
+      - f15376b4-16b1-11ea-bb04-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:26 GMT
+      - Wed, 04 Dec 2019 16:20:10 GMT
       x-ms-properties:
       - ''
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystema5631265/filea5631265?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystem766916aa/file766916aa?resource=file
   response:
     body:
       string: ''
@@ -29,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 04 Dec 2019 16:19:26 GMT
+      - Wed, 04 Dec 2019 16:20:09 GMT
       ETag:
-      - '"0x8D778D5BBCF5439"'
+      - '"0x8D778D5D5BBC41C"'
       Last-Modified:
-      - Wed, 04 Dec 2019 16:19:27 GMT
+      - Wed, 04 Dec 2019 16:20:10 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 348b2aa3-301f-002b-0abe-aacd58000000
+      - 19fc004c-a01f-005b-32be-aa74af000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -59,35 +59,35 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - d7ae2a7a-16b1-11ea-9728-001a7dda7113
+      - f19b0ab6-16b1-11ea-ba73-001a7dda7113
       x-ms-date:
-      - Wed, 04 Dec 2019 16:19:27 GMT
-      x-ms-properties:
-      - ''
+      - Wed, 04 Dec 2019 16:20:10 GMT
+      x-ms-permissions:
+      - '0777'
       x-ms-version:
       - '2019-02-02'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystema5631265/filea5631265?resource=file
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystem766916aa/file766916aa?action=setAccessControl
   response:
     body:
-      string: '{"error":{"code":"PathAlreadyExists","message":"The specified path
-        already exists.\nRequestId:348b2aa4-301f-002b-0bbe-aacd58000000\nTime:2019-12-04T16:19:27.1411630Z"}}'
+      string: '{"error":{"code":"ConditionNotMet","message":"The condition specified
+        using HTTP conditional header(s) is not met.\nRequestId:19fc004d-a01f-005b-33be-aa74af000000\nTime:2019-12-04T16:20:10.6664571Z"}}'
     headers:
       Content-Length:
-      - '168'
+      - '200'
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 04 Dec 2019 16:19:26 GMT
+      - Wed, 04 Dec 2019 16:20:10 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
-      - PathAlreadyExists
+      - ConditionNotMet
       x-ms-request-id:
-      - 348b2aa4-301f-002b-0bbe-aacd58000000
+      - 19fc004d-a01f-005b-33be-aa74af000000
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 409
-      message: The specified path already exists.
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
 version: 1
