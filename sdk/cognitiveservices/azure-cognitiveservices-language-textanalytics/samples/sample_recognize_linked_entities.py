@@ -27,21 +27,21 @@ OUTPUT:
     Entity: Bellevue, Washington
     Url: https://en.wikipedia.org/wiki/Bellevue,_Washington
     Data Source: Wikipedia
-    Score: 0.6983422583846437
+    Score: 0.698
     Offset: 36
     Length: 20
 
     Entity: Microsoft
     Url: https://en.wikipedia.org/wiki/Microsoft
     Data Source: Wikipedia
-    Score: 0.15940757036774889
+    Score: 0.159
     Offset: 0
     Length: 9
 
     Entity: January
     Url: https://en.wikipedia.org/wiki/January
     Data Source: Wikipedia
-    Score: 0.006847036169509657
+    Score: 0.007
     Offset: 60
     Length: 7
 
@@ -51,28 +51,28 @@ OUTPUT:
     Entity: Steve Ballmer
     Url: https://en.wikipedia.org/wiki/Steve_Ballmer
     Data Source: Wikipedia
-    Score: 0.6718822567632026
+    Score: 0.672
     Offset: 0
     Length: 13
 
     Entity: Satya Nadella
     Url: https://en.wikipedia.org/wiki/Satya_Nadella
     Data Source: Wikipedia
-    Score: 0.6813953196521605
+    Score: 0.681
     Offset: 68
     Length: 13
 
     Entity: Microsoft
     Url: https://en.wikipedia.org/wiki/Microsoft
     Data Source: Wikipedia
-    Score: 0.16407777316549788
+    Score: 0.164
     Offset: 37
     Length: 9
 
     Entity: Chief executive officer
     Url: https://en.wikipedia.org/wiki/Chief_executive_officer
     Data Source: Wikipedia
-    Score: 0.07353413770716566
+    Score: 0.074
     Offset: 30
     Length: 3
 
@@ -82,14 +82,14 @@ OUTPUT:
     Entity: Apple Inc.
     Url: https://en.wikipedia.org/wiki/Apple_Inc.
     Data Source: Wikipedia
-    Score: 0.6772289264768614
+    Score: 0.677
     Offset: 19
     Length: 10
 
     Entity: Microsoft
     Url: https://en.wikipedia.org/wiki/Microsoft
     Data Source: Wikipedia
-    Score: 0.13153454442693202
+    Score: 0.132
     Offset: 0
     Length: 9
 
@@ -106,6 +106,7 @@ class RecognizeLinkedEntitiesSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def recognize_linked_entities(self):
+        # [START batch_recognize_linked_entities]
         from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -124,12 +125,13 @@ class RecognizeLinkedEntitiesSample(object):
                 print("Url: {}".format(entity.url))
                 print("Data Source: {}".format(entity.data_source))
                 for match in entity.matches:
-                    print("Score: {}".format(match.score))
+                    print("Score: {0:.3f}".format(match.score))
                     print("Offset: {}".format(match.offset))
                     print("Length: {}\n".format(match.length))
             print("------------------------------------------")
+        # [END batch_recognize_linked_entities]
 
-    def advanced_scenario_recognize_linked_entities(self):
+    def alternative_scenario_recognize_linked_entities(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -164,4 +166,4 @@ class RecognizeLinkedEntitiesSample(object):
 if __name__ == '__main__':
     sample = RecognizeLinkedEntitiesSample()
     sample.recognize_linked_entities()
-    sample.advanced_scenario_recognize_linked_entities()
+    sample.alternative_scenario_recognize_linked_entities()

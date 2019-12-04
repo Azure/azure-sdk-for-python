@@ -31,12 +31,12 @@ OUTPUT:
 
     Where this entity appears in the text:
     Match 1: Easter Island
-    Score: 0.2722551909027642
+    Score: 0.272
     Offset: 0
     Length: 13
 
     Match 2: Rapa Nui
-    Score: 0.054383926475293
+    Score: 0.054
     Offset: 97
     Length: 8
 
@@ -46,7 +46,7 @@ OUTPUT:
 
     Where this entity appears in the text:
     Match 1: Polynesia
-    Score: 0.16260647143187268
+    Score: 0.163
     Offset: 67
     Length: 9
 
@@ -56,9 +56,10 @@ OUTPUT:
 
     Where this entity appears in the text:
     Match 1: Chilean
-    Score: 0.044830769978464025
+    Score: 0.045
     Offset: 17
     Length: 7
+
 """
 
 import os
@@ -70,6 +71,7 @@ class SingleRecognizeLinkedEntitiesSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def recognize_linked_entities(self):
+        # [START single_recognize_linked_entities]
         from azure.cognitiveservices.language.textanalytics import single_recognize_linked_entities
 
         text = "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia. " \
@@ -89,9 +91,10 @@ class SingleRecognizeLinkedEntitiesSample(object):
             print("Where this entity appears in the text:")
             for idx, match in enumerate(entity.matches):
                 print("Match {}: {}".format(idx+1, match.text))
-                print("Score: {}".format(match.score))
+                print("Score: {0:.3f}".format(match.score))
                 print("Offset: {}".format(match.offset))
                 print("Length: {}\n".format(match.length))
+        # [END single_recognize_linked_entities]
 
 
 if __name__ == '__main__':

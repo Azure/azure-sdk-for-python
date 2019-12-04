@@ -42,6 +42,7 @@ class SingleDetectLanguageSampleAsync(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def detect_language_async(self):
+        # [START single_detect_language_async]
         from azure.cognitiveservices.language.textanalytics.aio import single_detect_language
 
         text = "I need to take my cat to the veterinarian."
@@ -59,6 +60,7 @@ class SingleDetectLanguageSampleAsync(object):
         print("Document Statistics:")
         print("Text character count: {}".format(result.statistics.characters_count))
         print("Transactions count: {}".format(result.statistics.transactions_count))
+        # [END single_detect_language_async]
 
 
 async def main():

@@ -23,54 +23,55 @@ USAGE:
 OUTPUT:
     Document text: I had the best day of my life.
     Overall sentiment: positive
-    Overall scores: positive=0.9992358684539795; neutral=0.0006491420208476; negative=0.0001150449024863
+    Overall scores: positive=0.999; neutral=0.999; negative=0.999
 
     Sentence 1 sentiment: positive
-    Sentence score: positive=0.9992358684539795; neutral=0.0006491420208476; negative=0.0001150449024863
+    Sentence score: positive=0.999; neutral=0.999; negative=0.999
     Offset: 0
     Length: 30
 
     ------------------------------------
     Document text: This was a waste of my time. The speaker put me to sleep.
     Overall sentiment: negative
-    Overall scores: positive=0.0611404217779636; neutral=0.4256836175918579; negative=0.513175904750824
+    Overall scores: positive=0.061; neutral=0.061; negative=0.061
 
     Sentence 1 sentiment: negative
-    Sentence score: positive=1.68700626091e-05; neutral=6.6324328145e-06; negative=0.999976396560669
+    Sentence score: positive=0.000; neutral=0.000; negative=0.000
     Offset: 0
     Length: 28
 
     Sentence 2 sentiment: neutral
-    Sentence score: positive=0.1222639754414558; neutral=0.8513606190681458; negative=0.0263753551989794
+    Sentence score: positive=0.122; neutral=0.122; negative=0.122
     Offset: 29
     Length: 28
 
     ------------------------------------
     Document text: No tengo dinero ni nada que dar...
     Overall sentiment: negative
-    Overall scores: positive=0.0255409516394138; neutral=0.0314255990087986; negative=0.9430333375930786
+    Overall scores: positive=0.026; neutral=0.026; negative=0.026
 
     Sentence 1 sentiment: negative
-    Sentence score: positive=0.0255409516394138; neutral=0.0314255990087986; negative=0.9430333375930786
+    Sentence score: positive=0.026; neutral=0.026; negative=0.026
     Offset: 0
     Length: 34
 
     ------------------------------------
     Document text: L'hôtel n'était pas très confortable. L'éclairage était trop sombre.
     Overall sentiment: negative
-    Overall scores: positive=0.1645563840866089; neutral=0.0295139290392399; negative=0.8059296607971191
+    Overall scores: positive=0.165; neutral=0.165; negative=0.165
 
     Sentence 1 sentiment: negative
-    Sentence score: positive=0.1857066750526428; neutral=0.0316520929336548; negative=0.7826411724090576
+    Sentence score: positive=0.186; neutral=0.186; negative=0.186
     Offset: 0
     Length: 37
 
     Sentence 2 sentiment: negative
-    Sentence score: positive=0.1434061080217361; neutral=0.0273757670074701; negative=0.8292181491851807
+    Sentence score: positive=0.143; neutral=0.143; negative=0.143
     Offset: 38
     Length: 30
 
     ------------------------------------
+
 """
 
 import os
@@ -82,6 +83,7 @@ class AnalyzeSentimentSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def analyze_sentiment(self):
+        # [START batch_analyze_sentiment]
         from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -97,14 +99,15 @@ class AnalyzeSentimentSample(object):
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
             print("Overall sentiment: {}".format(doc.sentiment))
-            print("Overall scores: positive={}; neutral={}; negative={} \n".format(
+        # [END batch_analyze_sentiment]
+            print("Overall scores: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
                 doc.document_scores['positive'],
                 doc.document_scores['neutral'],
                 doc.document_scores['negative'],
             ))
             for idx, sentence in enumerate(doc.sentences):
                 print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
-                print("Sentence score: positive={}; neutral={}; negative={}".format(
+                print("Sentence score: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f}".format(
                     sentence.sentence_scores['positive'],
                     sentence.sentence_scores['neutral'],
                     sentence.sentence_scores['negative'],
@@ -113,7 +116,7 @@ class AnalyzeSentimentSample(object):
                 print("Length: {}\n".format(sentence.length))
             print("------------------------------------")
 
-    def advanced_scenario_analyze_sentiment(self):
+    def alternative_scenario_analyze_sentiment(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -151,4 +154,4 @@ class AnalyzeSentimentSample(object):
 if __name__ == '__main__':
     sample = AnalyzeSentimentSample()
     sample.analyze_sentiment()
-    sample.advanced_scenario_analyze_sentiment()
+    sample.alternative_scenario_analyze_sentiment()

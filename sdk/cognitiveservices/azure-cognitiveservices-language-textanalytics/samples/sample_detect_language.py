@@ -56,6 +56,7 @@ class DetectLanguageSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def detect_language(self):
+        # [START batch_detect_language]
         from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -76,8 +77,9 @@ class DetectLanguageSample(object):
                 print("Confidence score: {}\n".format(doc.detected_languages[0].score))
             if doc.is_error:
                 print(doc.id, doc.error)
+        # [END batch_detect_language]
 
-    def advanced_scenario_detect_language(self):
+    def alternative_scenario_detect_language(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -114,4 +116,4 @@ class DetectLanguageSample(object):
 if __name__ == '__main__':
     sample = DetectLanguageSample()
     sample.detect_language()
-    sample.advanced_scenario_detect_language()
+    sample.alternative_scenario_detect_language()

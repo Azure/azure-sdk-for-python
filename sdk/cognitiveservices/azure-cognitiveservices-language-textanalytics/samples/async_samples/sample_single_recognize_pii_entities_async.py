@@ -45,6 +45,7 @@ class SingleRecognizePiiEntitiesSampleAsync(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def recognize_pii_entities_async(self):
+        # [START single_recognize_pii_entities_async]
         from azure.cognitiveservices.language.textanalytics.aio import single_recognize_pii_entities
 
         text = "The employee's ABA number is 111000025 and his SSN is 555-55-5555."
@@ -60,6 +61,7 @@ class SingleRecognizePiiEntitiesSampleAsync(object):
             print("Entity: {}".format(entity.text))
             print("Type: {}".format(entity.type))
             print("Confidence Score: {}\n".format(entity.score))
+        # [END single_recognize_pii_entities_async]
 
 
 async def main():

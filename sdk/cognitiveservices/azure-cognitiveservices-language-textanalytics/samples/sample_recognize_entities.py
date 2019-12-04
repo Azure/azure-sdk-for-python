@@ -21,24 +21,17 @@ USAGE:
 
 OUTPUT:
     Document text: Microsoft was founded by Bill Gates and Paul Allen.
-    Entity:          Microsoft      Type:    Organization   Confidence Score:        0.99993896484375
-    Entity:          Bill Gates     Type:    Person         Confidence Score:        0.9997406601905823
-    Entity:          Paul Allen     Type:    Person         Confidence Score:        0.9995118379592896
+    Entity:          Microsoft      Type:    Organization   Confidence Score:        1.0
+    Entity:          Bill Gates     Type:    Person         Confidence Score:        1.0
+    Entity:          Paul Allen     Type:    Person         Confidence Score:        1.0
 
-    Document text: Microsoft wurde von Bill Gates und Paul Allen gegründet.
-    Entity:          Microsoft      Type:    Organization   Confidence Score:        0.9998779296875
-    Entity:          Bill Gates     Type:    Person         Confidence Score:        0.7356343269348145
-    Entity:          Paul Allen     Type:    Person         Confidence Score:        0.914785623550415
+    Document text: I had a wonderful trip to Seattle last week.
+    Entity:          Seattle        Type:    Location       Confidence Score:        0.806
+    Entity:          last week      Type:    DateTime       Confidence Score:        0.8
 
-    Document text: Microsoft fue fundado por Bill Gates y Paul Allen.
-    Entity:          Microsoft      Type:    Organization   Confidence Score:        0.9999008178710938
-    Entity:          Bill Gates     Type:    Person         Confidence Score:        0.9996491074562073
-    Entity:          Paul Allen     Type:    Person         Confidence Score:        0.9989705681800842
-
-    Document text: Microsoft a été fondée par Bill Gates et Paul Allen.
-    Entity:          Microsoft      Type:    Organization   Confidence Score:        0.99993896484375
-    Entity:          Bill Gates     Type:    Person         Confidence Score:        0.9985819458961487
-    Entity:          Paul Allen     Type:    Person         Confidence Score:        0.9499356150627136
+    Document text: I visited the Space Needle 2 times.
+    Entity:          Space Needle   Type:    Organization   Confidence Score:        0.922
+    Entity:          2              Type:    Quantity       Confidence Score:        0.8
 """
 
 import os
@@ -50,13 +43,13 @@ class RecognizeEntitiesSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def recognize_entities(self):
+        # [START batch_recognize_entities]
         from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
-            "Microsoft wurde von Bill Gates und Paul Allen gegründet.",
-            "Microsoft fue fundado por Bill Gates y Paul Allen.",
-            "Microsoft a été fondée par Bill Gates et Paul Allen.",
+            "I had a wonderful trip to Seattle last week.",
+            "I visited the Space Needle 2 times.",
         ]
 
         result = text_analytics_client.recognize_entities(documents)
@@ -65,9 +58,11 @@ class RecognizeEntitiesSample(object):
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: \t", entity.text, "\tType: \t", entity.type, "\tConfidence Score: \t", entity.score)
+                print("Entity: \t", entity.text, "\tType: \t", entity.type,
+                      "\tConfidence Score: \t", round(entity.score, 3))
+        # [END batch_recognize_entities]
 
-    def advanced_scenario_recognize_entities(self):
+    def alternative_scenario_recognize_entities(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -80,9 +75,8 @@ class RecognizeEntitiesSample(object):
 
         documents = [
             {"id": "0", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            {"id": "1", "language": "de", "text": "Microsoft wurde von Bill Gates und Paul Allen gegründet."},
-            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen."},
-            {"id": "3", "language": "fr", "text": "Microsoft a été fondée par Bill Gates et Paul Allen."}
+            {"id": "1", "language": "de", "text": "I had a wonderful trip to Seattle last week."},
+            {"id": "2", "language": "es", "text": "I visited the Space Needle 2 times."},
         ]
 
         extras = []
@@ -103,4 +97,4 @@ class RecognizeEntitiesSample(object):
 if __name__ == '__main__':
     sample = RecognizeEntitiesSample()
     sample.recognize_entities()
-    sample.advanced_scenario_recognize_entities()
+    sample.alternative_scenario_recognize_entities()

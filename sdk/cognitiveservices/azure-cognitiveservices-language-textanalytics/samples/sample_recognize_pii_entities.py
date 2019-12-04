@@ -45,6 +45,7 @@ class RecognizePiiEntitiesSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def recognize_pii_entities(self):
+        # [START batch_recognize_pii_entities]
         from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -62,8 +63,9 @@ class RecognizePiiEntitiesSample(object):
                 print("Entity: {}".format(entity.text))
                 print("Type: {}".format(entity.type))
                 print("Confidence Score: {}\n".format(entity.score))
+        # [END batch_recognize_pii_entities]
 
-    def advanced_scenario_recognize_pii_entities(self):
+    def alternative_scenario_recognize_pii_entities(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -98,4 +100,4 @@ class RecognizePiiEntitiesSample(object):
 if __name__ == '__main__':
     sample = RecognizePiiEntitiesSample()
     sample.recognize_pii_entities()
-    sample.advanced_scenario_recognize_pii_entities()
+    sample.alternative_scenario_recognize_pii_entities()

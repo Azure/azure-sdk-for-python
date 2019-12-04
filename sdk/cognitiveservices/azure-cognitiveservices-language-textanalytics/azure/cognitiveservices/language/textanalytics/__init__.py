@@ -94,6 +94,15 @@ def single_detect_language(
     :return: An instance of DocumentLanguage.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLanguage
     :raises: ~azure.core.exceptions.HttpResponseError
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_single_detect_language.py
+            :start-after: [START single_detect_language]
+            :end-before: [END single_detect_language]
+            :language: python
+            :dedent: 8
+            :caption: Detecting language in a single string.
     """
     doc = _validate_single_input(text, "country_hint", country_hint)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
@@ -142,6 +151,15 @@ def single_recognize_entities(
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
     :raises: ~azure.core.exceptions.HttpResponseError
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_single_recognize_entities.py
+            :start-after: [START single_recognize_entities]
+            :end-before: [END single_recognize_entities]
+            :language: python
+            :dedent: 8
+            :caption: Recognize entities in a single string.
     """
     doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
@@ -186,11 +204,20 @@ def single_recognize_pii_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-    be used for scoring. If a model-version is not specified, the API
-    will default to the latest, non-preview version.
+        be used for scoring. If a model-version is not specified, the API
+        will default to the latest, non-preview version.
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
     :raises: ~azure.core.exceptions.HttpResponseError
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_single_recognize_pii_entities.py
+            :start-after: [START single_recognize_pii_entities]
+            :end-before: [END single_recognize_pii_entities]
+            :language: python
+            :dedent: 8
+            :caption: Recognize personally identifiable information entities in a single string.
     """
     doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
@@ -240,6 +267,15 @@ def single_recognize_linked_entities(
     :return: An instance of DocumentLinkedEntities
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities
     :raises: ~azure.core.exceptions.HttpResponseError
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_single_recognize_linked_entities.py
+            :start-after: [START single_recognize_linked_entities]
+            :end-before: [END single_recognize_linked_entities]
+            :language: python
+            :dedent: 8
+            :caption: Recognize linked entities in a single string.
     """
     doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
@@ -283,11 +319,20 @@ def single_extract_key_phrases(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-    be used for scoring. If a model-version is not specified, the API
-    will default to the latest, non-preview version.
+        be used for scoring. If a model-version is not specified, the API
+        will default to the latest, non-preview version.
     :return: An instance of DocumentKeyPhrases
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases
     :raises: ~azure.core.exceptions.HttpResponseError
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_single_extract_key_phrases.py
+            :start-after: [START single_extract_key_phrases]
+            :end-before: [END single_extract_key_phrases]
+            :language: python
+            :dedent: 8
+            :caption: Extract key phrases in a single string.
     """
     doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
@@ -332,11 +377,20 @@ def single_analyze_sentiment(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-    be used for scoring. If a model-version is not specified, the API
-    will default to the latest, non-preview version.
+        be used for scoring. If a model-version is not specified, the API
+        will default to the latest, non-preview version.
     :return: DocumentSentiment
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentSentiment
     :raises: ~azure.core.exceptions.HttpResponseError
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_single_analyze_sentiment.py
+            :start-after: [START single_analyze_sentiment]
+            :end-before: [END single_analyze_sentiment]
+            :language: python
+            :dedent: 8
+            :caption: Analyze sentiment in a single string.
     """
     doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:

@@ -35,6 +35,7 @@ class ExtractKeyPhrasesSampleAsync(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def extract_key_phrases_async(self):
+        # [START batch_extract_key_phrases_async]
         from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -51,8 +52,9 @@ class ExtractKeyPhrasesSampleAsync(object):
                 print(doc.key_phrases)
             if doc.is_error:
                 print(doc.id, doc.error)
+        # [END batch_extract_key_phrases_async]
 
-    async def advanced_scenario_extract_key_phrases_async(self):
+    async def alternative_scenario_extract_key_phrases_async(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -89,7 +91,7 @@ class ExtractKeyPhrasesSampleAsync(object):
 async def main():
     sample = ExtractKeyPhrasesSampleAsync()
     await sample.extract_key_phrases_async()
-    await sample.advanced_scenario_extract_key_phrases_async()
+    await sample.alternative_scenario_extract_key_phrases_async()
 
 
 if __name__ == '__main__':

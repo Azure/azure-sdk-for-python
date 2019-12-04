@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication.py
+FILE: sample_authentication_async.py
 
 DESCRIPTION:
     This sample demonstrates how to authenticate with the text analytics service.
@@ -20,7 +20,7 @@ DESCRIPTION:
     https://docs.microsoft.com/azure/cognitive-services/authentication
 
 USAGE:
-    python sample_authentication.py
+    python sample_authentication_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
@@ -31,47 +31,54 @@ USAGE:
 """
 
 import os
+import asyncio
 
 
-class AuthenticationSample(object):
+class AuthenticationSampleAsync(object):
 
-    def authentication_with_subscription_key(self):
-        # [START create_ta_client_with_key]
-        from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
+    async def authentication_with_subscription_key_async(self):
+        # [START create_ta_client_with_key_async]
+        from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
         key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
         text_analytics_client = TextAnalyticsClient(endpoint, key)
-        # [END create_ta_client_with_key]
+        # [END create_ta_client_with_key_async]
 
         doc = ["I need to take my cat to the veterinarian."]
-        result = text_analytics_client.detect_language(doc)
+        async with text_analytics_client:
+            result = await text_analytics_client.detect_language(doc)
 
         print("Language detected: {}".format(result[0].detected_languages[0].name))
         print("Confidence score: {}".format(result[0].detected_languages[0].score))
 
-    def authentication_with_azure_active_directory(self):
+    async def authentication_with_azure_active_directory_async(self):
         """DefaultAzureCredential will use the values from the environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        # [START create_ta_client_with_aad]
-        from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
-        from azure.identity import DefaultAzureCredential
+        # [START create_ta_client_with_aad_async]
+        from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
+        from azure.identity.aio import DefaultAzureCredential
 
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
         token = DefaultAzureCredential()
 
         text_analytics_client = TextAnalyticsClient(endpoint, credential=token)
-        # [END create_ta_client_with_aad]
+        # [END create_ta_client_with_aad_async]
 
         doc = ["I need to take my cat to the veterinarian."]
-        result = text_analytics_client.detect_language(doc)
+        async with text_analytics_client:
+            result = await text_analytics_client.detect_language(doc)
 
         print("Language detected: {}".format(result[0].detected_languages[0].name))
         print("Confidence score: {}".format(result[0].detected_languages[0].score))
 
 
+async def main():
+    sample = AuthenticationSampleAsync()
+    await sample.authentication_with_subscription_key_async()
+    await sample.authentication_with_azure_active_directory_async()
+
 if __name__ == '__main__':
-    sample = AuthenticationSample()
-    sample.authentication_with_subscription_key()
-    sample.authentication_with_azure_active_directory()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

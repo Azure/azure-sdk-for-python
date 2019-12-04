@@ -42,7 +42,7 @@ class AsyncTextAnalyticsClientBase(object):
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-        config = self.create_configuration(**kwargs)
+        config = self._create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore
         if not config.transport:
             try:
@@ -69,7 +69,7 @@ class AsyncTextAnalyticsClientBase(object):
         ]
         return AsyncPipeline(config.transport, policies=policies)
 
-    def create_configuration(self, **kwargs):  # pylint: disable=no-self-use
+    def _create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
         config.user_agent_policy = kwargs.get('user_agent_policy') or UserAgentPolicy(**kwargs)
         config.headers_policy = kwargs.get('headers_policy') or HeadersPolicy(**kwargs)

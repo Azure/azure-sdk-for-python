@@ -26,22 +26,23 @@ USAGE:
 
 OUTPUT:
     Overall sentiment: mixed
-    Overall scores: positive=0.5048184394836426; neutral=0.1525073200464249; negative=0.342674195766449
+    Overall scores: positive=0.338; neutral=0.338; negative=0.338
 
     Sentence 1 sentiment: neutral
     Offset: 0
     Length: 35
-    Sentence score: positive=0.0220915991812944; neutral=0.9590522050857544; negative=0.0188561752438545
+    Sentence score: positive=0.006; neutral=0.006; negative=0.006
 
     Sentence 2 sentiment: positive
     Offset: 36
     Length: 32
-    Sentence score: positive=0.9965522289276123; neutral=0.0012628735275939; negative=0.0021848580799997
+    Sentence score: positive=0.999; neutral=0.999; negative=0.999
 
     Sentence 3 sentiment: negative
     Offset: 69
     Length: 39
-    Sentence score: positive=0.0130846798419952; neutral=0.3037517666816711; negative=0.6831635236740112
+    Sentence score: positive=0.010; neutral=0.010; negative=0.010
+
 """
 
 import os
@@ -53,6 +54,7 @@ class SingleAnalyzeSentimentSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def analyze_sentiment(self):
+        # [START single_analyze_sentiment]
         from azure.cognitiveservices.language.textanalytics import single_analyze_sentiment
 
         text = "I visited the restaurant last week. The portions were very generous. However, I did not like what " \
@@ -66,7 +68,7 @@ class SingleAnalyzeSentimentSample(object):
         )
 
         print("Overall sentiment: {}".format(result.sentiment))
-        print("Overall scores: positive={}; neutral={}; negative={} \n".format(
+        print("Overall scores: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
             result.document_scores['positive'],
             result.document_scores['neutral'],
             result.document_scores['negative'],
@@ -76,11 +78,12 @@ class SingleAnalyzeSentimentSample(object):
             print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
             print("Offset: {}".format(sentence.offset))
             print("Length: {}".format(sentence.length))
-            print("Sentence score: positive={}; neutral={}; negative={} \n".format(
+            print("Sentence score: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
                 sentence.sentence_scores['positive'],
                 sentence.sentence_scores['neutral'],
                 sentence.sentence_scores['negative'],
             ))
+        # [END single_analyze_sentiment]
 
 
 if __name__ == '__main__':

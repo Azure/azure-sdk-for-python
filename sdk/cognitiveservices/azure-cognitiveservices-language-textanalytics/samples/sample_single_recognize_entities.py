@@ -26,27 +26,27 @@ USAGE:
 OUTPUT:
     Entity: Microsoft
     Type: Organization
-    Confidence Score: 1.0
+    Confidence Score: 1.000
 
     Entity: Bill Gates
     Type: Person
-    Confidence Score: 0.999847412109375
+    Confidence Score: 1.000
 
     Entity: Paul Allen
     Type: Person
-    Confidence Score: 0.9988409876823425
+    Confidence Score: 0.999
 
     Entity: April 4, 1975
     Type: DateTime
-    Confidence Score: 0.8
+    Confidence Score: 0.800
 
     Entity: Altair
     Type: Organization
-    Confidence Score: 0.5250527262687683
+    Confidence Score: 0.525
 
     Entity: 8800
     Type: Quantity
-    Confidence Score: 0.8
+    Confidence Score: 0.80
 """
 
 import os
@@ -58,6 +58,7 @@ class SingleRecognizeEntitiesSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def recognize_entities(self):
+        # [START single_recognize_entities]
         from azure.cognitiveservices.language.textanalytics import single_recognize_entities
 
         text = "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975," \
@@ -73,7 +74,8 @@ class SingleRecognizeEntitiesSample(object):
         for entity in result.entities:
             print("Entity: {}".format(entity.text))
             print("Type: {}".format(entity.type))
-            print("Confidence Score: {}\n".format(entity.score))
+            print("Confidence Score: {0:.3f}\n".format(entity.score))
+        # [END single_recognize_entities]
 
 
 if __name__ == '__main__':

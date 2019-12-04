@@ -14,7 +14,7 @@ The async versions of the samples (the python sample files appended with `_async
 with Text Analytics and require Python 3.5 or later. 
 
 Authenticate the client with a Cognitive Services/Text Analytics subscription key or a token credential from [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity):
-* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_authentication.py)
+* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_authentication_async.py))
 
 In a batch of documents:
 * Detect language: [sample_detect_language.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_detect_language.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_detect_language_async.py))

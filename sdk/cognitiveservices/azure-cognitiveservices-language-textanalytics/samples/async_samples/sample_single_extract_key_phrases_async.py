@@ -45,6 +45,7 @@ class SingleExtractKeyPhrasesSampleAsync(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def extract_key_phrases_async(self):
+        # [START single_extract_key_phrases_async]
         from azure.cognitiveservices.language.textanalytics.aio import single_extract_key_phrases
 
         text = "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle."
@@ -59,6 +60,7 @@ class SingleExtractKeyPhrasesSampleAsync(object):
         print("Key phrases found:\n")
         for phrase in result.key_phrases:
             print(phrase)
+        # [END single_extract_key_phrases_async]
 
 
 async def main():

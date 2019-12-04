@@ -46,6 +46,7 @@ class RecognizePiiEntitiesSampleAsync(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def recognize_pii_entities_async(self):
+        # [START batch_recognize_pii_entities_async]
         from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -65,8 +66,9 @@ class RecognizePiiEntitiesSampleAsync(object):
                 print("Entity: {}".format(entity.text))
                 print("Type: {}".format(entity.type))
                 print("Confidence Score: {}\n".format(entity.score))
+        # [END batch_recognize_pii_entities_async]
 
-    async def advanced_scenario_recognize_pii_entities_async(self):
+    async def alternative_scenario_recognize_pii_entities_async(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -102,7 +104,7 @@ class RecognizePiiEntitiesSampleAsync(object):
 async def main():
     sample = RecognizePiiEntitiesSampleAsync()
     await sample.recognize_pii_entities_async()
-    await sample.advanced_scenario_recognize_pii_entities_async()
+    await sample.alternative_scenario_recognize_pii_entities_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

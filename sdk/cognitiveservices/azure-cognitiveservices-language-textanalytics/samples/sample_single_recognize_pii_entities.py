@@ -44,6 +44,7 @@ class SingleRecognizePiiEntitiesSample(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     def recognize_pii_entities(self):
+        # [START single_recognize_pii_entities]
         from azure.cognitiveservices.language.textanalytics import single_recognize_pii_entities
 
         text = "The employee's ABA number is 111000025 and his SSN is 555-55-5555."
@@ -59,6 +60,7 @@ class SingleRecognizePiiEntitiesSample(object):
             print("Entity: {}".format(entity.text))
             print("Type: {}".format(entity.type))
             print("Confidence Score: {}\n".format(entity.score))
+        # [END single_recognize_pii_entities]
 
 
 if __name__ == '__main__':

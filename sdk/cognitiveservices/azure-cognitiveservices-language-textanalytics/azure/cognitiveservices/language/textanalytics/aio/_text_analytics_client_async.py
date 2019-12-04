@@ -55,6 +55,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
     :type credentials: str or token credential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_ta_client_with_key_async]
+            :end-before: [END create_ta_client_with_key_async]
+            :language: python
+            :dedent: 8
+            :caption: Creating the TextAnalyticsClient with endpoint and subscription key.
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_ta_client_with_aad_async]
+            :end-before: [END create_ta_client_with_aad_async]
+            :language: python
+            :dedent: 8
+            :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -81,6 +97,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and country_hint on a per-item basis you must
+            use as input a list[LanguageInput] or a list of dict representations of
+            LanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.LanguageInput]
         :param str model_version: This value indicates which model will
@@ -97,6 +116,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLanguage,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
+                :start-after: [START batch_detect_language_async]
+                :end-before: [END batch_detect_language_async]
+                :language: python
+                :dedent: 8
+                :caption: Detecting language in a batch of documents.
         """
         docs = _validate_batch_input(documents, "country_hint", country_hint)
         try:
@@ -127,6 +155,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         For the list of enabled languages, check: https://aka.ms/talangs
 
         :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[MultiLanguageInput] or a list of dict representations of
+            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
         :param str model_version: This value indicates which model will
@@ -142,6 +173,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_entities_async.py
+                :start-after: [START batch_recognize_entities_async]
+                :end-before: [END batch_recognize_entities_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize entities in a batch of documents.
         """
         docs = _validate_batch_input(documents, "language", language)
         try:
@@ -173,6 +213,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[MultiLanguageInput] or a list of dict representations of
+            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
         :param str model_version: This value indicates which model will
@@ -188,6 +231,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_pii_entities_async.py
+                :start-after: [START batch_recognize_pii_entities_async]
+                :end-before: [END batch_recognize_pii_entities_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         docs = _validate_batch_input(documents, "language", language)
         try:
@@ -218,6 +270,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         supported languages in Text Analytics API.
 
         :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[MultiLanguageInput] or a list of dict representations of
+            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
         :param str model_version: This value indicates which model will
@@ -233,6 +288,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_linked_entities_async.py
+                :start-after: [START batch_recognize_linked_entities_async]
+                :end-before: [END batch_recognize_linked_entities_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize linked entities in a batch of documents.
         """
         docs = _validate_batch_input(documents, "language", language)
         try:
@@ -263,6 +327,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         languages.
 
         :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[MultiLanguageInput] or a list of dict representations of
+            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
         :param str model_version: This value indicates which model will
@@ -278,6 +345,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_extract_key_phrases_async.py
+                :start-after: [START batch_extract_key_phrases_async]
+                :end-before: [END batch_extract_key_phrases_async]
+                :language: python
+                :dedent: 8
+                :caption: Extract the key phrases in a batch of documents.
         """
         docs = _validate_batch_input(documents, "language", language)
         try:
@@ -309,6 +385,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[MultiLanguageInput] or a list of dict representations of
+            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
         :param str model_version: This value indicates which model will
@@ -324,6 +403,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentSentiment,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_analyze_sentiment_async.py
+                :start-after: [START batch_analyze_sentiment_async]
+                :end-before: [END batch_analyze_sentiment_async]
+                :language: python
+                :dedent: 8
+                :caption: Analyze sentiment in a batch of documents.
         """
         docs = _validate_batch_input(documents, "language", language)
         try:

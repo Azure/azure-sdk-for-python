@@ -57,6 +57,7 @@ class DetectLanguageSampleAsync(object):
     key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def detect_language_async(self):
+        # [START batch_detect_language_async]
         from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
         documents = [
@@ -77,8 +78,9 @@ class DetectLanguageSampleAsync(object):
                 print("Confidence score: {}\n".format(doc.detected_languages[0].score))
             if doc.is_error:
                 print(doc.id, doc.error)
+        # [END batch_detect_language_async]
 
-    async def advanced_scenario_detect_language_async(self):
+    async def alternative_scenario_detect_language_async(self):
         """This sample demonstrates how to retrieve batch statistics, the
         model version used, and the raw response returned from the service.
 
@@ -116,7 +118,7 @@ class DetectLanguageSampleAsync(object):
 async def main():
     sample = DetectLanguageSampleAsync()
     await sample.detect_language_async()
-    await sample.advanced_scenario_detect_language_async()
+    await sample.alternative_scenario_detect_language_async()
 
 
 if __name__ == '__main__':
