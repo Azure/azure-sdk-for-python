@@ -24,7 +24,7 @@ from ._storage_accounts_operations import StorageAccountsOperations
 from ._containers_operations import ContainersOperations
 from ._triggers_operations import TriggersOperations
 from ._users_operations import UsersOperations
-from ._locations_operations import LocationsOperations
+from ._skus_operations import SkusOperations
 
 __all__ = [
     'Operations',
@@ -42,5 +42,5 @@ __all__ = [
     'ContainersOperations',
     'TriggersOperations',
     'UsersOperations',
-    'LocationsOperations',
+    'SkusOperations',
 ]

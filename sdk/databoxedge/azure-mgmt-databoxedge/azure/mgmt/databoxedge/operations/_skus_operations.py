@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class LocationsOperations(object):
-    """LocationsOperations operations.
+class SkusOperations(object):
+    """SkusOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,7 +39,7 @@ class LocationsOperations(object):
 
         self.config = config
 
-    def list_available_skus(
+    def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """List all the available Skus in the region and information related to
         them.
@@ -60,7 +60,7 @@ class LocationsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_available_skus.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -109,4 +109,4 @@ class LocationsOperations(object):
         deserialized = models.ResourceTypeSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_available_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataBoxEdge/skus'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataBoxEdge/skus'}

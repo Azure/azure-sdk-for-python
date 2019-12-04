@@ -28,7 +28,7 @@ from .operations import StorageAccountsOperations
 from .operations import ContainersOperations
 from .operations import TriggersOperations
 from .operations import UsersOperations
-from .operations import LocationsOperations
+from .operations import SkusOperations
 from . import models
 
 
@@ -68,8 +68,8 @@ class DataBoxEdgeManagementClient(SDKClient):
     :vartype triggers: azure.mgmt.databoxedge.operations.TriggersOperations
     :ivar users: Users operations
     :vartype users: azure.mgmt.databoxedge.operations.UsersOperations
-    :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.databoxedge.operations.LocationsOperations
+    :ivar skus: Skus operations
+    :vartype skus: azure.mgmt.databoxedge.operations.SkusOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -120,5 +120,5 @@ class DataBoxEdgeManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(
+        self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
