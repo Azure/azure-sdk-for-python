@@ -63,7 +63,7 @@ jobs:
 
     steps:
     - template: ../steps/build-test.yml
-        parameters:
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
