@@ -27,21 +27,6 @@ try:
     from ._models_py3 import AscLocation
     from ._models_py3 import AtaExternalSecuritySolution
     from ._models_py3 import AtaSolutionProperties
-    from ._models_py3 import Automation
-    from ._models_py3 import AutomationAction
-    from ._models_py3 import AutomationActionEventHub
-    from ._models_py3 import AutomationActionEventHubInput
-    from ._models_py3 import AutomationActionEventHubOutput
-    from ._models_py3 import AutomationActionLogicApp
-    from ._models_py3 import AutomationActionLogicAppInput
-    from ._models_py3 import AutomationActionLogicAppOutput
-    from ._models_py3 import AutomationActionWorkspace
-    from ._models_py3 import AutomationMetadata
-    from ._models_py3 import AutomationRuleSet
-    from ._models_py3 import AutomationScope
-    from ._models_py3 import AutomationSource
-    from ._models_py3 import AutomationTriggeringRule
-    from ._models_py3 import AutomationValidationStatus
     from ._models_py3 import AutoProvisioningSetting
     from ._models_py3 import AwsResourceDetails
     from ._models_py3 import AzureResourceDetails
@@ -149,21 +134,6 @@ except (SyntaxError, ImportError):
     from ._models import AscLocation
     from ._models import AtaExternalSecuritySolution
     from ._models import AtaSolutionProperties
-    from ._models import Automation
-    from ._models import AutomationAction
-    from ._models import AutomationActionEventHub
-    from ._models import AutomationActionEventHubInput
-    from ._models import AutomationActionEventHubOutput
-    from ._models import AutomationActionLogicApp
-    from ._models import AutomationActionLogicAppInput
-    from ._models import AutomationActionLogicAppOutput
-    from ._models import AutomationActionWorkspace
-    from ._models import AutomationMetadata
-    from ._models import AutomationRuleSet
-    from ._models import AutomationScope
-    from ._models import AutomationSource
-    from ._models import AutomationTriggeringRule
-    from ._models import AutomationValidationStatus
     from ._models import AutoProvisioningSetting
     from ._models import AwsResourceDetails
     from ._models import AzureResourceDetails
@@ -256,7 +226,6 @@ except (SyntaxError, ImportError):
 from ._paged_models import AlertPaged
 from ._paged_models import AllowedConnectionsResourcePaged
 from ._paged_models import AscLocationPaged
-from ._paged_models import AutomationPaged
 from ._paged_models import AutoProvisioningSettingPaged
 from ._paged_models import CompliancePaged
 from ._paged_models import ComplianceResultPaged
@@ -302,9 +271,6 @@ from ._security_center_enums import (
     State,
     SubAssessmentStatusCode,
     Severity,
-    EventSource,
-    PropertyType,
-    Operator,
     ConnectionType,
 )
 
@@ -326,21 +292,6 @@ __all__ = [
     'AscLocation',
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
-    'Automation',
-    'AutomationAction',
-    'AutomationActionEventHub',
-    'AutomationActionEventHubInput',
-    'AutomationActionEventHubOutput',
-    'AutomationActionLogicApp',
-    'AutomationActionLogicAppInput',
-    'AutomationActionLogicAppOutput',
-    'AutomationActionWorkspace',
-    'AutomationMetadata',
-    'AutomationRuleSet',
-    'AutomationScope',
-    'AutomationSource',
-    'AutomationTriggeringRule',
-    'AutomationValidationStatus',
     'AutoProvisioningSetting',
     'AwsResourceDetails',
     'AzureResourceDetails',
@@ -454,7 +405,6 @@ __all__ = [
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
     'SecuritySubAssessmentPaged',
-    'AutomationPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -478,8 +428,5 @@ __all__ = [
     'State',
     'SubAssessmentStatusCode',
     'Severity',
-    'EventSource',
-    'PropertyType',
-    'Operator',
     'ConnectionType',
 ]

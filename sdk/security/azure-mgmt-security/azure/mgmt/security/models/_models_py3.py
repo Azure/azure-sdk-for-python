@@ -941,539 +941,6 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         self.last_event_received = last_event_received
 
 
-class TrackedResource(Model):
-    """Describes an Azure tracked resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :ivar location: Location where the resource is stored
-    :vartype location: str
-    :param kind: Kind of the resource
-    :type kind: str
-    :param etag: Entity tag is used for comparing two or more entities from
-     the same requested resource.
-    :type etag: str
-    :param tags: A list of key value pairs that describe the resource.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, kind: str=None, etag: str=None, tags=None, **kwargs) -> None:
-        super(TrackedResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
-        self.kind = kind
-        self.etag = etag
-        self.tags = tags
-
-
-class Automation(TrackedResource):
-    """The security automation resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :ivar location: Location where the resource is stored
-    :vartype location: str
-    :param kind: Kind of the resource
-    :type kind: str
-    :param etag: Entity tag is used for comparing two or more entities from
-     the same requested resource.
-    :type etag: str
-    :param tags: A list of key value pairs that describe the resource.
-    :type tags: dict[str, str]
-    :param description: The security automation description.
-    :type description: str
-    :param is_enabled: Indicates whether the security automation is enabled.
-    :type is_enabled: bool
-    :param metadata: The metadata of the security automation resource.
-    :type metadata: ~azure.mgmt.security.models.AutomationMetadata
-    :param scopes: A collection of scopes on which the security automations
-     logic is applied. Supported scopes are the subscription itself or a
-     resource group under that subscription. The automation will only apply on
-     defined scopes.
-    :type scopes: list[~azure.mgmt.security.models.AutomationScope]
-    :param sources: A collection of the source event types which evaluate the
-     security automation set of rules.
-    :type sources: list[~azure.mgmt.security.models.AutomationSource]
-    :param actions: A collection of the actions which are triggered if all the
-     configured rules evaluations, within at least one rule set, are true.
-    :type actions: list[~azure.mgmt.security.models.AutomationAction]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
-        'metadata': {'key': 'properties.metadata', 'type': 'AutomationMetadata'},
-        'scopes': {'key': 'properties.scopes', 'type': '[AutomationScope]'},
-        'sources': {'key': 'properties.sources', 'type': '[AutomationSource]'},
-        'actions': {'key': 'properties.actions', 'type': '[AutomationAction]'},
-    }
-
-    def __init__(self, *, kind: str=None, etag: str=None, tags=None, description: str=None, is_enabled: bool=None, metadata=None, scopes=None, sources=None, actions=None, **kwargs) -> None:
-        super(Automation, self).__init__(kind=kind, etag=etag, tags=tags, **kwargs)
-        self.description = description
-        self.is_enabled = is_enabled
-        self.metadata = metadata
-        self.scopes = scopes
-        self.sources = sources
-        self.actions = actions
-
-
-class AutomationAction(Model):
-    """The action that should be triggered.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AutomationActionLogicApp, AutomationActionEventHub,
-    AutomationActionWorkspace
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'action_type': {'LogicApp': 'AutomationActionLogicApp', 'EventHub': 'AutomationActionEventHub', 'Workspace': 'AutomationActionWorkspace'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(AutomationAction, self).__init__(**kwargs)
-        self.action_type = None
-
-
-class AutomationActionEventHub(AutomationAction):
-    """The target Event Hub to which event data will be exported.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AutomationActionEventHubInput,
-    AutomationActionEventHubOutput
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param event_hub_resource_id: The target Event Hub Azure Resource ID.
-    :type event_hub_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'event_hub_resource_id': {'key': 'eventHubResourceId', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'action_type': {'EventHub': 'AutomationActionEventHubInput', 'EventHub': 'AutomationActionEventHubOutput'}
-    }
-
-    def __init__(self, *, event_hub_resource_id: str=None, **kwargs) -> None:
-        super(AutomationActionEventHub, self).__init__(**kwargs)
-        self.event_hub_resource_id = event_hub_resource_id
-        self.action_type = 'EventHub'
-
-
-class AutomationActionEventHubInput(AutomationActionEventHub):
-    """The target Event Hub to which event data will be exported.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param event_hub_resource_id: The target Event Hub Azure Resource ID.
-    :type event_hub_resource_id: str
-    :param connection_string: The target Event Hub connection string
-    :type connection_string: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'event_hub_resource_id': {'key': 'eventHubResourceId', 'type': 'str'},
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-    }
-
-    def __init__(self, *, event_hub_resource_id: str=None, connection_string: str=None, **kwargs) -> None:
-        super(AutomationActionEventHubInput, self).__init__(event_hub_resource_id=event_hub_resource_id, **kwargs)
-        self.connection_string = connection_string
-        self.action_type = 'EventHub'
-
-
-class AutomationActionEventHubOutput(AutomationActionEventHub):
-    """The target Event Hub to which event data will be exported.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param event_hub_resource_id: The target Event Hub Azure Resource ID.
-    :type event_hub_resource_id: str
-    :param sas_policy_name: The target Event Hub SAS policy name.
-    :type sas_policy_name: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'event_hub_resource_id': {'key': 'eventHubResourceId', 'type': 'str'},
-        'sas_policy_name': {'key': 'sasPolicyName', 'type': 'str'},
-    }
-
-    def __init__(self, *, event_hub_resource_id: str=None, sas_policy_name: str=None, **kwargs) -> None:
-        super(AutomationActionEventHubOutput, self).__init__(event_hub_resource_id=event_hub_resource_id, **kwargs)
-        self.sas_policy_name = sas_policy_name
-        self.action_type = 'EventHub'
-
-
-class AutomationActionLogicApp(AutomationAction):
-    """The logic app action that should be triggered.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AutomationActionLogicAppInput,
-    AutomationActionLogicAppOutput
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param logic_app_resource_id: The triggered Logic App Azure Resource ID.
-     This can also reside on other subscriptions, given that you have
-     permissions to trigger the Logic App
-    :type logic_app_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'logic_app_resource_id': {'key': 'logicAppResourceId', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'action_type': {'LogicApp': 'AutomationActionLogicAppInput', 'LogicApp': 'AutomationActionLogicAppOutput'}
-    }
-
-    def __init__(self, *, logic_app_resource_id: str=None, **kwargs) -> None:
-        super(AutomationActionLogicApp, self).__init__(**kwargs)
-        self.logic_app_resource_id = logic_app_resource_id
-        self.action_type = 'LogicApp'
-
-
-class AutomationActionLogicAppInput(AutomationActionLogicApp):
-    """The logic app action that should be triggered.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param logic_app_resource_id: The triggered Logic App Azure Resource ID.
-     This can also reside on other subscriptions, given that you have
-     permissions to trigger the Logic App
-    :type logic_app_resource_id: str
-    :param uri: The Logic App trigger URI endpoint.
-    :type uri: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'logic_app_resource_id': {'key': 'logicAppResourceId', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-    }
-
-    def __init__(self, *, logic_app_resource_id: str=None, uri: str=None, **kwargs) -> None:
-        super(AutomationActionLogicAppInput, self).__init__(logic_app_resource_id=logic_app_resource_id, **kwargs)
-        self.uri = uri
-        self.action_type = 'LogicApp'
-
-
-class AutomationActionLogicAppOutput(AutomationActionLogicApp):
-    """The logic app action that should be triggered.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param logic_app_resource_id: The triggered Logic App Azure Resource ID.
-     This can also reside on other subscriptions, given that you have
-     permissions to trigger the Logic App
-    :type logic_app_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'logic_app_resource_id': {'key': 'logicAppResourceId', 'type': 'str'},
-    }
-
-    def __init__(self, *, logic_app_resource_id: str=None, **kwargs) -> None:
-        super(AutomationActionLogicAppOutput, self).__init__(logic_app_resource_id=logic_app_resource_id, **kwargs)
-        self.action_type = 'LogicApp'
-
-
-class AutomationActionWorkspace(AutomationAction):
-    """The Log Analytics Workspace to which event data will be exported. Security
-    alerts data will reside in the 'SecurityAlert' table and the assessments
-    data will reside in the 'SecurityRecommendation' table (under the
-    'Security'/'SecurityCenterFree' solutions). Note that in order to view the
-    data in the workspace, the Security Center Log Analytics free/standard
-    solution needs to be enabled on that workspace.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param workspace_resource_id: The fully qualified Log Analytics Workspace
-     Azure Resource ID.
-    :type workspace_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': 'str'},
-    }
-
-    def __init__(self, *, workspace_resource_id: str=None, **kwargs) -> None:
-        super(AutomationActionWorkspace, self).__init__(**kwargs)
-        self.workspace_resource_id = workspace_resource_id
-        self.action_type = 'Workspace'
-
-
-class AutomationMetadata(Model):
-    """The metadata of the security automation resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar created_date_time_utc: The security automation creation date.
-    :vartype created_date_time_utc: datetime
-    :ivar created_by: The AAD object ID of the entity that created the
-     security automation.
-    :vartype created_by: str
-    :ivar last_updated_date_time_utc: The security automation last updated
-     date.
-    :vartype last_updated_date_time_utc: datetime
-    :ivar last_updated_by: The AAD object ID of the entity that last updated
-     the security automation.
-    :vartype last_updated_by: str
-    """
-
-    _validation = {
-        'created_date_time_utc': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_updated_date_time_utc': {'readonly': True},
-        'last_updated_by': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'created_date_time_utc': {'key': 'createdDateTimeUtc', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_updated_date_time_utc': {'key': 'lastUpdatedDateTimeUtc', 'type': 'iso-8601'},
-        'last_updated_by': {'key': 'lastUpdatedBy', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(AutomationMetadata, self).__init__(**kwargs)
-        self.created_date_time_utc = None
-        self.created_by = None
-        self.last_updated_date_time_utc = None
-        self.last_updated_by = None
-
-
-class AutomationRuleSet(Model):
-    """A rule set which evaluates all its rules upon an event interception. Only
-    when all the included rules in the rule set will be evaluated as 'true',
-    will the event trigger the defined actions.
-
-    :param rules:
-    :type rules: list[~azure.mgmt.security.models.AutomationTriggeringRule]
-    """
-
-    _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[AutomationTriggeringRule]'},
-    }
-
-    def __init__(self, *, rules=None, **kwargs) -> None:
-        super(AutomationRuleSet, self).__init__(**kwargs)
-        self.rules = rules
-
-
-class AutomationScope(Model):
-    """A single automation scope.
-
-    :param description: The resources scope description.
-    :type description: str
-    :param scope_path: The resources scope path. Can be the subscription on
-     which the automation is defined on or a resource group under that
-     subscription (fully qualified Azure resource IDs).
-    :type scope_path: str
-    """
-
-    _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'scope_path': {'key': 'scopePath', 'type': 'str'},
-    }
-
-    def __init__(self, *, description: str=None, scope_path: str=None, **kwargs) -> None:
-        super(AutomationScope, self).__init__(**kwargs)
-        self.description = description
-        self.scope_path = scope_path
-
-
-class AutomationSource(Model):
-    """The source event types which evaluate the security automation set of rules.
-    For example - security alerts and security assessments. To learn more about
-    the supported security events data models schemas - please visit
-    https://aka.ms/ASCAutomationSchemas.
-
-    :param event_source: A valid event source type. Possible values include:
-     'Assessments', 'Alerts'
-    :type event_source: str or ~azure.mgmt.security.models.EventSource
-    :param rule_sets: A set of rules which evaluate upon event interception. A
-     logical disjunction is applied between defined rule sets (logical 'or').
-    :type rule_sets: list[~azure.mgmt.security.models.AutomationRuleSet]
-    """
-
-    _attribute_map = {
-        'event_source': {'key': 'eventSource', 'type': 'str'},
-        'rule_sets': {'key': 'ruleSets', 'type': '[AutomationRuleSet]'},
-    }
-
-    def __init__(self, *, event_source=None, rule_sets=None, **kwargs) -> None:
-        super(AutomationSource, self).__init__(**kwargs)
-        self.event_source = event_source
-        self.rule_sets = rule_sets
-
-
-class AutomationTriggeringRule(Model):
-    """A rule which is evaluated upon event interception. The rule is configured
-    by comparing a specific value from the event model to an expected value.
-    This comparison is done by using one of the supported operators set.
-
-    :param property_jpath: The JPath of the entity model property that should
-     be checked.
-    :type property_jpath: str
-    :param property_type: The data type of the compared operands (string,
-     integer, floating point number or a boolean [true/false]]. Possible values
-     include: 'String', 'Integer', 'Number', 'Boolean'
-    :type property_type: str or ~azure.mgmt.security.models.PropertyType
-    :param expected_value: The expected value.
-    :type expected_value: str
-    :param operator: A valid comparer operator to use. Possible values
-     include: 'Equals', 'GreaterThan', 'GreaterThanOrEqualTo', 'LesserThan',
-     'LesserThanOrEqualTo', 'NotEquals', 'Contains', 'StartsWith', 'EndsWith'
-    :type operator: str or ~azure.mgmt.security.models.Operator
-    """
-
-    _attribute_map = {
-        'property_jpath': {'key': 'propertyJPath', 'type': 'str'},
-        'property_type': {'key': 'propertyType', 'type': 'str'},
-        'expected_value': {'key': 'expectedValue', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-    }
-
-    def __init__(self, *, property_jpath: str=None, property_type=None, expected_value: str=None, operator=None, **kwargs) -> None:
-        super(AutomationTriggeringRule, self).__init__(**kwargs)
-        self.property_jpath = property_jpath
-        self.property_type = property_type
-        self.expected_value = expected_value
-        self.operator = operator
-
-
-class AutomationValidationStatus(Model):
-    """The security automation model state property bag.
-
-    :param is_valid: Indicates whether the model is valid or not.
-    :type is_valid: bool
-    :param message: The validation message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'is_valid': {'key': 'isValid', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(self, *, is_valid: bool=None, message: str=None, **kwargs) -> None:
-        super(AutomationValidationStatus, self).__init__(**kwargs)
-        self.is_valid = is_valid
-        self.message = message
-
-
 class AutoProvisioningSetting(Resource):
     """Auto provisioning setting.
 
@@ -4669,6 +4136,57 @@ class TopologySingleResourceParent(Model):
     def __init__(self, **kwargs) -> None:
         super(TopologySingleResourceParent, self).__init__(**kwargs)
         self.resource_id = None
+
+
+class TrackedResource(Model):
+    """Describes an Azure tracked resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar location: Location where the resource is stored
+    :vartype location: str
+    :param kind: Kind of the resource
+    :type kind: str
+    :param etag: Entity tag is used for comparing two or more entities from
+     the same requested resource.
+    :type etag: str
+    :param tags: A list of key value pairs that describe the resource.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, kind: str=None, etag: str=None, tags=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = None
+        self.kind = kind
+        self.etag = etag
+        self.tags = tags
 
 
 class UpdateIotSecuritySolutionData(TagsResource):

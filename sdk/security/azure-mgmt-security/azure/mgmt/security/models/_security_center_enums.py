@@ -176,33 +176,6 @@ class Severity(str, Enum):
     high = "High"
 
 
-class EventSource(str, Enum):
-
-    assessments = "Assessments"
-    alerts = "Alerts"
-
-
-class PropertyType(str, Enum):
-
-    string = "String"
-    integer = "Integer"
-    number = "Number"
-    boolean = "Boolean"
-
-
-class Operator(str, Enum):
-
-    equals = "Equals"
-    greater_than = "GreaterThan"
-    greater_than_or_equal_to = "GreaterThanOrEqualTo"
-    lesser_than = "LesserThan"
-    lesser_than_or_equal_to = "LesserThanOrEqualTo"
-    not_equals = "NotEquals"
-    contains = "Contains"
-    starts_with = "StartsWith"
-    ends_with = "EndsWith"
-
-
 class ConnectionType(str, Enum):
 
     internal = "Internal"
