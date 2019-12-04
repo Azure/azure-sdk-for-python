@@ -59,9 +59,9 @@ class AuthenticationSample(object):
         from azure.identity import DefaultAzureCredential
 
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-        token = DefaultAzureCredential()
+        credential = DefaultAzureCredential()
 
-        text_analytics_client = TextAnalyticsClient(endpoint, credential=token)
+        text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
         # [END create_ta_client_with_aad]
 
         doc = ["I need to take my cat to the veterinarian."]

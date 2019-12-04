@@ -61,9 +61,9 @@ class AuthenticationSampleAsync(object):
         from azure.identity.aio import DefaultAzureCredential
 
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-        token = DefaultAzureCredential()
+        credential = DefaultAzureCredential()
 
-        text_analytics_client = TextAnalyticsClient(endpoint, credential=token)
+        text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
         # [END create_ta_client_with_aad_async]
 
         doc = ["I need to take my cat to the veterinarian."]
