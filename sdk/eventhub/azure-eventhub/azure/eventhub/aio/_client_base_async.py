@@ -64,7 +64,7 @@ class ClientBaseAsync(ClientBase):
             credential=credential,
             **kwargs
         )
-        self._conn_manager = get_connection_manager(loop=self.loop, **kwargs)
+        self._conn_manager = get_connection_manager(loop=self._loop, **kwargs)
 
     def __enter__(self):
         raise TypeError("Asynchronous client must be opened with async context manager.")
@@ -220,7 +220,7 @@ class ConsumerProducerMixin(object):
                 connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # type: ignore
             )
             while not await self._handler.client_ready_async():  # type: ignore
-                await asyncio.sleep(0.05, loop=self._loop)
+                await asyncio.sleep(0.05, loop=self._loop)  # type: ignore
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
             self.running = True
 
@@ -245,7 +245,7 @@ class ConsumerProducerMixin(object):
     async def _do_retryable_operation(
             self,
             operation: Callable[..., Any],
-            timeout: Optional[int] = None,
+            timeout: Optional[float] = None,
             **kwargs: Any
             ) -> Optional[Any]:
         # pylint:disable=protected-access,line-too-long

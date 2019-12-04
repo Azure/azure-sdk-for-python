@@ -102,12 +102,18 @@ class EventHubConsumerClient(ClientBase):
     def __exit__(self, *args):
         self.close()
 
-    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, Union[str, int, datetime.datetime], Any) -> EventHubConsumer
+    def _create_consumer(
+            self,
+            consumer_group,  # type: str
+            partition_id,  # type: str
+            event_position,  # type: Union[str, int, datetime.datetime]
+            on_event_received,  # type: Callable[[PartitionContext, EventData], None]
+            **kwargs  # type: Any
+        ):
+        # type: (...) -> EventHubConsumer
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        on_event_received = kwargs.get("on_event_received")
         event_position_inclusive = kwargs.get("event_position_inclusive", False)
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(

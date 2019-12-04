@@ -6,7 +6,7 @@
 import asyncio
 import logging
 import datetime
-from typing import Any, Union, TYPE_CHECKING, Dict, Tuple, Callable, Optional, List
+from typing import Any, Union, TYPE_CHECKING, Dict, Tuple, Callable, Optional, List, Awaitable
 
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
@@ -114,12 +114,12 @@ class EventHubConsumerClient(ClientBaseAsync):
             consumer_group: str,
             partition_id: str,
             event_position: Union[str, int, datetime.datetime],
+            on_event_received: Callable[['PartitionContext', 'EventData'], Awaitable[None]],
             **kwargs
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        on_event_received = kwargs.get("on_event_received")
         event_position_inclusive = kwargs.get("event_position_inclusive", False)
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -209,7 +209,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive(
             self,
-            on_event: Callable[['PartitionContext', 'EventData'], None],
+            on_event: Callable[['PartitionContext', 'EventData'], Awaitable[None]],
             *,
             partition_id: Optional[str] = None,
             owner_level: Optional[int] = None,
@@ -217,9 +217,9 @@ class EventHubConsumerClient(ClientBaseAsync):
             track_last_enqueued_event_properties: bool = False,
             starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
             starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-            on_error: Optional[Callable[['PartitionContext', Exception], None]] = None,
-            on_partition_initialize: Optional[Callable[['PartitionContext'], None]] = None,
-            on_partition_close: Optional[Callable[['PartitionContext', 'CloseReason'], None]] = None
+            on_error: Optional[Callable[['PartitionContext', Exception], Awaitable[None]]] = None,
+            on_partition_initialize: Optional[Callable[['PartitionContext'], Awaitable[None]]] = None,
+            on_partition_close: Optional[Callable[['PartitionContext', 'CloseReason'], Awaitable[None]]] = None
     ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 

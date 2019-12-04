@@ -94,8 +94,7 @@ class EventHubProducerClient(ClientBaseAsync):
             if not self._max_message_size_on_link:
                 await cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
                 self._max_message_size_on_link = \
-                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size \
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
 
     async def _start_producer(self, partition_id: str, send_timeout: Optional[Union[int, float]]) -> None:
         async with self._lock:
