@@ -8,6 +8,7 @@ the challenge cache is global to the process.
 """
 import functools
 import time
+from uuid import uuid4
 
 try:
     from unittest.mock import Mock, patch
@@ -33,12 +34,18 @@ def empty_challenge_cache(fn):
     return wrapper
 
 
+def get_random_url():
+    """The challenge cache is keyed on URLs. Random URLs defend against tests interfering with each other."""
+
+    return "https://{}/{}".format(uuid4(), uuid4()).replace("-", "")
+
+
 @empty_challenge_cache
 def test_challenge_cache():
-    url_a = "https://azure.service.a"
+    url_a = get_random_url()
     challenge_a = HttpChallenge(url_a, "Bearer authorization=authority A, resource=resource A")
 
-    url_b = "https://azure.service.b"
+    url_b = get_random_url()
     challenge_b = HttpChallenge(url_b, "Bearer authorization=authority B, resource=resource B")
 
     for url, challenge in zip((url_a, url_b), (challenge_a, challenge_b)):
@@ -99,7 +106,7 @@ def test_policy():
 
     credential = Mock(get_token=Mock(wraps=get_token))
     pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
-    pipeline.run(HttpRequest("POST", "https://azure.service", data=data))
+    pipeline.run(HttpRequest("POST", get_random_url(), data=data))
 
     assert credential.get_token.call_count == 1
 
@@ -111,7 +118,7 @@ def test_policy_updates_cache():
     When the policy receives a 401, it should update the cached challenge for the requested URL, if one exists.
     """
 
-    url = "https://azure.service/path"
+    url = get_random_url()
     first_scope = "https://first-scope"
     first_token = "first-scope-token"
     second_scope = "https://second-scope"
@@ -163,6 +170,8 @@ def test_policy_updates_cache():
 def test_token_expiration():
     """policy should not use a cached token which has expired"""
 
+    url = get_random_url()
+
     expires_on = time.time() + 3600
     first_token = "*"
     second_token = "**"
@@ -182,7 +191,7 @@ def test_token_expiration():
         ],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
             )
         ]
         + [mock_response()] * 3,
@@ -190,12 +199,12 @@ def test_token_expiration():
     pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=transport)
 
     for _ in range(2):
-        pipeline.run(HttpRequest("GET", "https://a/b"))
+        pipeline.run(HttpRequest("GET", url))
         assert credential.get_token.call_count == 1
 
     token = AccessToken(second_token, time.time() + 3600)
     with patch("time.time", lambda: expires_on):
-        pipeline.run(HttpRequest("GET", "https://a/b"))
+        pipeline.run(HttpRequest("GET", url))
     assert credential.get_token.call_count == 2
 
 
@@ -207,6 +216,7 @@ def test_preserves_options_and_headers():
     request should be present when it is sent with authorization.
     """
 
+    url = get_random_url()
     token = "**"
 
     def get_token(*_, **__):
@@ -218,7 +228,7 @@ def test_preserves_options_and_headers():
         requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
             )
         ]
         + [mock_response()] * 2,
@@ -227,7 +237,7 @@ def test_preserves_options_and_headers():
     policies = get_policies_for_request_mutation_test(challenge_policy)
     pipeline = Pipeline(policies=policies, transport=transport)
 
-    response = pipeline.run(HttpRequest("GET", "https://a/b"))
+    response = pipeline.run(HttpRequest("GET", url))
 
     # ensure the mock sans I/O policies were called
     for policy in policies:

@@ -20,7 +20,7 @@ from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge,
 import pytest
 
 from keys_helpers import async_validating_transport, mock_response, Request
-from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test
+from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test, get_random_url
 
 
 @pytest.mark.asyncio
@@ -61,7 +61,7 @@ async def test_policy():
 
     credential = Mock(get_token=get_token)
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
-    await pipeline.run(HttpRequest("POST", "https://azure.service", data=data))
+    await pipeline.run(HttpRequest("POST", get_random_url(), data=data))
 
 
 @pytest.mark.asyncio
@@ -72,7 +72,7 @@ async def test_policy_updates_cache():
     When the policy receives a 401, it should update the cached challenge for the requested URL, if one exists.
     """
 
-    url = "https://azure.service/path"
+    url = get_random_url()
     first_scope = "https://first-scope"
     first_token = "first-scope-token"
     second_scope = "https://second-scope"
@@ -130,6 +130,8 @@ async def test_policy_updates_cache():
 async def test_token_expiration():
     """policy should not use a cached token which has expired"""
 
+    url = get_random_url()
+
     expires_on = time.time() + 3600
     first_token = "*"
     second_token = "**"
@@ -149,7 +151,7 @@ async def test_token_expiration():
         ],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
             )
         ]
         + [mock_response()] * 3,
@@ -157,12 +159,12 @@ async def test_token_expiration():
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=transport)
 
     for _ in range(2):
-        await pipeline.run(HttpRequest("GET", "https://a/b"))
+        await pipeline.run(HttpRequest("GET", url))
         assert credential.get_token.call_count == 1
 
     token = AccessToken(second_token, time.time() + 3600)
     with patch("time.time", lambda: expires_on):
-        await pipeline.run(HttpRequest("GET", "https://a/b"))
+        await pipeline.run(HttpRequest("GET", url))
     assert credential.get_token.call_count == 2
 
 
@@ -175,7 +177,10 @@ async def test_preserves_options_and_headers():
     request should be present when it is sent with authorization.
     """
 
+    url = get_random_url()
+
     token = "**"
+
     async def get_token(*_, **__):
         return AccessToken(token, 0)
 
@@ -185,7 +190,7 @@ async def test_preserves_options_and_headers():
         requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
             )
         ]
         + [mock_response()] * 2,
@@ -194,7 +199,7 @@ async def test_preserves_options_and_headers():
     policies = get_policies_for_request_mutation_test(challenge_policy)
     pipeline = AsyncPipeline(policies=policies, transport=transport)
 
-    response = await pipeline.run(HttpRequest("GET", "https://a/b"))
+    response = await pipeline.run(HttpRequest("GET", url))
 
     # ensure the mock sans I/O policies were used
     for policy in policies:
