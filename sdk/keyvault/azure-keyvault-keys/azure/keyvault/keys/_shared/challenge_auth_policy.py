@@ -42,6 +42,23 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
         ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
         return challenge
 
+    @staticmethod
+    def _get_challenge_request(request):
+        # type: (PipelineRequest) -> PipelineRequest
+
+        # The challenge request is intended to provoke an authentication challenge from Key Vault, to learn how the
+        # service request should be authenticated. It should be identical to the service request but with no body.
+        # (Sending the body would be a waste because the challenge request is unauthorized--it's certain to fail.)
+        challenge_request = HttpRequest(
+            request.http_request.method, request.http_request.url, headers=request.http_request.headers
+        )
+
+        if request.http_request.body:
+            # challenge_request has service_request's headers, including Content-Length, if any
+            challenge_request.headers["Content-Length"] = "0"
+
+        return PipelineRequest(http_request=challenge_request, context=copy.deepcopy(request.context))
+
 
 class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
     """policy for handling HTTP authentication challenges"""
@@ -51,15 +68,8 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
 
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
-            # provoke a challenge with an unauthorized, bodiless request
-            no_body = HttpRequest(
-                request.http_request.method, request.http_request.url, headers=request.http_request.headers
-            )
-            if request.http_request.body:
-                # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
-                no_body.headers["Content-Length"] = "0"
-
-            challenger = self.next.send(PipelineRequest(http_request=no_body, context=copy.deepcopy(request.context)))
+            challenge_request = self._get_challenge_request(request)
+            challenger = self.next.send(challenge_request)
             try:
                 challenge = self._update_challenge(request, challenger)
             except ValueError:

@@ -2,11 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import copy
-
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
 
 from . import ChallengeAuthPolicyBase, HttpChallenge, HttpChallengeCache
 
@@ -17,15 +15,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     async def send(self, request: PipelineRequest) -> HttpResponse:
         challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
-            # provoke a challenge with an unauthorized, bodiless request
-            no_body = HttpRequest(
-                request.http_request.method, request.http_request.url, headers=request.http_request.headers
-            )
-            if request.http_request.body:
-                # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
-                no_body.headers["Content-Length"] = "0"
-
-            challenger = await self.next.send(PipelineRequest(http_request=no_body, context=copy.deepcopy(request.context)))
+            challenge_request = self._get_challenge_request(request)
+            challenger = await self.next.send(challenge_request)
             try:
                 challenge = self._update_challenge(request, challenger)
             except ValueError:
