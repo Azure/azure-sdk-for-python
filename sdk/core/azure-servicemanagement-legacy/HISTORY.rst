@@ -3,7 +3,7 @@
 Release History
 ===============
 
-0.20.7 (2018-XX-XX)
+0.20.7
 +++++++++++++++++++
 
 - Python 3.7 compatibility
