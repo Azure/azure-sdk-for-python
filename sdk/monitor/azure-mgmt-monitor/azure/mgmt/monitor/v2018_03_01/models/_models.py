@@ -1228,15 +1228,15 @@ class WebhookReceiver(Model):
 
 
 class WebtestLocationAvailabilityCriteria(Model):
-    """Specifies the metric alert criteria for a web test resource.
+    """Specifies the metric alert rule criteria for a web test resource.
 
     All required parameters must be populated in order to send to Azure.
 
     :param web_test_id: Required. The web test Id.
     :type web_test_id: str
-    :param component_id: Required. The component Id.
+    :param component_id: Required. The Application Insights resource Id.
     :type component_id: str
-    :param failed_location_count: Required. Failed location count.
+    :param failed_location_count: Required. The number of failed locations.
     :type failed_location_count: float
     """
 
