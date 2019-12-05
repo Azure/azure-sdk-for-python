@@ -159,6 +159,10 @@ class ShareOperations:
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-share-quota': self._deserialize('int', response.headers.get('x-ms-share-quota')),
+                'x-ms-share-provisioned-iops': self._deserialize('int', response.headers.get('x-ms-share-provisioned-iops')),
+                'x-ms-share-provisioned-ingress-mbps': self._deserialize('int', response.headers.get('x-ms-share-provisioned-ingress-mbps')),
+                'x-ms-share-provisioned-egress-mbps': self._deserialize('int', response.headers.get('x-ms-share-provisioned-egress-mbps')),
+                'x-ms-share-next-allowed-quota-downgrade-time': self._deserialize('rfc-1123', response.headers.get('x-ms-share-next-allowed-quota-downgrade-time')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

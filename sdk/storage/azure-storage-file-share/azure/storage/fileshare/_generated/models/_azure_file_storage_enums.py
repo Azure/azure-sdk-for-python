@@ -82,6 +82,12 @@ class StorageErrorCode(str, Enum):
     feature_version_mismatch = "FeatureVersionMismatch"
 
 
+class PermissionCopyModeType(str, Enum):
+
+    source = "source"
+    override = "override"
+
+
 class DeleteSnapshotsOptionType(str, Enum):
 
     include = "include"

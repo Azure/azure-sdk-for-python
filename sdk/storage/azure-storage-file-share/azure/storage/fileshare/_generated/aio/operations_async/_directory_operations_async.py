@@ -665,6 +665,7 @@ class DirectoryOperations:
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-marker': self._deserialize('str', response.headers.get('x-ms-marker')),
                 'x-ms-number-of-handles-closed': self._deserialize('int', response.headers.get('x-ms-number-of-handles-closed')),
+                'x-ms-number-of-handles-failed': self._deserialize('int', response.headers.get('x-ms-number-of-handles-failed')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
