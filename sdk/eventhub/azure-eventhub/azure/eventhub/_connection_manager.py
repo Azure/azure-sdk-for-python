@@ -3,10 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING, Union, Any  # pylint: disable=unused-import
 from threading import Lock
 from enum import Enum
+
 from uamqp import Connection, TransportType, c_uamqp  # type: ignore
 
+if TYPE_CHECKING:
+    from uamqp.authentication import JWTTokenAuth
 
 class _ConnectionMode(Enum):
     ShareConnection = 1
@@ -31,7 +35,7 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
 
     def get_connection(self, host, auth):
-        # type: (...) -> Connection
+        # type: (str, JWTTokenAuth) -> Connection
         with self._lock:
             if self._conn is None:
                 self._conn = Connection(
@@ -49,12 +53,14 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
             return self._conn
 
     def close_connection(self):
+        # type: () -> None
         with self._lock:
             if self._conn:
                 self._conn.destroy()
             self._conn = None
 
     def reset_connection_if_broken(self):
+        # type: () -> None
         with self._lock:
             if self._conn and self._conn._state in (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
@@ -70,16 +76,20 @@ class _SeparateConnectionManager(object):
         pass
 
     def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
+        # type: (str, JWTTokenAuth) -> None
         return None
 
     def close_connection(self):
+        # type: () -> None
         pass
 
     def reset_connection_if_broken(self):
+        # type: () -> None
         pass
 
 
 def get_connection_manager(**kwargs):
+    # type: (Any) -> Union[_SharedConnectionManager, _SeparateConnectionManager]
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

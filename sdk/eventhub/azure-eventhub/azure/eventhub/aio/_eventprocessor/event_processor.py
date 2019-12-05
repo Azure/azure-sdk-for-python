@@ -20,6 +20,7 @@ from .utils import get_running_loop
 if TYPE_CHECKING:
     from datetime import datetime
     from .._consumer_async import EventHubConsumer
+    from .._consumer_client_async import EventHubConsumerClient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +32,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     """
     def __init__(
-            self, eventhub_client, consumer_group: str,
+            self,
+            eventhub_client: 'EventHubConsumerClient',
+            consumer_group: str,
             event_handler: Callable[[PartitionContext, EventData], Awaitable[None]],
             *,
             partition_id: Optional[str] = None,

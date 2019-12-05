@@ -5,7 +5,7 @@
 import logging
 import threading
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, Dict, List
+from typing import Any, Union, TYPE_CHECKING, Iterable, Dict, List, Optional, cast
 from uamqp import constants  # type:ignore
 
 from .exceptions import ConnectError, EventHubError
@@ -71,9 +71,9 @@ class EventHubProducerClient(ClientBase):
             credential=credential,
             network_tracing=kwargs.get("logging_enable"), **kwargs
         )
-        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, EventHubProducer]
+        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
         self._max_message_size_on_link = 0
-        self._partition_ids = None
+        self._partition_ids = None  # Optional[List[str]]
         self._lock = threading.Lock()
 
     def __enter__(self):
@@ -83,33 +83,36 @@ class EventHubProducerClient(ClientBase):
         self.close()
 
     def _get_partitions(self):
+        # type: () -> None
         if not self._partition_ids:
-            self._partition_ids = self.get_partition_ids()
-            for p_id in self._partition_ids:
+            self._partition_ids = self.get_partition_ids()  # type: ignore
+            for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
     def _get_max_mesage_size(self):
-        # pylint: disable=protected-access
+        # type: () -> None
+        # pylint: disable=protected-access,line-too-long
         with self._lock:
             if not self._max_message_size_on_link:
-                self._producers[ALL_PARTITIONS]._open_with_retry()
+                cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
                 self._max_message_size_on_link = \
-                    self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size \
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
 
     def _start_producer(self, partition_id, send_timeout):
+        # type: (str, Optional[Union[int, float]]) -> None
         with self._lock:
             self._get_partitions()
-            if partition_id not in self._partition_ids and partition_id != ALL_PARTITIONS:
+            if partition_id not in cast(List[str], self._partition_ids) and partition_id != ALL_PARTITIONS:
                 raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eventhub_name))
 
-            if not self._producers[partition_id] or self._producers[partition_id].closed:
+            if not self._producers[partition_id] or cast(EventHubProducer, self._producers[partition_id]).closed:
                 self._producers[partition_id] = self._create_producer(
                     partition_id=partition_id,
                     send_timeout=send_timeout
                 )
 
     def _create_producer(self, partition_id=None, send_timeout=None):
+        # type: (Optional[str], Optional[Union[int, float]]) -> EventHubProducer
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
@@ -187,10 +190,10 @@ class EventHubProducerClient(ClientBase):
         partition_id = event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         send_timeout = kwargs.pop("timeout", None)
         try:
-            self._producers[partition_id].send(event_data_batch, timeout=send_timeout)
+            cast(EventHubProducer, self._producers[partition_id]).send(event_data_batch, timeout=send_timeout)
         except (KeyError, AttributeError, EventHubError):
             self._start_producer(partition_id, send_timeout)
-            self._producers[partition_id].send(event_data_batch, timeout=send_timeout)
+            cast(EventHubProducer, self._producers[partition_id]).send(event_data_batch, timeout=send_timeout)
 
     def create_batch(self, **kwargs):
         # type:(Any) -> EventDataBatch

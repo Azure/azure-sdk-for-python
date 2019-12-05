@@ -8,9 +8,8 @@ import random
 from collections import Counter, defaultdict
 from typing import List, Iterable, Optional, Dict, Any, Union, TYPE_CHECKING
 
-from .checkpoint_store import CheckpointStore
-
 if TYPE_CHECKING:
+    from .checkpoint_store import CheckpointStore
     from .._consumer_client_async import EventHubConsumerClient
     from .._producer_client_async import EventHubProducerClient
 
@@ -30,7 +29,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             eventhub_client: Union['EventHubConsumerClient', 'EventHubProducerClient'],
             consumer_group: str,
             owner_id: str,
-            checkpoint_store: Optional[CheckpointStore],
+            checkpoint_store: Optional['CheckpointStore'],
             ownership_timeout: float,
             partition_id: Optional[str]
     ):

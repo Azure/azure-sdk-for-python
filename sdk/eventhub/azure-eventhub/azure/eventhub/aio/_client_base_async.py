@@ -27,6 +27,7 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
+    from ._connection_manager_async import _SeparateConnectionManager, _SharedConnectionManager
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,7 +65,10 @@ class ClientBaseAsync(ClientBase):
             credential=credential,
             **kwargs
         )
-        self._conn_manager = get_connection_manager(loop=self._loop, **kwargs)
+        self._conn_manager = cast(
+            Union[_SharedConnectionManager, _SeparateConnectionManager],
+            get_connection_manager(loop=self._loop, **kwargs)
+        )
 
     def __enter__(self):
         raise TypeError("Asynchronous client must be opened with async context manager.")
