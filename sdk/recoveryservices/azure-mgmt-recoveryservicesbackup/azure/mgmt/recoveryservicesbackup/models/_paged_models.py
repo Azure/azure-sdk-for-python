@@ -12,19 +12,6 @@
 from msrest.paging import Paged
 
 
-class ProtectionPolicyResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ProtectionPolicyResource <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ProtectionPolicyResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ProtectionPolicyResourcePaged, self).__init__(*args, **kwargs)
 class RecoveryPointResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`RecoveryPointResource <azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource>` object
@@ -38,6 +25,19 @@ class RecoveryPointResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RecoveryPointResourcePaged, self).__init__(*args, **kwargs)
+class ProtectionPolicyResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ProtectionPolicyResource <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ProtectionPolicyResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProtectionPolicyResourcePaged, self).__init__(*args, **kwargs)
 class JobResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`JobResource <azure.mgmt.recoveryservicesbackup.models.JobResource>` object

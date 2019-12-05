@@ -847,10 +847,9 @@ class ProtectionPolicy(Model):
     from this class.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFileShareProtectionPolicy,
-    AzureIaaSVMProtectionPolicy, AzureSqlProtectionPolicy,
-    AzureVmWorkloadProtectionPolicy, GenericProtectionPolicy,
-    MabProtectionPolicy
+    sub-classes are: AzureVmWorkloadProtectionPolicy,
+    AzureFileShareProtectionPolicy, AzureIaaSVMProtectionPolicy,
+    AzureSqlProtectionPolicy, GenericProtectionPolicy, MabProtectionPolicy
 
     All required parameters must be populated in order to send to Azure.
 
@@ -870,7 +869,7 @@ class ProtectionPolicy(Model):
     }
 
     _subtype_map = {
-        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
+        'backup_management_type': {'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
     }
 
     def __init__(self, **kwargs):
@@ -2177,9 +2176,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
-    :param instant_rp_details:
-    :type instant_rp_details:
-     ~azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -2203,7 +2199,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
@@ -2212,7 +2207,6 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
 
     def __init__(self, **kwargs):
         super(AzureIaaSVMProtectionPolicy, self).__init__(**kwargs)
-        self.instant_rp_details = kwargs.get('instant_rp_details', None)
         self.schedule_policy = kwargs.get('schedule_policy', None)
         self.retention_policy = kwargs.get('retention_policy', None)
         self.instant_rp_retention_range_in_days = kwargs.get('instant_rp_retention_range_in_days', None)

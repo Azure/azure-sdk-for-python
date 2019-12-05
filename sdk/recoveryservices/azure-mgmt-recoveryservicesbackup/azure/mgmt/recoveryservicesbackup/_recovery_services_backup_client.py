@@ -13,14 +13,14 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
-from .operations import BackupPoliciesOperations
-from .operations import ProtectionPoliciesOperations
-from .operations import ProtectionPolicyOperationResultsOperations
 from .operations import BackupResourceVaultConfigsOperations
 from .operations import ProtectedItemsOperations
 from .operations import ProtectedItemOperationResultsOperations
 from .operations import RecoveryPointsOperations
 from .operations import RestoresOperations
+from .operations import BackupPoliciesOperations
+from .operations import ProtectionPoliciesOperations
+from .operations import ProtectionPolicyOperationResultsOperations
 from .operations import BackupJobsOperations
 from .operations import JobDetailsOperations
 from .operations import JobCancellationsOperations
@@ -60,12 +60,6 @@ class RecoveryServicesBackupClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
-    :ivar backup_policies: BackupPolicies operations
-    :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
-    :ivar protection_policies: ProtectionPolicies operations
-    :vartype protection_policies: azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations
-    :ivar protection_policy_operation_results: ProtectionPolicyOperationResults operations
-    :vartype protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationResultsOperations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
     :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar protected_items: ProtectedItems operations
@@ -76,6 +70,12 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype recovery_points: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations
     :ivar restores: Restores operations
     :vartype restores: azure.mgmt.recoveryservicesbackup.operations.RestoresOperations
+    :ivar backup_policies: BackupPolicies operations
+    :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
+    :ivar protection_policies: ProtectionPolicies operations
+    :vartype protection_policies: azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations
+    :ivar protection_policy_operation_results: ProtectionPolicyOperationResults operations
+    :vartype protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationResultsOperations
     :ivar backup_jobs: BackupJobs operations
     :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
     :ivar job_details: JobDetails operations
@@ -155,12 +155,6 @@ class RecoveryServicesBackupClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_policies = BackupPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policies = ProtectionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protected_items = ProtectedItemsOperations(
@@ -170,6 +164,12 @@ class RecoveryServicesBackupClient(SDKClient):
         self.recovery_points = RecoveryPointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restores = RestoresOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_policies = BackupPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_policies = ProtectionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_jobs = BackupJobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
