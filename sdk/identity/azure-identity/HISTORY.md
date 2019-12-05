@@ -1,4 +1,4 @@
-# Unreleased
+# Version 1.1.1 Unreleased
 
 - All credential pipelines include `ProxyPolicy`
 ([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
