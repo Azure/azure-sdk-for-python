@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import KnownAuthorities, SharedTokenCacheCredential
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
@@ -20,6 +21,23 @@ except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 
 from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
+
+
+def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
+        policies=[policy],
+        transport=Mock(send=send),
+    )
+
+    credential.get_token("scope")
+
+    assert policy.on_request.called
 
 
 def test_empty_cache():
@@ -433,13 +451,7 @@ def test_authority_with_no_known_alias():
 
 
 def get_account_event(
-    username,
-    uid,
-    utid,
-    authority=None,
-    client_id="client-id",
-    refresh_token="refresh-token",
-    scopes=None,
+    username, uid, utid, authority=None, client_id="client-id", refresh_token="refresh-token", scopes=None
 ):
     return {
         "response": build_aad_response(

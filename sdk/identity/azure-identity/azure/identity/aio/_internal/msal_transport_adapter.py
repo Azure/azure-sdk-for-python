@@ -15,6 +15,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
+    ProxyPolicy,
 )
 from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
 
@@ -40,6 +41,7 @@ class MsalTransportAdapter:
 
         config = config or self._create_config(**kwargs)
         policies = policies or [
+            config.proxy_policy,
             config.retry_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
@@ -113,6 +115,7 @@ class MsalTransportAdapter:
     @staticmethod
     def _create_config(**kwargs: "Any") -> Configuration:
         config = Configuration(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         return config

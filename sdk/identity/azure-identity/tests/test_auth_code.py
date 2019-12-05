@@ -3,12 +3,30 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import AuthorizationCodeCredential
+
+from helpers import build_aad_response, mock_response
 
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
+
+
+def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", policies=[policy], transport=Mock(send=send)
+    )
+
+    credential.get_token("scope")
+
+    assert policy.on_request.called
 
 
 def test_auth_code_credential():
