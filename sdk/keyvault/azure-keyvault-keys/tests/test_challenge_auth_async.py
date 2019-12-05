@@ -84,8 +84,8 @@ async def test_policy_updates_cache():
     # 2. second request should be authorized according to the challenge
     # 3. third request should match the second (using a cached access token)
     # 4. fourth request should also match the second -> respond with a new challenge
-    # 4. fifth request should be authorized according to the new challenge
-    # 5. sixth request should match the fifth
+    # 5. fifth request should be authorized according to the new challenge
+    # 6. sixth request should match the fifth
     transport = async_validating_transport(
         requests=(
             Request(url),
