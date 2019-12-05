@@ -97,6 +97,21 @@ class ReasonCode(str, Enum):
     not_available_for_subscription = "NotAvailableForSubscription"
 
 
+class PrivateEndpointServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
 class UnderlyingResourceAction(str, Enum):
 
     delete = "Delete"

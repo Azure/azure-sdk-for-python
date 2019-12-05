@@ -16,6 +16,8 @@ from ._usages_operations import UsagesOperations
 from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from ._quotas_operations import QuotasOperations
 from ._machine_learning_compute_operations import MachineLearningComputeOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._azure_machine_learning_workspaces_operations import AzureMachineLearningWorkspacesOperationsMixin
 
 __all__ = [
@@ -26,5 +28,7 @@ __all__ = [
     'VirtualMachineSizesOperations',
     'QuotasOperations',
     'MachineLearningComputeOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
     'AzureMachineLearningWorkspacesOperationsMixin',
 ]

@@ -21,6 +21,8 @@ from .operations import UsagesOperations
 from .operations import VirtualMachineSizesOperations
 from .operations import QuotasOperations
 from .operations import MachineLearningComputeOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -44,6 +46,10 @@ class AzureMachineLearningWorkspaces(AzureMachineLearningWorkspacesOperationsMix
     :vartype quotas: azure.mgmt.machinelearningservices.operations.QuotasOperations
     :ivar machine_learning_compute: MachineLearningCompute operations
     :vartype machine_learning_compute: azure.mgmt.machinelearningservices.operations.MachineLearningComputeOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.machinelearningservices.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.machinelearningservices.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -77,4 +83,8 @@ class AzureMachineLearningWorkspaces(AzureMachineLearningWorkspacesOperationsMix
         self.quotas = QuotasOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.machine_learning_compute = MachineLearningComputeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -31,7 +31,7 @@ try:
     from ._models_py3 import DataLakeAnalytics
     from ._models_py3 import DataLakeAnalyticsProperties
     from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import HDInsight
     from ._models_py3 import HDInsightProperties
     from ._models_py3 import Identity
@@ -41,6 +41,11 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Password
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import QuotaBaseProperties
     from ._models_py3 import QuotaUpdateParameters
     from ._models_py3 import RegistryListCredentialsResult
@@ -93,7 +98,7 @@ except (SyntaxError, ImportError):
     from ._models import DataLakeAnalytics
     from ._models import DataLakeAnalyticsProperties
     from ._models import ErrorDetail
-    from ._models import ErrorResponse
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import HDInsight
     from ._models import HDInsightProperties
     from ._models import Identity
@@ -103,6 +108,11 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Password
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceListResult
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import QuotaBaseProperties
     from ._models import QuotaUpdateParameters
     from ._models import RegistryListCredentialsResult
@@ -152,6 +162,8 @@ from ._azure_machine_learning_workspaces_enums import (
     NodeState,
     ComputeType,
     ReasonCode,
+    PrivateEndpointServiceConnectionStatus,
+    PrivateEndpointConnectionProvisioningState,
     UnderlyingResourceAction,
 )
 
@@ -177,7 +189,7 @@ __all__ = [
     'DataLakeAnalytics',
     'DataLakeAnalyticsProperties',
     'ErrorDetail',
-    'ErrorResponse',
+    'ErrorResponse', 'ErrorResponseException',
     'HDInsight',
     'HDInsightProperties',
     'Identity',
@@ -187,6 +199,11 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'Password',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'QuotaBaseProperties',
     'QuotaUpdateParameters',
     'RegistryListCredentialsResult',
@@ -235,5 +252,7 @@ __all__ = [
     'NodeState',
     'ComputeType',
     'ReasonCode',
+    'PrivateEndpointServiceConnectionStatus',
+    'PrivateEndpointConnectionProvisioningState',
     'UnderlyingResourceAction',
 ]
