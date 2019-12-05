@@ -1225,3 +1225,35 @@ class WebhookReceiver(Model):
         super(WebhookReceiver, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.service_uri = kwargs.get('service_uri', None)
+
+
+class WebtestLocationAvailabilityCriteria(Model):
+    """Specifies the metric alert criteria for a web test resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param web_test_id: Required. The web test Id.
+    :type web_test_id: str
+    :param component_id: Required. The component Id.
+    :type component_id: str
+    :param failed_location_count: Required. Failed location count.
+    :type failed_location_count: float
+    """
+
+    _validation = {
+        'web_test_id': {'required': True},
+        'component_id': {'required': True},
+        'failed_location_count': {'required': True},
+    }
+
+    _attribute_map = {
+        'web_test_id': {'key': 'webTestId', 'type': 'str'},
+        'component_id': {'key': 'componentId', 'type': 'str'},
+        'failed_location_count': {'key': 'failedLocationCount', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebtestLocationAvailabilityCriteria, self).__init__(**kwargs)
+        self.web_test_id = kwargs.get('web_test_id', None)
+        self.component_id = kwargs.get('component_id', None)
+        self.failed_location_count = kwargs.get('failed_location_count', None)
