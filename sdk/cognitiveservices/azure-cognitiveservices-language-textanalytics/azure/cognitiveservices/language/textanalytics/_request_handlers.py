@@ -61,4 +61,4 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
             if item_hint is None:
                 doc.country_hint = whole_batch_hint
 
-    return string_batch if string_batch != [] else documents
+    return string_batch if string_batch else documents

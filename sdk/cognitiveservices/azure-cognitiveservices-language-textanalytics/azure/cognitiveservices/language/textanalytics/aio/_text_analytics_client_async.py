@@ -10,7 +10,6 @@ from typing import (  # pylint: disable=unused-import
     Any,
     List,
     Dict,
-    TYPE_CHECKING,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.models import ErrorException
@@ -25,18 +24,16 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
 )
-
-if TYPE_CHECKING:
-    from .._models import (
-        DetectLanguageInput,
-        TextDocumentInput,
-        DocumentLanguage,
-        DocumentEntities,
-        DocumentLinkedEntities,
-        DocumentKeyPhrases,
-        DocumentSentiment,
-        DocumentError,
-    )
+from .._models import (
+    DetectLanguageInput,
+    TextDocumentInput,
+    DocumentLanguage,
+    DocumentEntities,
+    DocumentLinkedEntities,
+    DocumentKeyPhrases,
+    DocumentSentiment,
+    DocumentError,
+)
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -54,7 +51,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -83,13 +80,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def detect_languages(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
-        country_hint="US",  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
+        documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = False,
+        country_hint: Optional[str] = "US",
+        **kwargs: Any
+    ) -> List[Union[DocumentLanguage, DocumentError]]:
         """Detects Language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
@@ -103,8 +99,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.DetectLanguageInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document
             level statistics.
         :param str country_hint: A country hint for the entire batch. Accepts two
@@ -115,7 +111,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLanguage,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -141,13 +137,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
-        language="en",  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DocumentEntities, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = False,
+        language: Optional[str] = "en",
+        **kwargs: Any
+    ) -> List[Union[DocumentEntities, DocumentError]]:
         """Named Entity Recognition for a batch of documents.
 
         Returns a list of general named entities in a given document.
@@ -161,8 +156,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -172,7 +167,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -198,13 +193,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_pii_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
-        language="en",  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DocumentEntities, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = False,
+        language: Optional[str] = "en",
+        **kwargs: Any
+    ) -> List[Union[DocumentEntities, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
 
         Returns a list of personal information entities ("SSN",
@@ -219,8 +213,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -230,7 +224,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -256,13 +250,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_linked_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
-        language="en",  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = False,
+        language: Optional[str] = "en",
+        **kwargs: Any
+    ) -> List[Union[DocumentLinkedEntities, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
         Returns a list of recognized entities with links to a
@@ -276,8 +269,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -287,7 +280,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -313,13 +306,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def extract_key_phrases(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
-        language="en",  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = False,
+        language: Optional[str] = "en",
+        **kwargs: Any
+    ) -> List[Union[DocumentKeyPhrases, DocumentError]]:
         """Extract Key Phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
@@ -333,8 +325,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -344,7 +336,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -370,13 +362,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def analyze_sentiment(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
-        language="en",  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = False,
+        language: Optional[str] = "en",
+        **kwargs: Any
+    ) -> List[Union[DocumentSentiment, DocumentError]]:
         """Analyze sentiment for a batch of documents.
 
         Returns a sentiment prediction, as well as sentiment scores for
@@ -391,8 +382,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -402,7 +393,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentSentiment,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 

@@ -80,7 +80,7 @@ def single_detect_language(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to detect language from.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
@@ -89,11 +89,11 @@ def single_detect_language(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentLanguage.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLanguage
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -138,7 +138,7 @@ def single_recognize_entities(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -146,11 +146,11 @@ def single_recognize_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -196,7 +196,7 @@ def single_recognize_pii_entities(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -204,11 +204,11 @@ def single_recognize_pii_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -254,7 +254,7 @@ def single_recognize_linked_entities(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -262,11 +262,11 @@ def single_recognize_linked_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentLinkedEntities
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -311,7 +311,7 @@ def single_extract_key_phrases(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to extract key phrases from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -319,11 +319,11 @@ def single_extract_key_phrases(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentKeyPhrases
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -369,7 +369,7 @@ def single_analyze_sentiment(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to analyze sentiment from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -377,11 +377,11 @@ def single_analyze_sentiment(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: DocumentSentiment
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentSentiment
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 

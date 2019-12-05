@@ -29,9 +29,12 @@ from ._models import (
 def process_single_error(error):
     """Configure and raise a DocumentError for single text operation errors.
     """
-    error_message = error.error["innerError"]["message"]
-    error_code = error.error["code"]
-    error_message += "\nErrorCode:{}".format(error_code)
+    try:
+        error_message = error.error["innerError"]["message"]
+        error_code = error.error["code"]
+        error_message += "\nErrorCode:{}".format(error_code)
+    except KeyError:
+        raise HttpResponseError(message="There was an unknown error with the request.")
     error = HttpResponseError(message=error_message)
     error.error_code = error_code
     raise error
@@ -52,14 +55,17 @@ def process_batch_error(error):
     except DecodeError:
         pass
 
-    if error_body is not None:
-        error_resp = error_body["error"]
-        if "innerError" in error_resp:
-            error_resp = error_resp["innerError"]
+    try:
+        if error_body is not None:
+            error_resp = error_body["error"]
+            if "innerError" in error_resp:
+                error_resp = error_resp["innerError"]
 
-        error_message = error_resp["message"]
-        error_code = error_resp["code"]
-        error_message += "\nErrorCode:{}".format(error_code)
+            error_message = error_resp["message"]
+            error_code = error_resp["code"]
+            error_message += "\nErrorCode:{}".format(error_code)
+    except KeyError:
+        raise HttpResponseError(message="There was an unknown error with the request.")
 
     error = raise_error(message=error_message, response=error.response)
     error.error_code = error_code

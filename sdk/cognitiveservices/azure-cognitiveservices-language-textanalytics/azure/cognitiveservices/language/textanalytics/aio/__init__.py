@@ -4,19 +4,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 from .._request_handlers import _validate_single_input
 from .._response_handlers import process_single_error
 from ._text_analytics_client_async import TextAnalyticsClient
-
-if TYPE_CHECKING:
-    from .._models import (
-        DocumentLanguage,
-        DocumentEntities,
-        DocumentLinkedEntities,
-        DocumentKeyPhrases,
-        DocumentSentiment,
-    )
+from .._models import (
+    DocumentLanguage,
+    DocumentEntities,
+    DocumentLinkedEntities,
+    DocumentKeyPhrases,
+    DocumentSentiment,
+)
 
 __all__ = [
     'TextAnalyticsClient',
@@ -30,15 +28,14 @@ __all__ = [
 
 
 async def single_detect_language(
-            endpoint,  # type: str
-            credential,  # type: str
-            text,  # type: str
-            country_hint="US",  # type: Optional[str]
-            show_stats=False,   # type: Optional[bool]
-            model_version=None,  # type: Optional[str]
-            **kwargs  # type: Any
-):
-    # type: (...) -> DocumentLanguage
+        endpoint: str,
+        credential: str,
+        text: str,
+        country_hint: Optional[str] = "US",
+        show_stats: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+) -> DocumentLanguage:
     """Detect Language for a single document.
 
     Returns the detected language and a numeric score between zero and
@@ -50,7 +47,7 @@ async def single_detect_language(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to detect language from.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
@@ -59,11 +56,11 @@ async def single_detect_language(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentLanguage.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLanguage
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -88,15 +85,14 @@ async def single_detect_language(
 
 
 async def single_recognize_entities(
-        endpoint,  # type: str
-        credential,  # type: str
-        text,  # type: str
-        language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
-        **kwargs  # type: Any
-):
-    # type: (...) -> DocumentEntities
+        endpoint: str,
+        credential: str,
+        text: str,
+        language: Optional[str] = "en",
+        show_stats: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+) -> DocumentEntities:
     """Named Entity Recognition for a single document.
 
     Returns a list of general named entities in a given document.
@@ -108,7 +104,7 @@ async def single_recognize_entities(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -116,11 +112,11 @@ async def single_recognize_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -145,15 +141,14 @@ async def single_recognize_entities(
 
 
 async def single_recognize_pii_entities(
-        endpoint,  # type: str
-        credential,  # type: str
-        text,  # type: str
-        language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
-        **kwargs  # type: Any
-):
-    # type: (...) -> DocumentEntities
+        endpoint: str,
+        credential: str,
+        text: str,
+        language: Optional[str] = "en",
+        show_stats: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+) -> DocumentEntities:
     """Recognize entities containing personal information for a single document.
 
     Returns a list of personal information entities ("SSN",
@@ -166,7 +161,7 @@ async def single_recognize_pii_entities(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -174,11 +169,11 @@ async def single_recognize_pii_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -203,15 +198,14 @@ async def single_recognize_pii_entities(
 
 
 async def single_recognize_linked_entities(
-        endpoint,  # type: str
-        credential,  # type: str
-        text,  # type: str
-        language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
-        **kwargs  # type: Any
-):
-    # type: (...) -> DocumentLinkedEntities
+        endpoint: str,
+        credential: str,
+        text: str,
+        language: Optional[str] = "en",
+        show_stats: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+) -> DocumentLinkedEntities:
     """Recognize linked entities from a well-known knowledge base
     for a single document.
 
@@ -224,7 +218,7 @@ async def single_recognize_linked_entities(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -232,11 +226,11 @@ async def single_recognize_linked_entities(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentLinkedEntities
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -261,15 +255,14 @@ async def single_recognize_linked_entities(
 
 
 async def single_extract_key_phrases(
-        endpoint,  # type: str
-        credential,  # type: str
-        text,  # type: str
-        language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
-        **kwargs  # type: Any
-):
-    # type: (...) -> DocumentKeyPhrases
+        endpoint: str,
+        credential: str,
+        text: str,
+        language: Optional[str] = "en",
+        show_stats: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+) -> DocumentKeyPhrases:
     """Extract Key Phrases for a single document.
 
     Returns a list of strings denoting the key phrases in the input
@@ -281,7 +274,7 @@ async def single_extract_key_phrases(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to extract key phrases from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -289,11 +282,11 @@ async def single_extract_key_phrases(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DocumentKeyPhrases
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 
@@ -318,15 +311,14 @@ async def single_extract_key_phrases(
 
 
 async def single_analyze_sentiment(
-        endpoint,  # type: str
-        credential,  # type: str
-        text,  # type: str
-        language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
-        **kwargs  # type: Any
-):
-    # type: (...) -> DocumentSentiment
+        endpoint: str,
+        credential: str,
+        text: str,
+        language: Optional[str] = "en",
+        show_stats: Optional[bool] = False,
+        model_version: Optional[str] = None,
+        **kwargs: Any
+) -> DocumentSentiment:
     """Analyze sentiment in a single document.
 
     Returns a sentiment prediction, as well as sentiment scores for
@@ -339,7 +331,7 @@ async def single_analyze_sentiment(
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
     :param str text: The single string to analyze sentiment from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -347,11 +339,11 @@ async def single_analyze_sentiment(
     :param bool show_stats: If set to true, response will contain
         document level statistics.
     :param str model_version: This value indicates which model will
-        be used for scoring. If a model-version is not specified, the API
-        will default to the latest, non-preview version.
+        be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+        is not specified, the API will default to the latest, non-preview version.
     :return: DocumentSentiment
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentSentiment
-    :raises: ~azure.core.exceptions.HttpResponseError
+    :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
 

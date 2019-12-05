@@ -54,7 +54,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or token credential
+    :type credential: str or ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -103,8 +103,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.DetectLanguageInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document
             level statistics.
         :param str country_hint: A country hint for the entire batch. Accepts two
@@ -115,7 +115,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLanguage,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -161,8 +161,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -172,7 +172,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -219,8 +219,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -230,7 +230,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -276,8 +276,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -287,7 +287,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -333,8 +333,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -344,7 +344,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -391,8 +391,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
-            be used for scoring. If a model-version is not specified, the API
-            will default to the latest, non-preview version.
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
         :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -402,7 +402,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentSentiment,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 

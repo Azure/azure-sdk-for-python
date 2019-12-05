@@ -6,7 +6,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 * Language Detection
 * Key Phrase Extraction
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics) | [Package (PyPI)](https://pypi.org/project/azure-cognitiveservices-language-textanalytics/) | [API reference documentation](https://westus.dev.cognitive.microsoft.com/docs/services/TextAnalytics-v3-0-Preview-1/operations/Languages) | [Product documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics) | [Package (PyPI)](https://pypi.org/project/azure-cognitiveservices-language-textanalytics/) | [API reference documentation](https://aka.ms/azsdk-python-textanalytics-ref-docs) | [Product documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples)
 
 ## Getting started
 
@@ -159,7 +159,7 @@ See [Language and regional support](https://docs.microsoft.com/azure/cognitive-s
 
 
 ### Client
-The Text Analytics client library provides a [TextAnalyticsClient](TODO) to do analysis on batches of documents.
+The Text Analytics client library provides a [TextAnalyticsClient](https://aka.ms/azsdk-python-textanalytics-textanalyticsclient) to do analysis on batches of documents.
 
 
 A batch contains the text documents you wish to process, and may contain a per-item ID and language/country hint
@@ -172,7 +172,7 @@ documents = ["I hated the movie. It was so slow!", "The movie made it into my to
 
 result = text_analytics_client.analyze_sentiment(documents)
 ```
-or as a list of [DetectLanguageInput](TODO) or [TextDocumentInput](TODO):
+or as a list of [DetectLanguageInput](https://aka.ms/azsdk-python-textanalytics-detectlanguageinput) or [TextDocumentInput](https://aka.ms/azsdk-python-textanalytics-textdocumentinput):
 ```python
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 
