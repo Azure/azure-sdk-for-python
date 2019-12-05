@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.50.2 (2019-12-9)
+------------------
+
+**Features**
+
+* Added support for delivery tag lock tokens
+
+**BugFixes**
+
+* Fixed bug where Message would pass through invalid kwargs on init when attempting to thread through subject.
+
+
 0.50.1 (2019-06-24)
 -------------------
 
