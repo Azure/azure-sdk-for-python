@@ -28,11 +28,12 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         super(ResourceGroupPreparer, self).__init__(name_prefix, random_name_length,
                                                     disable_recording=disable_recording,
                                                     playback_fake_resource=playback_fake_resource,
-                                                    client_kwargs=client_kwargs)
+                                                    client_kwargs=client_kwargs,
+                                                    random_name_enabled=random_name_enabled)
         self.location = location
         self.parameter_name = parameter_name
         self.parameter_name_for_location = parameter_name_for_location
-        if random_name_enabled:
+        if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
 
     def create_resource(self, name, **kwargs):
