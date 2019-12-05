@@ -11,6 +11,7 @@
 
 try:
     from ._models_py3 import AccessPolicy
+    from ._models_py3 import CopyFileSmbInfo
     from ._models_py3 import CorsRule
     from ._models_py3 import DirectoryItem
     from ._models_py3 import FileHTTPHeaders
@@ -18,6 +19,7 @@ try:
     from ._models_py3 import FileProperty
     from ._models_py3 import FilesAndDirectoriesListSegment
     from ._models_py3 import HandleItem
+    from ._models_py3 import LeaseAccessConditions
     from ._models_py3 import ListFilesAndDirectoriesSegmentResponse
     from ._models_py3 import ListHandlesResponse
     from ._models_py3 import ListSharesResponse
@@ -34,6 +36,7 @@ try:
     from ._models_py3 import StorageServiceProperties
 except (SyntaxError, ImportError):
     from ._models import AccessPolicy
+    from ._models import CopyFileSmbInfo
     from ._models import CorsRule
     from ._models import DirectoryItem
     from ._models import FileHTTPHeaders
@@ -41,6 +44,7 @@ except (SyntaxError, ImportError):
     from ._models import FileProperty
     from ._models import FilesAndDirectoriesListSegment
     from ._models import HandleItem
+    from ._models import LeaseAccessConditions
     from ._models import ListFilesAndDirectoriesSegmentResponse
     from ._models import ListHandlesResponse
     from ._models import ListSharesResponse
@@ -60,11 +64,13 @@ from ._azure_file_storage_enums import (
     DeleteSnapshotsOptionType,
     FileRangeWriteType,
     ListSharesIncludeType,
+    PermissionCopyModeType,
     StorageErrorCode,
 )
 
 __all__ = [
     'AccessPolicy',
+    'CopyFileSmbInfo',
     'CorsRule',
     'DirectoryItem',
     'FileHTTPHeaders',
@@ -72,6 +78,7 @@ __all__ = [
     'FileProperty',
     'FilesAndDirectoriesListSegment',
     'HandleItem',
+    'LeaseAccessConditions',
     'ListFilesAndDirectoriesSegmentResponse',
     'ListHandlesResponse',
     'ListSharesResponse',
@@ -87,6 +94,7 @@ __all__ = [
     'StorageError', 'StorageErrorException',
     'StorageServiceProperties',
     'StorageErrorCode',
+    'PermissionCopyModeType',
     'DeleteSnapshotsOptionType',
     'ListSharesIncludeType',
     'CopyStatusType',
