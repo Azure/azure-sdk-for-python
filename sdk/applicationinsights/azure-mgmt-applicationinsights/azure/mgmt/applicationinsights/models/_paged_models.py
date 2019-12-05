@@ -51,19 +51,6 @@ class ApplicationInsightsComponentAPIKeyPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ApplicationInsightsComponentAPIKeyPaged, self).__init__(*args, **kwargs)
-class WorkItemConfigurationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`WorkItemConfiguration <azure.mgmt.applicationinsights.models.WorkItemConfiguration>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[WorkItemConfiguration]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(WorkItemConfigurationPaged, self).__init__(*args, **kwargs)
 class ApplicationInsightsComponentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ApplicationInsightsComponent <azure.mgmt.applicationinsights.models.ApplicationInsightsComponent>` object
@@ -77,6 +64,19 @@ class ApplicationInsightsComponentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ApplicationInsightsComponentPaged, self).__init__(*args, **kwargs)
+class WorkItemConfigurationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkItemConfiguration <azure.mgmt.applicationinsights.models.WorkItemConfiguration>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkItemConfiguration]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkItemConfigurationPaged, self).__init__(*args, **kwargs)
 class ApplicationInsightsComponentWebTestLocationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ApplicationInsightsComponentWebTestLocation <azure.mgmt.applicationinsights.models.ApplicationInsightsComponentWebTestLocation>` object

@@ -25,7 +25,7 @@ class AnnotationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2015-05-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class AnnotationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2015-05-01"
 
         self.config = config
 

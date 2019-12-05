@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import ApplicationInsightsManagementClientConfiguration
 from .operations import Operations
-from .operations import AnalyticsItemsOperations
 from .operations import AnnotationsOperations
 from .operations import APIKeysOperations
 from .operations import ExportConfigurationsOperations
@@ -23,11 +22,12 @@ from .operations import ComponentQuotaStatusOperations
 from .operations import ComponentFeatureCapabilitiesOperations
 from .operations import ComponentAvailableFeaturesOperations
 from .operations import ProactiveDetectionConfigurationsOperations
-from .operations import WorkItemConfigurationsOperations
 from .operations import ComponentsOperations
+from .operations import WorkItemConfigurationsOperations
 from .operations import FavoritesOperations
 from .operations import WebTestLocationsOperations
 from .operations import WebTestsOperations
+from .operations import AnalyticsItemsOperations
 from .operations import WorkbooksOperations
 from . import models
 
@@ -40,8 +40,6 @@ class ApplicationInsightsManagementClient(SDKClient):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.applicationinsights.operations.Operations
-    :ivar analytics_items: AnalyticsItems operations
-    :vartype analytics_items: azure.mgmt.applicationinsights.operations.AnalyticsItemsOperations
     :ivar annotations: Annotations operations
     :vartype annotations: azure.mgmt.applicationinsights.operations.AnnotationsOperations
     :ivar api_keys: APIKeys operations
@@ -58,16 +56,18 @@ class ApplicationInsightsManagementClient(SDKClient):
     :vartype component_available_features: azure.mgmt.applicationinsights.operations.ComponentAvailableFeaturesOperations
     :ivar proactive_detection_configurations: ProactiveDetectionConfigurations operations
     :vartype proactive_detection_configurations: azure.mgmt.applicationinsights.operations.ProactiveDetectionConfigurationsOperations
-    :ivar work_item_configurations: WorkItemConfigurations operations
-    :vartype work_item_configurations: azure.mgmt.applicationinsights.operations.WorkItemConfigurationsOperations
     :ivar components: Components operations
     :vartype components: azure.mgmt.applicationinsights.operations.ComponentsOperations
+    :ivar work_item_configurations: WorkItemConfigurations operations
+    :vartype work_item_configurations: azure.mgmt.applicationinsights.operations.WorkItemConfigurationsOperations
     :ivar favorites: Favorites operations
     :vartype favorites: azure.mgmt.applicationinsights.operations.FavoritesOperations
     :ivar web_test_locations: WebTestLocations operations
     :vartype web_test_locations: azure.mgmt.applicationinsights.operations.WebTestLocationsOperations
     :ivar web_tests: WebTests operations
     :vartype web_tests: azure.mgmt.applicationinsights.operations.WebTestsOperations
+    :ivar analytics_items: AnalyticsItems operations
+    :vartype analytics_items: azure.mgmt.applicationinsights.operations.AnalyticsItemsOperations
     :ivar workbooks: Workbooks operations
     :vartype workbooks: azure.mgmt.applicationinsights.operations.WorkbooksOperations
 
@@ -86,13 +86,11 @@ class ApplicationInsightsManagementClient(SDKClient):
         super(ApplicationInsightsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-10-01'
+        self.api_version = '2015-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.analytics_items = AnalyticsItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.annotations = AnnotationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -110,15 +108,17 @@ class ApplicationInsightsManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.proactive_detection_configurations = ProactiveDetectionConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.work_item_configurations = WorkItemConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.components = ComponentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.work_item_configurations = WorkItemConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.favorites = FavoritesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_test_locations = WebTestLocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_tests = WebTestsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.analytics_items = AnalyticsItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workbooks = WorkbooksOperations(
             self._client, self.config, self._serialize, self._deserialize)
