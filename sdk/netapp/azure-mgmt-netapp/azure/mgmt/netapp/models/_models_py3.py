@@ -60,6 +60,22 @@ class ActiveDirectory(Model):
         self.organizational_unit = organizational_unit
 
 
+class AuthorizeRequest(Model):
+    """Authorize request.
+
+    :param remote_volume_resource_id: Resource id
+    :type remote_volume_resource_id: str
+    """
+
+    _attribute_map = {
+        'remote_volume_resource_id': {'key': 'remoteVolumeResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, remote_volume_resource_id: str=None, **kwargs) -> None:
+        super(AuthorizeRequest, self).__init__(**kwargs)
+        self.remote_volume_resource_id = remote_volume_resource_id
+
+
 class CapacityPool(Model):
     """Capacity pool resource.
 
@@ -563,20 +579,24 @@ class ReplicationObject(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param replication_id: replicationId. Id
+    :param replication_id: Id
     :type replication_id: str
-    :param endpoint_type: Required. endpointType. Indicates whether the local
-     volume is the source or destination for the Volume Replication
+    :param endpoint_type: Indicates whether the local volume is the source or
+     destination for the Volume Replication
     :type endpoint_type: str
-    :param replication_schedule: Required. replicationSchedule. Schedule
+    :param replication_schedule: Required. Schedule
     :type replication_schedule: str
-    :param remote_volume_resource_id: Required. remoteVolumeResourceId. The
-     resource ID of the remote volume.
+    :param owner_id: Id used to identify the owner of the resource
+    :type owner_id: str
+    :param remote_volume_resource_id: Required. The resource ID of the remote
+     volume.
     :type remote_volume_resource_id: str
+    :param remote_volume_region: The remote region for the other end of the
+     Volume Replication.
+    :type remote_volume_region: str
     """
 
     _validation = {
-        'endpoint_type': {'required': True},
         'replication_schedule': {'required': True},
         'remote_volume_resource_id': {'required': True},
     }
@@ -585,15 +605,52 @@ class ReplicationObject(Model):
         'replication_id': {'key': 'replicationId', 'type': 'str'},
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'replication_schedule': {'key': 'replicationSchedule', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
         'remote_volume_resource_id': {'key': 'remoteVolumeResourceId', 'type': 'str'},
+        'remote_volume_region': {'key': 'remoteVolumeRegion', 'type': 'str'},
     }
 
-    def __init__(self, *, endpoint_type: str, replication_schedule: str, remote_volume_resource_id: str, replication_id: str=None, **kwargs) -> None:
+    def __init__(self, *, replication_schedule: str, remote_volume_resource_id: str, replication_id: str=None, endpoint_type: str=None, owner_id: str=None, remote_volume_region: str=None, **kwargs) -> None:
         super(ReplicationObject, self).__init__(**kwargs)
         self.replication_id = replication_id
         self.endpoint_type = endpoint_type
         self.replication_schedule = replication_schedule
+        self.owner_id = owner_id
         self.remote_volume_resource_id = remote_volume_resource_id
+        self.remote_volume_region = remote_volume_region
+
+
+class ReplicationStatus(Model):
+    """Replication status.
+
+    :param healthy: Replication health check
+    :type healthy: bool
+    :param relationship_status: Status of the mirror relationship
+    :type relationship_status: str
+    :param mirror_state: The status of the replication
+    :type mirror_state: str
+    :param total_progress: The progress of the replication
+    :type total_progress: str
+    :param error_message: Displays error message if the replication is in an
+     error state
+    :type error_message: str
+    """
+
+    _attribute_map = {
+        'healthy': {'key': 'healthy', 'type': 'bool'},
+        'relationship_status': {'key': 'relationshipStatus', 'type': 'str'},
+        'mirror_state': {'key': 'mirrorState', 'type': 'str'},
+        'total_progress': {'key': 'totalProgress', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(self, *, healthy: bool=None, relationship_status: str=None, mirror_state: str=None, total_progress: str=None, error_message: str=None, **kwargs) -> None:
+        super(ReplicationStatus, self).__init__(**kwargs)
+        self.healthy = healthy
+        self.relationship_status = relationship_status
+        self.mirror_state = mirror_state
+        self.total_progress = total_progress
+        self.error_message = error_message
 
 
 class ResourceNameAvailability(Model):
@@ -819,6 +876,8 @@ class Volume(Model):
      replication object
     :type data_protection:
      ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+    :param is_restoring: Restoring
+    :type is_restoring: bool
     """
 
     _validation = {
@@ -854,9 +913,10 @@ class Volume(Model):
         'mount_targets': {'key': 'properties.mountTargets', 'type': 'object'},
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
+        'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, is_restoring: bool=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -876,6 +936,7 @@ class Volume(Model):
         self.mount_targets = mount_targets
         self.volume_type = volume_type
         self.data_protection = data_protection
+        self.is_restoring = is_restoring
 
 
 class VolumePatch(Model):
@@ -962,11 +1023,11 @@ class VolumePropertiesDataProtection(Model):
     DataProtection volume, can have a replication object.
 
     :param replication: Replication. Replication properties
-    :type replication: ~azure.mgmt.netapp.models.ReplicationObject
+    :type replication: object
     """
 
     _attribute_map = {
-        'replication': {'key': 'replication', 'type': 'ReplicationObject'},
+        'replication': {'key': 'replication', 'type': 'object'},
     }
 
     def __init__(self, *, replication=None, **kwargs) -> None:
