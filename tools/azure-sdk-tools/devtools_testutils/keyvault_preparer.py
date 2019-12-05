@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from collections import namedtuple
 import os
 import time
@@ -31,7 +35,7 @@ DEFAULT_PERMISSIONS = Permissions(
 DEFAULT_SKU = SkuName.premium.value
 CLIENT_OID = "00000000-0000-0000-0000-000000000000"
 
-class KeyVaultAccountPreparer(AzureMgmtPreparer):
+class KeyVaultPreparer(AzureMgmtPreparer):
     def __init__(
         self,
         name_prefix='vault',
@@ -49,7 +53,7 @@ class KeyVaultAccountPreparer(AzureMgmtPreparer):
         client_kwargs=None,
         random_name_enabled=True
     ):
-        super(KeyVaultAccountPreparer, self).__init__(name_prefix, 24,
+        super(KeyVaultPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
                                                      client_kwargs=client_kwargs,

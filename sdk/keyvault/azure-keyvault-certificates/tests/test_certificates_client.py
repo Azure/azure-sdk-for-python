@@ -26,7 +26,7 @@ from azure.keyvault.certificates import (
     IssuerProperties
 )
 from azure.keyvault.certificates._shared import parse_vault_id
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
 
@@ -181,7 +181,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(a.vault_url, b.vault_url)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_crud_operations(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -245,7 +245,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_list(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -276,7 +276,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_list(expected, returned_certificates)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_list_certificate_versions(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -319,7 +319,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_crud_contacts(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -351,7 +351,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_recover_and_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -380,7 +380,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates
-        for certificate_name in [c for c in certs.keys()if c.startswith("certrec")]:
+        for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]:
             client.begin_recover_deleted_certificate(
                 certificate_name=certificate_name,
                 _polling_interval=polling_interval
@@ -403,7 +403,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_async_request_cancellation_and_deletion(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -463,7 +463,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client.begin_delete_certificate(cert_name).wait()
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_policy(self, vault_client, **kwargs):
         client = vault_client.certificates
@@ -510,7 +510,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_policy(cert_policy, returned_policy)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_get_pending_certificate_signing_request(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -529,7 +529,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(client.get_certificate_operation(certificate_name=cert_name).csr, pending_version_csr)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         policy = CertificatePolicy.get_default()
@@ -557,7 +557,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_bundle(cert=restored_certificate, cert_name=cert_name, cert_policy=policy)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_merge_certificate(self, vault_client, **kwargs):
         import base64
@@ -609,7 +609,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client.merge_certificate(certificate_name=cert_name, x509_certificates=[signed_certificate_bytes.encode()])
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_crud_issuer(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -689,7 +689,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer(client_kwargs={'logging_enable': True})
     def test_logging_enabled(self, vault_client, **kwargs):
         client = vault_client.certificates
@@ -714,7 +714,7 @@ class CertificateClientTests(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_logging_disabled(self, vault_client, **kwargs):
         client = vault_client.certificates

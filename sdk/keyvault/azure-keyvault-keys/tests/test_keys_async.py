@@ -11,7 +11,7 @@ import logging
 import json
 
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
 
@@ -163,7 +163,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_key_crud_operations(self, vault_client, **kwargs):
@@ -215,7 +215,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_key_list(self, vault_client, **kwargs):
@@ -240,7 +240,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, vault_client, **kwargs):
@@ -267,7 +267,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_keys(self, vault_client, **kwargs):
@@ -301,7 +301,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -328,7 +328,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
@@ -361,7 +361,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):
@@ -385,7 +385,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             await client.purge_deleted_key(key_name)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, vault_client, **kwargs):
@@ -411,7 +411,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, vault_client, **kwargs):

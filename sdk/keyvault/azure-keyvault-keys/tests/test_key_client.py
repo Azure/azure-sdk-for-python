@@ -16,7 +16,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.keyvault.keys import JsonWebKey
 from keys_preparer import VaultClientPreparer
 from keys_test_case import KeyVaultTestCase
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
 
 # used for logging tests
@@ -136,7 +136,7 @@ class KeyClientTests(KeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_key_crud_operations(self, vault_client, **kwargs):
 
@@ -188,7 +188,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
 
@@ -214,7 +214,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_key_list(self, vault_client, **kwargs):
 
@@ -239,7 +239,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_list_versions(self, vault_client, **kwargs):
 
@@ -266,7 +266,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_list_deleted_keys(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -299,7 +299,7 @@ class KeyClientTests(KeyVaultTestCase):
                 del expected[key.name]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -327,7 +327,7 @@ class KeyClientTests(KeyVaultTestCase):
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -360,7 +360,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(not any(s in deleted for s in key_names))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer(client_kwargs={'logging_enable': True})
     def test_logging_enabled(self, vault_client, **kwargs):
         client = vault_client.keys
@@ -385,7 +385,7 @@ class KeyClientTests(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_logging_disabled(self, vault_client, **kwargs):
         client = vault_client.keys

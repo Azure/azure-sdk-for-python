@@ -5,7 +5,7 @@
 import hashlib
 import os
 
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from certificates_async_preparer import AsyncVaultClientPreparer
 from certificates_async_test_case import AsyncKeyVaultTestCase
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -33,7 +33,7 @@ def test_create_certificate():
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
@@ -105,7 +105,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END delete_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
@@ -177,7 +177,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END list_deleted_certificates]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
@@ -231,7 +231,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END restore_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
@@ -280,7 +280,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END recover_deleted_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
@@ -327,7 +327,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END delete_contacts]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):

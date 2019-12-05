@@ -9,7 +9,7 @@ import os
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from keys_preparer import VaultClientPreparer
 from keys_test_case import KeyVaultTestCase
 
@@ -70,7 +70,7 @@ class CryptoClientTests(KeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(permissions=NO_GET)
+    @KeyVaultPreparer(permissions=NO_GET)
     @VaultClientPreparer()
     def test_encrypt_and_decrypt(self, vault_client, **kwargs):
         # TODO: use iv, authentication_data
@@ -89,7 +89,7 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(self.plaintext, result.plaintext)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(permissions=NO_GET)
+    @KeyVaultPreparer(permissions=NO_GET)
     @VaultClientPreparer()
     def test_sign_and_verify(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -112,7 +112,7 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertTrue(verified.is_valid)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(permissions=NO_GET)
+    @KeyVaultPreparer(permissions=NO_GET)
     @VaultClientPreparer()
     def test_wrap_and_unwrap(self, vault_client, **kwargs):
         key_name = self.get_resource_name("keywrap")
@@ -143,7 +143,7 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(unwrap_result.key, key_bytes)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_encrypt_local(self, vault_client, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
@@ -160,7 +160,7 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.plaintext, self.plaintext)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_wrap_local(self, vault_client, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
@@ -177,7 +177,7 @@ class CryptoClientTests(KeyVaultTestCase):
             self.assertEqual(result.key, self.plaintext)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_rsa_verify_local(self, vault_client, **kwargs):
         """Sign with Key Vault, verify locally"""
@@ -204,7 +204,7 @@ class CryptoClientTests(KeyVaultTestCase):
                 self.assertTrue(result.is_valid)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_ec_verify_local(self, vault_client, **kwargs):
         """Sign with Key Vault, verify locally"""

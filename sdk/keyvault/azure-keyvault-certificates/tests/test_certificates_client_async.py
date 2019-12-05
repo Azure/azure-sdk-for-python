@@ -28,7 +28,7 @@ from azure.keyvault.certificates import (
     IssuerProperties
 )
 from azure.keyvault.certificates._shared import parse_vault_id
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from certificates_test_case import KeyVaultTestCase
 from certificates_async_preparer import AsyncVaultClientPreparer
 
@@ -177,7 +177,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(a.vault_url, b.vault_url)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_crud_operations(self, vault_client, **kwargs):
@@ -249,7 +249,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list(self, vault_client, **kwargs):
@@ -281,7 +281,7 @@ class CertificateClientTests(KeyVaultTestCase):
         await self._validate_certificate_list(expected, returned_certificates)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_certificate_versions(self, vault_client, **kwargs):
@@ -325,7 +325,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_crud_contacts(self, vault_client, **kwargs):
@@ -358,7 +358,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover_and_purge(self, vault_client, **kwargs):
@@ -418,7 +418,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @pytest.mark.skip("Skipping because service doesn't allow cancellation of certificates with issuer 'Unknown'")
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_async_request_cancellation_and_deletion(self, vault_client, **kwargs):
@@ -487,7 +487,7 @@ class CertificateClientTests(KeyVaultTestCase):
         await client.delete_certificate(cert_name, _polling_interval=polling_interval)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_policy(self, vault_client, **kwargs):
@@ -535,7 +535,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_policy(cert_policy, returned_policy)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_get_pending_certificate_signing_request(self, vault_client, **kwargs):
@@ -556,7 +556,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual((await client.get_certificate_operation(certificate_name=cert_name)).csr, pending_version_csr)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -588,7 +588,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_merge_certificate(self, vault_client, **kwargs):
@@ -645,7 +645,7 @@ class CertificateClientTests(KeyVaultTestCase):
         await client.merge_certificate(cert_name, [signed_certificate_bytes.encode()])
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_crud_issuer(self, vault_client, **kwargs):
@@ -727,7 +727,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, vault_client, **kwargs):
@@ -753,7 +753,7 @@ class CertificateClientTests(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, vault_client, **kwargs):

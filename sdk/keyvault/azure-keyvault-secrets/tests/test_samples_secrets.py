@@ -8,7 +8,7 @@ import hashlib
 import os
 
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from secrets_preparer import VaultClientPreparer
 from secrets_test_case import KeyVaultTestCase
 
@@ -35,7 +35,7 @@ def test_create_secret_client():
 class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_example_secret_crud_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -103,7 +103,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_secret]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -152,7 +152,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_secrets]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -178,7 +178,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_secret_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @VaultClientPreparer()
     def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets

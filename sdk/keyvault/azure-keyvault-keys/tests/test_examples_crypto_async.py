@@ -5,7 +5,7 @@
 import hashlib
 import os
 
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
 
@@ -14,7 +14,7 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
     # pylint:disable=unused-variable
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_encrypt_decrypt_async(self, vault_client, **kwargs):
@@ -47,7 +47,7 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         pass
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_wrap_unwrap_async(self, vault_client, **kwargs):
@@ -78,7 +78,7 @@ class TestCryptoExamples(AsyncKeyVaultTestCase):
         # [END unwrap]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_sign_verify_async(self, vault_client, **kwargs):

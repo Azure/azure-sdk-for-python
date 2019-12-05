@@ -6,7 +6,7 @@ import hashlib
 import os
 
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
 
@@ -33,7 +33,7 @@ def test_create_key_client():
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_crud_operations(self, vault_client, **kwargs):
@@ -124,7 +124,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END delete_key]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_list_operations(self, vault_client, **kwargs):
@@ -175,7 +175,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END list_deleted_keys]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_backup_restore(self, vault_client, **kwargs):
@@ -207,7 +207,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END restore_key_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_recover(self, vault_client, **kwargs):

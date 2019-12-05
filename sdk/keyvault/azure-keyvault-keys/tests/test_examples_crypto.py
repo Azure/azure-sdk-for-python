@@ -5,7 +5,7 @@
 import hashlib
 import os
 
-from devtools_testutils import ResourceGroupPreparer, KeyVaultAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from keys_preparer import VaultClientPreparer
 from keys_test_case import KeyVaultTestCase
 
@@ -14,7 +14,7 @@ class TestCryptoExamples(KeyVaultTestCase):
     # pylint:disable=unused-variable
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_encrypt_decrypt(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -46,7 +46,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         pass
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_wrap_unwrap(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -77,7 +77,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         # [END unwrap]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultAccountPreparer()
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_sign_verify(self, vault_client, **kwargs):
         key_client = vault_client.keys
