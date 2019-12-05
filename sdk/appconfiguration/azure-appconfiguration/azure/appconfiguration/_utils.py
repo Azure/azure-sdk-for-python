@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 
 from datetime import datetime
-import re
 from azure.core import MatchConditions
 
 def quote_etag(etag):
