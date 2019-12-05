@@ -109,7 +109,7 @@ class ConfigData(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'exclude': {'key': 'properties.exclude', 'type': 'bool'},
-        'low_cpu_threshold': {'key': 'properties.low_cpu_threshold', 'type': 'str'},
+        'low_cpu_threshold': {'key': 'properties.lowCpuThreshold', 'type': 'str'},
         'digests': {'key': 'properties.digests', 'type': '[DigestConfig]'},
     }
 
