@@ -19,7 +19,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.paging import ItemPaged
+from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureFileStorage
@@ -31,6 +31,7 @@ from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
+from ._serialize import get_source_conditions
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
@@ -820,11 +821,14 @@ class ShareFileClient(StorageAccountHostsMixin):
         destination_range = 'bytes={0}-{1}'.format(offset, end_range)
         source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
 
+        source_mod_conditions = get_source_conditions(kwargs)
+
         options = {
             'copy_source': source_url,
             'content_length': 0,
             'source_range': source_range,
             'range': destination_range,
+            'source_modified_access_conditions': source_mod_conditions,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_response_headers}
         options.update(kwargs)
@@ -859,6 +863,23 @@ class ShareFileClient(StorageAccountHostsMixin):
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (length-offset).
+        :keyword ~datetime.datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only if the source
+            blob has been modified since the specified date/time.
+        :keyword ~datetime.datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only if the source blob
+            has not been modified since the specified date/time.
+        :keyword str source_etag:
+            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions source_match_condition:
+            The source match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
