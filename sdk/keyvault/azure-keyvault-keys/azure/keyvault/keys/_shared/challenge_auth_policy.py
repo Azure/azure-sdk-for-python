@@ -52,6 +52,7 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
         challenge_request = HttpRequest(
             request.http_request.method, request.http_request.url, headers=request.http_request.headers
         )
+        challenge_request.headers["Content-Length"] = "0"
 
         if request.http_request.body:
             # challenge_request has service_request's headers, including Content-Length, if any
