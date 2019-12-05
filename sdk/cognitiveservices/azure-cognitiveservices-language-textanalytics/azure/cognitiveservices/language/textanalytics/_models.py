@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._generated.models._models import LanguageInput as GeneratedLanguageInput
-from ._generated.models._models import MultiLanguageInput as GeneratedMultiLanguageInput
+from ._generated.models._models import LanguageInput
+from ._generated.models._models import MultiLanguageInput
 
 
 class DictMixin(object):
@@ -348,7 +348,7 @@ class DocumentError(DictMixin):
         self.is_error = True
 
 
-class LanguageInput(GeneratedLanguageInput):
+class DetectLanguageInput(LanguageInput):
     """Contains an input document to be analyzed for type of language.
 
     :param id: Required. Unique, non-empty document identifier.
@@ -363,7 +363,7 @@ class LanguageInput(GeneratedLanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(LanguageInput, self).__init__(**kwargs)
+        super(DetectLanguageInput, self).__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.country_hint = kwargs.get("country_hint", None)
@@ -443,7 +443,7 @@ class Match(DictMixin):
         )
 
 
-class MultiLanguageInput(GeneratedMultiLanguageInput):
+class TextDocumentInput(MultiLanguageInput):
     """Contains an input document to be analyzed by the service.
 
     :param id: Required. A unique, non-empty document identifier.
@@ -457,7 +457,7 @@ class MultiLanguageInput(GeneratedMultiLanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(MultiLanguageInput, self).__init__(**kwargs)
+        super(TextDocumentInput, self).__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.language = kwargs.get("language", None)

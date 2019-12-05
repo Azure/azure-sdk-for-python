@@ -124,7 +124,7 @@ class AnalyzeSentimentSampleAsync(object):
         model version used, and the raw response returned from the service.
 
         It additionally shows an alternative way to pass in the input documents
-        using a list[MultiLanguageInput] and supplying your own IDs and language hints along
+        using a list[TextDocumentInput] and supplying your own IDs and language hints along
         with the text.
         """
         from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient

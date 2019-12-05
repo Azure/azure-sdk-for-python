@@ -12,8 +12,8 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient
 from azure.cognitiveservices.language.textanalytics import (
-    LanguageInput,
-    MultiLanguageInput,
+    DetectLanguageInput,
+    TextDocumentInput,
 )
 from asynctestcase import AsyncCognitiveServiceTestCase
 
@@ -342,10 +342,10 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [
-            LanguageInput(id="1", text="I should take my cat to the veterinarian."),
-            LanguageInput(id="2", text="Este es un document escrito en Español."),
-            LanguageInput(id="3", text="猫は幸せ"),
-            LanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian."),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
         response = await text_analytics.detect_languages(docs)
@@ -361,9 +361,9 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [
-            MultiLanguageInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
-            MultiLanguageInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
-            MultiLanguageInput(id="3", text="The restaurant had really good food. I recommend you try it."),
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
         ]
 
         response = await text_analytics.analyze_sentiment(docs)
@@ -378,7 +378,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            MultiLanguageInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
             "You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
@@ -509,9 +509,9 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             self.assertEqual(country, 3)
 
         docs = [
-            LanguageInput(id="1", text="I should take my cat to the veterinarian."),
-            LanguageInput(id="2", text="Este es un document escrito en Español."),
-            LanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian."),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
         response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
@@ -548,9 +548,9 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             self.assertEqual(country, 1)
 
         docs = [
-            LanguageInput(id="1", text="I should take my cat to the veterinarian.", country_hint="CA"),
-            LanguageInput(id="2", text="Este es un document escrito en Español.", country_hint="CA"),
-            LanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian.", country_hint="CA"),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español.", country_hint="CA"),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
         response = await text_analytics.detect_languages(docs, country_hint="US", response_hook=callback)
@@ -646,9 +646,9 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             self.assertEqual(language, 3)
 
         docs = [
-            MultiLanguageInput(id="1", text="I should take my cat to the veterinarian."),
-            MultiLanguageInput(id="2", text="Este es un document escrito en Español."),
-            MultiLanguageInput(id="3", text="猫は幸せ"),
+            TextDocumentInput(id="1", text="I should take my cat to the veterinarian."),
+            TextDocumentInput(id="2", text="Este es un document escrito en Español."),
+            TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
         response = await text_analytics.analyze_sentiment(docs, language="de", response_hook=callback)
@@ -685,9 +685,9 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             self.assertEqual(language, 1)
 
         docs = [
-            MultiLanguageInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
-            MultiLanguageInput(id="2", text="Este es un document escrito en Español.", language="es"),
-            MultiLanguageInput(id="3", text="猫は幸せ"),
+            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
+            TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
+            TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
         response = await text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)

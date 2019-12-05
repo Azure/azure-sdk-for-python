@@ -10,8 +10,8 @@ from ._request_handlers import _validate_single_input
 from ._response_handlers import process_single_error
 from ._version import VERSION
 from ._models import (
-    LanguageInput,
-    MultiLanguageInput,
+    DetectLanguageInput,
+    TextDocumentInput,
     DetectedLanguage,
     DocumentError,
     Entity,
@@ -31,8 +31,8 @@ from ._models import (
 
 __all__ = [
     'TextAnalyticsClient',
-    'LanguageInput',
-    'MultiLanguageInput',
+    'DetectLanguageInput',
+    'TextDocumentInput',
     'single_detect_language',
     'single_recognize_entities',
     'single_recognize_pii_entities',

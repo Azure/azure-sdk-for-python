@@ -8,8 +8,8 @@
 import six
 
 from ._models import (
-    LanguageInput,
-    MultiLanguageInput
+    DetectLanguageInput,
+    TextDocumentInput,
 )
 
 
@@ -20,7 +20,7 @@ def _validate_single_input(text, hint, hint_value):
     :param str text: A single text document.
     :param str hint: Could be country_hint or language
     :param str hint_value: The user passed country_hint or language
-    :return: A LanguageInput or MultiLanguageInput
+    :return: A DetectLanguageInput or TextDocumentInput
     """
     if isinstance(text, six.string_types):
         return [{"id": "0", hint: hint_value, "text": text}]
@@ -29,18 +29,18 @@ def _validate_single_input(text, hint, hint_value):
 
 def _validate_batch_input(documents, hint, whole_batch_hint):
     """Validate that batch input has either all string docs
-    or dict/LanguageInput/MultiLanguageInput, not a mix of both.
+    or dict/DetectLanguageInput/TextDocumentInput, not a mix of both.
     Assign country and language hints on a whole batch or per-item
     basis.
 
     :param list documents: The input documents.
-    :return: A list of LanguageInput or MultiLanguageInput
+    :return: A list of DetectLanguageInput or TextDocumentInput
     """
     if not isinstance(documents, list):
         raise TypeError("Documents parameter must be a list.")
 
     if not all(isinstance(x, six.string_types) for x in documents):
-        if not all(isinstance(x, (dict, MultiLanguageInput, LanguageInput)) for x in documents):
+        if not all(isinstance(x, (dict, TextDocumentInput, DetectLanguageInput)) for x in documents):
             raise TypeError("Mixing string and dictionary/object input unsupported.")
 
     string_batch = []
@@ -52,11 +52,11 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
             item_hint = doc.get(hint, None)
             if item_hint is None:
                 doc[hint] = whole_batch_hint
-        if isinstance(doc, MultiLanguageInput):
+        if isinstance(doc, TextDocumentInput):
             item_hint = doc.language
             if item_hint is None:
                 doc.language = whole_batch_hint
-        if isinstance(doc, LanguageInput):
+        if isinstance(doc, DetectLanguageInput):
             item_hint = doc.country_hint
             if item_hint is None:
                 doc.country_hint = whole_batch_hint

@@ -15,34 +15,35 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=true
   response:
     body:
-      string: '{"documents":[{"id":"1","keyPhrases":["Bill Gates","Paul Allen","Microsoft"]},{"id":"2","keyPhrases":["Bill
-        Gates","Paul Allen","Microsoft"]}],"errors":[],"modelVersion":"latest"}'
+      string: '{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":50,"transactionsCount":1}},{"id":"2","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 52b6c733-17a0-40d6-b3b5-973ed8141186
+      - d3795787-20b8-4e01-ad93-8c1444061d05
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Thu, 14 Nov 2019 21:40:08 GMT
+      - Thu, 05 Dec 2019 01:55:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - cdc66562-bb26-417c-bf9e-21a4e04b1e42
+      - d6257c67-f412-47d5-be13-8fb9f535935e
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '45'
     status:
       code: 200
       message: OK

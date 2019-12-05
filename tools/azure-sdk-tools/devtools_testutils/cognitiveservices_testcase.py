@@ -39,7 +39,7 @@ class CognitiveServiceTest(AzureTestCase):
         super(CognitiveServiceTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("AZURE_COGNITIVE_ENDPOINT")
+        return self.get_settings_value("TEXT_ANALYTICS_ACCOUNT_NAME")
 
     def generate_oauth_token(self):
         if self.is_live:

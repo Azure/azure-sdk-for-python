@@ -84,7 +84,7 @@ class DetectLanguagesSample(object):
         model version used, and the raw response returned from the service.
 
         It additionally shows an alternative way to pass in the input documents
-        using a list[LanguageInput] and supplying your own IDs and country hints along
+        using a list[DetectLanguageInput] and supplying your own IDs and country hints along
         with the text.
         """
         from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient

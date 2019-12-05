@@ -172,7 +172,7 @@ documents = ["I hated the movie. It was so slow!", "The movie made it into my to
 
 result = text_analytics_client.analyze_sentiment(documents)
 ```
-or as a list of [LanguageInput](TODO) or [MultiLanguageInput](TODO):
+or as a list of [DetectLanguageInput](TODO) or [TextDocumentInput](TODO):
 ```python
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 

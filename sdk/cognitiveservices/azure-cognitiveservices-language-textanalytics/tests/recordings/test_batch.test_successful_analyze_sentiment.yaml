@@ -17,33 +17,33 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=true
   response:
     body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.0145784495398402,"neutral":0.97402292490005493,"negative":0.0113986236974597},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0145784495398402,"neutral":0.97402292490005493,"negative":0.0113986236974597},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0160302110016346,"neutral":0.21421422064304349,"negative":0.76975554227828979},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0317745991051197,"neutral":0.42806893587112432,"negative":0.54015642404556274},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0002858212974388,"neutral":0.0003595057642087,"negative":0.99935466051101685},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.99577021598815918,"neutral":0.0020832826849073,"negative":0.002146489918232},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99423426389694214,"neutral":0.0028649389278144,"negative":0.0029007606208324},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.99730610847473145,"neutral":0.0013016263255849,"negative":0.0013922193320468},"offset":37,"length":23}]}],"errors":[],"modelVersion":"latest"}'
+      string: '{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":51,"transactionsCount":1},"documentScores":{"positive":0.0065773287788033,"neutral":0.98863190412521362,"negative":0.004790797829628},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0065773287788033,"neutral":0.98863190412521362,"negative":0.004790797829628},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","statistics":{"charactersCount":60,"transactionsCount":1},"documentScores":{"positive":0.0094401380047202,"neutral":0.20717787742614749,"negative":0.78338205814361572},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0186765640974045,"neutral":0.41426122188568121,"negative":0.567062258720398},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0002037113154074,"neutral":9.45370848058E-05,"negative":0.99970179796218872},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","statistics":{"charactersCount":60,"transactionsCount":1},"documentScores":{"positive":0.98069894313812256,"neutral":0.0163726881146431,"negative":0.002928314730525},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366370457225},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.96271371841430664,"neutral":0.0322662964463234,"negative":0.0050199925899506},"offset":37,"length":23}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 1a994071-d93e-4038-a3f3-f11dc1744325
+      - 5b4d6c4a-48d9-48c5-8be4-3856cddbe29d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 14 Nov 2019 21:40:03 GMT
+      - Thu, 05 Dec 2019 01:57:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - a0a3f3a9-fb09-408f-a77a-b5d1fcda04f8
+      - 8c834f04-11e6-448b-b9b6-451f1ee27659
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '70'
+      - '73'
     status:
       code: 200
       message: OK

@@ -28,8 +28,8 @@ from .._response_handlers import (
 
 if TYPE_CHECKING:
     from .._models import (
-        LanguageInput,
-        MultiLanguageInput,
+        DetectLanguageInput,
+        TextDocumentInput,
         DocumentLanguage,
         DocumentEntities,
         DocumentLinkedEntities,
@@ -54,7 +54,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credentials: str or token credential
+    :type credential: str or token credential
 
     .. admonition:: Example:
 
@@ -83,7 +83,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def detect_languages(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         country_hint="US",  # type: Optional[str]
@@ -98,10 +98,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
-            use as input a list[LanguageInput] or a list of dict representations of
-            LanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
+            use as input a list[DetectLanguageInput] or a list of dict representations of
+            DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.cognitiveservices.language.textanalytics.LanguageInput]
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.DetectLanguageInput]
         :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
@@ -141,7 +141,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -156,10 +156,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[MultiLanguageInput] or a list of dict representations of
-            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[TextDocumentInput] or a list of dict representations of
+            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
@@ -198,7 +198,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_pii_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -214,10 +214,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[MultiLanguageInput] or a list of dict representations of
-            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[TextDocumentInput] or a list of dict representations of
+            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
@@ -256,7 +256,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def recognize_linked_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -271,10 +271,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[MultiLanguageInput] or a list of dict representations of
-            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[TextDocumentInput] or a list of dict representations of
+            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
@@ -313,7 +313,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def extract_key_phrases(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -328,10 +328,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[MultiLanguageInput] or a list of dict representations of
-            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[TextDocumentInput] or a list of dict representations of
+            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
@@ -370,7 +370,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def analyze_sentiment(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -386,10 +386,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[MultiLanguageInput] or a list of dict representations of
-            MultiLanguageInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[TextDocumentInput] or a list of dict representations of
+            TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.

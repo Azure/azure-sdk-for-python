@@ -16,13 +16,14 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - New operation `recognize_linked_entities` provides links from a well-known knowledge base for each recognized entity
   - New module-level operations `single_detect_language`, `single_recognize_entities`, `single_extract_key_phrases`, `single_analyze_sentiment`, `single_recognize_pii_entities`, and `single_recognize_linked_entities` perform
   function on a single string instead of a batch of text documents and can be imported from the `azure.cognitiveservices.language.textanalytics` namespace.
-
-- New client and module-level async APIs added to subnamespace `azure.cognitiveservices.language.textanalytics.aio`.
+  - New client and module-level async APIs added to subnamespace `azure.cognitiveservices.language.textanalytics.aio`.
+  - `MultiLanguageInput` has been renamed to `TextDocumentInput`
+  - `LanguageInput` has been renamed to `DetectLanguageInput`
 
 - New input types:
-  - `detect_languages` can take as input a `list[LanguageInput]` or a `list[str]`. A list of dict-like objects in the same shape as `LanguageInput` is still accepted as input.
-  - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` can take as input a `list[MultiLanguageInput]` or `list[str]`.
-  A list of dict-like objects in the same shape as `MultiLanguageInput` is still accepted as input.
+  - `detect_languages` can take as input a `list[DetectLanguageInput]` or a `list[str]`. A list of dict-like objects in the same shape as `DetectLanguageInput` is still accepted as input.
+  - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` can take as input a `list[TextDocumentInput]` or `list[str]`.
+  A list of dict-like objects in the same shape as `TextDocumentInput` is still accepted as input.
 
 - New parameters:
   - All operations now take a parameter `model_version` which allows the user to specify a string referencing the desired model version to be used for analysis. If no string specified, it will default to the latest, non-preview version.

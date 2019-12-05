@@ -10,8 +10,8 @@ from devtools_testutils import ResourceGroupPreparer
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
 from azure.cognitiveservices.language.textanalytics import (
     TextAnalyticsClient,
-    LanguageInput,
-    MultiLanguageInput
+    DetectLanguageInput,
+    TextDocumentInput
 )
 
 
@@ -40,12 +40,22 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_languages(docs, show_stats=True)
 
         self.assertEqual(response[0].detected_languages[0].name, "English")
         self.assertEqual(response[1].detected_languages[0].name, "Spanish")
         self.assertEqual(response[2].detected_languages[0].name, "Japanese")
         self.assertEqual(response[3].detected_languages[0].name, "German")
+        self.assertEqual(response[0].detected_languages[0].iso6391_name, "en")
+        self.assertEqual(response[1].detected_languages[0].iso6391_name, "es")
+        self.assertEqual(response[2].detected_languages[0].iso6391_name, "ja")
+        self.assertEqual(response[3].detected_languages[0].iso6391_name, "de")
+
+        for doc in response:
+            self.assertIsNotNone(doc.id)
+            self.assertIsNotNone(doc.statistics)
+            self.assertIsNotNone(doc.detected_languages[0].score)
+
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -91,9 +101,17 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
-        response = text_analytics.recognize_entities(docs)
+        response = text_analytics.recognize_entities(docs, show_stats=True)
         for doc in response:
             self.assertEqual(len(doc.entities), 4)
+            self.assertIsNotNone(doc.id)
+            self.assertIsNotNone(doc.statistics)
+            for entity in doc.entities:
+                self.assertIsNotNone(entity.text)
+                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
+                self.assertIsNotNone(entity.score)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -132,13 +150,22 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
-        response = text_analytics.recognize_pii_entities(docs)
+        response = text_analytics.recognize_pii_entities(docs, show_stats=True)
         self.assertEqual(response[0].entities[0].text, "555-55-5555")
         self.assertEqual(response[0].entities[0].type, "U.S. Social Security Number (SSN)")
         self.assertEqual(response[1].entities[0].text, "111000025")
         self.assertEqual(response[1].entities[0].type, "ABA Routing Number")
         self.assertEqual(response[2].entities[0].text, "998.214.865-68")
         self.assertEqual(response[2].entities[0].type, "Brazil CPF Number")
+        for doc in response:
+            self.assertIsNotNone(doc.id)
+            self.assertIsNotNone(doc.statistics)
+            for entity in doc.entities:
+                self.assertIsNotNone(entity.text)
+                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
+                self.assertIsNotNone(entity.score)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -174,9 +201,18 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = text_analytics.recognize_linked_entities(docs)
+        response = text_analytics.recognize_linked_entities(docs, show_stats=True)
         for doc in response:
             self.assertEqual(len(doc.entities), 3)
+            self.assertIsNotNone(doc.id)
+            self.assertIsNotNone(doc.statistics)
+            for entity in doc.entities:
+                self.assertIsNotNone(entity.name)
+                self.assertIsNotNone(entity.matches)
+                self.assertIsNotNone(entity.language)
+                self.assertIsNotNone(entity.id)
+                self.assertIsNotNone(entity.url)
+                self.assertIsNotNone(entity.data_source)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -210,11 +246,13 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
-        response = text_analytics.extract_key_phrases(docs)
+        response = text_analytics.extract_key_phrases(docs, show_stats=True)
         for phrases in response:
             self.assertIn("Paul Allen", phrases.key_phrases)
             self.assertIn("Bill Gates", phrases.key_phrases)
             self.assertIn("Microsoft", phrases.key_phrases)
+            self.assertIsNotNone(phrases.id)
+            self.assertIsNotNone(phrases.statistics)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -249,10 +287,15 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed it. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
 
-        response = text_analytics.analyze_sentiment(docs)
+        response = text_analytics.analyze_sentiment(docs, show_stats=True)
         self.assertEqual(response[0].sentiment, "neutral")
         self.assertEqual(response[1].sentiment, "negative")
         self.assertEqual(response[2].sentiment, "positive")
+        for doc in response:
+            self.assertIsNotNone(doc.id)
+            self.assertIsNotNone(doc.statistics)
+            self.assertIsNotNone(doc.document_scores)
+            self.assertIsNotNone(doc.sentences)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -307,10 +350,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [
-            LanguageInput(id="1", text="I should take my cat to the veterinarian."),
-            LanguageInput(id="2", text="Este es un document escrito en Español."),
-            LanguageInput(id="3", text="猫は幸せ"),
-            LanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian."),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
         response = text_analytics.detect_languages(docs)
@@ -325,9 +368,9 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [
-            MultiLanguageInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
-            MultiLanguageInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
-            MultiLanguageInput(id="3", text="The restaurant had really good food. I recommend you try it."),
+            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
         ]
 
         response = text_analytics.analyze_sentiment(docs)
@@ -341,7 +384,7 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            MultiLanguageInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
@@ -465,9 +508,9 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
             self.assertEqual(country, 3)
 
         docs = [
-            LanguageInput(id="1", text="I should take my cat to the veterinarian."),
-            LanguageInput(id="2", text="Este es un document escrito en Español."),
-            LanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian."),
+            DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
         response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
@@ -502,9 +545,9 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
             self.assertEqual(country, 1)
 
         docs = [
-            LanguageInput(id="1", text="I should take my cat to the veterinarian.", country_hint="CA"),
-            LanguageInput(id="4", text="Este es un document escrito en Español.", country_hint="CA"),
-            LanguageInput(id="3", text="猫は幸せ"),
+            DetectLanguageInput(id="1", text="I should take my cat to the veterinarian.", country_hint="CA"),
+            DetectLanguageInput(id="4", text="Este es un document escrito en Español.", country_hint="CA"),
+            DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
         response = text_analytics.detect_languages(docs, country_hint="US", response_hook=callback)
@@ -595,9 +638,9 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
             self.assertEqual(language, 3)
 
         docs = [
-            MultiLanguageInput(id="1", text="I should take my cat to the veterinarian."),
-            MultiLanguageInput(id="4", text="Este es un document escrito en Español."),
-            MultiLanguageInput(id="3", text="猫は幸せ"),
+            TextDocumentInput(id="1", text="I should take my cat to the veterinarian."),
+            TextDocumentInput(id="4", text="Este es un document escrito en Español."),
+            TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
         response = text_analytics.analyze_sentiment(docs, language="de", response_hook=callback)
@@ -632,9 +675,9 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
             self.assertEqual(language, 1)
 
         docs = [
-            MultiLanguageInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
-            MultiLanguageInput(id="2", text="Este es un document escrito en Español.", language="es"),
-            MultiLanguageInput(id="3", text="猫は幸せ"),
+            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
+            TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
+            TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
         response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
