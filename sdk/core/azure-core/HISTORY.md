@@ -2,6 +2,8 @@
 # Release History
 
 -------------------
+## Version 1.1.2 Unreleased
+
 ## 2019-12-03 Version 1.1.1
 
 ### Bug fixes
