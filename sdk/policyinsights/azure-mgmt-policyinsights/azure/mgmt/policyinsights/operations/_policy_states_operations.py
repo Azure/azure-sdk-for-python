@@ -63,9 +63,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -91,57 +91,68 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_management_group.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'managementGroupsNamespace': self._serialize.url("self.management_groups_namespace", self.management_groups_namespace, 'str'),
-            'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_management_group.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'managementGroupsNamespace': self._serialize.url("self.management_groups_namespace", self.management_groups_namespace, 'str'),
+                    'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_management_group.metadata = {'url': '/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -246,9 +257,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -274,56 +285,67 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_subscription.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_subscription.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -429,9 +451,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -457,57 +479,68 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_resource_group.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_resource_group.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -614,9 +647,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -645,58 +678,69 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             expand = query_options.expand
 
-        # Construct URL
-        url = self.list_query_results_for_resource.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_resource.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -802,9 +846,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -830,58 +874,69 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_policy_set_definition.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
-            'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_policy_set_definition.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+                    'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
+                    'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_policy_set_definition.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -992,9 +1047,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -1020,58 +1075,69 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_policy_definition.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
-            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_policy_definition.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+                    'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
+                    'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_policy_definition.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -1181,9 +1247,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -1209,58 +1275,69 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_subscription_level_policy_assignment.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_subscription_level_policy_assignment.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+                    'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
+                    'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_subscription_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}
@@ -1372,9 +1449,9 @@ class PolicyStatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyStatesQueryResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.policyinsights.models.PolicyStatesQueryResults or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of PolicyState
+        :rtype:
+         ~azure.mgmt.policyinsights.models.PolicyStatePaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises:
          :class:`QueryFailureException<azure.mgmt.policyinsights.models.QueryFailureException>`
         """
@@ -1400,59 +1477,70 @@ class PolicyStatesOperations(object):
         if query_options is not None:
             apply = query_options.apply
 
-        # Construct URL
-        url = self.list_query_results_for_resource_group_level_policy_assignment.metadata['url']
-        path_format_arguments = {
-            'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_query_results_for_resource_group_level_policy_assignment.metadata['url']
+                path_format_arguments = {
+                    'policyStatesResource': self._serialize.url("policy_states_resource", policy_states_resource, 'str'),
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'authorizationNamespace': self._serialize.url("self.authorization_namespace", self.authorization_namespace, 'str'),
+                    'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
-        if order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if from_parameter is not None:
-            query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
-        if to is not None:
-            query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if apply is not None:
-            query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
+                if order_by is not None:
+                    query_parameters['$orderby'] = self._serialize.query("order_by", order_by, 'str')
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if from_parameter is not None:
+                    query_parameters['$from'] = self._serialize.query("from_parameter", from_parameter, 'iso-8601')
+                if to is not None:
+                    query_parameters['$to'] = self._serialize.query("to", to, 'iso-8601')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.QueryFailureException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyStatesQueryResults', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.QueryFailureException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.PolicyStatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_query_results_for_resource_group_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}

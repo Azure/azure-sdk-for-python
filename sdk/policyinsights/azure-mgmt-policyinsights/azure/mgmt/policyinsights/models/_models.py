@@ -809,36 +809,6 @@ class PolicyState(Model):
         self.policy_definition_group_names = kwargs.get('policy_definition_group_names', None)
 
 
-class PolicyStatesQueryResults(Model):
-    """Query results.
-
-    :param odatacontext: OData context string; used by OData clients to
-     resolve type information based on metadata.
-    :type odatacontext: str
-    :param odatacount: OData entity count; represents the number of policy
-     state records returned.
-    :type odatacount: int
-    :param value: Query results.
-    :type value: list[~azure.mgmt.policyinsights.models.PolicyState]
-    """
-
-    _validation = {
-        'odatacount': {'minimum': 0},
-    }
-
-    _attribute_map = {
-        'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
-        'odatacount': {'key': '@odata\\.count', 'type': 'int'},
-        'value': {'key': 'value', 'type': '[PolicyState]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PolicyStatesQueryResults, self).__init__(**kwargs)
-        self.odatacontext = kwargs.get('odatacontext', None)
-        self.odatacount = kwargs.get('odatacount', None)
-        self.value = kwargs.get('value', None)
-
-
 class PolicyTrackedResource(Model):
     """Policy tracked resource record.
 
