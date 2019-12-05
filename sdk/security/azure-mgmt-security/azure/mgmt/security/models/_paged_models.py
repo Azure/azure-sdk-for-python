@@ -337,3 +337,16 @@ class AutomationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AutomationPaged, self).__init__(*args, **kwargs)
+class SecurityAssessmentMetadataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SecurityAssessmentMetadata <azure.mgmt.security.models.SecurityAssessmentMetadata>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityAssessmentMetadata]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityAssessmentMetadataPaged, self).__init__(*args, **kwargs)

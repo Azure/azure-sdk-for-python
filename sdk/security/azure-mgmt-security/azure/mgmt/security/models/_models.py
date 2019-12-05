@@ -1098,47 +1098,16 @@ class AutomationAction(Model):
 class AutomationActionEventHub(AutomationAction):
     """The target Event Hub to which event data will be exported.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AutomationActionEventHubInput,
-    AutomationActionEventHubOutput
-
     All required parameters must be populated in order to send to Azure.
 
     :param action_type: Required. Constant filled by server.
     :type action_type: str
     :param event_hub_resource_id: The target Event Hub Azure Resource ID.
     :type event_hub_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'event_hub_resource_id': {'key': 'eventHubResourceId', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'action_type': {'AutomationActionEventHubInput': 'AutomationActionEventHubInput', 'AutomationActionEventHubOutput': 'AutomationActionEventHubOutput'}
-    }
-
-    def __init__(self, **kwargs):
-        super(AutomationActionEventHub, self).__init__(**kwargs)
-        self.event_hub_resource_id = kwargs.get('event_hub_resource_id', None)
-        self.action_type = 'EventHub'
-
-
-class AutomationActionEventHubInput(AutomationActionEventHub):
-    """The target Event Hub to which event data will be exported.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param event_hub_resource_id: The target Event Hub Azure Resource ID.
-    :type event_hub_resource_id: str
-    :param connection_string: The target Event Hub connection string
+    :param sas_policy_name: The target Event Hub SAS policy name.
+    :type sas_policy_name: str
+    :param connection_string: The target Event Hub connection string (it will
+     not be included in any response).
     :type connection_string: str
     """
 
@@ -1149,51 +1118,21 @@ class AutomationActionEventHubInput(AutomationActionEventHub):
     _attribute_map = {
         'action_type': {'key': 'actionType', 'type': 'str'},
         'event_hub_resource_id': {'key': 'eventHubResourceId', 'type': 'str'},
+        'sas_policy_name': {'key': 'sasPolicyName', 'type': 'str'},
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(AutomationActionEventHubInput, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.action_type = 'AutomationActionEventHubInput'
-
-
-class AutomationActionEventHubOutput(AutomationActionEventHub):
-    """The target Event Hub to which event data will be exported.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param event_hub_resource_id: The target Event Hub Azure Resource ID.
-    :type event_hub_resource_id: str
-    :param sas_policy_name: The target Event Hub SAS policy name.
-    :type sas_policy_name: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'event_hub_resource_id': {'key': 'eventHubResourceId', 'type': 'str'},
-        'sas_policy_name': {'key': 'sasPolicyName', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutomationActionEventHubOutput, self).__init__(**kwargs)
+        super(AutomationActionEventHub, self).__init__(**kwargs)
+        self.event_hub_resource_id = kwargs.get('event_hub_resource_id', None)
         self.sas_policy_name = kwargs.get('sas_policy_name', None)
-        self.action_type = 'AutomationActionEventHubOutput'
+        self.connection_string = kwargs.get('connection_string', None)
+        self.action_type = 'EventHub'
 
 
 class AutomationActionLogicApp(AutomationAction):
     """The logic app action that should be triggered.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AutomationActionLogicAppInput,
-    AutomationActionLogicAppOutput
-
     All required parameters must be populated in order to send to Azure.
 
     :param action_type: Required. Constant filled by server.
@@ -1202,39 +1141,8 @@ class AutomationActionLogicApp(AutomationAction):
      This can also reside on other subscriptions, given that you have
      permissions to trigger the Logic App
     :type logic_app_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'logic_app_resource_id': {'key': 'logicAppResourceId', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'action_type': {'AutomationActionLogicAppInput': 'AutomationActionLogicAppInput', 'AutomationActionLogicAppOutput': 'AutomationActionLogicAppOutput'}
-    }
-
-    def __init__(self, **kwargs):
-        super(AutomationActionLogicApp, self).__init__(**kwargs)
-        self.logic_app_resource_id = kwargs.get('logic_app_resource_id', None)
-        self.action_type = 'LogicApp'
-
-
-class AutomationActionLogicAppInput(AutomationActionLogicApp):
-    """The logic app action that should be triggered.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param logic_app_resource_id: The triggered Logic App Azure Resource ID.
-     This can also reside on other subscriptions, given that you have
-     permissions to trigger the Logic App
-    :type logic_app_resource_id: str
-    :param uri: The Logic App trigger URI endpoint.
+    :param uri: The Logic App trigger URI endpoint (it will not be included in
+     any response).
     :type uri: str
     """
 
@@ -1249,36 +1157,10 @@ class AutomationActionLogicAppInput(AutomationActionLogicApp):
     }
 
     def __init__(self, **kwargs):
-        super(AutomationActionLogicAppInput, self).__init__(**kwargs)
+        super(AutomationActionLogicApp, self).__init__(**kwargs)
+        self.logic_app_resource_id = kwargs.get('logic_app_resource_id', None)
         self.uri = kwargs.get('uri', None)
-        self.action_type = 'AutomationActionLogicAppInput'
-
-
-class AutomationActionLogicAppOutput(AutomationActionLogicApp):
-    """The logic app action that should be triggered.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param logic_app_resource_id: The triggered Logic App Azure Resource ID.
-     This can also reside on other subscriptions, given that you have
-     permissions to trigger the Logic App
-    :type logic_app_resource_id: str
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'logic_app_resource_id': {'key': 'logicAppResourceId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutomationActionLogicAppOutput, self).__init__(**kwargs)
-        self.action_type = 'AutomationActionLogicAppOutput'
+        self.action_type = 'LogicApp'
 
 
 class AutomationActionWorkspace(AutomationAction):
@@ -3942,6 +3824,97 @@ class RegulatoryComplianceStandard(Resource):
         self.failed_controls = None
         self.skipped_controls = None
         self.unsupported_controls = None
+
+
+class SecurityAssessmentMetadata(Resource):
+    """Security assessment metadata.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param display_name: Required. User friendly display name of the
+     assessment
+    :type display_name: str
+    :ivar policy_definition_id: Azure resource ID of the policy definition
+     that turns this assessment calculation on
+    :vartype policy_definition_id: str
+    :param description: Human readable description of the assessment
+    :type description: str
+    :param remediation_description: Human readable description of what you
+     should do to mitigate this security issue
+    :type remediation_description: str
+    :param category:
+    :type category: list[str or ~azure.mgmt.security.models.Category]
+    :param severity: Required. The severity level of the assessment. Possible
+     values include: 'Low', 'Medium', 'High'
+    :type severity: str or ~azure.mgmt.security.models.Severity
+    :param user_impact: The user impact of the assessment. Possible values
+     include: 'Low', 'Moderate', 'High'
+    :type user_impact: str or ~azure.mgmt.security.models.UserImpact
+    :param implementation_effort: The implementation effort required to
+     remediate this assessment. Possible values include: 'Low', 'Moderate',
+     'High'
+    :type implementation_effort: str or
+     ~azure.mgmt.security.models.ImplementationEffort
+    :param threats:
+    :type threats: list[str or ~azure.mgmt.security.models.Threats]
+    :param preview: True if this assessment is in preview release status
+    :type preview: bool
+    :param assessment_type: Required. BuiltIn if the assessment based on
+     built-in Azure Policy definition, Custom if the assessment based on custom
+     Azure Policy definition. Possible values include: 'BuiltIn',
+     'CustomPolicy', 'CustomerManaged'
+    :type assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'display_name': {'required': True},
+        'policy_definition_id': {'readonly': True},
+        'severity': {'required': True},
+        'assessment_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': '[str]'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'user_impact': {'key': 'properties.userImpact', 'type': 'str'},
+        'implementation_effort': {'key': 'properties.implementationEffort', 'type': 'str'},
+        'threats': {'key': 'properties.threats', 'type': '[str]'},
+        'preview': {'key': 'properties.preview', 'type': 'bool'},
+        'assessment_type': {'key': 'properties.assessmentType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecurityAssessmentMetadata, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.policy_definition_id = None
+        self.description = kwargs.get('description', None)
+        self.remediation_description = kwargs.get('remediation_description', None)
+        self.category = kwargs.get('category', None)
+        self.severity = kwargs.get('severity', None)
+        self.user_impact = kwargs.get('user_impact', None)
+        self.implementation_effort = kwargs.get('implementation_effort', None)
+        self.threats = kwargs.get('threats', None)
+        self.preview = kwargs.get('preview', None)
+        self.assessment_type = kwargs.get('assessment_type', None)
 
 
 class SecurityContact(Resource):

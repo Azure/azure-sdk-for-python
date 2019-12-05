@@ -203,6 +203,48 @@ class Operator(str, Enum):
     ends_with = "EndsWith"
 
 
+class Category(str, Enum):
+
+    compute = "Compute"
+    networking = "Networking"
+    data = "Data"
+    identity_and_access = "IdentityAndAccess"
+    io_t = "IoT"
+
+
+class UserImpact(str, Enum):
+
+    low = "Low"
+    moderate = "Moderate"
+    high = "High"
+
+
+class ImplementationEffort(str, Enum):
+
+    low = "Low"
+    moderate = "Moderate"
+    high = "High"
+
+
+class Threats(str, Enum):
+
+    account_breach = "accountBreach"
+    data_exfiltration = "dataExfiltration"
+    data_spillage = "dataSpillage"
+    malicious_insider = "maliciousInsider"
+    elevation_of_privilege = "elevationOfPrivilege"
+    threat_resistance = "threatResistance"
+    missing_coverage = "missingCoverage"
+    denial_of_service = "denialOfService"
+
+
+class AssessmentType(str, Enum):
+
+    built_in = "BuiltIn"  #: Azure Security Center managed assessments
+    custom_policy = "CustomPolicy"  #: User defined policies that are automatically ingested from Azure Policy to Azure Security Center
+    customer_managed = "CustomerManaged"  #: User assessments pushed directly by the user or other third party to Azure Security Center
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

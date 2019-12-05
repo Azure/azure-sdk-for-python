@@ -30,11 +30,7 @@ try:
     from ._models_py3 import Automation
     from ._models_py3 import AutomationAction
     from ._models_py3 import AutomationActionEventHub
-    from ._models_py3 import AutomationActionEventHubInput
-    from ._models_py3 import AutomationActionEventHubOutput
     from ._models_py3 import AutomationActionLogicApp
-    from ._models_py3 import AutomationActionLogicAppInput
-    from ._models_py3 import AutomationActionLogicAppOutput
     from ._models_py3 import AutomationActionWorkspace
     from ._models_py3 import AutomationMetadata
     from ._models_py3 import AutomationRuleSet
@@ -104,6 +100,7 @@ try:
     from ._models_py3 import RegulatoryComplianceStandard
     from ._models_py3 import Resource
     from ._models_py3 import ResourceDetails
+    from ._models_py3 import SecurityAssessmentMetadata
     from ._models_py3 import SecurityContact
     from ._models_py3 import SecuritySubAssessment
     from ._models_py3 import SecurityTask
@@ -152,11 +149,7 @@ except (SyntaxError, ImportError):
     from ._models import Automation
     from ._models import AutomationAction
     from ._models import AutomationActionEventHub
-    from ._models import AutomationActionEventHubInput
-    from ._models import AutomationActionEventHubOutput
     from ._models import AutomationActionLogicApp
-    from ._models import AutomationActionLogicAppInput
-    from ._models import AutomationActionLogicAppOutput
     from ._models import AutomationActionWorkspace
     from ._models import AutomationMetadata
     from ._models import AutomationRuleSet
@@ -226,6 +219,7 @@ except (SyntaxError, ImportError):
     from ._models import RegulatoryComplianceStandard
     from ._models import Resource
     from ._models import ResourceDetails
+    from ._models import SecurityAssessmentMetadata
     from ._models import SecurityContact
     from ._models import SecuritySubAssessment
     from ._models import SecurityTask
@@ -272,6 +266,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import RegulatoryComplianceAssessmentPaged
 from ._paged_models import RegulatoryComplianceControlPaged
 from ._paged_models import RegulatoryComplianceStandardPaged
+from ._paged_models import SecurityAssessmentMetadataPaged
 from ._paged_models import SecurityContactPaged
 from ._paged_models import SecuritySubAssessmentPaged
 from ._paged_models import SecurityTaskPaged
@@ -305,6 +300,11 @@ from ._security_center_enums import (
     EventSource,
     PropertyType,
     Operator,
+    Category,
+    UserImpact,
+    ImplementationEffort,
+    Threats,
+    AssessmentType,
     ConnectionType,
 )
 
@@ -329,11 +329,7 @@ __all__ = [
     'Automation',
     'AutomationAction',
     'AutomationActionEventHub',
-    'AutomationActionEventHubInput',
-    'AutomationActionEventHubOutput',
     'AutomationActionLogicApp',
-    'AutomationActionLogicAppInput',
-    'AutomationActionLogicAppOutput',
     'AutomationActionWorkspace',
     'AutomationMetadata',
     'AutomationRuleSet',
@@ -403,6 +399,7 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'Resource',
     'ResourceDetails',
+    'SecurityAssessmentMetadata',
     'SecurityContact',
     'SecuritySubAssessment',
     'SecurityTask',
@@ -455,6 +452,7 @@ __all__ = [
     'RegulatoryComplianceAssessmentPaged',
     'SecuritySubAssessmentPaged',
     'AutomationPaged',
+    'SecurityAssessmentMetadataPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -481,5 +479,10 @@ __all__ = [
     'EventSource',
     'PropertyType',
     'Operator',
+    'Category',
+    'UserImpact',
+    'ImplementationEffort',
+    'Threats',
+    'AssessmentType',
     'ConnectionType',
 ]
