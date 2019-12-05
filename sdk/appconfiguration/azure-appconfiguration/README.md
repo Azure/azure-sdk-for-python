@@ -139,7 +139,7 @@ deleted_config_setting = client.delete_configuration_setting(
 ```python
 
 filtered_listed = client.list_configuration_settings(
-    labels=["*Labe*"], keys=["*Ke*"]
+    labels="*Labe*", keys="*Ke*"
 )
 for item in filtered_listed:
     pass  # do something
@@ -172,7 +172,7 @@ To use list_configuration_settings, call it synchronously and iterate over the r
 ```python
 
 filtered_listed = async_client.list_configuration_settings(
-    labels=["*Labe*"], keys=["*Ke*"]
+    labels="*Labe*", keys="*Ke*"
 )
 async for item in filtered_listed:
     pass  # do something

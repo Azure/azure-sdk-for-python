@@ -31,7 +31,6 @@ from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._utils import (
     get_endpoint_from_connection_string,
-    escape_and_tostr,
     prep_if_match,
     prep_if_none_match,
 )
@@ -122,17 +121,17 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, keys=None, labels=None, **kwargs
-    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
 
         :param keys: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type keys: list[str]
+        :type keys: str
         :param labels: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
+        :type labels: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
@@ -153,7 +152,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_listed = client.list_configuration_settings(
-                labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
+                labels="*Labe*", keys="*Ke*", accept_datetime=accept_datetime
             )
             for item in filtered_listed:
                 pass  # do something
@@ -161,16 +160,14 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ['locked' if x == 'read_only' else x for x in select]
-        encoded_labels = escape_and_tostr(labels)
-        encoded_keys = escape_and_tostr(keys)
         error_map = {
             401: ClientAuthenticationError
         }
 
         try:
             return self._impl.get_key_values(
-                label=encoded_labels,
-                key=encoded_keys,
+                label=labels,
+                key=keys,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
                 error_map=error_map,
@@ -414,17 +411,17 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_revisions(
         self, keys=None, labels=None, **kwargs
-    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
 
         :param keys: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type keys: list[str]
+        :type keys: str
         :param labels: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
+        :type labels: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
@@ -445,7 +442,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_revisions = client.list_revisions(
-                labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
+                labels="*Labe*", keys="*Ke*", accept_datetime=accept_datetime
             )
             for item in filtered_revisions:
                 pass  # do something
@@ -453,16 +450,14 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ['locked' if x == 'read_only' else x for x in select]
-        encoded_labels = escape_and_tostr(labels)
-        encoded_keys = escape_and_tostr(keys)
         error_map = {
             401: ClientAuthenticationError
         }
 
         try:
             return self._impl.get_revisions(
-                label=encoded_labels,
-                key=encoded_keys,
+                label=labels,
+                key=keys,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
                 error_map=error_map,

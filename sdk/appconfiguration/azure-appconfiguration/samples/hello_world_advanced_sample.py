@@ -43,7 +43,7 @@ def main():
     print("")
 
     print("List configuration settings")
-    config_settings = client.list_configuration_settings(labels=["MyLabel"])
+    config_settings = client.list_configuration_settings(labels="MyLabel")
     for item in config_settings:
         print_configuration_setting(item)
 

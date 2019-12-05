@@ -8,32 +8,6 @@ from datetime import datetime
 import re
 from azure.core import MatchConditions
 
-def escape_reserved(value):
-    """
-    Reserved characters are star(*), comma(,) and backslash(\\)
-    If a reserved character is part of the value, then it must be escaped using \\{Reserved Character}.
-    Non-reserved characters can also be escaped.
-
-    """
-    if value is None:
-        return None
-    if value == "":
-        return "\0"  # '\0' will be encoded to %00 in the url.
-    if isinstance(value, list):
-        return [escape_reserved(s) for s in value]
-    value = str(value)  # value is unicode for Python 2.7
-    # precede all reserved characters with a backslash.
-    # But if a * is at the beginning or the end, don't add the backslash
-    return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
-
-def escape_and_tostr(value):
-    if value is None:
-        return None
-    if value == [None]:
-        return None
-    value = escape_reserved(value)
-    return ','.join(value)
-
 def quote_etag(etag):
     if not etag or etag == "*":
         return etag

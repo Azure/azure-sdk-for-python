@@ -78,7 +78,7 @@ class AzureAppConfigurationClientTestBase(AzureMgmtTestCase):
         exist = bool(
             list(
                 self.get_config_client().list_configuration_settings(
-                    keys=[kv.key], labels=[kv.label]
+                    keys=kv.key, labels=kv.label
                 )
             )
         )
