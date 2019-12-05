@@ -66,7 +66,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account.name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
+                self.account_url(storage_account, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
 
             # Assert
             self.validate_standard_account_endpoints(service, url, storage_account.name, storage_account_key)
@@ -91,7 +91,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(storage_account.name, "blob"), credential=self.sas_token, container_name='foo', blob_name='bar')
+                self.account_url(storage_account, "blob"), credential=self.sas_token, container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -105,7 +105,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(storage_account.name, "blob"), credential=self.token_credential, container_name='foo', blob_name='bar')
+                self.account_url(storage_account, "blob"), credential=self.token_credential, container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -118,7 +118,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for service_type in SERVICES:
             # Act
             with self.assertRaises(ValueError):
-                url = self.account_url(storage_account.name, "blob").replace('https', 'http')
+                url = self.account_url(storage_account, "blob").replace('https', 'http')
                 service_type(url, credential=self.token_credential, container_name='foo', blob_name='bar')
 
     @GlobalStorageAccountPreparer()
@@ -127,7 +127,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
 
         for service_type in SERVICES.items():
             # Act
-            url = self.account_url(storage_account.name, "blob").replace('core.windows.net', 'core.chinacloudapi.cn')
+            url = self.account_url(storage_account, "blob").replace('core.windows.net', 'core.chinacloudapi.cn')
             service = service_type[0](
                 url, credential=storage_account_key, container_name='foo', blob_name='bar')
 
@@ -147,7 +147,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
 
         for service_type in SERVICES.items():
             # Act
-            url = self.account_url(storage_account.name, "blob").replace('https', 'http')
+            url = self.account_url(storage_account, "blob").replace('https', 'http')
             service = service_type[0](
                 url, credential=storage_account_key, container_name='foo', blob_name='bar')
 
@@ -162,7 +162,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
 
         for service_type in BLOB_SERVICES:
             # Act
-            service = service_type(self.account_url(storage_account.name, "blob"), container_name='foo', blob_name='bar')
+            service = service_type(self.account_url(storage_account, "blob"), container_name='foo', blob_name='bar')
 
             # Assert
             self.assertIsNotNone(service)
@@ -198,10 +198,10 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.account_url(storage_account.name, "blob"), credential=storage_account_key,
+                self.account_url(storage_account, "blob"), credential=storage_account_key,
                 container_name='foo', blob_name='bar')
             service = service_type[0](
-                self.account_url(storage_account.name, "blob"), credential=storage_account_key,
+                self.account_url(storage_account, "blob"), credential=storage_account_key,
                 container_name='foo', blob_name='bar', connection_timeout=22)
 
             # Assert
@@ -244,7 +244,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_blob_client_with_complete_blob_url_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        blob_url = self.account_url(storage_account.name, "blob") + "/foourl/barurl"
+        blob_url = self.account_url(storage_account, "blob") + "/foourl/barurl"
         service = BlobClient(blob_url, credential=storage_account_key, container_name='foo', blob_name='bar')
 
             # Assert
@@ -453,7 +453,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_request_callback_signed_header_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
         name = self.get_resource_name('cont')
 
         # Act
@@ -473,7 +473,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_response_callback_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
         name = self.get_resource_name('cont')
         container = service.get_container_client(name)
 
@@ -489,7 +489,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -507,7 +507,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"), credential=storage_account_key, user_agent=custom_app, transport=AiohttpTestTransport())
+            self.account_url(storage_account, "blob"), credential=storage_account_key, user_agent=custom_app, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -534,7 +534,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_append_async(self, resource_group, location, storage_account, storage_account_key):
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -555,7 +555,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account.name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
+                self.account_url(storage_account, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
 
             # Assert
             async with service:
@@ -569,7 +569,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account.name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
+                self.account_url(storage_account, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
             service.close()
                 
 # ------------------------------------------------------------------------------

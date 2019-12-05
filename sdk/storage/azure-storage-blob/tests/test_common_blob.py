@@ -896,7 +896,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         copy = copyblob.start_copy_from_url(sourceblob)
@@ -921,7 +921,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         blob_tier = StandardBlobTier.Cool
@@ -942,7 +942,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
 
         blob_tier = StandardBlobTier.Archive
         rehydrate_priority = RehydratePriority.high
@@ -1409,7 +1409,7 @@ class StorageCommonBlobTest(StorageTestCase):
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
 
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
@@ -1475,18 +1475,18 @@ class StorageCommonBlobTest(StorageTestCase):
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=fake_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
             service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential)
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
@@ -1980,7 +1980,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
         container_name = self.get_resource_name('utcontainersync')
         transport = RequestsTransport()
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=transport)
         blob_name = self._get_blob_reference()
         with bsc:
             bsc.get_service_properties()

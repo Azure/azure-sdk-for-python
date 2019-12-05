@@ -49,7 +49,7 @@ class ServiceStatsTest(StorageTestCase):
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account.name, "blob")
+        url = self.account_url(storage_account, "blob")
         bs = BlobServiceClient(url, credential=storage_account_key)
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -61,7 +61,7 @@ class ServiceStatsTest(StorageTestCase):
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account.name, "blob")
+        url = self.account_url(storage_account, "blob")
         bs = BlobServiceClient(url, credential=storage_account_key)
 
         # Act
