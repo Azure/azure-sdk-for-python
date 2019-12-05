@@ -27,7 +27,7 @@ class ResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-08-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-10-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
@@ -61,11 +61,10 @@ class ResourcesOperations(object):
          $filter=substringof('demo', name)<br><br>You can link more than one
          substringof together by adding and/or operators.<br><br>You can filter
          by tag names and values. For example, to filter for a tag name and
-         value, use $filter=tagName eq 'tag1' and tagValue eq 'Value1'. When
-         you filter by a tag name and value, the tags for each resource are not
-         returned in the results.<br><br>You can use some properties together
-         when filtering. The combinations you can use are: substringof and/or
-         resourceType, plan and plan/publisher and plan/name, identity and
+         value, use $filter=tagName eq 'tag1' and tagValue eq
+         'Value1'<br><br>You can use some properties together when filtering.
+         The combinations you can use are: substringof and/or resourceType,
+         plan and plan/publisher and plan/name, identity and
          identity/principalId.
         :type filter: str
         :param expand: The $expand query parameter. You can expand createdTime
@@ -82,7 +81,7 @@ class ResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of GenericResource
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResourcePaged[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResourcePaged[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -352,11 +351,10 @@ class ResourcesOperations(object):
          $filter=substringof('demo', name)<br><br>You can link more than one
          substringof together by adding and/or operators.<br><br>You can filter
          by tag names and values. For example, to filter for a tag name and
-         value, use $filter=tagName eq 'tag1' and tagValue eq 'Value1'. When
-         you filter by a tag name and value, the tags for each resource are not
-         returned in the results.<br><br>You can use some properties together
-         when filtering. The combinations you can use are: substringof and/or
-         resourceType, plan and plan/publisher and plan/name, identity and
+         value, use $filter=tagName eq 'tag1' and tagValue eq
+         'Value1'<br><br>You can use some properties together when filtering.
+         The combinations you can use are: substringof and/or resourceType,
+         plan and plan/publisher and plan/name, identity and
          identity/principalId.
         :type filter: str
         :param expand: The $expand query parameter. You can expand createdTime
@@ -373,7 +371,7 @@ class ResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of GenericResource
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResourcePaged[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResourcePaged[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -435,7 +433,7 @@ class ResourcesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resources'}
 
     def check_existence(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Checks whether a resource exists.
 
         :param resource_group_name: The name of the resource group containing
@@ -451,6 +449,8 @@ class ResourcesOperations(object):
         :param resource_name: The name of the resource to check whether it
          exists.
         :type resource_name: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -474,7 +474,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -503,7 +503,7 @@ class ResourcesOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -518,7 +518,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -543,7 +543,7 @@ class ResourcesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a resource.
 
         :param resource_group_name: The name of the resource group that
@@ -558,6 +558,8 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: The name of the resource to delete.
         :type resource_name: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -575,6 +577,7 @@ class ResourcesOperations(object):
             parent_resource_path=parent_resource_path,
             resource_type=resource_type,
             resource_name=resource_name,
+            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -596,7 +599,7 @@ class ResourcesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -611,7 +614,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -650,7 +653,7 @@ class ResourcesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a resource.
 
         :param resource_group_name: The name of the resource group for the
@@ -665,9 +668,11 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: The name of the resource to create.
         :type resource_name: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param parameters: Parameters for creating or updating the resource.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -676,9 +681,9 @@ class ResourcesOperations(object):
         :return: An instance of LROPoller that returns GenericResource or
          ClientRawResponse<GenericResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -687,6 +692,7 @@ class ResourcesOperations(object):
             parent_resource_path=parent_resource_path,
             resource_type=resource_type,
             resource_name=resource_name,
+            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -713,7 +719,7 @@ class ResourcesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -728,7 +734,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -765,7 +771,7 @@ class ResourcesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a resource.
 
         :param resource_group_name: The name of the resource group for the
@@ -780,9 +786,11 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: The name of the resource to update.
         :type resource_name: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param parameters: Parameters for updating the resource.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -791,9 +799,9 @@ class ResourcesOperations(object):
         :return: An instance of LROPoller that returns GenericResource or
          ClientRawResponse<GenericResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -802,6 +810,7 @@ class ResourcesOperations(object):
             parent_resource_path=parent_resource_path,
             resource_type=resource_type,
             resource_name=resource_name,
+            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -827,7 +836,7 @@ class ResourcesOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
     def get(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Gets a resource.
 
         :param resource_group_name: The name of the resource group containing
@@ -842,6 +851,8 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: The name of the resource to get.
         :type resource_name: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -849,7 +860,7 @@ class ResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: GenericResource or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource or
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -867,7 +878,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -900,13 +911,15 @@ class ResourcesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
     def check_existence_by_id(
-            self, resource_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
         """Checks by ID whether a resource exists.
 
         :param resource_id: The fully qualified ID of the resource, including
          the resource name and resource type. Use the format,
          /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -925,7 +938,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -954,7 +967,7 @@ class ResourcesOperations(object):
 
 
     def _delete_by_id_initial(
-            self, resource_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_by_id.metadata['url']
         path_format_arguments = {
@@ -964,7 +977,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -989,13 +1002,15 @@ class ResourcesOperations(object):
             return client_raw_response
 
     def delete_by_id(
-            self, resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_id, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including
          the resource name and resource type. Use the format,
          /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1009,6 +1024,7 @@ class ResourcesOperations(object):
         """
         raw_result = self._delete_by_id_initial(
             resource_id=resource_id,
+            api_version=api_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -1030,7 +1046,7 @@ class ResourcesOperations(object):
 
 
     def _create_or_update_by_id_initial(
-            self, resource_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update_by_id.metadata['url']
         path_format_arguments = {
@@ -1040,7 +1056,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1079,16 +1095,18 @@ class ResourcesOperations(object):
         return deserialized
 
     def create_or_update_by_id(
-            self, resource_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_id, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including
          the resource name and resource type. Use the format,
          /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param parameters: Create or update resource parameters.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1097,13 +1115,14 @@ class ResourcesOperations(object):
         :return: An instance of LROPoller that returns GenericResource or
          ClientRawResponse<GenericResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_by_id_initial(
             resource_id=resource_id,
+            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -1130,7 +1149,7 @@ class ResourcesOperations(object):
 
 
     def _update_by_id_initial(
-            self, resource_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update_by_id.metadata['url']
         path_format_arguments = {
@@ -1140,7 +1159,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1177,16 +1196,18 @@ class ResourcesOperations(object):
         return deserialized
 
     def update_by_id(
-            self, resource_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_id, api_version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including
          the resource name and resource type. Use the format,
          /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param parameters: Update resource parameters.
         :type parameters:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1195,13 +1216,14 @@ class ResourcesOperations(object):
         :return: An instance of LROPoller that returns GenericResource or
          ClientRawResponse<GenericResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_by_id_initial(
             resource_id=resource_id,
+            api_version=api_version,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -1227,13 +1249,15 @@ class ResourcesOperations(object):
     update_by_id.metadata = {'url': '/{resourceId}'}
 
     def get_by_id(
-            self, resource_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
         """Gets a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including
          the resource name and resource type. Use the format,
          /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
+        :param api_version: The API version to use for the operation.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1241,7 +1265,7 @@ class ResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: GenericResource or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.resources.v2019_08_01.models.GenericResource or
+         ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1254,7 +1278,7 @@ class ResourcesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
