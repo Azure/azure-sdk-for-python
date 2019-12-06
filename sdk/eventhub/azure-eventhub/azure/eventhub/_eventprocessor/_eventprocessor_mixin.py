@@ -23,13 +23,13 @@ if TYPE_CHECKING:
 
 class EventProcessorMixin(object):
 
-    _eventhub_client
-    _consumer_group
-    _owner_level
-    _prefetch
-    _track_last_enqueued_event_properties
-    _initial_event_position_inclusive
-    _initial_event_position
+    _eventhub_client = None  # type: Optional[Union[EventHubConsumer, EventHubConsumerAsync]]
+    _consumer_group = ""  # type: str
+    _owner_level = None  # type: Optional[int]
+    _prefetch = None  # type: Optional[int]
+    _track_last_enqueued_event_properties = False  # type: bool
+    _initial_event_position_inclusive = False  # type: Union[bool, Dict[str, bool]]
+    _initial_event_position = "-1"  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
 
     def get_init_event_position(self, partition_id, checkpoint):
         # type: (str, Optional[Dict[str, Any]]) -> Tuple[Union[str, int, datetime], bool]
