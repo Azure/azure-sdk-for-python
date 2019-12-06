@@ -11,48 +11,14 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.operations import Operations
-from .operations.redis_operations import RedisOperations
-from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.patch_schedules_operations import PatchSchedulesOperations
-from .operations.linked_server_operations import LinkedServerOperations
+
+from ._configuration import RedisManagementClientConfiguration
+from .operations import Operations
+from .operations import RedisOperations
+from .operations import FirewallRulesOperations
+from .operations import PatchSchedulesOperations
+from .operations import LinkedServerOperations
 from . import models
-
-
-class RedisManagementClientConfiguration(AzureConfiguration):
-    """Configuration for RedisManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms part
-     of the URI for every service call.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(RedisManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-redis/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class RedisManagementClient(SDKClient):
@@ -89,7 +55,7 @@ class RedisManagementClient(SDKClient):
         super(RedisManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-01'
+        self.api_version = '2019-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
