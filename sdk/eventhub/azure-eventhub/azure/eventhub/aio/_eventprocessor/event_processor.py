@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
-from typing import Dict, Callable, List, Any, Union, TYPE_CHECKING, Optional, Iterable, Awaitable
+from typing import Dict, Callable, List, Any, Union, TYPE_CHECKING, Optional, Iterable, Awaitable, cast
 import uuid
 import asyncio
 import logging
@@ -51,7 +51,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             loop: Optional[asyncio.AbstractEventLoop] = None
     ):
         self._consumer_group = consumer_group
-        self._eventhub_client = eventhub_client
+        self._eventhub_client = eventhub_client  # type: ignore
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eventhub_name
         self._partition_id = partition_id
@@ -77,7 +77,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         self._consumers = {}  # type: Dict[str, EventHubConsumer]
         self._ownership_manager = OwnershipManager(
-            self._eventhub_client,
+            cast('EventHubConsumerClient', self._eventhub_client),
             self._consumer_group,
             self._id,
             self._checkpoint_store,
@@ -182,10 +182,12 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 self._partition_contexts[partition_id] = partition_context
 
             event_received_callback = partial(self._on_event_received, partition_context)
-            self._consumers[partition_id] = self.create_consumer(partition_id,
-                                                                 initial_event_position,
-                                                                 event_position_inclusive,
-                                                                 event_received_callback)
+            self._consumers[partition_id] = self.create_consumer(  # type: ignore
+                partition_id,
+                initial_event_position,
+                event_position_inclusive,
+                event_received_callback  # type: ignore
+            )
 
             if self._partition_initialize_handler:
                 try:

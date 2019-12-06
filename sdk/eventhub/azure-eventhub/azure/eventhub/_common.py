@@ -307,7 +307,7 @@ class EventDataBatch(object):
 
     def __repr__(self):
         # type: () -> str
-        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={}, event_count={}".format(
+        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={!r}, event_count={}".format(
             self.max_size_in_bytes,
             self._partition_id,
             self._partition_key,

@@ -127,7 +127,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         )
 
     def _handle_callback(self, callback, *args):
-        # type: (Callable[[Any, ...], None], Any) -> None
+        # type: (Callable[..., None], Any) -> None
         try:
             callback(*args)
         except Exception as exp:  # pylint:disable=broad-except

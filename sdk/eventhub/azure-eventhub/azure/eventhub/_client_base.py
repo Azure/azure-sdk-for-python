@@ -142,7 +142,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
-        self._conn_manager = get_connection_manager(**kwargs)
+        self._conn_manager = get_connection_manager(**kwargs)  # type: Any
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod
