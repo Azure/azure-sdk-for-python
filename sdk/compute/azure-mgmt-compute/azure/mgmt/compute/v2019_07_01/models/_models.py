@@ -3317,6 +3317,9 @@ class ImageReference(SubResource):
     image, or virtual machine image, but is not used in other creation
     operations.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
     :param publisher: The image publisher.
@@ -3334,7 +3337,16 @@ class ImageReference(SubResource):
      automatically update after deploy time even if a new version becomes
      available.
     :type version: str
+    :ivar exact_version: Specifies in decimal numbers, the version of platform
+     image or marketplace image used to create the virtual machine. This
+     readonly field differs from 'version', only if the value specified in
+     'version' field is 'latest'.
+    :vartype exact_version: str
     """
+
+    _validation = {
+        'exact_version': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -3342,6 +3354,7 @@ class ImageReference(SubResource):
         'offer': {'key': 'offer', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
+        'exact_version': {'key': 'exactVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -3350,6 +3363,7 @@ class ImageReference(SubResource):
         self.offer = kwargs.get('offer', None)
         self.sku = kwargs.get('sku', None)
         self.version = kwargs.get('version', None)
+        self.exact_version = None
 
 
 class ImageStorageProfile(Model):
