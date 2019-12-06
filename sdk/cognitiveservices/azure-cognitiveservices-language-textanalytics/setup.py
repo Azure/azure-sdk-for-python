@@ -36,24 +36,24 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.rst', encoding='utf-8') as f:
+with open('HISTORY.md', encoding='utf-8') as f:
     history = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-    long_description=readme + '\n\n' + history,
-    long_description_content_type='text/x-rst',
+    long_description=readme + "\n\n" + history,
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
@@ -64,10 +64,10 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -79,10 +79,13 @@ setup(
         'azure.cognitiveservices.language',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        "azure-core<2.0.0,>=1.0.0",
+        "msrest>=0.6.0",
         'azure-common~=1.1',
+        'six>=1.6',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-cognitiveservices-language-nspkg'],
+        ":python_version<'3.5'": ['typing'],
     }
 )

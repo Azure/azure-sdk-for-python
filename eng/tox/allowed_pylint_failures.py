@@ -15,7 +15,6 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-cognitiveservices-language-luis",
     "azure-cognitiveservices-language-nspkg",
     "azure-cognitiveservices-language-spellcheck",
-    "azure-cognitiveservices-language-textanalytics",
     "azure-cognitiveservices-nspkg",
     "azure-cognitiveservices-personalizer",
     "azure-cognitiveservices-search-autosuggest",

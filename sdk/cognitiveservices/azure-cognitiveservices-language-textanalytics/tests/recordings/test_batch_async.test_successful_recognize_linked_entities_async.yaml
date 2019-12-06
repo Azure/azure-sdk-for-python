@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "Microsoft was founded by Bill Gates
+      and Paul Allen", "language": "en"}, {"id": "2", "text": "Microsoft fue fundado
+      por Bill Gates y Paul Allen", "language": "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '200'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","entities":[{"name":"Bill Gates","matches":[{"text":"Bill
+        Gates","offset":25,"length":10,"score":0.22778968418472689}],"language":"en","id":"Bill
+        Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Paul
+        Allen","matches":[{"text":"Paul Allen","offset":40,"length":10,"score":0.1552051480609411}],"language":"en","id":"Paul
+        Allen","url":"https://en.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.18863350409792545}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]},{"id":"2","entities":[{"name":"Bill
+        Gates","matches":[{"text":"Bill Gates","offset":26,"length":10,"score":0.31967461235530847}],"language":"es","id":"Bill
+        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Paul
+        Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"score":0.80318090811651288}],"language":"es","id":"Paul
+        Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.30594656354495253}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"latest"}'
+    headers:
+      apim-request-id: e9955254-da59-4f35-8ddb-d9f56e5c7fab
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
+      date: Thu, 14 Nov 2019 21:44:28 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 95b78c78-32b0-4f94-96c2-7c101c00ecdb
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '16'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/entities/linking
+        - showStats=false
+        - ''
+version: 1
