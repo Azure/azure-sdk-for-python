@@ -1628,6 +1628,9 @@ class DiskUpdate(Model):
      settable for UltraSSD disks. MBps means millions of bytes per second - MB
      here uses the ISO notation, of powers of 10.
     :type disk_mbps_read_write: int
+    :param encryption: Encryption property can be used to encrypt data at rest
+     with customer managed keys or platform managed keys.
+    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku:
@@ -1640,6 +1643,7 @@ class DiskUpdate(Model):
         'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
         'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
         'disk_mbps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'int'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'DiskSku'},
     }
@@ -1651,6 +1655,7 @@ class DiskUpdate(Model):
         self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
         self.disk_iops_read_write = kwargs.get('disk_iops_read_write', None)
         self.disk_mbps_read_write = kwargs.get('disk_mbps_read_write', None)
+        self.encryption = kwargs.get('encryption', None)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
 
@@ -5128,6 +5133,9 @@ class SnapshotUpdate(Model):
      disk or snapshot.
     :type encryption_settings_collection:
      ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
+    :param encryption: Encryption property can be used to encrypt data at rest
+     with customer managed keys or platform managed keys.
+    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku:
@@ -5138,6 +5146,7 @@ class SnapshotUpdate(Model):
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
         'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SnapshotSku'},
     }
@@ -5147,6 +5156,7 @@ class SnapshotUpdate(Model):
         self.os_type = kwargs.get('os_type', None)
         self.disk_size_gb = kwargs.get('disk_size_gb', None)
         self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
+        self.encryption = kwargs.get('encryption', None)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
 

@@ -1628,6 +1628,9 @@ class DiskUpdate(Model):
      settable for UltraSSD disks. MBps means millions of bytes per second - MB
      here uses the ISO notation, of powers of 10.
     :type disk_mbps_read_write: int
+    :param encryption: Encryption property can be used to encrypt data at rest
+     with customer managed keys or platform managed keys.
+    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku:
@@ -1640,17 +1643,19 @@ class DiskUpdate(Model):
         'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
         'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
         'disk_mbps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'int'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'DiskSku'},
     }
 
-    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, disk_iops_read_write: int=None, disk_mbps_read_write: int=None, tags=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, disk_iops_read_write: int=None, disk_mbps_read_write: int=None, encryption=None, tags=None, sku=None, **kwargs) -> None:
         super(DiskUpdate, self).__init__(**kwargs)
         self.os_type = os_type
         self.disk_size_gb = disk_size_gb
         self.encryption_settings_collection = encryption_settings_collection
         self.disk_iops_read_write = disk_iops_read_write
         self.disk_mbps_read_write = disk_mbps_read_write
+        self.encryption = encryption
         self.tags = tags
         self.sku = sku
 
@@ -5128,6 +5133,9 @@ class SnapshotUpdate(Model):
      disk or snapshot.
     :type encryption_settings_collection:
      ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
+    :param encryption: Encryption property can be used to encrypt data at rest
+     with customer managed keys or platform managed keys.
+    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku:
@@ -5138,15 +5146,17 @@ class SnapshotUpdate(Model):
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
         'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SnapshotSku'},
     }
 
-    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, tags=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, encryption=None, tags=None, sku=None, **kwargs) -> None:
         super(SnapshotUpdate, self).__init__(**kwargs)
         self.os_type = os_type
         self.disk_size_gb = disk_size_gb
         self.encryption_settings_collection = encryption_settings_collection
+        self.encryption = encryption
         self.tags = tags
         self.sku = sku
 
