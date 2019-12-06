@@ -25,19 +25,19 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
-class SkuPaged(Paged):
+class SkuInformationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Sku <azure.mgmt.storage.v2019_06_01.models.Sku>` object
+    A paging container for iterating over a list of :class:`SkuInformation <azure.mgmt.storage.v2019_06_01.models.SkuInformation>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Sku]'}
+        'current_page': {'key': 'value', 'type': '[SkuInformation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SkuPaged, self).__init__(*args, **kwargs)
+        super(SkuInformationPaged, self).__init__(*args, **kwargs)
 class StorageAccountPaged(Paged):
     """
     A paging container for iterating over a list of :class:`StorageAccount <azure.mgmt.storage.v2019_06_01.models.StorageAccount>` object

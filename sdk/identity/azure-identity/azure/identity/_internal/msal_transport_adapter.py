@@ -86,6 +86,7 @@ class MsalTransportAdapter(object):
         config = config or self._create_config(**kwargs)
         policies = policies or [
             ContentDecodePolicy(),
+            config.proxy_policy,
             config.retry_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),

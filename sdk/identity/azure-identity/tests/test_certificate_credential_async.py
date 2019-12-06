@@ -7,11 +7,28 @@ import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
+from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity.aio import CertificateCredential
-from helpers import urlsafeb64_decode, mock_response
+from helpers import build_aad_response, urlsafeb64_decode, mock_response
 import pytest
 
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
+
+
+@pytest.mark.asyncio
+async def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = CertificateCredential(
+        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=Mock(send=send)
+    )
+
+    await credential.get_token("scope")
+
+    assert policy.on_request.called
 
 
 @pytest.mark.asyncio

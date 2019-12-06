@@ -7,6 +7,10 @@
 # --------------------------------------------------------------------------
 import unittest
 
+from azure.core.exceptions import ResourceNotFoundError
+
+from azure.core import MatchConditions
+
 from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess
 from testcase import (
     StorageTestCase,
@@ -61,6 +65,21 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @record
+    def test_create_file_system_with_metadata(self):
+        # Arrange
+        metadata = {'hello': 'world', 'number': '42'}
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        created = file_system_client.create_file_system(metadata=metadata)
+
+        # Assert
+        meta = file_system_client.get_file_system_properties().metadata
+        self.assertTrue(created)
+        self.assertDictEqual(meta, metadata)
+
+    @record
     def test_list_file_systemss(self):
         # Arrange
         file_system_name = self._get_file_system_reference()
@@ -87,6 +106,14 @@ class FileSystemTest(StorageTestCase):
 
         # Assert
         self.assertIsNone(deleted)
+
+    @record
+    def test_delete_none_existing_file_system(self):
+        fake_file_system_client = self.dsc.get_file_system_client("fakeclient")
+
+        # Act
+        with self.assertRaises(ResourceNotFoundError):
+            fake_file_system_client.delete_file_system(match_condition=MatchConditions.IfMissing)
 
     @record
     def test_list_file_systems_with_include_metadata(self):
@@ -173,6 +200,17 @@ class FileSystemTest(StorageTestCase):
         self.assertEqual(len(paths), 6)
 
     @record
+    def test_list_paths_which_are_all_files(self):
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            file_system.create_file("file{}".format(i))
+
+        paths = list(file_system.get_paths(upn=True))
+
+        self.assertEqual(len(paths), 6)
+
+    @record
     def test_list_paths_with_max_per_page(self):
         # Arrange
         file_system = self._create_file_system()
@@ -210,6 +248,48 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths), 2)
         self.assertEqual(paths[0].content_length, 5)
+
+    @record
+    def test_list_paths_recursively(self):
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}".format(i))
+
+            # create a subdirectory under the current directory
+            subdir = file_system.get_directory_client("dir1{}".format(i)).create_sub_directory("subdir")
+            subdir.create_sub_directory("subsub")
+
+            # create a file under the current directory
+            subdir.create_file("file")
+
+        paths = list(file_system.get_paths(recursive=True, upn=True))
+
+        # there are 24 subpaths in total
+        self.assertEqual(len(paths), 24)
+
+    @record
+    def test_create_directory_from_file_system_client(self):
+        # Arrange
+        file_system = self._create_file_system()
+        file_system.create_directory("dir1/dir2")
+
+        paths = list(file_system.get_paths(recursive=False, upn=True))
+
+        self.assertEqual(len(paths), 1)
+        self.assertEqual(paths[0].name, "dir1")
+
+    @record
+    def test_create_file_from_file_system_client(self):
+        # Arrange
+        file_system = self._create_file_system()
+        file_system.create_file("dir1/dir2/file")
+
+        paths = list(file_system.get_paths(recursive=True, upn=True))
+
+        self.assertEqual(len(paths), 3)
+        self.assertEqual(paths[0].name, "dir1")
+        self.assertEqual(paths[2].is_directory, False)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

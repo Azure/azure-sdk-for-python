@@ -33,7 +33,7 @@ class AadClientBase(ABC):
     """Sans I/O methods for AAD clients wrapping MSAL's OAuth client"""
 
     def __init__(self, tenant_id, client_id, cache=None, **kwargs):
-        # type: (str, str, **Any) -> None
+        # type: (str, str, Optional[TokenCache], **Any) -> None
         authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
         if authority[-1] == "/":
             authority = authority[:-1]

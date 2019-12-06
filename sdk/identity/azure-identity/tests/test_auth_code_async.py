@@ -7,8 +7,27 @@ from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity.aio import AuthorizationCodeCredential
 import pytest
+
+from helpers import build_aad_response, mock_response
+
+
+@pytest.mark.asyncio
+async def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", policies=[policy], transport=Mock(send=send)
+    )
+
+    await credential.get_token("scope")
+
+    assert policy.on_request.called
 
 
 @pytest.mark.asyncio

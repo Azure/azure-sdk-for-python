@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 import requests
 import pytest
+from azure.core import MatchConditions
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 
@@ -619,7 +620,7 @@ class StorageFileTest(FileTestCase):
         source_file_name = 'testfile'
         source_file_client = self._create_file(file_name=source_file_name)
         data = b'abcdefghijklmnop' * 32
-        source_file_client.upload_range(data, offset=0, length=512)
+        resp = source_file_client.upload_range(data, offset=0, length=512)
 
         destination_file_name = 'filetoupdate'
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
@@ -635,7 +636,9 @@ class StorageFileTest(FileTestCase):
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0)
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                      source_etag=resp['etag'],
+                                                      source_match_condition=MatchConditions.IfNotModified)
 
         # Assert
         # To make sure the range of the file is actually updated

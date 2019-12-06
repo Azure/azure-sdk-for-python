@@ -278,6 +278,7 @@ def generate_directory_sas(
         ip=ip,
         **kwargs)
 
+
 def generate_file_sas(
         account_name,  # type: str
         file_system_name,  # type: str
