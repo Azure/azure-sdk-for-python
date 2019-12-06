@@ -48,7 +48,7 @@ class ServicesOperations(object):
         id of the Azure service when creating a support ticket. <br/>For
         Billing, the id is
         '/providers/Microsoft.Support/services/517f2da6-78fd-0498-4e22-ad26996b1dfc'.
-        <br/>For Subscrption Management, the id is
+        <br/>For Subscription Management, the id is
         '/providers/Microsoft.Support/services/f3dc5421-79ef-1efa-41a5-42bf3cbb52c6'.
         <br/>For Quota, the id is
         '/providers/Microsoft.Support/services/06bfd9d3-516b-d5c6-5802-169c800dec89'

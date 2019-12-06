@@ -137,7 +137,7 @@ class MicrosoftSupportOperationsMixin(object):
         services as indicated by the 'serviceId' in the request.
         <br/><br/>**Billing tickets**<br/>For billing issues, user must set
         *serviceId* to
-        *'/providers/Microsoft.Support/services/517f2da6-78fd-0498-4e22-ad26996b1dfc'*.<br/><br/>**Subscripton
+        *'/providers/Microsoft.Support/services/517f2da6-78fd-0498-4e22-ad26996b1dfc'*.<br/><br/>**Subscription
         Management tickets**<br/> For issues relating to subscription
         management, *serviceId* should be set to
         *'/providers/Microsoft.Support/services/f3dc5421-79ef-1efa-41a5-42bf3cbb52c6'*.<br/><br/>**Technical

@@ -248,9 +248,9 @@ class ContactProfile(Model):
 
 class CreateSupportTicket(Model):
     """Describes the payload for creating a support ticket. Customers can create
-    tickets for issues relating to Billing, Subscription Management, Serice and
-    subscription limits(quotas) and Technical as determined by service id in
-    the request payload.
+    tickets for issues relating to Billing, Subscription Management, Service
+    and subscription limits(quotas) and Technical as determined by service id
+    in the request payload.
 
     All required parameters must be populated in order to send to Azure.
 
