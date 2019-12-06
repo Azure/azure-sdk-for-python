@@ -2,61 +2,72 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.5.0)
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b51368fa-6d71-11e9-949b-f218981b70f8
+      - 796b941e-17bd-11ea-bf36-001a7dda7113
       x-ms-date:
-      - Fri, 03 May 2019 07:04:34 GMT
+      - Fri, 06 Dec 2019 00:15:14 GMT
       x-ms-recursive:
-      - 'True'
+      - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-07-07'
     method: GET
     uri: https://storagename.file.core.windows.net/test?comp=listhandles
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults><Entries><Handle><HandleId>21129680188</HandleId><Path>foo2.txt</Path><FileId>12682214616000888832</FileId><ParentId>0</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,
-        03 May 2019 06:59:59 GMT</OpenTime></Handle><Handle><HandleId>21129680656</HandleId><Path>wut/bla1.txt</Path><FileId>17293900634428276736</FileId><ParentId>11529308504556830720</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,
-        03 May 2019 07:00:18 GMT</OpenTime></Handle><Handle><HandleId>21129680100</HandleId><Path>wut/foo1.txt</Path><FileId>14988057625214582784</FileId><ParentId>11529308504556830720</ParentId><SessionId>9385737614310506553</SessionId><ClientIp>167.220.2.92:27553</ClientIp><OpenTime>Fri,
-        03 May 2019 06:59:55 GMT</OpenTime></Handle></Entries><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults><Entries>
+        <Handle><HandleId>31248614035</HandleId><Path /><FileId>0</FileId><ParentId>0</ParentId><SessionId>9479483953728458157</SessionId><ClientIp>167.220.2.5:3263</ClientIp><OpenTime>Fri,
+        06 Dec 2019 00:14:48 GMT</OpenTime></Handle><Handle><HandleId>31248614037</HandleId><Path
+        /><FileId>0</FileId><ParentId>0</ParentId><SessionId>9479483953728458157</SessionId><ClientIp>167.220.2.5:3263</ClientIp><OpenTime>Fri,
+        06 Dec 2019 00:14:49 GMT</OpenTime></Handle><Handle><HandleId>31248614017</HandleId><Path>Open
+        Questions.docx</Path><FileId>14988049928633188352</FileId><ParentId>0</ParentId><SessionId>9479483953728458157</SessionId><ClientIp>167.220.2.5:3263</ClientIp><OpenTime>Fri,
+        06 Dec 2019 00:14:36 GMT</OpenTime></Handle></Entries><NextMarker /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 03 May 2019 07:04:34 GMT
+      - Fri, 06 Dec 2019 00:15:17 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
       x-ms-request-id:
-      - 1a653936-201a-001b-1a7e-01e1b9000000
+      - 4460e584-a01a-0020-2dca-abe99c000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-07-07'
     status:
       code: 200
       message: OK
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.5.0)
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b5628c50-6d71-11e9-949b-f218981b70f8
+      - 7e013a76-17bd-11ea-a357-001a7dda7113
       x-ms-date:
-      - Fri, 03 May 2019 07:04:35 GMT
+      - Fri, 06 Dec 2019 00:15:21 GMT
       x-ms-handle-id:
       - '*'
       x-ms-recursive:
-      - 'True'
+      - 'false'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-07-07'
     method: PUT
     uri: https://storagename.file.core.windows.net/test?comp=forceclosehandles
   response:
@@ -66,61 +77,18 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 03 May 2019 07:04:35 GMT
+      - Fri, 06 Dec 2019 00:15:25 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-number-of-handles-closed:
-      - '3'
+      - '2'
+      x-ms-number-of-handles-failed:
+      - '0'
       x-ms-request-id:
-      - 1a65393a-201a-001b-1b7e-01e1b9000000
+      - 4460e5d2-a01a-0020-70ca-abe99c000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-07-07'
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 0cf6db7a-1d1b-11ea-9ac1-2816a845e8c6
-      x-ms-date:
-      - Thu, 12 Dec 2019 20:07:40 GMT
-      x-ms-recursive:
-      - 'true'
-      x-ms-version:
-      - '2019-02-02'
-    method: GET
-    uri: https://storagename.file.core.windows.net/test?comp=listhandles
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:b5c9b768-201a-003f-3727-b1d3dc000000\nTime:2019-12-12T20:07:44.6563175Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 12 Dec 2019 20:07:44 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ShareNotFound
-      x-ms-request-id:
-      - b5c9b768-201a-003f-3727-b1d3dc000000
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 404
-      message: The specified share does not exist.
 version: 1

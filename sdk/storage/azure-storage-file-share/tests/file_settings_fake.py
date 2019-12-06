@@ -9,7 +9,7 @@
 
 import os
 
-STORAGE_ACCOUNT_NAME = os.getenv('STORAGE_ACCOUNT_NAME', "storagename")
+STORAGE_ACCOUNT_NAME = os.getenv('storagename', "storagename")
 STORAGE_ACCOUNT_KEY = os.getenv('STORAGE_ACCOUNT_KEY', "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==")
 BLOB_STORAGE_ACCOUNT_NAME = os.getenv('BLOB_STORAGE_ACCOUNT_NAME', "storagename")
 BLOB_STORAGE_ACCOUNT_KEY = os.getenv('BLOB_STORAGE_ACCOUNT_KEY', "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==")
