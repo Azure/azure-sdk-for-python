@@ -110,11 +110,9 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
         # type: (PipelineRequest, HttpChallenge) -> None
         """authenticate according to challenge, add Authorization header to request"""
 
-        scope = challenge.get_resource()
-        if not scope.endswith("/.default"):
-            scope += "/.default"
-
         if self._need_new_token:
+            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
             self._token = self._credential.get_token(scope)
 
         # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token

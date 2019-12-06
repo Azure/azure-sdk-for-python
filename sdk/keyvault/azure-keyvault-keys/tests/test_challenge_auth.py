@@ -71,44 +71,62 @@ def test_challenge_parsing():
 
 
 @empty_challenge_cache
-def test_policy():
-    expected_scope = "https://challenge.resource/.default"
-    expected_token = "expected_token"
-    challenge = Mock(
+def test_scope():
+    """The policy's token requests should always be for an AADv2 scope"""
+
+    expected_content = b"a duck"
+
+    def test_with_challenge(challenge, expected_scope):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        def get_token(*scopes):
+            assert len(scopes) is 1
+            assert scopes[0] == expected_scope
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(get_token=Mock(wraps=get_token))
+        pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        pipeline.run(request)
+
+        assert credential.get_token.call_count == 1
+
+    endpoint = "https://authority.net/tenant"
+
+    # an AADv1 resource becomes an AADv2 scope with the addition of '/.default'
+    resource = "https://challenge.resource"
+    scope = resource + "/.default"
+
+    challenge_with_resource = Mock(
         status_code=401,
-        headers={
-            "WWW-Authenticate": 'Bearer authorization="https://login.authority.net/tenant", resource={}'.format(
-                expected_scope
-            )
-        },
+        headers={"WWW-Authenticate": 'Bearer authorization="{}", resource={}'.format(endpoint, resource)},
     )
-    success = Mock(status_code=200)
-    data = {"spam": "eggs"}
 
-    responses = (r for r in (challenge, success))
+    challenge_with_scope = Mock(
+        status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", scope={}'.format(endpoint, scope)}
+    )
 
-    def send(request):
-        response = next(responses)
-        if response is challenge:
-            # this is the first request
-            assert not request.body
-            assert request.headers["Content-Length"] == "0"
-        elif response is success:
-            # this is the second request
-            assert request.body == data
-            assert expected_token in request.headers["Authorization"]
-        return response
-
-    def get_token(*scopes):
-        assert len(scopes) is 1
-        assert scopes[0] == expected_scope
-        return AccessToken(expected_token, 0)
-
-    credential = Mock(get_token=Mock(wraps=get_token))
-    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
-    pipeline.run(HttpRequest("POST", get_random_url(), data=data))
-
-    assert credential.get_token.call_count == 1
+    test_with_challenge(challenge_with_resource, scope)
+    test_with_challenge(challenge_with_scope, scope)
 
 
 @empty_challenge_cache
