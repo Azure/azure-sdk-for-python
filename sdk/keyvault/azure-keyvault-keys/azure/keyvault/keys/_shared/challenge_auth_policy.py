@@ -2,6 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""Policy implementing Key Vault's challenge authentication protocol.
+
+Normally the protocol is only used for the client's first service request, upon which:
+1. The challenge authentication policy sends a copy of the request, without authorization or content.
+2. Key Vault responds 401 with a header (the 'challenge') detailing how the client should authenticate such a request.
+3. The policy authenticates according to the challenge and sends the original request with authorization.
+
+The policy caches the challenge and thus knows how to authenticate future requests. However, authentication
+requirements can change. For example, a vault may move to a new tenant. In such a case the policy will attempt the
+protocol again.
+"""
+
 import copy
 
 from azure.core.pipeline import PipelineContext, PipelineRequest
