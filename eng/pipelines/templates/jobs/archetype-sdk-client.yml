@@ -4,6 +4,56 @@ parameters:
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
   TestTimeoutInMinutes: 0
+  TestMatrix:
+    Linux_Python27:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '2.7'
+      CoverageArg: ''
+      RunForPR: true
+    Linux_Python35:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.5'
+      CoverageArg: ''
+      RunForPR: true
+    Linux_Python36:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.6'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_Python37:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.7'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_Python38:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.8'
+      CoverageArg: ''
+      RunForPR: true
+    Windows_Python35:
+      OSName: 'Windows'
+      OSVmImage: 'windows-2019'
+      PythonVersion: '3.5'
+      CoverageArg: ''
+      RunForPR: false
+    MacOS_Python27:
+      OSName: 'MacOS'
+      OSVmImage: 'macOS-10.13'
+      PythonVersion: '2.7'
+      CoverageArg: ''
+      RunForPR: false
+    Linux_pypy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
+      CoverageArg: '--disablecov'
+      RunForPR: false
+
   
 jobs:
   - job: 'Build'
@@ -48,47 +98,11 @@ jobs:
 
     strategy:
       matrix:
-        Linux_Python27:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '2.7'
-          CoverageArg: ''
-        Linux_Python35:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.5'
-          CoverageArg: ''
-        Linux_Python36:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.6'
-          CoverageArg: ''
-        Linux_Python37:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.7'
-          CoverageArg: ''
-        Linux_Python38:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.8'
-          CoverageArg: ''
-        Windows_Python35:
-          OSName: 'Windows'
-          OSVmImage: 'windows-2019'
-          PythonVersion: '3.5'
-          CoverageArg: ''
-        MacOS_Python27:
-          OSName: 'MacOS'
-          OSVmImage: 'macOS-10.13'
-          PythonVersion: '2.7'
-          CoverageArg: ''
-        Linux_pypy3:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: 'pypy3'
-          CoverageArg: '--disablecov'
-
+        ${{ each matrixEntry in parameters.TestMatrix }}:
+          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+            ${{ matrixEntry.key }}:
+              ${{ insert }}: ${{ matrixEntry.value }}
+        
     pool:
       vmImage: '$(OSVmImage)'
 
