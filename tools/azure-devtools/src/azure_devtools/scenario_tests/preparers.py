@@ -9,9 +9,11 @@ import functools
 from .base import ReplayableTest
 from .utilities import create_random_name, is_text_payload, trim_kwargs_from_test_function
 from .recording_processors import RecordingProcessor
+from .exceptions import BadNameError
 
 
 # Core Utility
+
 
 class AbstractPreparer(object):
     def __init__(self, name_prefix, name_len, disable_recording=False):
@@ -36,10 +38,22 @@ class AbstractPreparer(object):
                 resource_name = self.moniker
 
             with self.override_disable_recording():
-                parameter_update = self.create_resource(
-                    resource_name,
-                    **kwargs
-                )
+                retries = 4
+                number_of_times_in_retries = 0
+                for i in range(retries):
+                    number_of_times_in_retries += 1
+                    try:
+                        parameter_update = self.create_resource(
+                            resource_name,
+                            **kwargs
+                        )
+                    except BadNameError:
+                        if i == retries - 1:
+                            raise
+                        self.random_resource_name = None
+                        resource_name = self.random_name
+                    else:
+                        break
 
             if parameter_update:
                 kwargs.update(parameter_update)
