@@ -4,8 +4,10 @@
 # ------------------------------------
 import base64
 import json
-import six
 import time
+
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+import six
 
 try:
     from unittest import mock
@@ -102,6 +104,11 @@ def mock_response(status_code=200, headers={}, json_payload=None):
         response.headers["content-type"] = "application/json"
         response.content_type = "application/json"
     return response
+
+
+def get_discovery_response(endpoint="https://a/b"):
+    aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
+    return mock_response(json_payload={name: endpoint for name in aad_metadata_endpoint_names})
 
 
 def validating_transport(requests, responses):

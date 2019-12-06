@@ -1,3 +1,9 @@
+# Version 1.1.1 Unreleased
+
+- All credential pipelines include `ProxyPolicy`
+([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
+
+
 # 2019-11-27 1.1.0
 
 - Constructing `DefaultAzureCredential` no longer raises `ImportError` on Python

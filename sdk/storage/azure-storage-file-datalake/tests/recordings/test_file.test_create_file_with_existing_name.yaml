@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2a21e49c-10b9-11ea-ba0f-001a7dda7113
+      - d7786b8a-16b1-11ea-b75f-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:45 GMT
+      - Wed, 04 Dec 2019 16:19:26 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -29,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 27 Nov 2019 01:56:44 GMT
+      - Wed, 04 Dec 2019 16:19:26 GMT
       ETag:
-      - '"0x8D772DD0EA3EC19"'
+      - '"0x8D778D5BBCF5439"'
       Last-Modified:
-      - Wed, 27 Nov 2019 01:56:45 GMT
+      - Wed, 04 Dec 2019 16:19:27 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - a1997263-501f-003d-46c5-a43b8f000000
+      - 348b2aa3-301f-002b-0abe-aacd58000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -59,9 +59,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 2a73b468-10b9-11ea-9409-001a7dda7113
+      - d7ae2a7a-16b1-11ea-9728-001a7dda7113
       x-ms-date:
-      - Wed, 27 Nov 2019 01:56:45 GMT
+      - Wed, 04 Dec 2019 16:19:27 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -71,20 +71,20 @@ interactions:
   response:
     body:
       string: '{"error":{"code":"PathAlreadyExists","message":"The specified path
-        already exists.\nRequestId:a1997264-501f-003d-47c5-a43b8f000000\nTime:2019-11-27T01:56:45.6374683Z"}}'
+        already exists.\nRequestId:348b2aa4-301f-002b-0bbe-aacd58000000\nTime:2019-12-04T16:19:27.1411630Z"}}'
     headers:
       Content-Length:
       - '168'
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 27 Nov 2019 01:56:44 GMT
+      - Wed, 04 Dec 2019 16:19:26 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - PathAlreadyExists
       x-ms-request-id:
-      - a1997264-501f-003d-47c5-a43b8f000000
+      - 348b2aa4-301f-002b-0bbe-aacd58000000
       x-ms-version:
       - '2019-02-02'
     status:
