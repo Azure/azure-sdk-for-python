@@ -39,9 +39,7 @@ class AbstractPreparer(object):
 
             with self.override_disable_recording():
                 retries = 4
-                number_of_times_in_retries = 0
                 for i in range(retries):
-                    number_of_times_in_retries += 1
                     try:
                         parameter_update = self.create_resource(
                             resource_name,
