@@ -100,7 +100,8 @@ jobs:
       matrix:
         ${{ each matrixEntry in parameters.Matrix }}:
           ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-            ${{ insert }}: ${{ matrixEntry }}
+            ${{ matrixEntry.key }}:
+              ${{ insert }}: ${{ matrixEntry.value }}
         
     pool:
       vmImage: '$(OSVmImage)'
