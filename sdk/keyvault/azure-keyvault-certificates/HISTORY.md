@@ -1,5 +1,10 @@
 # Release History
 
+# 4.0.0b7 Unreleased
+- Challenge authentication policy preserves request options
+([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
+
+
 ### 4.0.0b6
 - Updated `msrest` requirement to >=0.6.0
 - Renamed `get_policy` to `get_certificate_policy`
