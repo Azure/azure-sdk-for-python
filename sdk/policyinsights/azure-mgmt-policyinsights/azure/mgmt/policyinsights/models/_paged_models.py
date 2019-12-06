@@ -51,6 +51,19 @@ class RemediationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RemediationPaged, self).__init__(*args, **kwargs)
+class PolicyEventPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PolicyEvent <azure.mgmt.policyinsights.models.PolicyEvent>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PolicyEvent]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PolicyEventPaged, self).__init__(*args, **kwargs)
 class PolicyStatePaged(Paged):
     """
     A paging container for iterating over a list of :class:`PolicyState <azure.mgmt.policyinsights.models.PolicyState>` object
