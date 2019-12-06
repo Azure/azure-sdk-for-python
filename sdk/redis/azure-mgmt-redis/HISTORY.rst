@@ -3,6 +3,29 @@
 Release History
 ===============
 
+7.0.0 (2019-12-07)
+++++++++++++++++++
+
+**Features**
+
+- Model RedisUpdateParameters has a new parameter replicas_per_master
+- Model RedisCreateParameters has a new parameter replicas_per_master
+- Model RedisResource has a new parameter instances
+- Model RedisResource has a new parameter replicas_per_master
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- RedisManagementClient cannot be imported from `azure.mgmt.redis.redis_management_client` anymore (import from `azure.mgmt.redis` works like before)
+- RedisManagementClientConfiguration import has been moved from `azure.mgmt.redis.redis_management_client` to `azure.mgmt.redis`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.redis.models.my_class` (import from `azure.mgmt.redis.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.redis.operations.my_class_operations` (import from `azure.mgmt.redis.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
+
 6.0.0 (2019-01-15)
 ++++++++++++++++++
 
