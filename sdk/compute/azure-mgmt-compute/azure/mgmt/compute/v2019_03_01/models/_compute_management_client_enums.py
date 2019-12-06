@@ -269,19 +269,6 @@ class ProtocolTypes(str, Enum):
     https = "Https"
 
 
-class VirtualMachinePriorityTypes(str, Enum):
-
-    regular = "Regular"
-    low = "Low"
-    spot = "Spot"
-
-
-class VirtualMachineEvictionPolicyTypes(str, Enum):
-
-    deallocate = "Deallocate"
-    delete = "Delete"
-
-
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
@@ -302,6 +289,18 @@ class HyperVGenerationType(str, Enum):
 
     v1 = "V1"
     v2 = "V2"
+
+
+class VirtualMachinePriorityTypes(str, Enum):
+
+    regular = "Regular"
+    low = "Low"
+
+
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+
+    deallocate = "Deallocate"
+    delete = "Delete"
 
 
 class UpgradeMode(str, Enum):

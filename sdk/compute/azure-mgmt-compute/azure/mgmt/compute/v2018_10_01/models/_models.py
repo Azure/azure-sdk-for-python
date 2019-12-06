@@ -4663,11 +4663,6 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
-    :param proximity_placement_group: Specifies information about the
-     proximity placement group that the virtual machine scale set should be
-     assigned to. <br><br>Minimum api-version: 2018-04-01.
-    :type proximity_placement_group:
-     ~azure.mgmt.compute.v2018_10_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -4684,7 +4679,6 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
@@ -4698,7 +4692,6 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.overprovision = kwargs.get('overprovision', None)
         self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
         self.single_placement_group = kwargs.get('single_placement_group', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.identity = kwargs.get('identity', None)
 
 

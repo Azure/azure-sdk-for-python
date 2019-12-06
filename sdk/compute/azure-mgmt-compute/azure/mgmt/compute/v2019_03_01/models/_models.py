@@ -448,22 +448,23 @@ class AvailabilitySetUpdate(UpdateResource):
 
 
 class BillingProfile(Model):
-    """Specifies the billing related details of a Azure Spot VM or VMSS.
+    """Specifies the billing related details of a low priority VM or VMSS.
     <br><br>Minimum api-version: 2019-03-01.
 
     :param max_price: Specifies the maximum price you are willing to pay for a
-     Azure Spot VM/VMSS. This price is in US Dollars. <br><br> This price will
-     be compared with the current Azure Spot price for the VM size. Also, the
-     prices are compared at the time of create/update of Azure Spot VM/VMSS and
-     the operation will only succeed if  the maxPrice is greater than the
-     current Azure Spot price. <br><br> The maxPrice will also be used for
-     evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond
-     the maxPrice after creation of VM/VMSS. <br><br> Possible values are:
-     <br><br> - Any decimal value greater than zero. Example: 0.01538 <br><br>
-     -1 – indicates default price to be up-to on-demand. <br><br> You can set
-     the maxPrice to -1 to indicate that the Azure Spot VM/VMSS should not be
-     evicted for price reasons. Also, the default max price is -1 if it is not
-     provided by you. <br><br>Minimum api-version: 2019-03-01.
+     low priority VM/VMSS. This price is in US Dollars. <br><br> This price
+     will be compared with the current low priority price for the VM size.
+     Also, the prices are compared at the time of create/update of low priority
+     VM/VMSS and the operation will only succeed if  the maxPrice is greater
+     than the current low priority price. <br><br> The maxPrice will also be
+     used for evicting a low priority VM/VMSS if the current low priority price
+     goes beyond the maxPrice after creation of VM/VMSS. <br><br> Possible
+     values are: <br><br> - Any decimal value greater than zero. Example:
+     $0.01538 <br><br> -1 – indicates default price to be up-to on-demand.
+     <br><br> You can set the maxPrice to -1 to indicate that the low priority
+     VM/VMSS should not be evicted for price reasons. Also, the default max
+     price is -1 if it is not provided by you. <br><br>Minimum api-version:
+     2019-03-01.
     :type max_price: float
     """
 
@@ -5048,16 +5049,16 @@ class VirtualMachine(Resource):
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
-     'Regular', 'Low', 'Spot'
+     'Regular', 'Low'
     :type priority: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for the Azure Spot
+    :param eviction_policy: Specifies the eviction policy for the low priority
      virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
      api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a Azure
-     Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a low
+     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
@@ -6898,11 +6899,6 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      is scaled-in.
     :type scale_in_policy:
      ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
-    :param proximity_placement_group: Specifies information about the
-     proximity placement group that the virtual machine scale set should be
-     assigned to. <br><br>Minimum api-version: 2018-04-01.
-    :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -6921,7 +6917,6 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
@@ -6937,7 +6932,6 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.scale_in_policy = kwargs.get('scale_in_policy', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -7636,16 +7630,16 @@ class VirtualMachineScaleSetVMProfile(Model):
     :type license_type: str
     :param priority: Specifies the priority for the virtual machines in the
      scale set. <br><br>Minimum api-version: 2017-10-30-preview. Possible
-     values include: 'Regular', 'Low', 'Spot'
+     values include: 'Regular', 'Low'
     :type priority: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for virtual machines
-     in a Azure Spot scale set. <br><br>Minimum api-version:
+     in a low priority scale set. <br><br>Minimum api-version:
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a Azure
-     Spot VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a low
+     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
@@ -7844,16 +7838,16 @@ class VirtualMachineUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
-     'Regular', 'Low', 'Spot'
+     'Regular', 'Low'
     :type priority: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for the Azure Spot
+    :param eviction_policy: Specifies the eviction policy for the low priority
      virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
      api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a Azure
-     Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a low
+     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
