@@ -18,8 +18,11 @@ try:
     from ._models_py3 import EHNamespace
     from ._models_py3 import EHNamespaceIdContainer
     from ._models_py3 import EHNamespaceIdListResult
+    from ._models_py3 import Encryption
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Identity
     from ._models_py3 import IpFilterRule
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import NWRuleSetIpRules
     from ._models_py3 import NWRuleSetVirtualNetworkRules
@@ -39,8 +42,11 @@ except (SyntaxError, ImportError):
     from ._models import EHNamespace
     from ._models import EHNamespaceIdContainer
     from ._models import EHNamespaceIdListResult
+    from ._models import Encryption
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Identity
     from ._models import IpFilterRule
+    from ._models import KeyVaultProperties
     from ._models import NetworkRuleSet
     from ._models import NWRuleSetIpRules
     from ._models import NWRuleSetVirtualNetworkRules
@@ -59,6 +65,8 @@ from ._paged_models import VirtualNetworkRulePaged
 from ._event_hub2018_preview_management_client_enums import (
     SkuName,
     SkuTier,
+    IdentityType,
+    KeySource,
     IPAction,
     NetworkRuleIPAction,
     DefaultAction,
@@ -73,8 +81,11 @@ __all__ = [
     'EHNamespace',
     'EHNamespaceIdContainer',
     'EHNamespaceIdListResult',
+    'Encryption',
     'ErrorResponse', 'ErrorResponseException',
+    'Identity',
     'IpFilterRule',
+    'KeyVaultProperties',
     'NetworkRuleSet',
     'NWRuleSetIpRules',
     'NWRuleSetVirtualNetworkRules',
@@ -92,6 +103,8 @@ __all__ = [
     'VirtualNetworkRulePaged',
     'SkuName',
     'SkuTier',
+    'IdentityType',
+    'KeySource',
     'IPAction',
     'NetworkRuleIPAction',
     'DefaultAction',
