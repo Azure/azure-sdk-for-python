@@ -12,6 +12,11 @@
 from enum import Enum
 
 
+class Scenario(str, Enum):
+
+    alerts = "Alerts"
+
+
 class CpuThreshold(str, Enum):
 
     five = "5"
@@ -27,3 +32,17 @@ class Category(str, Enum):
     performance = "Performance"
     cost = "Cost"
     operational_excellence = "OperationalExcellence"
+
+
+class Impact(str, Enum):
+
+    high = "High"
+    medium = "Medium"
+    low = "Low"
+
+
+class Risk(str, Enum):
+
+    error = "Error"
+    warning = "Warning"
+    none = "None"
