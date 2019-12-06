@@ -13453,8 +13453,8 @@ class GoogleAdWordsLinkedService(LinkedService):
      authorizing access to AdWords for UserAuthentication.
     :type refresh_token: ~azure.mgmt.datafactory.models.SecretBase
     :param client_id: The client id of the google application used to acquire
-     the refresh token.
-    :type client_id: ~azure.mgmt.datafactory.models.SecretBase
+     the refresh token. Type: string (or Expression with resultType string).
+    :type client_id: object
     :param client_secret: The client secret of the google application used to
      acquire the refresh token.
     :type client_secret: ~azure.mgmt.datafactory.models.SecretBase
@@ -13498,7 +13498,7 @@ class GoogleAdWordsLinkedService(LinkedService):
         'developer_token': {'key': 'typeProperties.developerToken', 'type': 'SecretBase'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'refresh_token': {'key': 'typeProperties.refreshToken', 'type': 'SecretBase'},
-        'client_id': {'key': 'typeProperties.clientId', 'type': 'SecretBase'},
+        'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
         'email': {'key': 'typeProperties.email', 'type': 'object'},
         'key_file_path': {'key': 'typeProperties.keyFilePath', 'type': 'object'},
@@ -13674,8 +13674,8 @@ class GoogleBigQueryLinkedService(LinkedService):
      authorizing access to BigQuery for UserAuthentication.
     :type refresh_token: ~azure.mgmt.datafactory.models.SecretBase
     :param client_id: The client id of the google application used to acquire
-     the refresh token.
-    :type client_id: ~azure.mgmt.datafactory.models.SecretBase
+     the refresh token. Type: string (or Expression with resultType string).
+    :type client_id: object
     :param client_secret: The client secret of the google application used to
      acquire the refresh token.
     :type client_secret: ~azure.mgmt.datafactory.models.SecretBase
@@ -13719,7 +13719,7 @@ class GoogleBigQueryLinkedService(LinkedService):
         'request_google_drive_scope': {'key': 'typeProperties.requestGoogleDriveScope', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'refresh_token': {'key': 'typeProperties.refreshToken', 'type': 'SecretBase'},
-        'client_id': {'key': 'typeProperties.clientId', 'type': 'SecretBase'},
+        'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
         'email': {'key': 'typeProperties.email', 'type': 'object'},
         'key_file_path': {'key': 'typeProperties.keyFilePath', 'type': 'object'},
