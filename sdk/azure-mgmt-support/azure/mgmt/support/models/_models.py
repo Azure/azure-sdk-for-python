@@ -123,14 +123,17 @@ class CloudError(Model):
 class CommunicationDetails(Model):
     """Object that represents Communication resource.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Id of the resource
-    :type id: str
-    :param name: Name of the resource
-    :type name: str
-    :param type: Type of the resource 'Microsoft.Support/communications
-    :type type: str
+    :ivar id: Id of the resource
+    :vartype id: str
+    :ivar name: Name of the resource
+    :vartype name: str
+    :ivar type: Type of the resource 'Microsoft.Support/communications
+    :vartype type: str
     :param communication_type: Required. Communication type. Possible values
      include: 'web', 'phone'
     :type communication_type: str or
@@ -151,6 +154,9 @@ class CommunicationDetails(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'communication_type': {'required': True},
         'communication_direction': {'required': True},
     }
@@ -169,9 +175,9 @@ class CommunicationDetails(Model):
 
     def __init__(self, **kwargs):
         super(CommunicationDetails, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.id = None
+        self.name = None
+        self.type = None
         self.communication_type = kwargs.get('communication_type', None)
         self.communication_direction = kwargs.get('communication_direction', None)
         self.sender = kwargs.get('sender', None)
@@ -353,11 +359,18 @@ class ExceptionResponseException(HttpOperationError):
 class Operation(Model):
     """The operation supported by Microsoft Support RP.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :vartype name: str
     :param display: The object that describes the operation.
     :type display: ~azure.mgmt.support.models.OperationDisplay
     """
+
+    _validation = {
+        'name': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -366,23 +379,33 @@ class Operation(Model):
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = None
         self.display = kwargs.get('display', None)
 
 
 class OperationDisplay(Model):
     """The object that describes the operation.
 
-    :param description: The description of the operation.
-    :type description: str
-    :param operation: The action that users can perform, based on their
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar description: The description of the operation.
+    :vartype description: str
+    :ivar operation: The action that users can perform, based on their
      permission level.
-    :type operation: str
-    :param provider: Service provider: Microsoft Support.
-    :type provider: str
-    :param resource: Resource on which the operation is performed.
-    :type resource: str
+    :vartype operation: str
+    :ivar provider: Service provider: Microsoft Support.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed.
+    :vartype resource: str
     """
+
+    _validation = {
+        'description': {'readonly': True},
+        'operation': {'readonly': True},
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+    }
 
     _attribute_map = {
         'description': {'key': 'description', 'type': 'str'},
@@ -393,25 +416,34 @@ class OperationDisplay(Model):
 
     def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.operation = kwargs.get('operation', None)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
+        self.description = None
+        self.operation = None
+        self.provider = None
+        self.resource = None
 
 
 class ProblemClassification(Model):
     """Object that represents a ProblemClassification resource.
 
-    :param id: Id of the resource.
-    :type id: str
-    :param name: Name of the resource.
-    :type name: str
-    :param type: Type of the resource
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Id of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource
      'Microsoft.Support/problemClassification'.
-    :type type: str
+    :vartype type: str
     :param display_name: Localized name of problem classification.
     :type display_name: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -422,9 +454,9 @@ class ProblemClassification(Model):
 
     def __init__(self, **kwargs):
         super(ProblemClassification, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.id = None
+        self.name = None
+        self.type = None
         self.display_name = kwargs.get('display_name', None)
 
 
@@ -498,15 +530,24 @@ class QuotaTicketDetails(Model):
 class Service(Model):
     """Object that represents a Service resource.
 
-    :param id: Id of the resource.
-    :type id: str
-    :param name: Name of the resource.
-    :type name: str
-    :param type: Type of the resource 'Microsoft.Support/services'.
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Id of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource 'Microsoft.Support/services'.
+    :vartype type: str
     :param display_name: Localized name of Azure service.
     :type display_name: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -517,9 +558,9 @@ class Service(Model):
 
     def __init__(self, **kwargs):
         super(Service, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.id = None
+        self.name = None
+        self.type = None
         self.display_name = kwargs.get('display_name', None)
 
 
