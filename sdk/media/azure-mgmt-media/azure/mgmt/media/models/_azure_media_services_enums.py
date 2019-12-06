@@ -95,6 +95,7 @@ class ContentKeyPolicyFairPlayRentalAndLeaseKeyType(str, Enum):
 
     unknown = "Unknown"  #: Represents a ContentKeyPolicyFairPlayRentalAndLeaseKeyType that is unavailable in current API version.
     undefined = "Undefined"  #: Key duration is not specified.
+    dual_expiry = "DualExpiry"  #: Dual expiry for offline rental.
     persistent_unlimited = "PersistentUnlimited"  #: Content key can be persisted with an unlimited duration
     persistent_limited = "PersistentLimited"  #: Content key can be persisted and the valid duration is limited by the Rental Duration value
 
@@ -173,6 +174,7 @@ class EncoderNamedPreset(str, Enum):
     adaptive_streaming = "AdaptiveStreaming"  #: Produces a set of GOP aligned MP4 files with H.264 video and stereo AAC audio. Auto-generates a bitrate ladder based on the input resolution and bitrate. The auto-generated preset will never exceed the input resolution and bitrate. For example, if the input is 720p at 3 Mbps, output will remain 720p at best, and will start at rates lower than 3 Mbps. The output will have video and audio in separate MP4 files, which is optimal for adaptive streaming.
     aac_good_quality_audio = "AACGoodQualityAudio"  #: Produces a single MP4 file containing only stereo audio encoded at 192 kbps.
     content_aware_encoding_experimental = "ContentAwareEncodingExperimental"  #: Exposes an experimental preset for content-aware encoding. Given any input content, the service attempts to automatically determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. The underlying algorithms will continue to evolve over time. The output will contain MP4 files with video and audio interleaved.
+    content_aware_encoding = "ContentAwareEncoding"  #: Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content, the service performs an initial lightweight analysis of the input content, and uses the results to determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. This preset is particularly effective for low and medium complexity videos, where the output files will be at lower bitrates but at a quality that still delivers a good experience to viewers. The output will contain MP4 files with video and audio interleaved.
     h264_multiple_bitrate1080p = "H264MultipleBitrate1080p"  #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 1080p and goes down to 360p.
     h264_multiple_bitrate720p = "H264MultipleBitrate720p"  #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 720p and goes down to 360p.
     h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1600kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 360p.
