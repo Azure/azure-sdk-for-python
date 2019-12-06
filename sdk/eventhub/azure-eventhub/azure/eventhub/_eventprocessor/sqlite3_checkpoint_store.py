@@ -8,6 +8,8 @@ import threading
 import uuid
 import sqlite3
 import logging
+from typing import List, Dict, Any, Iterable, Optional, Union
+
 from .checkpoint_store import CheckpointStore
 
 _LOGGER = logging.getLogger(__name__)
@@ -80,6 +82,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
         self.conn = conn
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
+        # type: (str, str, str) -> List[Dict[str, Any]]
         with self._lock:
             cursor = self.conn.cursor()
             try:
@@ -92,6 +95,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
                 cursor.close()
 
     def claim_ownership(self, ownership_list):
+        # type: (Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]
         with self._lock:
             result = []
             cursor = self.conn.cursor()
@@ -139,6 +143,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
                 cursor.close()
 
     def update_checkpoint(self, checkpoint):
+        # type: (Dict[str, Optional[Union[str, int]]]) -> None
         with self._lock:
             cursor = self.conn.cursor()
             try:
@@ -154,6 +159,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
                 cursor.close()
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
+        # type: (str, str, str) -> List[Dict[str, Any]]
         with self._lock:
             cursor = self.conn.cursor()
             try:
@@ -170,5 +176,6 @@ class Sqlite3CheckpointStore(CheckpointStore):
                 cursor.close()
 
     def close(self):
+        # type: () -> None
         with self._lock:
             self.conn.close()

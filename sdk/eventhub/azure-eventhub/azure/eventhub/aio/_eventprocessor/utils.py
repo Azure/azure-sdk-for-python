@@ -6,7 +6,7 @@
 import asyncio
 
 
-def get_running_loop():
+def get_running_loop() -> asyncio.AbstractEventLoop:
     try:
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6

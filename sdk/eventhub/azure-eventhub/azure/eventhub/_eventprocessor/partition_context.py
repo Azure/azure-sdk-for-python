@@ -4,11 +4,15 @@
 # --------------------------------------------------------------------------------------------
 
 import logging
-from typing import Optional
+from typing import Dict, Optional, Any, TYPE_CHECKING
+
 from .._utils import get_last_enqueued_event_properties
 from .checkpoint_store import CheckpointStore
 
 _LOGGER = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from .._common import EventData
 
 
 class PartitionContext(object):
@@ -26,10 +30,11 @@ class PartitionContext(object):
         self.eventhub_name = eventhub_name
         self.consumer_group = consumer_group
         self._checkpoint_store = checkpoint_store
-        self._last_received_event = None
+        self._last_received_event = None  # type: Optional[EventData]
 
     @property
     def last_enqueued_event_properties(self):
+        # type: () -> Optional[Dict[str, Any]]
         """The latest enqueued event information.
 
         This property will be updated each time an event is received if the receiver is created
@@ -48,6 +53,7 @@ class PartitionContext(object):
         return None
 
     def update_checkpoint(self, event):
+        # type: (EventData) -> None
         """Updates the receive checkpoint to the given events offset.
 
         This operation will only update a checkpoint if a `checkpoint_store` was provided during

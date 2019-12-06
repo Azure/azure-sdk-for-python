@@ -5,7 +5,7 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Type
+from typing import Iterable, Union, Type, Optional, Any, List, TYPE_CHECKING
 import time
 
 from uamqp import types, constants, errors  # type: ignore
@@ -19,45 +19,41 @@ from ..exceptions import _error_handler, OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import create_properties, set_message_partition_key, trace_message
 from .._constants import TIMEOUT_SYMBOL
+from ._eventprocessor.utils import get_running_loop
 from ._client_base_async import ConsumerProducerMixin
+
+if TYPE_CHECKING:
+    from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
+    from ._producer_client_async import EventHubProducerClient
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-instance-attributes
-    """
-    A producer responsible for transmitting EventData to a specific Event Hub,
-    grouped together in batches. Depending on the options specified at creation, the producer may
+    """A producer responsible for transmitting batches of EventData to a specific Event Hub.
+
+    Depending on the options specified at creation, the producer may
     be created to allow event data to be automatically routed to an available partition or specific
     to a partition.
 
-    Please use the method `create_producer` on `EventHubClient` for creating `EventHubProducer`.
+    Please use the method `_create_producer` on `EventHubClient` for creating `EventHubProducer`.
+
+    :param client: The parent EventHubProducerClient.
+    :type client: ~azure.eventhub.aio.EventHubProducerClient
+    :param target: The URI of the EventHub to send to.
+    :type target: str
+    :keyword str partition: The specific partition ID to send to. Default is `None`, in which case the service
+     will assign to all partitions using round-robin.
+    :keyword float send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
+     queued. Default value is 60 seconds. If set to 0, there will be no timeout.
+    :keyword int keep_alive: The time interval in seconds between pinging the connection to keep it alive during
+     periods of inactivity. The default value is `None`, i.e. no keep alive pings.
+    :keyword bool auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
+     Default value is `True`.
+    :keyword ~asyncio.AbstractEventLoop loop: An event loop. If not specified the default event loop will be used.
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
-            self, client, target, **kwargs):
-        """
-        Instantiate an async EventHubProducer. EventHubProducer should be instantiated by calling the `create_producer`
-        method in EventHubClient.
-
-        :param client: The parent EventHubClientAsync.
-        :type client: ~azure.eventhub.aio.EventHubClientAsync
-        :param target: The URI of the EventHub to send to.
-        :type target: str
-        :param partition: The specific partition ID to send to. Default is `None`, in which case the service
-         will assign to all partitions using round-robin.
-        :type partition: str
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
-        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
-         periods of inactivity. The default value is `None`, i.e. no keep alive pings.
-        :type keep_alive: float
-        :param auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
-         Default value is `True`.
-        :type auto_reconnect: bool
-        :param loop: An event loop. If not specified the default event loop will be used.
-        """
+    def __init__(self, client: 'EventHubProducerClient', target: str, **kwargs) -> None:
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
@@ -68,7 +64,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self.running = False
         self.closed = False
 
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or get_running_loop()
         self._max_message_size_on_link = None
         self._client = client
         self._target = target
@@ -81,18 +77,18 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
-        self._unsent_events = None
+        self._unsent_events = []  # type: List[Any]
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
-        self._handler = None
-        self._outcome = None
-        self._condition = None
-        self._lock = asyncio.Lock()
+        self._handler = None  # type: Optional[SendClientAsync]
+        self._outcome = None  # type: Optional[constants.MessageSendResult]
+        self._condition = None  # type: Optional[Exception]
+        self._lock = asyncio.Lock(loop=self._loop)
         self._link_properties = {types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))}
 
-    def _create_handler(self, auth):
+    def _create_handler(self, auth: 'JWTTokenAsync') -> None:
         self._handler = SendClientAsync(
             self._target,
             auth=auth,
@@ -106,10 +102,10 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             properties=create_properties(self._client._config.user_agent),  # pylint:disable=protected-access
             loop=self._loop)
 
-    async def _open_with_retry(self):
+    async def _open_with_retry(self) -> Any:
         return await self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _set_msg_timeout(self, timeout_time, last_exception):
+    def _set_msg_timeout(self, timeout_time: Optional[float], last_exception: Optional[Exception]) -> None:
         if not timeout_time:
             return
         remaining_time = timeout_time - time.time()
@@ -120,24 +116,30 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 error = OperationTimeoutError("Send operation timed out")
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
-        self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
+        self._handler._msg_timeout = remaining_time * 1000   # type: ignore  # pylint: disable=protected-access
 
-    async def _send_event_data(self, timeout_time=None, last_exception=None):
+    async def _send_event_data(
+            self,
+            timeout_time: Optional[float] = None,
+            last_exception: Optional[Exception] = None
+        ) -> None:
+        # TODO: Correct uAMQP type hints
         if self._unsent_events:
             await self._open()
             self._set_msg_timeout(timeout_time, last_exception)
-            self._handler.queue_message(*self._unsent_events)
-            await self._handler.wait_async()
-            self._unsent_events = self._handler.pending_messages
+            self._handler.queue_message(*self._unsent_events)  # type: ignore
+            await self._handler.wait_async()  # type: ignore
+            self._unsent_events = self._handler.pending_messages  # type: ignore
             if self._outcome != constants.MessageSendResult.Ok:
                 if self._outcome == constants.MessageSendResult.Timeout:
                     self._condition = OperationTimeoutError("Send operation timed out")
-                raise self._condition
+                if self._condition:
+                    raise self._condition
 
-    async def _send_event_data_with_retry(self, timeout=None):
-        return await self._do_retryable_operation(self._send_event_data, timeout=timeout)
+    async def _send_event_data_with_retry(self, timeout: Optional[float] = None) -> None:
+        await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
-    def _on_outcome(self, outcome, condition):
+    def _on_outcome(self, outcome: constants.MessageSendResult, condition: Optional[Exception]) -> None:
         """
         Called when the outcome is received for a delivery.
 
@@ -149,7 +151,12 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._outcome = outcome
         self._condition = condition
 
-    def _wrap_eventdata(self, event_data, span, partition_key):
+    def _wrap_eventdata(
+            self,
+            event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+            span: Optional[AbstractSpan],
+            partition_key: Optional[Union[str, bytes]]
+        ) -> Union[EventData, EventDataBatch]:
         if isinstance(event_data, EventData):
             if partition_key:
                 set_message_partition_key(event_data.message, partition_key)
@@ -164,13 +171,17 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
                 event_data = _set_trace_message(event_data)
-                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
+                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return wrapper_event_data
 
     async def send(
-            self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
-            *, partition_key: Union[str, bytes] = None, timeout: float = None):
+            self,
+            event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+            *,
+            partition_key: Optional[Union[str, bytes]] = None,
+            timeout: Optional[float] = None
+        ) -> None:
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -212,8 +223,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             else:
                 await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.

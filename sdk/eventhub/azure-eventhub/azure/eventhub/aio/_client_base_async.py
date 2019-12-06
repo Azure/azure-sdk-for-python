@@ -27,6 +27,7 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
+    from ._connection_manager_async import _SeparateConnectionManager, _SharedConnectionManager
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,19 +58,20 @@ class ClientBaseAsync(ClientBase):
             credential: 'TokenCredential',
             **kwargs: Any
             ) -> None:
+        self._loop = kwargs.pop("loop", None)
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential,
             **kwargs
         )
-        self._conn_manager = get_connection_manager(**kwargs)
+        self._conn_manager = cast(
+            Union[_SharedConnectionManager, _SeparateConnectionManager],
+            get_connection_manager(loop=self._loop, **kwargs)
+        )
 
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close()
+    def __enter__(self):
+        raise TypeError("Asynchronous client must be opened with async context manager.")
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
@@ -79,7 +81,7 @@ class ClientBaseAsync(ClientBase):
         kwargs['credential'] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth(self) -> authentication.JWTTokenAsync:
+    async def _create_auth_async(self) -> authentication.JWTTokenAsync:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
@@ -109,10 +111,10 @@ class ClientBaseAsync(ClientBase):
             http_proxy=self._config.http_proxy,
             transport_type=self._config.transport_type)
 
-    async def _close_connection(self) -> None:
+    async def _close_connection_async(self) -> None:
         await self._conn_manager.reset_connection_if_broken()
 
-    async def _backoff(
+    async def _backoff_async(
             self,
             retried_times: int,
             last_exception: Exception,
@@ -123,18 +125,18 @@ class ClientBaseAsync(ClientBase):
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
                 timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
-            await asyncio.sleep(backoff)
+            await asyncio.sleep(backoff, loop=self._loop)
             _LOGGER.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
         else:
             _LOGGER.info("%r operation has timed out. Last exception before timeout is (%r)",
                      entity_name, last_exception)
             raise last_exception
 
-    async def _management_request(self, mgmt_msg: Message, op_type: bytes) -> Any:
+    async def _management_request_async(self, mgmt_msg: Message, op_type: bytes) -> Any:
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
-            mgmt_auth = await self._create_auth()
+            mgmt_auth = await self._create_auth_async()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
                 conn = await self._conn_manager.get_connection(self._address.hostname, mgmt_auth)
@@ -148,7 +150,7 @@ class ClientBaseAsync(ClientBase):
                 return response
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await _handle_exception(exception, self)
-                await self._backoff(retried_times=retried_times, last_exception=last_exception)
+                await self._backoff_async(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
                 if retried_times > self._config.max_retries:
                     _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
@@ -156,20 +158,9 @@ class ClientBaseAsync(ClientBase):
             finally:
                 await mgmt_client.close_async()
 
-    async def get_eventhub_properties(self) -> Dict[str, Any]:
-        """Get properties of the Event Hub.
-
-        Keys in the returned dictionary include:
-
-            - `eventhub_name` (str)
-            - `created_at` (UTC datetime.datetime)
-            - `partition_ids` (list[str])
-
-        :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-        """
+    async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
-        response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
+        response = await self._management_request_async(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.get_data()  # type: Dict[bytes, Any]
         if eh_info:
@@ -178,35 +169,13 @@ class ClientBaseAsync(ClientBase):
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
-    async def get_partition_ids(self) -> List[str]:
-        """Get partition IDs of the Event Hub.
+    async def _get_partition_ids_async(self) -> List[str]:
+        return (await self._get_eventhub_properties_async())['partition_ids']
 
-        :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-        """
-        return (await self.get_eventhub_properties())['partition_ids']
-
-    async def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
-        """Get properties of the specified partition.
-
-        Keys in the properties dictionary include:
-
-            - `eventhub_name` (str)
-            - `id` (str)
-            - `beginning_sequence_number` (int)
-            - `last_enqueued_sequence_number` (int)
-            - `last_enqueued_offset` (str)
-            - `last_enqueued_time_utc` (UTC datetime.datetime)
-            - `is_empty` (bool)
-
-        :param partition_id: The target partition ID.
-        :type partition_id: str
-        :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-        """
+    async def _get_partition_properties_async(self, partition_id: str) -> Dict[str, Any]:
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})
-        response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
+        response = await self._management_request_async(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
         output = {}  # type: Dict[str, Any]
         if partition_info:
@@ -221,7 +190,7 @@ class ClientBaseAsync(ClientBase):
             )
         return output
 
-    async def close(self) -> None:
+    async def _close_async(self) -> None:
         await self._conn_manager.close_connection()
 
 
@@ -249,25 +218,25 @@ class ConsumerProducerMixin(object):
         if not self.running:  # type: ignore
             if self._handler:  # type: ignore
                 await self._handler.close_async()  # type: ignore
-            auth = await self._client._create_auth()  # type: ignore
+            auth = await self._client._create_auth_async()  # type: ignore
             self._create_handler(auth)  # type: ignore
             await self._handler.open_async(  # type: ignore
                 connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # type: ignore
             )
             while not await self._handler.client_ready_async():  # type: ignore
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(0.05, loop=self._loop)  # type: ignore
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
             self.running = True
 
-    async def _close_handler(self) -> None:
+    async def _close_handler_async(self) -> None:
         # TODO: Propertly resolve type hinting
         if self._handler:  # type: ignore
             # close the link (shared connection) or connection (not shared)
             await self._handler.close_async()  # type: ignore
         self.running = False
 
-    async def _close_connection(self) -> None:
-        await self._close_handler()
+    async def _close_connection_async(self) -> None:
+        await self._close_handler_async()
         await self._client._conn_manager.reset_connection_if_broken()  # type: ignore # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
@@ -280,7 +249,7 @@ class ConsumerProducerMixin(object):
     async def _do_retryable_operation(
             self,
             operation: Callable[..., Any],
-            timeout: Optional[int] = None,
+            timeout: Optional[float] = None,
             **kwargs: Any
             ) -> Optional[Any]:
         # pylint:disable=protected-access,line-too-long
@@ -297,7 +266,7 @@ class ConsumerProducerMixin(object):
                 return await operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
-                await self._client._backoff(  # type: ignore
+                await self._client._backoff_async(  # type: ignore
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout_time=timeout_time,
@@ -314,5 +283,5 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
-        await self._close_handler()
+        await self._close_handler_async()
         self.closed = True

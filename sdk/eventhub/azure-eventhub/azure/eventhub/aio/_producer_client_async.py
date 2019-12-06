@@ -72,9 +72,15 @@ class EventHubProducerClient(ClientBaseAsync):
             **kwargs
         )
         self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
-        self._lock = asyncio.Lock()  # sync the creation of self._producers
+        self._lock = asyncio.Lock(loop=self._loop)  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.close()
 
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
@@ -88,8 +94,7 @@ class EventHubProducerClient(ClientBaseAsync):
             if not self._max_message_size_on_link:
                 await cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
                 self._max_message_size_on_link = \
-                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size \
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
 
     async def _start_producer(self, partition_id: str, send_timeout: Optional[Union[int, float]]) -> None:
         async with self._lock:
@@ -106,8 +111,7 @@ class EventHubProducerClient(ClientBaseAsync):
     def _create_producer(
             self, *,
             partition_id: Optional[str] = None,
-            send_timeout: Optional[Union[int, float]] = None,
-            loop: Optional[asyncio.AbstractEventLoop] = None
+            send_timeout: Optional[Union[int, float]] = None
     ) -> EventHubProducer:
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
@@ -118,7 +122,7 @@ class EventHubProducerClient(ClientBaseAsync):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
-            loop=loop
+            loop=self._loop
         )
         return handler
 
@@ -256,6 +260,48 @@ class EventHubProducerClient(ClientBaseAsync):
 
         return event_data_batch
 
+    async def get_eventhub_properties(self) -> Dict[str, Any]:
+        """Get properties of the Event Hub.
+
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
+
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubProducerClient, self)._get_eventhub_properties_async()
+
+    async def get_partition_ids(self) -> List[str]:
+        """Get partition IDs of the Event Hub.
+
+        :rtype: list[str]
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubProducerClient, self)._get_partition_ids_async()
+
+    async def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
+        """Get properties of the specified partition.
+
+        Keys in the properties dictionary include:
+
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubProducerClient, self)._get_partition_properties_async(partition_id)
+
     async def close(self) -> None:
         """Close the Producer client underlying AMQP connection and links.
 
@@ -275,4 +321,4 @@ class EventHubProducerClient(ClientBaseAsync):
             for producer in self._producers.values():
                 if producer:
                     await producer.close()
-        await self._conn_manager.close_connection()
+        await super(EventHubProducerClient, self)._close_async()
