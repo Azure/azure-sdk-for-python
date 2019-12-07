@@ -15,6 +15,7 @@ from os import (
     remove,
 )
 import unittest
+import uuid
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
@@ -34,7 +35,7 @@ from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-FILE_PATH = 'blob_input.temp.{}.dat.format(str(uuid.uuid4()))'
+FILE_PATH = 'blob_input.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_BLOB_SIZE = 64 * 1024
 
 
@@ -1020,7 +1021,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'path_chunked_upload_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'path_chunked_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1045,7 +1046,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'progress_chnked_upload_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'progress_chnked_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1082,7 +1083,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'stream_chunked_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1107,7 +1108,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'chnkd_upld_knwn_size_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'chnkd_upld_knwn_size_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_size = len(data) - 66
@@ -1131,7 +1132,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'nonseek_chnked_upld_unk_size_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'nonseek_chnked_upld_unk_size_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1153,7 +1154,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_with_multiple_appends_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'stream_with_multiple_appends_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream1:
             stream1.write(data)
         with open(FILE_PATH, 'wb') as stream2:
@@ -1179,7 +1180,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'hnked_upload_w_count_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'hnked_upload_w_count_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1204,7 +1205,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_w_count_parallel_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'upload_w_count_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 

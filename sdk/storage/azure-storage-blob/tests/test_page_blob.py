@@ -10,6 +10,7 @@ import pytest
 import pytest
 import os
 import unittest
+import uuid
 from datetime import datetime, timedelta
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
@@ -1210,7 +1211,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1234,7 +1235,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path_with_progress.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_blob_from_path_with_progress.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1263,7 +1264,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'st_create_blob_from_stream.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'st_create_blob_from_stream.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1291,7 +1292,7 @@ class StoragePageBlobTest(StorageTestCase):
         data = bytearray(LARGE_BLOB_SIZE)
         data[512: 1024] = self.get_random_bytes(512)
         data[8192: 8196] = self.get_random_bytes(4)
-        FILE_PATH = 'create_blob_from_stream_with_empty_pages.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_blob_from_stream_with_empty_pages.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1323,7 +1324,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_stream_non_seekable.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_blob_from_stream_non_seekable.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1350,7 +1351,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_stream_with_proge.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_blob_from_stream_with_proge.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1381,7 +1382,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_stream_trun.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_blob_from_stream_trun.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1403,7 +1404,7 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_blob_from_stream_with_progress_trunca.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = '_blob_from_stream_with_progress_trunca.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1536,7 +1537,7 @@ class StoragePageBlobTest(StorageTestCase):
             # test create_blob_from_path API
             blob3 = self._get_blob_reference(bsc)
             pblob3 = pbs.get_blob_client(container_name, blob3.blob_name)
-            FILE_PATH = '_blob_tier_on_create.temp.{}.dat.format(str(uuid.uuid4()))'
+            FILE_PATH = '_blob_tier_on_create.temp.{}.dat'.format(str(uuid.uuid4()))
             with open(FILE_PATH, 'wb') as stream:
                 stream.write(byte_data)
             with open(FILE_PATH, 'rb') as stream:

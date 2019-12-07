@@ -8,6 +8,7 @@
 import pytest
 import base64
 import unittest
+import uuid
 from os import path, remove, sys, urandom
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -296,7 +297,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_to_streamm.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'get_blob_to_streamm.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -323,7 +324,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        FILE_PATH = 'blob_to_stream_with_progress.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_to_stream_with_progress.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -351,7 +352,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        FILE_PATH = 'stream_non_parallel.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'stream_non_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=1)
             read_bytes = downloader.readinto(stream)
@@ -385,7 +386,7 @@ class StorageGetBlobTest(StorageTestCase):
 
 
         # Act
-        FILE_PATH = 'blob_to_stream_small.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_to_stream_small.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -411,7 +412,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_to_path.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'get_blob_to_path.temp.{}.dat'.format(str(uuid.uuid4()))
         end_range = self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=end_range - 1, max_concurrency=2)
@@ -441,7 +442,7 @@ class StorageGetBlobTest(StorageTestCase):
         # Act
         start_range = 3
         end_range = self.config.max_single_get_size + 1024
-        FILE_PATH = 'blob_to_path_with_progress.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_to_path_with_progress.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(
                 offset=start_range,
@@ -468,7 +469,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'blob_to_path_small.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_to_path_small.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=4, max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -486,7 +487,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'blob_to_path_non_parallel.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_to_path_non_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=3, max_concurrency=1)
             read_bytes = downloader.readinto(stream)
@@ -512,7 +513,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         end_range = 2 * self.config.max_single_get_size
-        FILE_PATH = 'path_invalid_range_parallel.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'path_invalid_range_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=end_range, max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -538,7 +539,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Act
         end_range = 2 * self.config.max_single_get_size
-        FILE_PATH = 'invalid_range_non_parallel.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'invalid_range_non_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=1, length=end_range, max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -708,7 +709,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_non_seekable.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'get_blob_non_seekable.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetBlobTest.NonSeekableFile(stream)
             downloader = blob.download_blob(max_concurrency=1)
@@ -730,7 +731,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_non_seekable.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'get_blob_non_seekable.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetBlobTest.NonSeekableFile(stream)
 
@@ -755,7 +756,7 @@ class StorageGetBlobTest(StorageTestCase):
             progress.append((current, total))
 
         # Act
-        FILE_PATH = 'blob_to_stream_exact_get_size.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_to_stream_exact_get_size.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
             properties = downloader.readinto(stream)
@@ -837,7 +838,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'stream_with_md5.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'stream_with_md5.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(validate_content=True, max_concurrency=2)
             read_bytes = downloader.readinto(stream)
@@ -875,7 +876,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob.set_http_headers(props.content_settings)
 
         # Act
-        FILE_PATH = 'blob_range_to_stream_with_overall_md5.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'blob_range_to_stream_with_overall_md5.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             downloader = blob.download_blob(offset=0, length=1024, validate_content=True, max_concurrency=2)
             read_bytes = downloader.readinto(stream)

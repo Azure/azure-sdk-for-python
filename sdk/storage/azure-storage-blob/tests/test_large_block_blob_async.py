@@ -11,6 +11,7 @@ import asyncio
 
 from os import path, remove, sys, urandom
 import unittest
+import uuid
 
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -182,7 +183,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'create_large_blob_from_path_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'create_large_blob_from_path_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -207,7 +208,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'reate_large_blob_from_path_with_md5_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'reate_large_blob_from_path_with_md5_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -231,7 +232,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(self.get_random_bytes(100))
-        FILE_PATH = 'large_blob_from_path_non_parallel_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'large_blob_from_path_non_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -255,7 +256,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        FILE_PATH = 'large_blob_from_path_with_progress_asyn.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'large_blob_from_path_with_progress_asyn.temp.{}.dat'.format(str(uuid.uuid4()))
         data = bytearray(urandom(LARGE_BLOB_SIZE))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -289,7 +290,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'large_blob_from_path_with_properties_asy.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'large_blob_from_path_with_properties_asy.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -320,7 +321,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'frm_stream_chnkd_upload_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'frm_stream_chnkd_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -345,7 +346,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'frm_strm_w_prgrss_chnkduplod_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'frm_strm_w_prgrss_chnkduplod_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -378,7 +379,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = '_lrgblob_frm_strm_chnkd_uplod_w_cnt_.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = '_lrgblob_frm_strm_chnkd_uplod_w_cnt_.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -404,7 +405,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'frm_stream_chnk_upload_w_cntnprops_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'frm_stream_chnk_upload_w_cntnprops_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -437,7 +438,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'from_stream_chunk_upld_with_props_async.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'from_stream_chunk_upld_with_props_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 

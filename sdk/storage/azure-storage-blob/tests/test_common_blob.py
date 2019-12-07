@@ -10,6 +10,7 @@ import pytest
 import requests
 import time
 import unittest
+import uuid
 import os
 from datetime import datetime, timedelta
 
@@ -1721,7 +1722,7 @@ class StorageCommonBlobTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-        FILE_PATH = 'download_to_file_with_sas.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
         download_blob_from_url(blob.url, FILE_PATH)
@@ -1741,7 +1742,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._setup_remote(rmt.name, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'to_file_with_credential.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'to_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1762,7 +1763,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._setup_remote(rmt.name, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'download_to_stream_with_credential.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'download_to_stream_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         with open(FILE_PATH, 'wb') as stream:
             download_blob_from_url(
@@ -1785,7 +1786,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._setup_remote(rmt.name, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'file_with_existing_file.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'file_with_existing_file.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1809,7 +1810,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._setup_remote(rmt.name, rmt_key)
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'file_with_existing_file_overwrite.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'file_with_existing_file_overwrite.temp.{}.dat'.format(str(uuid.uuid4()))
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1942,7 +1943,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_to_url_file_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        FILE_PATH = 'upload_to_url_file_with_credential.temp.{}.dat.format(str(uuid.uuid4()))'
+        FILE_PATH = 'upload_to_url_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
         with open(FILE_PATH, 'wb') as stream:
