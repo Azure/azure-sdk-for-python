@@ -9,8 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._runtime_operations import RuntimeOperations
+from .endpoint_keys_operations import EndpointKeysOperations
+from .alterations_operations import AlterationsOperations
+from .knowledgebase_operations import KnowledgebaseOperations
+from .operations import Operations
 
 __all__ = [
-    'RuntimeOperations',
+    'EndpointKeysOperations',
+    'AlterationsOperations',
+    'KnowledgebaseOperations',
+    'Operations',
 ]
