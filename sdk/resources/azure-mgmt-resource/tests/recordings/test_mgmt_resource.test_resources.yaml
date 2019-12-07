@@ -14,7 +14,7 @@ interactions:
       accept-language:
       - en-US
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2015-05-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2019-08-01
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2015-05-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2019-08-01
   response:
     body:
       string: "{\r\n  \"name\": \"pytestavsetea520dc4\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4\"\
@@ -112,7 +112,7 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2015-05-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2019-08-01
   response:
     body:
       string: "{\r\n  \"name\": \"pytestavsetea520dc4\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4\"\
@@ -207,7 +207,7 @@ interactions:
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2015-05-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resourcesea520dc4/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4?api-version=2019-08-01
   response:
     body:
       string: ''
