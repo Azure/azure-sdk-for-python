@@ -15,15 +15,18 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
+    from ._models_py3 import CassandraKeyspaceGetPropertiesResource
     from ._models_py3 import CassandraKeyspaceGetResults
     from ._models_py3 import CassandraKeyspaceResource
     from ._models_py3 import CassandraPartitionKey
     from ._models_py3 import CassandraSchema
     from ._models_py3 import CassandraTableCreateUpdateParameters
+    from ._models_py3 import CassandraTableGetPropertiesResource
     from ._models_py3 import CassandraTableGetResults
     from ._models_py3 import CassandraTableResource
     from ._models_py3 import ClusterKey
     from ._models_py3 import Column
+    from ._models_py3 import CompositePath
     from ._models_py3 import ConflictResolutionPolicy
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
@@ -41,9 +44,11 @@ try:
     from ._models_py3 import FailoverPolicies
     from ._models_py3 import FailoverPolicy
     from ._models_py3 import GremlinDatabaseCreateUpdateParameters
+    from ._models_py3 import GremlinDatabaseGetPropertiesResource
     from ._models_py3 import GremlinDatabaseGetResults
     from ._models_py3 import GremlinDatabaseResource
     from ._models_py3 import GremlinGraphCreateUpdateParameters
+    from ._models_py3 import GremlinGraphGetPropertiesResource
     from ._models_py3 import GremlinGraphGetResults
     from ._models_py3 import GremlinGraphResource
     from ._models_py3 import IncludedPath
@@ -56,9 +61,11 @@ try:
     from ._models_py3 import MetricName
     from ._models_py3 import MetricValue
     from ._models_py3 import MongoDBCollectionCreateUpdateParameters
+    from ._models_py3 import MongoDBCollectionGetPropertiesResource
     from ._models_py3 import MongoDBCollectionGetResults
     from ._models_py3 import MongoDBCollectionResource
     from ._models_py3 import MongoDBDatabaseCreateUpdateParameters
+    from ._models_py3 import MongoDBDatabaseGetPropertiesResource
     from ._models_py3 import MongoDBDatabaseGetResults
     from ._models_py3 import MongoDBDatabaseResource
     from ._models_py3 import MongoIndex
@@ -77,24 +84,32 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
+    from ._models_py3 import SpatialSpec
     from ._models_py3 import SqlContainerCreateUpdateParameters
+    from ._models_py3 import SqlContainerGetPropertiesResource
     from ._models_py3 import SqlContainerGetResults
     from ._models_py3 import SqlContainerResource
     from ._models_py3 import SqlDatabaseCreateUpdateParameters
+    from ._models_py3 import SqlDatabaseGetPropertiesResource
     from ._models_py3 import SqlDatabaseGetResults
     from ._models_py3 import SqlDatabaseResource
     from ._models_py3 import SqlStoredProcedureCreateUpdateParameters
+    from ._models_py3 import SqlStoredProcedureGetPropertiesResource
     from ._models_py3 import SqlStoredProcedureGetResults
     from ._models_py3 import SqlStoredProcedureResource
     from ._models_py3 import SqlTriggerCreateUpdateParameters
+    from ._models_py3 import SqlTriggerGetPropertiesResource
     from ._models_py3 import SqlTriggerGetResults
     from ._models_py3 import SqlTriggerResource
     from ._models_py3 import SqlUserDefinedFunctionCreateUpdateParameters
+    from ._models_py3 import SqlUserDefinedFunctionGetPropertiesResource
     from ._models_py3 import SqlUserDefinedFunctionGetResults
     from ._models_py3 import SqlUserDefinedFunctionResource
     from ._models_py3 import TableCreateUpdateParameters
+    from ._models_py3 import TableGetPropertiesResource
     from ._models_py3 import TableGetResults
     from ._models_py3 import TableResource
+    from ._models_py3 import ThroughputSettingsGetPropertiesResource
     from ._models_py3 import ThroughputSettingsGetResults
     from ._models_py3 import ThroughputSettingsResource
     from ._models_py3 import ThroughputSettingsUpdateParameters
@@ -109,15 +124,18 @@ except (SyntaxError, ImportError):
     from ._models import AzureEntityResource
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
+    from ._models import CassandraKeyspaceGetPropertiesResource
     from ._models import CassandraKeyspaceGetResults
     from ._models import CassandraKeyspaceResource
     from ._models import CassandraPartitionKey
     from ._models import CassandraSchema
     from ._models import CassandraTableCreateUpdateParameters
+    from ._models import CassandraTableGetPropertiesResource
     from ._models import CassandraTableGetResults
     from ._models import CassandraTableResource
     from ._models import ClusterKey
     from ._models import Column
+    from ._models import CompositePath
     from ._models import ConflictResolutionPolicy
     from ._models import ConsistencyPolicy
     from ._models import ContainerPartitionKey
@@ -135,9 +153,11 @@ except (SyntaxError, ImportError):
     from ._models import FailoverPolicies
     from ._models import FailoverPolicy
     from ._models import GremlinDatabaseCreateUpdateParameters
+    from ._models import GremlinDatabaseGetPropertiesResource
     from ._models import GremlinDatabaseGetResults
     from ._models import GremlinDatabaseResource
     from ._models import GremlinGraphCreateUpdateParameters
+    from ._models import GremlinGraphGetPropertiesResource
     from ._models import GremlinGraphGetResults
     from ._models import GremlinGraphResource
     from ._models import IncludedPath
@@ -150,9 +170,11 @@ except (SyntaxError, ImportError):
     from ._models import MetricName
     from ._models import MetricValue
     from ._models import MongoDBCollectionCreateUpdateParameters
+    from ._models import MongoDBCollectionGetPropertiesResource
     from ._models import MongoDBCollectionGetResults
     from ._models import MongoDBCollectionResource
     from ._models import MongoDBDatabaseCreateUpdateParameters
+    from ._models import MongoDBDatabaseGetPropertiesResource
     from ._models import MongoDBDatabaseGetResults
     from ._models import MongoDBDatabaseResource
     from ._models import MongoIndex
@@ -171,24 +193,32 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
+    from ._models import SpatialSpec
     from ._models import SqlContainerCreateUpdateParameters
+    from ._models import SqlContainerGetPropertiesResource
     from ._models import SqlContainerGetResults
     from ._models import SqlContainerResource
     from ._models import SqlDatabaseCreateUpdateParameters
+    from ._models import SqlDatabaseGetPropertiesResource
     from ._models import SqlDatabaseGetResults
     from ._models import SqlDatabaseResource
     from ._models import SqlStoredProcedureCreateUpdateParameters
+    from ._models import SqlStoredProcedureGetPropertiesResource
     from ._models import SqlStoredProcedureGetResults
     from ._models import SqlStoredProcedureResource
     from ._models import SqlTriggerCreateUpdateParameters
+    from ._models import SqlTriggerGetPropertiesResource
     from ._models import SqlTriggerGetResults
     from ._models import SqlTriggerResource
     from ._models import SqlUserDefinedFunctionCreateUpdateParameters
+    from ._models import SqlUserDefinedFunctionGetPropertiesResource
     from ._models import SqlUserDefinedFunctionGetResults
     from ._models import SqlUserDefinedFunctionResource
     from ._models import TableCreateUpdateParameters
+    from ._models import TableGetPropertiesResource
     from ._models import TableGetResults
     from ._models import TableResource
+    from ._models import ThroughputSettingsGetPropertiesResource
     from ._models import ThroughputSettingsGetResults
     from ._models import ThroughputSettingsResource
     from ._models import ThroughputSettingsUpdateParameters
@@ -227,6 +257,8 @@ from ._cosmos_db_management_client_enums import (
     IndexingMode,
     DataType,
     IndexKind,
+    CompositePathSortOrder,
+    SpatialType,
     PartitionKind,
     ConflictResolutionMode,
     TriggerType,
@@ -242,15 +274,18 @@ __all__ = [
     'AzureEntityResource',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
+    'CassandraKeyspaceGetPropertiesResource',
     'CassandraKeyspaceGetResults',
     'CassandraKeyspaceResource',
     'CassandraPartitionKey',
     'CassandraSchema',
     'CassandraTableCreateUpdateParameters',
+    'CassandraTableGetPropertiesResource',
     'CassandraTableGetResults',
     'CassandraTableResource',
     'ClusterKey',
     'Column',
+    'CompositePath',
     'ConflictResolutionPolicy',
     'ConsistencyPolicy',
     'ContainerPartitionKey',
@@ -268,9 +303,11 @@ __all__ = [
     'FailoverPolicies',
     'FailoverPolicy',
     'GremlinDatabaseCreateUpdateParameters',
+    'GremlinDatabaseGetPropertiesResource',
     'GremlinDatabaseGetResults',
     'GremlinDatabaseResource',
     'GremlinGraphCreateUpdateParameters',
+    'GremlinGraphGetPropertiesResource',
     'GremlinGraphGetResults',
     'GremlinGraphResource',
     'IncludedPath',
@@ -283,9 +320,11 @@ __all__ = [
     'MetricName',
     'MetricValue',
     'MongoDBCollectionCreateUpdateParameters',
+    'MongoDBCollectionGetPropertiesResource',
     'MongoDBCollectionGetResults',
     'MongoDBCollectionResource',
     'MongoDBDatabaseCreateUpdateParameters',
+    'MongoDBDatabaseGetPropertiesResource',
     'MongoDBDatabaseGetResults',
     'MongoDBDatabaseResource',
     'MongoIndex',
@@ -304,24 +343,32 @@ __all__ = [
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
+    'SpatialSpec',
     'SqlContainerCreateUpdateParameters',
+    'SqlContainerGetPropertiesResource',
     'SqlContainerGetResults',
     'SqlContainerResource',
     'SqlDatabaseCreateUpdateParameters',
+    'SqlDatabaseGetPropertiesResource',
     'SqlDatabaseGetResults',
     'SqlDatabaseResource',
     'SqlStoredProcedureCreateUpdateParameters',
+    'SqlStoredProcedureGetPropertiesResource',
     'SqlStoredProcedureGetResults',
     'SqlStoredProcedureResource',
     'SqlTriggerCreateUpdateParameters',
+    'SqlTriggerGetPropertiesResource',
     'SqlTriggerGetResults',
     'SqlTriggerResource',
     'SqlUserDefinedFunctionCreateUpdateParameters',
+    'SqlUserDefinedFunctionGetPropertiesResource',
     'SqlUserDefinedFunctionGetResults',
     'SqlUserDefinedFunctionResource',
     'TableCreateUpdateParameters',
+    'TableGetPropertiesResource',
     'TableGetResults',
     'TableResource',
+    'ThroughputSettingsGetPropertiesResource',
     'ThroughputSettingsGetResults',
     'ThroughputSettingsResource',
     'ThroughputSettingsUpdateParameters',
@@ -359,6 +406,8 @@ __all__ = [
     'IndexingMode',
     'DataType',
     'IndexKind',
+    'CompositePathSortOrder',
+    'SpatialType',
     'PartitionKind',
     'ConflictResolutionMode',
     'TriggerType',

@@ -23,16 +23,20 @@ class CosmosDBManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
+    :param subscription_id1: The ID of the target subscription.
+    :type subscription_id1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if subscription_id1 is None:
+            raise ValueError("Parameter 'subscription_id1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -46,3 +50,4 @@ class CosmosDBManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.subscription_id1 = subscription_id1
