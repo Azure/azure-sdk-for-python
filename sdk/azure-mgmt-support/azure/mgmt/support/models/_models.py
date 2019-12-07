@@ -258,8 +258,17 @@ class CreateSupportTicket(Model):
     and subscription limits(quotas) and Technical as determined by service id
     in the request payload.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Id of the resource
+    :vartype id: str
+    :ivar name: Name of the resource
+    :vartype name: str
+    :ivar type: Type of the resource 'Microsoft.Support/supportTickets
+    :vartype type: str
     :param service_id: Required. Azure service for which the support ticket
      will be created.
     :type service_id: str
@@ -293,6 +302,9 @@ class CreateSupportTicket(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'service_id': {'required': True},
         'title': {'required': True},
         'description': {'required': True},
@@ -302,6 +314,9 @@ class CreateSupportTicket(Model):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'service_id': {'key': 'properties.serviceId', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -316,6 +331,9 @@ class CreateSupportTicket(Model):
 
     def __init__(self, **kwargs):
         super(CreateSupportTicket, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.service_id = kwargs.get('service_id', None)
         self.title = kwargs.get('title', None)
         self.description = kwargs.get('description', None)
