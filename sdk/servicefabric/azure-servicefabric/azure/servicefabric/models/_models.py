@@ -1966,6 +1966,85 @@ class ApplicationResourceDescription(Model):
         self.identity = kwargs.get('identity', None)
 
 
+class ApplicationResourceUpgradeProgressInfo(Model):
+    """This type describes an application resource upgrade.
+
+    :param name: Name of the Application resource.
+    :type name: str
+    :param target_application_type_version: The target application version for
+     the application upgrade.
+    :type target_application_type_version: str
+    :param start_timestamp_utc: The estimated UTC datetime when the upgrade
+     started.
+    :type start_timestamp_utc: str
+    :param upgrade_state: The state of the application resource upgrade.
+     Possible values include: 'Invalid', 'ProvisioningTarget',
+     'RollingForward', 'UnprovisioningCurrent', 'CompletedRollforward',
+     'RollingBack', 'UnprovisioningTarget', 'CompletedRollback', 'Failed'
+    :type upgrade_state: str or
+     ~azure.servicefabric.models.ApplicationResourceUpgradeState
+    :param percent_completed: The estimated percent of replicas are completed
+     in the upgrade.
+    :type percent_completed: str
+    :param service_upgrade_progress: List of service upgrade progresses.
+    :type service_upgrade_progress:
+     list[~azure.servicefabric.models.ServiceUpgradeProgress]
+    :param rolling_upgrade_mode: The mode used to monitor health during a
+     rolling upgrade. The values are UnmonitoredAuto, UnmonitoredManual, and
+     Monitored. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     'UnmonitoredManual', 'Monitored'. Default value: "Monitored" .
+    :type rolling_upgrade_mode: str or
+     ~azure.servicefabric.models.RollingUpgradeMode
+    :param upgrade_duration: The estimated amount of time that the overall
+     upgrade elapsed. It is first interpreted as a string representing an ISO
+     8601 duration. If that fails, then it is interpreted as a number
+     representing the total number of milliseconds. Default value: "PT0H2M0S" .
+    :type upgrade_duration: str
+    :param application_upgrade_status_details: Additional detailed information
+     about the status of the pending upgrade.
+    :type application_upgrade_status_details: str
+    :param upgrade_replica_set_check_timeout_in_seconds: The maximum amount of
+     time to block processing of an upgrade domain and prevent loss of
+     availability when there are unexpected issues. When this timeout expires,
+     processing of the upgrade domain will proceed regardless of availability
+     loss issues. The timeout is reset at the start of each upgrade domain.
+     Valid values are between 0 and 42949672925 inclusive. (unsigned 32-bit
+     integer). Default value: 42949672925 .
+    :type upgrade_replica_set_check_timeout_in_seconds: long
+    :param failure_timestamp_utc: The estimated UTC datetime when the upgrade
+     failed and FailureAction was executed.
+    :type failure_timestamp_utc: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+        'target_application_type_version': {'key': 'TargetApplicationTypeVersion', 'type': 'str'},
+        'start_timestamp_utc': {'key': 'StartTimestampUtc', 'type': 'str'},
+        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
+        'percent_completed': {'key': 'PercentCompleted', 'type': 'str'},
+        'service_upgrade_progress': {'key': 'ServiceUpgradeProgress', 'type': '[ServiceUpgradeProgress]'},
+        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
+        'upgrade_duration': {'key': 'UpgradeDuration', 'type': 'str'},
+        'application_upgrade_status_details': {'key': 'ApplicationUpgradeStatusDetails', 'type': 'str'},
+        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
+        'failure_timestamp_utc': {'key': 'FailureTimestampUtc', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationResourceUpgradeProgressInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.target_application_type_version = kwargs.get('target_application_type_version', None)
+        self.start_timestamp_utc = kwargs.get('start_timestamp_utc', None)
+        self.upgrade_state = kwargs.get('upgrade_state', None)
+        self.percent_completed = kwargs.get('percent_completed', None)
+        self.service_upgrade_progress = kwargs.get('service_upgrade_progress', None)
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "Monitored")
+        self.upgrade_duration = kwargs.get('upgrade_duration', "PT0H2M0S")
+        self.application_upgrade_status_details = kwargs.get('application_upgrade_status_details', None)
+        self.upgrade_replica_set_check_timeout_in_seconds = kwargs.get('upgrade_replica_set_check_timeout_in_seconds', 42949672925)
+        self.failure_timestamp_utc = kwargs.get('failure_timestamp_utc', None)
+
+
 class VolumeReference(Model):
     """Describes a reference to a volume resource.
 
@@ -2454,6 +2533,18 @@ class ApplicationUpgradeDescription(Model):
      the health of an application or one of its children entities.
     :type application_health_policy:
      ~azure.servicefabric.models.ApplicationHealthPolicy
+    :param instance_close_delay_duration_in_seconds: Duration in seconds, to
+     wait before a stateless instance is closed, to allow the active requests
+     to drain gracefully. This would be effective when the instance is closing
+     during the application/cluster
+     upgrade, only for those instances which have a non-zero delay duration
+     configured in the service description. See
+     InstanceCloseDelayDurationSeconds property in $ref:
+     "#/definitions/StatelessServiceDescription.yaml" for details.
+     Note, the default value of InstanceCloseDelayDurationInSeconds is
+     4294967295, which indicates that the behavior will entirely depend on the
+     delay configured in the stateless service description.
+    :type instance_close_delay_duration_in_seconds: long
     """
 
     _validation = {
@@ -2473,6 +2564,7 @@ class ApplicationUpgradeDescription(Model):
         'sort_order': {'key': 'SortOrder', 'type': 'str'},
         'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
         'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
+        'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -2487,6 +2579,7 @@ class ApplicationUpgradeDescription(Model):
         self.sort_order = kwargs.get('sort_order', "Default")
         self.monitoring_policy = kwargs.get('monitoring_policy', None)
         self.application_health_policy = kwargs.get('application_health_policy', None)
+        self.instance_close_delay_duration_in_seconds = kwargs.get('instance_close_delay_duration_in_seconds', None)
 
 
 class ApplicationUpgradeDomainCompletedEvent(ApplicationEvent):
@@ -6630,6 +6723,49 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
         self.application_upgrade_status_details = kwargs.get('application_upgrade_status_details', None)
 
 
+class ConfigParameterOverride(Model):
+    """Information about a configuration parameter override.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param section_name: Required. Name of the section for the parameter
+     override.
+    :type section_name: str
+    :param parameter_name: Required. Name of the parameter that has been
+     overridden.
+    :type parameter_name: str
+    :param parameter_value: Required. Value of the overridden parameter.
+    :type parameter_value: str
+    :param timeout: The duration until config override is considered as valid.
+    :type timeout: timedelta
+    :param persist_across_upgrade: A value that indicates whether config
+     override will be removed on upgrade or will still be considered as valid.
+    :type persist_across_upgrade: bool
+    """
+
+    _validation = {
+        'section_name': {'required': True},
+        'parameter_name': {'required': True},
+        'parameter_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'section_name': {'key': 'SectionName', 'type': 'str'},
+        'parameter_name': {'key': 'ParameterName', 'type': 'str'},
+        'parameter_value': {'key': 'ParameterValue', 'type': 'str'},
+        'timeout': {'key': 'Timeout', 'type': 'duration'},
+        'persist_across_upgrade': {'key': 'PersistAcrossUpgrade', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ConfigParameterOverride, self).__init__(**kwargs)
+        self.section_name = kwargs.get('section_name', None)
+        self.parameter_name = kwargs.get('parameter_name', None)
+        self.parameter_value = kwargs.get('parameter_value', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.persist_across_upgrade = kwargs.get('persist_across_upgrade', None)
+
+
 class ContainerApiRequestBody(Model):
     """parameters for making container API call.
 
@@ -6772,6 +6908,12 @@ class ContainerCodePackageProperties(Model):
      list[~azure.servicefabric.models.ReliableCollectionsRef]
     :ivar instance_view: Runtime information of a container instance.
     :vartype instance_view: ~azure.servicefabric.models.ContainerInstanceView
+    :param liveness_probe: An array of liveness probes for a code package. It
+     determines when to restart a code package.
+    :type liveness_probe: list[~azure.servicefabric.models.Probe]
+    :param readiness_probe: An array of readiness probes for a code package.
+     It determines when to unpublish an endpoint.
+    :type readiness_probe: list[~azure.servicefabric.models.Probe]
     """
 
     _validation = {
@@ -6797,6 +6939,8 @@ class ContainerCodePackageProperties(Model):
         'diagnostics': {'key': 'diagnostics', 'type': 'DiagnosticsRef'},
         'reliable_collections_refs': {'key': 'reliableCollectionsRefs', 'type': '[ReliableCollectionsRef]'},
         'instance_view': {'key': 'instanceView', 'type': 'ContainerInstanceView'},
+        'liveness_probe': {'key': 'livenessProbe', 'type': '[Probe]'},
+        'readiness_probe': {'key': 'readinessProbe', 'type': '[Probe]'},
     }
 
     def __init__(self, **kwargs):
@@ -6816,6 +6960,8 @@ class ContainerCodePackageProperties(Model):
         self.diagnostics = kwargs.get('diagnostics', None)
         self.reliable_collections_refs = kwargs.get('reliable_collections_refs', None)
         self.instance_view = None
+        self.liveness_probe = kwargs.get('liveness_probe', None)
+        self.readiness_probe = kwargs.get('readiness_probe', None)
 
 
 class ContainerEvent(Model):
@@ -7767,7 +7913,8 @@ class DeployedCodePackageInfo(Model):
      ~azure.servicefabric.models.HostIsolationMode
     :param status: Specifies the status of a deployed application or service
      package on a Service Fabric node. Possible values include: 'Invalid',
-     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating',
+     'RanToCompletion', 'Failed'
     :type status: str or ~azure.servicefabric.models.DeploymentStatus
     :param run_frequency_interval: The interval at which code package is run.
      This is used for periodic code package.
@@ -8200,7 +8347,8 @@ class DeployedServicePackageInfo(Model):
     :type version: str
     :param status: Specifies the status of a deployed application or service
      package on a Service Fabric node. Possible values include: 'Invalid',
-     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating',
+     'RanToCompletion', 'Failed'
     :type status: str or ~azure.servicefabric.models.DeploymentStatus
     :param service_package_activation_id: The ActivationId of a deployed
      service package. If ServicePackageActivationMode specified at the time of
@@ -9023,6 +9171,26 @@ class DisableBackupDescription(Model):
         self.clean_backup = kwargs.get('clean_backup', None)
 
 
+class DiskInfo(Model):
+    """Information about the disk.
+
+    :param capacity: the disk size in bytes
+    :type capacity: str
+    :param available_space: the available disk space in bytes
+    :type available_space: str
+    """
+
+    _attribute_map = {
+        'capacity': {'key': 'Capacity', 'type': 'str'},
+        'available_space': {'key': 'AvailableSpace', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DiskInfo, self).__init__(**kwargs)
+        self.capacity = kwargs.get('capacity', None)
+        self.available_space = kwargs.get('available_space', None)
+
+
 class DoublePropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type Double.
 
@@ -9266,19 +9434,26 @@ class EntityKindHealthStateCount(Model):
 class EnvironmentVariable(Model):
     """Describes an environment variable for the container.
 
+    :param type: The type of the environment variable being given in value.
+     Possible values include: 'ClearText', 'KeyVaultReference',
+     'SecretValueReference'. Default value: "ClearText" .
+    :type type: str or ~azure.servicefabric.models.EnvironmentVariableType
     :param name: The name of the environment variable.
     :type name: str
-    :param value: The value of the environment variable.
+    :param value: The value of the environment variable, will be processed
+     based on the type provided.
     :type value: str
     """
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(EnvironmentVariable, self).__init__(**kwargs)
+        self.type = kwargs.get('type', "ClearText")
         self.name = kwargs.get('name', None)
         self.value = kwargs.get('value', None)
 
@@ -9392,6 +9567,35 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
         super(ExecutingFaultsChaosEvent, self).__init__(**kwargs)
         self.faults = kwargs.get('faults', None)
         self.kind = 'ExecutingFaults'
+
+
+class ExecutionPolicy(Model):
+    """The execution policy of the service.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: RunToCompletionExecutionPolicy
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'runToCompletion': 'RunToCompletionExecutionPolicy'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ExecutionPolicy, self).__init__(**kwargs)
+        self.type = None
 
 
 class ProvisionApplicationTypeDescriptionBase(Model):
@@ -10331,6 +10535,11 @@ class HealthInformation(Model):
      entity is evaluated at error when the health report expires.
      This flags the entity as being in Error health state.
     :type remove_when_expired: bool
+    :param health_report_id: A health report ID which identifies the health
+     report and can be used to find more detailed information about a specific
+     health event at
+     aka.ms/sfhealthid
+    :type health_report_id: str
     """
 
     _validation = {
@@ -10347,6 +10556,7 @@ class HealthInformation(Model):
         'description': {'key': 'Description', 'type': 'str'},
         'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
         'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
+        'health_report_id': {'key': 'HealthReportId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -10358,6 +10568,7 @@ class HealthInformation(Model):
         self.description = kwargs.get('description', None)
         self.sequence_number = kwargs.get('sequence_number', None)
         self.remove_when_expired = kwargs.get('remove_when_expired', None)
+        self.health_report_id = kwargs.get('health_report_id', None)
 
 
 class HealthEvent(HealthInformation):
@@ -10430,6 +10641,11 @@ class HealthEvent(HealthInformation):
      entity is evaluated at error when the health report expires.
      This flags the entity as being in Error health state.
     :type remove_when_expired: bool
+    :param health_report_id: A health report ID which identifies the health
+     report and can be used to find more detailed information about a specific
+     health event at
+     aka.ms/sfhealthid
+    :type health_report_id: str
     :param is_expired: Returns true if the health event is expired, otherwise
      false.
     :type is_expired: bool
@@ -10487,6 +10703,7 @@ class HealthEvent(HealthInformation):
         'description': {'key': 'Description', 'type': 'str'},
         'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
         'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
+        'health_report_id': {'key': 'HealthReportId', 'type': 'str'},
         'is_expired': {'key': 'IsExpired', 'type': 'bool'},
         'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
         'last_modified_utc_timestamp': {'key': 'LastModifiedUtcTimestamp', 'type': 'iso-8601'},
@@ -10828,9 +11045,14 @@ class ImageRegistryCredential(Model):
     :type server: str
     :param username: Required. The username for the private registry.
     :type username: str
+    :param password_type: The type of the image registry password being given
+     in password. Possible values include: 'ClearText', 'KeyVaultReference',
+     'SecretValueReference'. Default value: "ClearText" .
+    :type password_type: str or
+     ~azure.servicefabric.models.ImageRegistryPasswordType
     :param password: The password for the private registry. The password is
      required for create or update operations, however it is not returned in
-     the get or list operations.
+     the get or list operations. Will be processed based on the type provided.
     :type password: str
     """
 
@@ -10842,6 +11064,7 @@ class ImageRegistryCredential(Model):
     _attribute_map = {
         'server': {'key': 'server', 'type': 'str'},
         'username': {'key': 'username', 'type': 'str'},
+        'password_type': {'key': 'passwordType', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
@@ -10849,6 +11072,7 @@ class ImageRegistryCredential(Model):
         super(ImageRegistryCredential, self).__init__(**kwargs)
         self.server = kwargs.get('server', None)
         self.username = kwargs.get('username', None)
+        self.password_type = kwargs.get('password_type', "ClearText")
         self.password = kwargs.get('password', None)
 
 
@@ -10914,6 +11138,48 @@ class ImageStoreCopyDescription(Model):
         self.remote_destination = kwargs.get('remote_destination', None)
         self.skip_files = kwargs.get('skip_files', None)
         self.check_mark_file = kwargs.get('check_mark_file', None)
+
+
+class ImageStoreInfo(Model):
+    """Information about the ImageStore's resource usage.
+
+    :param disk_info: disk capacity and available disk space on the node where
+     the ImageStore primary is placed.
+    :type disk_info: ~azure.servicefabric.models.DiskInfo
+    :param used_by_metadata: the ImageStore's file system usage for metadata.
+    :type used_by_metadata: ~azure.servicefabric.models.UsageInfo
+    :param used_by_staging: The ImageStore's file system usage for staging
+     files that are being uploaded.
+    :type used_by_staging: ~azure.servicefabric.models.UsageInfo
+    :param used_by_copy: the ImageStore's file system usage for copied
+     application and cluster packages. [Removing application and cluster
+     packages](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-deleteimagestorecontent)
+     will free up this space.
+    :type used_by_copy: ~azure.servicefabric.models.UsageInfo
+    :param used_by_register: the ImageStore's file system usage for registered
+     and cluster packages. [Unregistering
+     application](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-unprovisionapplicationtype)
+     and [cluster
+     packages](https://docs.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-unprovisionapplicationtype)
+     will free up this space.
+    :type used_by_register: ~azure.servicefabric.models.UsageInfo
+    """
+
+    _attribute_map = {
+        'disk_info': {'key': 'DiskInfo', 'type': 'DiskInfo'},
+        'used_by_metadata': {'key': 'UsedByMetadata', 'type': 'UsageInfo'},
+        'used_by_staging': {'key': 'UsedByStaging', 'type': 'UsageInfo'},
+        'used_by_copy': {'key': 'UsedByCopy', 'type': 'UsageInfo'},
+        'used_by_register': {'key': 'UsedByRegister', 'type': 'UsageInfo'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ImageStoreInfo, self).__init__(**kwargs)
+        self.disk_info = kwargs.get('disk_info', None)
+        self.used_by_metadata = kwargs.get('used_by_metadata', None)
+        self.used_by_staging = kwargs.get('used_by_staging', None)
+        self.used_by_copy = kwargs.get('used_by_copy', None)
+        self.used_by_register = kwargs.get('used_by_register', None)
 
 
 class SecretResourcePropertiesBase(Model):
@@ -15218,6 +15484,165 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
         self.kind = 'Primary'
 
 
+class Probe(Model):
+    """Probes have a number of fields that you can use to control their behavior.
+
+    :param initial_delay_seconds: The initial delay in seconds to start
+     executing probe once code package has started.
+    :type initial_delay_seconds: int
+    :param period_seconds: Periodic seconds to execute probe.
+    :type period_seconds: int
+    :param timeout_seconds: Period after which probe is considered as failed
+     if it hasn't completed successfully.
+    :type timeout_seconds: int
+    :param success_threshold: The count of successful probe executions after
+     which probe is considered success.
+    :type success_threshold: int
+    :param failure_threshold: The count of failures after which probe is
+     considered failed.
+    :type failure_threshold: int
+    :param exec_property: Exec command to run inside the container.
+    :type exec_property: ~azure.servicefabric.models.ProbeExec
+    :param http_get: Http probe for the container.
+    :type http_get: ~azure.servicefabric.models.ProbeHttpGet
+    :param tcp_socket: Tcp port to probe inside the container.
+    :type tcp_socket: ~azure.servicefabric.models.ProbeTcpSocket
+    """
+
+    _attribute_map = {
+        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
+        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
+        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
+        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
+        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
+        'exec_property': {'key': 'exec', 'type': 'ProbeExec'},
+        'http_get': {'key': 'httpGet', 'type': 'ProbeHttpGet'},
+        'tcp_socket': {'key': 'tcpSocket', 'type': 'ProbeTcpSocket'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Probe, self).__init__(**kwargs)
+        self.initial_delay_seconds = kwargs.get('initial_delay_seconds', None)
+        self.period_seconds = kwargs.get('period_seconds', None)
+        self.timeout_seconds = kwargs.get('timeout_seconds', None)
+        self.success_threshold = kwargs.get('success_threshold', None)
+        self.failure_threshold = kwargs.get('failure_threshold', None)
+        self.exec_property = kwargs.get('exec_property', None)
+        self.http_get = kwargs.get('http_get', None)
+        self.tcp_socket = kwargs.get('tcp_socket', None)
+
+
+class ProbeExec(Model):
+    """Exec command to run inside the container.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param command: Required. Comma separated command to run inside the
+     container for example "sh, -c, echo hello world".
+    :type command: str
+    """
+
+    _validation = {
+        'command': {'required': True},
+    }
+
+    _attribute_map = {
+        'command': {'key': 'command', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProbeExec, self).__init__(**kwargs)
+        self.command = kwargs.get('command', None)
+
+
+class ProbeHttpGet(Model):
+    """Http probe for the container.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param port: Required. Port to access for probe.
+    :type port: int
+    :param path: Path to access on the HTTP request.
+    :type path: str
+    :param host: Host IP to connect to.
+    :type host: str
+    :param http_headers: Headers to set in the request.
+    :type http_headers: list[~azure.servicefabric.models.ProbeHttpGetHeaders]
+    :param scheme: Scheme for the http probe. Can be Http or Https. Possible
+     values include: 'http', 'https'
+    :type scheme: str or ~azure.servicefabric.models.Scheme
+    """
+
+    _validation = {
+        'port': {'required': True},
+    }
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'int'},
+        'path': {'key': 'path', 'type': 'str'},
+        'host': {'key': 'host', 'type': 'str'},
+        'http_headers': {'key': 'httpHeaders', 'type': '[ProbeHttpGetHeaders]'},
+        'scheme': {'key': 'scheme', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProbeHttpGet, self).__init__(**kwargs)
+        self.port = kwargs.get('port', None)
+        self.path = kwargs.get('path', None)
+        self.host = kwargs.get('host', None)
+        self.http_headers = kwargs.get('http_headers', None)
+        self.scheme = kwargs.get('scheme', None)
+
+
+class ProbeHttpGetHeaders(Model):
+    """Http headers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the header.
+    :type name: str
+    :param value: Required. The value of the header.
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProbeHttpGetHeaders, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
+class ProbeTcpSocket(Model):
+    """Tcp port to probe inside the container.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param port: Required. Port to access for probe.
+    :type port: int
+    """
+
+    _validation = {
+        'port': {'required': True},
+    }
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProbeTcpSocket, self).__init__(**kwargs)
+        self.port = kwargs.get('port', None)
+
+
 class PropertyBatchDescriptionList(Model):
     """Describes a list of property batch operations to be executed. Either all or
     none of the operations will be committed.
@@ -16920,6 +17345,18 @@ class RollingUpgradeUpdateDescription(Model):
      fails, then it is interpreted as a number representing the total number of
      milliseconds.
     :type upgrade_domain_timeout_in_milliseconds: str
+    :param instance_close_delay_duration_in_seconds: Duration in seconds, to
+     wait before a stateless instance is closed, to allow the active requests
+     to drain gracefully. This would be effective when the instance is closing
+     during the application/cluster
+     upgrade, only for those instances which have a non-zero delay duration
+     configured in the service description. See
+     InstanceCloseDelayDurationSeconds property in $ref:
+     "#/definitions/StatelessServiceDescription.yaml" for details.
+     Note, the default value of InstanceCloseDelayDurationInSeconds is
+     4294967295, which indicates that the behavior will entirely depend on the
+     delay configured in the stateless service description.
+    :type instance_close_delay_duration_in_seconds: long
     """
 
     _validation = {
@@ -16936,6 +17373,7 @@ class RollingUpgradeUpdateDescription(Model):
         'health_check_retry_timeout_in_milliseconds': {'key': 'HealthCheckRetryTimeoutInMilliseconds', 'type': 'str'},
         'upgrade_timeout_in_milliseconds': {'key': 'UpgradeTimeoutInMilliseconds', 'type': 'str'},
         'upgrade_domain_timeout_in_milliseconds': {'key': 'UpgradeDomainTimeoutInMilliseconds', 'type': 'str'},
+        'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -16949,6 +17387,36 @@ class RollingUpgradeUpdateDescription(Model):
         self.health_check_retry_timeout_in_milliseconds = kwargs.get('health_check_retry_timeout_in_milliseconds', None)
         self.upgrade_timeout_in_milliseconds = kwargs.get('upgrade_timeout_in_milliseconds', None)
         self.upgrade_domain_timeout_in_milliseconds = kwargs.get('upgrade_domain_timeout_in_milliseconds', None)
+        self.instance_close_delay_duration_in_seconds = kwargs.get('instance_close_delay_duration_in_seconds', None)
+
+
+class RunToCompletionExecutionPolicy(ExecutionPolicy):
+    """The run to completion execution policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param restart: Required. Enumerates the restart policy for
+     RunToCompletionExecutionPolicy. Possible values include: 'onFailure',
+     'never'
+    :type restart: str or ~azure.servicefabric.models.RestartPolicy
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'restart': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'restart': {'key': 'restart', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RunToCompletionExecutionPolicy, self).__init__(**kwargs)
+        self.restart = kwargs.get('restart', None)
+        self.type = 'runToCompletion'
 
 
 class SafetyCheckWrapper(Model):
@@ -17707,7 +18175,7 @@ class ServiceDescription(Model):
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+     include: 'Zero', 'Low', 'Medium', 'High', 'VeryHigh'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
@@ -18664,6 +19132,8 @@ class ServiceProperties(Model):
     :param replica_count: The number of replicas of the service to create.
      Defaults to 1 if not specified.
     :type replica_count: int
+    :param execution_policy: The execution policy of the service
+    :type execution_policy: ~azure.servicefabric.models.ExecutionPolicy
     :param auto_scaling_policies: Auto scaling policies
     :type auto_scaling_policies:
      list[~azure.servicefabric.models.AutoScalingPolicy]
@@ -18682,6 +19152,8 @@ class ServiceProperties(Model):
     :vartype unhealthy_evaluation: str
     :param identity_refs: The service identity list.
     :type identity_refs: list[~azure.servicefabric.models.ServiceIdentity]
+    :param dns_name: Dns name of the service.
+    :type dns_name: str
     """
 
     _validation = {
@@ -18694,24 +19166,28 @@ class ServiceProperties(Model):
     _attribute_map = {
         'description': {'key': 'description', 'type': 'str'},
         'replica_count': {'key': 'replicaCount', 'type': 'int'},
+        'execution_policy': {'key': 'executionPolicy', 'type': 'ExecutionPolicy'},
         'auto_scaling_policies': {'key': 'autoScalingPolicies', 'type': '[AutoScalingPolicy]'},
         'status': {'key': 'status', 'type': 'str'},
         'status_details': {'key': 'statusDetails', 'type': 'str'},
         'health_state': {'key': 'healthState', 'type': 'str'},
         'unhealthy_evaluation': {'key': 'unhealthyEvaluation', 'type': 'str'},
         'identity_refs': {'key': 'identityRefs', 'type': '[ServiceIdentity]'},
+        'dns_name': {'key': 'dnsName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ServiceProperties, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
         self.replica_count = kwargs.get('replica_count', None)
+        self.execution_policy = kwargs.get('execution_policy', None)
         self.auto_scaling_policies = kwargs.get('auto_scaling_policies', None)
         self.status = None
         self.status_details = None
         self.health_state = None
         self.unhealthy_evaluation = None
         self.identity_refs = kwargs.get('identity_refs', None)
+        self.dns_name = kwargs.get('dns_name', None)
 
 
 class ServiceReplicaProperties(Model):
@@ -18826,6 +19302,8 @@ class ServiceResourceDescription(Model):
     :param replica_count: The number of replicas of the service to create.
      Defaults to 1 if not specified.
     :type replica_count: int
+    :param execution_policy: The execution policy of the service
+    :type execution_policy: ~azure.servicefabric.models.ExecutionPolicy
     :param auto_scaling_policies: Auto scaling policies
     :type auto_scaling_policies:
      list[~azure.servicefabric.models.AutoScalingPolicy]
@@ -18844,6 +19322,8 @@ class ServiceResourceDescription(Model):
     :vartype unhealthy_evaluation: str
     :param identity_refs: The service identity list.
     :type identity_refs: list[~azure.servicefabric.models.ServiceIdentity]
+    :param dns_name: Dns name of the service.
+    :type dns_name: str
     """
 
     _validation = {
@@ -18864,12 +19344,14 @@ class ServiceResourceDescription(Model):
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'DiagnosticsRef'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'replica_count': {'key': 'properties.replicaCount', 'type': 'int'},
+        'execution_policy': {'key': 'properties.executionPolicy', 'type': 'ExecutionPolicy'},
         'auto_scaling_policies': {'key': 'properties.autoScalingPolicies', 'type': '[AutoScalingPolicy]'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
         'health_state': {'key': 'properties.healthState', 'type': 'str'},
         'unhealthy_evaluation': {'key': 'properties.unhealthyEvaluation', 'type': 'str'},
         'identity_refs': {'key': 'properties.identityRefs', 'type': '[ServiceIdentity]'},
+        'dns_name': {'key': 'properties.dnsName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -18881,12 +19363,14 @@ class ServiceResourceDescription(Model):
         self.diagnostics = kwargs.get('diagnostics', None)
         self.description = kwargs.get('description', None)
         self.replica_count = kwargs.get('replica_count', None)
+        self.execution_policy = kwargs.get('execution_policy', None)
         self.auto_scaling_policies = kwargs.get('auto_scaling_policies', None)
         self.status = None
         self.status_details = None
         self.health_state = None
         self.unhealthy_evaluation = None
         self.identity_refs = kwargs.get('identity_refs', None)
+        self.dns_name = kwargs.get('dns_name', None)
 
 
 class ServicesHealthEvaluation(HealthEvaluation):
@@ -19209,6 +19693,14 @@ class ServiceUpdateDescription(Model):
      value is 512.
      - ScalingPolicy - Indicates the ScalingPolicies property is set. The value
      is 1024.
+     - ServicePlacementTimeLimit - Indicates the ServicePlacementTimeLimit
+     property is set. The value is 2048.
+     - MinInstanceCount - Indicates the MinInstanceCount property is set. The
+     value is 4096.
+     - MinInstancePercentage - Indicates the MinInstancePercentage property is
+     set. The value is 8192.
+     - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 16384.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -19226,7 +19718,7 @@ class ServiceUpdateDescription(Model):
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+     include: 'Zero', 'Low', 'Medium', 'High', 'VeryHigh'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
@@ -19266,24 +19758,58 @@ class ServiceUpdateDescription(Model):
         self.service_kind = None
 
 
+class ServiceUpgradeProgress(Model):
+    """Information about how many replicas are completed or pending for a specific
+    service during upgrade.
+
+    :param service_name: Name of the Service resource.
+    :type service_name: str
+    :param completed_replica_count: The number of replicas that completes the
+     upgrade in the service.
+    :type completed_replica_count: str
+    :param pending_replica_count: The number of replicas that are waiting to
+     be upgraded in the service.
+    :type pending_replica_count: str
+    """
+
+    _attribute_map = {
+        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        'completed_replica_count': {'key': 'CompletedReplicaCount', 'type': 'str'},
+        'pending_replica_count': {'key': 'PendingReplicaCount', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServiceUpgradeProgress, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.completed_replica_count = kwargs.get('completed_replica_count', None)
+        self.pending_replica_count = kwargs.get('pending_replica_count', None)
+
+
 class Setting(Model):
     """Describes a setting for the container. The setting file path can be fetched
     from environment variable "Fabric_SettingPath". The path for Windows
     container is "C:\\secrets". The path for Linux container is "/var/secrets".
 
+    :param type: The type of the setting being given in value. Possible values
+     include: 'ClearText', 'KeyVaultReference', 'SecretValueReference'. Default
+     value: "ClearText" .
+    :type type: str or ~azure.servicefabric.models.SettingType
     :param name: The name of the setting.
     :type name: str
-    :param value: The value of the setting.
+    :param value: The value of the setting, will be processed based on the
+     type provided.
     :type value: str
     """
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Setting, self).__init__(**kwargs)
+        self.type = kwargs.get('type', "ClearText")
         self.name = kwargs.get('name', None)
         self.value = kwargs.get('value', None)
 
@@ -19396,6 +19922,18 @@ class StartClusterUpgradeDescription(Model):
      children entities.
     :type application_health_policy_map:
      ~azure.servicefabric.models.ApplicationHealthPolicies
+    :param instance_close_delay_duration_in_seconds: Duration in seconds, to
+     wait before a stateless instance is closed, to allow the active requests
+     to drain gracefully. This would be effective when the instance is closing
+     during the application/cluster
+     upgrade, only for those instances which have a non-zero delay duration
+     configured in the service description. See
+     InstanceCloseDelayDurationSeconds property in $ref:
+     "#/definitions/StatelessServiceDescription.yaml" for details.
+     Note, the default value of InstanceCloseDelayDurationInSeconds is
+     4294967295, which indicates that the behavior will entirely depend on the
+     delay configured in the stateless service description.
+    :type instance_close_delay_duration_in_seconds: long
     """
 
     _attribute_map = {
@@ -19411,6 +19949,7 @@ class StartClusterUpgradeDescription(Model):
         'enable_delta_health_evaluation': {'key': 'EnableDeltaHealthEvaluation', 'type': 'bool'},
         'cluster_upgrade_health_policy': {'key': 'ClusterUpgradeHealthPolicy', 'type': 'ClusterUpgradeHealthPolicyObject'},
         'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicies'},
+        'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -19427,6 +19966,7 @@ class StartClusterUpgradeDescription(Model):
         self.enable_delta_health_evaluation = kwargs.get('enable_delta_health_evaluation', None)
         self.cluster_upgrade_health_policy = kwargs.get('cluster_upgrade_health_policy', None)
         self.application_health_policy_map = kwargs.get('application_health_policy_map', None)
+        self.instance_close_delay_duration_in_seconds = kwargs.get('instance_close_delay_duration_in_seconds', None)
 
 
 class StartedChaosEvent(ChaosEvent):
@@ -19703,7 +20243,7 @@ class StatefulServiceDescription(ServiceDescription):
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+     include: 'Zero', 'Low', 'Medium', 'High', 'VeryHigh'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
@@ -19746,6 +20286,8 @@ class StatefulServiceDescription(ServiceDescription):
      is set. The value is 2.
      - StandByReplicaKeepDuration - Indicates the StandByReplicaKeepDuration
      property is set. The value is 4.
+     - ServicePlacementTimeLimit - Indicates the ServicePlacementTimeLimit
+     property is set. The value is 8.
     :type flags: int
     :param replica_restart_wait_duration_seconds: The duration, in seconds,
      between when a replica goes down and when a new replica is created.
@@ -19756,6 +20298,9 @@ class StatefulServiceDescription(ServiceDescription):
     :param stand_by_replica_keep_duration_seconds: The definition on how long
      StandBy replicas should be maintained before being removed.
     :type stand_by_replica_keep_duration_seconds: long
+    :param service_placement_time_limit_seconds: The duration for which
+     replicas can stay InBuild before reporting that build is stuck.
+    :type service_placement_time_limit_seconds: long
     """
 
     _validation = {
@@ -19769,6 +20314,7 @@ class StatefulServiceDescription(ServiceDescription):
         'replica_restart_wait_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
         'quorum_loss_wait_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
         'stand_by_replica_keep_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
+        'service_placement_time_limit_seconds': {'maximum': 4294967295, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -19794,6 +20340,7 @@ class StatefulServiceDescription(ServiceDescription):
         'replica_restart_wait_duration_seconds': {'key': 'ReplicaRestartWaitDurationSeconds', 'type': 'long'},
         'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'long'},
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'long'},
+        'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -19805,6 +20352,7 @@ class StatefulServiceDescription(ServiceDescription):
         self.replica_restart_wait_duration_seconds = kwargs.get('replica_restart_wait_duration_seconds', None)
         self.quorum_loss_wait_duration_seconds = kwargs.get('quorum_loss_wait_duration_seconds', None)
         self.stand_by_replica_keep_duration_seconds = kwargs.get('stand_by_replica_keep_duration_seconds', None)
+        self.service_placement_time_limit_seconds = kwargs.get('service_placement_time_limit_seconds', None)
         self.service_kind = 'Stateful'
 
 
@@ -20182,6 +20730,14 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
      value is 512.
      - ScalingPolicy - Indicates the ScalingPolicies property is set. The value
      is 1024.
+     - ServicePlacementTimeLimit - Indicates the ServicePlacementTimeLimit
+     property is set. The value is 2048.
+     - MinInstanceCount - Indicates the MinInstanceCount property is set. The
+     value is 4096.
+     - MinInstancePercentage - Indicates the MinInstancePercentage property is
+     set. The value is 8192.
+     - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 16384.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -20199,7 +20755,7 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+     include: 'Zero', 'Low', 'Medium', 'High', 'VeryHigh'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
@@ -20219,6 +20775,9 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     :param stand_by_replica_keep_duration_seconds: The definition on how long
      StandBy replicas should be maintained before being removed.
     :type stand_by_replica_keep_duration_seconds: str
+    :param service_placement_time_limit_seconds: The duration for which
+     replicas can stay InBuild before reporting that build is stuck.
+    :type service_placement_time_limit_seconds: str
     """
 
     _validation = {
@@ -20241,6 +20800,7 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         'replica_restart_wait_duration_seconds': {'key': 'ReplicaRestartWaitDurationSeconds', 'type': 'str'},
         'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'str'},
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'str'},
+        'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -20250,6 +20810,7 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         self.replica_restart_wait_duration_seconds = kwargs.get('replica_restart_wait_duration_seconds', None)
         self.quorum_loss_wait_duration_seconds = kwargs.get('quorum_loss_wait_duration_seconds', None)
         self.stand_by_replica_keep_duration_seconds = kwargs.get('stand_by_replica_keep_duration_seconds', None)
+        self.service_placement_time_limit_seconds = kwargs.get('service_placement_time_limit_seconds', None)
         self.service_kind = 'Stateful'
 
 
@@ -20485,7 +21046,7 @@ class StatelessServiceDescription(ServiceDescription):
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+     include: 'Zero', 'Low', 'Medium', 'High', 'VeryHigh'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
@@ -20505,6 +21066,56 @@ class StatelessServiceDescription(ServiceDescription):
     :type service_kind: str
     :param instance_count: Required. The instance count.
     :type instance_count: int
+    :param min_instance_count: MinInstanceCount is the minimum number of
+     instances that must be up to meet the EnsureAvailability safety check
+     during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ).
+     Note, if InstanceCount is set to -1, during MinInstanceCount computation
+     -1 is first converted into the number of nodes on which the instances are
+     allowed to be placed according to the placement constraints on the
+     service.
+    :type min_instance_count: int
+    :param min_instance_percentage: MinInstancePercentage is the minimum
+     percentage of InstanceCount that must be up to meet the EnsureAvailability
+     safety check during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ).
+     Note, if InstanceCount is set to -1, during MinInstancePercentage
+     computation, -1 is first converted into the number of nodes on which the
+     instances are allowed to be placed according to the placement constraints
+     on the service.
+    :type min_instance_percentage: int
+    :param flags: Flags indicating whether other properties are set. Each of
+     the associated properties corresponds to a flag, specified below, which,
+     if set, indicate that the property is specified.
+     This property can be a combination of those flags obtained using bitwise
+     'OR' operator.
+     For example, if the provided value is 1 then the flags for
+     InstanceCloseDelayDuration is set.
+     - None - Does not indicate any other properties are set. The value is
+     zero.
+     - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 1.
+    :type flags: int
+    :param instance_close_delay_duration_seconds: Duration in seconds, to wait
+     before a stateless instance is closed, to allow the active requests to
+     drain gracefully. This would be effective when the instance is closing
+     during the application/cluster upgrade and disabling node.
+     The endpoint exposed on this instance is removed prior to starting the
+     delay, which prevents new connections to this instance.
+     In addition, clients that have subscribed to service endpoint change
+     events(https://docs.microsoft.com/en-us/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
+     can do
+     the following upon receiving the endpoint removal notification:
+     - Stop sending new requests to this instance.
+     - Close existing connections after in-flight requests have completed.
+     - Connect to a different instance of the service partition for future
+     requests.
+     Note, the default value of InstanceCloseDelayDuration is 0, which
+     indicates that there won't be any delay or removal of the endpoint prior
+     to closing the instance.
+    :type instance_close_delay_duration_seconds: long
     """
 
     _validation = {
@@ -20513,6 +21124,7 @@ class StatelessServiceDescription(ServiceDescription):
         'partition_description': {'required': True},
         'service_kind': {'required': True},
         'instance_count': {'required': True, 'minimum': -1},
+        'instance_close_delay_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -20532,11 +21144,19 @@ class StatelessServiceDescription(ServiceDescription):
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'int'},
+        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
+        'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
+        'flags': {'key': 'Flags', 'type': 'int'},
+        'instance_close_delay_duration_seconds': {'key': 'InstanceCloseDelayDurationSeconds', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
         super(StatelessServiceDescription, self).__init__(**kwargs)
         self.instance_count = kwargs.get('instance_count', None)
+        self.min_instance_count = kwargs.get('min_instance_count', None)
+        self.min_instance_percentage = kwargs.get('min_instance_percentage', None)
+        self.flags = kwargs.get('flags', None)
+        self.instance_close_delay_duration_seconds = kwargs.get('instance_close_delay_duration_seconds', None)
         self.service_kind = 'Stateless'
 
 
@@ -20763,6 +21383,26 @@ class StatelessServicePartitionInfo(ServicePartitionInfo):
     :type service_kind: str
     :param instance_count: Number of instances of this partition.
     :type instance_count: long
+    :param min_instance_count: MinInstanceCount is the minimum number of
+     instances that must be up to meet the EnsureAvailability safety check
+     during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ).
+     Note, if InstanceCount is set to -1, during MinInstanceCount computation
+     -1 is first converted into the number of nodes on which the instances are
+     allowed to be placed according to the placement constraints on the
+     service.
+    :type min_instance_count: int
+    :param min_instance_percentage: MinInstancePercentage is the minimum
+     percentage of InstanceCount that must be up to meet the EnsureAvailability
+     safety check during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ).
+     Note, if InstanceCount is set to -1, during MinInstancePercentage
+     computation, -1 is first converted into the number of nodes on which the
+     instances are allowed to be placed according to the placement constraints
+     on the service.
+    :type min_instance_percentage: int
     """
 
     _validation = {
@@ -20775,11 +21415,15 @@ class StatelessServicePartitionInfo(ServicePartitionInfo):
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'long'},
+        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
+        'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(StatelessServicePartitionInfo, self).__init__(**kwargs)
         self.instance_count = kwargs.get('instance_count', None)
+        self.min_instance_count = kwargs.get('min_instance_count', None)
+        self.min_instance_percentage = kwargs.get('min_instance_percentage', None)
         self.service_kind = 'Stateless'
 
 
@@ -20877,6 +21521,14 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      value is 512.
      - ScalingPolicy - Indicates the ScalingPolicies property is set. The value
      is 1024.
+     - ServicePlacementTimeLimit - Indicates the ServicePlacementTimeLimit
+     property is set. The value is 2048.
+     - MinInstanceCount - Indicates the MinInstanceCount property is set. The
+     value is 4096.
+     - MinInstancePercentage - Indicates the MinInstancePercentage property is
+     set. The value is 8192.
+     - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 16384.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -20894,7 +21546,7 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
-     include: 'Zero', 'Low', 'Medium', 'High'
+     include: 'Zero', 'Low', 'Medium', 'High', 'VeryHigh'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
@@ -20903,6 +21555,41 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
     :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int
+    :param min_instance_count: MinInstanceCount is the minimum number of
+     instances that must be up to meet the EnsureAvailability safety check
+     during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ).
+     Note, if InstanceCount is set to -1, during MinInstanceCount computation
+     -1 is first converted into the number of nodes on which the instances are
+     allowed to be placed according to the placement constraints on the
+     service.
+    :type min_instance_count: int
+    :param min_instance_percentage: MinInstancePercentage is the minimum
+     percentage of InstanceCount that must be up to meet the EnsureAvailability
+     safety check during operations like upgrade or deactivate node.
+     The actual number that is used is max( MinInstanceCount, ceil(
+     MinInstancePercentage/100.0 * InstanceCount) ).
+     Note, if InstanceCount is set to -1, during MinInstancePercentage
+     computation, -1 is first converted into the number of nodes on which the
+     instances are allowed to be placed according to the placement constraints
+     on the service.
+    :type min_instance_percentage: int
+    :param instance_close_delay_duration_seconds: Duration in seconds, to wait
+     before a stateless instance is closed, to allow the active requests to
+     drain gracefully. This would be effective when the instance is closing
+     during the application/cluster upgrade and disabling node.
+     The endpoint exposed on this instance is removed prior to starting the
+     delay, which prevents new connections to this instance.
+     In addition, clients that have subscribed to service endpoint change
+     events(https://docs.microsoft.com/en-us/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
+     can do
+     the following upon receiving the endpoint removal notification:
+     - Stop sending new requests to this instance.
+     - Close existing connections after in-flight requests have completed.
+     - Connect to a different instance of the service partition for future
+     requests.
+    :type instance_close_delay_duration_seconds: str
     """
 
     _validation = {
@@ -20920,11 +21607,17 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'int'},
+        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
+        'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
+        'instance_close_delay_duration_seconds': {'key': 'InstanceCloseDelayDurationSeconds', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(StatelessServiceUpdateDescription, self).__init__(**kwargs)
         self.instance_count = kwargs.get('instance_count', None)
+        self.min_instance_count = kwargs.get('min_instance_count', None)
+        self.min_instance_percentage = kwargs.get('min_instance_percentage', None)
+        self.instance_close_delay_duration_seconds = kwargs.get('instance_close_delay_duration_seconds', None)
         self.service_kind = 'Stateless'
 
 
@@ -21672,6 +22365,27 @@ class UploadSessionInfo(Model):
         self.modified_date = kwargs.get('modified_date', None)
         self.file_size = kwargs.get('file_size', None)
         self.expected_ranges = kwargs.get('expected_ranges', None)
+
+
+class UsageInfo(Model):
+    """Information about how much space and how many files in the file system the
+    ImageStore is using in this category.
+
+    :param used_space: the size of all files in this category
+    :type used_space: str
+    :param file_count: the number of all files in this category
+    :type file_count: str
+    """
+
+    _attribute_map = {
+        'used_space': {'key': 'UsedSpace', 'type': 'str'},
+        'file_count': {'key': 'FileCount', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UsageInfo, self).__init__(**kwargs)
+        self.used_space = kwargs.get('used_space', None)
+        self.file_count = kwargs.get('file_count', None)
 
 
 class ValidationFailedChaosEvent(ChaosEvent):
