@@ -45,6 +45,7 @@ class AbstractPreparer(object):
                             resource_name,
                             **kwargs
                         )
+                        break
                     except BadNameError:
                         if i == retries - 1:
                             raise

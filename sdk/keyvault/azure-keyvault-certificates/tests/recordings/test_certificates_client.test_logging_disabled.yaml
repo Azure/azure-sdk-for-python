@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b6 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vault.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
+    uri: https://vaultname.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
@@ -17,7 +17,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['87']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 04 Dec 2019 20:02:50 GMT']
+      date: ['Fri, 06 Dec 2019 23:57:22 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -41,14 +41,14 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b6 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: PUT
-    uri: https://vault.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
+    uri: https://vaultname.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
-    body: {string: '{"id":"https://vault.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1575489771,"updated":1575489771}}'}
+    body: {string: '{"id":"https://vaultname.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1575676643,"updated":1575676643}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['178']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 04 Dec 2019 20:02:51 GMT']
+      date: ['Fri, 06 Dec 2019 23:57:23 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
