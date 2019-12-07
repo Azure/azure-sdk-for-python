@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.3.0 (2019-12-07)
+++++++++++++++++++
+
+**Features**
+
+- Model ClusterGetProperties has a new parameter kafka_rest_properties
+- Model ClusterCreateProperties has a new parameter kafka_rest_properties
+
 1.2.0 (2019-08-06)
 ++++++++++++++++++
 
