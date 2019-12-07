@@ -1137,7 +1137,7 @@ class SqlResourcesOperations(object):
         deserialized = models.SqlStoredProcedureGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_sql_stored_procedures.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures/'}
+    list_sql_stored_procedures.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures'}
 
     def get_sql_stored_procedure(
             self, resource_group_name, account_name, database_name, container_name, stored_procedure_name, custom_headers=None, raw=False, **operation_config):
@@ -1493,7 +1493,7 @@ class SqlResourcesOperations(object):
         deserialized = models.SqlUserDefinedFunctionGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_sql_user_defined_functions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions/'}
+    list_sql_user_defined_functions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions'}
 
     def get_sql_user_defined_function(
             self, resource_group_name, account_name, database_name, container_name, user_defined_function_name, custom_headers=None, raw=False, **operation_config):
@@ -1850,7 +1850,7 @@ class SqlResourcesOperations(object):
         deserialized = models.SqlTriggerGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_sql_triggers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers/'}
+    list_sql_triggers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers'}
 
     def get_sql_trigger(
             self, resource_group_name, account_name, database_name, container_name, trigger_name, custom_headers=None, raw=False, **operation_config):
