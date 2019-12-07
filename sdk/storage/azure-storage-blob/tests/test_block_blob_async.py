@@ -642,7 +642,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path.temp.dat'
+        FILE_PATH = 'create_blob_from_path.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -665,7 +665,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
-        FILE_PATH = 'from_path_non_parallel.temp.dat'
+        FILE_PATH = 'from_path_non_parallel.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -687,7 +687,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        FILE_PATH = 'non_parallel_with_standard_blob_tier.temp.dat'
+        FILE_PATH = 'non_parallel_with_standard_blob_tier.temp.{}.dat.format(str(uuid.uuid4()))'
         data = self.get_random_bytes(100)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -712,7 +712,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_path_with_progressasync.temp.dat'
+        FILE_PATH = 'blob_from_path_with_progressasync.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -743,7 +743,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path_with_propertiesasync.temp.dat'
+        FILE_PATH = 'create_blob_from_path_with_propertiesasync.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -772,7 +772,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_stream_chunked_uploadasync.temp.dat'
+        FILE_PATH = 'create_blob_from_stream_chunked_uploadasync.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -799,7 +799,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         blob_size = len(data) - 66
-        FILE_PATH = 'create_frm_stream_nonseek_chunk_upload_knwn_sizeasync.temp.dat'
+        FILE_PATH = 'create_frm_stream_nonseek_chunk_upload_knwn_sizeasync.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -823,7 +823,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'strm_nonseek_chunk_upld_unkwn_size_async.temp.dat'
+        FILE_PATH = 'strm_nonseek_chunk_upld_unkwn_size_async.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -847,7 +847,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_stream_with_progress_chunked_upload.temp.dat'
+        FILE_PATH = 'from_stream_with_progress_chunked_upload.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -878,7 +878,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_stream_chunked_upload_with.temp.dat'
+        FILE_PATH = 'blob_from_stream_chunked_upload_with.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -902,7 +902,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_frm_stream_chu_upld_with_count.temp.dat'
+        FILE_PATH = '_frm_stream_chu_upld_with_count.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -932,7 +932,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_from_stream_chunked_upload_with_propert.temp.dat'
+        FILE_PATH = '_from_stream_chunked_upload_with_propert.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -961,7 +961,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'tream_chunked_upload_with_properti.temp.dat'
+        FILE_PATH = 'tream_chunked_upload_with_properti.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_tier = StandardBlobTier.Cool

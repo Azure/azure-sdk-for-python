@@ -151,7 +151,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'large_blob_from_path.temp.dat'
+        FILE_PATH = 'large_blob_from_path.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -242,7 +242,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'blob_from_path_with_properties.temp.dat'
+        FILE_PATH = 'blob_from_path_with_properties.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -269,7 +269,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'blob_from_stream_chunked_upload.temp.dat'
+        FILE_PATH = 'blob_from_stream_chunked_upload.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -290,7 +290,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'stream_w_progress_chnkd_upload.temp.dat'
+        FILE_PATH = 'stream_w_progress_chnkd_upload.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -318,7 +318,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'chunked_upload_with_count.temp.dat'
+        FILE_PATH = 'chunked_upload_with_count.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -340,7 +340,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'plod_w_count_n_props.temp.dat'
+        FILE_PATH = 'plod_w_count_n_props.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -369,7 +369,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'creat_lrg_blob.temp.dat'
+        FILE_PATH = 'creat_lrg_blob.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 

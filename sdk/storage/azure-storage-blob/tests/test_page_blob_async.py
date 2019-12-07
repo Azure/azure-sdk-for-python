@@ -1256,7 +1256,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_p.temp.dat'
+        FILE_PATH = 'create_blob_from_p.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1281,7 +1281,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path_with_p.temp.dat'
+        FILE_PATH = 'create_blob_from_path_with_p.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1311,7 +1311,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_create_blob_from_s.temp.dat'
+        FILE_PATH = '_create_blob_from_s.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1340,7 +1340,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         data = bytearray(LARGE_BLOB_SIZE)
         data[512: 1024] = self.get_random_bytes(512)
         data[8192: 8196] = self.get_random_bytes(4)
-        FILE_PATH = '_with_empty_pages.temp.dat'
+        FILE_PATH = '_with_empty_pages.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1374,7 +1374,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_stream_non_see.temp.dat'
+        FILE_PATH = 'blob_from_stream_non_see.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1402,7 +1402,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'rom_stream_with_progress.temp.dat'
+        FILE_PATH = 'rom_stream_with_progress.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1434,7 +1434,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_create_blob_from_stream_trunc.temp.dat'
+        FILE_PATH = '_create_blob_from_stream_trunc.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1457,7 +1457,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_stream_with_progress_truncated.temp.dat'
+        FILE_PATH = 'from_stream_with_progress_truncated.temp.{}.dat.format(str(uuid.uuid4()))'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1598,7 +1598,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             # test create_blob_from_path API
             blob3 = self._get_blob_reference(bsc)
             pblob3 = pbs.get_blob_client(container_name, blob3.blob_name)
-            FILE_PATH = 'test_blob_tier_on_creat.temp.dat'
+            FILE_PATH = 'test_blob_tier_on_creat.temp.{}.dat.format(str(uuid.uuid4()))'
             with open(FILE_PATH, 'wb') as stream:
                 stream.write(byte_data)
             with open(FILE_PATH, 'rb') as stream:
