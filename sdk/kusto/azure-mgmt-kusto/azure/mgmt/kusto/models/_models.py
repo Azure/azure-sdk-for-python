@@ -1233,8 +1233,8 @@ class EventGridDataConnection(DataConnection):
     :param data_format: Required. The data format of the message. Optionally
      the data format can be added to each message. Possible values include:
      'MULTIJSON', 'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW',
-     'SINGLEJSON', 'AVRO', 'TSVE'
-    :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+     'SINGLEJSON', 'AVRO', 'TSVE', 'PARQUET'
+    :type data_format: str or ~azure.mgmt.kusto.models.EventGridDataFormat
     """
 
     _validation = {
@@ -1309,9 +1309,12 @@ class EventHubDataConnection(DataConnection):
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
      'AVRO', 'TSVE'
-    :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+    :type data_format: str or ~azure.mgmt.kusto.models.EventHubDataFormat
     :param event_system_properties: System properties of the event hub
     :type event_system_properties: list[str]
+    :param compression: The event hub messages compression type. Possible
+     values include: 'None', 'GZip'
+    :type compression: str or ~azure.mgmt.kusto.models.Compression
     """
 
     _validation = {
@@ -1335,6 +1338,7 @@ class EventHubDataConnection(DataConnection):
         'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
+        'compression': {'key': 'properties.compression', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1345,6 +1349,7 @@ class EventHubDataConnection(DataConnection):
         self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
         self.data_format = kwargs.get('data_format', None)
         self.event_system_properties = kwargs.get('event_system_properties', None)
+        self.compression = kwargs.get('compression', None)
         self.kind = 'EventHub'
 
 
@@ -1493,7 +1498,7 @@ class IotHubDataConnection(DataConnection):
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
      'AVRO', 'TSVE'
-    :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+    :type data_format: str or ~azure.mgmt.kusto.models.IotHubDataFormat
     :param event_system_properties: System properties of the iot hub
     :type event_system_properties: list[str]
     :param shared_access_policy_name: Required. The name of the share access

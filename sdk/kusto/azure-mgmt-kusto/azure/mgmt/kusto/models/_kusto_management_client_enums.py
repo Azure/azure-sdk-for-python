@@ -78,7 +78,7 @@ class PrincipalsModificationKind(str, Enum):
     none = "None"
 
 
-class DataFormat(str, Enum):
+class EventHubDataFormat(str, Enum):
 
     multijson = "MULTIJSON"
     json = "JSON"
@@ -92,6 +92,45 @@ class DataFormat(str, Enum):
     singlejson = "SINGLEJSON"
     avro = "AVRO"
     tsve = "TSVE"
+
+
+class Compression(str, Enum):
+
+    none = "None"
+    gzip = "GZip"
+
+
+class IotHubDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+
+
+class EventGridDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+    parquet = "PARQUET"
 
 
 class IdentityType(str, Enum):
