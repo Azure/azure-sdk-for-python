@@ -372,7 +372,7 @@ class WorkspaceCustomObjectParameter(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The value which should be used for this field.
-    :type value: dict[str, str]
+    :type value: object
     """
 
     _validation = {
@@ -380,7 +380,7 @@ class WorkspaceCustomObjectParameter(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '{str}'},
+        'value': {'key': 'value', 'type': 'object'},
     }
 
     def __init__(self, *, value, **kwargs) -> None:
