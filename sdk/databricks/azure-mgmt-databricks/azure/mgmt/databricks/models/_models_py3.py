@@ -349,6 +349,9 @@ class WorkspaceCustomBooleanParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param type: The type of variable that this is. Possible values include:
+     'Bool', 'Object', 'String'
+    :type type: str or ~azure.mgmt.databricks.models.CustomParameterType
     :param value: Required. The value which should be used for this field.
     :type value: bool
     """
@@ -358,11 +361,13 @@ class WorkspaceCustomBooleanParameter(Model):
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'bool'},
     }
 
-    def __init__(self, *, value: bool, **kwargs) -> None:
+    def __init__(self, *, value: bool, type=None, **kwargs) -> None:
         super(WorkspaceCustomBooleanParameter, self).__init__(**kwargs)
+        self.type = type
         self.value = value
 
 
@@ -371,6 +376,9 @@ class WorkspaceCustomObjectParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param type: The type of variable that this is. Possible values include:
+     'Bool', 'Object', 'String'
+    :type type: str or ~azure.mgmt.databricks.models.CustomParameterType
     :param value: Required. The value which should be used for this field.
     :type value: object
     """
@@ -380,11 +388,13 @@ class WorkspaceCustomObjectParameter(Model):
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'object'},
     }
 
-    def __init__(self, *, value, **kwargs) -> None:
+    def __init__(self, *, value, type=None, **kwargs) -> None:
         super(WorkspaceCustomObjectParameter, self).__init__(**kwargs)
+        self.type = type
         self.value = value
 
 
@@ -474,6 +484,9 @@ class WorkspaceCustomStringParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param type: The type of variable that this is. Possible values include:
+     'Bool', 'Object', 'String'
+    :type type: str or ~azure.mgmt.databricks.models.CustomParameterType
     :param value: Required. The value which should be used for this field.
     :type value: str
     """
@@ -483,11 +496,13 @@ class WorkspaceCustomStringParameter(Model):
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, value: str, **kwargs) -> None:
+    def __init__(self, *, value: str, type=None, **kwargs) -> None:
         super(WorkspaceCustomStringParameter, self).__init__(**kwargs)
+        self.type = type
         self.value = value
 
 

@@ -44,6 +44,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import OperationPaged
 from ._paged_models import WorkspacePaged
 from ._databricks_client_enums import (
+    CustomParameterType,
     ProvisioningState,
 )
 
@@ -65,5 +66,6 @@ __all__ = [
     'WorkspaceUpdate',
     'WorkspacePaged',
     'OperationPaged',
+    'CustomParameterType',
     'ProvisioningState',
 ]

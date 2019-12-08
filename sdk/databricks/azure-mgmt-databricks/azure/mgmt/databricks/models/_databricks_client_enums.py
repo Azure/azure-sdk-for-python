@@ -12,6 +12,13 @@
 from enum import Enum
 
 
+class CustomParameterType(str, Enum):
+
+    bool_enum = "Bool"
+    object_enum = "Object"
+    string = "String"
+
+
 class ProvisioningState(str, Enum):
 
     accepted = "Accepted"
