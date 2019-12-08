@@ -113,7 +113,8 @@ class Metric(Model):
     :type name: ~azure.mgmt.monitor.v2018_01_01.models.LocalizableString
     :param unit: Required. the unit of the metric. Possible values include:
      'Count', 'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond',
-     'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified'
+     'Percent', 'MilliSeconds', 'ByteSeconds', 'Unspecified', 'Cores',
+     'MilliCores', 'NanoCores', 'BitsPerSecond'
     :type unit: str or ~azure.mgmt.monitor.v2018_01_01.models.Unit
     :param timeseries: Required. the time series returned when a data query is
      performed.
@@ -185,7 +186,8 @@ class MetricDefinition(Model):
     :type name: ~azure.mgmt.monitor.v2018_01_01.models.LocalizableString
     :param unit: the unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'CountPerSecond', 'BytesPerSecond', 'Percent',
-     'MilliSeconds', 'ByteSeconds', 'Unspecified'
+     'MilliSeconds', 'ByteSeconds', 'Unspecified', 'Cores', 'MilliCores',
+     'NanoCores', 'BitsPerSecond'
     :type unit: str or ~azure.mgmt.monitor.v2018_01_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value
      defining how to use the values for display. Possible values include:
@@ -253,7 +255,7 @@ class MetricValue(Model):
     :type total: float
     :param count: the number of samples in the time range. Can be used to
      determine the number of values that contributed to the average value.
-    :type count: long
+    :type count: float
     """
 
     _validation = {
@@ -266,7 +268,7 @@ class MetricValue(Model):
         'minimum': {'key': 'minimum', 'type': 'float'},
         'maximum': {'key': 'maximum', 'type': 'float'},
         'total': {'key': 'total', 'type': 'float'},
-        'count': {'key': 'count', 'type': 'long'},
+        'count': {'key': 'count', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):

@@ -1225,3 +1225,35 @@ class WebhookReceiver(Model):
         super(WebhookReceiver, self).__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri
+
+
+class WebtestLocationAvailabilityCriteria(Model):
+    """Specifies the metric alert rule criteria for a web test resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param web_test_id: Required. The web test Id.
+    :type web_test_id: str
+    :param component_id: Required. The Application Insights resource Id.
+    :type component_id: str
+    :param failed_location_count: Required. The number of failed locations.
+    :type failed_location_count: float
+    """
+
+    _validation = {
+        'web_test_id': {'required': True},
+        'component_id': {'required': True},
+        'failed_location_count': {'required': True},
+    }
+
+    _attribute_map = {
+        'web_test_id': {'key': 'webTestId', 'type': 'str'},
+        'component_id': {'key': 'componentId', 'type': 'str'},
+        'failed_location_count': {'key': 'failedLocationCount', 'type': 'float'},
+    }
+
+    def __init__(self, *, web_test_id: str, component_id: str, failed_location_count: float, **kwargs) -> None:
+        super(WebtestLocationAvailabilityCriteria, self).__init__(**kwargs)
+        self.web_test_id = web_test_id
+        self.component_id = component_id
+        self.failed_location_count = failed_location_count
