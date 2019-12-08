@@ -405,7 +405,8 @@ class WorkspaceCustomParameters(Model):
      ~azure.mgmt.databricks.models.WorkspaceCustomStringParameter
     :param custom_private_subnet_name: The name of the Private Subnet within
      the Virtual Network
-    :type custom_private_subnet_name: str
+    :type custom_private_subnet_name:
+     ~azure.mgmt.databricks.models.WorkspaceCustomStringParameter
     :param enable_no_public_ip: Should the Public IP be Disabled?
     :type enable_no_public_ip:
      ~azure.mgmt.databricks.models.WorkspaceCustomBooleanParameter
@@ -441,7 +442,7 @@ class WorkspaceCustomParameters(Model):
         'aml_workspace_id': {'key': 'amlWorkspaceId', 'type': 'WorkspaceCustomStringParameter'},
         'custom_virtual_network_id': {'key': 'customVirtualNetworkId', 'type': 'WorkspaceCustomStringParameter'},
         'custom_public_subnet_name': {'key': 'customPublicSubnetName', 'type': 'WorkspaceCustomStringParameter'},
-        'custom_private_subnet_name': {'key': 'customPrivateSubnetName', 'type': 'str'},
+        'custom_private_subnet_name': {'key': 'customPrivateSubnetName', 'type': 'WorkspaceCustomStringParameter'},
         'enable_no_public_ip': {'key': 'enableNoPublicIp', 'type': 'WorkspaceCustomBooleanParameter'},
         'load_balancer_backend_pool_name': {'key': 'loadBalancerBackendPoolName', 'type': 'WorkspaceCustomStringParameter'},
         'load_balancer_id': {'key': 'loadBalancerId', 'type': 'WorkspaceCustomStringParameter'},
@@ -452,7 +453,7 @@ class WorkspaceCustomParameters(Model):
         'vnet_address_prefix': {'key': 'vnetAddressPrefix', 'type': 'WorkspaceCustomStringParameter'},
     }
 
-    def __init__(self, *, aml_workspace_id=None, custom_virtual_network_id=None, custom_public_subnet_name=None, custom_private_subnet_name: str=None, enable_no_public_ip=None, load_balancer_backend_pool_name=None, load_balancer_id=None, relay_namespace_name=None, storage_account_name=None, storage_account_sku_name=None, resource_tags=None, vnet_address_prefix=None, **kwargs) -> None:
+    def __init__(self, *, aml_workspace_id=None, custom_virtual_network_id=None, custom_public_subnet_name=None, custom_private_subnet_name=None, enable_no_public_ip=None, load_balancer_backend_pool_name=None, load_balancer_id=None, relay_namespace_name=None, storage_account_name=None, storage_account_sku_name=None, resource_tags=None, vnet_address_prefix=None, **kwargs) -> None:
         super(WorkspaceCustomParameters, self).__init__(**kwargs)
         self.aml_workspace_id = aml_workspace_id
         self.custom_virtual_network_id = custom_virtual_network_id

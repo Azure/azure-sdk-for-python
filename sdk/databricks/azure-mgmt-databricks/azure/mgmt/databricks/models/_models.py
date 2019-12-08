@@ -405,7 +405,8 @@ class WorkspaceCustomParameters(Model):
      ~azure.mgmt.databricks.models.WorkspaceCustomStringParameter
     :param custom_private_subnet_name: The name of the Private Subnet within
      the Virtual Network
-    :type custom_private_subnet_name: str
+    :type custom_private_subnet_name:
+     ~azure.mgmt.databricks.models.WorkspaceCustomStringParameter
     :param enable_no_public_ip: Should the Public IP be Disabled?
     :type enable_no_public_ip:
      ~azure.mgmt.databricks.models.WorkspaceCustomBooleanParameter
@@ -441,7 +442,7 @@ class WorkspaceCustomParameters(Model):
         'aml_workspace_id': {'key': 'amlWorkspaceId', 'type': 'WorkspaceCustomStringParameter'},
         'custom_virtual_network_id': {'key': 'customVirtualNetworkId', 'type': 'WorkspaceCustomStringParameter'},
         'custom_public_subnet_name': {'key': 'customPublicSubnetName', 'type': 'WorkspaceCustomStringParameter'},
-        'custom_private_subnet_name': {'key': 'customPrivateSubnetName', 'type': 'str'},
+        'custom_private_subnet_name': {'key': 'customPrivateSubnetName', 'type': 'WorkspaceCustomStringParameter'},
         'enable_no_public_ip': {'key': 'enableNoPublicIp', 'type': 'WorkspaceCustomBooleanParameter'},
         'load_balancer_backend_pool_name': {'key': 'loadBalancerBackendPoolName', 'type': 'WorkspaceCustomStringParameter'},
         'load_balancer_id': {'key': 'loadBalancerId', 'type': 'WorkspaceCustomStringParameter'},
