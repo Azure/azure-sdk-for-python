@@ -20,8 +20,11 @@ from ._orders_operations import OrdersOperations
 from ._roles_operations import RolesOperations
 from ._shares_operations import SharesOperations
 from ._storage_account_credentials_operations import StorageAccountCredentialsOperations
+from ._storage_accounts_operations import StorageAccountsOperations
+from ._containers_operations import ContainersOperations
 from ._triggers_operations import TriggersOperations
 from ._users_operations import UsersOperations
+from ._skus_operations import SkusOperations
 
 __all__ = [
     'Operations',
@@ -35,6 +38,9 @@ __all__ = [
     'RolesOperations',
     'SharesOperations',
     'StorageAccountCredentialsOperations',
+    'StorageAccountsOperations',
+    'ContainersOperations',
     'TriggersOperations',
     'UsersOperations',
+    'SkusOperations',
 ]

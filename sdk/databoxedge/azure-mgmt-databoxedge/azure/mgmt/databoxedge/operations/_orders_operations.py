@@ -27,7 +27,7 @@ class OrdersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2019-07-01".
+    :ivar api_version: The API version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class OrdersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -229,7 +229,7 @@ class OrdersOperations(object):
             self, device_name, order, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an order.
 
-        :param device_name: The device name.
+        :param device_name: The order details of a device.
         :type device_name: str
         :param order: The order to be created or updated.
         :type order: ~azure.mgmt.databoxedge.models.Order
