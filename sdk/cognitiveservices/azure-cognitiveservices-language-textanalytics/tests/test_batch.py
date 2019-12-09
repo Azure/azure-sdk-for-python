@@ -414,10 +414,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         def callback(response):
             self.assertIsNotNone(response.model_version)
             self.assertIsNotNone(response.raw_response)
-            self.assertEqual(response.statistics.documents_count, 5)
-            self.assertEqual(response.statistics.transactions_count, 4)
-            self.assertEqual(response.statistics.valid_documents_count, 4)
-            self.assertEqual(response.statistics.erroneous_documents_count, 1)
+            self.assertEqual(response.statistics.document_count, 5)
+            self.assertEqual(response.statistics.transaction_count, 4)
+            self.assertEqual(response.statistics.valid_document_count, 4)
+            self.assertEqual(response.statistics.erroneous_document_count, 1)
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},

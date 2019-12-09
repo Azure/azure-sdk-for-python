@@ -309,25 +309,25 @@ class DocumentStatistics(DictMixin):
     """If showStats=true was specified in the request this field will contain
     information about the document payload.
 
-    :param characters_count: Number of text elements recognized in
+    :param character_count: Number of text elements recognized in
      the document.
-    :type characters_count: int
-    :param transactions_count: Number of transactions for the
+    :type character_count: int
+    :param transaction_count: Number of transactions for the
      document.
-    :type transactions_count: int
+    :type transaction_count: int
     """
 
     def __init__(self, **kwargs):
-        self.characters_count = kwargs.get("characters_count", None)
-        self.transactions_count = kwargs.get("transactions_count", None)
+        self.character_count = kwargs.get("character_count", None)
+        self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
     def _from_generated(cls, stats):
         if stats is None:
             return None
         return cls(
-            characters_count=stats.characters_count,
-            transactions_count=stats.transactions_count,
+            character_count=stats.characters_count,
+            transaction_count=stats.transactions_count,
         )
 
 
@@ -468,33 +468,33 @@ class RequestStatistics(DictMixin):
     information about the request payload. Note: This object is not returned
     in the response and needs to be retrieved by a response hook.
 
-    :param documents_count: Number of documents submitted in the request.
-    :type documents_count: int
-    :param valid_documents_count: Number of valid documents. This
+    :param document_count: Number of documents submitted in the request.
+    :type document_count: int
+    :param valid_document_count: Number of valid documents. This
      excludes empty, over-size limit or non-supported languages documents.
-    :type valid_documents_count: int
-    :param erroneous_documents_count: Number of invalid documents.
+    :type valid_document_count: int
+    :param erroneous_document_count: Number of invalid documents.
      This includes empty, over-size limit or non-supported languages documents.
-    :type erroneous_documents_count: int
-    :param transactions_count: Number of transactions for the request.
-    :type transactions_count: long
+    :type erroneous_document_count: int
+    :param transaction_count: Number of transactions for the request.
+    :type transaction_count: long
     """
 
     def __init__(self, **kwargs):
-        self.documents_count = kwargs.get("documents_count", None)
-        self.valid_documents_count = kwargs.get("valid_documents_count", None)
-        self.erroneous_documents_count = kwargs.get("erroneous_documents_count", None)
-        self.transactions_count = kwargs.get("transactions_count", None)
+        self.document_count = kwargs.get("document_count", None)
+        self.valid_document_count = kwargs.get("valid_document_count", None)
+        self.erroneous_document_count = kwargs.get("erroneous_document_count", None)
+        self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
     def _from_generated(cls, statistics):
         if statistics is None:
             return None
         return cls(
-            documents_count=statistics["documentsCount"],
-            valid_documents_count=statistics["validDocumentsCount"],
-            erroneous_documents_count=statistics["erroneousDocumentsCount"],
-            transactions_count=statistics["transactionsCount"],
+            document_count=statistics["documentsCount"],
+            valid_document_count=statistics["validDocumentsCount"],
+            erroneous_document_count=statistics["erroneousDocumentsCount"],
+            transaction_count=statistics["transactionsCount"],
         )
 
 
