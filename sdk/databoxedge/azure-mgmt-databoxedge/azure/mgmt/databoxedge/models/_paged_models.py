@@ -129,6 +129,32 @@ class StorageAccountCredentialPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(StorageAccountCredentialPaged, self).__init__(*args, **kwargs)
+class StorageAccountPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`StorageAccount <azure.mgmt.databoxedge.models.StorageAccount>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StorageAccount]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StorageAccountPaged, self).__init__(*args, **kwargs)
+class ContainerPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Container <azure.mgmt.databoxedge.models.Container>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Container]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ContainerPaged, self).__init__(*args, **kwargs)
 class TriggerPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Trigger <azure.mgmt.databoxedge.models.Trigger>` object
@@ -155,3 +181,16 @@ class UserPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(UserPaged, self).__init__(*args, **kwargs)
+class ResourceTypeSkuPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ResourceTypeSku <azure.mgmt.databoxedge.models.ResourceTypeSku>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceTypeSku]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceTypeSkuPaged, self).__init__(*args, **kwargs)

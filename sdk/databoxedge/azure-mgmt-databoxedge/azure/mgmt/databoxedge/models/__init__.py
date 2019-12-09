@@ -20,6 +20,7 @@ try:
     from ._models_py3 import BandwidthSchedule
     from ._models_py3 import ClientAccessRight
     from ._models_py3 import ContactDetails
+    from ._models_py3 import Container
     from ._models_py3 import DataBoxEdgeDevice
     from ._models_py3 import DataBoxEdgeDeviceExtendedInfo
     from ._models_py3 import DataBoxEdgeDevicePatch
@@ -46,6 +47,7 @@ try:
     from ._models_py3 import PeriodicTimerEventTrigger
     from ._models_py3 import PeriodicTimerSourceInfo
     from ._models_py3 import RefreshDetails
+    from ._models_py3 import ResourceTypeSku
     from ._models_py3 import Role
     from ._models_py3 import RoleSinkInfo
     from ._models_py3 import SecuritySettings
@@ -53,6 +55,11 @@ try:
     from ._models_py3 import Share
     from ._models_py3 import ShareAccessRight
     from ._models_py3 import Sku
+    from ._models_py3 import SkuCost
+    from ._models_py3 import SkuLocationInfo
+    from ._models_py3 import SkuRestriction
+    from ._models_py3 import SkuRestrictionInfo
+    from ._models_py3 import StorageAccount
     from ._models_py3 import StorageAccountCredential
     from ._models_py3 import SymmetricKey
     from ._models_py3 import TrackingInfo
@@ -75,6 +82,7 @@ except (SyntaxError, ImportError):
     from ._models import BandwidthSchedule
     from ._models import ClientAccessRight
     from ._models import ContactDetails
+    from ._models import Container
     from ._models import DataBoxEdgeDevice
     from ._models import DataBoxEdgeDeviceExtendedInfo
     from ._models import DataBoxEdgeDevicePatch
@@ -101,6 +109,7 @@ except (SyntaxError, ImportError):
     from ._models import PeriodicTimerEventTrigger
     from ._models import PeriodicTimerSourceInfo
     from ._models import RefreshDetails
+    from ._models import ResourceTypeSku
     from ._models import Role
     from ._models import RoleSinkInfo
     from ._models import SecuritySettings
@@ -108,6 +117,11 @@ except (SyntaxError, ImportError):
     from ._models import Share
     from ._models import ShareAccessRight
     from ._models import Sku
+    from ._models import SkuCost
+    from ._models import SkuLocationInfo
+    from ._models import SkuRestriction
+    from ._models import SkuRestrictionInfo
+    from ._models import StorageAccount
     from ._models import StorageAccountCredential
     from ._models import SymmetricKey
     from ._models import TrackingInfo
@@ -121,13 +135,16 @@ except (SyntaxError, ImportError):
     from ._models import UserAccessRight
 from ._paged_models import AlertPaged
 from ._paged_models import BandwidthSchedulePaged
+from ._paged_models import ContainerPaged
 from ._paged_models import DataBoxEdgeDevicePaged
 from ._paged_models import NodePaged
 from ._paged_models import OperationPaged
 from ._paged_models import OrderPaged
+from ._paged_models import ResourceTypeSkuPaged
 from ._paged_models import RolePaged
 from ._paged_models import SharePaged
 from ._paged_models import StorageAccountCredentialPaged
+from ._paged_models import StorageAccountPaged
 from ._paged_models import TriggerPaged
 from ._paged_models import UserPaged
 from ._data_box_edge_management_client_enums import (
@@ -136,6 +153,7 @@ from ._data_box_edge_management_client_enums import (
     AzureContainerDataFormat,
     DayOfWeek,
     ClientPermissionType,
+    ContainerStatus,
     SkuName,
     SkuTier,
     DataBoxEdgeDeviceStatus,
@@ -158,15 +176,18 @@ from ._data_box_edge_management_client_enums import (
     NodeStatus,
     OrderState,
     AuthenticationType,
+    SkuRestrictionReasonCode,
     ShareStatus,
     MonitoringStatus,
     ShareAccessProtocol,
     ShareAccessType,
     DataPolicy,
+    StorageAccountStatus,
     SSLStatus,
     AccountType,
     InstallRebootBehavior,
     UpdateOperation,
+    UserType,
 )
 
 __all__ = [
@@ -180,6 +201,7 @@ __all__ = [
     'BandwidthSchedule',
     'ClientAccessRight',
     'ContactDetails',
+    'Container',
     'DataBoxEdgeDevice',
     'DataBoxEdgeDeviceExtendedInfo',
     'DataBoxEdgeDevicePatch',
@@ -206,6 +228,7 @@ __all__ = [
     'PeriodicTimerEventTrigger',
     'PeriodicTimerSourceInfo',
     'RefreshDetails',
+    'ResourceTypeSku',
     'Role',
     'RoleSinkInfo',
     'SecuritySettings',
@@ -213,6 +236,11 @@ __all__ = [
     'Share',
     'ShareAccessRight',
     'Sku',
+    'SkuCost',
+    'SkuLocationInfo',
+    'SkuRestriction',
+    'SkuRestrictionInfo',
+    'StorageAccount',
     'StorageAccountCredential',
     'SymmetricKey',
     'TrackingInfo',
@@ -233,13 +261,17 @@ __all__ = [
     'RolePaged',
     'SharePaged',
     'StorageAccountCredentialPaged',
+    'StorageAccountPaged',
+    'ContainerPaged',
     'TriggerPaged',
     'UserPaged',
+    'ResourceTypeSkuPaged',
     'AlertSeverity',
     'EncryptionAlgorithm',
     'AzureContainerDataFormat',
     'DayOfWeek',
     'ClientPermissionType',
+    'ContainerStatus',
     'SkuName',
     'SkuTier',
     'DataBoxEdgeDeviceStatus',
@@ -262,13 +294,16 @@ __all__ = [
     'NodeStatus',
     'OrderState',
     'AuthenticationType',
+    'SkuRestrictionReasonCode',
     'ShareStatus',
     'MonitoringStatus',
     'ShareAccessProtocol',
     'ShareAccessType',
     'DataPolicy',
+    'StorageAccountStatus',
     'SSLStatus',
     'AccountType',
     'InstallRebootBehavior',
     'UpdateOperation',
+    'UserType',
 ]

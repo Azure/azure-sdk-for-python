@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class TriggersOperations(object):
-    """TriggersOperations operations.
+class ContainersOperations(object):
+    """ContainersOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -41,33 +41,34 @@ class TriggersOperations(object):
 
         self.config = config
 
-    def list_by_data_box_edge_device(
-            self, device_name, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all the triggers configured in the device.
+    def list_by_storage_account(
+            self, device_name, storage_account_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all the containers of a storage Account in a Data Box Edge/Data
+        Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
+        :param storage_account_name: The storage Account name.
+        :type storage_account_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
-        :param filter: Specify $filter='CustomContextTag eq <tag>' to filter
-         on custom context tag property
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Trigger
+        :return: An iterator like instance of Container
         :rtype:
-         ~azure.mgmt.databoxedge.models.TriggerPaged[~azure.mgmt.databoxedge.models.Trigger]
+         ~azure.mgmt.databoxedge.models.ContainerPaged[~azure.mgmt.databoxedge.models.Container]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_data_box_edge_device.metadata['url']
+                url = self.list_by_storage_account.metadata['url']
                 path_format_arguments = {
                     'deviceName': self._serialize.url("device_name", device_name, 'str'),
+                    'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
                 }
@@ -76,8 +77,6 @@ class TriggersOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -113,19 +112,21 @@ class TriggersOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.TriggerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_data_box_edge_device.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/triggers'}
+    list_by_storage_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/storageAccounts/{storageAccountName}/containers'}
 
     def get(
-            self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get a specific trigger by name.
+            self, device_name, storage_account_name, container_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a container by name.
 
         :param device_name: The device name.
         :type device_name: str
-        :param name: The trigger name.
-        :type name: str
+        :param storage_account_name: The Storage Account Name
+        :type storage_account_name: str
+        :param container_name: The container Name
+        :type container_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -133,8 +134,8 @@ class TriggersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Trigger or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.databoxedge.models.Trigger or
+        :return: Container or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.databoxedge.models.Container or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -142,7 +143,8 @@ class TriggersOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
         }
@@ -173,23 +175,24 @@ class TriggersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Trigger', response)
+            deserialized = self._deserialize('Container', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/triggers/{name}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/storageAccounts/{storageAccountName}/containers/{containerName}'}
 
 
     def _create_or_update_initial(
-            self, device_name, name, trigger, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, device_name, storage_account_name, container_name, container, resource_group_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
         }
@@ -211,7 +214,7 @@ class TriggersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(trigger, 'Trigger')
+        body_content = self._serialize.body(container, 'Container')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -225,7 +228,7 @@ class TriggersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Trigger', response)
+            deserialized = self._deserialize('Container', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -234,15 +237,17 @@ class TriggersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, device_name, name, trigger, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a trigger.
+            self, device_name, storage_account_name, container_name, container, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a new container or updates an existing container on the device.
 
-        :param device_name: Creates or updates a trigger
+        :param device_name: The device name.
         :type device_name: str
-        :param name: The trigger name.
-        :type name: str
-        :param trigger: The trigger.
-        :type trigger: ~azure.mgmt.databoxedge.models.Trigger
+        :param storage_account_name: The Storage Account Name
+        :type storage_account_name: str
+        :param container_name: The container name.
+        :type container_name: str
+        :param container: The container properties.
+        :type container: ~azure.mgmt.databoxedge.models.Container
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -250,18 +255,19 @@ class TriggersOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Trigger or
-         ClientRawResponse<Trigger> if raw==True
+        :return: An instance of LROPoller that returns Container or
+         ClientRawResponse<Container> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.databoxedge.models.Trigger]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.databoxedge.models.Container]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.databoxedge.models.Trigger]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.databoxedge.models.Container]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             device_name=device_name,
-            name=name,
-            trigger=trigger,
+            storage_account_name=storage_account_name,
+            container_name=container_name,
+            container=container,
             resource_group_name=resource_group_name,
             custom_headers=custom_headers,
             raw=True,
@@ -269,7 +275,7 @@ class TriggersOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Trigger', response)
+            deserialized = self._deserialize('Container', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -284,16 +290,17 @@ class TriggersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/triggers/{name}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/storageAccounts/{storageAccountName}/containers/{containerName}'}
 
 
     def _delete_initial(
-            self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, device_name, storage_account_name, container_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
         }
@@ -316,7 +323,7 @@ class TriggersOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -326,13 +333,15 @@ class TriggersOperations(object):
             return client_raw_response
 
     def delete(
-            self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the trigger on the gateway device.
+            self, device_name, storage_account_name, container_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the container on the Data Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
-        :param name: The trigger name.
-        :type name: str
+        :param storage_account_name: The Storage Account Name
+        :type storage_account_name: str
+        :param container_name: The container name.
+        :type container_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -348,7 +357,8 @@ class TriggersOperations(object):
         """
         raw_result = self._delete_initial(
             device_name=device_name,
-            name=name,
+            storage_account_name=storage_account_name,
+            container_name=container_name,
             resource_group_name=resource_group_name,
             custom_headers=custom_headers,
             raw=True,
@@ -367,4 +377,91 @@ class TriggersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/triggers/{name}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/storageAccounts/{storageAccountName}/containers/{containerName}'}
+
+
+    def _refresh_initial(
+            self, device_name, storage_account_name, container_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.refresh.metadata['url']
+        path_format_arguments = {
+            'deviceName': self._serialize.url("device_name", device_name, 'str'),
+            'storageAccountName': self._serialize.url("storage_account_name", storage_account_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def refresh(
+            self, device_name, storage_account_name, container_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Refreshes the container metadata with the data from the cloud.
+
+        :param device_name: The device name.
+        :type device_name: str
+        :param storage_account_name: The Storage Account Name
+        :type storage_account_name: str
+        :param container_name: The container name.
+        :type container_name: str
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._refresh_initial(
+            device_name=device_name,
+            storage_account_name=storage_account_name,
+            container_name=container_name,
+            resource_group_name=resource_group_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    refresh.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/storageAccounts/{storageAccountName}/containers/{containerName}/refresh'}

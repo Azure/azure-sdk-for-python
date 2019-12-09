@@ -51,10 +51,26 @@ class ClientPermissionType(str, Enum):
     read_write = "ReadWrite"
 
 
+class ContainerStatus(str, Enum):
+
+    ok = "OK"
+    offline = "Offline"
+    unknown = "Unknown"
+    updating = "Updating"
+    needs_attention = "NeedsAttention"
+
+
 class SkuName(str, Enum):
 
     gateway = "Gateway"
     edge = "Edge"
+    tea_1_node = "TEA_1Node"
+    tea_1_node_ups = "TEA_1Node_UPS"
+    tea_1_node_heater = "TEA_1Node_Heater"
+    tea_1_node_ups_heater = "TEA_1Node_UPS_Heater"
+    tea_4_node_heater = "TEA_4Node_Heater"
+    tea_4_node_ups_heater = "TEA_4Node_UPS_Heater"
+    tma = "TMA"
 
 
 class SkuTier(str, Enum):
@@ -116,6 +132,7 @@ class JobType(str, Enum):
     download_updates = "DownloadUpdates"
     install_updates = "InstallUpdates"
     refresh_share = "RefreshShare"
+    refresh_container = "RefreshContainer"
 
 
 class UpdateOperationStage(str, Enum):
@@ -246,6 +263,12 @@ class AuthenticationType(str, Enum):
     azure_active_directory = "AzureActiveDirectory"
 
 
+class SkuRestrictionReasonCode(str, Enum):
+
+    not_available_for_subscription = "NotAvailableForSubscription"
+    quota_id = "QuotaId"
+
+
 class ShareStatus(str, Enum):
 
     offline = "Offline"
@@ -280,6 +303,15 @@ class DataPolicy(str, Enum):
     local = "Local"
 
 
+class StorageAccountStatus(str, Enum):
+
+    ok = "OK"
+    offline = "Offline"
+    unknown = "Unknown"
+    updating = "Updating"
+    needs_attention = "NeedsAttention"
+
+
 class SSLStatus(str, Enum):
 
     enabled = "Enabled"
@@ -305,3 +337,10 @@ class UpdateOperation(str, Enum):
     scan = "Scan"
     download = "Download"
     install = "Install"
+
+
+class UserType(str, Enum):
+
+    share = "Share"
+    local_management = "LocalManagement"
+    arm = "ARM"

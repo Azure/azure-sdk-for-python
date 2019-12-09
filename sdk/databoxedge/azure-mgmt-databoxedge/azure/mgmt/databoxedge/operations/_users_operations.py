@@ -27,7 +27,7 @@ class UsersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2019-07-01".
+    :ivar api_version: The API version. Constant value: "2019-08-01".
     """
 
     models = models
@@ -37,12 +37,12 @@ class UsersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2019-08-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, device_name, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the users registered on a Data Box Edge/Data Box Gateway
         device.
 
@@ -50,6 +50,9 @@ class UsersOperations(object):
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
+        :param filter: Specify $filter='UserType eq <type>' to filter on user
+         type property
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -74,6 +77,8 @@ class UsersOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
