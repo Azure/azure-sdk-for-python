@@ -1188,19 +1188,25 @@ class AmazonS3LinkedService(LinkedService):
 class DatasetLocation(Model):
     """Dataset location.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: HdfsLocation, HttpServerLocation, SftpLocation,
+    FtpServerLocation, GoogleCloudStorageLocation, AzureFileStorageLocation,
+    FileServerLocation, AmazonS3Location, AzureDataLakeStoreLocation,
+    AzureBlobFSLocation, AzureBlobStorageLocation
+
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -1209,17 +1215,21 @@ class DatasetLocation(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+    _subtype_map = {
+        'type': {'HdfsLocation': 'HdfsLocation', 'HttpServerLocation': 'HttpServerLocation', 'SftpLocation': 'SftpLocation', 'FtpServerLocation': 'FtpServerLocation', 'GoogleCloudStorageLocation': 'GoogleCloudStorageLocation', 'AzureFileStorageLocation': 'AzureFileStorageLocation', 'FileServerLocation': 'FileServerLocation', 'AmazonS3Location': 'AmazonS3Location', 'AzureDataLakeStoreLocation': 'AzureDataLakeStoreLocation', 'AzureBlobFSLocation': 'AzureBlobFSLocation', 'AzureBlobStorageLocation': 'AzureBlobStorageLocation'}
+    }
+
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
         super(DatasetLocation, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = type
         self.folder_path = folder_path
         self.file_name = file_name
+        self.type = None
 
 
 class AmazonS3Location(DatasetLocation):
@@ -1230,14 +1240,14 @@ class AmazonS3Location(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param bucket_name: Specify the bucketName of amazon S3. Type: string (or
      Expression with resultType string)
     :type bucket_name: object
@@ -1252,33 +1262,41 @@ class AmazonS3Location(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'bucket_name': {'key': 'bucketName', 'type': 'object'},
         'version': {'key': 'version', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, bucket_name=None, version=None, **kwargs) -> None:
-        super(AmazonS3Location, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, bucket_name=None, version=None, **kwargs) -> None:
+        super(AmazonS3Location, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
         self.bucket_name = bucket_name
         self.version = version
+        self.type = 'AmazonS3Location'
 
 
 class StoreReadSettings(Model):
     """Connector read setting.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: HdfsReadSettings, HttpReadSettings, SftpReadSettings,
+    FtpReadSettings, GoogleCloudStorageReadSettings,
+    AzureFileStorageReadSettings, FileServerReadSettings, AmazonS3ReadSettings,
+    AzureDataLakeStoreReadSettings, AzureBlobFSReadSettings,
+    AzureBlobStorageReadSettings
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -1287,15 +1305,19 @@ class StoreReadSettings(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, **kwargs) -> None:
+    _subtype_map = {
+        'type': {'HdfsReadSettings': 'HdfsReadSettings', 'HttpReadSettings': 'HttpReadSettings', 'SftpReadSettings': 'SftpReadSettings', 'FtpReadSettings': 'FtpReadSettings', 'GoogleCloudStorageReadSettings': 'GoogleCloudStorageReadSettings', 'AzureFileStorageReadSettings': 'AzureFileStorageReadSettings', 'FileServerReadSettings': 'FileServerReadSettings', 'AmazonS3ReadSettings': 'AmazonS3ReadSettings', 'AzureDataLakeStoreReadSettings': 'AzureDataLakeStoreReadSettings', 'AzureBlobFSReadSettings': 'AzureBlobFSReadSettings', 'AzureBlobStorageReadSettings': 'AzureBlobStorageReadSettings'}
+    }
+
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, **kwargs) -> None:
         super(StoreReadSettings, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = type
         self.max_concurrent_connections = max_concurrent_connections
+        self.type = None
 
 
 class AmazonS3ReadSettings(StoreReadSettings):
@@ -1306,12 +1328,12 @@ class AmazonS3ReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -1342,8 +1364,8 @@ class AmazonS3ReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -1353,8 +1375,8 @@ class AmazonS3ReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(AmazonS3ReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(AmazonS3ReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -1362,6 +1384,7 @@ class AmazonS3ReadSettings(StoreReadSettings):
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'AmazonS3ReadSettings'
 
 
 class ControlActivity(Activity):
@@ -1785,12 +1808,16 @@ class AvroSource(CopySource):
 class FormatWriteSettings(Model):
     """Format write settings.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: JsonWriteSettings, DelimitedTextWriteSettings,
+    AvroWriteSettings
+
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -1803,10 +1830,14 @@ class FormatWriteSettings(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, **kwargs) -> None:
+    _subtype_map = {
+        'type': {'JsonWriteSettings': 'JsonWriteSettings', 'DelimitedTextWriteSettings': 'DelimitedTextWriteSettings', 'AvroWriteSettings': 'AvroWriteSettings'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
         super(FormatWriteSettings, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = type
+        self.type = None
 
 
 class AvroWriteSettings(FormatWriteSettings):
@@ -1817,7 +1848,7 @@ class AvroWriteSettings(FormatWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param record_name: Top level record name in write result, which is
      required in AVRO spec.
@@ -1837,10 +1868,11 @@ class AvroWriteSettings(FormatWriteSettings):
         'record_namespace': {'key': 'recordNamespace', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, record_name: str=None, record_namespace: str=None, **kwargs) -> None:
-        super(AvroWriteSettings, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
+    def __init__(self, *, additional_properties=None, record_name: str=None, record_namespace: str=None, **kwargs) -> None:
+        super(AvroWriteSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.record_name = record_name
         self.record_namespace = record_namespace
+        self.type = 'AvroWriteSettings'
 
 
 class AzureBatchLinkedService(LinkedService):
@@ -2162,14 +2194,14 @@ class AzureBlobFSLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param file_system: Specify the fileSystem of azure blobFS. Type: string
      (or Expression with resultType string).
     :type file_system: object
@@ -2181,15 +2213,16 @@ class AzureBlobFSLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'file_system': {'key': 'fileSystem', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, file_system=None, **kwargs) -> None:
-        super(AzureBlobFSLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, file_system=None, **kwargs) -> None:
+        super(AzureBlobFSLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
         self.file_system = file_system
+        self.type = 'AzureBlobFSLocation'
 
 
 class AzureBlobFSReadSettings(StoreReadSettings):
@@ -2200,12 +2233,12 @@ class AzureBlobFSReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -2233,8 +2266,8 @@ class AzureBlobFSReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -2243,14 +2276,15 @@ class AzureBlobFSReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(AzureBlobFSReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(AzureBlobFSReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'AzureBlobFSReadSettings'
 
 
 class AzureBlobFSSink(CopySink):
@@ -2546,14 +2580,14 @@ class AzureBlobStorageLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param container: Specify the container of azure blob. Type: string (or
      Expression with resultType string).
     :type container: object
@@ -2565,15 +2599,16 @@ class AzureBlobStorageLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'container': {'key': 'container', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, container=None, **kwargs) -> None:
-        super(AzureBlobStorageLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, container=None, **kwargs) -> None:
+        super(AzureBlobStorageLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
         self.container = container
+        self.type = 'AzureBlobStorageLocation'
 
 
 class AzureBlobStorageReadSettings(StoreReadSettings):
@@ -2584,12 +2619,12 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -2600,6 +2635,9 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
     :param wildcard_file_name: Azure blob wildcardFileName. Type: string (or
      Expression with resultType string).
     :type wildcard_file_name: object
+    :param prefix: The prefix filter for the Azure Blob name. Type: string (or
+     Expression with resultType string).
+    :type prefix: object
     :param enable_partition_discovery: Indicates whether to enable partition
      discovery.
     :type enable_partition_discovery: bool
@@ -2617,24 +2655,27 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
         'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(AzureBlobStorageReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(AzureBlobStorageReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
+        self.prefix = prefix
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'AzureBlobStorageReadSettings'
 
 
 class AzureBlobStorageWriteSettings(StoreWriteSettings):
@@ -3442,14 +3483,14 @@ class AzureDataLakeStoreLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -3458,13 +3499,14 @@ class AzureDataLakeStoreLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
-        super(AzureDataLakeStoreLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+        super(AzureDataLakeStoreLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
+        self.type = 'AzureDataLakeStoreLocation'
 
 
 class AzureDataLakeStoreReadSettings(StoreReadSettings):
@@ -3475,12 +3517,12 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -3508,8 +3550,8 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -3518,14 +3560,15 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(AzureDataLakeStoreReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(AzureDataLakeStoreReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'AzureDataLakeStoreReadSettings'
 
 
 class AzureDataLakeStoreSink(CopySink):
@@ -3735,14 +3778,14 @@ class AzureFileStorageLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -3751,13 +3794,14 @@ class AzureFileStorageLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
-        super(AzureFileStorageLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+        super(AzureFileStorageLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
+        self.type = 'AzureFileStorageLocation'
 
 
 class AzureFileStorageReadSettings(StoreReadSettings):
@@ -3768,12 +3812,12 @@ class AzureFileStorageReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -3801,8 +3845,8 @@ class AzureFileStorageReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -3811,14 +3855,15 @@ class AzureFileStorageReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(AzureFileStorageReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(AzureFileStorageReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'AzureFileStorageReadSettings'
 
 
 class AzureFunctionActivity(ExecutionActivity):
@@ -10267,12 +10312,15 @@ class DelimitedTextDataset(Dataset):
 class FormatReadSettings(Model):
     """Format read settings.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DelimitedTextReadSettings
+
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -10285,10 +10333,14 @@ class FormatReadSettings(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, **kwargs) -> None:
+    _subtype_map = {
+        'type': {'DelimitedTextReadSettings': 'DelimitedTextReadSettings'}
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
         super(FormatReadSettings, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = type
+        self.type = None
 
 
 class DelimitedTextReadSettings(FormatReadSettings):
@@ -10299,7 +10351,7 @@ class DelimitedTextReadSettings(FormatReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param skip_line_count: Indicates the number of non-empty rows to skip
      when reading data from input files. Type: integer (or Expression with
@@ -10317,9 +10369,10 @@ class DelimitedTextReadSettings(FormatReadSettings):
         'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, skip_line_count=None, **kwargs) -> None:
-        super(DelimitedTextReadSettings, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
+    def __init__(self, *, additional_properties=None, skip_line_count=None, **kwargs) -> None:
+        super(DelimitedTextReadSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.skip_line_count = skip_line_count
+        self.type = 'DelimitedTextReadSettings'
 
 
 class DelimitedTextSink(CopySink):
@@ -10437,7 +10490,7 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param quote_all_text: Indicates whether string values should always be
      enclosed with quotes. Type: boolean (or Expression with resultType
@@ -10460,10 +10513,11 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
         'file_extension': {'key': 'fileExtension', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, file_extension, additional_properties=None, quote_all_text=None, **kwargs) -> None:
-        super(DelimitedTextWriteSettings, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
+    def __init__(self, *, file_extension, additional_properties=None, quote_all_text=None, **kwargs) -> None:
+        super(DelimitedTextWriteSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.quote_all_text = quote_all_text
         self.file_extension = file_extension
+        self.type = 'DelimitedTextWriteSettings'
 
 
 class DependencyReference(Model):
@@ -12688,14 +12742,14 @@ class FileServerLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -12704,13 +12758,14 @@ class FileServerLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
-        super(FileServerLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+        super(FileServerLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
+        self.type = 'FileServerLocation'
 
 
 class FileServerReadSettings(StoreReadSettings):
@@ -12721,12 +12776,12 @@ class FileServerReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -12754,8 +12809,8 @@ class FileServerReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -12764,14 +12819,15 @@ class FileServerReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(FileServerReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(FileServerReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'FileServerReadSettings'
 
 
 class FileServerWriteSettings(StoreWriteSettings):
@@ -13114,12 +13170,12 @@ class FtpReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -13141,20 +13197,21 @@ class FtpReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
         'use_binary_transfer': {'key': 'useBinaryTransfer', 'type': 'bool'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, use_binary_transfer: bool=None, **kwargs) -> None:
-        super(FtpReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, use_binary_transfer: bool=None, **kwargs) -> None:
+        super(FtpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.use_binary_transfer = use_binary_transfer
+        self.type = 'FtpReadSettings'
 
 
 class FtpServerLinkedService(LinkedService):
@@ -13251,14 +13308,14 @@ class FtpServerLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -13267,13 +13324,14 @@ class FtpServerLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
-        super(FtpServerLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+        super(FtpServerLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
+        self.type = 'FtpServerLocation'
 
 
 class GetDataFactoryOperationStatusResponse(Model):
@@ -13939,14 +13997,14 @@ class GoogleCloudStorageLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param bucket_name: Specify the bucketName of Google Cloud Storage. Type:
      string (or Expression with resultType string)
     :type bucket_name: object
@@ -13961,17 +14019,18 @@ class GoogleCloudStorageLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'bucket_name': {'key': 'bucketName', 'type': 'object'},
         'version': {'key': 'version', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, bucket_name=None, version=None, **kwargs) -> None:
-        super(GoogleCloudStorageLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, bucket_name=None, version=None, **kwargs) -> None:
+        super(GoogleCloudStorageLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
         self.bucket_name = bucket_name
         self.version = version
+        self.type = 'GoogleCloudStorageLocation'
 
 
 class GoogleCloudStorageReadSettings(StoreReadSettings):
@@ -13982,12 +14041,12 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -14018,8 +14077,8 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -14029,8 +14088,8 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(GoogleCloudStorageReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, prefix=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(GoogleCloudStorageReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -14038,6 +14097,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
         self.enable_partition_discovery = enable_partition_discovery
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'GoogleCloudStorageReadSettings'
 
 
 class GreenplumLinkedService(LinkedService):
@@ -14506,14 +14566,14 @@ class HdfsLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -14522,13 +14582,14 @@ class HdfsLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
-        super(HdfsLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+        super(HdfsLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
+        self.type = 'HdfsLocation'
 
 
 class HdfsReadSettings(StoreReadSettings):
@@ -14539,12 +14600,12 @@ class HdfsReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -14574,8 +14635,8 @@ class HdfsReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -14585,8 +14646,8 @@ class HdfsReadSettings(StoreReadSettings):
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None, **kwargs) -> None:
-        super(HdfsReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery: bool=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None, **kwargs) -> None:
+        super(HdfsReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -14594,6 +14655,7 @@ class HdfsReadSettings(StoreReadSettings):
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.distcp_settings = distcp_settings
+        self.type = 'HdfsReadSettings'
 
 
 class HdfsSource(CopySource):
@@ -15843,12 +15905,12 @@ class HttpReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param request_method: The HTTP method used to call the RESTful API. The
      default is GET. Type: string (or Expression with resultType string).
     :type request_method: object
@@ -15870,20 +15932,21 @@ class HttpReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'request_method': {'key': 'requestMethod', 'type': 'object'},
         'request_body': {'key': 'requestBody', 'type': 'object'},
         'additional_headers': {'key': 'additionalHeaders', 'type': 'object'},
         'request_timeout': {'key': 'requestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, request_method=None, request_body=None, additional_headers=None, request_timeout=None, **kwargs) -> None:
-        super(HttpReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, request_method=None, request_body=None, additional_headers=None, request_timeout=None, **kwargs) -> None:
+        super(HttpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.request_method = request_method
         self.request_body = request_body
         self.additional_headers = additional_headers
         self.request_timeout = request_timeout
+        self.type = 'HttpReadSettings'
 
 
 class HttpServerLocation(DatasetLocation):
@@ -15894,14 +15957,14 @@ class HttpServerLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param relative_url: Specify the relativeUrl of http server. Type: string
      (or Expression with resultType string)
     :type relative_url: object
@@ -15913,15 +15976,16 @@ class HttpServerLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'relative_url': {'key': 'relativeUrl', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, relative_url=None, **kwargs) -> None:
-        super(HttpServerLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, relative_url=None, **kwargs) -> None:
+        super(HttpServerLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
         self.relative_url = relative_url
+        self.type = 'HttpServerLocation'
 
 
 class HttpSource(CopySource):
@@ -17860,7 +17924,7 @@ class JsonWriteSettings(FormatWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param file_pattern: File pattern of JSON. This setting controls the way a
      collection of JSON objects will be treated. The default value is
@@ -17880,9 +17944,10 @@ class JsonWriteSettings(FormatWriteSettings):
         'file_pattern': {'key': 'filePattern', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, file_pattern=None, **kwargs) -> None:
-        super(JsonWriteSettings, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
+    def __init__(self, *, additional_properties=None, file_pattern=None, **kwargs) -> None:
+        super(JsonWriteSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.file_pattern = file_pattern
+        self.type = 'JsonWriteSettings'
 
 
 class LinkedIntegrationRuntime(Model):
@@ -27018,14 +27083,14 @@ class SftpLocation(DatasetLocation):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
-    :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
     :type folder_path: object
     :param file_name: Specify the file name of dataset. Type: string (or
      Expression with resultType string).
     :type file_name: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -27034,13 +27099,14 @@ class SftpLocation(DatasetLocation):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'folderPath', 'type': 'object'},
         'file_name': {'key': 'fileName', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
-        super(SftpLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name, **kwargs)
+    def __init__(self, *, additional_properties=None, folder_path=None, file_name=None, **kwargs) -> None:
+        super(SftpLocation, self).__init__(additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs)
+        self.type = 'SftpLocation'
 
 
 class SftpReadSettings(StoreReadSettings):
@@ -27051,12 +27117,12 @@ class SftpReadSettings(StoreReadSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
@@ -27081,8 +27147,8 @@ class SftpReadSettings(StoreReadSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'recursive': {'key': 'recursive', 'type': 'object'},
         'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
         'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
@@ -27090,13 +27156,14 @@ class SftpReadSettings(StoreReadSettings):
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
-        super(SftpReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, modified_datetime_start=None, modified_datetime_end=None, **kwargs) -> None:
+        super(SftpReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
+        self.type = 'SftpReadSettings'
 
 
 class SftpServerLinkedService(LinkedService):
