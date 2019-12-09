@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .workspaces_operations import WorkspacesOperations
-from .operations import Operations
+from ._workspaces_operations import WorkspacesOperations
+from ._operations import Operations
 
 __all__ = [
     'WorkspacesOperations',
