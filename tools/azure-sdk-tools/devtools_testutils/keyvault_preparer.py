@@ -2,11 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
 import time
 import random
 
-from collections import namedtuple
 from string import ascii_letters
 
 from azure.mgmt.keyvault import KeyVaultManagementClient
@@ -23,9 +21,9 @@ from azure.mgmt.keyvault.models import (
     VaultCreateOrUpdateParameters,
 )
 
-from azure_devtools.scenario_tests import AzureTestError, BadNameError
+from azure_devtools.scenario_tests.exceptions import AzureTestError, BadNameError
 
-from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from . import AzureMgmtPreparer, ResourceGroupPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
 
 
