@@ -41,8 +41,8 @@ from filetestcase import (
 TEST_SHARE_PREFIX = 'share'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
-INPUT_FILE_PATH = 'file_input.temp.dat'
-OUTPUT_FILE_PATH = 'file_output.temp.dat'
+INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
+OUTPUT_FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_FILE_SIZE = 64 * 1024 + 5
 
 
