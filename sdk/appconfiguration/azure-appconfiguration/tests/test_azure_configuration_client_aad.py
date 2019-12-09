@@ -99,7 +99,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
 
     # method: add_configuration_setting
-    @pytest.mark.live_tests
     def test_add_configuration_setting(self):
         kv = ConfigurationSetting(
             key=KEY + "_ADD",
@@ -122,7 +121,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             and created_kv.read_only is False
         )
 
-    @pytest.mark.live_tests
     def test_add_existing_configuration_setting(self):
         with pytest.raises(ResourceExistsError):
             self.app_config_client.add_configuration_setting(
@@ -133,7 +131,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
 
     # method: set_configuration_setting
-    @pytest.mark.live_tests
     def test_set_existing_configuration_setting_label_etag(self):
         to_set_kv = self.test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
@@ -148,7 +145,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             and to_set_kv.etag != set_kv.etag
         )
 
-    @pytest.mark.live_tests
     def test_set_existing_configuration_setting_label_wrong_etag(self):
         to_set_kv = self.test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
@@ -157,7 +153,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         with pytest.raises(ResourceModifiedError):
             self.app_config_client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
-    @pytest.mark.live_tests
     def test_set_configuration_setting_etag(self):
         kv = ConfigurationSetting(
             key=KEY + "_SET",
@@ -170,7 +165,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         with pytest.raises(ResourceModifiedError):
             self.app_config_client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
-    @pytest.mark.live_tests
     def test_set_configuration_setting_no_etag(self):
         to_set_kv = ConfigurationSetting(
             key=KEY + "_SET",
@@ -191,7 +185,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
 
     # method: get_configuration_setting
-    @pytest.mark.live_tests
     def test_get_configuration_setting_no_label(self):
         compare_kv = self.test_config_setting_no_label
         fetched_kv = self.app_config_client.get_configuration_setting(compare_kv.key)
@@ -203,7 +196,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         assert fetched_kv.label is None
 
-    @pytest.mark.live_tests
     def test_get_configuration_setting_label(self):
         compare_kv = self.test_config_setting
         fetched_kv = self.app_config_client.get_configuration_setting(
@@ -217,7 +209,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         assert fetched_kv.label is not None
 
-    @pytest.mark.live_tests
     def test_get_non_existing_configuration_setting(self):
         compare_kv = self.test_config_setting
         with pytest.raises(ResourceNotFoundError):
@@ -226,7 +217,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
 
     # method: delete_configuration_setting
-    @pytest.mark.live_tests
     def test_delete_with_key_no_label(self):
         to_delete_kv = self.test_config_setting_no_label
         self.app_config_client.delete_configuration_setting(to_delete_kv.key)
@@ -234,7 +224,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(to_delete_kv.key)
 
-    @pytest.mark.live_tests
     def test_delete_with_key_label(self):
         to_delete_kv = self.test_config_setting
         self.app_config_client.delete_configuration_setting(
@@ -246,14 +235,12 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
                 to_delete_kv.key, label=to_delete_kv.label
             )
 
-    @pytest.mark.live_tests
     def test_delete_non_existing(self):
         deleted_kv = self.app_config_client.delete_configuration_setting(
             "not_exist_" + KEY
         )
         assert deleted_kv is None
 
-    @pytest.mark.live_tests
     def test_delete_correct_etag(self):
         to_delete_kv = self.test_config_setting_no_label
         deleted_kv = self.app_config_client.delete_configuration_setting(
@@ -264,7 +251,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(to_delete_kv.key)
 
-    @pytest.mark.live_tests
     def test_delete_wrong_etag(self):
         to_delete_kv = self.test_config_setting_no_label
         with pytest.raises(ResourceModifiedError):
@@ -273,7 +259,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
 
     # method: list_configuration_settings
-    @pytest.mark.live_tests
     def test_list_configuration_settings_key_label(self):
         items = self.app_config_client.list_configuration_settings(
             labels=[LABEL], keys=[KEY]
@@ -284,7 +269,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 1
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_only_label(self):
         items = self.app_config_client.list_configuration_settings(labels=[LABEL])
         cnt = 0
@@ -293,7 +277,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 1
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_only_key(self):
         items = self.app_config_client.list_configuration_settings(keys=[KEY])
         cnt = 0
@@ -302,7 +285,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 2
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_fields(self):
         items = self.app_config_client.list_configuration_settings(
             keys=["*"], labels=[LABEL], fields=["key", "content_type"]
@@ -315,7 +297,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 1
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_reserved_chars(self):
         resered_char_kv = ConfigurationSetting(
             key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
@@ -333,7 +314,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 1
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_contains(self):
         items = self.app_config_client.list_configuration_settings(
             labels=["*" + LABEL + "*"]
@@ -344,7 +324,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 1
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_correct_etag(self):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
@@ -357,7 +336,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt == 1
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_multi_pages(self):
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
@@ -387,12 +365,10 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         except AzureError:
             pass
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_null_label(self):
         items = self.app_config_client.list_configuration_settings(labels=[""])
         assert len(list(items)) > 0
 
-    @pytest.mark.live_tests
     def test_list_configuration_settings_only_accepttime(self):
         exclude_today = self.app_config_client.list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
@@ -401,7 +377,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert len(list(all_inclusive)) > len(list(exclude_today))
 
     # method: list_revisions
-    @pytest.mark.live_tests
     def test_list_revisions_key_label(self):
         to_list1 = self.test_config_setting
         items = self.app_config_client.list_revisions(
@@ -413,7 +388,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt >= 2
 
-    @pytest.mark.live_tests
     def test_list_revisions_only_label(self):
         items = self.app_config_client.list_revisions(labels=[LABEL])
         cnt = 0
@@ -422,7 +396,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt >= 1
 
-    @pytest.mark.live_tests
     def test_list_revisions_key_no_label(self):
         items = self.app_config_client.list_revisions(keys=[KEY])
         cnt = 0
@@ -431,7 +404,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt >= 1
 
-    @pytest.mark.live_tests
     def test_list_revisions_fields(self):
         items = self.app_config_client.list_revisions(
             keys=["*"], labels=[LABEL], fields=["key", "content_type"]
@@ -445,7 +417,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
                 and not kv.etag
             )
 
-    @pytest.mark.live_tests
     def test_list_revisions_correct_etag(self):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
@@ -458,7 +429,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             cnt += 1
         assert cnt > 0
 
-    @pytest.mark.live_tests
     def test_read_only(self):
         kv = self.test_config_setting_no_label
         read_only_kv = self.app_config_client.set_read_only(kv)
@@ -466,7 +436,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         readable_kv = self.app_config_client.set_read_only(read_only_kv, False)
         assert not readable_kv.read_only
 
-    @pytest.mark.live_tests
     def test_delete_read_only(self):
         to_delete_kv = self.test_config_setting_no_label
         read_only_kv = self.app_config_client.set_read_only(to_delete_kv)
@@ -478,7 +447,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(to_delete_kv.key)
 
-    @pytest.mark.live_tests
     def test_set_read_only(self):
         to_set_kv = self.test_config_setting
         to_set_kv.value = to_set_kv.value + "a"

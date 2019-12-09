@@ -73,13 +73,12 @@ class AzureAppConfigurationClient:
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
-            if isinstance(credential, AppConfigConnectionStringCredential):
-                pipeline = self._create_appconfig_pipeline(**kwargs)
-            else:
-                pipeline = self._create_appconfig_aad_pipeline(
-                    credential=credential,
-                    base_url=base_url,
-                    **kwargs)
+            aad_mode = False if isinstance(credential, AppConfigConnectionStringCredential) else True
+            pipeline = self._create_appconfig_pipeline(
+                credential=credential,
+                aad_mode=aad_mode,
+                base_url=base_url,
+                **kwargs)
 
         self._impl = AzureAppConfiguration(
             credentials=credential, endpoint=base_url, pipeline=pipeline
@@ -114,45 +113,24 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(self, **kwargs):
+    def _create_appconfig_pipeline(self, credential, base_url=None, aad_mode=False, **kwargs):
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
-            policies = [
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                AppConfigRequestsCredentialsPolicy(self._config.credentials),
-                self._config.retry_policy,
-                SyncTokenPolicy(),
-                self._config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs)
-            ]
-
-        if not transport:
-            transport = RequestsTransport(**kwargs)
-
-        return Pipeline(transport, policies)
-
-    def _create_appconfig_aad_pipeline(self, base_url, credential, **kwargs):
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-        if base_url.endswith('/'):
-            scope = base_url + '.default'
-        else:
-            scope = base_url + '/.default'
-
-        if policies is None:  # [] is a valid policy list
-            if hasattr(credential, "get_token"):
-                credential_policy = BearerTokenCredentialPolicy(credential, scope)
+            if aad_mode:
+                scope = base_url.strip("/") + "/.default"
+                if hasattr(credential, "get_token"):
+                    credential_policy = BearerTokenCredentialPolicy(credential, scope)
+                else:
+                    raise TypeError("Unsupported credential: {}".format(credential))
             else:
-                raise TypeError("Unsupported credential: {}".format(credential))
+                credential_policy = AppConfigRequestsCredentialsPolicy(credential)
             policies = [
                 self._config.headers_policy,
                 self._config.user_agent_policy,
-                self._config.retry_policy,
                 credential_policy,
+                self._config.retry_policy,
                 SyncTokenPolicy(),
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
