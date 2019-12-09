@@ -797,7 +797,13 @@ class VirtualMachinesOperations(object):
 
     def generalize(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """Sets the state of the virtual machine to generalized.
+        """Sets the OS state of the virtual machine to generalized. It is
+        recommended to sysprep the virtual machine before performing this
+        operation. <br>For Windows, please refer to [Create a managed image of
+        a generalized VM in
+        Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/capture-image-resource).<br>For
+        Linux, please refer to [How to create an image of a virtual machine or
+        VHD](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/capture-image).
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
