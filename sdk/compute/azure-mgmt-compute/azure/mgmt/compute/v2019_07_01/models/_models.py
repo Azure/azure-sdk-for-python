@@ -658,9 +658,9 @@ class CreationData(Model):
      'Import', 'Copy', 'Restore', 'Upload'
     :type create_option: str or
      ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOption
-    :param storage_account_id: If createOption is Import, the Azure Resource
-     Manager identifier of the storage account containing the blob to import as
-     a disk. Required only if the blob is in a different subscription
+    :param storage_account_id: Required if createOption is Import. The Azure
+     Resource Manager identifier of the storage account containing the blob to
+     import as a disk.
     :type storage_account_id: str
     :param image_reference: Disk source information.
     :type image_reference:
