@@ -123,7 +123,8 @@ class AzureAppConfigurationClient:
                 if hasattr(credential, "get_token"):
                     credential_policy = BearerTokenCredentialPolicy(credential, scope)
                 else:
-                    raise TypeError("Unsupported credential: {}".format(credential))
+                    raise TypeError("Please provide an instance from azure-identity "
+                                    "or a class that implement the 'get_token protocol")
             else:
                 credential_policy = AppConfigRequestsCredentialsPolicy(credential)
             policies = [
