@@ -23,7 +23,7 @@ from azure.mgmt.keyvault.models import (
     VaultCreateOrUpdateParameters,
 )
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError, BadNameError
+from azure_devtools.scenario_tests import AzureTestError, BadNameError
 
 from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
 from .resource_testcase import RESOURCE_GROUP_PARAM
