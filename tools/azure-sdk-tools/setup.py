@@ -11,7 +11,6 @@ DEPENDENCIES = [
     'Jinja2',
     'pytoml',
     'json-delta>=2.0',
-    'azure-devtools[ci_tools]>=1.1.0',
     # Tests
     'pytest-cov',
     'pytest>=3.5.1',
