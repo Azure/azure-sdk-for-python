@@ -9,6 +9,7 @@ import base64
 import os
 import unittest
 import asyncio
+import uuid
 
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport

@@ -14,6 +14,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 import requests
 import pytest
+import uuid
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.fileshare import (

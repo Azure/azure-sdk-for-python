@@ -8,6 +8,7 @@
 import base64
 import os
 import unittest
+import uuid
 
 import pytest
 from azure.core.exceptions import HttpResponseError
