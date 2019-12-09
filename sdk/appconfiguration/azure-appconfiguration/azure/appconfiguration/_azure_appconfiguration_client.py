@@ -73,7 +73,7 @@ class AzureAppConfigurationClient:
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
-            aad_mode = False if isinstance(credential, AppConfigConnectionStringCredential) else True
+            aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
                 credential=credential,
                 aad_mode=aad_mode,
