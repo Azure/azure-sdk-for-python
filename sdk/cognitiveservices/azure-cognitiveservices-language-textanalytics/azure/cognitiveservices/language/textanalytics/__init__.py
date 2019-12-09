@@ -14,7 +14,7 @@ from ._models import (
     TextDocumentInput,
     DetectedLanguage,
     DocumentError,
-    Entity,
+    NamedEntity,
     LinkedEntity,
     DocumentSentiment,
     DocumentEntities,
@@ -24,7 +24,7 @@ from ._models import (
     DocumentKeyPhrases,
     DocumentLinkedEntities,
     DocumentStatistics,
-    Match,
+    LinkedEntityMatch,
     RequestStatistics,
     SentenceSentiment
 )
@@ -42,7 +42,7 @@ __all__ = [
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentLanguage',
-    'Entity',
+    'NamedEntity',
     'Error',
     'InnerError',
     'DocumentKeyPhrases',
@@ -51,7 +51,7 @@ __all__ = [
     'DocumentStatistics',
     'DocumentError',
     'LinkedEntity',
-    'Match',
+    'LinkedEntityMatch',
     'RequestStatistics',
     'SentenceSentiment',
 ]

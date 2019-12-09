@@ -13,7 +13,7 @@ from azure.core.exceptions import (
 )
 from ._models import (
     DocumentEntities,
-    Entity,
+    NamedEntity,
     DocumentStatistics,
     DocumentLinkedEntities,
     LinkedEntity,
@@ -116,7 +116,7 @@ def language_result(language):
 def entities_result(entity):
     return DocumentEntities(
         id=entity.id,
-        entities=[Entity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 

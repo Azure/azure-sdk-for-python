@@ -92,7 +92,7 @@ class DocumentEntities(DictMixin):
     :type id: str
     :param entities: Recognized entities in the document.
     :type entities:
-     list[~azure.cognitiveservices.language.textanalytics.models.Entity]
+     list[~azure.cognitiveservices.language.textanalytics.models.NamedEntity]
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
@@ -131,8 +131,8 @@ class DocumentLanguage(DictMixin):
         self.is_error = False
 
 
-class Entity(DictMixin):
-    """Entity.
+class NamedEntity(DictMixin):
+    """NamedEntity.
 
     :param text: Entity text as appears in the request.
     :type text: str
@@ -377,7 +377,7 @@ class LinkedEntity(DictMixin):
     :param matches: List of instances this entity appears in the
      text.
     :type matches:
-     list[~azure.cognitiveservices.language.textanalytics.models.Match]
+     list[~azure.cognitiveservices.language.textanalytics.models.LinkedEntityMatch]
     :param language: Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data
@@ -405,7 +405,7 @@ class LinkedEntity(DictMixin):
     def _from_generated(cls, entity):
         return cls(
             name=entity.name,
-            matches=[Match._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
+            matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
             id=entity.id,
             url=entity.url,
@@ -413,8 +413,8 @@ class LinkedEntity(DictMixin):
         )
 
 
-class Match(DictMixin):
-    """Match.
+class LinkedEntityMatch(DictMixin):
+    """LinkedEntityMatch.
 
     :param score: If a well-known item is recognized, a
      decimal number denoting the confidence level between 0 and 1 will be
