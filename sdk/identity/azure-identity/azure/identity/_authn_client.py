@@ -14,14 +14,16 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
+    DistributedTracingPolicy,
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     RetryPolicy,
-    DistributedTracingPolicy,
+    UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from ._constants import AZURE_CLI_CLIENT_ID, KnownAuthorities
+from ._internal.user_agent import USER_AGENT
 
 try:
     ABC = abc.ABC
@@ -177,6 +179,7 @@ class AuthnClient(AuthnClientBase):
         config = config or self._create_config(**kwargs)
         policies = policies or [
             ContentDecodePolicy(),
+            config.user_agent_policy,
             config.proxy_policy,
             config.retry_policy,
             config.logging_policy,
@@ -211,4 +214,5 @@ class AuthnClient(AuthnClientBase):
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
         config.proxy_policy = ProxyPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         return config

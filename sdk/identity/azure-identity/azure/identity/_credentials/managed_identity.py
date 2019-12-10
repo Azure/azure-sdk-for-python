@@ -14,10 +14,12 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     RetryPolicy,
+    UserAgentPolicy,
 )
 
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
+from .._internal.user_agent import USER_AGENT
 
 try:
     from typing import TYPE_CHECKING
@@ -72,6 +74,7 @@ class _ManagedIdentityBase(object):
         policies = [
             ContentDecodePolicy(),
             config.headers_policy,
+            config.user_agent_policy,
             config.retry_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
@@ -96,6 +99,7 @@ class _ManagedIdentityBase(object):
         # Metadata header is required by IMDS and in Cloud Shell; App Service ignores it
         config.headers_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
         return config
 
