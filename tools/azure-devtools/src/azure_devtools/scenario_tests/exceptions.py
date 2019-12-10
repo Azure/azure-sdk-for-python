@@ -9,6 +9,6 @@ class AzureTestError(Exception):
         message = 'An error caused by the Azure test harness failed the test: {}'
         super(AzureTestError, self).__init__(message.format(error_message))
 
-class BadNameError(Exception):
+class NameInUseError(Exception):
     def __init__(self, error_message):
-        super(BadNameError, self).__init__(error_message)
+        super(NameInUseError, self).__init__(error_message)

@@ -9,7 +9,7 @@ import functools
 from .base import ReplayableTest
 from .utilities import create_random_name, is_text_payload, trim_kwargs_from_test_function
 from .recording_processors import RecordingProcessor
-from .exceptions import BadNameError
+from .exceptions import NameInUseError
 
 
 # Core Utility
@@ -46,7 +46,7 @@ class AbstractPreparer(object):
                             **kwargs
                         )
                         break
-                    except BadNameError:
+                    except NameInUseError:
                         if i == retries - 1:
                             raise
                         self.random_resource_name = None
