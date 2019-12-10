@@ -257,8 +257,12 @@ class ShareProperties(DictMixin):
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.quota = kwargs.get('x-ms-share-quota')
+        self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
         self.metadata = kwargs.get('metadata')
         self.snapshot = None
+        self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
+        self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
+        self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -267,8 +271,12 @@ class ShareProperties(DictMixin):
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
         props.quota = generated.properties.quota
+        props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
         props.metadata = generated.metadata
         props.snapshot = generated.snapshot
+        props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
+        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
+        props.provisioned_iops = generated.properties.provisioned_iops
         return props
 
 
