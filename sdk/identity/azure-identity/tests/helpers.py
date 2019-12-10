@@ -92,7 +92,10 @@ class Request:
         for param, expected_value in self.required_params.items():
             assert request.query.get(param) == expected_value
         for header, expected_value in self.required_headers.items():
-            assert request.headers.get(header) == expected_value
+            actual = request.headers.get(header)
+            assert actual == expected_value, "expected header '{}: {}', actual value was '{}'".format(
+                header, expected_value, actual
+            )
         for field, expected_value in self.required_data.items():
             assert request.body.get(field) == expected_value
 
