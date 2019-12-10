@@ -81,6 +81,7 @@ def test_receive_load_balancing(connstr_senders):
                                    kwargs={"starting_position": "-1"})
 
         worker1.start()
+        time.sleep(3.3)
         worker2.start()
         time.sleep(10)
         assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
