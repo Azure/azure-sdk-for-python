@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-import warnings
 import json
 import logging
 from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
