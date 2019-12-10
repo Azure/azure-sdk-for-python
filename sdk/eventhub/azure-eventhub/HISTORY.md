@@ -2,6 +2,10 @@
 
 ## Version 5.0.0b7 Unreleased
 
+**Breaking changes**
+
+- Removed deprecated property EventData.application_properties and deprecated method EventData.encode_message()
+
 ## 2019-12-03 5.0.0b6
 
 **Breaking changes**
