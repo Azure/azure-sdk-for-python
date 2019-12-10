@@ -8,7 +8,9 @@ from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
+
 from helpers import async_validating_transport, build_aad_response, mock_response, Request
 
 import pytest
@@ -28,6 +30,18 @@ async def test_policies_configurable():
     await credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+@pytest.mark.asyncio
+async def test_user_agent():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+
+    await credential.get_token("scope")
 
 
 @pytest.mark.asyncio

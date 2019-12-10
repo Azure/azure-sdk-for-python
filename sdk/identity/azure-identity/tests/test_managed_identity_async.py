@@ -8,6 +8,8 @@ from unittest import mock
 from azure.core.credentials import AccessToken
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._internal.user_agent import USER_AGENT
+
 import pytest
 
 from helpers import async_validating_transport, mock_response, Request
@@ -24,7 +26,12 @@ async def test_cloud_shell():
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(url, method="POST", required_headers={"Metadata": "true"}, required_data={"resource": scope})
+            Request(
+                url,
+                method="POST",
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
+                required_data={"resource": scope},
+            )
         ],
         responses=[
             mock_response(
@@ -60,7 +67,7 @@ async def test_cloud_shell_user_assigned_identity():
             Request(
                 url,
                 method="POST",
-                required_headers={"Metadata": "true"},
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_data={"client_id": client_id, "resource": scope},
             )
         ],
@@ -98,7 +105,7 @@ async def test_app_service():
             Request(
                 url,
                 method="GET",
-                required_headers={"Metadata": "true", "secret": secret},
+                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "resource": scope},
             )
         ],
@@ -135,7 +142,7 @@ async def test_app_service_user_assigned_identity():
             Request(
                 url,
                 method="GET",
-                required_headers={"Metadata": "true", "secret": secret},
+                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "clientid": client_id, "resource": scope},
             )
         ],
@@ -169,7 +176,7 @@ async def test_imds():
             Request(
                 url,
                 method="GET",
-                required_headers={"Metadata": "true"},
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
             ),
         ],
@@ -208,7 +215,7 @@ async def test_imds_user_assigned_identity():
             Request(
                 url,
                 method="GET",
-                required_headers={"Metadata": "true"},
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "client_id": client_id, "resource": scope},
             ),
         ],
