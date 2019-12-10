@@ -29,6 +29,7 @@ import pytest
 import datetime
 import os
 import logging
+import re
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
     def __init__(self, method_name):
@@ -73,7 +74,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         exist = bool(
             list(
                 self.app_config_client.list_configuration_settings(
-                    keys=[kv.key], labels=[kv.label]
+                    keys=kv.key, labels=kv.label
                 )
             )
         )
@@ -253,7 +254,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     # method: list_configuration_settings
     def test_list_configuration_settings_key_label(self):
         items = self.app_config_client.list_configuration_settings(
-            labels=[LABEL], keys=[KEY]
+            labels=LABEL, keys=KEY
         )
         cnt = 0
         for kv in items:
@@ -262,7 +263,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert cnt == 1
 
     def test_list_configuration_settings_only_label(self):
-        items = self.app_config_client.list_configuration_settings(labels=[LABEL])
+        items = self.app_config_client.list_configuration_settings(labels=LABEL)
         cnt = 0
         for kv in items:
             assert kv.label == LABEL
@@ -270,7 +271,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert cnt == 1
 
     def test_list_configuration_settings_only_key(self):
-        items = self.app_config_client.list_configuration_settings(keys=[KEY])
+        items = self.app_config_client.list_configuration_settings(keys=KEY)
         cnt = 0
         for kv in items:
             assert kv.key == KEY
@@ -279,7 +280,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     def test_list_configuration_settings_fields(self):
         items = self.app_config_client.list_configuration_settings(
-            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
+            keys="*", labels=LABEL, fields=["key", "content_type"]
         )
         cnt = 0
         for kv in items:
@@ -297,8 +298,9 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             resered_char_kv
         )
         self.to_delete.append(resered_char_kv)
+        escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
         items = self.app_config_client.list_configuration_settings(
-            labels=[LABEL_RESERVED_CHARS]
+            labels=escaped_label
         )
         cnt = 0
         for kv in items:
@@ -308,7 +310,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     def test_list_configuration_settings_contains(self):
         items = self.app_config_client.list_configuration_settings(
-            labels=["*" + LABEL + "*"]
+            labels="*" + LABEL + "*"
         )
         cnt = 0
         for kv in items:
@@ -320,7 +322,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
         items = self.app_config_client.list_configuration_settings(
-            keys=[to_list_kv.key], labels=[to_list_kv.label], headers=custom_headers
+            keys=to_list_kv.key, labels=to_list_kv.label, headers=custom_headers
         )
         cnt = 0
         for kv in items:
@@ -343,7 +345,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             ]
         except ResourceExistsError:
             pass
-        items = self.app_config_client.list_configuration_settings(keys=["multi_*"])
+        items = self.app_config_client.list_configuration_settings(keys="multi_*")
         assert len(list(items)) > PAGE_SIZE
 
         # Remove the configuration settings
@@ -358,7 +360,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             pass
 
     def test_list_configuration_settings_null_label(self):
-        items = self.app_config_client.list_configuration_settings(labels=[""])
+        items = self.app_config_client.list_configuration_settings(labels="\0")
         assert len(list(items)) > 0
 
     def test_list_configuration_settings_only_accepttime(self):
@@ -372,7 +374,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     def test_list_revisions_key_label(self):
         to_list1 = self.test_config_setting
         items = self.app_config_client.list_revisions(
-            labels=[to_list1.label], keys=[to_list1.key]
+            labels=to_list1.label, keys=to_list1.key
         )
         cnt = 0
         for kv in items:
@@ -381,7 +383,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert cnt >= 2
 
     def test_list_revisions_only_label(self):
-        items = self.app_config_client.list_revisions(labels=[LABEL])
+        items = self.app_config_client.list_revisions(labels=LABEL)
         cnt = 0
         for kv in items:
             assert kv.label == LABEL
@@ -389,7 +391,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert cnt >= 1
 
     def test_list_revisions_key_no_label(self):
-        items = self.app_config_client.list_revisions(keys=[KEY])
+        items = self.app_config_client.list_revisions(keys=KEY)
         cnt = 0
         for kv in items:
             assert kv.key == KEY
@@ -398,7 +400,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     def test_list_revisions_fields(self):
         items = self.app_config_client.list_revisions(
-            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
+            keys="*", labels=LABEL, fields=["key", "content_type"]
         )
         for kv in items:
             assert (
@@ -413,7 +415,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
         items = self.app_config_client.list_revisions(
-            keys=[to_list_kv.key], labels=[to_list_kv.label], headers=custom_headers
+            keys=to_list_kv.key, labels=to_list_kv.label, headers=custom_headers
         )
         cnt = 0
         for kv in items:
