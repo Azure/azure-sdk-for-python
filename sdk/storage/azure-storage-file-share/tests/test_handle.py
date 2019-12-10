@@ -211,7 +211,7 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
         # Act
-        handles_info = root.close_all_handles()
+        handles_info = root.close_all_handles(recursive=True)
 
         # Assert at least 1 handle has been closed
         self.assertTrue(handles_info['closed_handles_count'] > 1)
