@@ -10,63 +10,65 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .sku_py3 import Sku
-    from .redis_access_keys_py3 import RedisAccessKeys
-    from .redis_linked_server_py3 import RedisLinkedServer
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
-    from .tracked_resource_py3 import TrackedResource
-    from .redis_create_parameters_py3 import RedisCreateParameters
-    from .redis_update_parameters_py3 import RedisUpdateParameters
-    from .redis_firewall_rule_py3 import RedisFirewallRule
-    from .redis_firewall_rule_create_parameters_py3 import RedisFirewallRuleCreateParameters
-    from .redis_resource_py3 import RedisResource
-    from .redis_regenerate_key_parameters_py3 import RedisRegenerateKeyParameters
-    from .redis_reboot_parameters_py3 import RedisRebootParameters
-    from .export_rdb_parameters_py3 import ExportRDBParameters
-    from .import_rdb_parameters_py3 import ImportRDBParameters
-    from .schedule_entry_py3 import ScheduleEntry
-    from .redis_patch_schedule_py3 import RedisPatchSchedule
-    from .redis_force_reboot_response_py3 import RedisForceRebootResponse
-    from .redis_linked_server_with_properties_py3 import RedisLinkedServerWithProperties
-    from .redis_linked_server_create_parameters_py3 import RedisLinkedServerCreateParameters
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
-    from .upgrade_notification_py3 import UpgradeNotification
-    from .notification_list_response_py3 import NotificationListResponse
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import ExportRDBParameters
+    from ._models_py3 import ImportRDBParameters
+    from ._models_py3 import NotificationListResponse
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import RedisAccessKeys
+    from ._models_py3 import RedisCreateParameters
+    from ._models_py3 import RedisFirewallRule
+    from ._models_py3 import RedisFirewallRuleCreateParameters
+    from ._models_py3 import RedisForceRebootResponse
+    from ._models_py3 import RedisInstanceDetails
+    from ._models_py3 import RedisLinkedServer
+    from ._models_py3 import RedisLinkedServerCreateParameters
+    from ._models_py3 import RedisLinkedServerWithProperties
+    from ._models_py3 import RedisPatchSchedule
+    from ._models_py3 import RedisRebootParameters
+    from ._models_py3 import RedisRegenerateKeyParameters
+    from ._models_py3 import RedisResource
+    from ._models_py3 import RedisUpdateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ScheduleEntry
+    from ._models_py3 import Sku
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import UpgradeNotification
 except (SyntaxError, ImportError):
-    from .sku import Sku
-    from .redis_access_keys import RedisAccessKeys
-    from .redis_linked_server import RedisLinkedServer
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-    from .tracked_resource import TrackedResource
-    from .redis_create_parameters import RedisCreateParameters
-    from .redis_update_parameters import RedisUpdateParameters
-    from .redis_firewall_rule import RedisFirewallRule
-    from .redis_firewall_rule_create_parameters import RedisFirewallRuleCreateParameters
-    from .redis_resource import RedisResource
-    from .redis_regenerate_key_parameters import RedisRegenerateKeyParameters
-    from .redis_reboot_parameters import RedisRebootParameters
-    from .export_rdb_parameters import ExportRDBParameters
-    from .import_rdb_parameters import ImportRDBParameters
-    from .schedule_entry import ScheduleEntry
-    from .redis_patch_schedule import RedisPatchSchedule
-    from .redis_force_reboot_response import RedisForceRebootResponse
-    from .redis_linked_server_with_properties import RedisLinkedServerWithProperties
-    from .redis_linked_server_create_parameters import RedisLinkedServerCreateParameters
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .check_name_availability_parameters import CheckNameAvailabilityParameters
-    from .upgrade_notification import UpgradeNotification
-    from .notification_list_response import NotificationListResponse
-from .operation_paged import OperationPaged
-from .redis_resource_paged import RedisResourcePaged
-from .redis_firewall_rule_paged import RedisFirewallRulePaged
-from .redis_patch_schedule_paged import RedisPatchSchedulePaged
-from .redis_linked_server_with_properties_paged import RedisLinkedServerWithPropertiesPaged
-from .redis_management_client_enums import (
+    from ._models import CheckNameAvailabilityParameters
+    from ._models import ExportRDBParameters
+    from ._models import ImportRDBParameters
+    from ._models import NotificationListResponse
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import ProxyResource
+    from ._models import RedisAccessKeys
+    from ._models import RedisCreateParameters
+    from ._models import RedisFirewallRule
+    from ._models import RedisFirewallRuleCreateParameters
+    from ._models import RedisForceRebootResponse
+    from ._models import RedisInstanceDetails
+    from ._models import RedisLinkedServer
+    from ._models import RedisLinkedServerCreateParameters
+    from ._models import RedisLinkedServerWithProperties
+    from ._models import RedisPatchSchedule
+    from ._models import RedisRebootParameters
+    from ._models import RedisRegenerateKeyParameters
+    from ._models import RedisResource
+    from ._models import RedisUpdateParameters
+    from ._models import Resource
+    from ._models import ScheduleEntry
+    from ._models import Sku
+    from ._models import TrackedResource
+    from ._models import UpgradeNotification
+from ._paged_models import OperationPaged
+from ._paged_models import RedisFirewallRulePaged
+from ._paged_models import RedisLinkedServerWithPropertiesPaged
+from ._paged_models import RedisPatchSchedulePaged
+from ._paged_models import RedisResourcePaged
+from ._redis_management_client_enums import (
     SkuName,
     SkuFamily,
     TlsVersion,
@@ -78,31 +80,32 @@ from .redis_management_client_enums import (
 )
 
 __all__ = [
-    'Sku',
-    'RedisAccessKeys',
-    'RedisLinkedServer',
-    'Resource',
-    'ProxyResource',
-    'TrackedResource',
-    'RedisCreateParameters',
-    'RedisUpdateParameters',
-    'RedisFirewallRule',
-    'RedisFirewallRuleCreateParameters',
-    'RedisResource',
-    'RedisRegenerateKeyParameters',
-    'RedisRebootParameters',
+    'CheckNameAvailabilityParameters',
     'ExportRDBParameters',
     'ImportRDBParameters',
-    'ScheduleEntry',
-    'RedisPatchSchedule',
-    'RedisForceRebootResponse',
-    'RedisLinkedServerWithProperties',
-    'RedisLinkedServerCreateParameters',
-    'OperationDisplay',
-    'Operation',
-    'CheckNameAvailabilityParameters',
-    'UpgradeNotification',
     'NotificationListResponse',
+    'Operation',
+    'OperationDisplay',
+    'ProxyResource',
+    'RedisAccessKeys',
+    'RedisCreateParameters',
+    'RedisFirewallRule',
+    'RedisFirewallRuleCreateParameters',
+    'RedisForceRebootResponse',
+    'RedisInstanceDetails',
+    'RedisLinkedServer',
+    'RedisLinkedServerCreateParameters',
+    'RedisLinkedServerWithProperties',
+    'RedisPatchSchedule',
+    'RedisRebootParameters',
+    'RedisRegenerateKeyParameters',
+    'RedisResource',
+    'RedisUpdateParameters',
+    'Resource',
+    'ScheduleEntry',
+    'Sku',
+    'TrackedResource',
+    'UpgradeNotification',
     'OperationPaged',
     'RedisResourcePaged',
     'RedisFirewallRulePaged',

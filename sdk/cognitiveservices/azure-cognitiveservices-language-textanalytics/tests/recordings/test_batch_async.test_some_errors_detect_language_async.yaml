@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I should take my cat to the veterinarian.",
+      "countryHint": "United States"}, {"id": "2", "text": "Este es un document escrito
+      en Espa\u00f1ol."}, {"id": "3", "text": ""}, {"id": "4", "text": "Fahrt nach
+      Stuttgart und dann zum Hotel zu Fu."}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '278'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"2","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"4","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","innerError":{"code":"InvalidCountryHint","message":"Country
+        hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
+        code."},"message":"Invalid Country Hint."}},{"id":"3","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 691381d0-74a5-4a03-a6fc-dd03adc02ef9
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
+      date: Mon, 18 Nov 2019 17:05:07 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: fa4f4184-b1f9-49a9-b429-a75b75bc3839
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '6'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - showStats=false
+        - ''
+version: 1
