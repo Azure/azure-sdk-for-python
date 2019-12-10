@@ -13,9 +13,10 @@ from azure.core.exceptions import (
 )
 from azure.appconfiguration import (
     ResourceReadOnlyError,
-    AzureAppConfigurationClient,
     ConfigurationSetting,
 )
+from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.identity.aio import DefaultAzureCredential
 from consts import (
     KEY,
     LABEL,
@@ -25,20 +26,27 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
+from async_proxy import AzureAppConfigurationClientProxy
 import pytest
 import datetime
 import os
 import logging
+from unittest.mock import Mock
+from azure.core.credentials import AccessToken
+import asyncio
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         if self.is_playback():
-            connection_str = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg="
+            base_url = "https://fake_app_config.azconfig-test.io"
+            credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
         else:
-            connection_str = os.getenv('APP_CONFIG_CONNECTION')
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(connection_str)
+            base_url = os.getenv('APP_CONFIG_ENDPOINT')
+            credential = DefaultAzureCredential()
+        app_config_client = AzureAppConfigurationClient(base_url=base_url, credential=credential)
+        self.app_config_client = AzureAppConfigurationClientProxy(app_config_client)
 
     def setUp(self):
         super(AppConfigurationClientTest, self).setUp()
