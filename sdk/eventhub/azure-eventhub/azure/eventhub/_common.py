@@ -251,27 +251,6 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
-    @property
-    def application_properties(self):
-        # type: () -> Dict[str, Any]
-        """This method is deprecated. Will be removed in the next release. Use EventData.properties instead.
-        """
-        warnings.warn(
-            "azure.eventhub.EventData.application_properties is deprecated, use EventData.properties instead.",
-            DeprecationWarning
-        )
-        return self.properties
-
-    def encode_message(self):
-        # type: () -> bytes
-        """This method is deprecated. Will be removed in the next release.
-        """
-        warnings.warn(
-            "azure.eventhub.EventData.encode_message() is deprecated. It will be removed in 5.0.0",
-            DeprecationWarning
-        )
-        return self._encode_message()
-
 
 class EventDataBatch(object):
     """A batch of events.
