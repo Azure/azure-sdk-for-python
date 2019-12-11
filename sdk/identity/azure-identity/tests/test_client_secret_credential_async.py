@@ -10,8 +10,14 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
-
-from helpers import async_validating_transport, AsyncMockTransport, build_aad_response, mock_response, Request
+from helpers import (
+    async_validating_transport,
+    AsyncMockTransport,
+    build_aad_response,
+    mock_response,
+    Request,
+    wrap_in_future,
+)
 
 import pytest
 
@@ -109,7 +115,7 @@ async def test_cache():
         "token_type": "Bearer",
     }
     mock_send = Mock(return_value=mock_response(json_payload=token_payload))
-    transport = Mock(send=asyncio.coroutine(mock_send))
+    transport = Mock(send=wrap_in_future(mock_send))
     scope = "scope"
 
     credential = ClientSecretCredential("tenant-id", "client-id", "secret", transport=transport)
