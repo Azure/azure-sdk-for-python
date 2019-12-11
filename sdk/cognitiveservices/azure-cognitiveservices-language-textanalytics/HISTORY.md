@@ -19,6 +19,16 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - New client and module-level async APIs added to subnamespace `azure.cognitiveservices.language.textanalytics.aio`.
   - `MultiLanguageInput` has been renamed to `TextDocumentInput`
   - `LanguageInput` has been renamed to `DetectLanguageInput`
+  - `DocumentLanguage` has been renamed to `DetectLanguageResult`
+  - `DocumentEntities` has been renamed to `RecognizeEntitiesResult`
+  - `DocumentLinkedEntities` has been renamed to `RecognizeLinkedEntitiesResult`
+  - `DocumentKeyPhrases` has been renamed to `ExtractKeyPhrasesResult`
+  - `DocumentSentiment` has been renamed to `AnalyzeSentimentResult`
+  - `DocumentStatistics` has been renamed to `TextDocumentStatistics`
+  - `RequestStatistics` has been renamed to `TextDocumentBatchStatistics`
+  - `Entity` has been renamed to `NamedEntity`
+  - `Match` has been renamed to `LinkedEntityMatch`
+  - The batching methods' `documents` parameter has been renamed `inputs`
 
 - New input types:
   - `detect_languages` can take as input a `list[DetectLanguageInput]` or a `list[str]`. A list of dict-like objects in the same shape as `DetectLanguageInput` is still accepted as input.
@@ -30,25 +40,25 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - `detect_languages` now takes a parameter `country_hint` which allows you to specify the country hint for the entire batch. Any per-item country hints will take precedence over a whole batch hint.
   - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` now take a parameter `language` which allows you to specify the language for the entire batch.
   Any per-item specified language will take precedence over a whole batch hint.
-  - A `response_hook` parameter can be passed with a callback to use the raw response from the service. Additionally, values returned for `RequestStatistics` and `model_version` must be retrieved using a response hook.
+  - A `response_hook` parameter can be passed with a callback to use the raw response from the service. Additionally, values returned for `TextDocumentBatchStatistics` and `model_version` must be retrieved using a response hook.
 
 - New return types
   - The return types for the batching methods (`detect_languages`, `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment`) now return a heterogeneous list of 
   result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean on each object called `is_error` can be used to determine whether the returned response object at 
   that index is a result or an error:
-  - `detect_languages` now returns a List[Union[`DocumentLanguage`, `DocumentError`]]
-  - `recognize_entities` now returns a List[Union[`DocumentEntities`, `DocumentError`]]
-  - `recognize_pii_entities` now returns a List[Union[`DocumentEntities`, `DocumentError`]]
-  - `recognize_linked_entities` now returns a List[Union[`DocumentLinkedEntities`, `DocumentError`]]
-  - `extract_key_phrases` now returns a List[Union[`DocumentKeyPhrases`, `DocumentError`]]
-  - `analyze_sentiment` now returns a List[Union[`DocumentSentiment`, `DocumentError`]]
+  - `detect_languages` now returns a List[Union[`DetectLanguageResult`, `DocumentError`]]
+  - `recognize_entities` now returns a List[Union[`RecognizeEntitiesResult`, `DocumentError`]]
+  - `recognize_pii_entities` now returns a List[Union[`RecognizePiiEntitiesResult`, `DocumentError`]]
+  - `recognize_linked_entities` now returns a List[Union[`RecognizeLinkedEntitiesResult`, `DocumentError`]]
+  - `extract_key_phrases` now returns a List[Union[`ExtractKeyPhrasesResult`, `DocumentError`]]
+  - `analyze_sentiment` now returns a List[Union[`AnalyzeSentimentResult`, `DocumentError`]]
   - The module-level, single text operations will return a single result object or raise the error found on the document:
-  - `single_detect_languages` returns a `DocumentLanguage`
-  - `single_recognize_entities` returns a `DocumentEntities`
-  - `single_recognize_pii_entities` returns a `DocumentEntities`
-  - `single_recognize_linked_entities` returns a `DocumentLinkedEntities`
-  - `single_extract_key_phrases` returns a `DocumentKeyPhrases`
-  - `single_analyze_sentiment` returns a `DocumentSentiment`
+  - `single_detect_languages` returns a `DetectLanguageResult`
+  - `single_recognize_entities` returns a `RecognizeEntitiesResult`
+  - `single_recognize_pii_entities` returns a `RecognizePiiEntitiesResult`
+  - `single_recognize_linked_entities` returns a `RecognizeLinkedEntitiesResult`
+  - `single_extract_key_phrases` returns a `ExtractKeyPhrasesResult`
+  - `single_analyze_sentiment` returns a `AnalyzeSentimentResult`
 
 - New underlying REST pipeline implementation, based on the new `azure-core` library.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
