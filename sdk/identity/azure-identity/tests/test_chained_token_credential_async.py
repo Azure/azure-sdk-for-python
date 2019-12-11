@@ -6,7 +6,7 @@ from azure.identity.aio import ChainedTokenCredential
 import pytest
 from unittest.mock import Mock
 
-from helpers import get_completed_future
+from helpers_async import get_completed_future
 
 
 @pytest.mark.asyncio

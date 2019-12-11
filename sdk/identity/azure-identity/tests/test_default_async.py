@@ -13,7 +13,8 @@ from azure.identity.aio._credentials.managed_identity import ImdsCredential, Msi
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import async_validating_transport, mock_response, Request, wrap_in_future
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 

@@ -5,7 +5,7 @@
 from azure.identity.aio._credentials.managed_identity import ImdsCredential
 import pytest
 
-from helpers import AsyncMockTransport
+from helpers_async import AsyncMockTransport
 
 
 @pytest.mark.asyncio
@@ -16,7 +16,7 @@ async def test_imds_close():
 
     await credential.close()
 
-    assert transport.__aexit__.call_count == 1
+    assert transport.exited
 
 
 @pytest.mark.asyncio
@@ -27,4 +27,4 @@ async def test_imds_context_manager():
     async with credential:
         pass
 
-    assert transport.__aexit__.call_count == 1
+    assert transport.exited

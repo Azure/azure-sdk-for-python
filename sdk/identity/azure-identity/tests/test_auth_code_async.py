@@ -12,7 +12,8 @@ from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import AuthorizationCodeCredential
 import pytest
 
-from helpers import async_validating_transport, build_aad_response, mock_response, Request, wrap_in_future
+from helpers import build_aad_response, mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 
 
 @pytest.mark.asyncio

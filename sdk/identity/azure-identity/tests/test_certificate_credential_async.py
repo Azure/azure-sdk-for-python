@@ -11,16 +11,6 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
 
-from helpers import (
-    AsyncMockTransport,
-    async_validating_transport,
-    build_aad_response,
-    urlsafeb64_decode,
-    mock_response,
-    Request,
-)
-from test_certificate_credential import validate_jwt
-
 import pytest
 
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
@@ -38,7 +28,7 @@ async def test_close():
 
     await credential.close()
 
-    assert transport.__aexit__.call_count == 1
+    assert transport.exited
 
 
 @pytest.mark.asyncio
@@ -49,7 +39,7 @@ async def test_context_manager():
     async with credential:
         pass
 
-    assert transport.__aexit__.call_count == 1
+    assert transport.exited
 
 
 @pytest.mark.asyncio
@@ -122,3 +112,9 @@ async def test_request_body():
     token = await cred.get_token("scope")
 
     assert token.token == access_token
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(test_close())

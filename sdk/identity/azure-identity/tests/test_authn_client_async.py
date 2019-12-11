@@ -9,7 +9,8 @@ from urllib.parse import urlparse
 import pytest
 from azure.identity.aio._authn_client import AsyncAuthnClient
 
-from helpers import mock_response, wrap_in_future
+from helpers import mock_response
+from helpers_async import wrap_in_future
 
 
 @pytest.mark.asyncio

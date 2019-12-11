@@ -10,14 +10,8 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
-from helpers import (
-    async_validating_transport,
-    AsyncMockTransport,
-    build_aad_response,
-    mock_response,
-    Request,
-    wrap_in_future,
-)
+from helpers import build_aad_response, mock_response, Request
+from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
 
 import pytest
 
@@ -29,7 +23,7 @@ async def test_close():
 
     await credential.close()
 
-    assert transport.__aexit__.call_count == 1
+    assert transport.exited
 
 
 @pytest.mark.asyncio
@@ -40,7 +34,7 @@ async def test_context_manager():
     async with credential:
         pass
 
-    assert transport.__aexit__.call_count == 1
+    assert transport.exited
 
 
 @pytest.mark.asyncio

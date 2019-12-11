@@ -21,8 +21,8 @@ from azure.identity.aio import (
 from azure.identity.aio._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 
-from helpers import async_validating_transport, mock_response, Request, wrap_in_future
-
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 
 @pytest.mark.asyncio
 async def test_client_secret_environment_credential():
