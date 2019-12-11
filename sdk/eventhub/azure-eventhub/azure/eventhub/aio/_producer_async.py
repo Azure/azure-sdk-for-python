@@ -5,7 +5,7 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Type, Optional, Any, List, TYPE_CHECKING
+from typing import Iterable, Union, Type, Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
 from uamqp import types, constants, errors
@@ -155,7 +155,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             self,
             event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             span: Optional[AbstractSpan],
-            partition_key: Optional[Union[str, bytes]]
+            partition_key: Optional[AnyStr]
         ) -> Union[EventData, EventDataBatch]:
         if isinstance(event_data, EventData):
             if partition_key:
@@ -179,7 +179,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             self,
             event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *,
-            partition_key: Optional[Union[str, bytes]] = None,
+            partition_key: Optional[AnyStr] = None,
             timeout: Optional[float] = None
         ) -> None:
         """

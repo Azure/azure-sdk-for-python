@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
+from typing import Union, Dict, Any, AnyStr, Iterable, Optional, List, TYPE_CHECKING, cast
 
 import six
 
@@ -48,7 +48,7 @@ class EventData(object):
     """
 
     def __init__(self, body=None):
-        # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
+        # type: (Union[AnyStr, List[Union[str, bytes]]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         if body and isinstance(body, list):
             self.message = Message(body[0])

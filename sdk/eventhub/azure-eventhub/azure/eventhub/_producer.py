@@ -8,7 +8,7 @@ import uuid
 import logging
 import time
 import threading
-from typing import Iterable, Union, Type, Optional, Any, List, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import Iterable, Union, Type, Optional, Any, AnyStr, List, TYPE_CHECKING  # pylint: disable=unused-import
 
 from uamqp import types, constants, errors
 from uamqp import SendClient
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 def _set_partition_key(event_datas, partition_key):
-    # type: (Iterable[EventData], Union[str, bytes]) -> Iterable[EventData]
+    # type: (Iterable[EventData], AnyStr) -> Iterable[EventData]
     for ed in iter(event_datas):
         set_message_partition_key(ed.message, partition_key)
         yield ed
@@ -166,7 +166,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self,
             event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
             span,  # type: Optional[AbstractSpan]
-            partition_key  # type: Optional[Union[str, bytes]]
+            partition_key  # type: Optional[AnyStr]
         ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
@@ -190,7 +190,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     def send(
             self,
             event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
-            partition_key=None,  # type: Optional[Union[str, bytes]]
+            partition_key=None,  # type: Optional[AnyStr]
             timeout=None  # type: Optional[float]
         ):
         # type:(...) -> None
