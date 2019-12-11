@@ -48,7 +48,7 @@ class EventData(object):
     """
 
     def __init__(self, body=None):
-        # type: (Union[AnyStr, List[Union[str, bytes]]]) -> None
+        # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         if body and isinstance(body, list):
             self.message = Message(body[0])

@@ -51,7 +51,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             loop: Optional[asyncio.AbstractEventLoop] = None
     ):
         self._consumer_group = consumer_group
-        self._eventhub_client = eventhub_client  # type: ignore
+        self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eventhub_name
         self._partition_id = partition_id
@@ -164,6 +164,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 raise
             except Exception as error:  # pylint:disable=broad-except
                 await self._process_error(partition_context, error)
+
 
     async def _receive(self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None) -> None:  # pylint: disable=too-many-statements
         try:  # pylint:disable=too-many-nested-blocks
