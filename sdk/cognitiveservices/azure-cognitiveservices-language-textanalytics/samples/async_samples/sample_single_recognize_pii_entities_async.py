@@ -53,7 +53,7 @@ class SingleRecognizePiiEntitiesSampleAsync(object):
         result = await single_recognize_pii_entities(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             language="en"
         )
 

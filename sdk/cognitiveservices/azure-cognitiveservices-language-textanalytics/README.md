@@ -200,7 +200,7 @@ other optional parameters.
 from azure.cognitiveservices.language.textanalytics import single_analyze_sentiment
 
 text = "I did not like the restaurant. The food was too spicy."
-result = single_analyze_sentiment(endpoint=endpoint, credential=credential, text=text, language="en")
+result = single_analyze_sentiment(endpoint=endpoint, credential=credential, text_input=text, language="en")
 
 print(result.sentiment)
 ```

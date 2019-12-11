@@ -63,7 +63,7 @@ class SingleAnalyzeSentimentSample(object):
         result = single_analyze_sentiment(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             language="en"
         )
 

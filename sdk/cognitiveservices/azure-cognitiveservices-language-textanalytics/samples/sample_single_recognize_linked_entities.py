@@ -80,7 +80,7 @@ class SingleRecognizeLinkedEntitiesSample(object):
         result = single_recognize_linked_entities(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             language="en"
         )
 

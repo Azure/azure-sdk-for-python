@@ -67,7 +67,7 @@ class SingleRecognizeEntitiesSample(object):
         result = single_recognize_entities(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             language="en"
         )
 

@@ -52,7 +52,7 @@ class SingleExtractKeyPhrasesSample(object):
         result = single_extract_key_phrases(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             language="en"
         )
 

@@ -68,7 +68,7 @@ class SingleRecognizeEntitiesSampleAsync(object):
         result = await single_recognize_entities(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             language="en"
         )
 

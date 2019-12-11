@@ -50,7 +50,7 @@ class SingleDetectLanguageSampleAsync(object):
         result = await single_detect_language(
             endpoint=self.endpoint,
             credential=self.key,
-            text=text,
+            input_text=text,
             country_hint="US",
             show_stats=True
         )
