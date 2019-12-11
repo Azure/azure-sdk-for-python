@@ -27,7 +27,7 @@ steps:
   - pwsh: |
       Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem -Name LongPathsEnabled -Value 1
     displayName: "Enable Long File Path"
-    condition: eq(${{ parameters.OSName }}, "Windows")
+    condition: eq(variables['OSName'], "Windows")
 
   - script: |
       pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
