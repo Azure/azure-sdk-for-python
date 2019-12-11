@@ -96,7 +96,7 @@ class DocumentEntities(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
+     ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentEntities.
     """
@@ -119,7 +119,7 @@ class DocumentLanguage(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
+     ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentLanguage.
     """
@@ -238,7 +238,7 @@ class DocumentKeyPhrases(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
+     ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentKeyPhrases.
     """
@@ -261,7 +261,7 @@ class DocumentLinkedEntities(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
+     ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentLinkedEntities.
     """
@@ -285,7 +285,7 @@ class DocumentSentiment(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
+     ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param document_scores: Document level sentiment confidence
      scores between 0 and 1 for each sentiment class.
     :type document_scores: dict
@@ -305,7 +305,7 @@ class DocumentSentiment(DictMixin):
         self.is_error = False
 
 
-class DocumentStatistics(DictMixin):
+class TextDocumentStatistics(DictMixin):
     """If showStats=true was specified in the request this field will contain
     information about the document payload.
 
@@ -463,7 +463,7 @@ class TextDocumentInput(MultiLanguageInput):
         self.language = kwargs.get("language", None)
 
 
-class RequestStatistics(DictMixin):
+class TextDocumentBatchStatistics(DictMixin):
     """If show_stats=true was specified in the request this field will contain
     information about the request payload. Note: This object is not returned
     in the response and needs to be retrieved by a response hook.

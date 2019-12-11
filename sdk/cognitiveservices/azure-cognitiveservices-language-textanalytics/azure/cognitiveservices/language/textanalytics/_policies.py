@@ -6,7 +6,7 @@
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.policies import SansIOHTTPPolicy, HTTPPolicy
-from ._models import RequestStatistics
+from ._models import TextDocumentBatchStatistics
 
 
 class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
@@ -34,7 +34,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
             statistics = data.get("statistics", None)
             model_version = data.get("modelVersion", None)
 
-            batch_statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
+            batch_statistics = TextDocumentBatchStatistics._from_generated(statistics)  # pylint: disable=protected-access
             response.statistics = batch_statistics
             response.model_version = model_version
             response.raw_response = data

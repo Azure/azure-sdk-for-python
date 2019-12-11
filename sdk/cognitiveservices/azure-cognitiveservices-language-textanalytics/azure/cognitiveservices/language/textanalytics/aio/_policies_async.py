@@ -7,7 +7,7 @@
 import asyncio
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from .._models import RequestStatistics
+from .._models import TextDocumentBatchStatistics
 
 
 class AsyncTextAnalyticsResponseHook(AsyncHTTPPolicy):
@@ -24,7 +24,7 @@ class AsyncTextAnalyticsResponseHook(AsyncHTTPPolicy):
             statistics = data.get("statistics", None)
             model_version = data.get("modelVersion", None)
 
-            batch_statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
+            batch_statistics = TextDocumentBatchStatistics._from_generated(statistics)  # pylint: disable=protected-access
             response.statistics = batch_statistics
             response.model_version = model_version
             response.raw_response = data

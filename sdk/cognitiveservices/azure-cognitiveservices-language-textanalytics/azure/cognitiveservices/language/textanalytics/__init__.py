@@ -23,9 +23,9 @@ from ._models import (
     InnerError,
     DocumentKeyPhrases,
     DocumentLinkedEntities,
-    DocumentStatistics,
+    TextDocumentStatistics,
     LinkedEntityMatch,
-    RequestStatistics,
+    TextDocumentBatchStatistics,
     SentenceSentiment
 )
 
@@ -48,11 +48,11 @@ __all__ = [
     'DocumentKeyPhrases',
     'DocumentLinkedEntities',
     'DocumentSentiment',
-    'DocumentStatistics',
+    'TextDocumentStatistics',
     'DocumentError',
     'LinkedEntity',
     'LinkedEntityMatch',
-    'RequestStatistics',
+    'TextDocumentBatchStatistics',
     'SentenceSentiment',
 ]
 

@@ -14,7 +14,7 @@ from azure.core.exceptions import (
 from ._models import (
     DocumentEntities,
     NamedEntity,
-    DocumentStatistics,
+    TextDocumentStatistics,
     DocumentLinkedEntities,
     LinkedEntity,
     DocumentKeyPhrases,
@@ -108,7 +108,7 @@ def language_result(language):
     return DocumentLanguage(
         id=language.id,
         detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],  # pylint: disable=protected-access
-        statistics=DocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
     )
 
 
@@ -117,7 +117,7 @@ def entities_result(entity):
     return DocumentEntities(
         id=entity.id,
         entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
-        statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
 
@@ -126,7 +126,7 @@ def linked_entities_result(entity):
     return DocumentLinkedEntities(
         id=entity.id,
         entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
-        statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
 
@@ -135,7 +135,7 @@ def key_phrases_result(phrases):
     return DocumentKeyPhrases(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
-        statistics=DocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
     )
 
 
@@ -144,7 +144,7 @@ def sentiment_result(sentiment):
     return DocumentSentiment(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
-        statistics=DocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         document_scores=sentiment.document_scores,
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
     )
