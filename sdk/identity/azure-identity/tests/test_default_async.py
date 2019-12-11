@@ -7,7 +7,6 @@ import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
-from azure.core.credentials import AccessToken
 from azure.identity import KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
 from azure.identity.aio._credentials.managed_identity import ImdsCredential, MsiCredential

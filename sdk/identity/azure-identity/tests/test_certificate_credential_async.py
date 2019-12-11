@@ -11,13 +11,45 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
 
-from helpers import async_validating_transport, build_aad_response, urlsafeb64_decode, mock_response, Request
+from helpers import (
+    AsyncMockTransport,
+    async_validating_transport,
+    build_aad_response,
+    urlsafeb64_decode,
+    mock_response,
+    Request,
+)
 from test_certificate_credential import validate_jwt
 
 import pytest
 
+from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
+from helpers_async import async_validating_transport, AsyncMockTransport
+from test_certificate_credential import validate_jwt
+
 
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)
+
+    async with credential:
+        pass
+
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio

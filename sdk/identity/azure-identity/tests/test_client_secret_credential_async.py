@@ -11,9 +11,30 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
 
-from helpers import async_validating_transport, build_aad_response, mock_response, Request
+from helpers import async_validating_transport, AsyncMockTransport, build_aad_response, mock_response, Request
 
 import pytest
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+
+    async with credential:
+        pass
+
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio

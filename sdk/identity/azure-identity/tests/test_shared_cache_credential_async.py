@@ -19,8 +19,37 @@ from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 
-from helpers import async_validating_transport, build_aad_response, build_id_token, mock_response, Request
+from helpers import (
+    AsyncMockTransport,
+    async_validating_transport,
+    build_aad_response,
+    build_id_token,
+    mock_response,
+    Request,
+)
+
 from test_shared_cache_credential import get_account_event, populated_cache
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    credential = SharedTokenCacheCredential(transport=transport)
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    credential = SharedTokenCacheCredential(transport=transport)
+
+    async with credential:
+        pass
+
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio
