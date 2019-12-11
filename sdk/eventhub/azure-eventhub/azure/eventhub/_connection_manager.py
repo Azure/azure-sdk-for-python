@@ -10,7 +10,7 @@ from enum import Enum
 from uamqp import Connection, TransportType, c_uamqp  # type: ignore
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth
+    from uamqp.authentication import JWTTokenAuth  # type: ignore
 
 class _ConnectionMode(Enum):
     ShareConnection = 1
@@ -89,7 +89,7 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs):
-    # type: (Any) -> Union[_SharedConnectionManager, _SeparateConnectionManager]
+    # type: (Any) -> Union[_SeparateConnectionManager, _SharedConnectionManager, ]
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

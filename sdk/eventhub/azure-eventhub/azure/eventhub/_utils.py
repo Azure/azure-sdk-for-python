@@ -32,7 +32,7 @@ from ._constants import (
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
-    from azure.core.tracing import AbstractSpan
+    from azure.core.tracing import AbstractSpan   # type: ignore
     from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)

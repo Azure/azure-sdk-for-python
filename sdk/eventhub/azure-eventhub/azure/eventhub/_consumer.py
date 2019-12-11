@@ -23,9 +23,8 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth
+    from uamqp.authentication import JWTTokenAuth  # type: ignore
     from ._consumer_client import EventHubConsumerClient
-    from ._eventprocessor.partition_context import PartitionContext
 
 
 _LOGGER = logging.getLogger(__name__)

@@ -17,7 +17,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse, quote_plus
 
-from uamqp import (
+from uamqp import (  # type: ignore
     AMQPClient,
     Message,
     authentication,
@@ -142,7 +142,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
-        self._conn_manager = get_connection_manager(**kwargs)  # type: Any
+        self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod

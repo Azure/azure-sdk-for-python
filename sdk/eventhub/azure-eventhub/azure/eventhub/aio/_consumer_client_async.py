@@ -15,7 +15,7 @@ from .._constants import ALL_PARTITIONS
 
 
 if TYPE_CHECKING:
-    from uamqp.constants import TransportType
+    from uamqp.constants import TransportType  # type: ignore
     from azure.core.credentials import TokenCredential  # type: ignore
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore

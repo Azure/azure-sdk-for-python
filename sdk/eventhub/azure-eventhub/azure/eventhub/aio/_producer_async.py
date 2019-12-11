@@ -23,7 +23,7 @@ from ._eventprocessor.utils import get_running_loop
 from ._client_base_async import ConsumerProducerMixin
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
+    from uamqp.authentication import JWTTokenAsync  # type: ignore  # pylint: disable=ungrouped-imports
     from ._producer_client_async import EventHubProducerClient
 
 _LOGGER = logging.getLogger(__name__)

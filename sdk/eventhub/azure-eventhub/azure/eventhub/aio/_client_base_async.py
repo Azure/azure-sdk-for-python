@@ -10,7 +10,7 @@ import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
-from uamqp import (
+from uamqp import (  # type: ignore
     authentication,
     constants,
     errors,
@@ -65,10 +65,7 @@ class ClientBaseAsync(ClientBase):
             credential=credential,
             **kwargs
         )
-        self._conn_manager = cast(
-            Union[_SharedConnectionManager, _SeparateConnectionManager],
-            get_connection_manager(loop=self._loop, **kwargs)
-        )
+        self._conn_manager_async = get_connection_manager(loop=self._loop, **kwargs)
 
     def __enter__(self):
         raise TypeError("Asynchronous client must be opened with async context manager.")
@@ -112,7 +109,7 @@ class ClientBaseAsync(ClientBase):
             transport_type=self._config.transport_type)
 
     async def _close_connection_async(self) -> None:
-        await self._conn_manager.reset_connection_if_broken()
+        await self._conn_manager_async.reset_connection_if_broken()
 
     async def _backoff_async(
             self,
@@ -139,7 +136,7 @@ class ClientBaseAsync(ClientBase):
             mgmt_auth = await self._create_auth_async()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
-                conn = await self._conn_manager.get_connection(self._address.hostname, mgmt_auth)
+                conn = await self._conn_manager_async.get_connection(self._address.hostname, mgmt_auth)
                 await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
@@ -191,7 +188,7 @@ class ClientBaseAsync(ClientBase):
         return output
 
     async def _close_async(self) -> None:
-        await self._conn_manager.close_connection()
+        await self._conn_manager_async.close_connection()
 
 
 class ConsumerProducerMixin(object):
@@ -221,7 +218,7 @@ class ConsumerProducerMixin(object):
             auth = await self._client._create_auth_async()  # type: ignore
             self._create_handler(auth)  # type: ignore
             await self._handler.open_async(  # type: ignore
-                connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # type: ignore
+                connection=await self._client._conn_manager_async.get_connection(self._client._address.hostname, auth)  # type: ignore
             )
             while not await self._handler.client_ready_async():  # type: ignore
                 await asyncio.sleep(0.05, loop=self._loop)  # type: ignore
@@ -237,7 +234,7 @@ class ConsumerProducerMixin(object):
 
     async def _close_connection_async(self) -> None:
         await self._close_handler_async()
-        await self._client._conn_manager.reset_connection_if_broken()  # type: ignore # pylint:disable=protected-access
+        await self._client._conn_manager_async.reset_connection_if_broken()  # type: ignore # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
         if not self.running and isinstance(exception, compat.TimeoutException):

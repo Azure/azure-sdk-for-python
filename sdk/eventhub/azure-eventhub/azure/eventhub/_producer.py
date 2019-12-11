@@ -25,7 +25,7 @@ from ._constants import TIMEOUT_SYMBOL
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth  # pylint: disable=ungrouped-imports
+    from uamqp.authentication import JWTTokenAuth  # type: ignore  # pylint: disable=ungrouped-imports
     from ._producer_client import EventHubProducerClient
 
 

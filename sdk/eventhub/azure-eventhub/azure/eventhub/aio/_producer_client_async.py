@@ -15,7 +15,7 @@ from .._constants import ALL_PARTITIONS
 from .._common import EventData, EventDataBatch
 
 if TYPE_CHECKING:
-    from uamqp.constants import TransportType
+    from uamqp.constants import TransportType  # type: ignore
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)

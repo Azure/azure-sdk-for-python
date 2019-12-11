@@ -9,10 +9,10 @@ from asyncio import Lock
 from uamqp import TransportType, c_uamqp  # type: ignore
 from uamqp.async_ops import ConnectionAsync  # type: ignore
 
-from .._connection_manager import _ConnectionMode
+from .._connection_manager import _ConnectionMode  # type: ignore
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAsync
+    from uamqp.authentication import JWTTokenAsync  # type: ignore
 
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
@@ -82,7 +82,7 @@ class _SeparateConnectionManager(object):
         pass
 
 
-def get_connection_manager(**kwargs) -> Union[_SharedConnectionManager, _SeparateConnectionManager]:
+def get_connection_manager(**kwargs) -> Union[_SeparateConnectionManager, _SharedConnectionManager]:
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
