@@ -6,13 +6,14 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from ... import ChainedTokenCredential as SyncChainedTokenCredential
+from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
 
 
-class ChainedTokenCredential(SyncChainedTokenCredential):
+class ChainedTokenCredential(SyncChainedTokenCredential, AsyncCredentialBase):
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
@@ -21,6 +22,15 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
     :param credentials: credential instances to form the chain
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
+
+    async def __aenter__(self):
+        pass
+
+    async def close(self):
+        """Close the transport sessions of all credentials in the chain."""
+
+        for credential in self.credentials:
+            await credential.close()
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request a token from each credential, in order, returning the first token received.

@@ -54,6 +54,17 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
         super().__init__(**kwargs)
 
+    async def __aenter__(self):
+        await self._pipeline.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self.close()
+        return self
+
+    async def close(self) -> None:
+        await self._pipeline.__aexit__()
+
     async def request_token(
         self,
         scopes: "Iterable[str]",
