@@ -219,6 +219,25 @@ def connstr_senders(connection_str):
 
 
 @pytest.fixture()
+def storage_clm_with_prefix(eph):
+    try:
+        container = str(uuid.uuid4())
+        storage_clm = AzureStorageCheckpointLeaseManager(
+            os.environ['AZURE_STORAGE_ACCOUNT'],
+            os.environ['AZURE_STORAGE_ACCESS_KEY'],
+            container,
+            storage_blob_prefix="testprefix" + str(uuid.uuid4()))
+    except KeyError:
+        pytest.skip("Live Storage configuration not found.")
+    try:
+        storage_clm.initialize(eph)
+        storage_clm.storage_client.create_container(container)
+        yield storage_clm
+    finally:
+        storage_clm.storage_client.delete_container(container)
+
+
+@pytest.fixture()
 def storage_clm(eph):
     try:
         container = str(uuid.uuid4())

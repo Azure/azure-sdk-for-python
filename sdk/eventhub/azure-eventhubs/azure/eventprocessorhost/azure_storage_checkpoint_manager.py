@@ -213,11 +213,13 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         :rtype: ~azure.eventprocessorhost.lease.Lease
         """
         try:
+            blob_path = self._get_lease_blob_path(partition_id)
             blob = await self.host.loop.run_in_executor(
                 self.executor,
                 functools.partial(
                     self.storage_client.get_blob_to_text,
-                    self.lease_container_name, partition_id))
+                    self.lease_container_name,
+                    blob_path))
             lease = AzureBlobLease()
             lease.with_blob(blob)
             async def state():
@@ -231,7 +233,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                         functools.partial(
                             self.storage_client.get_blob_properties,
                             self.lease_container_name,
-                            partition_id))
+                            blob_path))
                     return res.properties.lease.state
                 except Exception as err:  # pylint: disable=broad-except
                     _logger.error("Failed to get lease state %r %r", err, partition_id)
@@ -269,20 +271,21 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         return_lease = None
         try:
+            blob_path = self._get_lease_blob_path(partition_id)
             return_lease = AzureBlobLease()
             return_lease.partition_id = partition_id
             serializable_lease = return_lease.serializable()
             json_lease = json.dumps(serializable_lease)
             _logger.info("Creating Lease %r %r %r",
                          self.lease_container_name,
-                         partition_id,
+                         blob_path,
                          json.dumps({k:v for k, v in serializable_lease.items() if k != 'event_processor_context'}))
             await self.host.loop.run_in_executor(
                 self.executor,
                 functools.partial(
                     self.storage_client.create_blob_from_text,
                     self.lease_container_name,
-                    partition_id,
+                    blob_path,
                     json_lease))
         except Exception:  # pylint: disable=broad-except
             try:
@@ -300,12 +303,13 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         :param lease: The stored lease to be deleted.
         :type lease: ~azure.eventprocessorhost.lease.Lease
         """
+        blob_path = self._get_lease_blob_path(lease.partition_id)
         await self.host.loop.run_in_executor(
             self.executor,
             functools.partial(
                 self.storage_client.delete_blob,
                 self.lease_container_name,
-                lease.partition_id,
+                blob_path,
                 lease_id=lease.token))
 
     async def acquire_lease_async(self, lease):
@@ -323,6 +327,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         new_lease_id = str(uuid.uuid4())
         partition_id = lease.partition_id
         try:
+            blob_path = self._get_lease_blob_path(partition_id)
             if asyncio.iscoroutinefunction(lease.state):
                 state = await lease.state()
             else:
@@ -345,7 +350,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                         functools.partial(
                             self.storage_client.change_blob_lease,
                             self.lease_container_name,
-                            partition_id,
+                            blob_path,
                             lease.token,
                             new_lease_id))
                     lease.token = new_lease_id
@@ -356,7 +361,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                     functools.partial(
                         self.storage_client.acquire_blob_lease,
                         self.lease_container_name,
-                        partition_id,
+                        blob_path,
                         self.lease_duration,
                         new_lease_id))
             lease.owner = self.host.host_name
@@ -381,12 +386,13 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         :rtype: bool
         """
         try:
+            blob_path = self._get_lease_blob_path(lease.partition_id)
             await self.host.loop.run_in_executor(
                 self.executor,
                 functools.partial(
                     self.storage_client.renew_blob_lease,
                     self.lease_container_name,
-                    lease.partition_id,
+                    blob_path,
                     lease_id=lease.token,
                     timeout=self.lease_duration))
         except Exception as err:  # pylint: disable=broad-except
@@ -411,6 +417,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         lease_id = None
         try:
             _logger.info("Releasing lease %r %r", self.host.guid, lease.partition_id)
+            blob_path = self._get_lease_blob_path(lease.partition_id)
             lease_id = lease.token
             released_copy = AzureBlobLease()
             released_copy.with_lease(lease)
@@ -422,7 +429,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                 functools.partial(
                     self.storage_client.create_blob_from_text,
                     self.lease_container_name,
-                    lease.partition_id,
+                    blob_path,
                     json.dumps(released_copy.serializable()),
                     lease_id=lease_id))
             await self.host.loop.run_in_executor(
@@ -430,7 +437,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                 functools.partial(
                     self.storage_client.release_blob_lease,
                     self.lease_container_name,
-                    lease.partition_id,
+                    blob_path,
                     lease_id))
         except Exception as err:  # pylint: disable=broad-except
             _logger.error("Failed to release lease %r %r %r",
@@ -461,12 +468,13 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         # First, renew the lease to make sure the update will go through.
         if await self.renew_lease_async(lease):
             try:
+                blob_path = self._get_lease_blob_path(lease.partition_id)
                 await self.host.loop.run_in_executor(
                     self.executor,
                     functools.partial(
                         self.storage_client.create_blob_from_text,
                         self.lease_container_name,
-                        lease.partition_id,
+                        blob_path,
                         json.dumps(lease.serializable()),
                         lease_id=lease.token))
 
@@ -477,3 +485,15 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         else:
             return False
         return True
+
+    def _get_lease_blob_path(self, partition_id):
+        # Note: In a perfect world, without a prefix provided we'd prepend the
+        # consumer group to the partition_id. However this would break
+        # backcompat with a historical world in which we just had partition_id
+        # within the container, and preclude any way for a user to generate
+        # that behavior, so we will fix it in all cases in the Track2 library
+        # and simply enable the proper full path here if the optional parameter
+        # is present.
+        if self.storage_blob_prefix:
+            return str.format("{}/{}", self.consumer_group_directory, partition_id)
+        return partition_id

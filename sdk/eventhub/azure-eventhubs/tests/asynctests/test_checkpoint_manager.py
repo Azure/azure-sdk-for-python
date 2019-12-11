@@ -74,6 +74,34 @@ def test_delete_lease(storage_clm):
 
 
 @pytest.mark.liveTest
+def test_lease_with_path_prefix(storage_clm_with_prefix):
+    """
+    Test creating a lease with a blob prefix
+    """
+    loop = asyncio.get_event_loop()
+    local_checkpoint = loop.run_until_complete(storage_clm_with_prefix.create_checkpoint_if_not_exists_async("1"))
+    assert local_checkpoint.partition_id == "1"
+    assert local_checkpoint.offset == "-1"
+    lease = loop.run_until_complete(storage_clm_with_prefix.get_lease_async("1"))
+    
+    path_parts = storage_clm_with_prefix._get_lease_blob_path("0").split('/')
+    assert "testprefix" in path_parts[0]
+    assert "$default" in path_parts[0]
+    assert len(path_parts) == 2
+    assert path_parts[-1] == "0"
+
+
+@pytest.mark.liveTest
+def test_lease_without_path_prefix(storage_clm):
+    """
+    Test creating a lease with a blob prefix
+    """
+    path_parts = storage_clm._get_lease_blob_path("0").split('/')
+    assert len(path_parts) == 1
+    assert path_parts[0] == "0"
+
+
+@pytest.mark.liveTest
 def test_checkpointing(storage_clm):
     """
     Test checkpointing
