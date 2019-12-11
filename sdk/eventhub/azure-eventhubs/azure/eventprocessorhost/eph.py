@@ -100,9 +100,6 @@ class EPHOptions:
      from the active partition when a checkpoint is not able to be persisted. This can
      allow parallel scenarios to collide less, but can introduce latency.  Default is False.
     :vartype release_partition_on_checkpoint_failure: bool
-    :ivar connection_idle_timeout: Timeout in seconds after which the underlying connection
-    will close if there is no further activity.  Default is None.
-    :vartype connection_idle_timeout: int
     """
 
     def __init__(self):
@@ -116,4 +113,3 @@ class EPHOptions:
         self.keep_alive_interval = None
         self.auto_reconnect_on_error = True
         self.release_partition_on_checkpoint_failure = False
-        self.connection_idle_timeout = None
