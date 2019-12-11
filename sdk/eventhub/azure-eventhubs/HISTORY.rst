@@ -9,7 +9,6 @@ Release History
 **Features**
 
 - Updated UAMQP version to 1.2.4
-- Added `idle_timeout` parameter to the `add_receiver` functions and `EPHOptions` for optionally closing idle connections.
 - Added `reconnect_timeout` and `max_reconnect_tries` parameters to `receive` functions for better control of connection behaviour during receive.
 - Added an option `release_partition_on_checkpoint_failure` to `EPHOptions` for `EventProcessorHost` to
   instruct the EventProcessorHost to fail fast on a checkpoint failure and proactively release the partition.
