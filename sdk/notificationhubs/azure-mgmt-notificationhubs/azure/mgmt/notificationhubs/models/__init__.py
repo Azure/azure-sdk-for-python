@@ -10,102 +10,102 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .sku_py3 import Sku
-    from .check_availability_parameters_py3 import CheckAvailabilityParameters
-    from .check_availability_result_py3 import CheckAvailabilityResult
-    from .namespace_create_or_update_parameters_py3 import NamespaceCreateOrUpdateParameters
-    from .namespace_patch_parameters_py3 import NamespacePatchParameters
-    from .namespace_resource_py3 import NamespaceResource
-    from .shared_access_authorization_rule_properties_py3 import SharedAccessAuthorizationRuleProperties
-    from .shared_access_authorization_rule_create_or_update_parameters_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-    from .shared_access_authorization_rule_resource_py3 import SharedAccessAuthorizationRuleResource
-    from .shared_access_authorization_rule_list_result_py3 import SharedAccessAuthorizationRuleListResult
-    from .resource_list_keys_py3 import ResourceListKeys
-    from .policykey_resource_py3 import PolicykeyResource
-    from .apns_credential_py3 import ApnsCredential
-    from .wns_credential_py3 import WnsCredential
-    from .gcm_credential_py3 import GcmCredential
-    from .mpns_credential_py3 import MpnsCredential
-    from .adm_credential_py3 import AdmCredential
-    from .baidu_credential_py3 import BaiduCredential
-    from .notification_hub_create_or_update_parameters_py3 import NotificationHubCreateOrUpdateParameters
-    from .notification_hub_patch_parameters_py3 import NotificationHubPatchParameters
-    from .notification_hub_resource_py3 import NotificationHubResource
-    from .debug_send_response_py3 import DebugSendResponse
-    from .pns_credentials_resource_py3 import PnsCredentialsResource
-    from .resource_py3 import Resource
-    from .sub_resource_py3 import SubResource
+    from ._models_py3 import AdmCredential
+    from ._models_py3 import ApnsCredential
+    from ._models_py3 import BaiduCredential
+    from ._models_py3 import CheckAvailabilityParameters
+    from ._models_py3 import CheckAvailabilityResult
+    from ._models_py3 import DebugSendResponse
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import GcmCredential
+    from ._models_py3 import MpnsCredential
+    from ._models_py3 import NamespaceCreateOrUpdateParameters
+    from ._models_py3 import NamespacePatchParameters
+    from ._models_py3 import NamespaceResource
+    from ._models_py3 import NotificationHubCreateOrUpdateParameters
+    from ._models_py3 import NotificationHubPatchParameters
+    from ._models_py3 import NotificationHubResource
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import PnsCredentialsResource
+    from ._models_py3 import PolicykeyResource
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceListKeys
+    from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+    from ._models_py3 import SharedAccessAuthorizationRuleListResult
+    from ._models_py3 import SharedAccessAuthorizationRuleProperties
+    from ._models_py3 import SharedAccessAuthorizationRuleResource
+    from ._models_py3 import Sku
+    from ._models_py3 import SubResource
+    from ._models_py3 import WnsCredential
 except (SyntaxError, ImportError):
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .sku import Sku
-    from .check_availability_parameters import CheckAvailabilityParameters
-    from .check_availability_result import CheckAvailabilityResult
-    from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
-    from .namespace_patch_parameters import NamespacePatchParameters
-    from .namespace_resource import NamespaceResource
-    from .shared_access_authorization_rule_properties import SharedAccessAuthorizationRuleProperties
-    from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-    from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
-    from .shared_access_authorization_rule_list_result import SharedAccessAuthorizationRuleListResult
-    from .resource_list_keys import ResourceListKeys
-    from .policykey_resource import PolicykeyResource
-    from .apns_credential import ApnsCredential
-    from .wns_credential import WnsCredential
-    from .gcm_credential import GcmCredential
-    from .mpns_credential import MpnsCredential
-    from .adm_credential import AdmCredential
-    from .baidu_credential import BaiduCredential
-    from .notification_hub_create_or_update_parameters import NotificationHubCreateOrUpdateParameters
-    from .notification_hub_patch_parameters import NotificationHubPatchParameters
-    from .notification_hub_resource import NotificationHubResource
-    from .debug_send_response import DebugSendResponse
-    from .pns_credentials_resource import PnsCredentialsResource
-    from .resource import Resource
-    from .sub_resource import SubResource
-from .operation_paged import OperationPaged
-from .namespace_resource_paged import NamespaceResourcePaged
-from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
-from .notification_hub_resource_paged import NotificationHubResourcePaged
-from .notification_hubs_management_client_enums import (
+    from ._models import AdmCredential
+    from ._models import ApnsCredential
+    from ._models import BaiduCredential
+    from ._models import CheckAvailabilityParameters
+    from ._models import CheckAvailabilityResult
+    from ._models import DebugSendResponse
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import GcmCredential
+    from ._models import MpnsCredential
+    from ._models import NamespaceCreateOrUpdateParameters
+    from ._models import NamespacePatchParameters
+    from ._models import NamespaceResource
+    from ._models import NotificationHubCreateOrUpdateParameters
+    from ._models import NotificationHubPatchParameters
+    from ._models import NotificationHubResource
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import PnsCredentialsResource
+    from ._models import PolicykeyResource
+    from ._models import Resource
+    from ._models import ResourceListKeys
+    from ._models import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+    from ._models import SharedAccessAuthorizationRuleListResult
+    from ._models import SharedAccessAuthorizationRuleProperties
+    from ._models import SharedAccessAuthorizationRuleResource
+    from ._models import Sku
+    from ._models import SubResource
+    from ._models import WnsCredential
+from ._paged_models import NamespaceResourcePaged
+from ._paged_models import NotificationHubResourcePaged
+from ._paged_models import OperationPaged
+from ._paged_models import SharedAccessAuthorizationRuleResourcePaged
+from ._notification_hubs_management_client_enums import (
     SkuName,
     NamespaceType,
     AccessRights,
 )
 
 __all__ = [
-    'OperationDisplay',
-    'Operation',
-    'ErrorResponse', 'ErrorResponseException',
-    'Sku',
+    'AdmCredential',
+    'ApnsCredential',
+    'BaiduCredential',
     'CheckAvailabilityParameters',
     'CheckAvailabilityResult',
+    'DebugSendResponse',
+    'ErrorResponse', 'ErrorResponseException',
+    'GcmCredential',
+    'MpnsCredential',
     'NamespaceCreateOrUpdateParameters',
     'NamespacePatchParameters',
     'NamespaceResource',
-    'SharedAccessAuthorizationRuleProperties',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleResource',
-    'SharedAccessAuthorizationRuleListResult',
-    'ResourceListKeys',
-    'PolicykeyResource',
-    'ApnsCredential',
-    'WnsCredential',
-    'GcmCredential',
-    'MpnsCredential',
-    'AdmCredential',
-    'BaiduCredential',
     'NotificationHubCreateOrUpdateParameters',
     'NotificationHubPatchParameters',
     'NotificationHubResource',
-    'DebugSendResponse',
+    'Operation',
+    'OperationDisplay',
     'PnsCredentialsResource',
+    'PolicykeyResource',
     'Resource',
+    'ResourceListKeys',
+    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
+    'SharedAccessAuthorizationRuleListResult',
+    'SharedAccessAuthorizationRuleProperties',
+    'SharedAccessAuthorizationRuleResource',
+    'Sku',
     'SubResource',
+    'WnsCredential',
     'OperationPaged',
     'NamespaceResourcePaged',
     'SharedAccessAuthorizationRuleResourcePaged',
