@@ -83,7 +83,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def detect_languages(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
+        inputs,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         country_hint="US",  # type: Optional[str]
@@ -96,11 +96,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
-        :param documents: The set of documents to process as part of this batch.
+        :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
             use as input a list[DetectLanguageInput] or a list of dict representations of
             DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
-        :type documents:
+        :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.DetectLanguageInput]
         :param str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
@@ -126,7 +126,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
-        docs = _validate_batch_input(documents, "country_hint", country_hint)
+        docs = _validate_batch_input(inputs, "country_hint", country_hint)
         try:
             return self._client.languages(
                 documents=docs,
@@ -141,7 +141,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -154,11 +154,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         For a list of supported entity types, check: https://aka.ms/taner
         For a list of enabled languages, check: https://aka.ms/talangs
 
-        :param documents: The set of documents to process as part of this batch.
+        :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
+        :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
@@ -183,7 +183,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_batch_input(inputs, "language", language)
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -198,7 +198,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_pii_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -212,11 +212,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         check https://aka.ms/tanerpii. See https://aka.ms/talangs
         for the list of enabled languages.
 
-        :param documents: The set of documents to process as part of this batch.
+        :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
+        :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
@@ -241,7 +241,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_batch_input(inputs, "language", language)
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -256,7 +256,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_linked_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -269,11 +269,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         well-known knowledge base. See https://aka.ms/talangs for
         supported languages in Text Analytics API.
 
-        :param documents: The set of documents to process as part of this batch.
+        :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
+        :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
@@ -298,7 +298,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_batch_input(inputs, "language", language)
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -313,7 +313,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def extract_key_phrases(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -326,11 +326,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         text. See https://aka.ms/talangs for the list of enabled
         languages.
 
-        :param documents: The set of documents to process as part of this batch.
+        :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
+        :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
@@ -355,7 +355,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_batch_input(inputs, "language", language)
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -370,7 +370,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def analyze_sentiment(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
@@ -384,11 +384,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         and each sentence within it. See https://aka.ms/talangs for the list
         of enabled languages.
 
-        :param documents: The set of documents to process as part of this batch.
+        :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
+        :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
         :param str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
@@ -413,7 +413,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_batch_input(inputs, "language", language)
         try:
             return self._client.sentiment(
                 documents=docs,

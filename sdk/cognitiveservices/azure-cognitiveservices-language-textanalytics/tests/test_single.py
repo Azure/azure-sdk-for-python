@@ -27,7 +27,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_detect_language(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="This is written in English.",
+            input_text="This is written in English.",
             country_hint="US"
         )
 
@@ -42,7 +42,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential="xxxxxxxxxxxx",
-                text="This is written in English.",
+                input_text="This is written in English.",
             )
 
     @ResourceGroupPreparer()
@@ -52,7 +52,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential="",
-                text="This is written in English.",
+                input_text="This is written in English.",
             )
 
     @ResourceGroupPreparer()
@@ -62,7 +62,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=[],
-                text="This is written in English.",
+                input_text="This is written in English.",
             )
 
     @ResourceGroupPreparer()
@@ -72,7 +72,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=None,
-                text="This is written in English.",
+                input_text="This is written in English.",
             )
 
     @ResourceGroupPreparer()
@@ -85,7 +85,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text=text,
+                input_text=text,
             )
 
     @ResourceGroupPreparer()
@@ -95,7 +95,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="",
+                input_text="",
             )
 
     @ResourceGroupPreparer()
@@ -105,7 +105,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text={"id": "1", "text": "hello world"}
+                input_text={"id": "1", "text": "hello world"}
             )
 
     @ResourceGroupPreparer()
@@ -115,7 +115,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="This is written in English.",
+                input_text="This is written in English.",
                 country_hint="United States"
             )
 
@@ -126,7 +126,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 country_hint="US",
                 model_version="old"
             )
@@ -141,7 +141,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_detect_language(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             show_stats=True,
             model_version="latest",
             response_hook=callback
@@ -158,7 +158,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_detect_language(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             country_hint="",
             response_hook=callback
         )
@@ -174,7 +174,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_detect_language(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             country_hint="CA",
             response_hook=callback
         )
@@ -190,7 +190,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_detect_language(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             response_hook=callback
         )
 
@@ -202,7 +202,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_recognize_entities(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Microsoft was founded by Bill Gates.",
+            input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
 
@@ -221,7 +221,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential="xxxxxxxxxxxx",
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -231,7 +231,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential="",
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -241,7 +241,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=[],
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -251,7 +251,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=None,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -264,7 +264,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text=text,
+                input_text=text,
             )
 
     @ResourceGroupPreparer()
@@ -274,7 +274,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="",
+                input_text="",
             )
 
     @ResourceGroupPreparer()
@@ -284,7 +284,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text={"id": "1", "text": "hello world"}
+                input_text={"id": "1", "text": "hello world"}
             )
 
     @ResourceGroupPreparer()
@@ -294,7 +294,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
 
@@ -305,7 +305,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
             )
@@ -320,7 +320,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_recognize_entities(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Microsoft was founded by Bill Gates.",
+            input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
             response_hook=callback
@@ -334,7 +334,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_recognize_pii_entities(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="My SSN is 555-55-5555",
+            input_text="My SSN is 555-55-5555",
             language="en"
         )
 
@@ -352,7 +352,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential="xxxxxxxxxxxx",
-                text="My SSN is 555-55-5555",
+                input_text="My SSN is 555-55-5555",
             )
 
     @ResourceGroupPreparer()
@@ -362,7 +362,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential="",
-                text="My SSN is 555-55-5555",
+                input_text="My SSN is 555-55-5555",
             )
 
     @ResourceGroupPreparer()
@@ -372,7 +372,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=[],
-                text="My SSN is 555-55-5555",
+                input_text="My SSN is 555-55-5555",
             )
 
     @ResourceGroupPreparer()
@@ -382,7 +382,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=None,
-                text="My SSN is 555-55-5555",
+                input_text="My SSN is 555-55-5555",
             )
 
     @ResourceGroupPreparer()
@@ -395,7 +395,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text=text,
+                input_text=text,
             )
 
     @ResourceGroupPreparer()
@@ -405,7 +405,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="",
+                input_text="",
             )
 
     @ResourceGroupPreparer()
@@ -415,7 +415,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text={"id": "1", "text": "hello world"}
+                input_text={"id": "1", "text": "hello world"}
             )
 
     @ResourceGroupPreparer()
@@ -425,7 +425,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="My SSN is 555-55-5555",
+                input_text="My SSN is 555-55-5555",
                 language="English"
             )
 
@@ -436,7 +436,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_pii_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
             )
@@ -451,7 +451,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_recognize_pii_entities(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="My SSN is 555-55-5555",
+            input_text="My SSN is 555-55-5555",
             show_stats=True,
             model_version="latest",
             response_hook=callback
@@ -465,7 +465,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_recognize_linked_entities(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Microsoft was founded by Bill Gates.",
+            input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
 
@@ -485,7 +485,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential="xxxxxxxxxxxx",
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -495,7 +495,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential="",
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -505,7 +505,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=[],
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -515,7 +515,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=None,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -528,7 +528,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text=text,
+                input_text=text,
             )
 
     @ResourceGroupPreparer()
@@ -538,7 +538,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="",
+                input_text="",
             )
 
     @ResourceGroupPreparer()
@@ -548,7 +548,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text={"id": "1", "text": "hello world"}
+                input_text={"id": "1", "text": "hello world"}
             )
 
     @ResourceGroupPreparer()
@@ -558,7 +558,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
 
@@ -569,7 +569,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_recognize_linked_entities(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
             )
@@ -584,7 +584,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_recognize_linked_entities(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Microsoft was founded by Bill Gates.",
+            input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
             response_hook=callback
@@ -598,7 +598,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_extract_key_phrases(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Microsoft was founded by Bill Gates.",
+            input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
 
@@ -612,7 +612,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential="xxxxxxxxxxxx",
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -622,7 +622,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential="",
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -632,7 +632,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=[],
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -642,7 +642,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=None,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
             )
 
     @ResourceGroupPreparer()
@@ -655,7 +655,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text=text,
+                input_text=text,
             )
 
     @ResourceGroupPreparer()
@@ -665,7 +665,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="",
+                input_text="",
             )
 
     @ResourceGroupPreparer()
@@ -675,7 +675,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text={"id": "1", "text": "hello world"}
+                input_text={"id": "1", "text": "hello world"}
             )
 
     @ResourceGroupPreparer()
@@ -685,7 +685,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
 
@@ -696,7 +696,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_extract_key_phrases(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
             )
@@ -711,7 +711,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_extract_key_phrases(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Microsoft was founded by Bill Gates.",
+            input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
             response_hook=callback
@@ -725,7 +725,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_analyze_sentiment(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="I was unhappy with the food at the restaurant.",
+            input_text="I was unhappy with the food at the restaurant.",
             language="en"
         )
 
@@ -741,7 +741,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential="xxxxxxxxxxxx",
-                text="I was unhappy with the food at the restaurant.",
+                input_text="I was unhappy with the food at the restaurant.",
             )
 
     @ResourceGroupPreparer()
@@ -751,7 +751,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential="",
-                text="I was unhappy with the food at the restaurant.",
+                input_text="I was unhappy with the food at the restaurant.",
             )
 
     @ResourceGroupPreparer()
@@ -761,7 +761,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=[],
-                text="I was unhappy with the food at the restaurant.",
+                input_text="I was unhappy with the food at the restaurant.",
             )
 
     @ResourceGroupPreparer()
@@ -771,7 +771,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=None,
-                text="I was unhappy with the food at the restaurant.",
+                input_text="I was unhappy with the food at the restaurant.",
             )
 
     @ResourceGroupPreparer()
@@ -784,7 +784,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text=text,
+                input_text=text,
             )
 
     @ResourceGroupPreparer()
@@ -794,7 +794,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="",
+                input_text="",
             )
 
     @ResourceGroupPreparer()
@@ -804,7 +804,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text={"id": "1", "text": "hello world"}
+                input_text={"id": "1", "text": "hello world"}
             )
 
     @ResourceGroupPreparer()
@@ -814,7 +814,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="I was unhappy with the food at the restaurant.",
+                input_text="I was unhappy with the food at the restaurant.",
                 language="English"
             )
 
@@ -825,7 +825,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             response = single_analyze_sentiment(
                 endpoint=cognitiveservices_account,
                 credential=cognitiveservices_account_key,
-                text="Microsoft was founded by Bill Gates.",
+                input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
             )
@@ -840,7 +840,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_analyze_sentiment(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="I was unhappy with the food at the restaurant.",
+            input_text="I was unhappy with the food at the restaurant.",
             show_stats=True,
             model_version="latest",
             response_hook=callback
@@ -857,7 +857,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_analyze_sentiment(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             language="",
             response_hook=callback
         )
@@ -873,7 +873,7 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_analyze_sentiment(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             language="es",
             response_hook=callback
         )
@@ -889,6 +889,6 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
         response = single_analyze_sentiment(
             endpoint=cognitiveservices_account,
             credential=cognitiveservices_account_key,
-            text="Este es un document escrito en Español.",
+            input_text="Este es un document escrito en Español.",
             response_hook=callback
         )

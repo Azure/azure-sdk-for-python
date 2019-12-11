@@ -30,7 +30,7 @@ __all__ = [
 async def single_detect_language(
         endpoint: str,
         credential: str,
-        text: str,
+        input_text: str,
         country_hint: Optional[str] = "US",
         show_stats: Optional[bool] = False,
         model_version: Optional[str] = None,
@@ -48,7 +48,7 @@ async def single_detect_language(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
-    :param str text: The single string to detect language from.
+    :param str input_text: The single string to detect language from.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
         Defaults to "US". If you don't want to use a country hint,
@@ -71,10 +71,10 @@ async def single_detect_language(
             :dedent: 8
             :caption: Detecting language in a single string.
     """
-    doc = _validate_single_input(text, "country_hint", country_hint)
+    doc = _validate_single_input(input_text, "country_hint", country_hint)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = await client.detect_languages(
-            documents=doc,
+            inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
@@ -87,7 +87,7 @@ async def single_detect_language(
 async def single_recognize_entities(
         endpoint: str,
         credential: str,
-        text: str,
+        input_text: str,
         language: Optional[str] = "en",
         show_stats: Optional[bool] = False,
         model_version: Optional[str] = None,
@@ -105,7 +105,7 @@ async def single_recognize_entities(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
-    :param str text: The single string to recognize entities from.
+    :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -127,10 +127,10 @@ async def single_recognize_entities(
             :dedent: 8
             :caption: Recognize entities in a single string.
     """
-    doc = _validate_single_input(text, "language", language)
+    doc = _validate_single_input(input_text, "language", language)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = await client.recognize_entities(
-            documents=doc,
+            inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
@@ -143,7 +143,7 @@ async def single_recognize_entities(
 async def single_recognize_pii_entities(
         endpoint: str,
         credential: str,
-        text: str,
+        input_text: str,
         language: Optional[str] = "en",
         show_stats: Optional[bool] = False,
         model_version: Optional[str] = None,
@@ -162,7 +162,7 @@ async def single_recognize_pii_entities(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
-    :param str text: The single string to recognize entities from.
+    :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -184,10 +184,10 @@ async def single_recognize_pii_entities(
             :dedent: 8
             :caption: Recognize personally identifiable information entities in a single string.
     """
-    doc = _validate_single_input(text, "language", language)
+    doc = _validate_single_input(input_text, "language", language)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = await client.recognize_pii_entities(
-            documents=doc,
+            inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
@@ -200,7 +200,7 @@ async def single_recognize_pii_entities(
 async def single_recognize_linked_entities(
         endpoint: str,
         credential: str,
-        text: str,
+        input_text: str,
         language: Optional[str] = "en",
         show_stats: Optional[bool] = False,
         model_version: Optional[str] = None,
@@ -219,7 +219,7 @@ async def single_recognize_linked_entities(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
-    :param str text: The single string to recognize entities from.
+    :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -241,10 +241,10 @@ async def single_recognize_linked_entities(
             :dedent: 8
             :caption: Recognize linked entities in a single string.
     """
-    doc = _validate_single_input(text, "language", language)
+    doc = _validate_single_input(input_text, "language", language)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = await client.recognize_linked_entities(
-            documents=doc,
+            inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
@@ -257,7 +257,7 @@ async def single_recognize_linked_entities(
 async def single_extract_key_phrases(
         endpoint: str,
         credential: str,
-        text: str,
+        input_text: str,
         language: Optional[str] = "en",
         show_stats: Optional[bool] = False,
         model_version: Optional[str] = None,
@@ -275,7 +275,7 @@ async def single_extract_key_phrases(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
-    :param str text: The single string to extract key phrases from.
+    :param str input_text: The single string to extract key phrases from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -297,10 +297,10 @@ async def single_extract_key_phrases(
             :dedent: 8
             :caption: Extract key phrases in a single string.
     """
-    doc = _validate_single_input(text, "language", language)
+    doc = _validate_single_input(input_text, "language", language)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = await client.extract_key_phrases(
-            documents=doc,
+            inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
@@ -313,7 +313,7 @@ async def single_extract_key_phrases(
 async def single_analyze_sentiment(
         endpoint: str,
         credential: str,
-        text: str,
+        input_text: str,
         language: Optional[str] = "en",
         show_stats: Optional[bool] = False,
         model_version: Optional[str] = None,
@@ -332,7 +332,7 @@ async def single_analyze_sentiment(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
-    :param str text: The single string to analyze sentiment from.
+    :param str input_text: The single string to analyze sentiment from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -354,10 +354,10 @@ async def single_analyze_sentiment(
             :dedent: 8
             :caption: Analyze sentiment in a single string.
     """
-    doc = _validate_single_input(text, "language", language)
+    doc = _validate_single_input(input_text, "language", language)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = await client.analyze_sentiment(
-            documents=doc,
+            inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
