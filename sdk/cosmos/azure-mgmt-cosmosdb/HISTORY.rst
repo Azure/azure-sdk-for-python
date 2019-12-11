@@ -3,6 +3,65 @@
 Release History
 ===============
 
+0.11.0 (2019-12-07)
++++++++++++++++++++
+
+**Features**
+
+- Model GremlinDatabaseGetResults has a new parameter resource
+- Model ThroughputSettingsGetResults has a new parameter resource
+- Model SqlStoredProcedureGetResults has a new parameter resource
+- Model MongoDBDatabaseGetResults has a new parameter resource
+- Model SqlUserDefinedFunctionGetResults has a new parameter resource
+- Model TableGetResults has a new parameter resource
+- Model IndexingPolicy has a new parameter composite_indexes
+- Model IndexingPolicy has a new parameter spatial_indexes
+- Model CassandraKeyspaceGetResults has a new parameter resource
+- Model SqlDatabaseGetResults has a new parameter resource
+
+**Breaking changes**
+
+- Model GremlinDatabaseGetResults no longer has parameter _etag
+- Model GremlinDatabaseGetResults no longer has parameter gremlin_database_get_results_id
+- Model GremlinDatabaseGetResults no longer has parameter _ts
+- Model GremlinDatabaseGetResults no longer has parameter _rid
+- Model ThroughputSettingsGetResults no longer has parameter minimum_throughput
+- Model ThroughputSettingsGetResults no longer has parameter offer_replace_pending
+- Model ThroughputSettingsGetResults no longer has parameter throughput
+- Model SqlStoredProcedureGetResults no longer has parameter _etag
+- Model SqlStoredProcedureGetResults no longer has parameter _ts
+- Model SqlStoredProcedureGetResults no longer has parameter _rid
+- Model SqlStoredProcedureGetResults no longer has parameter body
+- Model SqlStoredProcedureGetResults no longer has parameter sql_stored_procedure_get_results_id
+- Model MongoDBDatabaseGetResults no longer has parameter _etag
+- Model MongoDBDatabaseGetResults no longer has parameter mongo_db_database_get_results_id
+- Model MongoDBDatabaseGetResults no longer has parameter _ts
+- Model MongoDBDatabaseGetResults no longer has parameter _rid
+- Model SqlUserDefinedFunctionGetResults no longer has parameter _etag
+- Model SqlUserDefinedFunctionGetResults no longer has parameter sql_user_defined_function_get_results_id
+- Model SqlUserDefinedFunctionGetResults no longer has parameter _ts
+- Model SqlUserDefinedFunctionGetResults no longer has parameter _rid
+- Model SqlUserDefinedFunctionGetResults no longer has parameter body
+- Model TableGetResults no longer has parameter _etag
+- Model TableGetResults no longer has parameter table_get_results_id
+- Model TableGetResults no longer has parameter _ts
+- Model TableGetResults no longer has parameter _rid
+- Model CassandraKeyspaceGetResults no longer has parameter _etag
+- Model CassandraKeyspaceGetResults no longer has parameter cassandra_keyspace_get_results_id
+- Model CassandraKeyspaceGetResults no longer has parameter _ts
+- Model CassandraKeyspaceGetResults no longer has parameter _rid
+- Model SqlDatabaseGetResults no longer has parameter _colls
+- Model SqlDatabaseGetResults no longer has parameter _etag
+- Model SqlDatabaseGetResults no longer has parameter _users
+- Model SqlDatabaseGetResults no longer has parameter sql_database_get_results_id
+- Model SqlDatabaseGetResults no longer has parameter _rid
+- Model SqlDatabaseGetResults no longer has parameter _ts
+- Model GremlinGraphGetResults has a new signature
+- Model CassandraTableGetResults has a new signature
+- Model SqlTriggerGetResults has a new signature
+- Model SqlContainerGetResults has a new signature
+- Model MongoDBCollectionGetResults has a new signature
+
 0.10.0 (2019-11-13)
 +++++++++++++++++++
 

@@ -12,7 +12,7 @@ from .exceptions import ConnectError, EventHubError
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
-from ._common import EventData, EventDataBatch
+from ._common import EventDataBatch
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore

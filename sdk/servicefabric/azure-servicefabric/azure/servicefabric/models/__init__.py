@@ -41,6 +41,7 @@ try:
     from ._models_py3 import ApplicationParameter
     from ._models_py3 import ApplicationProcessExitedEvent
     from ._models_py3 import ApplicationResourceDescription
+    from ._models_py3 import ApplicationResourceUpgradeProgressInfo
     from ._models_py3 import ApplicationScopedVolume
     from ._models_py3 import ApplicationScopedVolumeCreationParameters
     from ._models_py3 import ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk
@@ -129,6 +130,7 @@ try:
     from ._models_py3 import ComposeDeploymentStatusInfo
     from ._models_py3 import ComposeDeploymentUpgradeDescription
     from ._models_py3 import ComposeDeploymentUpgradeProgressInfo
+    from ._models_py3 import ConfigParameterOverride
     from ._models_py3 import ContainerApiRequestBody
     from ._models_py3 import ContainerApiResponse
     from ._models_py3 import ContainerApiResult
@@ -177,6 +179,7 @@ try:
     from ._models_py3 import DiagnosticsRef
     from ._models_py3 import DiagnosticsSinkProperties
     from ._models_py3 import DisableBackupDescription
+    from ._models_py3 import DiskInfo
     from ._models_py3 import DoublePropertyValue
     from ._models_py3 import EnableBackupDescription
     from ._models_py3 import EndpointProperties
@@ -192,6 +195,7 @@ try:
     from ._models_py3 import Epoch
     from ._models_py3 import EventHealthEvaluation
     from ._models_py3 import ExecutingFaultsChaosEvent
+    from ._models_py3 import ExecutionPolicy
     from ._models_py3 import ExternalStoreProvisionApplicationTypeDescription
     from ._models_py3 import FabricCodeVersionInfo
     from ._models_py3 import FabricConfigVersionInfo
@@ -229,6 +233,7 @@ try:
     from ._models_py3 import ImageRegistryCredential
     from ._models_py3 import ImageStoreContent
     from ._models_py3 import ImageStoreCopyDescription
+    from ._models_py3 import ImageStoreInfo
     from ._models_py3 import InlinedValueSecretResourceProperties
     from ._models_py3 import Int64PropertyValue
     from ._models_py3 import Int64RangePartitionInformation
@@ -331,6 +336,11 @@ try:
     from ._models_py3 import PartitionSchemeDescription
     from ._models_py3 import PartitionsHealthEvaluation
     from ._models_py3 import PrimaryReplicatorStatus
+    from ._models_py3 import Probe
+    from ._models_py3 import ProbeExec
+    from ._models_py3 import ProbeHttpGet
+    from ._models_py3 import ProbeHttpGetHeaders
+    from ._models_py3 import ProbeTcpSocket
     from ._models_py3 import PropertyBatchDescriptionList
     from ._models_py3 import PropertyBatchInfo
     from ._models_py3 import PropertyBatchOperation
@@ -383,6 +393,7 @@ try:
     from ._models_py3 import ResumeClusterUpgradeDescription
     from ._models_py3 import RetentionPolicyDescription
     from ._models_py3 import RollingUpgradeUpdateDescription
+    from ._models_py3 import RunToCompletionExecutionPolicy
     from ._models_py3 import SafetyCheck
     from ._models_py3 import SafetyCheckWrapper
     from ._models_py3 import ScalingMechanismDescription
@@ -438,6 +449,7 @@ try:
     from ._models_py3 import ServiceTypeInfo
     from ._models_py3 import ServiceTypeManifest
     from ._models_py3 import ServiceUpdateDescription
+    from ._models_py3 import ServiceUpgradeProgress
     from ._models_py3 import Setting
     from ._models_py3 import SingletonPartitionInformation
     from ._models_py3 import SingletonPartitionSchemeDescription
@@ -485,6 +497,7 @@ try:
     from ._models_py3 import UploadChunkRange
     from ._models_py3 import UploadSession
     from ._models_py3 import UploadSessionInfo
+    from ._models_py3 import UsageInfo
     from ._models_py3 import ValidationFailedChaosEvent
     from ._models_py3 import VolumeProviderParametersAzureFile
     from ._models_py3 import VolumeReference
@@ -526,6 +539,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationParameter
     from ._models import ApplicationProcessExitedEvent
     from ._models import ApplicationResourceDescription
+    from ._models import ApplicationResourceUpgradeProgressInfo
     from ._models import ApplicationScopedVolume
     from ._models import ApplicationScopedVolumeCreationParameters
     from ._models import ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk
@@ -614,6 +628,7 @@ except (SyntaxError, ImportError):
     from ._models import ComposeDeploymentStatusInfo
     from ._models import ComposeDeploymentUpgradeDescription
     from ._models import ComposeDeploymentUpgradeProgressInfo
+    from ._models import ConfigParameterOverride
     from ._models import ContainerApiRequestBody
     from ._models import ContainerApiResponse
     from ._models import ContainerApiResult
@@ -662,6 +677,7 @@ except (SyntaxError, ImportError):
     from ._models import DiagnosticsRef
     from ._models import DiagnosticsSinkProperties
     from ._models import DisableBackupDescription
+    from ._models import DiskInfo
     from ._models import DoublePropertyValue
     from ._models import EnableBackupDescription
     from ._models import EndpointProperties
@@ -677,6 +693,7 @@ except (SyntaxError, ImportError):
     from ._models import Epoch
     from ._models import EventHealthEvaluation
     from ._models import ExecutingFaultsChaosEvent
+    from ._models import ExecutionPolicy
     from ._models import ExternalStoreProvisionApplicationTypeDescription
     from ._models import FabricCodeVersionInfo
     from ._models import FabricConfigVersionInfo
@@ -714,6 +731,7 @@ except (SyntaxError, ImportError):
     from ._models import ImageRegistryCredential
     from ._models import ImageStoreContent
     from ._models import ImageStoreCopyDescription
+    from ._models import ImageStoreInfo
     from ._models import InlinedValueSecretResourceProperties
     from ._models import Int64PropertyValue
     from ._models import Int64RangePartitionInformation
@@ -816,6 +834,11 @@ except (SyntaxError, ImportError):
     from ._models import PartitionSchemeDescription
     from ._models import PartitionsHealthEvaluation
     from ._models import PrimaryReplicatorStatus
+    from ._models import Probe
+    from ._models import ProbeExec
+    from ._models import ProbeHttpGet
+    from ._models import ProbeHttpGetHeaders
+    from ._models import ProbeTcpSocket
     from ._models import PropertyBatchDescriptionList
     from ._models import PropertyBatchInfo
     from ._models import PropertyBatchOperation
@@ -868,6 +891,7 @@ except (SyntaxError, ImportError):
     from ._models import ResumeClusterUpgradeDescription
     from ._models import RetentionPolicyDescription
     from ._models import RollingUpgradeUpdateDescription
+    from ._models import RunToCompletionExecutionPolicy
     from ._models import SafetyCheck
     from ._models import SafetyCheckWrapper
     from ._models import ScalingMechanismDescription
@@ -923,6 +947,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceTypeInfo
     from ._models import ServiceTypeManifest
     from ._models import ServiceUpdateDescription
+    from ._models import ServiceUpgradeProgress
     from ._models import Setting
     from ._models import SingletonPartitionInformation
     from ._models import SingletonPartitionSchemeDescription
@@ -970,6 +995,7 @@ except (SyntaxError, ImportError):
     from ._models import UploadChunkRange
     from ._models import UploadSession
     from ._models import UploadSessionInfo
+    from ._models import UsageInfo
     from ._models import ValidationFailedChaosEvent
     from ._models import VolumeProviderParametersAzureFile
     from ._models import VolumeReference
@@ -982,6 +1008,7 @@ except (SyntaxError, ImportError):
 from ._service_fabric_client_ap_is_enums import (
     ApplicationDefinitionKind,
     ApplicationPackageCleanupPolicy,
+    ApplicationResourceUpgradeState,
     ApplicationScopedVolumeKind,
     ApplicationStatus,
     ApplicationTypeDefinitionKind,
@@ -1012,6 +1039,8 @@ from ._service_fabric_client_ap_is_enums import (
     DiagnosticsSinkKind,
     EntityKind,
     EntryPointStatus,
+    EnvironmentVariableType,
+    ExecutionPolicyType,
     FabricErrorCodes,
     FabricEventKind,
     FabricReplicaStatus,
@@ -1022,6 +1051,7 @@ from ._service_fabric_client_ap_is_enums import (
     HealthState,
     HostIsolationMode,
     HostType,
+    ImageRegistryPasswordType,
     ImpactLevel,
     MoveCost,
     NetworkKind,
@@ -1055,12 +1085,15 @@ from ._service_fabric_client_ap_is_enums import (
     ReplicatorOperationName,
     ResourceStatus,
     RestartPartitionMode,
+    RestartPolicy,
     RestoreState,
     ResultStatus,
     RetentionPolicyType,
+    RollingUpgradeMode,
     SafetyCheckKind,
     ScalingMechanismKind,
     ScalingTriggerKind,
+    Scheme,
     SecretKind,
     ServiceCorrelationScheme,
     ServiceEndpointRole,
@@ -1073,6 +1106,7 @@ from ._service_fabric_client_ap_is_enums import (
     ServicePlacementPolicyType,
     ServiceStatus,
     ServiceTypeRegistrationStatus,
+    SettingType,
     SizeTypes,
     State,
     UpgradeDomainState,
@@ -1116,6 +1150,7 @@ __all__ = [
     'ApplicationParameter',
     'ApplicationProcessExitedEvent',
     'ApplicationResourceDescription',
+    'ApplicationResourceUpgradeProgressInfo',
     'ApplicationScopedVolume',
     'ApplicationScopedVolumeCreationParameters',
     'ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk',
@@ -1204,6 +1239,7 @@ __all__ = [
     'ComposeDeploymentStatusInfo',
     'ComposeDeploymentUpgradeDescription',
     'ComposeDeploymentUpgradeProgressInfo',
+    'ConfigParameterOverride',
     'ContainerApiRequestBody',
     'ContainerApiResponse',
     'ContainerApiResult',
@@ -1252,6 +1288,7 @@ __all__ = [
     'DiagnosticsRef',
     'DiagnosticsSinkProperties',
     'DisableBackupDescription',
+    'DiskInfo',
     'DoublePropertyValue',
     'EnableBackupDescription',
     'EndpointProperties',
@@ -1267,6 +1304,7 @@ __all__ = [
     'Epoch',
     'EventHealthEvaluation',
     'ExecutingFaultsChaosEvent',
+    'ExecutionPolicy',
     'ExternalStoreProvisionApplicationTypeDescription',
     'FabricCodeVersionInfo',
     'FabricConfigVersionInfo',
@@ -1304,6 +1342,7 @@ __all__ = [
     'ImageRegistryCredential',
     'ImageStoreContent',
     'ImageStoreCopyDescription',
+    'ImageStoreInfo',
     'InlinedValueSecretResourceProperties',
     'Int64PropertyValue',
     'Int64RangePartitionInformation',
@@ -1406,6 +1445,11 @@ __all__ = [
     'PartitionSchemeDescription',
     'PartitionsHealthEvaluation',
     'PrimaryReplicatorStatus',
+    'Probe',
+    'ProbeExec',
+    'ProbeHttpGet',
+    'ProbeHttpGetHeaders',
+    'ProbeTcpSocket',
     'PropertyBatchDescriptionList',
     'PropertyBatchInfo',
     'PropertyBatchOperation',
@@ -1458,6 +1502,7 @@ __all__ = [
     'ResumeClusterUpgradeDescription',
     'RetentionPolicyDescription',
     'RollingUpgradeUpdateDescription',
+    'RunToCompletionExecutionPolicy',
     'SafetyCheck',
     'SafetyCheckWrapper',
     'ScalingMechanismDescription',
@@ -1513,6 +1558,7 @@ __all__ = [
     'ServiceTypeInfo',
     'ServiceTypeManifest',
     'ServiceUpdateDescription',
+    'ServiceUpgradeProgress',
     'Setting',
     'SingletonPartitionInformation',
     'SingletonPartitionSchemeDescription',
@@ -1560,6 +1606,7 @@ __all__ = [
     'UploadChunkRange',
     'UploadSession',
     'UploadSessionInfo',
+    'UsageInfo',
     'ValidationFailedChaosEvent',
     'VolumeProviderParametersAzureFile',
     'VolumeReference',
@@ -1660,11 +1707,19 @@ __all__ = [
     'NetworkKind',
     'HeaderMatchType',
     'OperatingSystemType',
+    'ImageRegistryPasswordType',
+    'EnvironmentVariableType',
+    'SettingType',
+    'Scheme',
+    'ApplicationResourceUpgradeState',
+    'RollingUpgradeMode',
     'DiagnosticsSinkKind',
     'AutoScalingMechanismKind',
     'AutoScalingMetricKind',
     'AutoScalingResourceMetricName',
     'AutoScalingTriggerKind',
+    'ExecutionPolicyType',
+    'RestartPolicy',
     'NodeStatusFilter',
     'ReplicaHealthReportServiceKind',
     'DataLossMode',

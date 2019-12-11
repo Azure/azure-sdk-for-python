@@ -9,7 +9,8 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy
+    HttpLoggingPolicy,
+    AsyncBearerTokenCredentialPolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -57,7 +58,16 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, AppConfigConnectionStringCredential, dict) -> None
+        # type: (str, any, dict) -> None
+        try:
+            if not base_url.lower().startswith('http'):
+                base_url = "https://" + base_url
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        if not credential:
+            raise ValueError("Missing credential")
+
         self._config = AzureAppConfigurationConfiguration(credential, base_url, **kwargs)
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -66,7 +76,12 @@ class AzureAppConfigurationClient:
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
-            pipeline = self._create_appconfig_pipeline(**kwargs)
+            aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
+            pipeline = self._create_appconfig_pipeline(
+                credential=credential,
+                aad_mode=aad_mode,
+                base_url=base_url,
+                ** kwargs)
 
         self._impl = AzureAppConfiguration(
             credentials=credential, endpoint=base_url, pipeline=pipeline
@@ -104,17 +119,27 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(self, **kwargs):
+    def _create_appconfig_pipeline(self, credential, base_url=None, aad_mode=False, **kwargs):
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
+            if aad_mode:
+                scope = base_url.strip("/") + "/.default"
+                if hasattr(credential, "get_token"):
+                    credential_policy = AsyncBearerTokenCredentialPolicy(credential, scope)
+                else:
+                    raise TypeError("Please provide an instance from azure-identity "
+                                    "or a class that implement the 'get_token protocol")
+            else:
+                credential_policy = AppConfigRequestsCredentialsPolicy(credential)
+
             policies = [
                 self._config.headers_policy,
                 self._config.user_agent_policy,
-                AppConfigRequestsCredentialsPolicy(self._config.credentials),
-                SyncTokenPolicy(),
+                credential_policy,
                 self._config.retry_policy,
+                SyncTokenPolicy(),
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),

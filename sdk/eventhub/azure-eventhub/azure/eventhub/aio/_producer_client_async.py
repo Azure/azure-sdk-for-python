@@ -12,7 +12,7 @@ from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
-from .._common import EventData, EventDataBatch
+from .._common import EventDataBatch
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType  # type: ignore

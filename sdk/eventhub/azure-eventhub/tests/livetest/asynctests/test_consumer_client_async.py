@@ -65,6 +65,7 @@ async def test_receive_load_balancing_async(connstr_senders):
     async with client1, client2:
         task1 = asyncio.ensure_future(
             client1.receive(on_event, starting_position="-1"))
+        await asyncio.sleep(3.3)
         task2 = asyncio.ensure_future(
             client2.receive(on_event, starting_position="-1"))
         await asyncio.sleep(10)
