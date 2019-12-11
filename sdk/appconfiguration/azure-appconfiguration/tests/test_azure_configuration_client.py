@@ -29,6 +29,7 @@ import pytest
 import datetime
 import os
 import logging
+import re
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
     def __init__(self, method_name):
@@ -73,7 +74,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         exist = bool(
             list(
                 self.app_config_client.list_configuration_settings(
-                    keys=[kv.key], labels=[kv.label]
+                    key_filter=kv.key, label_filter=kv.label
                 )
             )
         )
@@ -252,42 +253,28 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: list_configuration_settings
     def test_list_configuration_settings_key_label(self):
-        items = self.app_config_client.list_configuration_settings(
-            labels=[LABEL], keys=[KEY]
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.key == KEY and kv.label == LABEL
-            cnt += 1
-        assert cnt == 1
+        items = list(self.app_config_client.list_configuration_settings(
+            label_filter=LABEL, key_filter=KEY
+        ))
+        assert len(items) == 1
+        assert all(x.label == LABEL and x.label == LABEL for x in items)
 
     def test_list_configuration_settings_only_label(self):
-        items = self.app_config_client.list_configuration_settings(labels=[LABEL])
-        cnt = 0
-        for kv in items:
-            assert kv.label == LABEL
-            cnt += 1
-        assert cnt == 1
+        items = list(self.app_config_client.list_configuration_settings(label_filter=LABEL))
+        assert len(items) == 1
+        assert all(x.label == LABEL for x in items)
 
     def test_list_configuration_settings_only_key(self):
-        items = self.app_config_client.list_configuration_settings(keys=[KEY])
-        cnt = 0
-        for kv in items:
-            assert kv.key == KEY
-            cnt += 1
-        assert cnt == 2
+        items = list(self.app_config_client.list_configuration_settings(key_filter=KEY))
+        assert len(items) == 2
+        assert all(x.key == KEY for x in items)
 
     def test_list_configuration_settings_fields(self):
-        items = self.app_config_client.list_configuration_settings(
-            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
-        )
-        cnt = 0
-        for kv in items:
-            assert (
-                kv.key is not None and kv.label is None and kv.content_type is not None
-            )
-            cnt += 1
-        assert cnt == 1
+        items = list(self.app_config_client.list_configuration_settings(
+            key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
+        ))
+        assert len(items) == 1
+        assert all(x.key and not x.label and x.content_type for x in items)
 
     def test_list_configuration_settings_reserved_chars(self):
         resered_char_kv = ConfigurationSetting(
@@ -297,36 +284,28 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             resered_char_kv
         )
         self.to_delete.append(resered_char_kv)
-        items = self.app_config_client.list_configuration_settings(
-            labels=[LABEL_RESERVED_CHARS]
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.label == LABEL_RESERVED_CHARS
-            cnt += 1
-        assert cnt == 1
+        escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
+        items = list(self.app_config_client.list_configuration_settings(
+            label_filter=escaped_label
+        ))
+        assert len(items) == 1
+        assert all(x.label == LABEL_RESERVED_CHARS for x in items)
 
     def test_list_configuration_settings_contains(self):
-        items = self.app_config_client.list_configuration_settings(
-            labels=["*" + LABEL + "*"]
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.label == LABEL
-            cnt += 1
-        assert cnt == 1
+        items = list(self.app_config_client.list_configuration_settings(
+            label_filter="*" + LABEL + "*"
+        ))
+        assert len(items) == 1
+        assert all(x.label == LABEL for x in items)
 
     def test_list_configuration_settings_correct_etag(self):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = self.app_config_client.list_configuration_settings(
-            keys=[to_list_kv.key], labels=[to_list_kv.label], headers=custom_headers
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.key == to_list_kv.key and kv.label == to_list_kv.label
-            cnt += 1
-        assert cnt == 1
+        items = list(self.app_config_client.list_configuration_settings(
+            key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
+        ))
+        assert len(items) == 1
+        assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
     def test_list_configuration_settings_multi_pages(self):
         # create PAGE_SIZE+1 configuration settings to have at least two pages
@@ -343,7 +322,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             ]
         except ResourceExistsError:
             pass
-        items = self.app_config_client.list_configuration_settings(keys=["multi_*"])
+        items = self.app_config_client.list_configuration_settings(key_filter="multi_*")
         assert len(list(items)) > PAGE_SIZE
 
         # Remove the configuration settings
@@ -358,7 +337,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             pass
 
     def test_list_configuration_settings_null_label(self):
-        items = self.app_config_client.list_configuration_settings(labels=[""])
+        items = self.app_config_client.list_configuration_settings(label_filter="\0")
         assert len(list(items)) > 0
 
     def test_list_configuration_settings_only_accepttime(self):
@@ -371,55 +350,36 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     # method: list_revisions
     def test_list_revisions_key_label(self):
         to_list1 = self.test_config_setting
-        items = self.app_config_client.list_revisions(
-            labels=[to_list1.label], keys=[to_list1.key]
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.key == to_list1.key and kv.label == to_list1.label
-            cnt += 1
-        assert cnt >= 2
+        items = list(self.app_config_client.list_revisions(
+            label_filter=to_list1.label, key_filter=to_list1.key
+        ))
+        assert len(items) >= 2
+        assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
 
     def test_list_revisions_only_label(self):
-        items = self.app_config_client.list_revisions(labels=[LABEL])
-        cnt = 0
-        for kv in items:
-            assert kv.label == LABEL
-            cnt += 1
-        assert cnt >= 1
+        items = list(self.app_config_client.list_revisions(label_filter=LABEL))
+        assert len(items) >= 1
+        assert all(x.label == LABEL for x in items)
 
     def test_list_revisions_key_no_label(self):
-        items = self.app_config_client.list_revisions(keys=[KEY])
-        cnt = 0
-        for kv in items:
-            assert kv.key == KEY
-            cnt += 1
-        assert cnt >= 1
+        items = list(self.app_config_client.list_revisions(key_filter=KEY))
+        assert len(items) >= 1
+        assert all(x.key == KEY for x in items)
 
     def test_list_revisions_fields(self):
-        items = self.app_config_client.list_revisions(
-            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
-        )
-        for kv in items:
-            assert (
-                kv.key is not None
-                and kv.label is None
-                and kv.content_type is not None
-                and not kv.tags
-                and not kv.etag
-            )
+        items = list(self.app_config_client.list_revisions(
+            key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
+        ))
+        assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
 
     def test_list_revisions_correct_etag(self):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = self.app_config_client.list_revisions(
-            keys=[to_list_kv.key], labels=[to_list_kv.label], headers=custom_headers
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.key == to_list_kv.key and kv.label == to_list_kv.label
-            cnt += 1
-        assert cnt > 0
+        items = list(self.app_config_client.list_revisions(
+            key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
+        ))
+        assert len(items) >= 1
+        assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
     def test_read_only(self):
         kv = self.test_config_setting_no_label
