@@ -15,8 +15,7 @@ except ImportError:  # python < 3.3
 from azure.core.credentials import AccessToken
 from azure.identity._authn_client import AuthnClient
 from six.moves.urllib_parse import urlparse
-
-from helpers import mock_response, Request
+from helpers import mock_response
 
 
 def test_authn_client_deserialization():
