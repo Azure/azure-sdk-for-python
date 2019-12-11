@@ -19,8 +19,8 @@ steps:
     versionSpec: 3.7
 
 - script: |
+    python3 -m pip install azure-devtools[ci_tools]>=1.1.0
     python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-sdk-tools&egg=azure-sdk-tools"
-    python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-devtools&egg=azure-devtools"
   displayName: 'Install Azure SDK tools'
 
 - script: python3  -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
