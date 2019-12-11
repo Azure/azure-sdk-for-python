@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from typing import Optional, Dict
 
-from uamqp.constants import TransportType  # type: ignore
+from uamqp.constants import TransportType
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes

@@ -7,8 +7,8 @@ from datetime import datetime
 from contextlib import contextmanager
 from typing import Union, Dict, Callable, Any, Type, Iterator, Tuple, Optional, cast, TYPE_CHECKING
 
-from azure.core.tracing import SpanKind  # type: ignore
-from azure.core.settings import settings  # type: ignore
+from azure.core.tracing import SpanKind
+from azure.core.settings import settings
 
 from .._utils import trace_link_message
 

@@ -10,11 +10,11 @@ import time
 import threading
 from typing import Iterable, Union, Type, Optional, Any, List, TYPE_CHECKING  # pylint: disable=unused-import
 
-from uamqp import types, constants, errors  # type: ignore
-from uamqp import SendClient  # type: ignore
+from uamqp import types, constants, errors
+from uamqp import SendClient
 
-from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
-from azure.core.settings import settings  # type: ignore
+from azure.core.tracing import SpanKind, AbstractSpan
+from azure.core.settings import settings
 
 from .exceptions import _error_handler, OperationTimeoutError
 from ._common import EventData, EventDataBatch
@@ -25,7 +25,7 @@ from ._constants import TIMEOUT_SYMBOL
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth  # type: ignore  # pylint: disable=ungrouped-imports
+    from uamqp.authentication import JWTTokenAuth  # pylint: disable=ungrouped-imports
     from ._producer_client import EventHubProducerClient
 
 

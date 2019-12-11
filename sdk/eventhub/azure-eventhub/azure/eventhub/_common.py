@@ -10,7 +10,7 @@ from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, ca
 
 import six
 
-from uamqp import BatchMessage, Message, constants  # type: ignore
+from uamqp import BatchMessage, Message, constants
 
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
 from ._constants import (

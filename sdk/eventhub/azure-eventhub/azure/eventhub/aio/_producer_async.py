@@ -8,11 +8,11 @@ import logging
 from typing import Iterable, Union, Type, Optional, Any, List, TYPE_CHECKING
 import time
 
-from uamqp import types, constants, errors  # type: ignore
-from uamqp import SendClientAsync  # type: ignore
+from uamqp import types, constants, errors
+from uamqp import SendClientAsync
 
-from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
-from azure.core.settings import settings  # type: ignore
+from azure.core.tracing import SpanKind, AbstractSpan
+from azure.core.settings import settings
 
 from .._common import EventData, EventDataBatch
 from ..exceptions import _error_handler, OperationTimeoutError
@@ -23,7 +23,7 @@ from ._eventprocessor.utils import get_running_loop
 from ._client_base_async import ConsumerProducerMixin
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAsync  # type: ignore  # pylint: disable=ungrouped-imports
+    from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
     from ._producer_client_async import EventHubProducerClient
 
 _LOGGER = logging.getLogger(__name__)

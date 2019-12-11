@@ -7,10 +7,10 @@ import uuid
 import logging
 from typing import TYPE_CHECKING, Callable, Awaitable, cast, Dict, Optional
 
-import uamqp  # type: ignore
-from uamqp import errors, types, utils  # type: ignore
-from uamqp import ReceiveClientAsync, Source  # type: ignore
-from uamqp.compat import queue  # type: ignore
+import uamqp
+from uamqp import errors, types, utils
+from uamqp import ReceiveClientAsync, Source
+from uamqp.compat import queue
 
 from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
@@ -24,7 +24,7 @@ from .._constants import (
 )
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAsync  # type: ignore
+    from uamqp.authentication import JWTTokenAsync
     from ._consumer_client_async import EventHubConsumerClient
 
 _LOGGER = logging.getLogger(__name__)

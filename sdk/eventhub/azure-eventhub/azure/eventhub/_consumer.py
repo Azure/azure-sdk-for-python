@@ -8,9 +8,9 @@ import uuid
 import logging
 from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
 
-import uamqp  # type: ignore
-from uamqp import types, errors, utils  # type: ignore
-from uamqp import ReceiveClient, Source  # type: ignore
+import uamqp
+from uamqp import types, errors, utils
+from uamqp import ReceiveClient, Source
 
 from .exceptions import _error_handler
 from ._common import EventData
@@ -23,7 +23,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth  # type: ignore
+    from uamqp.authentication import JWTTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
 

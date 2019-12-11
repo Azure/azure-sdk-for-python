@@ -6,13 +6,13 @@
 from typing import TYPE_CHECKING, Union
 from asyncio import Lock
 
-from uamqp import TransportType, c_uamqp  # type: ignore
-from uamqp.async_ops import ConnectionAsync  # type: ignore
+from uamqp import TransportType, c_uamqp
+from uamqp.async_ops import ConnectionAsync
 
-from .._connection_manager import _ConnectionMode  # type: ignore
+from .._connection_manager import _ConnectionMode
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAsync  # type: ignore
+    from uamqp.authentication import JWTTokenAsync
 
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes

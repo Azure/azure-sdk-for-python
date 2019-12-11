@@ -6,7 +6,7 @@ import logging
 import threading
 
 from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
-from uamqp import constants  # type:ignore
+from uamqp import constants
 
 from .exceptions import ConnectError, EventHubError
 from ._client_base import ClientBase
@@ -15,7 +15,7 @@ from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 

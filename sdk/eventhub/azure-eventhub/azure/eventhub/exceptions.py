@@ -5,7 +5,7 @@
 import logging
 import six
 
-from uamqp import errors, compat  # type: ignore
+from uamqp import errors, compat
 
 from ._constants import NO_RETRY_ERRORS
 

@@ -12,12 +12,12 @@ import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast
 from datetime import timedelta
 try:
-    from urlparse import urlparse  # type: ignore
+    from urlparse import urlparse
     from urllib import quote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse, quote_plus
 
-from uamqp import (  # type: ignore
+from uamqp import (
     AMQPClient,
     Message,
     authentication,
@@ -39,7 +39,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple('Address', 'hostname path')

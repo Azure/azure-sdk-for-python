@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Union, Any  # pylint: disable=unused-import
 from threading import Lock
 from enum import Enum
 
-from uamqp import Connection, TransportType, c_uamqp  # type: ignore
+from uamqp import Connection, TransportType, c_uamqp
 
 if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth  # type: ignore
+    from uamqp.authentication import JWTTokenAuth
 
 class _ConnectionMode(Enum):
     ShareConnection = 1

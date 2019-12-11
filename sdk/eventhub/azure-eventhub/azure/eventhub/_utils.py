@@ -13,10 +13,10 @@ from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any
 
 import six
 
-from uamqp import types  # type: ignore
-from uamqp.message import MessageHeader  # type: ignore
+from uamqp import types
+from uamqp.message import MessageHeader
 
-from azure.core.settings import settings  # type: ignore
+from azure.core.settings import settings
 
 from ._version import VERSION
 from ._constants import (
@@ -32,7 +32,7 @@ from ._constants import (
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
-    from azure.core.tracing import AbstractSpan   # type: ignore
+    from azure.core.tracing import AbstractSpan
     from ._common import EventData
 
 _LOGGER = logging.getLogger(__name__)

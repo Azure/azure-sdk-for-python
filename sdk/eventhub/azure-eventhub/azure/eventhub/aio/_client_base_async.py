@@ -10,7 +10,7 @@ import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
-from uamqp import (  # type: ignore
+from uamqp import (
     authentication,
     constants,
     errors,
@@ -28,7 +28,7 @@ from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from ._connection_manager_async import _SeparateConnectionManager, _SharedConnectionManager
-    from azure.core.credentials import TokenCredential  # type: ignore
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
