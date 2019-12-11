@@ -185,6 +185,7 @@ def connstr_receivers(connection_str):
 
 @pytest.fixture()
 def short_idle_connstr_receivers(connection_str):
+    pytest.skip("Note: idle_timeout tests are disabled until underlying UAMQP idle timeout bugs are fixed.")
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     eh_hub_info = client.get_eventhub_info()
     partitions = eh_hub_info["partition_ids"]
