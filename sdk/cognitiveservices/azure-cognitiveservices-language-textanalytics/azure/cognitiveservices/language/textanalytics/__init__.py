@@ -16,13 +16,14 @@ from ._models import (
     DocumentError,
     NamedEntity,
     LinkedEntity,
-    DocumentSentiment,
-    DocumentEntities,
-    DocumentLanguage,
+    AnalyzeSentimentResult,
+    RecognizeEntitiesResult,
+    DetectLanguageResult,
     Error,
     InnerError,
-    DocumentKeyPhrases,
-    DocumentLinkedEntities,
+    ExtractKeyPhrasesResult,
+    RecognizeLinkedEntitiesResult,
+    RecognizePiiEntitiesResult,
     TextDocumentStatistics,
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
@@ -40,14 +41,15 @@ __all__ = [
     'single_extract_key_phrases',
     'single_analyze_sentiment',
     'DetectedLanguage',
-    'DocumentEntities',
-    'DocumentLanguage',
+    'RecognizeEntitiesResult',
+    'RecognizePiiEntitiesResult',
+    'DetectLanguageResult',
     'NamedEntity',
     'Error',
     'InnerError',
-    'DocumentKeyPhrases',
-    'DocumentLinkedEntities',
-    'DocumentSentiment',
+    'ExtractKeyPhrasesResult',
+    'RecognizeLinkedEntitiesResult',
+    'AnalyzeSentimentResult',
     'TextDocumentStatistics',
     'DocumentError',
     'LinkedEntity',
@@ -68,7 +70,7 @@ def single_detect_language(
             model_version=None,  # type: Optional[str]
             **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentLanguage
+    # type: (...) -> DetectLanguageResult
     """Detect Language for a single document.
 
     Returns the detected language and a numeric score between zero and
@@ -91,8 +93,8 @@ def single_detect_language(
     :param str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
-    :return: An instance of DocumentLanguage.
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLanguage
+    :return: An instance of DetectLanguageResult.
+    :rtype: ~azure.cognitiveservices.language.textanalytics.DetectLanguageResult
     :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
@@ -114,7 +116,7 @@ def single_detect_language(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0]  # DocumentLanguage
+        return response[0]  # DetectLanguageResult
 
 
 def single_recognize_entities(
@@ -126,7 +128,7 @@ def single_recognize_entities(
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentEntities
+    # type: (...) -> RecognizeEntitiesResult
     """Named Entity Recognition for a single document.
 
     Returns a list of general named entities in a given document.
@@ -148,8 +150,8 @@ def single_recognize_entities(
     :param str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
-    :return: An instance of DocumentEntities.
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
+    :return: An instance of RecognizeEntitiesResult.
+    :rtype: ~azure.cognitiveservices.language.textanalytics.RecognizeEntitiesResult
     :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
@@ -171,7 +173,7 @@ def single_recognize_entities(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0]  # DocumentEntities
+        return response[0]  # RecognizeEntitiesResult
 
 
 def single_recognize_pii_entities(
@@ -183,7 +185,7 @@ def single_recognize_pii_entities(
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentEntities
+    # type: (...) -> RecognizePiiEntitiesResult
     """Recognize entities containing personal information for a single document.
 
     Returns a list of personal information entities ("SSN",
@@ -206,8 +208,8 @@ def single_recognize_pii_entities(
     :param str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
-    :return: An instance of DocumentEntities.
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
+    :return: An instance of RecognizePiiEntitiesResult.
+    :rtype: ~azure.cognitiveservices.language.textanalytics.RecognizePiiEntitiesResult
     :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
@@ -229,7 +231,7 @@ def single_recognize_pii_entities(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0]  # DocumentEntities
+        return response[0]  # RecognizePiiEntitiesResult
 
 
 def single_recognize_linked_entities(
@@ -241,7 +243,7 @@ def single_recognize_linked_entities(
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentLinkedEntities
+    # type: (...) -> RecognizeLinkedEntitiesResult
     """Recognize linked entities from a well-known knowledge base
     for a single document.
 
@@ -264,8 +266,8 @@ def single_recognize_linked_entities(
     :param str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
-    :return: An instance of DocumentLinkedEntities
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities
+    :return: An instance of RecognizeLinkedEntitiesResult
+    :rtype: ~azure.cognitiveservices.language.textanalytics.RecognizeLinkedEntitiesResult
     :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
@@ -287,7 +289,7 @@ def single_recognize_linked_entities(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0]  # DocumentLinkedEntities
+        return response[0]  # RecognizeLinkedEntitiesResult
 
 
 def single_extract_key_phrases(
@@ -299,7 +301,7 @@ def single_extract_key_phrases(
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentKeyPhrases
+    # type: (...) -> ExtractKeyPhrasesResult
     """Extract Key Phrases for a single document.
 
     Returns a list of strings denoting the key phrases in the input
@@ -321,8 +323,8 @@ def single_extract_key_phrases(
     :param str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
-    :return: An instance of DocumentKeyPhrases
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases
+    :return: An instance of ExtractKeyPhrasesResult
+    :rtype: ~azure.cognitiveservices.language.textanalytics.ExtractKeyPhrasesResult
     :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
@@ -344,7 +346,7 @@ def single_extract_key_phrases(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0]  # DocumentKeyPhrases
+        return response[0]  # ExtractKeyPhrasesResult
 
 
 def single_analyze_sentiment(
@@ -356,7 +358,7 @@ def single_analyze_sentiment(
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentSentiment
+    # type: (...) -> AnalyzeSentimentResult
     """Analyze sentiment in a single document.
 
     Returns a sentiment prediction, as well as sentiment scores for
@@ -379,8 +381,8 @@ def single_analyze_sentiment(
     :param str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
-    :return: DocumentSentiment
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentSentiment
+    :return: An instance of AnalyzeSentimentResult
+    :rtype: ~azure.cognitiveservices.language.textanalytics.AnalyzeSentimentResult
     :raises ~azure.core.exceptions.HttpResponseError:
 
     .. admonition:: Example:
@@ -402,4 +404,4 @@ def single_analyze_sentiment(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0]  # DocumentSentiment
+        return response[0]  # AnalyzeSentimentResult

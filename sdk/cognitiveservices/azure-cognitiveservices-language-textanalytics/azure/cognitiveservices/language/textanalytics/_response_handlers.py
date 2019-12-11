@@ -12,15 +12,16 @@ from azure.core.exceptions import (
     DecodeError,
 )
 from ._models import (
-    DocumentEntities,
+    RecognizeEntitiesResult,
     NamedEntity,
     TextDocumentStatistics,
-    DocumentLinkedEntities,
+    RecognizeLinkedEntitiesResult,
+    RecognizePiiEntitiesResult,
     LinkedEntity,
-    DocumentKeyPhrases,
-    DocumentSentiment,
+    ExtractKeyPhrasesResult,
+    AnalyzeSentimentResult,
     SentenceSentiment,
-    DocumentLanguage,
+    DetectLanguageResult,
     DetectedLanguage,
     DocumentError,
 )
@@ -105,7 +106,7 @@ def prepare_result(func):
 
 @prepare_result
 def language_result(language):
-    return DocumentLanguage(
+    return DetectLanguageResult(
         id=language.id,
         detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
@@ -114,7 +115,16 @@ def language_result(language):
 
 @prepare_result
 def entities_result(entity):
-    return DocumentEntities(
+    return RecognizeEntitiesResult(
+        id=entity.id,
+        entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+    )
+
+
+@prepare_result
+def pii_entities_result(entity):
+    return RecognizePiiEntitiesResult(
         id=entity.id,
         entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
@@ -123,7 +133,7 @@ def entities_result(entity):
 
 @prepare_result
 def linked_entities_result(entity):
-    return DocumentLinkedEntities(
+    return RecognizeLinkedEntitiesResult(
         id=entity.id,
         entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
@@ -132,7 +142,7 @@ def linked_entities_result(entity):
 
 @prepare_result
 def key_phrases_result(phrases):
-    return DocumentKeyPhrases(
+    return ExtractKeyPhrasesResult(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
         statistics=TextDocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
@@ -141,7 +151,7 @@ def key_phrases_result(phrases):
 
 @prepare_result
 def sentiment_result(sentiment):
-    return DocumentSentiment(
+    return AnalyzeSentimentResult(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access

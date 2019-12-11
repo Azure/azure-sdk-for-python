@@ -24,17 +24,19 @@ from ._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
+    pii_entities_result
 )
 
 if TYPE_CHECKING:
     from ._models import (
         DetectLanguageInput,
         TextDocumentInput,
-        DocumentLanguage,
-        DocumentEntities,
-        DocumentLinkedEntities,
-        DocumentKeyPhrases,
-        DocumentSentiment,
+        DetectLanguageResult,
+        RecognizeEntitiesResult,
+        RecognizeLinkedEntitiesResult,
+        ExtractKeyPhrasesResult,
+        AnalyzeSentimentResult,
+        RecognizePiiEntitiesResult,
         DocumentError,
     )
 
@@ -89,7 +91,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         country_hint="US",  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
+        # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
         """Detects Language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
@@ -111,9 +113,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the empty string "".
-        :return: The combined list of DocumentLanguage and DocumentErrors in the order
+        :return: The combined list of DetectLanguageResults and DocumentErrors in the order
             the original documents were passed in.
-        :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLanguage,
+        :rtype: list[~azure.cognitiveservices.language.textanalytics.DetectLanguageResult,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -147,7 +149,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Union[DocumentEntities, DocumentError]]
+        # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
         """Named Entity Recognition for a batch of documents.
 
         Returns a list of general named entities in a given document.
@@ -168,9 +170,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
-        :return: The combined list of DocumentEntities and DocumentErrors in the order
+        :return: The combined list of RecognizeEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
-        :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
+        :rtype: list[~azure.cognitiveservices.language.textanalytics.RecognizeEntitiesResult,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -204,7 +206,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Union[DocumentEntities, DocumentError]]
+        # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
         """Recognize entities containing personal information for a batch of documents.
 
         Returns a list of personal information entities ("SSN",
@@ -226,9 +228,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
-        :return: The combined list of DocumentEntities and DocumentErrors in the order
+        :return: The combined list of RecognizePiiEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
-        :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
+        :rtype: list[~azure.cognitiveservices.language.textanalytics.RecognizePiiEntitiesResult,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -247,7 +249,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                cls=entities_result,
+                cls=pii_entities_result,
                 **kwargs
             )
         except ErrorException as error:
@@ -262,7 +264,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
+        # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
         Returns a list of recognized entities with links to a
@@ -283,9 +285,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
-        :return: The combined list of DocumentLinkedEntities and DocumentErrors in the order
+        :return: The combined list of RecognizeLinkedEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
-        :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities,
+        :rtype: list[~azure.cognitiveservices.language.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -319,7 +321,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
+        # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
         """Extract Key Phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
@@ -340,9 +342,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
-        :return: The combined list of DocumentKeyPhrases and DocumentErrors in the order
+        :return: The combined list of ExtractKeyPhrasesResults and DocumentErrors in the order
             the original documents were passed in.
-        :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases,
+        :rtype: list[~azure.cognitiveservices.language.textanalytics.ExtractKeyPhrasesResult,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -376,7 +378,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
+        # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
         """Analyze sentiment for a batch of documents.
 
         Returns a sentiment prediction, as well as sentiment scores for
@@ -398,9 +400,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
-        :return: The combined list of DocumentSentiment and DocumentErrors in the order
+        :return: The combined list of AnalyzeSentimentResults and DocumentErrors in the order
             the original documents were passed in.
-        :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentSentiment,
+        :rtype: list[~azure.cognitiveservices.language.textanalytics.AnalyzeSentimentResult,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError:
 

@@ -85,8 +85,8 @@ class DetectedLanguage(DictMixin):
         )
 
 
-class DocumentEntities(DictMixin):
-    """DocumentEntities.
+class RecognizeEntitiesResult(DictMixin):
+    """RecognizeEntitiesResult.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
@@ -98,7 +98,7 @@ class DocumentEntities(DictMixin):
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a DocumentEntities.
+     results. Always False for an instance of a RecognizeEntitiesResult.
     """
 
     def __init__(self, **kwargs):
@@ -108,8 +108,31 @@ class DocumentEntities(DictMixin):
         self.is_error = False
 
 
-class DocumentLanguage(DictMixin):
-    """DocumentLanguage.
+class RecognizePiiEntitiesResult(DictMixin):
+    """RecognizePiiEntitiesResult.
+
+    :param id: Unique, non-empty document identifier.
+    :type id: str
+    :param entities: Recognized entities in the document.
+    :type entities:
+     list[~azure.cognitiveservices.language.textanalytics.models.NamedEntity]
+    :param statistics: If show_stats=true was specified in the request this
+     field will contain information about the document payload.
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
+    :param bool is_error: Boolean check for error item when iterating over list of
+     results. Always False for an instance of a RecognizePiiEntitiesResult.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.is_error = False
+
+
+class DetectLanguageResult(DictMixin):
+    """DetectLanguageResult.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
@@ -121,7 +144,7 @@ class DocumentLanguage(DictMixin):
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a DocumentLanguage.
+     results. Always False for an instance of a DetectLanguageResult.
     """
 
     def __init__(self, **kwargs):
@@ -226,8 +249,8 @@ class InnerError(DictMixin):
         self.innererror = kwargs.get("innererror", None)
 
 
-class DocumentKeyPhrases(DictMixin):
-    """DocumentKeyPhrases.
+class ExtractKeyPhrasesResult(DictMixin):
+    """ExtractKeyPhrasesResult.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
@@ -240,7 +263,7 @@ class DocumentKeyPhrases(DictMixin):
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a DocumentKeyPhrases.
+     results. Always False for an instance of a ExtractKeyPhrasesResult.
     """
 
     def __init__(self, **kwargs):
@@ -250,8 +273,8 @@ class DocumentKeyPhrases(DictMixin):
         self.is_error = False
 
 
-class DocumentLinkedEntities(DictMixin):
-    """DocumentLinkedEntities.
+class RecognizeLinkedEntitiesResult(DictMixin):
+    """RecognizeLinkedEntitiesResult.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
@@ -263,7 +286,7 @@ class DocumentLinkedEntities(DictMixin):
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a DocumentLinkedEntities.
+     results. Always False for an instance of a RecognizeLinkedEntitiesResult.
     """
 
     def __init__(self, **kwargs):
@@ -273,8 +296,8 @@ class DocumentLinkedEntities(DictMixin):
         self.is_error = False
 
 
-class DocumentSentiment(DictMixin):
-    """DocumentSentiment.
+class AnalyzeSentimentResult(DictMixin):
+    """AnalyzeSentimentResult.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
@@ -293,7 +316,7 @@ class DocumentSentiment(DictMixin):
     :type sentences:
      list[~azure.cognitiveservices.language.textanalytics.models.SentenceSentiment]
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a DocumentSentiment.
+     results. Always False for an instance of a AnalyzeSentimentResult.
     """
 
     def __init__(self, **kwargs):
