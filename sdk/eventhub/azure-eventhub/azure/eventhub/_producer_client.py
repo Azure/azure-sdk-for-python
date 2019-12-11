@@ -5,7 +5,7 @@
 import logging
 import threading
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, Dict, List, Optional, cast
+from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 from uamqp import constants  # type:ignore
 
 from .exceptions import ConnectError, EventHubError
