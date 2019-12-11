@@ -26,7 +26,7 @@
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
 from azure.core.pipeline.transport import AioHttpTransport
 from .policies import ARMAutoResourceProviderRegistrationPolicy
 
@@ -42,14 +42,18 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
         if policies is None:  # [] is a valid policy list
             policies = [
                 ARMAutoResourceProviderRegistrationPolicy(),
+                RequestIdPolicy(),
                 config.headers_policy,
                 config.user_agent_policy,
-                config.authentication_policy,
+                config.proxy_policy,
                 ContentDecodePolicy(),
                 config.redirect_policy,
                 config.retry_policy,
+                config.authentication_policy,
                 config.custom_hook_policy,
                 config.logging_policy,
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
             ]
 
         if not transport:
