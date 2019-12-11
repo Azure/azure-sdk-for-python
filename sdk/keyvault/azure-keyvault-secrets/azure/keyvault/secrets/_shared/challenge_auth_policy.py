@@ -31,15 +31,13 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from typing import Any
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpResponse
 
 
 class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
     """Sans I/O base for challenge authentication policies"""
-
-    # pylint:disable=useless-super-delegation
-    def __init__(self, credential, **kwargs):
-        super(ChallengeAuthPolicyBase, self).__init__(credential, **kwargs)
 
     @staticmethod
     def _update_challenge(request, challenger):
@@ -73,6 +71,12 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
 
 class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
     """policy for handling HTTP authentication challenges"""
+
+    # pylint:disable=useless-super-delegation
+    def __init__(self, credential, **kwargs):
+        # type: (TokenCredential, **Any) -> None
+        self._credential = credential
+        super(ChallengeAuthPolicy, self).__init__(**kwargs)
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
