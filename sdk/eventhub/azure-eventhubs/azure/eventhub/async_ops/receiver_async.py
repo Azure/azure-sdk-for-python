@@ -34,7 +34,7 @@ class AsyncReceiver(Receiver):
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, source, offset=None, prefetch=300, epoch=None,
-            keep_alive=None, auto_reconnect=True, idle_timeout=None, loop=None):
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async receiver.
 
@@ -48,9 +48,6 @@ class AsyncReceiver(Receiver):
         :param epoch: An optional epoch value.
         :type epoch: int
         :param loop: An event loop.
-        :param idle_timeout: An optionl timeout in seconds after which the underlying connection
-         will close if there is no further activity.  Default is None.
-        :type idle_timeout: int
         """
         self.loop = loop or asyncio.get_event_loop()
         self.running = False
@@ -66,7 +63,7 @@ class AsyncReceiver(Receiver):
         self.redirected = None
         self.error = None
         self.properties = None
-        self.idle_timeout = (idle_timeout * 1000) if idle_timeout else None
+        self.idle_timeout = None #TODO: Add this back in when UAMQP bug is fixed. (idle_timeout * 1000) if idle_timeout else None
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
@@ -341,5 +338,5 @@ class AsyncReceiver(Receiver):
             raise TimeoutError("Timeout exceeded when reconnecting receiver")      
         if num_tries > max_reconnect_retries:
             log.warn("Max retries exceeded when reconnecting receiver")    
-            
+
         return data_batch
