@@ -93,9 +93,13 @@ class Request:
             assert request.query.get(param) == expected_value
         for header, expected_value in self.required_headers.items():
             actual = request.headers.get(header)
-            assert actual == expected_value, "expected header '{}: {}', actual value was '{}'".format(
-                header, expected_value, actual
-            )
+            if header.lower() == "user-agent":
+                # UserAgentPolicy appends the value of $AZURE_HTTP_USER_AGENT, which is set in pipelines.
+                assert expected_value in actual
+            else:
+                assert actual == expected_value, "expected header '{}: {}', actual value was '{}'".format(
+                    header, expected_value, actual
+                )
         for field, expected_value in self.required_data.items():
             assert request.body.get(field) == expected_value
 
