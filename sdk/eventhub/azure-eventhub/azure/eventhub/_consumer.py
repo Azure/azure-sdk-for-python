@@ -66,7 +66,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     def __init__(self, client, source, **kwargs):
         # type: (EventHubConsumerClient, str, Any) -> None
-        super(EventHubConsumer, self).__init__()
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
