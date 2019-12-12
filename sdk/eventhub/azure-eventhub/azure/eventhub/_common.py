@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from typing import Union, Dict, Any, AnyStr, Iterable, Optional, List, TYPE_CHECKING, cast
+from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
 
 import six
 
