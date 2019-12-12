@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
+from typing import Union, Dict, Any, AnyStr, Iterable, Optional, List, TYPE_CHECKING, cast
 
 import six
 
@@ -48,7 +48,7 @@ class EventData(object):
     """
 
     def __init__(self, body=None):
-        # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
+        # type: (Union[str, bytes, List[AnyStr]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         if body and isinstance(body, list):
             self.message = Message(body[0])
@@ -298,7 +298,7 @@ class EventDataBatch(object):
 
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
-        # type: (Iterable[EventData], Optional[Union[str, bytes]]) -> EventDataBatch
+        # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = batch_data  # pylint:disable=protected-access
         return batch_data_instance
