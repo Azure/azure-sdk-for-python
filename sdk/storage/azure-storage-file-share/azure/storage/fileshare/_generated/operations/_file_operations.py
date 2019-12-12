@@ -899,12 +899,10 @@ class FileOperations(object):
             return cls(response, None, response_headers)
     change_lease.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    def break_lease(self, lease_id, timeout=None, request_id=None, cls=None, **kwargs):
+    def break_lease(self, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
         """[Update] The Lease File operation establishes and manages a lock on a
         file for write and delete operations.
 
-        :param lease_id: Specifies the current lease ID on the resource.
-        :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -914,6 +912,10 @@ class FileOperations(object):
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -922,6 +924,10 @@ class FileOperations(object):
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         comp = "lease"
         action = "break"
 
@@ -945,6 +951,8 @@ class FileOperations(object):
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-lease-action'] = self._serialize.header("action", action, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
