@@ -274,12 +274,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
 
 class ConsumerProducerMixin(object):
-    def __init__(self):
-        self._name = ""
-        self._client = None
-        self._handler = None
-        self._loop = None
-
     def __enter__(self):
         return self
 
