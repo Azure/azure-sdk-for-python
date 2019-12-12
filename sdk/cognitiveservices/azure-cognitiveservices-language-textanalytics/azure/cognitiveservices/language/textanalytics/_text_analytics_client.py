@@ -86,8 +86,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def detect_languages(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
         country_hint="US",  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -104,15 +102,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.DetectLanguageInput]
-        :param str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :param bool show_stats: If set to true, response will contain document
-            level statistics.
         :param str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the empty string "".
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics.
         :return: The combined list of DetectLanguageResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DetectLanguageResult,
@@ -129,6 +127,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :caption: Detecting language in a batch of documents.
         """
         docs = _validate_batch_input(inputs, "country_hint", country_hint)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
         try:
             return self._client.languages(
                 documents=docs,
@@ -144,8 +144,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -162,14 +160,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
-        :param str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics.
         :return: The combined list of RecognizeEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.RecognizeEntitiesResult,
@@ -186,6 +185,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :caption: Recognize entities in a batch of documents.
         """
         docs = _validate_batch_input(inputs, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -201,8 +202,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_pii_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -220,14 +219,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
-        :param str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
         :return: The combined list of RecognizePiiEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.RecognizePiiEntitiesResult,
@@ -244,6 +243,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         docs = _validate_batch_input(inputs, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -259,8 +260,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_linked_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -277,14 +276,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
-        :param str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
         :return: The combined list of RecognizeLinkedEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.RecognizeLinkedEntitiesResult,
@@ -301,6 +300,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :caption: Recognize linked entities in a batch of documents.
         """
         docs = _validate_batch_input(inputs, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -316,8 +317,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def extract_key_phrases(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -334,14 +333,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
-        :param str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
         :return: The combined list of ExtractKeyPhrasesResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.ExtractKeyPhrasesResult,
@@ -358,6 +357,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :caption: Extract the key phrases in a batch of documents.
         """
         docs = _validate_batch_input(inputs, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -373,8 +374,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def analyze_sentiment(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        model_version=None,  # type: Optional[str]
-        show_stats=False,  # type:  Optional[bool]
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -392,14 +391,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.cognitiveservices.language.textanalytics.TextDocumentInput]
-        :param str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :param bool show_stats: If set to true, response will contain document level statistics.
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
         :return: The combined list of AnalyzeSentimentResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.AnalyzeSentimentResult,
@@ -416,6 +415,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :caption: Analyze sentiment in a batch of documents.
         """
         docs = _validate_batch_input(inputs, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
         try:
             return self._client.sentiment(
                 documents=docs,

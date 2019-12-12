@@ -35,12 +35,13 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` can take as input a `list[TextDocumentInput]` or `list[str]`.
   A list of dict-like objects in the same shape as `TextDocumentInput` is still accepted as input.
 
-- New parameters:
-  - All operations now take a parameter `model_version` which allows the user to specify a string referencing the desired model version to be used for analysis. If no string specified, it will default to the latest, non-preview version.
+- New parameters/keyword arguments:
+  - All operations now take a keyword argument `model_version` which allows the user to specify a string referencing the desired model version to be used for analysis. If no string specified, it will default to the latest, non-preview version.
   - `detect_languages` now takes a parameter `country_hint` which allows you to specify the country hint for the entire batch. Any per-item country hints will take precedence over a whole batch hint.
   - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` now take a parameter `language` which allows you to specify the language for the entire batch.
   Any per-item specified language will take precedence over a whole batch hint.
-  - A `response_hook` parameter can be passed with a callback to use the raw response from the service. Additionally, values returned for `TextDocumentBatchStatistics` and `model_version` must be retrieved using a response hook.
+  - A `response_hook` keyword argument can be passed with a callback to use the raw response from the service. Additionally, values returned for `TextDocumentBatchStatistics` and `model_version` used must be retrieved using a response hook.
+  - `show_stats` and `model_version` parameters move to keyword only arguments.
 
 - New return types
   - The return types for the batching methods (`detect_languages`, `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment`) now return a heterogeneous list of 

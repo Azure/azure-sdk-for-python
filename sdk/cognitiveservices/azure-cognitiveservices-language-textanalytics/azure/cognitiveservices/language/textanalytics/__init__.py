@@ -66,8 +66,6 @@ def single_detect_language(
             credential,  # type: str
             input_text,  # type: str
             country_hint="US",  # type: Optional[str]
-            show_stats=False,   # type: Optional[bool]
-            model_version=None,  # type: Optional[str]
             **kwargs  # type: Any
 ):
     # type: (...) -> DetectLanguageResult
@@ -88,9 +86,9 @@ def single_detect_language(
         letter country codes specified by ISO 3166-1 alpha-2.
         Defaults to "US". If you don't want to use a country hint,
         pass the empty string "".
-    :param bool show_stats: If set to true, response will contain
+    :keyword bool show_stats: If set to true, response will contain
         document level statistics.
-    :param str model_version: This value indicates which model will
+    :keyword str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
     :return: An instance of DetectLanguageResult.
@@ -107,6 +105,8 @@ def single_detect_language(
             :caption: Detecting language in a single string.
     """
     doc = _validate_single_input(input_text, "country_hint", country_hint)
+    model_version = kwargs.pop("model_version", None)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.detect_languages(
             inputs=doc,
@@ -124,8 +124,6 @@ def single_recognize_entities(
         credential,  # type: str
         input_text,  # type: str
         language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
     # type: (...) -> RecognizeEntitiesResult
@@ -145,9 +143,9 @@ def single_recognize_entities(
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
-    :param bool show_stats: If set to true, response will contain
+    :keyword bool show_stats: If set to true, response will contain
         document level statistics.
-    :param str model_version: This value indicates which model will
+    :keyword str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
     :return: An instance of RecognizeEntitiesResult.
@@ -164,6 +162,8 @@ def single_recognize_entities(
             :caption: Recognize entities in a single string.
     """
     doc = _validate_single_input(input_text, "language", language)
+    model_version = kwargs.pop("model_version", None)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.recognize_entities(
             inputs=doc,
@@ -181,8 +181,6 @@ def single_recognize_pii_entities(
         credential,  # type: str
         input_text,  # type: str
         language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
     # type: (...) -> RecognizePiiEntitiesResult
@@ -203,9 +201,9 @@ def single_recognize_pii_entities(
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
-    :param bool show_stats: If set to true, response will contain
+    :keyword bool show_stats: If set to true, response will contain
         document level statistics.
-    :param str model_version: This value indicates which model will
+    :keyword str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
     :return: An instance of RecognizePiiEntitiesResult.
@@ -222,6 +220,8 @@ def single_recognize_pii_entities(
             :caption: Recognize personally identifiable information entities in a single string.
     """
     doc = _validate_single_input(input_text, "language", language)
+    model_version = kwargs.pop("model_version", None)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.recognize_pii_entities(
             inputs=doc,
@@ -239,8 +239,6 @@ def single_recognize_linked_entities(
         credential,  # type: str
         input_text,  # type: str
         language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
     # type: (...) -> RecognizeLinkedEntitiesResult
@@ -261,9 +259,9 @@ def single_recognize_linked_entities(
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
-    :param bool show_stats: If set to true, response will contain
+    :keyword bool show_stats: If set to true, response will contain
         document level statistics.
-    :param str model_version: This value indicates which model will
+    :keyword str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
     :return: An instance of RecognizeLinkedEntitiesResult
@@ -280,6 +278,8 @@ def single_recognize_linked_entities(
             :caption: Recognize linked entities in a single string.
     """
     doc = _validate_single_input(input_text, "language", language)
+    model_version = kwargs.pop("model_version", None)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.recognize_linked_entities(
             inputs=doc,
@@ -297,8 +297,6 @@ def single_extract_key_phrases(
         credential,  # type: str
         input_text,  # type: str
         language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
     # type: (...) -> ExtractKeyPhrasesResult
@@ -318,9 +316,9 @@ def single_extract_key_phrases(
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
-    :param bool show_stats: If set to true, response will contain
+    :keyword bool show_stats: If set to true, response will contain
         document level statistics.
-    :param str model_version: This value indicates which model will
+    :keyword str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
     :return: An instance of ExtractKeyPhrasesResult
@@ -337,6 +335,8 @@ def single_extract_key_phrases(
             :caption: Extract key phrases in a single string.
     """
     doc = _validate_single_input(input_text, "language", language)
+    model_version = kwargs.pop("model_version", None)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.extract_key_phrases(
             inputs=doc,
@@ -354,8 +354,6 @@ def single_analyze_sentiment(
         credential,  # type: str
         input_text,  # type: str
         language="en",  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
-        model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
     # type: (...) -> AnalyzeSentimentResult
@@ -376,9 +374,9 @@ def single_analyze_sentiment(
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
-    :param bool show_stats: If set to true, response will contain
+    :keyword bool show_stats: If set to true, response will contain
         document level statistics.
-    :param str model_version: This value indicates which model will
+    :keyword str model_version: This value indicates which model will
         be used for scoring, e.g. "latest", "2019-10-01". If a model-version
         is not specified, the API will default to the latest, non-preview version.
     :return: An instance of AnalyzeSentimentResult
@@ -395,6 +393,8 @@ def single_analyze_sentiment(
             :caption: Analyze sentiment in a single string.
     """
     doc = _validate_single_input(input_text, "language", language)
+    model_version = kwargs.pop("model_version", None)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.analyze_sentiment(
             inputs=doc,
