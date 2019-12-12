@@ -36,15 +36,27 @@ def get_cli_profile():
 
 
 class _CliCredentials(object):
-    """A wrapper of CLI credentials type that implements the azure-core credential protocol.
+    """A wrapper of CLI credentials type that implements the azure-core credential protocol AND
+    the msrestazure protocol.
+
+    :param cli_profile: The CLI profile instance
+    :param resource: The resource to use in "msrestazure" mode (ignored otherwise)
     """
 
     _DEFAULT_PREFIX = "/.default"
 
-    def __init__(self, cli_profile):
+    def __init__(self, cli_profile, resource):
         if AccessToken is None:  # import failed
             raise ImportError("You need to install 'azure-core' to use this feature")
         self._profile = cli_profile
+        self._resource = resource
+        self._cred_dict = {}
+
+    def _get_cred(self, resource):
+        if not resource in self._cred_dict:
+            credentials, _, _ = self._profile.get_login_credentials(resource=resource)
+            self._cred_dict[resource] = credentials
+        return self._cred_dict[resource]
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
 
@@ -56,13 +68,17 @@ class _CliCredentials(object):
         else:
             resource = scope
 
-        credentials, _, _ = self._profile.get_login_credentials(resource=resource)
+        credentials = self._get_cred(resource)
         _, token, fulltoken = credentials._token_retriever()  # pylint:disable=protected-access
 
         return AccessToken(token, int(fulltoken['expiresIn'] + time.time()))
 
+    def signed_session(self, session=None):
+        credentials = self._get_cred(self._resource)
+        return credentials.signed_session(session)
 
-def get_azure_cli_credentials(resource=None, with_tenant=False, as_azure_core_credentials=True):
+
+def get_azure_cli_credentials(resource=None, with_tenant=False):
     """Return Credentials and default SubscriptionID of current loaded profile of the CLI.
 
     Credentials will be the "az login" command:
@@ -75,15 +91,12 @@ def get_azure_cli_credentials(resource=None, with_tenant=False, as_azure_core_cr
 
     :param str resource: The alternative resource for credentials if not ARM (GraphRBac, etc.)
     :param bool with_tenant: If True, return a three-tuple with last as tenant ID
-    :param bool as_azure_core_credentials: If True, return the credentials using the azure-core credential protocol.
-     Note that in that mode, "resource" will be ignored.
     :return: tuple of Credentials and SubscriptionID (and tenant ID if with_tenant)
     :rtype: tuple
     """
     profile = get_cli_profile()
     cred, subscription_id, tenant_id = profile.get_login_credentials(resource=resource)
-    if as_azure_core_credentials:
-        cred = _CliCredentials(profile)
+    cred = _CliCredentials(profile, resource)
     if with_tenant:
         return cred, subscription_id, tenant_id
     else:

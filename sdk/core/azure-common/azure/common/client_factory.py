@@ -48,15 +48,6 @@ def _client_resource(client_class, cloud):
     return None, None
 
 
-def _is_azure_core_based(client_class):
-    """Detect if the client if based on azure-core and needs special credential.
-
-    After azure-core, spec is that the parameter is "credential" (no s). Let's use that,
-    since there is no obvious way to do otherwise for now.
-    """
-    return "credential" in get_arg_spec(client_class.__init__).args
-
-
 def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
@@ -85,12 +76,10 @@ def get_client_from_cli_profile(client_class, **kwargs):
     parameters = {}
     kwarg_cred = kwargs.pop('credentials', kwargs.pop('credential', None))
     if kwarg_cred is None or 'subscription_id' not in kwargs:
-        as_core_credential = _is_azure_core_based(client_class)
         resource, _ = _client_resource(client_class, cloud)
         credentials, subscription_id, tenant_id = get_azure_cli_credentials(
             resource=resource,
             with_tenant=True,
-            as_azure_core_credentials=as_core_credential
         )
         # Provide both syntax of cred, we have an "inspect" filter later
         parameters.update({
