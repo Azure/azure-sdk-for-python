@@ -7,8 +7,10 @@ import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential
+from azure.identity._internal.user_agent import USER_AGENT
 from six.moves.urllib_parse import urlparse
-from helpers import build_aad_response, urlsafeb64_decode, mock_response
+
+from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request, validating_transport
 
 try:
     from unittest.mock import Mock, patch
@@ -31,6 +33,17 @@ def test_policies_configurable():
     credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+def test_user_agent():
+    transport = validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)
+
+    credential.get_token("scope")
 
 
 def test_request_url():

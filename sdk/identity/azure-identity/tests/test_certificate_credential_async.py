@@ -8,8 +8,11 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
-from helpers import build_aad_response, urlsafeb64_decode, mock_response
+
+from helpers import async_validating_transport, build_aad_response, urlsafeb64_decode, mock_response, Request
+
 import pytest
 
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
@@ -29,6 +32,18 @@ async def test_policies_configurable():
     await credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+@pytest.mark.asyncio
+async def test_user_agent():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)
+
+    await credential.get_token("scope")
 
 
 @pytest.mark.asyncio

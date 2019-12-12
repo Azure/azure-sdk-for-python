@@ -64,7 +64,6 @@ known_content_issues:
   - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
   - ['sdk/cognitiveservices/azure-cognitiveservices-search-nspkg/README.rst', 'nspkg and common']
   - ['sdk/cognitiveservices/azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
-  - ['sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/README.md', 'nspkg and common']
   - ['sdk/core/azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-core/README.md', 'nspkg and common']

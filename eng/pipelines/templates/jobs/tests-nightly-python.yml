@@ -43,7 +43,7 @@ jobs:
         continueOnError: true
 
       - task: PublishTestResults@2
-        condition: succeededOrFailed()
+        condition: always()
         inputs:
           testResultsFiles: '**/junit/test-results.xml'
           testRunTitle: '$(OSName) Python $(PythonVersion)'
