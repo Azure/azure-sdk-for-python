@@ -16,7 +16,9 @@ from uamqp import (
     errors,
     compat,
     Message,
-    AMQPClientAsync
+    AMQPClientAsync,
+    ReceiveClientAsync,
+    SendClientAsync,
 )
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
@@ -27,7 +29,6 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
-    from ._connection_manager_async import _SeparateConnectionManager, _SharedConnectionManager
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -115,7 +116,7 @@ class ClientBaseAsync(ClientBase):
             self,
             retried_times: int,
             last_exception: Exception,
-            timeout_time: Optional[int] = None,
+            timeout_time: Optional[float] = None,
             entity_name: Optional[str] = None
             ) -> None:
         entity_name = entity_name or self._container_id
@@ -193,16 +194,26 @@ class ClientBaseAsync(ClientBase):
 
 class ConsumerProducerMixin(object):
 
+    def __init__(self):
+        self._name = ""
+        self._client = None  # type: ClientBaseAsync
+        self._handler = None  # type: Union[ReceiveClientAsync, SendClientAsync]
+        self._loop = None  # type: asyncio.AbstractEventLoop
+        self.running = False
+
     async def __aenter__(self):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
+    def _create_handler(self, auth):
+        pass
+
     def _check_closed(self) -> None:
         if self.closed:
             raise ClientClosedError(
-                "{} has been closed. Please create a new one to handle event data.".format(self._name)  # type: ignore
+                "{} has been closed. Please create a new one to handle event data.".format(self._name)
             )
 
     async def _open(self) -> None:
@@ -212,29 +223,29 @@ class ConsumerProducerMixin(object):
         """
         # pylint: disable=protected-access,line-too-long
         # TODO: Properly resolve type hinting
-        if not self.running:  # type: ignore
-            if self._handler:  # type: ignore
-                await self._handler.close_async()  # type: ignore
-            auth = await self._client._create_auth_async()  # type: ignore
-            self._create_handler(auth)  # type: ignore
-            await self._handler.open_async(  # type: ignore
-                connection=await self._client._conn_manager_async.get_connection(self._client._address.hostname, auth)  # type: ignore
+        if not self.running:
+            if self._handler:
+                await self._handler.close_async()
+            auth = await self._client._create_auth_async()
+            self._create_handler(auth)
+            await self._handler.open_async(
+                connection=await self._client._conn_manager_async.get_connection(self._client._address.hostname, auth)
             )
-            while not await self._handler.client_ready_async():  # type: ignore
-                await asyncio.sleep(0.05, loop=self._loop)  # type: ignore
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
+            while not await self._handler.client_ready_async():
+                await asyncio.sleep(0.05, loop=self._loop)
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES
             self.running = True
 
     async def _close_handler_async(self) -> None:
         # TODO: Propertly resolve type hinting
-        if self._handler:  # type: ignore
+        if self._handler:
             # close the link (shared connection) or connection (not shared)
-            await self._handler.close_async()  # type: ignore
+            await self._handler.close_async()
         self.running = False
 
     async def _close_connection_async(self) -> None:
         await self._close_handler_async()
-        await self._client._conn_manager_async.reset_connection_if_broken()  # type: ignore # pylint:disable=protected-access
+        await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
         if not self.running and isinstance(exception, compat.TimeoutException):
@@ -254,7 +265,7 @@ class ConsumerProducerMixin(object):
         retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
         operation_need_param = kwargs.pop('operation_need_param', True)
-        max_retries = self._client._config.max_retries  # type: ignore
+        max_retries = self._client._config.max_retries
 
         while retried_times <= max_retries:
             try:
@@ -263,15 +274,15 @@ class ConsumerProducerMixin(object):
                 return await operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
-                await self._client._backoff_async(  # type: ignore
+                await self._client._backoff_async(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout_time=timeout_time,
-                    entity_name=self._name  # type: ignore
+                    entity_name=self._name
                 )
                 retried_times += 1
                 if retried_times > max_retries:
-                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)  # type: ignore
+                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
                     raise last_exception
         return None
 

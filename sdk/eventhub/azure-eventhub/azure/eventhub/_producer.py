@@ -68,6 +68,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     def __init__(self, client, target, **kwargs):
         # type: (EventHubProducerClient, str, Any) -> None
+        super(EventHubProducer, self).__init__()
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)

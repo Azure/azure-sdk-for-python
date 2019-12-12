@@ -12,12 +12,26 @@ from uamqp import Connection, TransportType, c_uamqp
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAuth
 
+
 class _ConnectionMode(Enum):
     ShareConnection = 1
     SeparateConnection = 2
 
 
-class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attributes
+class ConnectionManager(object):
+
+    def get_connection(self, host, auth):
+        # type: (str, 'JWTTokenAuth') -> Connection
+        pass
+
+    def close_connection(self):
+        pass
+
+    def reset_connection_if_broken(self):
+        pass
+
+
+class _SharedConnectionManager(ConnectionManager):  #pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self._lock = Lock()
         self._conn = None  # type: Connection
@@ -71,7 +85,7 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
                 self._conn = None
 
 
-class _SeparateConnectionManager(object):
+class _SeparateConnectionManager(ConnectionManager):
     def __init__(self, **kwargs):
         pass
 

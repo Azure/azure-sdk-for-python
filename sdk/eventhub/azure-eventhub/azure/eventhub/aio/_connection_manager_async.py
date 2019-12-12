@@ -15,7 +15,19 @@ if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync
 
 
-class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
+class ConnectionManager(object):
+
+    async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
+        pass
+
+    async def close_connection(self) -> None:
+        pass
+
+    async def reset_connection_if_broken(self) -> None:
+        pass
+
+
+class _SharedConnectionManager(ConnectionManager):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs) -> None:
         self._loop = kwargs.get('loop')
         self._lock = Lock(loop=self._loop)
@@ -68,7 +80,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                 self._conn = None
 
 
-class _SeparateConnectionManager(object):
+class _SeparateConnectionManager(ConnectionManager):
     def __init__(self, **kwargs) -> None:
         pass
 
@@ -82,7 +94,7 @@ class _SeparateConnectionManager(object):
         pass
 
 
-def get_connection_manager(**kwargs) -> Union[_SeparateConnectionManager, _SharedConnectionManager]:
+def get_connection_manager(**kwargs) -> ConnectionManager:
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

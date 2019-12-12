@@ -54,6 +54,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
     """
 
     def __init__(self, client: 'EventHubProducerClient', target: str, **kwargs) -> None:
+        super().__init__()
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)

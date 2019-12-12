@@ -274,12 +274,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
 
 class ConsumerProducerMixin(object):
+    def __init__(self):
+        self._name = ""
+        self._client = None
+        self._handler = None
+        self._loop = None
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    def _create_handler(self, auth):
+        pass
 
     def _check_closed(self):
         if self.closed:

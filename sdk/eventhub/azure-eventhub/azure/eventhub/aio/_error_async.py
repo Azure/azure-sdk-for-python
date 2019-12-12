@@ -30,7 +30,7 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
         raise exception
     error = exception
     try:
-        name = cast('ConsumerProducerMixin', closable)._name  # type: ignore
+        name = cast('ConsumerProducerMixin', closable)._name
     except AttributeError:
         name = cast('ClientBaseAsync', closable)._container_id
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise

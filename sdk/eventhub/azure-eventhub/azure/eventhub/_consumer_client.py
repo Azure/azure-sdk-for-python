@@ -15,7 +15,7 @@ from ._eventprocessor.partition_context import PartitionContext
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential  # type: ignore
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
