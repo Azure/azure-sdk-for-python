@@ -193,7 +193,7 @@ class AioHttpTransport(AsyncHttpTransport):
         except asyncio.TimeoutError as err:
             error = ServiceResponseError(err, error=err)
         if error:
-            raise error
+            raise error from err
         return response
 
 
