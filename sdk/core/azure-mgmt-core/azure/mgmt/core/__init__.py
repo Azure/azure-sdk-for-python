@@ -1,4 +1,4 @@
-﻿# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -29,5 +29,10 @@ from .version import msrestazure_version
 from .pipeline_client import ARMPipelineClient
 
 __all__ = ["ARMPipelineClient"]
-
 __version__ = msrestazure_version
+
+try:
+    from .async_pipeline_client import AsyncARMPipelineClient #pylint: disable=unused-import
+    __all__.extend(["AsyncARMPipelineClient"])
+except (ImportError, SyntaxError): # Python <= 3.5
+    pass
