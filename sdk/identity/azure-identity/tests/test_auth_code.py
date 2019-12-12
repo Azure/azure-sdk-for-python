@@ -5,8 +5,9 @@
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import AuthorizationCodeCredential
+from azure.identity._internal.user_agent import USER_AGENT
 
-from helpers import build_aad_response, mock_response
+from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
     from unittest.mock import Mock
@@ -27,6 +28,19 @@ def test_policies_configurable():
     credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+def test_user_agent():
+    transport = validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+    )
+
+    credential.get_token("scope")
 
 
 def test_auth_code_credential():
