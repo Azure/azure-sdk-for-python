@@ -27,7 +27,9 @@ from test_shared_cache_credential import get_account_event, populated_cache
 @pytest.mark.asyncio
 async def test_close():
     transport = AsyncMockTransport()
-    credential = SharedTokenCacheCredential(transport=transport)
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+    )
 
     await credential.close()
 
@@ -37,7 +39,9 @@ async def test_close():
 @pytest.mark.asyncio
 async def test_context_manager():
     transport = AsyncMockTransport()
-    credential = SharedTokenCacheCredential(transport=transport)
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+    )
 
     async with credential:
         pass
