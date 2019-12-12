@@ -46,7 +46,7 @@ class TextAnalyticsClientBase(object):
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
         config.user_agent_policy.add_user_agent(
-            "azsdk-python-azure-cognitiveservices-language-textanalytics/{}".format(VERSION)
+            "azsdk-python-azure-ai-textanalytics/{}".format(VERSION)
         )
 
         policies = [

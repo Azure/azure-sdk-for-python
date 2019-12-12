@@ -51,7 +51,7 @@ class AsyncTextAnalyticsClientBase(object):
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
             config.transport = AioHttpTransport(**kwargs)
         config.user_agent_policy.add_user_agent(
-            'azsdk-python-azure-cognitiveservices-language-textanalytics/{}'.format(VERSION)
+            'azsdk-python-azure-ai-textanalytics/{}'.format(VERSION)
         )
 
         policies = [

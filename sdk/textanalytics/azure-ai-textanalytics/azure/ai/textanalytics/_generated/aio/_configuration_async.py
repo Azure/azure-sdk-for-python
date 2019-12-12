@@ -11,7 +11,7 @@
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from ..version import VERSION
+from .._version import VERSION
 
 
 class TextAnalyticsClientConfiguration(Configuration):

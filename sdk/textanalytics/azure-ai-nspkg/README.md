@@ -1,5 +1,4 @@
-Microsoft Azure SDK for Python
-==============================
+# Microsoft Azure SDK for Python
 
 This is the Microsoft Azure ai Services namespace package.
 
@@ -14,4 +13,4 @@ If you are looking to install the Azure client libraries, see the
 `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-ai-nspkg%2FREADME.png
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftextanalytics%2Fazure-ai-nspkg%2FFREADME.png)

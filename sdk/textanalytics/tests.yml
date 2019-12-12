@@ -1,0 +1,23 @@
+trigger: none
+
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: $(BuildTargetingString)
+      ServiceDirectory: textanalytics
+      EnvVars:
+        TEXT_ANALYTICS_ACCOUNT_NAME: $(python-textanalytics-test-textanalytics-account-name)
+        TEXT_ANALYTICS_KEY: $(python-textanalytics-test-textanalytics-account-key)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
