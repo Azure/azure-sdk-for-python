@@ -109,3 +109,4 @@ six>=1.6
 #override azure-cosmos azure-core<2.0.0,>=1.0.0b3
 #override azure-eventhub-checkpointstoreblob-aio azure-storage-blob<12.0.0b4,>=12.0.0b2
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
+#override azure-servicebus uamqp<2.0,>=1.2.5
