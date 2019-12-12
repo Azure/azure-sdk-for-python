@@ -8,6 +8,7 @@
 import base64
 import os
 import unittest
+import uuid
 from datetime import datetime, timedelta
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
@@ -347,6 +348,50 @@ class StorageFileAsyncTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_with_invalid_file_permission())
 
+    async def _test_create_file_with_lease_async(self):
+        # Arrange
+        file_client = await self._get_file_client()
+        await file_client.create_file(1024)
+
+        lease = await file_client.acquire_lease()
+        resp = await file_client.create_file(1024, lease=lease)
+        self.assertIsNotNone(resp)
+
+        # There is currently a lease on the file so there should be an exception when delete the file without lease
+        with self.assertRaises(HttpResponseError):
+            await file_client.delete_file()
+
+        # There is currently a lease on the file so delete the file with the lease will succeed
+        await file_client.delete_file(lease=lease)
+
+    @record
+    def test_create_file_with_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_file_with_lease_async())
+
+    async def _test_create_file_with_changed_lease_async(self):
+        # Arrange
+        file_client = await self._get_file_client()
+        await file_client.create_file(1024)
+
+        lease = await file_client.acquire_lease()
+        old_lease_id = lease.id
+        await lease.change(str(uuid.uuid4()))
+
+        # use the old lease id to create file will throw exception.
+        with self.assertRaises(HttpResponseError):
+            await file_client.create_file(1024, lease=old_lease_id)
+
+        # use the new lease to create file will succeed.
+        resp = await file_client.create_file(1024, lease=lease)
+
+        self.assertIsNotNone(resp)
+
+    @record
+    def test_test_create_file_with_changed_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_file_with_changed_lease_async())
+
     async def _test_create_file_will_set_all_smb_properties(self):
         # Arrange
         file_client = await self._get_file_client()
@@ -467,6 +512,25 @@ class StorageFileAsyncTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_resize_file_async())
 
+    async def _test_resize_file_with_lease_async(self):
+        # Arrange
+        file_client = await self._create_file()
+        lease = await file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await file_client.resize_file(5)
+        await file_client.resize_file(5, lease=lease)
+
+        # Assert
+        props = await file_client.get_file_properties()
+        self.assertEqual(props.size, 5)
+
+    @record
+    def test_resize_file_with_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_resize_file_with_lease_async())
+
     async def _test_set_file_properties_async(self):
         # Arrange
         file_client = await self._create_file()
@@ -540,6 +604,27 @@ class StorageFileAsyncTest(FileTestCase):
     def test_get_file_properties_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_properties_async())
+
+    async def _test_get_file_properties_with_invalid_lease_fails_async(self):
+        # Arrange
+        file_client = await self._create_file()
+        file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await file_client.get_file_properties(lease=str(uuid.uuid4()))
+
+        # get properties on a leased file will succeed
+        properties = await file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.size, len(self.short_byte_data))
+
+    @record
+    def test_get_file_properties_with_invalid_lease_fails_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_file_properties_with_invalid_lease_fails_async())
 
     async def _test_get_file_properties_with_snapshot_async(self):
         # Arrange
@@ -664,6 +749,43 @@ class StorageFileAsyncTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_file_metadata_with_upper_case_async())
 
+    async def _test_set_file_metadata_with_broken_lease_async(self):
+        # Arrange
+        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        file_client = await self._create_file()
+
+        lease = await file_client.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            await file_client.set_file_metadata(metadata)
+
+        lease_id_to_be_broken = lease.id
+        await lease.break_lease()
+
+        # Act
+        # lease is broken, set metadata doesn't require a lease
+        await file_client.set_file_metadata({'hello': 'world'})
+        props = await file_client.get_file_properties()
+        # Assert
+        self.assertEqual(1, len(props.metadata))
+        self.assertEqual(props.metadata['hello'], 'world')
+
+        # Act
+        await file_client.acquire_lease(lease_id=lease_id_to_be_broken)
+        await file_client.set_file_metadata(metadata, lease=lease_id_to_be_broken)
+        # Assert
+        props = await file_client.get_file_properties()
+        md = props.metadata
+        self.assertEqual(3, len(md))
+        self.assertEqual(md['hello'], 'world')
+        self.assertEqual(md['number'], '42')
+        self.assertEqual(md['UP'], 'UPval')
+        self.assertFalse('up' in md)
+
+    @record
+    def test_set_file_metadata_with_broken_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_file_metadata_with_broken_lease_async())
+
     async def _test_delete_file_with_existing_file_async(self):
         # Arrange
         file_client = await self._create_file()
@@ -719,6 +841,28 @@ class StorageFileAsyncTest(FileTestCase):
     def test_update_range_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_range_async())
+
+    async def _test_update_range_with_lease_async(self):
+        # Arrange
+        file_client = await self._create_file()
+        lease = await file_client.acquire_lease()
+
+        # Act
+        data = b'abcdefghijklmnop' * 32
+        with self.assertRaises(HttpResponseError):
+            await file_client.upload_range(data, offset=0, length=512)
+        await file_client.upload_range(data, offset=0, length=512, lease=lease)
+
+        # Assert
+        content = await file_client.download_file()
+        content = await content.readall()
+        self.assertEqual(data, content[:512])
+        self.assertEqual(self.short_byte_data[512:], content[512:])
+
+    @record
+    def test_update_range_with_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_range_with_lease_async())
 
     async def _test_update_range_with_md5_async(self):
         # Arrange
@@ -799,6 +943,48 @@ class StorageFileAsyncTest(FileTestCase):
     def test_update_range_from_file_url_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_range_from_file_url())
+
+    async def _test_update_range_from_file_url_with_lease_async(self):
+        # Arrange
+        source_file_name = 'testfile'
+        source_file_client = await self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        await source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = await self._create_empty_file(file_name=destination_file_name)
+        lease = await destination_file_client.acquire_lease()
+
+        # generate SAS for the source file
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0)
+        await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                            lease=lease)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = await destination_file_client.get_ranges()
+        file_content = await destination_file_client.download_file(offset=0, length=512)
+        file_content = await file_content.readall()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(511, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
+    def test_update_range_from_file_url_with_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_range_from_file_url_with_lease_async())
 
     async def _test_update_big_range_from_file_url(self):
         # Arrange
@@ -905,6 +1091,35 @@ class StorageFileAsyncTest(FileTestCase):
     def test_list_ranges_none_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_ranges_none_async())
+
+    async def _test_list_ranges_none_with_invalid_lease_fails_async(self):
+        # Arrange
+        file_name = self._get_file_reference()
+        await self._setup_share()
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
+        await file_client.create_file(1024)
+        await file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await file_client.get_ranges(lease=str(uuid.uuid4()))
+
+        # Get ranges on a leased file will succeed without provide the lease
+        ranges = await file_client.get_ranges()
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertEqual(len(ranges), 0)
+
+    @record
+    def test_list_ranges_none_with_invalid_lease_failse_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_list_ranges_none_with_invalid_lease_fails_async())
 
     async def _test_list_ranges_2_async(self):
         # Arrange
@@ -1273,6 +1488,41 @@ class StorageFileAsyncTest(FileTestCase):
     def test_unicode_get_file_unicode_name_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_file_unicode_name_async())
+
+    async def _test_unicode_get_file_unicode_name_with_lease_async(self):
+        # Arrange
+        file_name = '啊齄丂狛狜'
+        await self._setup_share()
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
+        await file_client.create_file(1024)
+        lease = await file_client.acquire_lease()
+
+        with self.assertRaises(HttpResponseError):
+            await file_client.upload_file(b'hello world')
+
+        await file_client.upload_file(b'hello world', lease=lease)
+
+        # Act
+        # download the file with a wrong lease id will fail
+        with self.assertRaises(HttpResponseError):
+            await file_client.upload_file(b'hello world', lease=str(uuid.uuid4()))
+
+        content = await file_client.download_file()
+        content = await content.readall()
+
+        # Assert
+        self.assertEqual(content, b'hello world')
+
+    @record
+    def test_unicode_get_file_unicode_name_with_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_unicode_get_file_unicode_name_with_lease_async())
+
 
     async def _test_file_unicode_data_async(self):
         # Arrange

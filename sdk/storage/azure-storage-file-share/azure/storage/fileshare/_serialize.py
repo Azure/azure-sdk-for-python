@@ -7,7 +7,7 @@
 
 from azure.core import MatchConditions
 
-from ._generated.models import SourceModifiedAccessConditions
+from ._generated.models import SourceModifiedAccessConditions, LeaseAccessConditions
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
@@ -59,3 +59,12 @@ def validate_copy_mode(copy_mode, permission, permission_key):
             raise ValueError("permission/permission_key shouldn't be specified without copy mode")
     else:
         raise ValueError("Invalid copy mode")
+
+
+def get_access_conditions(lease):
+    # type: (Optional[Union[ShareFileLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None

@@ -8,6 +8,7 @@
 import base64
 import os
 import unittest
+import uuid
 from datetime import datetime, timedelta
 
 import requests
@@ -281,6 +282,42 @@ class StorageFileTest(FileTestCase):
             file_name.create_file(1024, file_permission="abcde")
 
     @record
+    def test_create_file_with_lease(self):
+        # Arrange
+        file_client = self._get_file_client()
+        file_client.create_file(1024)
+
+        lease = file_client.acquire_lease()
+        resp = file_client.create_file(1024, lease=lease)
+        self.assertIsNotNone(resp)
+
+        # There is currently a lease on the file so there should be an exception when delete the file without lease
+        with self.assertRaises(HttpResponseError):
+            file_client.delete_file()
+
+        # There is currently a lease on the file so delete the file with the lease will succeed
+        file_client.delete_file(lease=lease)
+
+    @record
+    def test_create_file_with_changed_lease(self):
+        # Arrange
+        file_client = self._get_file_client()
+        file_client.create_file(1024)
+
+        lease = file_client.acquire_lease()
+        old_lease_id = lease.id
+        lease.change(str(uuid.uuid4()))
+
+        # use the old lease id to create file will throw exception.
+        with self.assertRaises(HttpResponseError):
+            file_client.create_file(1024, lease=old_lease_id)
+
+        # use the new lease to create file will succeed.
+        resp = file_client.create_file(1024, lease=lease)
+
+        self.assertIsNotNone(resp)
+
+    @record
     def test_create_file_will_set_all_smb_properties(self):
         # Arrange
         file_client = self._get_file_client()
@@ -376,6 +413,21 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(props.size, 5)
 
     @record
+    def test_resize_file_with_lease(self):
+        # Arrange
+        file_client = self._create_file()
+        lease = file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            file_client.resize_file(5)
+        file_client.resize_file(5, lease=lease)
+
+        # Assert
+        props = file_client.get_file_properties()
+        self.assertEqual(props.size, 5)
+
+    @record
     def test_set_file_properties(self):
         # Arrange
         file_client = self._create_file()
@@ -433,6 +485,22 @@ class StorageFileTest(FileTestCase):
         # Act
         properties = file_client.get_file_properties()
 
+        # Assert
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.size, len(self.short_byte_data))
+
+    @record
+    def test_get_file_properties_with_invalid_lease_fails(self):
+        # Arrange
+        file_client = self._create_file()
+        file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            file_client.get_file_properties(lease=str(uuid.uuid4()))
+
+        # get properties on a leased file will succeed
+        properties = file_client.get_file_properties()
         # Assert
         self.assertIsNotNone(properties)
         self.assertEqual(properties.size, len(self.short_byte_data))
@@ -539,6 +607,39 @@ class StorageFileTest(FileTestCase):
         self.assertFalse('up' in md)
 
     @record
+    def test_set_file_metadata_with_broken_lease(self):
+        # Arrange
+        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        file_client = self._create_file()
+
+        lease = file_client.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            file_client.set_file_metadata(metadata)
+
+        lease_id_to_be_broken = lease.id
+        lease.break_lease()
+
+        # lease is broken, set metadata doesn't require a lease
+        file_client.set_file_metadata({'hello': 'world'})
+        # Act
+        md = file_client.get_file_properties().metadata
+        # Assert
+        self.assertEqual(1, len(md))
+        self.assertEqual(md['hello'], 'world')
+
+        # Act
+        file_client.acquire_lease(lease_id=lease_id_to_be_broken)
+        file_client.set_file_metadata(metadata, lease=lease_id_to_be_broken)
+
+        # Assert
+        md = file_client.get_file_properties().metadata
+        self.assertEqual(3, len(md))
+        self.assertEqual(md['hello'], 'world')
+        self.assertEqual(md['number'], '42')
+        self.assertEqual(md['UP'], 'UPval')
+        self.assertFalse('up' in md)
+
+    @record
     def test_delete_file_with_existing_file(self):
         # Arrange
         file_client = self._create_file()
@@ -574,6 +675,25 @@ class StorageFileTest(FileTestCase):
         # Act
         data = b'abcdefghijklmnop' * 32
         file_client.upload_range(data, offset=0, length=512)
+
+        # Assert
+        content = file_client.download_file().readall()
+        self.assertEqual(len(data), 512)
+        self.assertEqual(data, content[:512])
+        self.assertEqual(self.short_byte_data[512:], content[512:])
+
+    @record
+    def test_update_range_with_lease(self):
+        # Arrange
+        file_client = self._create_file()
+        lease = file_client.acquire_lease()
+
+        # Act
+        data = b'abcdefghijklmnop' * 32
+        with self.assertRaises(HttpResponseError):
+            file_client.upload_range(data, offset=0, length=512)
+
+        file_client.upload_range(data, offset=0, length=512, lease=lease)
 
         # Assert
         content = file_client.download_file().readall()
@@ -641,6 +761,48 @@ class StorageFileTest(FileTestCase):
         destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
                                                       source_etag=resp['etag'],
                                                       source_match_condition=MatchConditions.IfNotModified)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = destination_file_client.get_ranges()
+        file_content = destination_file_client.download_file(offset=0, length=512).readall()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(511, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
+    def test_update_range_from_file_url_with_lease(self):
+        # Arrange
+        source_file_name = 'testfile'
+        source_file_client = self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        resp = source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name)
+        lease = destination_file_client.acquire_lease()
+
+        # generate SAS for the source file
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        # Act
+        with self.assertRaises(HttpResponseError):
+            destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                          source_etag=resp['etag'],
+                                                          source_match_condition=MatchConditions.IfNotModified)
+
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                      source_etag=resp['etag'],
+                                                      source_match_condition=MatchConditions.IfNotModified,
+                                                      lease=lease)
 
         # Assert
         # To make sure the range of the file is actually updated
@@ -730,6 +892,30 @@ class StorageFileTest(FileTestCase):
         file_client.create_file(1024)
 
         # Act
+        ranges = file_client.get_ranges()
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertEqual(len(ranges), 0)
+
+    @record
+    def test_list_ranges_none_with_invalid_lease_fails(self):
+        # Arrange
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(1024)
+
+        file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            file_client.get_ranges(lease=str(uuid.uuid4()))
+
+        # Get ranges on a leased file will succeed without provide the lease
         ranges = file_client.get_ranges()
 
         # Assert
@@ -847,6 +1033,33 @@ class StorageFileTest(FileTestCase):
 
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
+
+    # TODO:uncomment this in STG71 copy file PR
+    # @record
+    # def test_copy_existing_file_with_lease(self):
+    #     # Arrange
+    #     source_client = self._create_file()
+    #     file_client = ShareFileClient(
+    #         self.get_file_url(),
+    #         share_name=self.share_name,
+    #         file_path='file1copy',
+    #         credential=self.settings.STORAGE_ACCOUNT_KEY)
+    #     file_client.create_file(1024)
+    #     lease = file_client.acquire_lease()
+    #
+    #     # Act
+    #     with self.assertRaises(HttpResponseError):
+    #         file_client.start_copy_from_url(source_client.url)
+    #
+    #     copy = file_client.start_copy_from_url(source_client.url, lease=lease)
+    #
+    #     # Assert
+    #     self.assertIsNotNone(copy)
+    #     self.assertEqual(copy['copy_status'], 'success')
+    #     self.assertIsNotNone(copy['copy_id'])
+    #
+    #     copy_file = file_client.download_file().readall()
+    #     self.assertEqual(copy_file, self.short_byte_data)
 
     @record
     def test_copy_file_with_specifying_acl_copy_behavior_attributes(self):
@@ -1031,6 +1244,32 @@ class StorageFileTest(FileTestCase):
 
         # Act
         content = file_client.download_file().readall()
+
+        # Assert
+        self.assertEqual(content, b'hello world')
+
+    @record
+    def test_unicode_get_file_unicode_name_with_lease(self):
+        # Arrange
+        file_name = '啊齄丂狛狜'
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(1024)
+        lease = file_client.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            file_client.upload_file(b'hello world')
+
+        file_client.upload_file(b'hello world', lease=lease)
+
+        # Act
+        # download the file with a wrong lease id will fail
+        with self.assertRaises(HttpResponseError):
+            file_client.upload_file(b'hello world', lease=str(uuid.uuid4()))
+
+        content = file_client.download_file(lease=lease).readall()
 
         # Assert
         self.assertEqual(content, b'hello world')
