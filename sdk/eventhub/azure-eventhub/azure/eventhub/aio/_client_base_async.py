@@ -30,6 +30,7 @@ from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from typing import Protocol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -192,15 +193,62 @@ class ClientBaseAsync(ClientBase):
         await self._conn_manager_async.close_connection()
 
 
-class ConsumerProducerMixin(object):
+if TYPE_CHECKING:
+    class AbstractConsumerProducer(Protocol):
+        @property
+        def _name(self):
+            # type: () -> str
+            """
+            """
 
-    def __init__(self):
-        self._name = ""
-        self._client = None  # type: ClientBaseAsync
-        self._handler = None  # type: Union[ReceiveClientAsync, SendClientAsync]
-        self._loop = None  # type: asyncio.AbstractEventLoop
-        self.running = False
+        @_name.setter
+        def _name(self, value):
+            pass
 
+        @property
+        def _client(self):
+            # type: () -> ClientBaseAsync
+            """
+            """
+
+        @_client.setter
+        def _client(self, value):
+            pass
+
+        @property
+        def _handler(self):
+            # type: () -> AMQPClientAsync
+            """
+
+            """
+
+        @property
+        def _loop(self):
+            # type: () -> asyncio.AbstractEventLoop
+            """
+            """
+
+        @_loop.setter
+        def _loop(self, value):
+            pass
+
+        @property
+        def running(self):
+            # type: () -> bool
+            """
+
+            """
+
+        @running.setter
+        def running(self, value):
+            pass
+
+    _MIXIN_BASE = AbstractConsumerProducer
+else:
+    _MIXIN_BASE = object
+
+
+class ConsumerProducerMixin(_MIXIN_BASE):
     async def __aenter__(self):
         return self
 
@@ -222,7 +270,6 @@ class ConsumerProducerMixin(object):
 
         """
         # pylint: disable=protected-access,line-too-long
-        # TODO: Properly resolve type hinting
         if not self.running:
             if self._handler:
                 await self._handler.close_async()
@@ -237,7 +284,6 @@ class ConsumerProducerMixin(object):
             self.running = True
 
     async def _close_handler_async(self) -> None:
-        # TODO: Propertly resolve type hinting
         if self._handler:
             # close the link (shared connection) or connection (not shared)
             await self._handler.close_async()

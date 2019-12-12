@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 from asyncio import Lock
 
 from uamqp import TransportType, c_uamqp
@@ -13,21 +13,21 @@ from .._connection_manager import _ConnectionMode
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync
+    from typing import Protocol
+
+    class ConnectionManager(Protocol):
+
+        async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
+            pass
+
+        async def close_connection(self) -> None:
+            pass
+
+        async def reset_connection_if_broken(self) -> None:
+            pass
 
 
-class ConnectionManager(object):
-
-    async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
-        pass
-
-    async def close_connection(self) -> None:
-        pass
-
-    async def reset_connection_if_broken(self) -> None:
-        pass
-
-
-class _SharedConnectionManager(ConnectionManager):  # pylint:disable=too-many-instance-attributes
+class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs) -> None:
         self._loop = kwargs.get('loop')
         self._lock = Lock(loop=self._loop)
@@ -80,7 +80,7 @@ class _SharedConnectionManager(ConnectionManager):  # pylint:disable=too-many-in
                 self._conn = None
 
 
-class _SeparateConnectionManager(ConnectionManager):
+class _SeparateConnectionManager(object):
     def __init__(self, **kwargs) -> None:
         pass
 
@@ -94,7 +94,7 @@ class _SeparateConnectionManager(ConnectionManager):
         pass
 
 
-def get_connection_manager(**kwargs) -> ConnectionManager:
+def get_connection_manager(**kwargs) -> 'ConnectionManager':
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
