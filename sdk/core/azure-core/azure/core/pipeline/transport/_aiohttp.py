@@ -186,7 +186,9 @@ class AioHttpTransport(AsyncHttpTransport):
             response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
             if not stream_response:
                 await response.load_body()
-        except aiohttp.client_exceptions.ClientConnectorError as err:
+        except aiohttp.client_exceptions.ClientResponseError as err:
+            error = ServiceResponseError(err, error=err)
+        except aiohttp.client_exceptions.ClientError as err:
             error = ServiceRequestError(err, error=err)
         except asyncio.TimeoutError as err:
             error = ServiceResponseError(err, error=err)
