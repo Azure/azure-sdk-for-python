@@ -62,7 +62,7 @@ setup(
         "tests",
         "tests.asynctests"]),
     install_requires=[
-        'uamqp~=1.2.4',
+        'uamqp>=1.2.5,<2.0.0',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         'azure-storage-blob~=1.3'

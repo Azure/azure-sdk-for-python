@@ -8,7 +8,6 @@ Release History
 
 **Features**
 
-- Updated UAMQP version to 1.2.4
 - Added `reconnect_timeout` and `max_reconnect_tries` parameters to `receive` functions for better control of connection behaviour during receive.
 - Added an option `release_partition_on_checkpoint_failure` to `EPHOptions` for `EventProcessorHost` to
   instruct the EventProcessorHost to fail fast on a checkpoint failure and proactively release the partition.
@@ -17,6 +16,7 @@ Release History
 
 **BugFixes**
 
+- Increments UAMQP dependency min version to 1.2.5 to include a set of fixes, including handling of large messages and mitigation of segfaults.
 - Fixes bug preventing application_properties from being transmitted when set individually in key-value form.
 - Fixed send timeout threadthrough to sender so it is now passed in proper units and leveraged within UAMQP.
 - Fixed bug where on reconnect, `receive` functions returned an empty list.
