@@ -96,4 +96,6 @@ enum34>=1.0.4
 certifi>=2017.4.17
 aiohttp>=3.0
 aiodns>=2.0
-#override azure-eventhubs uamqp>=1.2.5,<2.0.0
+six>=1.6
+#override azure-cosmos requests>=2.10.0
+#override azure-eventhub uamqp>=1.2.5,<2.0.0
