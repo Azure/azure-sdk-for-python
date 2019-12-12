@@ -1,0 +1,2 @@
+include *.rst
+include azure/ai/__init__.py
