@@ -158,7 +158,6 @@ class AioHttpTransport(AsyncHttpTransport):
                     config['proxy'] = proxies[protocol]
                     break
 
-        error = None  # type: Optional[AzureError]
         response = None
         config['ssl'] = self._build_ssl_config(
             cert=config.pop('connection_cert', self.connection_config.cert),
@@ -187,13 +186,11 @@ class AioHttpTransport(AsyncHttpTransport):
             if not stream_response:
                 await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
-            error = ServiceResponseError(err, error=err)
+            raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
-            error = ServiceRequestError(err, error=err)
+            raise ServiceRequestError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            error = ServiceResponseError(err, error=err)
-        if error:
-            raise error from err
+            raise ServiceResponseError(err, error=err) from err
         return response
 
 
