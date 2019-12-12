@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    # pylint:disable=useless-super-delegation
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         self._credential = credential
         super().__init__(**kwargs)

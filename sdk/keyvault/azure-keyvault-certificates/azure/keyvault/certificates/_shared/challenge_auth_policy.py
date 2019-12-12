@@ -72,7 +72,6 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
 class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    # pylint:disable=useless-super-delegation
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, **Any) -> None
         self._credential = credential
