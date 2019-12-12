@@ -1,0 +1,5 @@
+/azure-sdk-for-python/sdk/identity/azure-identity/
+/azure-sdk-for-python/sdk/keyvault/azure-keyvault-secrets
+pytest
+pytest-asyncio;python_full_version>="3.5.3"
+aiohttp;python_full_version>="3.5.3"
