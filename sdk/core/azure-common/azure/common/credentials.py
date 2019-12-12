@@ -49,7 +49,7 @@ class _CliCredentials(object):
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
 
         if len(scopes) != 1:
-            raise ValueError("Cannot deal with multiple scope: {}".format(scopes))
+            raise ValueError("Multiple scopes are not supported: {}".format(scopes))
         scope = scopes[0]
         if scope.endswith(self._DEFAULT_PREFIX):
             resource = scope[:-len(self._DEFAULT_PREFIX)]

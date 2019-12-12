@@ -22,7 +22,7 @@ from .cloud import get_cli_active_cloud
 
 
 def _instantiate_client(client_class, **kwargs):
-    """Instantiate a client from kwargs, removing unsupported stuff.
+    """Instantiate a client from kwargs, filtering kwargs to match client signature.
     """
     args = get_arg_spec(client_class.__init__).args
     for key in ['subscription_id', 'tenant_id', 'base_url', 'credential', 'credentials']:
