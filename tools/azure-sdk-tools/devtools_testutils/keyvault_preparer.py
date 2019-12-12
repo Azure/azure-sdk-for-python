@@ -105,7 +105,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
                     break
                 except Exception as ex:
                     if "VaultAlreadyExists" in str(ex):
-                        raise NameInUseError("A vault with name {} already exists".format(name))
+                        raise NameInUseError("A vault with the name {} already exists".format(name))
                     if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
                         raise
                     time.sleep(3)
