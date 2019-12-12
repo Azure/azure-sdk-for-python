@@ -15,10 +15,12 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
+    UserAgentPolicy,
 )
 from azure.core.pipeline.transport import AioHttpTransport
 
 from .._authn_client import AuthnClientBase
+from .._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Iterable, Mapping, Optional
@@ -40,6 +42,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         config = config or self._create_config(**kwargs)
         policies = policies or [
             ContentDecodePolicy(),
+            config.user_agent_policy,
             config.proxy_policy,
             config.retry_policy,
             config.logging_policy,
@@ -72,4 +75,5 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         config.proxy_policy = ProxyPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         return config

@@ -7,6 +7,7 @@ import datetime
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import DeviceCodeCredential
+from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
 from helpers import build_aad_response, get_discovery_response, mock_response, Request, validating_transport
@@ -44,6 +45,28 @@ def test_policies_configurable():
     credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+def test_user_agent():
+    transport = validating_transport(
+        requests=[Request()] * 2 + [Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[
+            get_discovery_response(),
+            mock_response(
+                json_payload={
+                    "device_code": "_",
+                    "user_code": "user-code",
+                    "verification_uri": "verification-uri",
+                    "expires_in": 42,
+                }
+            ),
+            mock_response(json_payload=dict(build_aad_response(access_token="**"), scope="scope")),
+        ],
+    )
+
+    credential = DeviceCodeCredential(client_id="client-id", prompt_callback=Mock(), transport=transport)
+
+    credential.get_token("scope")
 
 
 def test_device_code_credential():
