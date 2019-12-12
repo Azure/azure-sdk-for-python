@@ -13,6 +13,7 @@ Release History
 **BugFixes**
 
 * Fixed bug where Message would pass through invalid kwargs on init when attempting to thread through subject.
+* Increments UAMQP dependency min version to 1.2.5, to include a set of fixes, including handling of large messages and mitigation of segfaults.
 
 
 0.50.1 (2019-06-24)
