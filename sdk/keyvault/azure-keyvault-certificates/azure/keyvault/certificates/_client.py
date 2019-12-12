@@ -734,7 +734,7 @@ class CertificateClient(KeyVaultClientBase):
     def merge_certificate(
         self,
         certificate_name,  # type: str
-        x509_certificates,  # type: List[bytearray]
+        x509_certificates,  # type: Iterable[bytearray]
         **kwargs  # type: Any
     ):
         # type: (...) -> KeyVaultCertificate

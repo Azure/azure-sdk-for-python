@@ -694,7 +694,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def merge_certificate(
-        self, certificate_name: str, x509_certificates: List[bytearray], **kwargs: "Any"
+        self, certificate_name: str, x509_certificates: Iterable[bytearray], **kwargs: "Any"
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
