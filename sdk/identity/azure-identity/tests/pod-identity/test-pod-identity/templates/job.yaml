@@ -1,0 +1,34 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test
+  labels:
+    app: pod-identity-test
+spec:
+  backoffLimit: 12  # give up after this many attempts
+  ttlSecondsAfterFinished: 3600  # delete the job and its sub-resources after this many seconds
+  template:
+    metadata:
+        labels:
+          app: pod-identity-test
+          aadpodidbinding: pod-identity-test
+    spec:
+      restartPolicy: OnFailure  # ensure we have only one pod, whose logs reflect the last test run
+      initContainers:
+      - name: wait-for-imds  # wait until IMDS responds before running the test
+        image: busybox:1.31
+        command: ['sh', '-c', 'wget 169.254.169.254 -T 120']
+      containers:
+      - name: test-pod-identity
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_IDENTITY_TEST_VAULT_URL
+          value: "{{ .Values.vaultUrl }}"
+        - name: AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID
+          value: {{ index .Values "aad-pod-identity" "azureIdentity" "clientID" | quote }}

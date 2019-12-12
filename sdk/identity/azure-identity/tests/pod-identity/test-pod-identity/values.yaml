@@ -1,0 +1,29 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+# Default values for test-pod-identity
+
+image:
+  repository: ""
+  name: ""
+  tag: ""
+  pullPolicy: Always
+
+vaultUrl: ""
+
+# override values for aad-pod-identity
+aad-pod-identity:
+  # 1.5.4 fixes the text/plain issue (https://github.com/Azure/aad-pod-identity/issues/340)
+  mic:
+    # https://mcr.microsoft.com/v2/k8s/aad-pod-identity/mic/tags/list
+    tag: 1.5.4-rc3
+  nmi:
+    # https://mcr.microsoft.com/v2/k8s/aad-pod-identity/nmi/tags/list
+    tag: 1.5.4-rc3
+  azureIdentityBinding:
+    name: "pod-identity-test-binding"
+    selector: "pod-identity-test"
+  azureIdentity:
+    enabled: true
