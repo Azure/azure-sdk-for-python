@@ -24,6 +24,7 @@ class FileOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar x_ms_type: Dummy constant parameter, file type can only be file. Constant value: "file".
+    :ivar x_ms_write: Only update is supported: - Update: Writes the bytes downloaded from the source url into the specified range. Constant value: "update".
     :ivar x_ms_copy_action: . Constant value: "abort".
     """
 
@@ -37,6 +38,7 @@ class FileOperations(object):
 
         self._config = config
         self.x_ms_type = "file"
+        self.x_ms_write = "update"
         self.x_ms_copy_action = "abort"
 
     def create(self, file_content_length, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, metadata=None, file_permission="inherit", file_permission_key=None, file_http_headers=None, lease_access_conditions=None, cls=None, **kwargs):
@@ -1049,7 +1051,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/octet-stream'
         header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
-        header_parameters['x-ms-write'] = self._serialize.header("file_range_write", file_range_write, 'FileRangeWriteType')
+        header_parameters['x-ms-write'] = self._serialize.header("self.x_ms_write", self.x_ms_write, 'FileRangeWriteType')
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if content_md5 is not None:
             header_parameters['Content-MD5'] = self._serialize.header("content_md5", content_md5, 'bytearray')
@@ -1159,7 +1161,7 @@ class FileOperations(object):
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
         if source_range is not None:
             header_parameters['x-ms-source-range'] = self._serialize.header("source_range", source_range, 'str')
-        header_parameters['x-ms-write'] = self._serialize.header("self._config.file_range_write_from_url", self._config.file_range_write_from_url, 'str')
+        header_parameters['x-ms-write'] = self._serialize.header("self.x_ms_write", self.x_ms_write, 'str')
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if source_content_crc64 is not None:
             header_parameters['x-ms-source-content-crc64'] = self._serialize.header("source_content_crc64", source_content_crc64, 'bytearray')

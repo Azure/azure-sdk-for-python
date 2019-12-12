@@ -26,9 +26,6 @@ class AzureFileStorageConfiguration(Configuration):
     :param url: The URL of the service account, share, directory or file that
      is the target of the desired operation.
     :type url: str
-    :ivar file_range_write_from_url: Only update is supported: - Update:
-     Writes the bytes downloaded from the source url into the specified range.
-    :type file_range_write_from_url: str
     """
 
     def __init__(self, version, url, **kwargs):
@@ -46,7 +43,6 @@ class AzureFileStorageConfiguration(Configuration):
 
         self.version = version
         self.url = url
-        self.file_range_write_from_url = "update"
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
