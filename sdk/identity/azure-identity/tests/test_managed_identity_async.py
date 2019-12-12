@@ -201,7 +201,9 @@ async def test_imds():
         ],
     )
 
-    token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+    # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
+    with mock.patch.dict("os.environ", clear=True):
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
     assert token == expected_token
 
 
@@ -241,5 +243,7 @@ async def test_imds_user_assigned_identity():
         ],
     )
 
-    token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+    # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
+    with mock.patch.dict("os.environ", clear=True):
+        token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
