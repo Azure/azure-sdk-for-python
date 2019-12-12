@@ -66,7 +66,8 @@ class CertificateClient(KeyVaultClientBase):
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
-        operation requires the certificates/create permission.
+        operation requires the certificates/create permission. The poller requires the
+        certificates/get permission, otherwise it will through a 403.
 
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.

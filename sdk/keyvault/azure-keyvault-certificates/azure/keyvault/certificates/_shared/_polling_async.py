@@ -30,6 +30,9 @@ class RecoverDeletedAsyncPollingMethod(AsyncPollingMethod):
         except ResourceNotFoundError:
             pass
         except HttpResponseError as e:
+            # We are exploiting a KV bug here. If we are polling on get_deleted_* and we don't
+            # have get permissions, we will get ResourceNotFoundError until the resource is recovered,
+            # at which point we'll get a 403.
             if e.status_code == 403:
                 self._status = self._finished_status
             else:
