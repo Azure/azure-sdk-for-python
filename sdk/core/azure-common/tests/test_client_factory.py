@@ -75,25 +75,74 @@ class TestCommon(unittest.TestCase):
         get_azure_cli_credentials.return_value = 'credentials', 'subscription_id', 'tenant_id'
 
         client = get_client_from_cli_profile(FakeClient)
-        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True)
+        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True, as_azure_core_credentials=False)
         assert client.credentials == 'credentials'
         assert client.subscription_id == 'subscription_id'
         assert client.base_url == "https://management.azure.com/"
 
         client = get_client_from_cli_profile(FakeSubscriptionClient)
-        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True)
+        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True, as_azure_core_credentials=False)
         assert client.credentials == 'credentials'
         assert client.base_url == "https://management.azure.com/"
 
         client = get_client_from_cli_profile(GraphRbacManagementClient)
-        get_azure_cli_credentials.assert_called_with(resource="https://graph.windows.net/", with_tenant=True)
+        get_azure_cli_credentials.assert_called_with(resource="https://graph.windows.net/", with_tenant=True, as_azure_core_credentials=False)
         assert client.credentials == 'credentials'
         assert client.tenant_id == 'tenant_id'
         assert client.base_url == "https://graph.windows.net/"
 
         client = get_client_from_cli_profile(KeyVaultClient)
-        get_azure_cli_credentials.assert_called_with(resource="https://vault.azure.net", with_tenant=True)
+        get_azure_cli_credentials.assert_called_with(resource="https://vault.azure.net", with_tenant=True, as_azure_core_credentials=False)
         assert client.credentials == 'credentials'
+
+    @mock.patch('azure.common.client_factory.get_cli_active_cloud')
+    @mock.patch('azure.common.client_factory.get_azure_cli_credentials')
+    def test_get_client_from_cli_profile_core(self, get_azure_cli_credentials, get_cli_active_cloud):
+
+        class KeyVaultClientBase(object):
+            def __init__(self, vault_url, credential):
+                if not credential:
+                    raise ValueError(
+                        "credential should be an object supporting the TokenCredential protocol, "
+                        "such as a credential from azure-identity"
+                    )
+                if not vault_url:
+                    raise ValueError("vault_url must be the URL of an Azure Key Vault")
+                self.credential = credential
+                self.vault_url = vault_url
+
+        class NewKeyVaultClient(KeyVaultClientBase):
+            pass
+
+        class StorageAccountHostsMixin(object):
+            def __init__(
+                    self, account_url,  # type: str
+                    credential=None,  # type: Optional[Any]
+                    **kwargs  # type: Any
+                ):
+                try:
+                    if not account_url.lower().startswith('http'):
+                        account_url = "https://" + account_url
+                except AttributeError:
+                    raise ValueError("Account URL must be a string.")
+
+                self.credential = credential
+                self.account_url = account_url
+
+        class BlobServiceClient(StorageAccountHostsMixin):
+            pass
+
+        get_cli_active_cloud.return_value = AZURE_PUBLIC_CLOUD
+        get_azure_cli_credentials.return_value = 'credential', 'subscription_id', 'tenant_id'
+
+        client = get_client_from_cli_profile(NewKeyVaultClient, vault_url="foo")
+        assert client.credential == 'credential'
+        assert client.vault_url == "foo"
+
+        client = get_client_from_cli_profile(BlobServiceClient, account_url="foo")
+        assert client.credential == 'credential'
+        assert client.account_url == "https://foo"
+
 
     def test_get_client_from_auth_file(self):
 
