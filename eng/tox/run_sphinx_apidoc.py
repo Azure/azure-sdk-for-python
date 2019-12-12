@@ -23,8 +23,6 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 generate_mgmt_script = os.path.join(root_dir, "doc/sphinx/generate_doc.py")
 
 def is_mgmt_package(package_dir):
-    if "textanalytics" in pkg_name:
-        return False
     return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
 
 def copy_existing_docs(source, target):
