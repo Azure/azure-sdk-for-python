@@ -11,7 +11,10 @@ from uamqp import Connection, TransportType, c_uamqp
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAuth
-    from typing_extensions import Protocol
+    try:
+        from typing_extensions import Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
 
     class ConnectionManager(Protocol):
         def get_connection(self, host, auth):

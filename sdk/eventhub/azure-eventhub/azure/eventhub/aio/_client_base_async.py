@@ -28,7 +28,10 @@ from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing_extensions import Protocol
+    try:
+        from typing_extensions import Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
 
