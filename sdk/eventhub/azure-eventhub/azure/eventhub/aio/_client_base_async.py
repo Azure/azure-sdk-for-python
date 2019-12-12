@@ -17,8 +17,6 @@ from uamqp import (
     compat,
     Message,
     AMQPClientAsync,
-    ReceiveClientAsync,
-    SendClientAsync,
 )
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
@@ -30,7 +28,7 @@ from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing import Protocol
+    from typing_extensions import Protocol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -198,7 +196,7 @@ if TYPE_CHECKING:
         @property
         def _name(self):
             # type: () -> str
-            """
+            """Name of the consumer or producer
             """
 
         @_name.setter
@@ -208,7 +206,7 @@ if TYPE_CHECKING:
         @property
         def _client(self):
             # type: () -> ClientBaseAsync
-            """
+            """The instance of EventHubComsumerClient or EventHubProducerClient
             """
 
         @_client.setter
@@ -218,14 +216,14 @@ if TYPE_CHECKING:
         @property
         def _handler(self):
             # type: () -> AMQPClientAsync
-            """
-
+            """The instance of SendClientAsync or ReceiveClientAsync
             """
 
         @property
         def _loop(self):
             # type: () -> asyncio.AbstractEventLoop
-            """
+            """The event loop that users pass in to call wrap sync calls to async API.
+            It's furthur passed to uamqp APIs
             """
 
         @_loop.setter
@@ -235,8 +233,7 @@ if TYPE_CHECKING:
         @property
         def running(self):
             # type: () -> bool
-            """
-
+            """Whether the consumer or producer is running
             """
 
         @running.setter

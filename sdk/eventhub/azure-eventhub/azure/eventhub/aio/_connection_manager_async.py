@@ -13,7 +13,7 @@ from .._connection_manager import _ConnectionMode
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync
-    from typing import Protocol
+    from typing_extensions import Protocol
 
     class ConnectionManager(Protocol):
 
