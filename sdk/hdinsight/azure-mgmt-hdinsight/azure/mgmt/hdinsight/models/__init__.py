@@ -23,6 +23,7 @@ try:
     from ._models_py3 import BillingResources
     from ._models_py3 import BillingResponseListResult
     from ._models_py3 import CapabilitiesResult
+    from ._models_py3 import ClientGroupInfo
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterConfigurations
     from ._models_py3 import ClusterCreateParametersExtended
@@ -49,6 +50,7 @@ try:
     from ._models_py3 import Extension
     from ._models_py3 import GatewaySettings
     from ._models_py3 import HardwareProfile
+    from ._models_py3 import KafkaRestProperties
     from ._models_py3 import LinuxOperatingSystemProfile
     from ._models_py3 import LocalizedName
     from ._models_py3 import Operation
@@ -96,6 +98,7 @@ except (SyntaxError, ImportError):
     from ._models import BillingResources
     from ._models import BillingResponseListResult
     from ._models import CapabilitiesResult
+    from ._models import ClientGroupInfo
     from ._models import Cluster
     from ._models import ClusterConfigurations
     from ._models import ClusterCreateParametersExtended
@@ -122,6 +125,7 @@ except (SyntaxError, ImportError):
     from ._models import Extension
     from ._models import GatewaySettings
     from ._models import HardwareProfile
+    from ._models import KafkaRestProperties
     from ._models import LinuxOperatingSystemProfile
     from ._models import LocalizedName
     from ._models import Operation
@@ -185,6 +189,7 @@ __all__ = [
     'BillingResources',
     'BillingResponseListResult',
     'CapabilitiesResult',
+    'ClientGroupInfo',
     'Cluster',
     'ClusterConfigurations',
     'ClusterCreateParametersExtended',
@@ -211,6 +216,7 @@ __all__ = [
     'Extension',
     'GatewaySettings',
     'HardwareProfile',
+    'KafkaRestProperties',
     'LinuxOperatingSystemProfile',
     'LocalizedName',
     'Operation',

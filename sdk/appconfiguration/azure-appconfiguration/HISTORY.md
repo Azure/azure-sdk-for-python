@@ -3,7 +3,17 @@
 
 -------------------
 
-## 2019-12-xx Version 1.0.0b6
+## 2020-01-xx Version 1.0.0
+
+### Features
+
+- Add AAD auth support    #8924
+
+### Breaking changes
+
+- List_configuration_settings & list_revisions now take string key/label filter instead of keys/labels list   #9066
+
+## 2019-12-03 Version 1.0.0b6
 
 ### Features
 

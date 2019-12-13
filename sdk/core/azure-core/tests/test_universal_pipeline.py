@@ -31,11 +31,12 @@ except ImportError:
     import mock
 
 import requests
+import pytest
+from os import SEEK_SET
 try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import pytest
 
 from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import (
@@ -48,6 +49,7 @@ from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
     RequestsTransportResponse,
+    HttpTransport,
 )
 
 from azure.core.pipeline.policies import (
@@ -148,34 +150,6 @@ def test_no_log(mock_http_logger):
 
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
-
-def test_retry_seekable_body():
-    def build_response(body, content_type=None):
-        class MockResponse(HttpResponse):
-            def __init__(self):
-                super(MockResponse, self).__init__(None, None)
-                self._body = 'test'
-
-            def body(self):
-                return self._body
-
-        data = BytesIO(b"Lots of dataaaa")
-        universal_request = HttpRequest('GET', 'http://127.0.0.1/', data=data)
-        universal_request.set_streamed_data_body(data)
-        return PipelineResponse(universal_request, MockResponse(), PipelineContext(None, stream=True))
-    
-    response = build_response(b"<groot/>", content_type="application/xml")
-    http_retry = RetryPolicy()
-    setting = {
-        'total': 3,
-        'status': 3,
-        'history': [],
-        'connect': 3,
-        'read': 3,
-        'body_position': 10,
-    }
-    increment = http_retry.increment(setting, response)
-    assert increment
 
 def test_retry_without_http_response():
     class NaughtyPolicy(HTTPPolicy):
@@ -440,3 +414,96 @@ def test_http_logger_operation_level():
     assert mock_handler.messages[4].message == 'Response headers:'
 
     mock_handler.reset()
+
+def test_retry_seekable_stream():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                request.body.seek(0,2)
+                raise AzureError('fail on first')
+            position = request.body.tell()
+            assert position == 0
+            return HttpResponse(request, None)
+
+    data = BytesIO(b"Lots of dataaaa")
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request.set_streamed_data_body(data)
+    http_retry = RetryPolicy(retry_total = 1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    pipeline.run(http_request)
+
+def test_retry_seekable_file():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                for value in request.files.values():
+                    name, body = value[0], value[1]
+                    if name and body and hasattr(body, 'read'):
+                        body.seek(0,2)
+                        raise AzureError('fail on first')
+            for value in request.files.values():
+                name, body = value[0], value[1]
+                if name and body and hasattr(body, 'read'):
+                    position = body.tell()
+                    assert not position
+                    return HttpResponse(request, None)
+
+    file_name = 'test_retry_seekable_file'
+    with open(file_name, "w+") as f:
+        f.write('Lots of dataaaa')
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    headers = {'Content-Type': "multipart/form-data"}
+    http_request.headers = headers
+    form_data_content = {
+        'fileContent': open(file_name, 'rb'),
+        'fileName': file_name,
+    }
+    http_request.set_formdata_body(form_data_content)
+    http_retry = RetryPolicy(retry_total = 1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    pipeline.run(http_request)
+
+def test_retry_on_429():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._count = 0
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self._count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 429
+            return response
+
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_retry = RetryPolicy(retry_total = 1)
+    transport = MockTransport()
+    pipeline = Pipeline(transport, [http_retry])
+    pipeline.run(http_request)
+    assert transport._count == 2

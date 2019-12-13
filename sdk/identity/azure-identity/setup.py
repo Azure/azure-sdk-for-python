@@ -21,7 +21,7 @@ try:
     import azure
 
     try:
-        ver = azure.__version__
+        ver = azure.__version__  # type: ignore
         raise Exception(
             "This package is incompatible with azure=={}. ".format(ver) + 'Uninstall it with "pip uninstall azure".'
         )
@@ -31,7 +31,7 @@ except ImportError:
     pass
 
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
+    VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)  # type: ignore
 if not VERSION:
     raise RuntimeError("Cannot find version information")
 
@@ -51,7 +51,7 @@ setup(
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
@@ -59,7 +59,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        'Programming Language :: Python :: 3.8',
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,

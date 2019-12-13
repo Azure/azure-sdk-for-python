@@ -2,7 +2,16 @@
 # Release History
 
 -------------------
-## 1.1.0b1 Unreleased
+## Version 1.1.2 Unreleased
+
+## 2019-12-03 Version 1.1.1
+
+### Bug fixes
+
+- Bearer token authorization requires HTTPS
+- Rewind the body position in retry #8307
+
+## 2019-11-25 Version 1.1.0
 
 ### Features
 
@@ -15,11 +24,10 @@
 
 ### Bug fixes
 
-- Retry: rewind body position if possible  #8307
 - RequestHistory: deepcopy fails if request contains a stream  #7732
 - Retry: retry raises error if response does not have http_response #8629
-
-## Version 1.0.1
+- Client kwargs are now passed to DistributedTracingPolicy correctly    #8051
+- NetworkLoggingPolicy now logs correctly all requests in case of retry #8262
 
 ## 2019-10-29 Version 1.0.0
 

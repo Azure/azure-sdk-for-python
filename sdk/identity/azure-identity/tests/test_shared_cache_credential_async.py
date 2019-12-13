@@ -5,6 +5,7 @@
 from unittest.mock import Mock
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import KnownAuthorities
 from azure.identity.aio import SharedTokenCacheCredential
 from azure.identity._internal.shared_token_cache import (
@@ -14,11 +15,44 @@ from azure.identity._internal.shared_token_cache import (
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
 )
+from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 
 from helpers import async_validating_transport, build_aad_response, build_id_token, mock_response, Request
 from test_shared_cache_credential import get_account_event, populated_cache
+
+
+@pytest.mark.asyncio
+async def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
+        policies=[policy],
+        transport=Mock(send=send),
+    )
+
+    await credential.get_token("scope")
+
+    assert policy.on_request.called
+
+
+@pytest.mark.asyncio
+async def test_user_agent():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+    )
+
+    await credential.get_token("scope")
 
 
 @pytest.mark.asyncio

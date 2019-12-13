@@ -8,12 +8,12 @@ import uuid
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes - 
-# 
-# 1. An Azure Cosmos account - 
+# Prerequistes -
+#
+# 1. An Azure Cosmos account -
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
 #
-# 2. Microsoft Azure Cosmos PyPi package - 
+# 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates how to consume the Change Feed and iterate on the results.
@@ -85,7 +85,7 @@ def run_sample():
 
     except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
-    
+
     finally:
         print("\nrun_sample done")
 

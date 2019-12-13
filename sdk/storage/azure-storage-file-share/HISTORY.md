@@ -1,5 +1,19 @@
 # Change Log azure-storage-file
 
+## Version 12.0.1 Unreleased
+
+## Version 12.0.0:
+
+**New features**
+- Added `delete_directory` method to the `share_client`.
+- All the clients now have a `close()` method to close the sockets opened by the client when using without a context manager.
+
+**Fixes and improvements**
+- Fixes a bug where determining length breaks while uploading a file when provided with an invalid fileno.
+
+**Breaking changes**
+- `close_handle(handle)` and `close_all_handles()` no longer return int. These functions return a dictionary which has the number of handles closed and number of handles failed to be closed.
+
 ## Version 12.0.0b5:
 
 **Important: This package was previously named azure-storage-file**

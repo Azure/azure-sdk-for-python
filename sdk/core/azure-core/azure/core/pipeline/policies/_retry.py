@@ -85,7 +85,7 @@ class RetryPolicy(HTTPPolicy):
 
     #: Maximum backoff time.
     BACKOFF_MAX = 120
-    _SAFE_CODES = set(range(506)) - set([408, 500, 502, 503, 504])
+    _SAFE_CODES = set(range(506)) - set([408, 429, 500, 502, 503, 504])
     _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
     def __init__(self, **kwargs):
@@ -330,21 +330,25 @@ class RetryPolicy(HTTPPolicy):
             return False
 
         if response.http_request.body and hasattr(response.http_request.body, 'read'):
-            return self.is_seekable(response.http_request.body)
-        return True
-
-    def is_seekable(self, body):
-        try:
-            body_position = body.tell()
-        except (AttributeError, UnsupportedOperation):
-            # if body position cannot be obtained, then retries will not work
-            return False
-        try:
-            # attempt to rewind the body to the initial position
-            body.seek(body_position, SEEK_SET)
-        except (UnsupportedOperation, ValueError, AttributeError):
-            # if body is not seekable, then retry would not work
-            return False
+            if 'body_position' not in settings:
+                return False
+            try:
+                # attempt to rewind the body to the initial position
+                response.http_request.body.seek(settings['body_position'], SEEK_SET)
+            except (UnsupportedOperation, ValueError, AttributeError):
+                # if body is not seekable, then retry would not work
+                return False
+        file_positions = settings.get('file_positions')
+        if response.http_request.files and file_positions:
+            try:
+                for value in response.http_request.files.values():
+                    file_name, body = value[0], value[1]
+                    if file_name in file_positions:
+                        position = file_positions[file_name]
+                        body.seek(position, SEEK_SET)
+            except (UnsupportedOperation, ValueError, AttributeError):
+                # if body is not seekable, then retry would not work
+                return False
         return True
 
     def update_context(self, context, retry_settings):
@@ -371,6 +375,29 @@ class RetryPolicy(HTTPPolicy):
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
+        body_position = None
+        file_positions = None
+        if request.http_request.body and hasattr(request.http_request.body, 'read'):
+            try:
+                body_position = request.http_request.body.tell()
+            except (AttributeError, UnsupportedOperation):
+                # if body position cannot be obtained, then retries will not work
+                pass
+        else:
+            if request.http_request.files:
+                file_positions = {}
+                try:
+                    for value in request.http_request.files.values():
+                        name, body = value[0], value[1]
+                        if name and body and hasattr(body, 'read'):
+                            position = body.tell()
+                            file_positions[name] = position
+                except (AttributeError, UnsupportedOperation):
+                    file_positions = None
+
+        retry_settings['body_position'] = body_position
+        retry_settings['file_positions'] = file_positions
+
         while retry_active:
             try:
                 response = self.next.send(request)

@@ -21,7 +21,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for the certificate contacts for a key vault.
 #
-# 1. Create contacts (create_contacts)
+# 1. Create contacts (set_contacts)
 #
 # 2. Get contacts (get_contacts)
 #
@@ -44,7 +44,7 @@ async def run_sample():
         ]
 
         # Creates and sets the certificate contacts for this key vault.
-        await client.create_contacts(contact_list)
+        await client.set_contacts(contact_list)
 
         # Gets the certificate contacts for this key vault.
         contacts = await client.get_contacts()
