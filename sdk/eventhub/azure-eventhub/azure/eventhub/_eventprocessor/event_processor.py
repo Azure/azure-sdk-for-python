@@ -175,7 +175,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         self._create_tasks_for_claimed_ownership(newly_claimed_pids, checkpoints)
                 else:
                     _LOGGER.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
-                    to_cancel_pids= set(self._consumers.keys())
+                    to_cancel_pids = set(self._consumers.keys())
                 if to_cancel_pids:
                     self._cancel_tasks_for_partitions(to_cancel_pids)
             except Exception as err:  # pylint:disable=broad-except
