@@ -12,33 +12,32 @@
 from enum import Enum
 
 
+class ExportType(str, Enum):
+
+    usage = "Usage"
+    actual_cost = "ActualCost"
+    amortized_cost = "AmortizedCost"
+
+
 class TimeframeType(str, Enum):
 
-    week_to_date = "WeekToDate"
     month_to_date = "MonthToDate"
-    year_to_date = "YearToDate"
-    the_last_week = "TheLastWeek"
+    billing_month_to_date = "BillingMonthToDate"
     the_last_month = "TheLastMonth"
-    the_last_year = "TheLastYear"
+    the_last_billing_month = "TheLastBillingMonth"
+    week_to_date = "WeekToDate"
     custom = "Custom"
 
 
 class GranularityType(str, Enum):
 
     daily = "Daily"
-    hourly = "Hourly"
 
 
 class QueryColumnType(str, Enum):
 
     tag = "Tag"
     dimension = "Dimension"
-
-
-class SortDirection(str, Enum):
-
-    ascending = "Ascending"
-    descending = "Descending"
 
 
 class StatusType(str, Enum):
