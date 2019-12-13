@@ -72,7 +72,7 @@ credentials.
 ##### Create a service principal (optional)
 This [Azure CLI][azure_cli] snippet shows how to create a
 new service principal. Before using it, replace "your-application-name" with
-a more appropriate name for your service principal.
+the appropriate name for your service principal.
 
 Create a service principal:
 ```Bash
@@ -109,7 +109,7 @@ Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 
 Constructing the client also requires your configuration store's URL, which you can
 get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
-the service's "Endpoint".
+the service's "endpoint".
 
 ```python
 from azure.identity import DefaultAzureCredential
