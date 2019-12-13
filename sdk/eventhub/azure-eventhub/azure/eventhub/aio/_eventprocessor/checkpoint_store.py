@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from typing import Iterable, Dict, Any, Union
+from typing import Iterable, Dict, Any, Union, Optional
 from abc import ABC, abstractmethod
 
 
@@ -14,8 +14,12 @@ class CheckpointStore(ABC):
     """
 
     @abstractmethod
-    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str) \
-            -> Iterable[Dict[str, Any]]:
+    async def list_ownership(
+          self,
+          fully_qualified_namespace: str,
+          eventhub_name: str,
+          consumer_group: str
+        ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the chosen storage service.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
@@ -57,7 +61,7 @@ class CheckpointStore(ABC):
         """
 
     @abstractmethod
-    async def update_checkpoint(self, checkpoint: Dict[str, Union[str, int]]) -> None:
+    async def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]]) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the chosen storage service.
 
@@ -81,7 +85,12 @@ class CheckpointStore(ABC):
         """
 
     @abstractmethod
-    async def list_checkpoints(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str):
+    async def list_checkpoints(
+          self,
+          fully_qualified_namespace: str,
+          eventhub_name: str,
+          consumer_group: str
+        ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the store.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.

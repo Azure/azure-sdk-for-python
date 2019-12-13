@@ -6,11 +6,11 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
+from typing import Union, Dict, Any, AnyStr, Iterable, Optional, List, TYPE_CHECKING, cast
 
 import six
 
-from uamqp import BatchMessage, Message, constants  # type: ignore
+from uamqp import BatchMessage, Message, constants
 
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
 from ._constants import (
@@ -48,7 +48,7 @@ class EventData(object):
     """
 
     def __init__(self, body=None):
-        # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
+        # type: (Union[str, bytes, List[AnyStr]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         if body and isinstance(body, list):
             self.message = Message(body[0])
@@ -178,7 +178,7 @@ class EventData(object):
 
     @property
     def properties(self):
-        # type: () -> Dict[str, Any]
+        # type: () -> Dict[Union[str, bytes], Any]
         """Application-defined properties on the event.
 
         :rtype: dict
@@ -187,7 +187,7 @@ class EventData(object):
 
     @properties.setter
     def properties(self, value):
-        # type: (Dict[str, Any]) -> None
+        # type: (Dict[Union[str, bytes], Any]) -> None
         """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.
@@ -197,7 +197,7 @@ class EventData(object):
 
     @property
     def system_properties(self):
-        # type: () -> Dict[str, Any]
+        # type: () -> Dict[Union[str, bytes], Any]
         """Metadata set by the Event Hubs Service associated with the event
 
         :rtype: dict
@@ -273,7 +273,7 @@ class EventDataBatch(object):
     """
 
     def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
-        # type: (Optional[int], Optional[str], Optional[str]) -> None
+        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id
@@ -285,7 +285,7 @@ class EventDataBatch(object):
 
     def __repr__(self):
         # type: () -> str
-        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={}, event_count={}".format(
+        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={!r}, event_count={}".format(
             self.max_size_in_bytes,
             self._partition_id,
             self._partition_key,
@@ -296,9 +296,10 @@ class EventDataBatch(object):
     def __len__(self):
         return self._count
 
-    @staticmethod
-    def _from_batch(batch_data, partition_key=None):
-        batch_data_instance = EventDataBatch(partition_key=partition_key)
+    @classmethod
+    def _from_batch(cls, batch_data, partition_key=None):
+        # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
+        batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = batch_data  # pylint:disable=protected-access
         return batch_data_instance
 

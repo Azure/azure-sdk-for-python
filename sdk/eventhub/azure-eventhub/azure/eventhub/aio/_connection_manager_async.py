@@ -3,15 +3,37 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING
 from asyncio import Lock
-from uamqp import TransportType, c_uamqp  # type: ignore
-from uamqp.async_ops import ConnectionAsync  # type: ignore
+
+from uamqp import TransportType, c_uamqp
+from uamqp.async_ops import ConnectionAsync
+
 from .._connection_manager import _ConnectionMode
+
+if TYPE_CHECKING:
+    from uamqp.authentication import JWTTokenAsync
+    try:
+        from typing_extensions import Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
+
+    class ConnectionManager(Protocol):
+
+        async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
+            pass
+
+        async def close_connection(self) -> None:
+            pass
+
+        async def reset_connection_if_broken(self) -> None:
+            pass
 
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, **kwargs):
-        self._lock = Lock()
+    def __init__(self, **kwargs) -> None:
+        self._loop = kwargs.get('loop')
+        self._lock = Lock(loop=self._loop)
         self._conn = None
 
         self._container_id = kwargs.get("container_id")
@@ -26,8 +48,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._idle_timeout = kwargs.get("idle_timeout")
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
 
-    async def get_connection(self, host, auth):
-        # type: (...) -> ConnectionAsync
+    async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
         async with self._lock:
             if self._conn is None:
                 self._conn = ConnectionAsync(
@@ -41,16 +62,17 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                     remote_idle_timeout_empty_frame_send_ratio=self._remote_idle_timeout_empty_frame_send_ratio,
                     error_policy=self._error_policy,
                     debug=self._debug,
+                    loop=self._loop,
                     encoding=self._encoding)
             return self._conn
 
-    async def close_connection(self):
+    async def close_connection(self) -> None:
         async with self._lock:
             if self._conn:
                 await self._conn.destroy_async()
             self._conn = None
 
-    async def reset_connection_if_broken(self):
+    async def reset_connection_if_broken(self) -> None:
         async with self._lock:
             if self._conn and self._conn._state in (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
@@ -62,20 +84,20 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
 
 
 class _SeparateConnectionManager(object):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         pass
 
-    async def get_connection(self, host, auth):
+    async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> None:
         pass  # return None
 
-    async def close_connection(self):
+    async def close_connection(self) -> None:
         pass
 
-    async def reset_connection_if_broken(self):
+    async def reset_connection_if_broken(self) -> None:
         pass
 
 
-def get_connection_manager(**kwargs):
+def get_connection_manager(**kwargs) -> 'ConnectionManager':
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

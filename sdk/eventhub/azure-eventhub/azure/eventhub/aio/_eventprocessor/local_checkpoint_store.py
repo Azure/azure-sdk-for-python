@@ -11,7 +11,7 @@ class InMemoryCheckpointStore(Sqlite3CheckpointStore):
     This is for mock test only.
 
     """
-    def __init__(self):
+    def __init__(self) -> None:
         super(InMemoryCheckpointStore, self).__init__(db_filename=":memory:")
 
 
@@ -20,5 +20,5 @@ class FileBasedCheckpointStore(Sqlite3CheckpointStore):
     This is for internal test only.
 
     """
-    def __init__(self, filename):
+    def __init__(self, filename: str) -> None:
         super(FileBasedCheckpointStore, self).__init__(db_filename=filename)
