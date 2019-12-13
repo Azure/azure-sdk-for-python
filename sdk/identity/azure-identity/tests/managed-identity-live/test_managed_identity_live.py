@@ -3,7 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.identity import ManagedIdentityCredential
-from azure.keyvault.secrets import SecretClient
+
+try:
+    from azure.keyvault.secrets import SecretClient
+except ImportError:
+    # prevent pytest discovery failing before it can skip the test
+    pass
 
 
 def test_managed_identity_live(live_managed_identity_config):

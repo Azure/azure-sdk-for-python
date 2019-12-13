@@ -3,8 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.identity.aio import ManagedIdentityCredential
-from azure.keyvault.secrets.aio import SecretClient
+
 import pytest
+
+try:
+    from azure.keyvault.secrets.aio import SecretClient
+except ImportError:
+    # prevent pytest discovery failing before it can skip the test
+    pass
+
 
 
 @pytest.mark.asyncio
