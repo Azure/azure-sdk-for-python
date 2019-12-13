@@ -34,7 +34,7 @@ from azure.core.pipeline import PipelineContext, PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 
-from ..policies import ARMAutoResourceProviderRegistrationPolicy
+from .policies import ARMAutoResourceProviderRegistrationPolicy
 
 _LOGGER = logging.getLogger(__name__)
 
