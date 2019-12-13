@@ -120,6 +120,12 @@ def test_loadbalancer_list_ownership_error():
         def close(self):
             pass
 
+    def on_error(partition_context, error):
+        assert partition_context is None
+        assert isinstance(error, RuntimeError)
+        on_error.called = True
+
+    on_error.called = False
     eventhub_client = MockEventHubClient()
     checkpoint_store = ErrorCheckpointStore()
 
@@ -127,6 +133,7 @@ def test_loadbalancer_list_ownership_error():
                                      consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
+                                     on_error=on_error,
                                      load_balancing_interval=1)
 
     thread = threading.Thread(target=event_processor.start)
@@ -138,6 +145,7 @@ def test_loadbalancer_list_ownership_error():
     thread.join()
     assert event_processor_running is True
     assert event_processor_partitions == 0
+    assert on_error.called is True
 
 
 def test_partition_processor():
