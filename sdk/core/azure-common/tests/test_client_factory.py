@@ -75,24 +75,24 @@ class TestCommon(unittest.TestCase):
         get_azure_cli_credentials.return_value = 'credentials', 'subscription_id', 'tenant_id'
 
         client = get_client_from_cli_profile(FakeClient)
-        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True, as_azure_core_credentials=False)
+        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True)
         assert client.credentials == 'credentials'
         assert client.subscription_id == 'subscription_id'
         assert client.base_url == "https://management.azure.com/"
 
         client = get_client_from_cli_profile(FakeSubscriptionClient)
-        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True, as_azure_core_credentials=False)
+        get_azure_cli_credentials.assert_called_with(resource=None, with_tenant=True)
         assert client.credentials == 'credentials'
         assert client.base_url == "https://management.azure.com/"
 
         client = get_client_from_cli_profile(GraphRbacManagementClient)
-        get_azure_cli_credentials.assert_called_with(resource="https://graph.windows.net/", with_tenant=True, as_azure_core_credentials=False)
+        get_azure_cli_credentials.assert_called_with(resource="https://graph.windows.net/", with_tenant=True)
         assert client.credentials == 'credentials'
         assert client.tenant_id == 'tenant_id'
         assert client.base_url == "https://graph.windows.net/"
 
         client = get_client_from_cli_profile(KeyVaultClient)
-        get_azure_cli_credentials.assert_called_with(resource="https://vault.azure.net", with_tenant=True, as_azure_core_credentials=False)
+        get_azure_cli_credentials.assert_called_with(resource="https://vault.azure.net", with_tenant=True)
         assert client.credentials == 'credentials'
 
     @mock.patch('azure.common.client_factory.get_cli_active_cloud')
