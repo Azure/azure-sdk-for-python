@@ -243,6 +243,9 @@ if TYPE_CHECKING:
         def running(self, value):
             pass
 
+        def _create_handler(self, auth: authentication.JWTTokenAsync) -> None:
+            pass
+
     _MIXIN_BASE = AbstractConsumerProducer
 else:
     _MIXIN_BASE = object
@@ -254,9 +257,6 @@ class ConsumerProducerMixin(_MIXIN_BASE):
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
-
-    def _create_handler(self, auth):
-        pass
 
     def _check_closed(self) -> None:
         if self.closed:
