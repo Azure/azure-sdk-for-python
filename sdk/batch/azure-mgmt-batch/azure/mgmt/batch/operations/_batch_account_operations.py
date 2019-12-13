@@ -99,7 +99,7 @@ class BatchAccountOperations(object):
 
     def create(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new Batch account with the specified parameters. Existing
+        """Create a new Batch account with the specified parameters. Existing
         accounts cannot be updated with this API and should instead be updated
         with the Update Batch Account API.
 
