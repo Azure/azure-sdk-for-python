@@ -1,5 +1,7 @@
 # Change Log azure-storage-file-datalake
 
+## Version 12.0.0b7 Unreleased
+
 ## Version 12.0.0b6 (2019-12-04)
 - `StorageErrorException` is parsed into more detailed error.
 - `etag` and `match_condition` parameters are added as an option('if_match' and 'if_none_match' are still supported).
