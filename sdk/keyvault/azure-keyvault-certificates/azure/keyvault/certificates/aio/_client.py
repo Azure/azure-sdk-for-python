@@ -56,7 +56,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         If this is the first version, the certificate resource is created. This
         operation requires the certificates/create permission. The poller requires the
-        certificates/get permission, otherwise it will throw a 403.
+        certificates/get permission, otherwise raises
+        an :class:`~azure.core.exceptions.HttpResponseError`
 
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.
