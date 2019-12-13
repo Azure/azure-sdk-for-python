@@ -242,7 +242,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             self._running = True
             while self._running:
                 try:
-                    checkpoints = await self._ownership_manager.get_checkpoints() if self._checkpoint_store else None
                     claimed_partition_ids = await self._ownership_manager.claim_ownership()
                     if claimed_partition_ids:
                         existing_pids = set(self._consumers.keys())
