@@ -66,7 +66,9 @@ class CertificateClient(KeyVaultClientBase):
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
-        operation requires the certificates/create permission.
+        operation requires the certificates/create permission. The poller requires the
+        certificates/get permission, otherwise raises
+        an :class:`~azure.core.exceptions.HttpResponseError`
 
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.
@@ -734,7 +736,7 @@ class CertificateClient(KeyVaultClientBase):
     def merge_certificate(
         self,
         certificate_name,  # type: str
-        x509_certificates,  # type: List[bytearray]
+        x509_certificates,  # type: Iterable[bytearray]
         **kwargs  # type: Any
     ):
         # type: (...) -> KeyVaultCertificate

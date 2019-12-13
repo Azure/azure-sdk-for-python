@@ -178,7 +178,6 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(a.id, b.id)
         self.assertEqual(a.name, b.name)
         self.assertEqual(a.provider, b.provider)
-        self.assertEqual(a.vault_url, b.vault_url)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
