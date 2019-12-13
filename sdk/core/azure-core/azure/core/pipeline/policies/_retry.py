@@ -85,7 +85,7 @@ class RetryPolicy(HTTPPolicy):
 
     #: Maximum backoff time.
     BACKOFF_MAX = 120
-    _SAFE_CODES = set(range(506)) - set([408, 500, 502, 503, 504])
+    _SAFE_CODES = set(range(506)) - set([408, 429, 500, 502, 503, 504])
     _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
     def __init__(self, **kwargs):

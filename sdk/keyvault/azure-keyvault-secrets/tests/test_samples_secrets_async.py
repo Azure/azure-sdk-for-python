@@ -5,7 +5,7 @@
 import hashlib
 import os
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import ResourceGroupPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
 from secrets_async_preparer import AsyncVaultClientPreparer
 from secrets_async_test_case import AsyncKeyVaultTestCase
@@ -31,12 +31,9 @@ def test_create_secret_client():
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
-
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secret_crud_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -101,8 +98,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END delete_secret]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -149,7 +147,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END list_deleted_secrets]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
@@ -178,8 +177,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END restore_secret_backup]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets

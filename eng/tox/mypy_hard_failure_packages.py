@@ -6,7 +6,5 @@
 # --------------------------------------------------------------------------------------------
 
 MYPY_HARD_FAILURE_OPTED = [
-  "azure-core",
-  "azure-eventhub",
-  "azure-cognitiveservices-language-textanalytics",
+  "azure-core"
 ]
