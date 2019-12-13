@@ -95,7 +95,7 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
         on_event_received.event = event
 
     async with client:
-        consumer = client._create_consumer("$default", "0", "-1", on_event_received=on_event_received)
+        consumer = client._create_consumer("$default", "0", "-1", on_event_received)
         async with consumer:
             await consumer._open_with_retry()
 

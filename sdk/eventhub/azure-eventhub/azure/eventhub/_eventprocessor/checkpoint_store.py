@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Iterable, Dict, Any, Union
+from typing import Iterable, Dict, Any, Union, Optional
 from abc import abstractmethod
 
 
@@ -59,7 +59,7 @@ class CheckpointStore(object):
 
     @abstractmethod
     def update_checkpoint(self, checkpoint):
-        # type: (Dict[str, Union[str, int]]) -> None
+        # type: (Dict[str, Optional[Union[str, int]]]) -> None
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the chosen storage service.
 

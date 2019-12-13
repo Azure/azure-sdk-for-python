@@ -5,9 +5,13 @@
 
 import time
 import random
-from typing import List, Iterable, Optional, Dict, Any
 from collections import Counter, defaultdict
-from .checkpoint_store import CheckpointStore
+from typing import List, Iterable, Optional, Dict, Any, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .checkpoint_store import CheckpointStore
+    from .._consumer_client_async import EventHubConsumerClient
+    from .._producer_client_async import EventHubProducerClient
 
 
 class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
@@ -21,8 +25,12 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
 
     """
     def __init__(
-            self, eventhub_client, consumer_group: str, owner_id: str,
-            checkpoint_store: Optional[CheckpointStore], ownership_timeout: float,
+            self,
+            eventhub_client: Union['EventHubConsumerClient', 'EventHubProducerClient'],
+            consumer_group: str,
+            owner_id: str,
+            checkpoint_store: Optional['CheckpointStore'],
+            ownership_timeout: float,
             partition_id: Optional[str]
     ):
         self.cached_parition_ids = []  # type: List[str]
@@ -37,7 +45,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         self.partition_id = partition_id
         self._initializing = True
 
-    async def claim_ownership(self):
+    async def claim_ownership(self) -> List[str]:
         """Claims ownership for this EventProcessor
         """
         if not self.cached_parition_ids:
@@ -85,7 +93,11 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         """
         self.cached_parition_ids = await self.eventhub_client.get_partition_ids()
 
-    def _balance_ownership(self, ownership_list, all_partition_ids):
+    def _balance_ownership(
+            self,
+            ownership_list: Iterable[Dict[str, Any]],
+            all_partition_ids: List[str]
+        ) -> List[Dict[str, Any]]:
         """Balances and claims ownership of partitions for this EventProcessor.
         """
         now = time.time()
@@ -117,7 +129,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         claimable_partition_ids = unclaimed_partition_ids + released_partition_ids
 
         active_ownership = [o for o in ownership_list if o not in released_partitions]
-        active_ownership_by_owner = defaultdict(list)
+        active_ownership_by_owner = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
         for ownership in active_ownership:
             active_ownership_by_owner[ownership["owner_id"]].append(ownership)
         active_ownership_self = active_ownership_by_owner[self.owner_id]
@@ -156,7 +168,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
                 to_claim.append(to_steal_partition)
         return to_claim
 
-    async def get_checkpoints(self):
+    async def get_checkpoints(self) -> Dict[str, Dict[str, Any]]:
         if self.checkpoint_store:
             checkpoints = await self.checkpoint_store.list_checkpoints(
                 self.fully_qualified_namespace, self.eventhub_name, self.consumer_group)

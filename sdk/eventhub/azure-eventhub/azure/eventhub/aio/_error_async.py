@@ -4,8 +4,9 @@
 # --------------------------------------------------------------------------------------------
 import asyncio
 import logging
+from typing import TYPE_CHECKING, Union, cast
 
-from uamqp import errors, compat  # type: ignore
+from uamqp import errors, compat
 
 from ..exceptions import (
     _create_eventhub_exception,
@@ -14,23 +15,31 @@ from ..exceptions import (
     EventDataError
 )
 
+if TYPE_CHECKING:
+    from ._client_base_async import ClientBaseAsync, ConsumerProducerMixin
+
 _LOGGER = logging.getLogger(__name__)
 
 
-async def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
+async def _handle_exception(  # pylint:disable=too-many-branches, too-many-statements
+        exception: Exception,
+        closable: Union['ClientBaseAsync', 'ConsumerProducerMixin']
+    ) -> Exception:
+    # pylint: disable=protected-access
     if isinstance(exception, asyncio.CancelledError):
         raise exception
+    error = exception
     try:
-        name = closable._name  # pylint: disable=protected-access
+        name = cast('ConsumerProducerMixin', closable)._name
     except AttributeError:
-        name = closable._container_id  # pylint: disable=protected-access
+        name = cast('ClientBaseAsync', closable)._container_id
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         _LOGGER.info("%r stops due to keyboard interrupt", name)
-        await closable.close()
-        raise exception
+        await cast('ConsumerProducerMixin', closable).close()
+        raise error
     elif isinstance(exception, EventHubError):
-        await closable.close()
-        raise exception
+        await cast('ConsumerProducerMixin', closable).close()
+        raise error
     elif isinstance(exception, (
             errors.MessageAccepted,
             errors.MessageAlreadySettled,
@@ -47,24 +56,21 @@ async def _handle_exception(exception, closable):  # pylint:disable=too-many-bra
         error = EventDataSendError(str(exception), exception)
         raise error
     else:
-        if isinstance(exception, errors.AuthenticationException):
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.LinkDetach):
-            if hasattr(closable, "_close_handler"):
-                await closable._close_handler()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.ConnectionClose):
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.MessageHandlerError):
-            if hasattr(closable, "_close_handler"):
-                await closable._close_handler()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.AMQPConnectionError):
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, compat.TimeoutException):
-            pass  # Timeout doesn't need to recreate link or connection to retry
-        else:
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
+        try:
+            if isinstance(exception, errors.AuthenticationException):
+                await closable._close_connection_async()
+            elif isinstance(exception, errors.LinkDetach):
+                await cast('ConsumerProducerMixin', closable)._close_handler_async()
+            elif isinstance(exception, errors.ConnectionClose):
+                await closable._close_connection_async()
+            elif isinstance(exception, errors.MessageHandlerError):
+                await cast('ConsumerProducerMixin', closable)._close_handler_async()
+            elif isinstance(exception, errors.AMQPConnectionError):
+                await closable._close_connection_async()
+            elif isinstance(exception, compat.TimeoutException):
+                pass  # Timeout doesn't need to recreate link or connection to retry
+            else:
+                await closable._close_connection_async()
+        except AttributeError:
+            pass
         return _create_eventhub_exception(exception)

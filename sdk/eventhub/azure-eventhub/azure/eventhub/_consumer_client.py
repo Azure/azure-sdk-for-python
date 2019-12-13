@@ -15,7 +15,7 @@ from ._eventprocessor.partition_context import PartitionContext
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential  # type: ignore
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -96,12 +96,24 @@ class EventHubConsumerClient(ClientBase):
         self._lock = threading.Lock()
         self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
 
-    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, Union[str, int, datetime.datetime], Any) -> EventHubConsumer
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def _create_consumer(
+            self,
+            consumer_group,  # type: str
+            partition_id,  # type: str
+            event_position,  # type: Union[str, int, datetime.datetime]
+            on_event_received,  # type: Callable[[PartitionContext, EventData], None]
+            **kwargs  # type: Any
+        ):
+        # type: (...) -> EventHubConsumer
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        on_event_received = kwargs.get("on_event_received")
         event_position_inclusive = kwargs.get("event_position_inclusive", False)
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -264,6 +276,51 @@ class EventHubConsumerClient(ClientBase):
                 except KeyError:
                     pass
 
+    def get_eventhub_properties(self):
+        # type:() -> Dict[str, Any]
+        """Get properties of the Event Hub.
+
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
+
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubConsumerClient, self)._get_eventhub_properties()
+
+    def get_partition_ids(self):
+        # type:() -> List[str]
+        """Get partition IDs of the Event Hub.
+
+        :rtype: list[str]
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubConsumerClient, self)._get_partition_ids()
+
+    def get_partition_properties(self, partition_id):
+        # type:(str) -> Dict[str, Any]
+        """Get properties of the specified partition.
+
+        Keys in the properties dictionary include:
+
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubConsumerClient, self)._get_partition_properties(partition_id)
+
     def close(self):
         # type: () -> None
         """Stop retrieving events from the Event Hub and close the underlying AMQP connection and links.
@@ -284,4 +341,4 @@ class EventHubConsumerClient(ClientBase):
             for processor in self._event_processors.values():
                 processor.stop()
             self._event_processors = {}
-        super(EventHubConsumerClient, self).close()
+        super(EventHubConsumerClient, self)._close()
