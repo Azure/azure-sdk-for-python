@@ -1,2 +1,2 @@
-include *.rst
+include *.md
 include azure/ai/__init__.py
