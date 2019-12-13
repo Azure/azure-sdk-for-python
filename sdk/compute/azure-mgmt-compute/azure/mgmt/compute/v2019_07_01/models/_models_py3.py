@@ -381,17 +381,38 @@ class AvailabilitySet(Resource):
 class UpdateResource(Model):
     """The Update Resource model definition.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(UpdateResource, self).__init__(**kwargs)
         self.tags = tags
+        self.id = None
+        self.name = None
+        self.type = None
 
 
 class AvailabilitySetUpdate(UpdateResource):
@@ -403,6 +424,12 @@ class AvailabilitySetUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
@@ -424,11 +451,17 @@ class AvailabilitySetUpdate(UpdateResource):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'statuses': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
@@ -625,9 +658,9 @@ class CreationData(Model):
      'Import', 'Copy', 'Restore', 'Upload'
     :type create_option: str or
      ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOption
-    :param storage_account_id: If createOption is Import, the Azure Resource
-     Manager identifier of the storage account containing the blob to import as
-     a disk. Required only if the blob is in a different subscription
+    :param storage_account_id: Required if createOption is Import. The Azure
+     Resource Manager identifier of the storage account containing the blob to
+     import as a disk.
     :type storage_account_id: str
     :param image_reference: Disk source information.
     :type image_reference:
@@ -1011,6 +1044,12 @@ class DedicatedHostGroupUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param platform_fault_domain_count: Required. Number of fault domains that
      the host group can span.
     :type platform_fault_domain_count: int
@@ -1026,12 +1065,18 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
         'zones': {'key': 'zones', 'type': '[str]'},
@@ -1087,6 +1132,12 @@ class DedicatedHostUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param platform_fault_domain: Fault domain of the dedicated host within a
      dedicated host group.
     :type platform_fault_domain: int
@@ -1120,6 +1171,9 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
@@ -1130,6 +1184,9 @@ class DedicatedHostUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
         'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
         'host_id': {'key': 'properties.hostId', 'type': 'str'},
@@ -1571,6 +1628,9 @@ class DiskUpdate(Model):
      settable for UltraSSD disks. MBps means millions of bytes per second - MB
      here uses the ISO notation, of powers of 10.
     :type disk_mbps_read_write: int
+    :param encryption: Encryption property can be used to encrypt data at rest
+     with customer managed keys or platform managed keys.
+    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku:
@@ -1583,17 +1643,19 @@ class DiskUpdate(Model):
         'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
         'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
         'disk_mbps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'int'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'DiskSku'},
     }
 
-    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, disk_iops_read_write: int=None, disk_mbps_read_write: int=None, tags=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, disk_iops_read_write: int=None, disk_mbps_read_write: int=None, encryption=None, tags=None, sku=None, **kwargs) -> None:
         super(DiskUpdate, self).__init__(**kwargs)
         self.os_type = os_type
         self.disk_size_gb = disk_size_gb
         self.encryption_settings_collection = encryption_settings_collection
         self.disk_iops_read_write = disk_iops_read_write
         self.disk_mbps_read_write = disk_mbps_read_write
+        self.encryption = encryption
         self.tags = tags
         self.sku = sku
 
@@ -1861,6 +1923,74 @@ class GalleryApplication(Resource):
         self.supported_os_type = supported_os_type
 
 
+class GalleryApplicationUpdate(UpdateResource):
+    """Specifies information about the gallery Application Definition that you
+    want to update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param description: The description of this gallery Application Definition
+     resource. This property is updatable.
+    :type description: str
+    :param eula: The Eula agreement for the gallery Application Definition.
+    :type eula: str
+    :param privacy_statement_uri: The privacy statement uri.
+    :type privacy_statement_uri: str
+    :param release_note_uri: The release note uri.
+    :type release_note_uri: str
+    :param end_of_life_date: The end of life date of the gallery Application
+     Definition. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param supported_os_type: Required. This property allows you to specify
+     the supported type of the OS that application is built for. <br><br>
+     Possible values are: <br><br> **Windows** <br><br> **Linux**. Possible
+     values include: 'Windows', 'Linux'
+    :type supported_os_type: str or
+     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'supported_os_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'eula': {'key': 'properties.eula', 'type': 'str'},
+        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
+        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'OperatingSystemTypes'},
+    }
+
+    def __init__(self, *, supported_os_type, tags=None, description: str=None, eula: str=None, privacy_statement_uri: str=None, release_note_uri: str=None, end_of_life_date=None, **kwargs) -> None:
+        super(GalleryApplicationUpdate, self).__init__(tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+
+
 class GalleryApplicationVersion(Resource):
     """Specifies information about the gallery Application Version that you want
     to create or update.
@@ -2039,6 +2169,63 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         self.source = source
         self.content_type = content_type
         self.enable_health_check = enable_health_check
+
+
+class GalleryApplicationVersionUpdate(UpdateResource):
+    """Specifies information about the gallery Application Version that you want
+    to update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param publishing_profile: Required.
+    :type publishing_profile:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionPublishingProfile
+    :ivar provisioning_state: The current state of the gallery Application
+     Version. The provisioning state, which only appears in the response.
+     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
+     'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    :ivar replication_status:
+    :vartype replication_status:
+     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'publishing_profile': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'replication_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+    }
+
+    def __init__(self, *, publishing_profile, tags=None, **kwargs) -> None:
+        super(GalleryApplicationVersionUpdate, self).__init__(tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.provisioning_state = None
+        self.replication_status = None
 
 
 class GalleryArtifactSource(Model):
@@ -2338,6 +2525,117 @@ class GalleryImageIdentifier(Model):
         self.sku = sku
 
 
+class GalleryImageUpdate(UpdateResource):
+    """Specifies information about the gallery Image Definition that you want to
+    update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param description: The description of this gallery Image Definition
+     resource. This property is updatable.
+    :type description: str
+    :param eula: The Eula agreement for the gallery Image Definition.
+    :type eula: str
+    :param privacy_statement_uri: The privacy statement uri.
+    :type privacy_statement_uri: str
+    :param release_note_uri: The release note uri.
+    :type release_note_uri: str
+    :param os_type: Required. This property allows you to specify the type of
+     the OS that is included in the disk when creating a VM from a managed
+     image. <br><br> Possible values are: <br><br> **Windows** <br><br>
+     **Linux**. Possible values include: 'Windows', 'Linux'
+    :type os_type: str or
+     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+    :param os_state: Required. This property allows the user to specify
+     whether the virtual machines created under this image are 'Generalized' or
+     'Specialized'. Possible values include: 'Generalized', 'Specialized'
+    :type os_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemStateTypes
+    :param hyper_vgeneration: The hypervisor generation of the Virtual
+     Machine. Applicable to OS disks only. Possible values include: 'V1', 'V2'
+    :type hyper_vgeneration: str or
+     ~azure.mgmt.compute.v2019_07_01.models.HyperVGeneration
+    :param end_of_life_date: The end of life date of the gallery Image
+     Definition. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param identifier: Required.
+    :type identifier:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageIdentifier
+    :param recommended:
+    :type recommended:
+     ~azure.mgmt.compute.v2019_07_01.models.RecommendedMachineConfiguration
+    :param disallowed:
+    :type disallowed: ~azure.mgmt.compute.v2019_07_01.models.Disallowed
+    :param purchase_plan:
+    :type purchase_plan:
+     ~azure.mgmt.compute.v2019_07_01.models.ImagePurchasePlan
+    :ivar provisioning_state: The current state of the gallery Image
+     Definition. The provisioning state, which only appears in the response.
+     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
+     'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'os_type': {'required': True},
+        'os_state': {'required': True},
+        'identifier': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'eula': {'key': 'properties.eula', 'type': 'str'},
+        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
+        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
+        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
+        'os_state': {'key': 'properties.osState', 'type': 'OperatingSystemStateTypes'},
+        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
+        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
+        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
+        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, os_type, os_state, identifier, tags=None, description: str=None, eula: str=None, privacy_statement_uri: str=None, release_note_uri: str=None, hyper_vgeneration=None, end_of_life_date=None, recommended=None, disallowed=None, purchase_plan=None, **kwargs) -> None:
+        super(GalleryImageUpdate, self).__init__(tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.os_type = os_type
+        self.os_state = os_state
+        self.hyper_vgeneration = hyper_vgeneration
+        self.end_of_life_date = end_of_life_date
+        self.identifier = identifier
+        self.recommended = recommended
+        self.disallowed = disallowed
+        self.purchase_plan = purchase_plan
+        self.provisioning_state = None
+
+
 class GalleryImageVersion(Resource):
     """Specifies information about the gallery Image Version that you want to
     create or update.
@@ -2479,6 +2777,68 @@ class GalleryImageVersionStorageProfile(Model):
         self.data_disk_images = data_disk_images
 
 
+class GalleryImageVersionUpdate(UpdateResource):
+    """Specifies information about the gallery Image Version that you want to
+    update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param publishing_profile:
+    :type publishing_profile:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionPublishingProfile
+    :ivar provisioning_state: The current state of the gallery Image Version.
+     The provisioning state, which only appears in the response. Possible
+     values include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
+     'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    :param storage_profile: Required.
+    :type storage_profile:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionStorageProfile
+    :ivar replication_status:
+    :vartype replication_status:
+     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'storage_profile': {'required': True},
+        'replication_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
+        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+    }
+
+    def __init__(self, *, storage_profile, tags=None, publishing_profile=None, **kwargs) -> None:
+        super(GalleryImageVersionUpdate, self).__init__(tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.provisioning_state = None
+        self.storage_profile = storage_profile
+        self.replication_status = None
+
+
 class GalleryOSDiskImage(GalleryDiskImage):
     """This is the OS disk image.
 
@@ -2510,6 +2870,58 @@ class GalleryOSDiskImage(GalleryDiskImage):
 
     def __init__(self, *, host_caching=None, source=None, **kwargs) -> None:
         super(GalleryOSDiskImage, self).__init__(host_caching=host_caching, source=source, **kwargs)
+
+
+class GalleryUpdate(UpdateResource):
+    """Specifies information about the Shared Image Gallery that you want to
+    update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param description: The description of this Shared Image Gallery resource.
+     This property is updatable.
+    :type description: str
+    :param identifier:
+    :type identifier: ~azure.mgmt.compute.v2019_07_01.models.GalleryIdentifier
+    :ivar provisioning_state: The current state of the gallery. The
+     provisioning state, which only appears in the response. Possible values
+     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
+     'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, description: str=None, identifier=None, **kwargs) -> None:
+        super(GalleryUpdate, self).__init__(tags=tags, **kwargs)
+        self.description = description
+        self.identifier = identifier
+        self.provisioning_state = None
 
 
 class GrantAccessData(Model):
@@ -2986,6 +3398,12 @@ class ImageUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param source_virtual_machine: The source virtual machine from which Image
      is created.
     :type source_virtual_machine:
@@ -3003,11 +3421,17 @@ class ImageUpdate(UpdateResource):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -3775,12 +4199,30 @@ class ProximityPlacementGroup(Resource):
 class ProximityPlacementGroupUpdate(UpdateResource):
     """Specifies information about the proximity placement group.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, *, tags=None, **kwargs) -> None:
@@ -4691,6 +5133,9 @@ class SnapshotUpdate(Model):
      disk or snapshot.
     :type encryption_settings_collection:
      ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
+    :param encryption: Encryption property can be used to encrypt data at rest
+     with customer managed keys or platform managed keys.
+    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku:
@@ -4701,15 +5146,17 @@ class SnapshotUpdate(Model):
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
         'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SnapshotSku'},
     }
 
-    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, tags=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings_collection=None, encryption=None, tags=None, sku=None, **kwargs) -> None:
         super(SnapshotUpdate, self).__init__(**kwargs)
         self.os_type = os_type
         self.disk_size_gb = disk_size_gb
         self.encryption_settings_collection = encryption_settings_collection
+        self.encryption = encryption
         self.tags = tags
         self.sku = sku
 
@@ -5338,8 +5785,11 @@ class VirtualMachine(Resource):
     :type priority: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
-     virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
-     api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
+     virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
+     machines, the only supported value is 'Deallocate' and the minimum
+     api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
+     'Deallocate' and 'Delete' are supported and the minimum api-version is
+     2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure
@@ -5780,16 +6230,25 @@ class VirtualMachineExtensionsListResult(Model):
 class VirtualMachineExtensionUpdate(UpdateResource):
     """Describes a Virtual Machine Extension.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param force_update_tag: How the extension handler should be forced to
      update even if the extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param type: Specifies the type of the extension; an example is
-     "CustomScriptExtension".
-    :type type: str
+    :param virtual_machine_extension_update_type: Specifies the type of the
+     extension; an example is "CustomScriptExtension".
+    :type virtual_machine_extension_update_type: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -5805,22 +6264,31 @@ class VirtualMachineExtensionUpdate(UpdateResource):
     :type protected_settings: object
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
+        'virtual_machine_extension_update_type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
     }
 
-    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, virtual_machine_extension_update_type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
         super(VirtualMachineExtensionUpdate, self).__init__(tags=tags, **kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
-        self.type = type
+        self.virtual_machine_extension_update_type = virtual_machine_extension_update_type
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
@@ -6335,15 +6803,17 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     :vartype id: str
     :param name: The name of the extension.
     :type name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param force_update_tag: If a value is provided and is different from the
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param type: Specifies the type of the extension; an example is
+    :param type1: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :type type: str
+    :type type1: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6367,15 +6837,17 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
 
     _validation = {
         'id': {'readonly': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
@@ -6384,12 +6856,13 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
         self.name = name
+        self.type = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
-        self.type = type
+        self.type1 = type1
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
@@ -6414,6 +6887,85 @@ class VirtualMachineScaleSetExtensionProfile(Model):
     def __init__(self, *, extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtensionProfile, self).__init__(**kwargs)
         self.extensions = extensions
+
+
+class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
+    """Describes a Virtual Machine Scale Set Extension.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: The name of the extension.
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param force_update_tag: If a value is provided and is different from the
+     previous value, the extension handler will be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
+    :param publisher: The name of the extension handler publisher.
+    :type publisher: str
+    :param type1: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :type type1: str
+    :param type_handler_version: Specifies the version of the script handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should
+     use a newer minor version if one is available at deployment time. Once
+     deployed, however, the extension will not upgrade minor versions unless
+     redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param settings: Json formatted public settings for the extension.
+    :type settings: object
+    :param protected_settings: The extension can contain either
+     protectedSettings or protectedSettingsFromKeyVault or no protected
+     settings at all.
+    :type protected_settings: object
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :param provision_after_extensions: Collection of extension names after
+     which this extension needs to be provisioned.
+    :type provision_after_extensions: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
+    }
+
+    def __init__(self, *, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type1 = type1
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
+        self.provisioning_state = None
+        self.provision_after_extensions = provision_after_extensions
 
 
 class VirtualMachineScaleSetIdentity(Model):
@@ -7174,8 +7726,17 @@ class VirtualMachineScaleSetStorageProfile(Model):
 class VirtualMachineScaleSetUpdate(UpdateResource):
     """Describes a Virtual Machine Scale Set.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param sku: The virtual machine scale set sku.
     :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
     :param plan: The purchase plan when deploying a virtual machine scale set
@@ -7222,8 +7783,17 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIdentity
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
@@ -7952,8 +8522,11 @@ class VirtualMachineScaleSetVMProfile(Model):
      values include: 'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for virtual machines
-     in a Azure Spot scale set. <br><br>Minimum api-version:
+    :param eviction_policy: Specifies the eviction policy for the Azure Spot
+     virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
+     machines, the only supported value is 'Deallocate' and the minimum
+     api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
+     'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
@@ -8095,6 +8668,12 @@ class VirtualMachineUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param plan: Specifies information about the marketplace image used to
      create the virtual machine. This element is only used for marketplace
      images. Before you can use a marketplace image from an API, you must
@@ -8161,8 +8740,11 @@ class VirtualMachineUpdate(UpdateResource):
     :type priority: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
-     virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
-     api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
+     virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
+     machines, the only supported value is 'Deallocate' and the minimum
+     api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
+     'Deallocate' and 'Delete' are supported and the minimum api-version is
+     2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure
@@ -8200,6 +8782,9 @@ class VirtualMachineUpdate(UpdateResource):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'instance_view': {'readonly': True},
         'vm_id': {'readonly': True},
@@ -8207,6 +8792,9 @@ class VirtualMachineUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
