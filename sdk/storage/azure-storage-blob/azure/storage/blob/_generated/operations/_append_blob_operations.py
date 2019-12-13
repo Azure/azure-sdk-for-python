@@ -39,7 +39,7 @@ class AppendBlobOperations(object):
         self.x_ms_blob_type = "AppendBlob"
         self.comp = "appendblock"
 
-    def create(self, content_length, timeout=None, metadata=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def create(self, content_length, timeout=None, metadata=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Create Append Blob operation creates a new append blob.
 
         :param content_length: The length of the request.
@@ -71,6 +71,8 @@ class AppendBlobOperations(object):
          ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -113,6 +115,9 @@ class AppendBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -167,6 +172,8 @@ class AppendBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -196,12 +203,13 @@ class AppendBlobOperations(object):
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{containerName}/{blob}'}
 
-    def append_block(self, body, content_length, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, request_id=None, lease_access_conditions=None, append_position_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def append_block(self, body, content_length, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, request_id=None, lease_access_conditions=None, append_position_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Append Block operation commits a new block of data to the end of an
         existing append blob. The Append Block operation is permitted only if
         the blob was created with x-ms-blob-type set to AppendBlob. Append
@@ -236,6 +244,8 @@ class AppendBlobOperations(object):
          ~azure.storage.blob.models.AppendPositionAccessConditions
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -266,6 +276,9 @@ class AppendBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -315,6 +328,8 @@ class AppendBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -349,12 +364,13 @@ class AppendBlobOperations(object):
                 'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     append_block.metadata = {'url': '/{containerName}/{blob}'}
 
-    def append_block_from_url(self, source_url, content_length, source_range=None, source_content_md5=None, source_contentcrc64=None, timeout=None, transactional_content_md5=None, request_id=None, cpk_info=None, lease_access_conditions=None, append_position_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
+    def append_block_from_url(self, source_url, content_length, source_range=None, source_content_md5=None, source_contentcrc64=None, timeout=None, transactional_content_md5=None, request_id=None, cpk_info=None, cpk_scope_info=None, lease_access_conditions=None, append_position_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
         """The Append Block operation commits a new block of data to the end of an
         existing append blob where the contents are read from a source url. The
         Append Block operation is permitted only if the blob was created with
@@ -387,6 +403,8 @@ class AppendBlobOperations(object):
         :type request_id: str
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -420,6 +438,9 @@ class AppendBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -488,6 +509,8 @@ class AppendBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         if max_size is not None:
@@ -532,6 +555,7 @@ class AppendBlobOperations(object):
                 'x-ms-blob-append-offset': self._deserialize('str', response.headers.get('x-ms-blob-append-offset')),
                 'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }

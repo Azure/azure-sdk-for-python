@@ -1,0 +1,256 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 02:10:54 GMT
+      x-ms-default-encryption-scope:
+      - containerscope
+      x-ms-deny-encryption-scope-override:
+      - 'true'
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainerwithdenyoverride?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      etag:
+      - '"0x8D7835F83CE9D80"'
+      last-modified:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: aaaa
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      x-ms-encryption-scope:
+      - antjoscope1
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainerwithdenyoverride/appendblob?comp=appendblock
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>RequestForbiddenByContainerEncryptionPolicy</Code><Message>The
+        request is forbidden by the container encryption policy.\nRequestId:22a68084-d01e-002a-2648-b54d2b000000\nTime:2019-12-18T02:10:55.4112287Z</Message></Error>"
+    headers:
+      content-length:
+      - '272'
+      content-type:
+      - application/xml
+      date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - RequestForbiddenByContainerEncryptionPolicy
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 403
+      message: The request is forbidden by the container encryption policy.
+- request:
+    body: aaaa
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainerwithdenyoverride/appendblob?comp=appendblock
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:22a6808e-d01e-002a-3048-b54d2b000000\nTime:2019-12-18T02:10:55.5442898Z</Message></Error>"
+    headers:
+      content-length:
+      - '215'
+      content-type:
+      - application/xml
+      date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainerwithdenyoverride/appendblob
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      etag:
+      - '"0x8D7835F840DB1E2"'
+      last-modified:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-encryption-scope:
+      - containerscope
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: aaaa
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainerwithdenyoverride/appendblob?comp=appendblock
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      etag:
+      - '"0x8D7835F84250867"'
+      last-modified:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-append-offset:
+      - '0'
+      x-ms-blob-committed-block-count:
+      - '1'
+      x-ms-content-crc64:
+      - 8JRcxVurLRg=
+      x-ms-encryption-scope:
+      - containerscope
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/cpkcontainerwithdenyoverride?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 18 Dec 2019 02:10:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 202
+      message: Accepted
+version: 1

@@ -345,6 +345,9 @@ class BlobProperties(Model):
     :type archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :param customer_provided_key_sha256:
     :type customer_provided_key_sha256: str
+    :param encryption_scope: The name of the encryption scope under which the
+     blob is encrypted.
+    :type encryption_scope: str
     :param access_tier_change_time:
     :type access_tier_change_time: datetime
     """
@@ -385,13 +388,14 @@ class BlobProperties(Model):
         'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool', 'xml': {'name': 'AccessTierInferred'}},
         'archive_status': {'key': 'ArchiveStatus', 'type': 'str', 'xml': {'name': 'ArchiveStatus'}},
         'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str', 'xml': {'name': 'CustomerProvidedKeySha256'}},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str', 'xml': {'name': 'EncryptionScope'}},
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
     }
     _xml_map = {
         'name': 'Properties'
     }
 
-    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, access_tier_change_time=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, **kwargs) -> None:
         super(BlobProperties, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
@@ -423,6 +427,7 @@ class BlobProperties(Model):
         self.access_tier_inferred = access_tier_inferred
         self.archive_status = archive_status
         self.customer_provided_key_sha256 = customer_provided_key_sha256
+        self.encryption_scope = encryption_scope
         self.access_tier_change_time = access_tier_change_time
 
 
@@ -533,6 +538,32 @@ class ClearRange(Model):
         super(ClearRange, self).__init__(**kwargs)
         self.start = start
         self.end = end
+
+
+class ContainerCpkScopeInfo(Model):
+    """Additional parameters for create operation.
+
+    :param default_encryption_scope: Optional.  Version 2019-02-02 and later.
+     Specifies the default encryption scope to set on the container and use for
+     all future writes.
+    :type default_encryption_scope: str
+    :param deny_encryption_scope_override: Optional.  Version 2019-02-02 and
+     newer.  If true, prevents any request from specifying a different
+     encryption scope than the scope set on the container.
+    :type deny_encryption_scope_override: bool
+    """
+
+    _attribute_map = {
+        'default_encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'default_encryption_scope'}},
+        'deny_encryption_scope_override': {'key': '', 'type': 'bool', 'xml': {'name': 'deny_encryption_scope_override'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, default_encryption_scope: str=None, deny_encryption_scope_override: bool=None, **kwargs) -> None:
+        super(ContainerCpkScopeInfo, self).__init__(**kwargs)
+        self.default_encryption_scope = default_encryption_scope
+        self.deny_encryption_scope_override = deny_encryption_scope_override
 
 
 class ContainerItem(Model):
@@ -713,6 +744,28 @@ class CpkInfo(Model):
         self.encryption_key = encryption_key
         self.encryption_key_sha256 = encryption_key_sha256
         self.encryption_algorithm = encryption_algorithm
+
+
+class CpkScopeInfo(Model):
+    """Additional parameters for a set of operations.
+
+    :param encryption_scope: Optional. Version 2019-02-02 and later.
+     Specifies the name of the encryption scope to use to encrypt the data
+     provided in the request. If not specified, encryption is performed with
+     the default account encryption scope.  For more information, see
+     Encryption at Rest for Azure Storage Services.
+    :type encryption_scope: str
+    """
+
+    _attribute_map = {
+        'encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'encryption_scope'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, encryption_scope: str=None, **kwargs) -> None:
+        super(CpkScopeInfo, self).__init__(**kwargs)
+        self.encryption_scope = encryption_scope
 
 
 class DataLakeStorageError(Model):

@@ -23,10 +23,12 @@ try:
     from ._models_py3 import BlockList
     from ._models_py3 import BlockLookupList
     from ._models_py3 import ClearRange
+    from ._models_py3 import ContainerCpkScopeInfo
     from ._models_py3 import ContainerItem
     from ._models_py3 import ContainerProperties
     from ._models_py3 import CorsRule
     from ._models_py3 import CpkInfo
+    from ._models_py3 import CpkScopeInfo
     from ._models_py3 import DataLakeStorageError, DataLakeStorageErrorException
     from ._models_py3 import DataLakeStorageErrorError
     from ._models_py3 import DirectoryHttpHeaders
@@ -64,10 +66,12 @@ except (SyntaxError, ImportError):
     from ._models import BlockList
     from ._models import BlockLookupList
     from ._models import ClearRange
+    from ._models import ContainerCpkScopeInfo
     from ._models import ContainerItem
     from ._models import ContainerProperties
     from ._models import CorsRule
     from ._models import CpkInfo
+    from ._models import CpkScopeInfo
     from ._models import DataLakeStorageError, DataLakeStorageErrorException
     from ._models import DataLakeStorageErrorError
     from ._models import DirectoryHttpHeaders
@@ -132,10 +136,12 @@ __all__ = [
     'BlockList',
     'BlockLookupList',
     'ClearRange',
+    'ContainerCpkScopeInfo',
     'ContainerItem',
     'ContainerProperties',
     'CorsRule',
     'CpkInfo',
+    'CpkScopeInfo',
     'DataLakeStorageError', 'DataLakeStorageErrorException',
     'DataLakeStorageErrorError',
     'DirectoryHttpHeaders',

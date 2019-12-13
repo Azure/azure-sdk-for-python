@@ -212,6 +212,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -554,6 +558,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -618,6 +626,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -671,6 +683,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -727,6 +743,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1045,6 +1065,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1093,6 +1117,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1195,6 +1223,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1398,6 +1430,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1473,6 +1509,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -1572,6 +1612,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -1709,6 +1753,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -1798,6 +1846,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
+            A predefined encryption scope used to encrypts the data on the service-side.
+            The encryption scope is defined on control plane, while the scope could be
+            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
