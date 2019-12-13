@@ -1,12 +1,12 @@
 # Release History
 
-## Version 5.0.0b7 Unreleased
+## 5.0.0b7 (Unreleased)
 
 **Breaking changes**
 
 - Removed deprecated property EventData.application_properties and deprecated method EventData.encode_message()
 
-## 2019-12-03 5.0.0b6
+## 5.0.0b6 (2019-12-03)
 
 **Breaking changes**
 
@@ -43,7 +43,7 @@
 - Added new parameter `idle_timeout` in construct and `from_connection_string` to `EventHubConsumerClient` and `EventHubProducerClient`
 after which the underlying connection will close if there is no further activity.
 
-## 2019-11-04 5.0.0b5
+## 5.0.0b5 (2019-11-04)
 
 **Breaking changes**
 
