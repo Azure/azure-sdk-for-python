@@ -108,8 +108,7 @@ Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 [AzureAppConfigurationClient][configuration_client_class].
 
 Constructing the client also requires your configuration store's URL, which you can
-get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
-the service's "endpoint".
+get from the Azure CLI or the Azure Portal. In the Azure Portal, the URL can be found listed as the service "Endpoint"
 
 ```python
 from azure.identity import DefaultAzureCredential
