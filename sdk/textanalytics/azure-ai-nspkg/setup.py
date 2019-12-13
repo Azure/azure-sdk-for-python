@@ -32,7 +32,7 @@ if sys.version_info[0] < 3:
 
 setup(
     name='azure-ai-nspkg',
-    version='3.0.1',
+    version='1.0.0',
     description='Microsoft Azure ai Namespace Package [Internal]',
     long_description=open('README.md', 'r').read(),
     license='MIT License',
