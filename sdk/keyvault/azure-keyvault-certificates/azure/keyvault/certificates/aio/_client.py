@@ -55,7 +55,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
-        operation requires the certificates/create permission.
+        operation requires the certificates/create permission. The poller requires the
+        certificates/get permission, otherwise raises
+        an :class:`~azure.core.exceptions.HttpResponseError`
 
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.
@@ -694,7 +696,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def merge_certificate(
-        self, certificate_name: str, x509_certificates: List[bytearray], **kwargs: "Any"
+        self, certificate_name: str, x509_certificates: Iterable[bytearray], **kwargs: "Any"
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
