@@ -3,6 +3,11 @@
 Release History
 ===============
 
+7.0.0.0 (2019-12-13)
+++++++++++++++++++++
+
+This is re-release of 6.6.0.0 to match the actual API version used internally
+
 6.6.0.0 (2019-12-07)
 ++++++++++++++++++++
 
