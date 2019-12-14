@@ -21,7 +21,6 @@ try:
     from ._models_py3 import EntitiesResult
     from ._models_py3 import Entity
     from ._models_py3 import EntityLinkingResult
-    from ._models_py3 import Error, ErrorException
     from ._models_py3 import InnerError
     from ._models_py3 import KeyPhraseResult
     from ._models_py3 import LanguageBatchInput
@@ -35,6 +34,7 @@ try:
     from ._models_py3 import SentenceSentiment
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
+    from ._models_py3 import TextAnalyticsError, TextAnalyticsErrorException
 except (SyntaxError, ImportError):
     from ._models import DetectedLanguage
     from ._models import DocumentEntities
@@ -47,7 +47,6 @@ except (SyntaxError, ImportError):
     from ._models import EntitiesResult
     from ._models import Entity
     from ._models import EntityLinkingResult
-    from ._models import Error, ErrorException
     from ._models import InnerError
     from ._models import KeyPhraseResult
     from ._models import LanguageBatchInput
@@ -61,6 +60,13 @@ except (SyntaxError, ImportError):
     from ._models import SentenceSentiment
     from ._models import SentimentConfidenceScorePerLabel
     from ._models import SentimentResponse
+    from ._models import TextAnalyticsError, TextAnalyticsErrorException
+from ._text_analytics_client_enums import (
+    ErrorCodeValue,
+    InnerErrorCodeValue,
+    DocumentSentimentValue,
+    SentenceSentimentValue,
+)
 
 __all__ = [
     'DetectedLanguage',
@@ -74,7 +80,6 @@ __all__ = [
     'EntitiesResult',
     'Entity',
     'EntityLinkingResult',
-    'Error', 'ErrorException',
     'InnerError',
     'KeyPhraseResult',
     'LanguageBatchInput',
@@ -88,4 +93,9 @@ __all__ = [
     'SentenceSentiment',
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
+    'TextAnalyticsError', 'TextAnalyticsErrorException',
+    'ErrorCodeValue',
+    'InnerErrorCodeValue',
+    'DocumentSentimentValue',
+    'SentenceSentimentValue',
 ]

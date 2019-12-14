@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
-from ._generated.models import ErrorException
+from ._generated.models import TextAnalyticsErrorException
 from ._generated._text_analytics_client import TextAnalyticsClient as TextAnalytics
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_batch_input
@@ -137,7 +137,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=language_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -195,7 +195,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=entities_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -253,7 +253,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=pii_entities_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -310,7 +310,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=linked_entities_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -367,7 +367,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=key_phrases_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -425,5 +425,5 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=sentiment_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)

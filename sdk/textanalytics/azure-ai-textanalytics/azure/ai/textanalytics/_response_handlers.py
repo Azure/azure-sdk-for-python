@@ -24,6 +24,8 @@ from ._models import (
     DetectLanguageResult,
     DetectedLanguage,
     DocumentError,
+    SentimentConfidenceScorePerLabel,
+    TextAnalyticsError
 )
 
 
@@ -31,7 +33,7 @@ def process_single_error(error):
     """Configure and raise a DocumentError for single text operation errors.
     """
     try:
-        error_message = error.error["innerError"]["message"]
+        error_message = error.error["inner_error"]["message"]
         error_code = error.error["code"]
         error_message += "\nErrorCode:{}".format(error_code)
     except KeyError:
@@ -96,7 +98,7 @@ def prepare_result(func):
 
         for idx, item in enumerate(results):
             if hasattr(item, "error"):
-                results[idx] = DocumentError(id=item.id, error=item.error)
+                results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
             else:
                 results[idx] = func(item)
         return results
@@ -153,8 +155,8 @@ def key_phrases_result(phrases):
 def sentiment_result(sentiment):
     return AnalyzeSentimentResult(
         id=sentiment.id,
-        sentiment=sentiment.sentiment,
+        sentiment=sentiment.sentiment.value,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
-        document_scores=sentiment.document_scores,
+        document_scores=SentimentConfidenceScorePerLabel._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
     )

@@ -37,7 +37,7 @@ class TextAnalyticsClientConfiguration(Configuration):
         super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
 
-        self.user_agent_policy.add_user_agent('azsdk-python-azure-cognitiveservices-language-textanalytics/{}'.format(VERSION))
+        self.user_agent_policy.add_user_agent('azsdk-python-azure-ai-textanalytics/{}'.format(VERSION))
         self.generate_client_request_id = True
 
         self.credentials = credentials

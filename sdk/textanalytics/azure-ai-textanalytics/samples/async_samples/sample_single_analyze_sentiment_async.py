@@ -69,9 +69,9 @@ class SingleAnalyzeSentimentSampleAsync(object):
 
         print("Overall sentiment: {}".format(result.sentiment))
         print("Overall scores: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
-            result.document_scores['positive'],
-            result.document_scores['neutral'],
-            result.document_scores['negative'],
+            result.document_scores.positive,
+            result.document_scores.neutral,
+            result.document_scores.negative,
         ))
 
         for idx, sentence in enumerate(result.sentences):
@@ -79,9 +79,9 @@ class SingleAnalyzeSentimentSampleAsync(object):
             print("Offset: {}".format(sentence.offset))
             print("Length: {}".format(sentence.length))
             print("Sentence score: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
-                sentence.sentence_scores['positive'],
-                sentence.sentence_scores['neutral'],
-                sentence.sentence_scores['negative'],
+                sentence.sentence_scores.positive,
+                sentence.sentence_scores.neutral,
+                sentence.sentence_scores.negative,
             ))
         # [END single_analyze_sentiment_async]
 

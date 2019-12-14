@@ -12,7 +12,7 @@ from typing import (  # pylint: disable=unused-import
     Dict,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._generated.models import ErrorException
+from .._generated.models import TextAnalyticsErrorException
 from .._generated.aio._text_analytics_client_async import TextAnalyticsClient as TextAnalytics
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_batch_input
@@ -133,7 +133,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=language_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -189,7 +189,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=entities_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -246,7 +246,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=pii_entities_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -302,7 +302,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=linked_entities_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -358,7 +358,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=key_phrases_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)
 
     @distributed_trace_async
@@ -415,5 +415,5 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=sentiment_result,
                 **kwargs
             )
-        except ErrorException as error:
+        except TextAnalyticsErrorException as error:
             process_batch_error(error)

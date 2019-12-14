@@ -28,7 +28,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+         list[~azure.ai.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -39,10 +39,9 @@ class TextAnalyticsClientOperationsMixin(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: EntitiesResult or the result of cls(response)
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.EntitiesResult
+        :rtype: ~azure.ai.textanalytics.models.EntitiesResult
         :raises:
-         :class:`ErrorException<azure.cognitiveservices.language.textanalytics.models.ErrorException>`
+         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
@@ -78,7 +77,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
@@ -104,7 +103,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+         list[~azure.ai.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -115,10 +114,9 @@ class TextAnalyticsClientOperationsMixin(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: EntitiesResult or the result of cls(response)
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.EntitiesResult
+        :rtype: ~azure.ai.textanalytics.models.EntitiesResult
         :raises:
-         :class:`ErrorException<azure.cognitiveservices.language.textanalytics.models.ErrorException>`
+         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
@@ -154,7 +152,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
@@ -177,7 +175,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+         list[~azure.ai.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -188,10 +186,9 @@ class TextAnalyticsClientOperationsMixin(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: EntityLinkingResult or the result of cls(response)
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.EntityLinkingResult
+        :rtype: ~azure.ai.textanalytics.models.EntityLinkingResult
         :raises:
-         :class:`ErrorException<azure.cognitiveservices.language.textanalytics.models.ErrorException>`
+         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
@@ -227,7 +224,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
@@ -249,7 +246,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+         list[~azure.ai.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -260,10 +257,9 @@ class TextAnalyticsClientOperationsMixin(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: KeyPhraseResult or the result of cls(response)
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.KeyPhraseResult
+        :rtype: ~azure.ai.textanalytics.models.KeyPhraseResult
         :raises:
-         :class:`ErrorException<azure.cognitiveservices.language.textanalytics.models.ErrorException>`
+         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
@@ -299,7 +295,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
@@ -320,8 +316,7 @@ class TextAnalyticsClientOperationsMixin(object):
         languages in Text Analytics API</a> for the list of enabled languages.
 
         :param documents:
-        :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.LanguageInput]
+        :type documents: list[~azure.ai.textanalytics.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -332,10 +327,9 @@ class TextAnalyticsClientOperationsMixin(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: LanguageResult or the result of cls(response)
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.LanguageResult
+        :rtype: ~azure.ai.textanalytics.models.LanguageResult
         :raises:
-         :class:`ErrorException<azure.cognitiveservices.language.textanalytics.models.ErrorException>`
+         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         input = models.LanguageBatchInput(documents=documents)
@@ -371,7 +365,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
@@ -395,7 +389,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param documents: The set of documents to process as part of this
          batch.
         :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+         list[~azure.ai.textanalytics.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will
          be used for scoring. If a model-version is not specified, the API
          should default to the latest, non-preview version.
@@ -406,10 +400,9 @@ class TextAnalyticsClientOperationsMixin(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: SentimentResponse or the result of cls(response)
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.SentimentResponse
+        :rtype: ~azure.ai.textanalytics.models.SentimentResponse
         :raises:
-         :class:`ErrorException<azure.cognitiveservices.language.textanalytics.models.ErrorException>`
+         :class:`TextAnalyticsErrorException<azure.ai.textanalytics.models.TextAnalyticsErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         input = models.MultiLanguageBatchInput(documents=documents)
@@ -445,7 +438,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.ErrorException(response, self._deserialize)
+            raise models.TextAnalyticsErrorException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:

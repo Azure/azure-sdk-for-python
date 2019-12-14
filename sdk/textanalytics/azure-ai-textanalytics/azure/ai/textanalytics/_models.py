@@ -92,11 +92,11 @@ class RecognizeEntitiesResult(DictMixin):
     :type id: str
     :param entities: Recognized entities in the document.
     :type entities:
-     list[~azure.ai.textanalytics.models.NamedEntity]
+     list[~azure.ai.textanalytics.NamedEntity]
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.models.TextDocumentStatistics
+     ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a RecognizeEntitiesResult.
     """
@@ -115,11 +115,11 @@ class RecognizePiiEntitiesResult(DictMixin):
     :type id: str
     :param entities: Recognized entities in the document.
     :type entities:
-     list[~azure.ai.textanalytics.models.NamedEntity]
+     list[~azure.ai.textanalytics.NamedEntity]
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.models.TextDocumentStatistics
+     ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a RecognizePiiEntitiesResult.
     """
@@ -138,11 +138,11 @@ class DetectLanguageResult(DictMixin):
     :type id: str
     :param detected_languages: A list of extracted languages.
     :type detected_languages:
-     list[~azure.ai.textanalytics.models.DetectedLanguage]
+     list[~azure.ai.textanalytics.DetectedLanguage]
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.models.TextDocumentStatistics
+     ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DetectLanguageResult.
     """
@@ -194,8 +194,8 @@ class NamedEntity(DictMixin):
         )
 
 
-class Error(DictMixin):
-    """Error.
+class TextAnalyticsError(DictMixin):
+    """TextAnalyticsError.
 
     :param code: Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
@@ -205,24 +205,29 @@ class Error(DictMixin):
     :type message: str
     :param target: Error target.
     :type target: str
-    :param innererror: Inner error contains more specific information.
-    :type innererror:
-     ~azure.ai.textanalytics.models.InnerError
+    :param inner_error: Inner error contains more specific information.
+    :type inner_error: ~azure.ai.textanalytics.InnerError
     :param details: Details about specific errors that led to this reported
      error.
-    :type details:
-     list[~azure.ai.textanalytics.models.Error]
-    :param is_error: Boolean check for error item when iterating over list of
-     results. Always True for an instance of a Error.
+    :type details: list[~azure.ai.textanalytics.TextAnalyticsError]
     """
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.target = kwargs.get("target", None)
-        self.innererror = kwargs.get("innererror", None)
-        self.details = kwargs.get("details", None)
-        self.is_error = True
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.inner_error = kwargs.get('inner_error', None)
+        self.details = kwargs.get('details', None)
+
+    @classmethod
+    def _from_generated(cls, err):
+        return cls(
+            code=err.code.value,
+            message=err.message,
+            target=err.target,
+            inner_error=InnerError._from_generated(err.inner_error),  # pylint: disable=protected-access
+            details=err.details,
+        )
 
 
 class InnerError(DictMixin):
@@ -235,18 +240,30 @@ class InnerError(DictMixin):
     :type code: str
     :param message: Error message.
     :type message: str
+    :param details: Error details.
+    :type details: dict[str, str]
     :param target: Error target.
     :type target: str
-    :param innererror: Inner error contains more specific information.
-    :type innererror:
-     ~azure.ai.textanalytics.models.InnerError
+    :param inner_error: Inner error contains more specific information.
+    :type inner_error: ~azure.ai.textanalytics.InnerError
     """
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.target = kwargs.get("target", None)
-        self.innererror = kwargs.get("innererror", None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)
+        self.target = kwargs.get('target', None)
+        self.inner_error = kwargs.get('inner_error', None)
+
+    @classmethod
+    def _from_generated(cls, inner_err):
+        return cls(
+            code=inner_err.code.value,
+            message=inner_err.message,
+            details=inner_err.details,
+            target=inner_err.target,
+            inner_error=inner_err.inner_error
+        )
 
 
 class ExtractKeyPhrasesResult(DictMixin):
@@ -261,7 +278,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.models.TextDocumentStatistics
+     ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a ExtractKeyPhrasesResult.
     """
@@ -280,11 +297,11 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :type id: str
     :param entities: Recognized well-known entities in the document.
     :type entities:
-     list[~azure.ai.textanalytics.models.LinkedEntity]
+     list[~azure.ai.textanalytics.LinkedEntity]
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.models.TextDocumentStatistics
+     ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a RecognizeLinkedEntitiesResult.
     """
@@ -308,13 +325,14 @@ class AnalyzeSentimentResult(DictMixin):
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.models.TextDocumentStatistics
+     ~azure.ai.textanalytics.TextDocumentStatistics
     :param document_scores: Document level sentiment confidence
      scores between 0 and 1 for each sentiment class.
-    :type document_scores: dict
+    :type document_scores:
+     ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
-     list[~azure.ai.textanalytics.models.SentenceSentiment]
+     list[~azure.ai.textanalytics.SentenceSentiment]
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a AnalyzeSentimentResult.
     """
@@ -360,7 +378,7 @@ class DocumentError(DictMixin):
     :param id: Document Id.
     :type id: str
     :param error: Document Error.
-    :type error: dict
+    :type error: ~azure.ai.textanalytics.TextAnalyticsError
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always True for an instance of a DocumentError.
     """
@@ -369,6 +387,14 @@ class DocumentError(DictMixin):
         self.id = kwargs.get("id", None)
         self.error = kwargs.get("error", None)
         self.is_error = True
+
+    @classmethod
+    def _from_generated(cls, doc_err):
+        return cls(
+            id=doc_err.id,
+            error=TextAnalyticsError._from_generated(doc_err.error),  # pylint: disable=protected-access
+            is_error=True
+        )
 
 
 class DetectLanguageInput(LanguageInput):
@@ -400,7 +426,7 @@ class LinkedEntity(DictMixin):
     :param matches: List of instances this entity appears in the
      text.
     :type matches:
-     list[~azure.ai.textanalytics.models.LinkedEntityMatch]
+     list[~azure.ai.textanalytics.LinkedEntityMatch]
     :param language: Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data
@@ -529,7 +555,8 @@ class SentenceSentiment(DictMixin):
     :type sentiment: str
     :param sentence_scores: The sentiment confidence score between 0
      and 1 for the sentence for all classes.
-    :type sentence_scores: dict
+    :type sentence_scores:
+     ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
     :param offset: The sentence offset from the start of the
      document.
     :type offset: int
@@ -549,9 +576,35 @@ class SentenceSentiment(DictMixin):
     @classmethod
     def _from_generated(cls, sentence):
         return cls(
-            sentiment=sentence.sentiment,
-            sentence_scores=sentence.sentence_scores,
+            sentiment=sentence.sentiment.value,
+            sentence_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             offset=sentence.offset,
             length=sentence.length,
             warnings=sentence.warnings,
+        )
+
+
+class SentimentConfidenceScorePerLabel(DictMixin):
+    """Represents the confidence scores between 0 and 1 across all sentiment
+    classes: positive, neutral, negative.
+
+    :param positive: Positive score.
+    :type positive: float
+    :param neutral: Neutral score.
+    :type neutral: float
+    :param negative: Negative score.
+    :type negative: float
+    """
+
+    def __init__(self, **kwargs):
+        self.positive = kwargs.get('positive', None)
+        self.neutral = kwargs.get('neutral', None)
+        self.negative = kwargs.get('negative', None)
+
+    @classmethod
+    def _from_generated(cls, score):
+        return cls(
+            positive=score.positive,
+            neutral=score.neutral,
+            negative=score.negative
         )
