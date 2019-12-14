@@ -257,7 +257,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         to_cancel_pids = set(self._tasks.keys())
                     await self._cancel_tasks_for_partitions(to_cancel_pids)
                 except Exception as err:  # pylint:disable=broad-except
-                    await self._process_error(None, err)
+                    await self._process_error(None, err)  # type: ignore
                     '''
                     ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                     when there are load balancing and/or checkpointing (checkpoint_store isn't None).

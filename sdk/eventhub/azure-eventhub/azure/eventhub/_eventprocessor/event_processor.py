@@ -182,7 +182,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
                                 err, self._eventhub_name, self._consumer_group, self._load_balancing_interval)
-                self._handle_callback(self._error_handler, None, err)
+                self._handle_callback(self._error_handler, None, err)  # type: ignore
                 # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                 # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
                 # They're swallowed here to retry every self._load_balancing_interval seconds.
