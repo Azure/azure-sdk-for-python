@@ -6,5 +6,8 @@
 # --------------------------------------------------------------------------------------------
 
 MYPY_HARD_FAILURE_OPTED = [
-  "azure-core"
+  "azure-core",
+  "azure-eventhub",
+  "azure-eventhub-checkpointstoreblob",
+  "azure-eventhub-checkpointstoreblob-aio",
 ]
