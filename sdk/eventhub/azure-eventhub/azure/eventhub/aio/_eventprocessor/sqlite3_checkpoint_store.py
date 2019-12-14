@@ -3,16 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
+from typing import List, Dict, Any, Iterable, Optional, Union
 import time
 import uuid
 import sqlite3
 import logging
+
 from .checkpoint_store import CheckpointStore
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _check_table_name(table_name: str):
+def _check_table_name(table_name: str) -> str:
     for c in table_name:
         if not (c.isalnum() or c == "_"):
             raise ValueError("Table name \"{}\" is not in correct format".format(table_name))
@@ -42,8 +44,12 @@ class Sqlite3CheckpointStore(CheckpointStore):
     checkpoint_fields_dict = {**primary_keys_dict, **checkpoint_data_fields_dict}
     checkpoint_fields = primary_keys + checkpoint_data_fields
 
-    def __init__(self, db_filename: str = ":memory:",
-                 ownership_table: str = "ownership", checkpoint_table: str = "checkpoint"):
+    def __init__(
+            self,
+            db_filename: str = ":memory:",
+            ownership_table: str = "ownership",
+            checkpoint_table: str = "checkpoint"
+        ) -> None:
         super(Sqlite3CheckpointStore, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)
         self.checkpoint_table = _check_table_name(checkpoint_table)
@@ -69,7 +75,12 @@ class Sqlite3CheckpointStore(CheckpointStore):
             c.close()
         self.conn = conn
 
-    async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
+    async def list_ownership(
+            self,
+            fully_qualified_namespace: str,
+            eventhub_name: str,
+            consumer_group: str
+        ) -> List[Dict[str, Any]]:
         cursor = self.conn.cursor()
         try:
             cursor.execute("select " + ",".join(self.ownership_fields) +
@@ -80,7 +91,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
         finally:
             cursor.close()
 
-    async def claim_ownership(self, ownership_list):
+    async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
         result = []
         cursor = self.conn.cursor()
         try:
@@ -125,7 +136,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
         finally:
             cursor.close()
 
-    async def update_checkpoint(self, checkpoint):
+    async def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]]) -> None:
         cursor = self.conn.cursor()
         try:
             cursor.execute("insert or replace into " + self.checkpoint_table + "("
@@ -139,7 +150,12 @@ class Sqlite3CheckpointStore(CheckpointStore):
         finally:
             cursor.close()
 
-    async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
+    async def list_checkpoints(
+            self,
+            fully_qualified_namespace: str,
+            eventhub_name: str,
+            consumer_group: str
+        ) -> List[Dict[str, Any]]:
         cursor = self.conn.cursor()
         try:
             cursor.execute("select "
@@ -154,5 +170,5 @@ class Sqlite3CheckpointStore(CheckpointStore):
         finally:
             cursor.close()
 
-    async def close(self):
+    async def close(self) -> None:
         self.conn.close()

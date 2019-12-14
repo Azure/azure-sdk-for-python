@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-from uamqp import types  # type: ignore
+from uamqp import types
 
 
 PROP_SEQ_NUMBER = b"x-opt-sequence-number"

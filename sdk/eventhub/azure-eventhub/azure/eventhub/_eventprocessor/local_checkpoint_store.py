@@ -12,6 +12,7 @@ class InMemoryCheckpointStore(Sqlite3CheckpointStore):
 
     """
     def __init__(self):
+        # type: () -> None
         super(InMemoryCheckpointStore, self).__init__(db_filename=":memory:")
 
 
@@ -21,4 +22,5 @@ class FileBasedCheckpointStore(Sqlite3CheckpointStore):
 
     """
     def __init__(self, filename):
+        # type: (str) -> None
         super(FileBasedCheckpointStore, self).__init__(db_filename=filename)

@@ -406,7 +406,7 @@ class CertificateOperation(object):
         cancellation_requested=False,  # type: Optional[bool]
         status=None,  # type: Optional[str]
         status_details=None,  # type: Optional[str]
-        error=None,  # type: Optional[models.Error]
+        error=None,  # type: Optional[CertificateOperationError]
         target=None,  # type: Optional[str]
         request_id=None,  # type: Optional[str]
     ):
@@ -650,7 +650,6 @@ class CertificatePolicy(object):
         if (
             self.enabled is not None
             or self.not_before is not None
-            or self.expires_on is not None
             or self.created_on is not None
             or self.updated_on is not None
             or self.recovery_level
@@ -658,7 +657,6 @@ class CertificatePolicy(object):
             attributes = models.CertificateAttributes(
                 enabled=self.enabled,
                 not_before=self.not_before,
-                expires=self.expires_on,
                 created=self.created_on,
                 updated=self.updated_on,
                 recovery_level=self.recovery_level,
@@ -988,15 +986,6 @@ class CertificatePolicy(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires_on(self):
-        # type: () -> datetime
-        """The datetime when the certificate expires.
-
-        :rtype: ~datetime.datetime
-        """
-        return self._attributes.expires if self._attributes else None
-
-    @property
     def created_on(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
@@ -1112,15 +1101,6 @@ class IssuerProperties(object):
         """:rtype: str"""
         return self._provider
 
-    @property
-    def vault_url(self):
-        # type: () -> str
-        """URL of the vault containing the issuer
-
-        :rtype: str
-        """
-        return self._vault_id.vault_url
-
 
 class CertificateIssuer(object):
     """The issuer for a Key Vault certificate.
@@ -1135,7 +1115,7 @@ class CertificateIssuer(object):
 
     def __init__(
         self,
-        provider=None,  # type: Optional[str]
+        provider,  # type: str
         attributes=None,  # type: Optional[models.IssuerAttributes]
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
