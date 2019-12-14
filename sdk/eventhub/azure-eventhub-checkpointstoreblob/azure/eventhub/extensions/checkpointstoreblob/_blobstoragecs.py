@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Dict
+from typing import Dict, Optional, Any
 import logging
 import time
 import calendar
 from datetime import datetime
 from collections import defaultdict
 
-from azure.eventhub import CheckpointStore  # pylint: disable=no-name-in-module
+from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob import BlobClient, ContainerClient  # type: ignore
