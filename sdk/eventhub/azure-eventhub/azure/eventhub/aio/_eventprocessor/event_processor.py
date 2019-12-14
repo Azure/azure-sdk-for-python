@@ -266,7 +266,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                     that this EventProcessor is working on. So two or multiple EventProcessors may be working
                     on the same partition for a short while.
-                    When owner_levle by default is set, this time duration will be very short.
+                    Setting owner_level would create exclusive connection to the partition and
+                    alleviate duplicate-receiving greatly.
                     '''  # pylint:disable=pointless-string-statement
                     _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                     "eventhub %r consumer group %r. Retrying after %r seconds",

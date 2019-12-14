@@ -190,7 +190,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                 # that this EventProcessor is working on. So two or multiple EventProcessors may be working
                 # on the same partition for a short while.
-                # When owner_levle by default is set, this time duration will be very short.
+                # Setting owner_level would create exclusive connection to the partition and
+                # alleviate duplicate-receiving greatly.
             time.sleep(self._load_balancing_interval)
 
     def _close_consumer(self, partition_id, consumer, reason):
