@@ -49,10 +49,8 @@ class AbstractPreparer(object):
                     except NameInUseError:
                         if i == retries - 1:
                             raise
-                        self.random_resource_name = None
+                        self.resource_random_name = None
                         resource_name = self.random_name
-                    else:
-                        break
 
             if parameter_update:
                 kwargs.update(parameter_update)
