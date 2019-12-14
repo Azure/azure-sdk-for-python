@@ -2176,6 +2176,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :type protected_items_count: int
     :param backup_management_type: Required. Constant filled by server.
     :type backup_management_type: str
+    :param instant_rp_details:
+    :type instant_rp_details:
+     ~azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails
     :param schedule_policy: Backup schedule specified as part of backup
      policy.
     :type schedule_policy:
@@ -2199,14 +2202,16 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     _attribute_map = {
         'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'instant_rp_details': {'key': 'instantRPDetails', 'type': 'InstantRPAdditionalDetails'},
         'schedule_policy': {'key': 'schedulePolicy', 'type': 'SchedulePolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, *, protected_items_count: int=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
+    def __init__(self, *, protected_items_count: int=None, instant_rp_details=None, schedule_policy=None, retention_policy=None, instant_rp_retention_range_in_days: int=None, time_zone: str=None, **kwargs) -> None:
         super(AzureIaaSVMProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
+        self.instant_rp_details = instant_rp_details
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
         self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
