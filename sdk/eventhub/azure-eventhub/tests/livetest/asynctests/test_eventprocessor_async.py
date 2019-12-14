@@ -145,6 +145,12 @@ async def test_loadbalancer_list_ownership_error():
         async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
             raise RuntimeError("Test runtime error")
 
+    async def on_error(partition_context, error):
+        assert partition_context is None
+        assert isinstance(error, RuntimeError)
+        on_error.called = True
+
+    on_error.called = False
     eventhub_client = MockEventHubClient()
     checkpoint_store = ErrorCheckpointStore()
 
@@ -152,17 +158,20 @@ async def test_loadbalancer_list_ownership_error():
                                      consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
-                                     error_handler=None,
+                                     error_handler=on_error,
                                      partition_initialize_handler=None,
                                      partition_close_handler=None,
                                      load_balancing_interval=1)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
-    assert event_processor._running is True
-    assert len(event_processor._tasks) == 0
-    await event_processor.stop()
-    task.cancel()
-    await eventhub_client.close()
+    try:
+        assert event_processor._running is True
+        assert len(event_processor._tasks) == 0
+        assert on_error.called is True
+    finally:
+        await event_processor.stop()
+        task.cancel()
+        await eventhub_client.close()
 
 
 @pytest.mark.asyncio

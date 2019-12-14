@@ -139,9 +139,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                     " has another error during running process_error(). The exception is %r.",
                     self._id,
-                    partition_context.eventhub_name,
-                    partition_context.partition_id,
-                    partition_context.consumer_group,
+                    self._eventhub_name,
+                    partition_context.partition_id if partition_context else None,
+                    self._consumer_group,
                     exp
                 )
 
@@ -164,27 +164,34 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         """
         while self._running:
             try:
-                checkpoints = self._ownership_manager.get_checkpoints() if self._checkpoint_store else None
                 claimed_partition_ids = self._ownership_manager.claim_ownership()
                 if claimed_partition_ids:
-                    to_cancel_list = set(self._consumers.keys()) - set(claimed_partition_ids)
-                    self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
+                    existing_pids = set(self._consumers.keys())
+                    claimed_pids = set(claimed_partition_ids)
+                    to_cancel_pids = existing_pids - claimed_pids
+                    newly_claimed_pids = claimed_pids - existing_pids
+                    if newly_claimed_pids:
+                        checkpoints = self._ownership_manager.get_checkpoints() if self._checkpoint_store else None
+                        self._create_tasks_for_claimed_ownership(newly_claimed_pids, checkpoints)
                 else:
                     _LOGGER.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
-                    to_cancel_list = set(self._consumers.keys())
-                if to_cancel_list:
-                    self._cancel_tasks_for_partitions(to_cancel_list)
+                    to_cancel_pids = set(self._consumers.keys())
+                if to_cancel_pids:
+                    self._cancel_tasks_for_partitions(to_cancel_pids)
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
                                 err, self._eventhub_name, self._consumer_group, self._load_balancing_interval)
+                self._handle_callback(self._error_handler, None, err)  # type: ignore
                 # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                 # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
                 # They're swallowed here to retry every self._load_balancing_interval seconds.
                 # Meanwhile this event processor won't lose the partitions it has claimed before.
                 # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                 # that this EventProcessor is working on. So two or multiple EventProcessors may be working
-                # on the same partition.
+                # on the same partition for a short while.
+                # Setting owner_level would create exclusive connection to the partition and
+                # alleviate duplicate-receiving greatly.
             time.sleep(self._load_balancing_interval)
 
     def _close_consumer(self, partition_id, consumer, reason):
