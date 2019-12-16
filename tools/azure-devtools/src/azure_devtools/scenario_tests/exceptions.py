@@ -10,5 +10,11 @@ class AzureTestError(Exception):
         super(AzureTestError, self).__init__(message.format(error_message))
 
 class NameInUseError(Exception):
-    def __init__(self, error_message):
+    def __init__(self, vault_name):
+        error_message = "A vault with the name {} already exists".format(vault_name)
         super(NameInUseError, self).__init__(error_message)
+
+class ReservedResourceNameError(Exception):
+    def __init__(self, rg_name):
+        error_message = "The resource name {} or a part of the name is trademarked / reserved".format(rg_name)
+        super(ReservedResourceNameError, self).__init__(error_message)
