@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import sys
 import os
 import logging
 import threading
@@ -68,13 +67,13 @@ class StressTestRunner(object):
             "--transport_type",
             help="Transport type, 0 means AMQP, 1 means AMQP over WebSocket",
             type=int,
-            default=TransportType.Amqp
+            default=0
         )
         self.argument_parser.add_argument("--parallel_send_cnt", help="Number of parallelling sending", type=int)
         self.argument_parser.add_argument(
             "--parallel_create_new_client",
+            action="store_true",
             help="Whether create new client for each sending",
-            type=bool
         )
         self.argument_parser.add_argument("--proxy_hostname", type=str)
         self.argument_parser.add_argument("--proxy_port", type=str)
@@ -292,7 +291,7 @@ class StressTestRunner(object):
         if self.args.parallel_create_new_client:
             for i in range(cnt):
                 tasks.append(
-                    asyncio.create_task(
+                    asyncio.ensure_future(
                         self.run_test_method_async(
                             test_method,
                             worker[i],
