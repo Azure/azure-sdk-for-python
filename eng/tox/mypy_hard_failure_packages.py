@@ -10,4 +10,5 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-eventhub",
   "azure-eventhub-checkpointstoreblob",
   "azure-eventhub-checkpointstoreblob-aio",
+  "azure-ai-textanalytics"
 ]
