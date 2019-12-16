@@ -44,7 +44,7 @@ steps:
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
-    condition: succeededOrFailed()
+    condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'

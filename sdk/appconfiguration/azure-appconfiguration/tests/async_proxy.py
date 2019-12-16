@@ -48,11 +48,11 @@ class AzureAppConfigurationClientProxy(object):
         )
 
     def list_configuration_settings(
-        self, labels=None, keys=None, accept_datetime=None, fields=None, **kwargs
+        self, label_filter=None, key_filter=None, accept_datetime=None, fields=None, **kwargs
     ):
         paged = self.obj.list_configuration_settings(
-            labels=labels,
-            keys=keys,
+            label_filter=label_filter,
+            key_filter=key_filter,
             accept_datetime=accept_datetime,
             fields=fields,
             **kwargs
@@ -60,11 +60,11 @@ class AzureAppConfigurationClientProxy(object):
         return _to_list(paged)
 
     def list_revisions(
-        self, labels=None, keys=None, accept_datetime=None, fields=None, **kwargs
+        self, label_filter=None, key_filter=None, accept_datetime=None, fields=None, **kwargs
     ):
         paged = self.obj.list_revisions(
-            labels=labels,
-            keys=keys,
+            label_filter=label_filter,
+            key_filter=key_filter,
             accept_datetime=accept_datetime,
             fields=fields,
             **kwargs

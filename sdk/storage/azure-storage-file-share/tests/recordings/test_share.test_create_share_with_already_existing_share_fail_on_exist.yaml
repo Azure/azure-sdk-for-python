@@ -173,4 +173,172 @@ interactions:
     status:
       code: 202
       message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 1022f7e2-1d1b-11ea-98b2-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:07:46 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 12 Dec 2019 20:07:49 GMT
+      ETag:
+      - '"0x8D77F3EF6B0693B"'
+      Last-Modified:
+      - Thu, 12 Dec 2019 20:07:49 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 054f362b-b01a-0031-7027-b13fd7000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 10407ca8-1d1b-11ea-a057-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:07:46 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
+        specified share already exists.\nRequestId:054f362e-b01a-0031-7127-b13fd7000000\nTime:2019-12-12T20:07:50.0131172Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '222'
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 12 Dec 2019 20:07:49 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareAlreadyExists
+      x-ms-request-id:
+      - 054f362e-b01a-0031-7127-b13fd7000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 409
+      message: The specified share already exists.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 104742fe-1d1b-11ea-8c67-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:07:46 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>sharef92e1cc1</Name><Properties><Last-Modified>Thu,
+        12 Dec 2019 20:07:49 GMT</Last-Modified><Etag>\"0x8D77F3EF6B0693B\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Thu, 12 Dec 2019 20:07:49 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 054f362f-b01a-0031-7227-b13fd7000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 104da740-1d1b-11ea-9d13-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:07:46 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 12 Dec 2019 20:07:49 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 054f3630-b01a-0031-7327-b13fd7000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
 version: 1

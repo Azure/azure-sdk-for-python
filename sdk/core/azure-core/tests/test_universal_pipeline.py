@@ -482,3 +482,28 @@ def test_retry_seekable_file():
     http_retry = RetryPolicy(retry_total = 1)
     pipeline = Pipeline(MockTransport(), [http_retry])
     pipeline.run(http_request)
+
+def test_retry_on_429():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._count = 0
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self._count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 429
+            return response
+
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_retry = RetryPolicy(retry_total = 1)
+    transport = MockTransport()
+    pipeline = Pipeline(transport, [http_retry])
+    pipeline.run(http_request)
+    assert transport._count == 2

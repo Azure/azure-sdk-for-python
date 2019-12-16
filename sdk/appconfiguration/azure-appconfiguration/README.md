@@ -34,9 +34,13 @@ az appconfig create --name <config-store-name> --resource-group <resource-group-
 
 ### Authenticate the client
 
-In order to interact with the App Configuration service, you'll need to create an instance of the [AzureAppConfigurationClient][configuration_client_class] class. To make this possible, you'll need the connection string of the Configuration Store.
+In order to interact with the App Configuration service, you'll need to create an instance of the 
+[AzureAppConfigurationClient][configuration_client_class] class. To make this possible, 
+you can either use the connection string of the Configuration Store or use an AAD token.
 
-#### Get credentials
+#### Use connection string
+
+##### Get credentials
 
 Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store.
 
@@ -46,15 +50,73 @@ az appconfig credential list --name <config-store-name>
 
 Alternatively, get the connection string from the Azure Portal.
 
-#### Create client
+##### Create client
 
 Once you have the value of the connection string, you can create the AzureAppConfigurationClient:
 
 ```python
-    from azure.appconfiguration import AzureAppConfigurationClient
+from azure.appconfiguration import AzureAppConfigurationClient
 
-    connection_str = "<connection_string>"
-    client = AzureAppConfigurationClient.from_connection_string(connection_str)
+connection_str = "<connection_string>"
+client = AzureAppConfigurationClient.from_connection_string(connection_str)
+```
+
+#### Use AAD token
+
+Here we demonstrate using [DefaultAzureCredential][default_cred_ref]
+to authenticate as a service principal. However, [AzureAppConfigurationClient][configuration_client_class]
+accepts any [azure-identity][azure_identity] credential. See the
+[azure-identity][azure_identity] documentation for more information about other
+credentials.
+
+##### Create a service principal (optional)
+This [Azure CLI][azure_cli] snippet shows how to create a
+new service principal. Before using it, replace "your-application-name" with
+the appropriate name for your service principal.
+
+Create a service principal:
+```Bash
+az ad sp create-for-rbac --name http://my-application --skip-assignment
+```
+
+> Output:
+> ```json
+> {
+>     "appId": "generated app id",
+>     "displayName": "my-application",
+>     "name": "http://my-application",
+>     "password": "random password",
+>     "tenant": "tenant id"
+> }
+> ```
+
+Use the output to set **AZURE_CLIENT_ID** ("appId" above), **AZURE_CLIENT_SECRET**
+("password" above) and **AZURE_TENANT_ID** ("tenant" above) environment variables.
+The following example shows a way to do this in Bash:
+```Bash
+export AZURE_CLIENT_ID="generated app id"
+export AZURE_CLIENT_SECRET="random password"
+export AZURE_TENANT_ID="tenant id"
+```
+
+Assign one of the applicable [App Configuration roles](https://github.com/Azure/AppConfiguration/blob/master/docs/REST/authorization/aad.md) to the service principal.
+
+##### Create a client
+Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
+**AZURE_TENANT_ID** environment variables are set,
+[DefaultAzureCredential][default_cred_ref] will be able to authenticate the
+[AzureAppConfigurationClient][configuration_client_class].
+
+Constructing the client also requires your configuration store's URL, which you can
+get from the Azure CLI or the Azure Portal. In the Azure Portal, the URL can be found listed as the service "Endpoint"
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.appconfiguration import AzureAppConfigurationClient
+
+credential = DefaultAzureCredential()
+
+client = AzureAppConfigurationClient(base_url="your_endpoint_url", credential=credential)
 ```
 
 ## Key concepts
@@ -69,14 +131,14 @@ For example, MaxRequests may be 100 in "NorthAmerica", and 200 in "WestEurope". 
 Properties of a Configuration Setting:
 
 ```python
-    key : str
-    label : str
-    content_type : str
-    value : str
-    last_modified : str
-    read_only : bool
-    tags : dict
-    etag : str
+key : str
+label : str
+content_type : str
+value : str
+last_modified : str
+read_only : bool
+tags : dict
+etag : str
 ```
 
 ## Examples
@@ -202,3 +264,5 @@ Http request and response details are printed to stdout with this logging config
 [configuration_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/azure/appconfiguration/_azure_appconfiguration_client.py
 [package]: https://pypi.org/project/azure-appconfiguration/
 [configuration_store]: https://azure.microsoft.com/en-us/services/app-configuration/
+[default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
