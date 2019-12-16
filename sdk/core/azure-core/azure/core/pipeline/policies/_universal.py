@@ -113,7 +113,7 @@ class RequestIdPolicy(SansIOHTTPPolicy):
     operations, and additional request id can also be set dynamically per operation.
 
     :keyword str request_id: The request id to be added into header.
-    :keyword bool auto_request_id: Auto generates a unique request ID per call if true.
+    :keyword bool auto_request_id: Auto generates a unique request ID per call if true which is by default.
 
     .. admonition:: Example:
 
@@ -143,14 +143,14 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        if self._auto_request_id:
+        if 'request_id' in request.context.options:
+            request_id = request.context.options.pop('request_id')
+        elif self._request_id:
+            request_id = self._request_id
+        elif self._auto_request_id:
             request_id = str(uuid.uuid1())
         else:
             request_id = None
-        if self._request_id:
-            request_id = self._request_id
-        if 'request_id' in request.context.options:
-            request_id = request.context.options.pop('request_id')
         header = {"x-ms-client-request-id": request_id}
         request.http_request.headers.update(header)
 
