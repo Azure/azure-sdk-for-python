@@ -13,14 +13,16 @@ from .._connection_manager import _ConnectionMode
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync
+
     try:
         from typing_extensions import Protocol
     except ImportError:
         Protocol = object  # type: ignore
 
     class ConnectionManager(Protocol):
-
-        async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
+        async def get_connection(
+            self, host: str, auth: "JWTTokenAsync"
+        ) -> ConnectionAsync:
             pass
 
         async def close_connection(self) -> None:
@@ -32,7 +34,7 @@ if TYPE_CHECKING:
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs) -> None:
-        self._loop = kwargs.get('loop')
+        self._loop = kwargs.get("loop")
         self._lock = Lock(loop=self._loop)
         self._conn = None
 
@@ -41,14 +43,16 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._error_policy = kwargs.get("error_policy")
         self._properties = kwargs.get("properties")
         self._encoding = kwargs.get("encoding") or "UTF-8"
-        self._transport_type = kwargs.get('transport_type') or TransportType.Amqp
-        self._http_proxy = kwargs.get('http_proxy')
+        self._transport_type = kwargs.get("transport_type") or TransportType.Amqp
+        self._http_proxy = kwargs.get("http_proxy")
         self._max_frame_size = kwargs.get("max_frame_size")
         self._channel_max = kwargs.get("channel_max")
         self._idle_timeout = kwargs.get("idle_timeout")
-        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
+        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get(
+            "remote_idle_timeout_empty_frame_send_ratio"
+        )
 
-    async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> ConnectionAsync:
+    async def get_connection(self, host: str, auth: "JWTTokenAsync") -> ConnectionAsync:
         async with self._lock:
             if self._conn is None:
                 self._conn = ConnectionAsync(
@@ -63,7 +67,8 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                     error_policy=self._error_policy,
                     debug=self._debug,
                     loop=self._loop,
-                    encoding=self._encoding)
+                    encoding=self._encoding,
+                )
             return self._conn
 
     async def close_connection(self) -> None:
@@ -87,7 +92,7 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs) -> None:
         pass
 
-    async def get_connection(self, host: str, auth: 'JWTTokenAsync') -> None:
+    async def get_connection(self, host: str, auth: "JWTTokenAsync") -> None:
         pass  # return None
 
     async def close_connection(self) -> None:
@@ -97,7 +102,7 @@ class _SeparateConnectionManager(object):
         pass
 
 
-def get_connection_manager(**kwargs) -> 'ConnectionManager':
+def get_connection_manager(**kwargs) -> "ConnectionManager":
     connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
