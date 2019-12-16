@@ -4,6 +4,10 @@
 -------------------
 ## Version 1.1.2 Unreleased
 
+### Features
+
+- Support auto_request_id in RequestIdPolicy   #9163
+
 ## 2019-12-03 Version 1.1.1
 
 ### Bug fixes
