@@ -287,7 +287,7 @@ class KeyVaultCertificate(object):
 
     def __init__(
         self,
-        policy,  # type: CertificatePolicy
+        policy=None,  # type: Optional[CertificatePolicy]
         properties=None,  # type: Optional[CertificateProperties]
         cer=None,  # type: Optional[bytes]
         **kwargs  # type: Any
@@ -470,6 +470,15 @@ class CertificateOperation(object):
         return self._vault_id.name
 
     @property
+    def vault_url(self):
+        # type: () -> str
+        """URL of the vault containing the CertificateOperation
+
+        :rtype: str
+        """
+        return self._vault_id.vault_url
+
+    @property
     def issuer_name(self):
         # type: () -> str
         """The name of the issuer of the certificate.
@@ -602,7 +611,6 @@ class CertificatePolicy(object):
         self._issuer_name = issuer_name
         self._subject = kwargs.pop("subject", None)
         self._attributes = kwargs.pop("attributes", None)
-        self._id = kwargs.pop("cert_policy_id", None)
         self._exportable = kwargs.pop("exportable", None)
         self._key_type = kwargs.pop("key_type", None)
         self._key_size = kwargs.pop("key_size", None)
@@ -631,7 +639,7 @@ class CertificatePolicy(object):
 
     def __repr__(self):
         # type () -> str
-        return "<CertificatePolicy [{}]>".format(self.id)[:1024]
+        return "<CertificatePolicy [issuer_name: {}]>".format(self.issuer_name)[:1024]
 
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
@@ -649,17 +657,13 @@ class CertificatePolicy(object):
         # pylint:disable=too-many-boolean-expressions
         if (
             self.enabled is not None
-            or self.not_before is not None
             or self.created_on is not None
             or self.updated_on is not None
-            or self.recovery_level
         ):
             attributes = models.CertificateAttributes(
                 enabled=self.enabled,
-                not_before=self.not_before,
                 created=self.created_on,
                 updated=self.updated_on,
-                recovery_level=self.recovery_level,
             )
         else:
             attributes = None
@@ -723,7 +727,6 @@ class CertificatePolicy(object):
             secret_properties = None
 
         policy_bundle = models.CertificatePolicy(
-            id=self.id,
             key_properties=key_properties,
             secret_properties=secret_properties,
             x509_certificate_properties=x509_certificate_properties,
@@ -759,7 +762,6 @@ class CertificatePolicy(object):
                 if certificate_policy_bundle.issuer_parameters else None
             ),
             subject=(x509_certificate_properties.subject if x509_certificate_properties else None),
-            cert_policy_id=certificate_policy_bundle.id,
             certificate_type=(
                 certificate_policy_bundle.issuer_parameters.certificate_type
                 if certificate_policy_bundle.issuer_parameters
@@ -804,12 +806,6 @@ class CertificatePolicy(object):
                 x509_certificate_properties.validity_in_months if x509_certificate_properties else None
             ),
         )
-
-    @property
-    def id(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._id
 
     @property
     def exportable(self):
@@ -977,15 +973,6 @@ class CertificatePolicy(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def not_before(self):
-        # type: () -> datetime
-        """The datetime before which the certificate is not valid.
-
-        :rtype: ~datetime.datetime
-        """
-        return self._attributes.not_before if self._attributes else None
-
-    @property
     def created_on(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
@@ -1002,15 +989,6 @@ class CertificatePolicy(object):
         :rtype: ~datetime.datetime
         """
         return self._attributes.updated if self._attributes else None
-
-    @property
-    def recovery_level(self):
-        # type: () -> models.DeletionRecoveryLevel
-        """The deletion recovery level currently in effect for the certificate.
-
-        :rtype: DeletionRecoveryLevel
-        """
-        return self._attributes.recovery_level if self._attributes else None
 
 
 class CertificateContact(object):
@@ -1174,15 +1152,6 @@ class CertificateIssuer(object):
         # Issuers are not versioned.
         """:rtype: str"""
         return self._vault_id.version
-
-    @property
-    def vault_url(self):
-        # type: () -> str
-        """URL of the vault containing the issuer
-
-        :rtype: str
-        """
-        return self._vault_id.vault_url
 
     @property
     def provider(self):
