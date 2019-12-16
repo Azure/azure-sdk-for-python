@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 from uamqp import constants
 from ._common import EventData, EventDataBatch
 from ._version import VERSION
+
 __version__ = VERSION
 
 from ._producer_client import EventHubProducerClient

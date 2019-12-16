@@ -26,7 +26,12 @@
 import sys
 
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
+from azure.core.pipeline.policies import (
+    SansIOHTTPPolicy,
+    UserAgentPolicy,
+    AsyncRedirectPolicy,
+    AsyncHTTPPolicy,
+    AsyncRetryPolicy)
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
@@ -34,6 +39,7 @@ from azure.core.pipeline.transport import (
     TrioRequestsTransport,
     AioHttpTransport
 )
+from azure.core.exceptions import AzureError
 
 import aiohttp
 import trio
@@ -163,3 +169,14 @@ def test_conf_async_trio_requests():
 
     response = trio.run(do)
     assert response.http_response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_retry_without_http_response():
+    class NaughtyPolicy(AsyncHTTPPolicy):
+        def send(*args):
+            raise AzureError('boo')
+
+    policies = [AsyncRetryPolicy(), NaughtyPolicy()]
+    pipeline = AsyncPipeline(policies=policies, transport=None)
+    with pytest.raises(AzureError):
+        await pipeline.run(HttpRequest('GET', url='https://foo.bar'))

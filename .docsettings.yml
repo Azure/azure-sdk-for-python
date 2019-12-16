@@ -54,6 +54,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-nspkg/README.rst', '#4554']
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/storage/azure-storage-file-datalake/swagger/README.md', '#4554']
+  - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
@@ -76,6 +77,7 @@ known_content_issues:
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
   - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']
+  - ['sdk/textanalytics/azure-ai-nspkg/README.md', 'nspkg and common']
 
   # root readme
   - ['README.md', 'root readme']

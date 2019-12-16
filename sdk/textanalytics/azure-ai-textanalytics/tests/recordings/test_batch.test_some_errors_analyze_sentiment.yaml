@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
+      "I did not like the hotel we stayed it. It was too expensive.", "language":
+      "english"}, {"id": "3", "text": "The restaurant had really good food. I recommend
+      you try it.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '269'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"3","sentiment":"positive","documentScores":{"positive":0.99577021598815918,"neutral":0.0020832819864154,"negative":0.0021464885212481},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99423426389694214,"neutral":0.0028649375308305,"negative":0.0029007578268647},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.99730610847473145,"neutral":0.0013016263255849,"negative":0.0013922193320468},"offset":37,"length":23}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}},{"id":"2","error":{"code":"InvalidArgument","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: de,en,es,fr,it,ja,nl,pt-PT,zh-Hans,zh-Hant"},"message":"Invalid
+        Language Code."}}],"modelVersion":"latest"}'
+    headers:
+      apim-request-id:
+      - 396f50c5-78d6-48bd-a710-57cbd34d2abd
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Thu, 14 Nov 2019 21:39:24 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 6be9ae68-74cc-4448-9de7-0e2946d924df
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '71'
+    status:
+      code: 200
+      message: OK
+version: 1
