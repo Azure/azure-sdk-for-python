@@ -83,7 +83,9 @@ class CheckpointStore(object):
         """
 
     @abstractmethod
-    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
+    def list_checkpoints(
+        self, fully_qualified_namespace, eventhub_name, consumer_group
+    ):
         # type: (str, str, str) -> Iterable[Dict[str, Any]]
         """List the updated checkpoints from the store.
 

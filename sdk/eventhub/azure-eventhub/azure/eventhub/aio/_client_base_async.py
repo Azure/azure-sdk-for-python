@@ -28,6 +28,7 @@ from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -42,6 +43,7 @@ class EventHubSharedKeyCredential(object):
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
     """
+
     def __init__(self, policy: str, key: str):
         self.policy = policy
         self.key = key
@@ -55,12 +57,12 @@ class EventHubSharedKeyCredential(object):
 
 class ClientBaseAsync(ClientBase):
     def __init__(
-            self,
-            fully_qualified_namespace: str,
-            eventhub_name: str,
-            credential: 'TokenCredential',
-            **kwargs: Any
-            ) -> None:
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         self._loop = kwargs.pop("loop", None)
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -71,14 +73,16 @@ class ClientBaseAsync(ClientBase):
         self._conn_manager_async = get_connection_manager(loop=self._loop, **kwargs)
 
     def __enter__(self):
-        raise TypeError("Asynchronous client must be opened with async context manager.")
+        raise TypeError(
+            "Asynchronous client must be opened with async context manager."
+        )
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
         host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
-        kwargs['fully_qualified_namespace'] = host
-        kwargs['eventhub_name'] = entity
-        kwargs['credential'] = EventHubSharedKeyCredential(policy, key)
+        kwargs["fully_qualified_namespace"] = host
+        kwargs["eventhub_name"] = entity
+        kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
     async def _create_auth_async(self) -> authentication.JWTTokenAsync:
@@ -90,7 +94,7 @@ class ClientBaseAsync(ClientBase):
         try:
             token_type = self._credential.token_type
         except AttributeError:
-            token_type = b'jwt'
+            token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
             auth = authentication.JWTTokenAsync(
                 self._auth_uri,
@@ -99,7 +103,8 @@ class ClientBaseAsync(ClientBase):
                 token_type=token_type,
                 timeout=self._config.auth_timeout,
                 http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type)
+                transport_type=self._config.transport_type,
+            )
             await auth.update_token()
             return auth
         return authentication.JWTTokenAsync(
@@ -109,27 +114,36 @@ class ClientBaseAsync(ClientBase):
             token_type=token_type,
             timeout=self._config.auth_timeout,
             http_proxy=self._config.http_proxy,
-            transport_type=self._config.transport_type)
+            transport_type=self._config.transport_type,
+        )
 
     async def _close_connection_async(self) -> None:
         await self._conn_manager_async.reset_connection_if_broken()
 
     async def _backoff_async(
-            self,
-            retried_times: int,
-            last_exception: Exception,
-            timeout_time: Optional[float] = None,
-            entity_name: Optional[str] = None
-            ) -> None:
+        self,
+        retried_times: int,
+        last_exception: Exception,
+        timeout_time: Optional[float] = None,
+        entity_name: Optional[str] = None,
+    ) -> None:
         entity_name = entity_name or self._container_id
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
-                timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
+            timeout_time is None or time.time() + backoff <= timeout_time
+        ):  # pylint:disable=no-else-return
             await asyncio.sleep(backoff, loop=self._loop)
-            _LOGGER.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+            _LOGGER.info(
+                "%r has an exception (%r). Retrying...",
+                format(entity_name),
+                last_exception,
+            )
         else:
-            _LOGGER.info("%r operation has timed out. Last exception before timeout is (%r)",
-                     entity_name, last_exception)
+            _LOGGER.info(
+                "%r operation has timed out. Last exception before timeout is (%r)",
+                entity_name,
+                last_exception,
+            )
             raise last_exception
 
     async def _management_request_async(self, mgmt_msg: Message, op_type: bytes) -> Any:
@@ -137,56 +151,87 @@ class ClientBaseAsync(ClientBase):
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = await self._create_auth_async()
-            mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
+            mgmt_client = AMQPClientAsync(
+                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+            )
             try:
-                conn = await self._conn_manager_async.get_connection(self._address.hostname, mgmt_auth)
+                conn = await self._conn_manager_async.get_connection(
+                    self._address.hostname, mgmt_auth
+                )
                 await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
                     constants.READ_OPERATION,
                     op_type=op_type,
-                    status_code_field=b'status-code',
-                    description_fields=b'status-description')
+                    status_code_field=b"status-code",
+                    description_fields=b"status-description",
+                )
                 return response
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await _handle_exception(exception, self)
-                await self._backoff_async(retried_times=retried_times, last_exception=last_exception)
+                await self._backoff_async(
+                    retried_times=retried_times, last_exception=last_exception
+                )
                 retried_times += 1
                 if retried_times > self._config.max_retries:
-                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
+                    _LOGGER.info(
+                        "%r returns an exception %r", self._container_id, last_exception
+                    )
                     raise last_exception
             finally:
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = Message(application_properties={'name': self.eventhub_name})
-        response = await self._management_request_async(mgmt_msg, op_type=MGMT_OPERATION)
+        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+        response = await self._management_request_async(
+            mgmt_msg, op_type=MGMT_OPERATION
+        )
         output = {}
         eh_info = response.get_data()  # type: Dict[bytes, Any]
         if eh_info:
-            output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
-            output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
-            output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
+            output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
+            output["created_at"] = utc_from_timestamp(
+                float(eh_info[b"created_at"]) / 1000
+            )
+            output["partition_ids"] = [
+                p.decode("utf-8") for p in eh_info[b"partition_ids"]
+            ]
         return output
 
     async def _get_partition_ids_async(self) -> List[str]:
-        return (await self._get_eventhub_properties_async())['partition_ids']
+        return (await self._get_eventhub_properties_async())["partition_ids"]
 
-    async def _get_partition_properties_async(self, partition_id: str) -> Dict[str, Any]:
-        mgmt_msg = Message(application_properties={'name': self.eventhub_name,
-                                                   'partition': partition_id})
-        response = await self._management_request_async(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
+    async def _get_partition_properties_async(
+        self, partition_id: str
+    ) -> Dict[str, Any]:
+        mgmt_msg = Message(
+            application_properties={
+                "name": self.eventhub_name,
+                "partition": partition_id,
+            }
+        )
+        response = await self._management_request_async(
+            mgmt_msg, op_type=MGMT_PARTITION_OPERATION
+        )
         partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
         output = {}  # type: Dict[str, Any]
         if partition_info:
-            output['eventhub_name'] = cast(bytes, partition_info[b'name']).decode('utf-8')
-            output['id'] = cast(bytes, partition_info[b'partition']).decode('utf-8')
-            output['beginning_sequence_number'] = cast(int, partition_info[b'begin_sequence_number'])
-            output['last_enqueued_sequence_number'] = cast(int, partition_info[b'last_enqueued_sequence_number'])
-            output['last_enqueued_offset'] = cast(bytes, partition_info[b'last_enqueued_offset']).decode('utf-8')
-            output['is_empty'] = partition_info[b'is_partition_empty']
-            output['last_enqueued_time_utc'] = utc_from_timestamp(
-                float(cast(int, partition_info[b'last_enqueued_time_utc']) / 1000)
+            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
+                "utf-8"
+            )
+            output["id"] = cast(bytes, partition_info[b"partition"]).decode("utf-8")
+            output["beginning_sequence_number"] = cast(
+                int, partition_info[b"begin_sequence_number"]
+            )
+            output["last_enqueued_sequence_number"] = cast(
+                int, partition_info[b"last_enqueued_sequence_number"]
+            )
+            output["last_enqueued_offset"] = cast(
+                bytes, partition_info[b"last_enqueued_offset"]
+            ).decode("utf-8")
+            output["is_empty"] = partition_info[b"is_partition_empty"]
+            output["last_enqueued_time_utc"] = utc_from_timestamp(
+                float(cast(int, partition_info[b"last_enqueued_time_utc"]) / 1000)
             )
         return output
 
@@ -195,6 +240,7 @@ class ClientBaseAsync(ClientBase):
 
 
 if TYPE_CHECKING:
+
     class AbstractConsumerProducer(Protocol):
         @property
         def _name(self):
@@ -261,7 +307,9 @@ class ConsumerProducerMixin(_MIXIN_BASE):
     def _check_closed(self) -> None:
         if self.closed:
             raise ClientClosedError(
-                "{} has been closed. Please create a new one to handle event data.".format(self._name)
+                "{} has been closed. Please create a new one to handle event data.".format(
+                    self._name
+                )
             )
 
     async def _open(self) -> None:
@@ -276,11 +324,16 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
             await self._handler.open_async(
-                connection=await self._client._conn_manager_async.get_connection(self._client._address.hostname, auth)
+                connection=await self._client._conn_manager_async.get_connection(
+                    self._client._address.hostname, auth
+                )
             )
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05, loop=self._loop)
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES
+            self._max_message_size_on_link = (
+                self._handler.message_handler._link.peer_max_message_size
+                or constants.MAX_MESSAGE_LENGTH_BYTES
+            )
             self.running = True
 
     async def _close_handler_async(self) -> None:
@@ -301,22 +354,26 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         return await _handle_exception(exception, self)
 
     async def _do_retryable_operation(
-            self,
-            operation: Callable[..., Any],
-            timeout: Optional[float] = None,
-            **kwargs: Any
-            ) -> Optional[Any]:
+        self,
+        operation: Callable[..., Any],
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Optional[Any]:
         # pylint:disable=protected-access,line-too-long
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
-        last_exception = kwargs.pop('last_exception', None)
-        operation_need_param = kwargs.pop('operation_need_param', True)
+        last_exception = kwargs.pop("last_exception", None)
+        operation_need_param = kwargs.pop("operation_need_param", True)
         max_retries = self._client._config.max_retries
 
         while retried_times <= max_retries:
             try:
                 if operation_need_param:
-                    return await operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                    return await operation(
+                        timeout_time=timeout_time,
+                        last_exception=last_exception,
+                        **kwargs
+                    )
                 return await operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
@@ -324,11 +381,15 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout_time=timeout_time,
-                    entity_name=self._name
+                    entity_name=self._name,
                 )
                 retried_times += 1
                 if retried_times > max_retries:
-                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._name,
+                        last_exception,
+                    )
                     raise last_exception
         return None
 
