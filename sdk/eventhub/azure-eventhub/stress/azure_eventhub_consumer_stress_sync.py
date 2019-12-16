@@ -15,6 +15,7 @@ from process_monitor import ProcessMonitor
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.eventhub import EventHubConsumerClient, TransportType
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--link_credit", default=3000, type=int)
 parser.add_argument("--output_interval", type=float, default=1000)
@@ -104,7 +105,8 @@ def create_client(args):
         }
 
     client = EventHubConsumerClientTest.from_connection_string(
-        args.conn_str, args.consumer,
+        args.conn_str,
+        args.consumer,
         eventhub_name=args.eventhub,
         checkpoint_store=checkpoint_store,
         load_balancing_interval=args.load_balancing_interval,
@@ -121,7 +123,7 @@ def run(args):
     with ProcessMonitor("monitor_consumer_stress_sync.log", "consumer_stress_sync"):
         kwargs_dict = {
             "prefetch": args.link_credit,
-            "partition_id": str(args.recv_partition_id),
+            "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties
         }
         if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:

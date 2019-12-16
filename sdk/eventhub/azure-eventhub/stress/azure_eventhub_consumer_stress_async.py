@@ -11,9 +11,10 @@ import logging
 from collections import defaultdict
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
-from .logger import get_logger
+from azure.eventhub import TransportType
+from logger import get_logger
+from process_monitor import ProcessMonitor
 
-logging.basicConfig(level=logging.INFO)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--link_credit", default=3000, type=int)
@@ -23,6 +24,8 @@ parser.add_argument("--consumer", help="Consumer group name", default="$default"
 parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
 parser.add_argument("--offset", help="Starting offset", default="-1")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
+parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
+parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
 parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
 parser.add_argument("--conn_str", help="EventHub connection string",
                     default=os.environ.get('EVENT_HUB_PERF_32_CONN_STR'))
@@ -30,6 +33,17 @@ parser.add_argument("--eventhub", help="Name of EventHub")
 parser.add_argument("--address", help="Address URI to the EventHub entity")
 parser.add_argument("--sas_policy", help="Name of the shared access policy to authenticate with")
 parser.add_argument("--sas_key", help="Shared access key")
+parser.add_argument(
+    "--transport_type",
+    help="Transport type, 0 means AMQP, 1 means AMQP over WebSocket",
+    type=int,
+    default=0
+)
+parser.add_argument("--parallel_recv_cnt", help="Number of parallelling receiving", type=int)
+parser.add_argument("--proxy_hostname", type=str)
+parser.add_argument("--proxy_port", type=str)
+parser.add_argument("--proxy_username", type=str)
+parser.add_argument("--proxy_password", type=str)
 parser.add_argument("--aad_client_id", help="AAD client id")
 parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
@@ -45,6 +59,14 @@ LOG_PER_COUNT = args.output_interval
 start_time = time.perf_counter()
 recv_cnt_map = defaultdict(int)
 recv_time_map = dict()
+
+
+class EventHubConsumerClientTest(EventHubConsumerClient):
+    async def get_partition_ids(self):
+        if args.partitions != 0:
+            return [str(i) for i in range(args.partitions)]
+        else:
+            return await super(EventHubConsumerClientTest, self).get_partition_ids()
 
 
 async def on_event_received(partition_context, event):
@@ -66,27 +88,68 @@ async def on_event_received(partition_context, event):
             await partition_context.update_checkpoint(event)
 
 
-async def run(args):
-    class EventHubConsumerClientTest(EventHubConsumerClient):
-        async def get_partition_ids(self):
-            if args.partitions != 0:
-                return [str(i) for i in range(args.partitions)]
-            else:
-                return await super(EventHubConsumerClientTest, self).get_partition_ids()
+def create_client(args):
 
     if args.storage_conn_str:
         checkpoint_store = BlobCheckpointStore.from_connection_string(args.storage_conn_str, args.storage_container_name)
     else:
         checkpoint_store = None
+
+    transport_type = TransportType.Amqp if args.transport_type == 0 else TransportType.AmqpOverWebsocket
+    http_proxy = None
+    if args.proxy_hostname:
+        http_proxy = {
+            "proxy_hostname": args.proxy_hostname,
+            "proxy_port": args.proxy_port,
+            "username": args.proxy_username,
+            "password": args.proxy_password,
+        }
+
     client = EventHubConsumerClientTest.from_connection_string(
-        args.conn_str, args.consumer, eventhub_name=args.eventhub, checkpoint_store=checkpoint_store,
-        load_balancing_interval=args.load_balancing_interval, auth_timeout=args.auth_timeout,
-        logging_enable=args.uamqp_debug, idle_timeout=60
+        args.conn_str,
+        args.consumer,
+        eventhub_name=args.eventhub,
+        checkpoint_store=checkpoint_store,
+        load_balancing_interval=args.load_balancing_interval,
+        auth_timeout=args.auth_timeout,
+        logging_enable=args.uamqp_debug,
+        http_proxy=http_proxy,
+        transport_type=transport_type
     )
-    async with client:
-        task = asyncio.ensure_future(client.receive(on_event_received, prefetch=args.link_credit))
+
+    return client
+
+
+async def run(args):
+
+    with ProcessMonitor("monitor_consumer_stress_async.log", "consumer_stress_async"):
+        kwargs_dict = {
+            "prefetch": args.link_credit,
+            "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
+            "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties
+        }
+        if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:
+            clients = [create_client(args) for _ in range(args.parallel_recv_cnt)]
+            tasks = [
+                asyncio.ensure_future(
+                    clients[i].receive(
+                        on_event_received,
+                        **kwargs_dict
+                    )
+                ) for i in range(args.parallel_recv_cnt)
+            ]
+        else:
+            clients = [create_client(args)]
+            tasks = [asyncio.ensure_future(
+                clients[0].receive(
+                    on_event_received,
+                    prefetch=args.link_credit,
+                )
+            )]
+
         await asyncio.sleep(args.duration)
-    await task
+        await asyncio.gather(*[clients[i].close() for i in range(args.parallel_recv_cnt)])
+        await asyncio.gather(*tasks)
 
 
 if __name__ == '__main__':

@@ -48,7 +48,7 @@ class ProcessMonitor:
         while self.running:
             log_content = "process status: {}," \
                 "process cpu usage percent: {}," \
-                "process memory usage percent: {}".format(
+                "process memory usage percent: {:.3f}".format(
                     self._process_instance.status(),
                     self._process_instance.cpu_percent(),
                     self._process_instance.memory_percent()
