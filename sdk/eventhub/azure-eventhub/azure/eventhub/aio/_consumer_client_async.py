@@ -6,7 +6,17 @@
 import asyncio
 import logging
 import datetime
-from typing import Any, Union, TYPE_CHECKING, Dict, Tuple, Callable, Optional, List, Awaitable
+from typing import (
+    Any,
+    Union,
+    TYPE_CHECKING,
+    Dict,
+    Tuple,
+    Callable,
+    Optional,
+    List,
+    Awaitable,
+)
 
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
@@ -83,12 +93,14 @@ class EventHubConsumerClient(ClientBaseAsync):
             :caption: Create a new instance of the EventHubConsumerClient.
     """
 
-    def __init__(self,
-                 fully_qualified_namespace: str,
-                 eventhub_name: str,
-                 consumer_group: str,
-                 credential: 'TokenCredential',
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        credential: "TokenCredential",
+        **kwargs
+    ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         self._consumer_group = consumer_group
@@ -110,22 +122,26 @@ class EventHubConsumerClient(ClientBaseAsync):
         await self.close()
 
     def _create_consumer(
-            self,
-            consumer_group: str,
-            partition_id: str,
-            event_position: Union[str, int, datetime.datetime],
-            on_event_received: Callable[['PartitionContext', 'EventData'], Awaitable[None]],
-            **kwargs
+        self,
+        consumer_group: str,
+        partition_id: str,
+        event_position: Union[str, int, datetime.datetime],
+        on_event_received: Callable[["PartitionContext", "EventData"], Awaitable[None]],
+        **kwargs
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
-        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+        track_last_enqueued_event_properties = kwargs.get(
+            "track_last_enqueued_event_properties", False
+        )
         event_position_inclusive = kwargs.get("event_position_inclusive", False)
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, self._address.path, consumer_group, partition_id)
+            self._address.hostname, self._address.path, consumer_group, partition_id
+        )
         handler = EventHubConsumer(
-            self, source_url,
+            self,
+            source_url,
             on_event_received=on_event_received,
             event_position=event_position,
             event_position_inclusive=event_position_inclusive,
@@ -133,25 +149,27 @@ class EventHubConsumerClient(ClientBaseAsync):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            loop=self._loop
+            loop=self._loop,
         )
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str: str,
-                               consumer_group: str,
-                               *,
-                               eventhub_name: Optional[str] = None,
-                               logging_enable: bool = False,
-                               http_proxy: Optional[Dict[str, Union[str, int]]] = None,
-                               auth_timeout: float = 60,
-                               user_agent: Optional[str] = None,
-                               retry_total: int = 3,
-                               transport_type: Optional['TransportType'] = None,
-                               checkpoint_store: Optional['CheckpointStore'] = None,
-                               load_balancing_interval: float = 10,
-                               **kwargs: Any
-                               ) -> 'EventHubConsumerClient':
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        consumer_group: str,
+        *,
+        eventhub_name: Optional[str] = None,
+        logging_enable: bool = False,
+        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
+        auth_timeout: float = 60,
+        user_agent: Optional[str] = None,
+        retry_total: int = 3,
+        transport_type: Optional["TransportType"] = None,
+        checkpoint_store: Optional["CheckpointStore"] = None,
+        load_balancing_interval: float = 10,
+        **kwargs: Any
+    ) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -208,18 +226,26 @@ class EventHubConsumerClient(ClientBaseAsync):
         return cls(**constructor_args)
 
     async def receive(
-            self,
-            on_event: Callable[['PartitionContext', 'EventData'], Awaitable[None]],
-            *,
-            partition_id: Optional[str] = None,
-            owner_level: Optional[int] = None,
-            prefetch: int = 300,
-            track_last_enqueued_event_properties: bool = False,
-            starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
-            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-            on_error: Optional[Callable[['PartitionContext', Exception], Awaitable[None]]] = None,
-            on_partition_initialize: Optional[Callable[['PartitionContext'], Awaitable[None]]] = None,
-            on_partition_close: Optional[Callable[['PartitionContext', 'CloseReason'], Awaitable[None]]] = None
+        self,
+        on_event: Callable[["PartitionContext", "EventData"], Awaitable[None]],
+        *,
+        partition_id: Optional[str] = None,
+        owner_level: Optional[int] = None,
+        prefetch: int = 300,
+        track_last_enqueued_event_properties: bool = False,
+        starting_position: Optional[
+            Union[str, int, datetime.datetime, Dict[str, Any]]
+        ] = None,
+        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        on_error: Optional[
+            Callable[["PartitionContext", Exception], Awaitable[None]]
+        ] = None,
+        on_partition_initialize: Optional[
+            Callable[["PartitionContext"], Awaitable[None]]
+        ] = None,
+        on_partition_close: Optional[
+            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
+        ] = None
     ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
@@ -285,20 +311,34 @@ class EventHubConsumerClient(ClientBaseAsync):
         async with self._lock:
             error = None
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
-                error = ("This consumer client is already receiving events "
-                         "from all partitions for consumer group {}. ".format(self._consumer_group))
-            elif partition_id is None and any(x[0] == self._consumer_group for x in self._event_processors):
-                error = ("This consumer client is already receiving events "
-                         "for consumer group {}. ".format(self._consumer_group))
+                error = (
+                    "This consumer client is already receiving events "
+                    "from all partitions for consumer group {}. ".format(
+                        self._consumer_group
+                    )
+                )
+            elif partition_id is None and any(
+                x[0] == self._consumer_group for x in self._event_processors
+            ):
+                error = (
+                    "This consumer client is already receiving events "
+                    "for consumer group {}. ".format(self._consumer_group)
+                )
             elif (self._consumer_group, partition_id) in self._event_processors:
-                error = ("This consumer client is already receiving events "
-                         "from partition {} for consumer group {}. ".format(partition_id, self._consumer_group))
+                error = (
+                    "This consumer client is already receiving events "
+                    "from partition {} for consumer group {}. ".format(
+                        partition_id, self._consumer_group
+                    )
+                )
             if error:
                 _LOGGER.warning(error)
                 raise ValueError(error)
 
             event_processor = EventProcessor(
-                self, self._consumer_group, on_event,
+                self,
+                self._consumer_group,
+                on_event,
                 partition_id=partition_id,
                 checkpoint_store=self._checkpoint_store,
                 error_handler=on_error,
@@ -310,16 +350,20 @@ class EventHubConsumerClient(ClientBaseAsync):
                 owner_level=owner_level,
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-                loop=self._loop
+                loop=self._loop,
             )
-            self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)] = event_processor
+            self._event_processors[
+                (self._consumer_group, partition_id or ALL_PARTITIONS)
+            ] = event_processor
         try:
             await event_processor.start()
         finally:
             await event_processor.stop()
             async with self._lock:
                 try:
-                    del self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)]
+                    del self._event_processors[
+                        (self._consumer_group, partition_id or ALL_PARTITIONS)
+                    ]
                 except KeyError:
                     pass
 
@@ -335,7 +379,9 @@ class EventHubConsumerClient(ClientBaseAsync):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return await super(EventHubConsumerClient, self)._get_eventhub_properties_async()
+        return await super(
+            EventHubConsumerClient, self
+        )._get_eventhub_properties_async()
 
     async def get_partition_ids(self) -> List[str]:
         """Get partition IDs of the Event Hub.
@@ -363,7 +409,9 @@ class EventHubConsumerClient(ClientBaseAsync):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return await super(EventHubConsumerClient, self)._get_partition_properties_async(partition_id)
+        return await super(
+            EventHubConsumerClient, self
+        )._get_partition_properties_async(partition_id)
 
     async def close(self) -> None:
         """Stop retrieving events from the Event Hub and close the underlying AMQP connection and links.
@@ -384,6 +432,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             await asyncio.gather(
                 *[p.stop() for p in self._event_processors.values()],
                 return_exceptions=True,
-                loop=self._loop)
+                loop=self._loop
+            )
             self._event_processors = {}
             await super(EventHubConsumerClient, self)._close_async()

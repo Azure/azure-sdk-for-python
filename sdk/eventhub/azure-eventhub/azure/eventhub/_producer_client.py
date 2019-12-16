@@ -58,20 +58,24 @@ class EventHubProducerClient(ClientBase):
 
     """
 
-    def __init__(self,
-                 fully_qualified_namespace,  # type: str
-                 eventhub_name,  # type: str
-                 credential,  # type: TokenCredential
-                 **kwargs  # type: Any
-                 ):
+    def __init__(
+        self,
+        fully_qualified_namespace,  # type: str
+        eventhub_name,  # type: str
+        credential,  # type: TokenCredential
+        **kwargs  # type: Any
+    ):
         # type:(...) -> None
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential,
-            network_tracing=kwargs.get("logging_enable"), **kwargs
+            network_tracing=kwargs.get("logging_enable"),
+            **kwargs
         )
-        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
+        self._producers = {
+            ALL_PARTITIONS: self._create_producer()
+        }  # type: Dict[str, Optional[EventHubProducer]]
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
         self._lock = threading.Lock()
@@ -94,34 +98,51 @@ class EventHubProducerClient(ClientBase):
         # pylint: disable=protected-access,line-too-long
         with self._lock:
             if not self._max_message_size_on_link:
-                cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
-                self._max_message_size_on_link = \
-                    self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
+                cast(
+                    EventHubProducer, self._producers[ALL_PARTITIONS]
+                )._open_with_retry()
+                self._max_message_size_on_link = (
+                    self._producers[  # type: ignore
+                        ALL_PARTITIONS
+                    ]._handler.message_handler._link.peer_max_message_size
+                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                )
 
     def _start_producer(self, partition_id, send_timeout):
         # type: (str, Optional[Union[int, float]]) -> None
         with self._lock:
             self._get_partitions()
-            if partition_id not in cast(List[str], self._partition_ids) and partition_id != ALL_PARTITIONS:
-                raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eventhub_name))
+            if (
+                partition_id not in cast(List[str], self._partition_ids)
+                and partition_id != ALL_PARTITIONS
+            ):
+                raise ConnectError(
+                    "Invalid partition {} for the event hub {}".format(
+                        partition_id, self.eventhub_name
+                    )
+                )
 
-            if not self._producers[partition_id] or cast(EventHubProducer, self._producers[partition_id]).closed:
+            if (
+                not self._producers[partition_id]
+                or cast(EventHubProducer, self._producers[partition_id]).closed
+            ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=partition_id,
-                    send_timeout=send_timeout
+                    partition_id=partition_id, send_timeout=send_timeout
                 )
 
     def _create_producer(self, partition_id=None, send_timeout=None):
         # type: (Optional[str], Optional[Union[int, float]]) -> EventHubProducer
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
+        send_timeout = (
+            self._config.send_timeout if send_timeout is None else send_timeout
+        )
 
         handler = EventHubProducer(
             self,
             target,
             partition=partition_id,
             send_timeout=send_timeout,
-            idle_timeout=self._idle_timeout
+            idle_timeout=self._idle_timeout,
         )
         return handler
 
@@ -187,13 +208,19 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
-        partition_id = event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+        partition_id = (
+            event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+        )
         send_timeout = kwargs.pop("timeout", None)
         try:
-            cast(EventHubProducer, self._producers[partition_id]).send(event_data_batch, timeout=send_timeout)
+            cast(EventHubProducer, self._producers[partition_id]).send(
+                event_data_batch, timeout=send_timeout
+            )
         except (KeyError, AttributeError, EventHubError):
             self._start_producer(partition_id, send_timeout)
-            cast(EventHubProducer, self._producers[partition_id]).send(event_data_batch, timeout=send_timeout)
+            cast(EventHubProducer, self._producers[partition_id]).send(
+                event_data_batch, timeout=send_timeout
+            )
 
     def create_batch(self, **kwargs):
         # type:(Any) -> EventDataBatch
@@ -226,13 +253,16 @@ class EventHubProducerClient(ClientBase):
         partition_key = kwargs.get("partition_key", None)
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
-            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
-                             .format(max_size_in_bytes, self._max_message_size_on_link))
+            raise ValueError(
+                "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
+                    max_size_in_bytes, self._max_message_size_on_link
+                )
+            )
 
         event_data_batch = EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
-            partition_key=partition_key
+            partition_key=partition_key,
         )
 
         return event_data_batch
@@ -280,7 +310,9 @@ class EventHubProducerClient(ClientBase):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return super(EventHubProducerClient, self)._get_partition_properties(partition_id)
+        return super(EventHubProducerClient, self)._get_partition_properties(
+            partition_id
+        )
 
     def close(self):
         # type: () -> None
