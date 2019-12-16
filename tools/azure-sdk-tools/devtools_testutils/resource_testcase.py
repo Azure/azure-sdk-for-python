@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from azure_devtools.scenario_tests import AzureTestError
+from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.common.exceptions import CloudError
 from azure.mgmt.resource import ResourceManagementClient
@@ -39,9 +39,14 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ResourceManagementClient)
-            self.resource = self.client.resource_groups.create_or_update(
-                name, {'location': self.location}
-            )
+            try:
+                self.resource = self.client.resource_groups.create_or_update(
+                    name, {'location': self.location}
+                )
+            except Exception as ex:
+                if "ReservedResourceName" in str(ex):
+                    raise ReservedResourceNameError(name)
+                raise
             self.test_class_instance.scrubber.register_name_pair(
                 name,
                 self.moniker
