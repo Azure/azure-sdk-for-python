@@ -12,6 +12,7 @@
 try:
     from ._models_py3 import AutomaticTuningOptions
     from ._models_py3 import AutomaticTuningServerOptions
+    from ._models_py3 import AutoPauseDelayTimeRange
     from ._models_py3 import BackupLongTermRetentionPolicy
     from ._models_py3 import BackupShortTermRetentionPolicy
     from ._models_py3 import CheckNameAvailabilityRequest
@@ -59,7 +60,10 @@ try:
     from ._models_py3 import InstanceFailoverGroupReadOnlyEndpoint
     from ._models_py3 import InstanceFailoverGroupReadWriteEndpoint
     from ._models_py3 import InstancePool
+    from ._models_py3 import InstancePoolEditionCapability
+    from ._models_py3 import InstancePoolFamilyCapability
     from ._models_py3 import InstancePoolUpdate
+    from ._models_py3 import InstancePoolVcoresCapability
     from ._models_py3 import Job
     from ._models_py3 import JobAgent
     from ._models_py3 import JobAgentUpdate
@@ -102,6 +106,7 @@ try:
     from ._models_py3 import MetricDefinition
     from ._models_py3 import MetricName
     from ._models_py3 import MetricValue
+    from ._models_py3 import MinCapacityCapability
     from ._models_py3 import Name
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -115,6 +120,7 @@ try:
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
+    from ._models_py3 import ReadScaleCapability
     from ._models_py3 import RecommendedElasticPool
     from ._models_py3 import RecommendedElasticPoolMetric
     from ._models_py3 import RecommendedIndex
@@ -147,6 +153,7 @@ try:
     from ._models_py3 import ServiceTierAdvisor
     from ._models_py3 import Sku
     from ._models_py3 import SloUsageMetric
+    from ._models_py3 import StorageCapability
     from ._models_py3 import SubscriptionUsage
     from ._models_py3 import SyncAgent
     from ._models_py3 import SyncAgentKeyProperties
@@ -172,9 +179,12 @@ try:
     from ._models_py3 import VulnerabilityAssessmentRecurringScansProperties
     from ._models_py3 import VulnerabilityAssessmentScanError
     from ._models_py3 import VulnerabilityAssessmentScanRecord
+    from ._models_py3 import WorkloadClassifier
+    from ._models_py3 import WorkloadGroup
 except (SyntaxError, ImportError):
     from ._models import AutomaticTuningOptions
     from ._models import AutomaticTuningServerOptions
+    from ._models import AutoPauseDelayTimeRange
     from ._models import BackupLongTermRetentionPolicy
     from ._models import BackupShortTermRetentionPolicy
     from ._models import CheckNameAvailabilityRequest
@@ -222,7 +232,10 @@ except (SyntaxError, ImportError):
     from ._models import InstanceFailoverGroupReadOnlyEndpoint
     from ._models import InstanceFailoverGroupReadWriteEndpoint
     from ._models import InstancePool
+    from ._models import InstancePoolEditionCapability
+    from ._models import InstancePoolFamilyCapability
     from ._models import InstancePoolUpdate
+    from ._models import InstancePoolVcoresCapability
     from ._models import Job
     from ._models import JobAgent
     from ._models import JobAgentUpdate
@@ -265,6 +278,7 @@ except (SyntaxError, ImportError):
     from ._models import MetricDefinition
     from ._models import MetricName
     from ._models import MetricValue
+    from ._models import MinCapacityCapability
     from ._models import Name
     from ._models import Operation
     from ._models import OperationDisplay
@@ -278,6 +292,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceProperties
     from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import ProxyResource
+    from ._models import ReadScaleCapability
     from ._models import RecommendedElasticPool
     from ._models import RecommendedElasticPoolMetric
     from ._models import RecommendedIndex
@@ -310,6 +325,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceTierAdvisor
     from ._models import Sku
     from ._models import SloUsageMetric
+    from ._models import StorageCapability
     from ._models import SubscriptionUsage
     from ._models import SyncAgent
     from ._models import SyncAgentKeyProperties
@@ -335,6 +351,8 @@ except (SyntaxError, ImportError):
     from ._models import VulnerabilityAssessmentRecurringScansProperties
     from ._models import VulnerabilityAssessmentScanError
     from ._models import VulnerabilityAssessmentScanRecord
+    from ._models import WorkloadClassifier
+    from ._models import WorkloadGroup
 from ._paged_models import BackupShortTermRetentionPolicyPaged
 from ._paged_models import DatabaseBlobAuditingPolicyPaged
 from ._paged_models import DatabaseOperationPaged
@@ -407,6 +425,8 @@ from ._paged_models import UsagePaged
 from ._paged_models import VirtualClusterPaged
 from ._paged_models import VirtualNetworkRulePaged
 from ._paged_models import VulnerabilityAssessmentScanRecordPaged
+from ._paged_models import WorkloadClassifierPaged
+from ._paged_models import WorkloadGroupPaged
 from ._sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -464,10 +484,6 @@ from ._sql_management_client_enums import (
     AutomaticTuningServerReason,
     RestorePointType,
     ManagementOperationState,
-    MaxSizeUnit,
-    LogSizeUnit,
-    CapabilityStatus,
-    PerformanceLevelUnit,
     CreateMode,
     SampleName,
     DatabaseStatus,
@@ -485,16 +501,22 @@ from ._sql_management_client_enums import (
     ManagedInstanceProxyOverride,
     ManagedDatabaseStatus,
     ManagedDatabaseCreateMode,
+    MaxSizeUnit,
+    LogSizeUnit,
+    CapabilityStatus,
+    PerformanceLevelUnit,
+    PauseDelayTimeUnit,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
-    CapabilityGroup,
     ReplicaType,
+    CapabilityGroup,
 )
 
 __all__ = [
     'AutomaticTuningOptions',
     'AutomaticTuningServerOptions',
+    'AutoPauseDelayTimeRange',
     'BackupLongTermRetentionPolicy',
     'BackupShortTermRetentionPolicy',
     'CheckNameAvailabilityRequest',
@@ -542,7 +564,10 @@ __all__ = [
     'InstanceFailoverGroupReadOnlyEndpoint',
     'InstanceFailoverGroupReadWriteEndpoint',
     'InstancePool',
+    'InstancePoolEditionCapability',
+    'InstancePoolFamilyCapability',
     'InstancePoolUpdate',
+    'InstancePoolVcoresCapability',
     'Job',
     'JobAgent',
     'JobAgentUpdate',
@@ -585,6 +610,7 @@ __all__ = [
     'MetricDefinition',
     'MetricName',
     'MetricValue',
+    'MinCapacityCapability',
     'Name',
     'Operation',
     'OperationDisplay',
@@ -598,6 +624,7 @@ __all__ = [
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
+    'ReadScaleCapability',
     'RecommendedElasticPool',
     'RecommendedElasticPoolMetric',
     'RecommendedIndex',
@@ -630,6 +657,7 @@ __all__ = [
     'ServiceTierAdvisor',
     'Sku',
     'SloUsageMetric',
+    'StorageCapability',
     'SubscriptionUsage',
     'SyncAgent',
     'SyncAgentKeyProperties',
@@ -655,6 +683,8 @@ __all__ = [
     'VulnerabilityAssessmentRecurringScansProperties',
     'VulnerabilityAssessmentScanError',
     'VulnerabilityAssessmentScanRecord',
+    'WorkloadClassifier',
+    'WorkloadGroup',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -668,7 +698,6 @@ __all__ = [
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
     'ReplicationLinkPaged',
-    'ServerAzureADAdministratorPaged',
     'ServerCommunicationLinkPaged',
     'ServiceObjectivePaged',
     'ElasticPoolActivityPaged',
@@ -727,6 +756,9 @@ __all__ = [
     'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
+    'ServerAzureADAdministratorPaged',
+    'WorkloadGroupPaged',
+    'WorkloadClassifierPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -783,10 +815,6 @@ __all__ = [
     'AutomaticTuningServerReason',
     'RestorePointType',
     'ManagementOperationState',
-    'MaxSizeUnit',
-    'LogSizeUnit',
-    'CapabilityStatus',
-    'PerformanceLevelUnit',
     'CreateMode',
     'SampleName',
     'DatabaseStatus',
@@ -804,9 +832,14 @@ __all__ = [
     'ManagedInstanceProxyOverride',
     'ManagedDatabaseStatus',
     'ManagedDatabaseCreateMode',
+    'MaxSizeUnit',
+    'LogSizeUnit',
+    'CapabilityStatus',
+    'PerformanceLevelUnit',
+    'PauseDelayTimeUnit',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
-    'CapabilityGroup',
     'ReplicaType',
+    'CapabilityGroup',
 ]
