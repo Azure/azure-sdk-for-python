@@ -736,7 +736,7 @@ class CertificateClient(KeyVaultClientBase):
     def merge_certificate(
         self,
         certificate_name,  # type: str
-        x509_certificates,  # type: Iterable[bytearray]
+        x509_certificates,  # type: Iterable[bytes]
         **kwargs  # type: Any
     ):
         # type: (...) -> KeyVaultCertificate
@@ -750,7 +750,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate
         :param x509_certificates: The certificate or the certificate chain to merge.
-        :type x509_certificates: list[bytearray]
+        :type x509_certificates: list[bytes]
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]

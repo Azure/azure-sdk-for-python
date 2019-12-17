@@ -696,7 +696,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def merge_certificate(
-        self, certificate_name: str, x509_certificates: Iterable[bytearray], **kwargs: "Any"
+        self, certificate_name: str, x509_certificates: Iterable[bytes], **kwargs: "Any"
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -708,7 +708,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate
         :param x509_certificates: The certificate or the certificate chain to merge.
-        :type x509_certificates: list[bytearray]
+        :type x509_certificates: list[bytes]
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
