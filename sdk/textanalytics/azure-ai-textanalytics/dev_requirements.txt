@@ -1,0 +1,5 @@
+-e ../../../tools/azure-sdk-tools
+-e ../../cognitiveservices/azure-mgmt-cognitiveservices
+../../core/azure-core
+aiohttp>=3.0; python_version >= '3.5'
+../azure-ai-nspkg
