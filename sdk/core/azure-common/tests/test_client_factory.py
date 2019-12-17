@@ -143,6 +143,10 @@ class TestCommon(unittest.TestCase):
         assert client.credential == 'credential'
         assert client.account_url == "https://foo"
 
+        client = get_client_from_cli_profile(BlobServiceClient, account_url="foo", credential=None)
+        assert client.credential == None
+        assert client.account_url == "https://foo"
+
 
     def test_get_client_from_auth_file(self):
 
