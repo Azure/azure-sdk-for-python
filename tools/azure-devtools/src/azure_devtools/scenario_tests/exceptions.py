@@ -10,8 +10,7 @@ class AzureTestError(Exception):
         super(AzureTestError, self).__init__(message.format(error_message))
 
 class AzureNameError(Exception):
-    def __init__(self, error_message):
-        super(AzureNameError, self).__init__(message.format(error_message))
+    pass
 
 class NameInUseError(AzureNameError):
     def __init__(self, vault_name):
