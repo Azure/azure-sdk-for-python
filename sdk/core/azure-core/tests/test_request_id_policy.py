@@ -20,11 +20,13 @@ def test_request_id_policy_fix_id():
     assert request.headers["x-ms-client-request-id"] == test_request_id
 
 
-@pytest.mark.parametrize("auto_request_id", [True, False])
-def test_request_id_policy_fix_on_demand_id(auto_request_id):
+@pytest.mark.parametrize("auto_request_id, other_request_id", [(True, None), (True, "junk"), (False, None), (False, "junk")])
+def test_request_id_policy_fix_on_demand_id(auto_request_id, other_request_id):
     """Test policy with no other policy and happy path"""
     test_request_id = 'test_request_id'
     request_id_policy = RequestIdPolicy(auto_request_id=auto_request_id)
+    if other_request_id:
+        request_id_policy.set_request_id(other_request_id)
     request = HttpRequest('GET', 'http://127.0.0.1/')
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     pipeline_request.context.options['request_id'] = test_request_id
