@@ -1,14 +1,14 @@
-# Change Log azure-storage-file-datalake
+# Release History
 
-## Version 12.0.0b7 Unreleased
+## 12.0.0b7 (Unreleased)
 
-## Version 12.0.0b6 (2019-12-04)
+## 12.0.0b6 (2019-12-04)
 - `StorageErrorException` is parsed into more detailed error.
 - `etag` and `match_condition` parameters are added as an option('if_match' and 'if_none_match' are still supported).
 - ADLS Gen1 to Gen2 API Mapping is available.
 - All the clients now have a `close()` method to close the sockets opened by the client
 
-## Version 12.0.0b5 (2019-11-06)
+## 12.0.0b5 (2019-11-06)
 - Initial Release. Please see the README for information on the new design.
 - Support for Azure Data Lake Storage REST APIs.
 - Support for DataLakeServiceClient: create file system, delete file system, get file systems, and get user delegation key
