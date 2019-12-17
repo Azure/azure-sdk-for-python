@@ -126,7 +126,10 @@ class RequestIdPolicy(SansIOHTTPPolicy):
     """
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
         # type: (dict) -> None
+        self._no_request_id = False
         self._request_id = kwargs.pop('request_id', None)
+        if 'request_id' in kwargs and not self._request_id:
+            self._no_request_id = True
         self._auto_request_id = kwargs.pop('auto_request_id', True)
 
     def set_request_id(self, value):
@@ -135,6 +138,7 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param str value: The request id value.
         """
         self._request_id = value
+        self._no_request_id = not value
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -143,16 +147,22 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        update_header = False
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
+            update_header = True
         elif self._request_id:
             request_id = self._request_id
+            update_header = True
+        elif self._no_request_id:
+            request_id = None
+            update_header = True
         elif self._auto_request_id:
             request_id = str(uuid.uuid1())
-        else:
-            request_id = None
-        header = {"x-ms-client-request-id": request_id}
-        request.http_request.headers.update(header)
+            update_header = True
+        if update_header:
+            header = {"x-ms-client-request-id": request_id}
+            request.http_request.headers.update(header)
 
 class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
