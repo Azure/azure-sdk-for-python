@@ -105,6 +105,8 @@ class HeadersPolicy(SansIOHTTPPolicy):
         if additional_headers:
             request.http_request.headers.update(additional_headers)
 
+class _Unset: pass
+
 class RequestIdPolicy(SansIOHTTPPolicy):
     """A simple policy that sets the given request id in the header.
 
@@ -126,10 +128,7 @@ class RequestIdPolicy(SansIOHTTPPolicy):
     """
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
         # type: (dict) -> None
-        self._no_request_id = False
-        self._request_id = kwargs.pop('request_id', None)
-        if 'request_id' in kwargs and not self._request_id:
-            self._no_request_id = True
+        self._request_id = kwargs.pop('request_id', _Unset)
         self._auto_request_id = kwargs.pop('auto_request_id', True)
 
     def set_request_id(self, value):
@@ -138,7 +137,6 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param str value: The request id value.
         """
         self._request_id = value
-        self._no_request_id = not value
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -151,11 +149,8 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
             update_header = True
-        elif self._request_id:
+        elif self._request_id is not _Unset:
             request_id = self._request_id
-            update_header = True
-        elif self._no_request_id:
-            request_id = None
             update_header = True
         elif self._auto_request_id:
             request_id = str(uuid.uuid1())
