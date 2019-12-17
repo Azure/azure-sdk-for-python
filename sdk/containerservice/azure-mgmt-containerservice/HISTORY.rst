@@ -3,6 +3,23 @@
 Release History
 ===============
 
+8.1.0 (2019-12-16)
+++++++++++++++++++
+
+**Features**
+
+- Model ContainerServiceNetworkProfile has a new parameter outbound_type
+- Model ManagedClusterAgentPoolProfile has a new parameter node_labels
+- Model ManagedClusterAgentPoolProfile has a new parameter tags
+- Model ManagedCluster has a new parameter identity_profile
+- Model ManagedClusterLoadBalancerProfile has a new parameter idle_timeout_in_minutes
+- Model ManagedClusterLoadBalancerProfile has a new parameter allocated_outbound_ports
+- Model AgentPool has a new parameter node_labels
+- Model AgentPool has a new parameter tags
+- Model ManagedClusterAddonProfile has a new parameter identity
+- Model ManagedClusterAgentPoolProfileProperties has a new parameter node_labels
+- Model ManagedClusterAgentPoolProfileProperties has a new parameter tags
+
 8.0.0 (2019-10-24)
 ++++++++++++++++++
 
