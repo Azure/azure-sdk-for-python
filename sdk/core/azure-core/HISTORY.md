@@ -1,21 +1,20 @@
 
 # Release History
 
--------------------
-## Version 1.1.2 Unreleased
+## 1.1.2 (Unreleased)
 
 ### Features
 
 - Support auto_request_id in RequestIdPolicy   #9163
 
-## 2019-12-03 Version 1.1.1
+## 1.1.1 (2019-12-03) 
 
 ### Bug fixes
 
 - Bearer token authorization requires HTTPS
 - Rewind the body position in retry #8307
 
-## 2019-11-25 Version 1.1.0
+## 1.1.0 (2019-11-25)
 
 ### Features
 
@@ -33,7 +32,7 @@
 - Client kwargs are now passed to DistributedTracingPolicy correctly    #8051
 - NetworkLoggingPolicy now logs correctly all requests in case of retry #8262
 
-## 2019-10-29 Version 1.0.0
+## 1.0.0 (2019-10-29)
 
 ### Features
 
@@ -52,7 +51,7 @@
 - Tracing: AbstractSpan.set_current_span is longer supported. Use change_context instead.  #7773
 - azure.core.pipeline.policies.ContentDecodePolicy.deserialize_from_text changed
 
-## 2019-10-07 Version 1.0.0b4
+## 1.0.0b4 (2019-10-07)
 
 ### Features
 
@@ -111,14 +110,14 @@
    - `azure.core.polling.poller` has been removed. Import from `azure.core.polling` instead.
    - `azure.core.polling.async_poller` has been removed. Import from `azure.core.polling` instead.
 
-## 2019-09-09 Version 1.0.0b3
+## 1.0.0b3 (2019-09-09)
 
 ### Bug fixes
 
 -  Fix aiohttp auto-headers #6992
 -  Add tracing to policies module init  #6951
 
-## 2019-08-05 Version 1.0.0b2
+## 1.0.0b2 (2019-08-05)
 
 ### Breaking changes
 
@@ -139,6 +138,6 @@
 - New paging base classes that support `continuation_token` and `by_page()`  #6420
 - Proxy support for `AiohttpTransport`  #6372
 
-## 2019-06-26 Version 1.0.0b1
+## 1.0.0b1 (2019-06-26)
 
 - Preview 1 release

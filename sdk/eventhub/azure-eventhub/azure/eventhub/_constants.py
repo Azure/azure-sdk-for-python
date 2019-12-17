@@ -17,16 +17,16 @@ PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
 PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
 PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
-EPOCH_SYMBOL = b'com.microsoft:epoch'
-TIMEOUT_SYMBOL = b'com.microsoft:timeout'
-RECEIVER_RUNTIME_METRIC_SYMBOL = b'com.microsoft:enable-receiver-runtime-metric'
+EPOCH_SYMBOL = b"com.microsoft:epoch"
+TIMEOUT_SYMBOL = b"com.microsoft:timeout"
+RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
 
 MAX_USER_AGENT_LENGTH = 512
 ALL_PARTITIONS = "all-partitions"
 CONTAINER_PREFIX = "eventhub.pysdk-"
 JWT_TOKEN_SCOPE = "https://eventhubs.azure.net//.default"
-MGMT_OPERATION = b'com.microsoft:eventhub'
-MGMT_PARTITION_OPERATION = b'com.microsoft:partition'
+MGMT_OPERATION = b"com.microsoft:eventhub"
+MGMT_PARTITION_OPERATION = b"com.microsoft:partition"
 USER_AGENT_PREFIX = "azsdk-python-eventhubs"
 
 NO_RETRY_ERRORS = (
@@ -34,5 +34,5 @@ NO_RETRY_ERRORS = (
     b"com.microsoft:entity-disabled",
     b"com.microsoft:auth-failed",
     b"com.microsoft:precondition-failed",
-    b"com.microsoft:argument-error"
+    b"com.microsoft:argument-error",
 )

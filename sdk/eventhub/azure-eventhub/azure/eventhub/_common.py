@@ -6,7 +6,17 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from typing import Union, Dict, Any, AnyStr, Iterable, Optional, List, TYPE_CHECKING, cast
+from typing import (
+    Union,
+    Dict,
+    Any,
+    AnyStr,
+    Iterable,
+    Optional,
+    List,
+    TYPE_CHECKING,
+    cast,
+)
 
 import six
 
@@ -18,7 +28,7 @@ from ._constants import (
     PROP_OFFSET,
     PROP_PARTITION_KEY,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
-    PROP_TIMESTAMP
+    PROP_TIMESTAMP,
 )
 
 if TYPE_CHECKING:
@@ -110,7 +120,7 @@ class EventData(object):
                 event_str += ", enqueued_time={!r}".format(self.enqueued_time)
         except:  # pylint: disable=bare-except
             pass
-        event_str += ' }'
+        event_str += " }"
         return event_str
 
     @classmethod
@@ -123,7 +133,7 @@ class EventData(object):
         :param ~uamqp.Message message: A received uamqp message.
         :rtype: ~azure.eventhub.EventData
         """
-        event_data = cls(body='')
+        event_data = cls(body="")
         event_data.message = message
         return event_data
 
@@ -148,7 +158,7 @@ class EventData(object):
         :rtype: str
         """
         try:
-            return self.message.annotations[PROP_OFFSET].decode('UTF-8')
+            return self.message.annotations[PROP_OFFSET].decode("UTF-8")
         except (KeyError, AttributeError):
             return None
 
@@ -161,7 +171,7 @@ class EventData(object):
         """
         timestamp = self.message.annotations.get(PROP_TIMESTAMP, None)
         if timestamp:
-            return utc_from_timestamp(float(timestamp)/1000)
+            return utc_from_timestamp(float(timestamp) / 1000)
         return None
 
     @property
@@ -216,7 +226,7 @@ class EventData(object):
         except TypeError:
             raise ValueError("Event content empty.")
 
-    def body_as_str(self, encoding='UTF-8'):
+    def body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         """The content of the event as a string, if the data is of a compatible type.
 
@@ -234,9 +244,11 @@ class EventData(object):
         try:
             return cast(bytes, data).decode(encoding)
         except Exception as e:
-            raise TypeError("Message data is not compatible with string type: {}".format(e))
+            raise TypeError(
+                "Message data is not compatible with string type: {}".format(e)
+            )
 
-    def body_as_json(self, encoding='UTF-8'):
+    def body_as_json(self, encoding="UTF-8"):
         # type: (str) -> Dict[str, Any]
         """The content of the event loaded as a JSON object, if the data is compatible.
 
@@ -286,10 +298,7 @@ class EventDataBatch(object):
     def __repr__(self):
         # type: () -> str
         batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={!r}, event_count={}".format(
-            self.max_size_in_bytes,
-            self._partition_id,
-            self._partition_key,
-            self._count
+            self.max_size_in_bytes, self._partition_id, self._partition_key, self._count
         )
         return "EventDataBatch({})".format(batch_repr)
 
@@ -300,7 +309,9 @@ class EventDataBatch(object):
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
         batch_data_instance = cls(partition_key=partition_key)
-        batch_data_instance.message._body_gen = batch_data  # pylint:disable=protected-access
+        batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
+            batch_data
+        )
         return batch_data_instance
 
     @property
@@ -326,8 +337,13 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
         if self._partition_key:
-            if event_data.partition_key and event_data.partition_key != self._partition_key:
-                raise ValueError('The partition key of event_data does not match the partition key of this batch.')
+            if (
+                event_data.partition_key
+                and event_data.partition_key != self._partition_key
+            ):
+                raise ValueError(
+                    "The partition key of event_data does not match the partition key of this batch."
+                )
             if not event_data.partition_key:
                 set_message_partition_key(event_data.message, self._partition_key)
 
@@ -336,11 +352,18 @@ class EventDataBatch(object):
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
-        size_after_add = self._size + event_data_size \
+        size_after_add = (
+            self._size
+            + event_data_size
             + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+        )
 
         if size_after_add > self.max_size_in_bytes:
-            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size_in_bytes))
+            raise ValueError(
+                "EventDataBatch has reached its size limit: {}".format(
+                    self.max_size_in_bytes
+                )
+            )
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add

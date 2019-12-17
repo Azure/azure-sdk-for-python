@@ -12,7 +12,7 @@ from ..exceptions import (
     _create_eventhub_exception,
     EventHubError,
     EventDataSendError,
-    EventDataError
+    EventDataError,
 )
 
 if TYPE_CHECKING:
@@ -22,32 +22,34 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def _handle_exception(  # pylint:disable=too-many-branches, too-many-statements
-        exception: Exception,
-        closable: Union['ClientBaseAsync', 'ConsumerProducerMixin']
-    ) -> Exception:
+    exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"]
+) -> Exception:
     # pylint: disable=protected-access
     if isinstance(exception, asyncio.CancelledError):
         raise exception
     error = exception
     try:
-        name = cast('ConsumerProducerMixin', closable)._name
+        name = cast("ConsumerProducerMixin", closable)._name
     except AttributeError:
-        name = cast('ClientBaseAsync', closable)._container_id
+        name = cast("ClientBaseAsync", closable)._container_id
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         _LOGGER.info("%r stops due to keyboard interrupt", name)
-        await cast('ConsumerProducerMixin', closable).close()
+        await cast("ConsumerProducerMixin", closable).close()
         raise error
     elif isinstance(exception, EventHubError):
-        await cast('ConsumerProducerMixin', closable).close()
+        await cast("ConsumerProducerMixin", closable).close()
         raise error
-    elif isinstance(exception, (
+    elif isinstance(
+        exception,
+        (
             errors.MessageAccepted,
             errors.MessageAlreadySettled,
             errors.MessageModified,
             errors.MessageRejected,
             errors.MessageReleased,
-            errors.MessageContentTooLarge)
-            ):
+            errors.MessageContentTooLarge,
+        ),
+    ):
         _LOGGER.info("%r Event data error (%r)", name, exception)
         error = EventDataError(str(exception), exception)
         raise error
@@ -60,11 +62,11 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
             if isinstance(exception, errors.AuthenticationException):
                 await closable._close_connection_async()
             elif isinstance(exception, errors.LinkDetach):
-                await cast('ConsumerProducerMixin', closable)._close_handler_async()
+                await cast("ConsumerProducerMixin", closable)._close_handler_async()
             elif isinstance(exception, errors.ConnectionClose):
                 await closable._close_connection_async()
             elif isinstance(exception, errors.MessageHandlerError):
-                await cast('ConsumerProducerMixin', closable)._close_handler_async()
+                await cast("ConsumerProducerMixin", closable)._close_handler_async()
             elif isinstance(exception, errors.AMQPConnectionError):
                 await closable._close_connection_async()
             elif isinstance(exception, compat.TimeoutException):
