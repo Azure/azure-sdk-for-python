@@ -13,7 +13,7 @@ from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement
-from packaging_tools.pypi import PyPIClient
+from pypi_tools.pypi import PyPIClient
 from pip._internal.operations import freeze
 
 setup_parser_path = os.path.abspath(
