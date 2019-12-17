@@ -11,11 +11,11 @@ def get_pypi_xmlrpc_client():
     return xmlrpc.client.ServerProxy("https://pypi.python.org/pypi", use_datetime=True)
 
 class PyPIClient:
-    def __init__(self, host: str = "https://pypi.org"):
+    def __init__(self, host="https://pypi.org"):
         self._host = host
         self._session = requests.Session()
 
-    def project(self, package_name: str):
+    def project(self, package_name):
         response = self._session.get(
             "{host}/pypi/{project_name}/json".format(
                 host=self._host,
@@ -25,7 +25,7 @@ class PyPIClient:
         response.raise_for_status()
         return response.json()
 
-    def project_release(self, package_name: str, version: str):
+    def project_release(self, package_name, version):
         response = self._session.get(
             "{host}/pypi/{project_name}/{version}/json".format(
                 host=self._host,
@@ -36,7 +36,7 @@ class PyPIClient:
         response.raise_for_status()
         return response.json()
 
-    def get_ordered_versions(self, package_name: str):
+    def get_ordered_versions(self, package_name):
         project = self.project(package_name)
         versions = [
             Version(package_version)
@@ -46,7 +46,7 @@ class PyPIClient:
         versions.sort()
         return versions
 
-    def get_relevant_versions(self, package_name: str):
+    def get_relevant_versions(self, package_name):
         """Return a tuple: (latest release, latest stable)
         If there are different, it means the latest is not a stable
         """
