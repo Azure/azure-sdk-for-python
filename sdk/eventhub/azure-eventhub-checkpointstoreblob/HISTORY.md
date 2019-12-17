@@ -1,8 +1,8 @@
 # Release History
 
-## Version 1.0.0b7 Unreleased
+## 1.0.0b7 (Unreleased)
 
-## 2019-12-04 1.0.0b6
+## 1.0.0b6 (2019-12-04)
 
 **Breaking changes**
 
@@ -12,7 +12,7 @@
 - Module `blobstoragepm` is now internal, all imports should be directly from `azure.eventhub.extensions.checkpointstoreblob`.
 - `BlobCheckpointStore` now has a `close()` function for shutting down an HTTP connection pool, additionally the object can be used in a context manager to manage the connection.
 
-## 2019-11-04 1.0.0b5
+## 1.0.0b5 (2019-11-04)
 
 **New features**
 
