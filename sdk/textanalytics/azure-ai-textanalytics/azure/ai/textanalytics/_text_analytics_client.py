@@ -13,6 +13,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
+
 from ._generated.models import TextAnalyticsErrorException
 from ._generated._text_analytics_client import TextAnalyticsClient as TextAnalytics
 from ._base_client import TextAnalyticsClientBase
