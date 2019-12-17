@@ -105,7 +105,8 @@ class HeadersPolicy(SansIOHTTPPolicy):
         if additional_headers:
             request.http_request.headers.update(additional_headers)
 
-class _Unset: pass
+class _Unset(object):
+    pass
 
 class RequestIdPolicy(SansIOHTTPPolicy):
     """A simple policy that sets the given request id in the header.
