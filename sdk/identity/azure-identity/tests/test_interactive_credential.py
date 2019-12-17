@@ -11,16 +11,12 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
+from azure.identity._internal.user_agent import USER_AGENT
+
 import pytest
 from six.moves import urllib, urllib_parse
 
-from helpers import (
-    build_aad_response,
-    get_discovery_response,
-    mock_response,
-    Request,
-    validating_transport,
-)
+from helpers import build_aad_response, get_discovery_response, mock_response, Request, validating_transport
 
 try:
     from unittest.mock import Mock, patch
@@ -48,6 +44,24 @@ def test_policies_configurable():
         credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
+def test_user_agent():
+    transport = validating_transport(
+        requests=[Request(), Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[get_discovery_response(), mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    # mock local server fakes successful authentication by immediately returning a well-formed response
+    oauth_state = "oauth-state"
+    auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
+    server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
+
+    credential = InteractiveBrowserCredential(transport=transport, server_class=server_class)
+
+    with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
+        credential.get_token("scope")
 
 
 @patch("azure.identity._credentials.browser.webbrowser.open")

@@ -4,7 +4,16 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List, Optional  # pylint: disable=unused-import
+from typing import (
+    Any,
+    Union,
+    Dict,
+    Tuple,
+    TYPE_CHECKING,
+    Callable,
+    List,
+    Optional,
+)  # pylint: disable=unused-import
 
 from ._common import EventData
 from ._client_base import ClientBase
@@ -15,7 +24,7 @@ from ._eventprocessor.partition_context import PartitionContext
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential  # type: ignore
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,13 +86,14 @@ class EventHubConsumerClient(ClientBase):
             :caption: Create a new instance of the EventHubConsumerClient.
     """
 
-    def __init__(self,
-                 fully_qualified_namespace,  # type: str
-                 eventhub_name,  # type: str
-                 consumer_group,  # type: str
-                 credential,  # type: TokenCredential
-                 **kwargs  # type: Any
-                 ):
+    def __init__(
+        self,
+        fully_qualified_namespace,  # type: str
+        eventhub_name,  # type: str
+        consumer_group,  # type: str
+        credential,  # type: TokenCredential
+        **kwargs  # type: Any
+    ):
         # type: (...) -> None
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
@@ -91,21 +101,39 @@ class EventHubConsumerClient(ClientBase):
         network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
-            eventhub_name=eventhub_name, credential=credential,
-            network_tracing=network_tracing, **kwargs)
+            eventhub_name=eventhub_name,
+            credential=credential,
+            network_tracing=network_tracing,
+            **kwargs
+        )
         self._lock = threading.Lock()
         self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
 
-    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        # type: (str, str, Union[str, int, datetime.datetime], Any) -> EventHubConsumer
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def _create_consumer(
+        self,
+        consumer_group,  # type: str
+        partition_id,  # type: str
+        event_position,  # type: Union[str, int, datetime.datetime]
+        on_event_received,  # type: Callable[[PartitionContext, EventData], None]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> EventHubConsumer
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
-        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        on_event_received = kwargs.get("on_event_received")
+        track_last_enqueued_event_properties = kwargs.get(
+            "track_last_enqueued_event_properties", False
+        )
         event_position_inclusive = kwargs.get("event_position_inclusive", False)
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, self._address.path, consumer_group, partition_id)
+            self._address.hostname, self._address.path, consumer_group, partition_id
+        )
         handler = EventHubConsumer(
             self,
             source_url,
@@ -115,7 +143,7 @@ class EventHubConsumerClient(ClientBase):
             on_event_received=on_event_received,
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
-            track_last_enqueued_event_properties=track_last_enqueued_event_properties
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
         )
         return handler
 
@@ -161,7 +189,9 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        constructor_args = cls._from_connection_string(conn_str, consumer_group=consumer_group, **kwargs)
+        constructor_args = cls._from_connection_string(
+            conn_str, consumer_group=consumer_group, **kwargs
+        )
         return cls(**constructor_args)
 
     def receive(self, on_event, **kwargs):
@@ -231,38 +261,105 @@ class EventHubConsumerClient(ClientBase):
         with self._lock:
             error = None  # type: Optional[str]
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
-                error = ("This consumer client is already receiving events "
-                         "from all partitions for consumer group {}.".format(self._consumer_group))
-            elif partition_id is None and any(x[0] == self._consumer_group for x in self._event_processors):
-                error = ("This consumer client is already receiving events "
-                         "for consumer group {}.".format(self._consumer_group))
+                error = (
+                    "This consumer client is already receiving events "
+                    "from all partitions for consumer group {}.".format(
+                        self._consumer_group
+                    )
+                )
+            elif partition_id is None and any(
+                x[0] == self._consumer_group for x in self._event_processors
+            ):
+                error = (
+                    "This consumer client is already receiving events "
+                    "for consumer group {}.".format(self._consumer_group)
+                )
             elif (self._consumer_group, partition_id) in self._event_processors:
-                error = ("This consumer client is already receiving events "
-                         "from partition {} for consumer group {}. ".format(partition_id, self._consumer_group))
+                error = (
+                    "This consumer client is already receiving events "
+                    "from partition {} for consumer group {}. ".format(
+                        partition_id, self._consumer_group
+                    )
+                )
             if error:
                 _LOGGER.warning(error)
                 raise ValueError(error)
 
             initial_event_position = kwargs.pop("starting_position", None)
-            initial_event_position_inclusive = kwargs.pop("starting_position_inclusive", False)
+            initial_event_position_inclusive = kwargs.pop(
+                "starting_position_inclusive", False
+            )
             event_processor = EventProcessor(
-                self, self._consumer_group, on_event,
+                self,
+                self._consumer_group,
+                on_event,
                 checkpoint_store=self._checkpoint_store,
                 load_balancing_interval=self._load_balancing_interval,
                 initial_event_position=initial_event_position,
                 initial_event_position_inclusive=initial_event_position_inclusive,
                 **kwargs
             )
-            self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)] = event_processor
+            self._event_processors[
+                (self._consumer_group, partition_id or ALL_PARTITIONS)
+            ] = event_processor
         try:
             event_processor.start()
         finally:
             event_processor.stop()
             with self._lock:
                 try:
-                    del self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)]
+                    del self._event_processors[
+                        (self._consumer_group, partition_id or ALL_PARTITIONS)
+                    ]
                 except KeyError:
                     pass
+
+    def get_eventhub_properties(self):
+        # type:() -> Dict[str, Any]
+        """Get properties of the Event Hub.
+
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
+
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubConsumerClient, self)._get_eventhub_properties()
+
+    def get_partition_ids(self):
+        # type:() -> List[str]
+        """Get partition IDs of the Event Hub.
+
+        :rtype: list[str]
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubConsumerClient, self)._get_partition_ids()
+
+    def get_partition_properties(self, partition_id):
+        # type:(str) -> Dict[str, Any]
+        """Get properties of the specified partition.
+
+        Keys in the properties dictionary include:
+
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubConsumerClient, self)._get_partition_properties(
+            partition_id
+        )
 
     def close(self):
         # type: () -> None
@@ -284,4 +381,4 @@ class EventHubConsumerClient(ClientBase):
             for processor in self._event_processors.values():
                 processor.stop()
             self._event_processors = {}
-        super(EventHubConsumerClient, self).close()
+        super(EventHubConsumerClient, self)._close()

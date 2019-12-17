@@ -3,9 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
+from typing import Dict, Optional, Any, TYPE_CHECKING
+
 import logging
 from .checkpoint_store import CheckpointStore
 from ..._utils import get_last_enqueued_event_properties
+
+if TYPE_CHECKING:
+    from ..._common import EventData
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,17 +22,24 @@ class PartitionContext(object):
     when calling `EventHubConsumerClient.receive()`.
     Users can call `update_checkpoint()` of this class to persist checkpoint data.
     """
-    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str,
-                 partition_id: str, checkpoint_store: CheckpointStore = None):
+
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        partition_id: str,
+        checkpoint_store: CheckpointStore = None,
+    ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
         self.consumer_group = consumer_group
-        self._last_received_event = None
+        self._last_received_event = None  # type: Optional[EventData]
         self._checkpoint_store = checkpoint_store
 
     @property
-    def last_enqueued_event_properties(self):
+    def last_enqueued_event_properties(self) -> Optional[Dict[str, Any]]:
         """The latest enqueued event information.
 
         This property will be updated each time an event is received if the receiver is created
@@ -45,7 +57,7 @@ class PartitionContext(object):
             return get_last_enqueued_event_properties(self._last_received_event)
         return None
 
-    async def update_checkpoint(self, event):
+    async def update_checkpoint(self, event: "EventData") -> None:
         """Updates the receive checkpoint to the given events offset.
 
         This operation will only update a checkpoint if a `checkpoint_store` was provided during
@@ -57,16 +69,20 @@ class PartitionContext(object):
         """
         if self._checkpoint_store:
             checkpoint = {
-                'fully_qualified_namespace': self.fully_qualified_namespace,
-                'eventhub_name': self.eventhub_name,
-                'consumer_group': self.consumer_group,
-                'partition_id': self.partition_id,
-                'offset': event.offset,
-                'sequence_number': event.sequence_number
+                "fully_qualified_namespace": self.fully_qualified_namespace,
+                "eventhub_name": self.eventhub_name,
+                "consumer_group": self.consumer_group,
+                "partition_id": self.partition_id,
+                "offset": event.offset,
+                "sequence_number": event.sequence_number,
             }
             await self._checkpoint_store.update_checkpoint(checkpoint)
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
                 "update_checkpoint is called without checkpoint store. No checkpoint is updated.",
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group, self.partition_id)
+                self.fully_qualified_namespace,
+                self.eventhub_name,
+                self.consumer_group,
+                self.partition_id,
+            )

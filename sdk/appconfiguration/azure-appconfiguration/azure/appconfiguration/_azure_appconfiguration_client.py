@@ -9,7 +9,8 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy
+    HttpLoggingPolicy,
+    BearerTokenCredentialPolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
@@ -31,7 +32,6 @@ from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._utils import (
     get_endpoint_from_connection_string,
-    escape_and_tostr,
     prep_if_match,
     prep_if_none_match,
 )
@@ -54,7 +54,16 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, AppConfigConnectionStringCredential, dict) -> None
+        # type: (str, any, dict) -> None
+        try:
+            if not base_url.lower().startswith('http'):
+                base_url = "https://" + base_url
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        if not credential:
+            raise ValueError("Missing credential")
+
         self._config = AzureAppConfigurationConfiguration(credential, base_url, **kwargs)
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -63,7 +72,12 @@ class AzureAppConfigurationClient:
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
-            pipeline = self._create_appconfig_pipeline(**kwargs)
+            aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
+            pipeline = self._create_appconfig_pipeline(
+                credential=credential,
+                aad_mode=aad_mode,
+                base_url=base_url,
+                **kwargs)
 
         self._impl = AzureAppConfiguration(
             credentials=credential, endpoint=base_url, pipeline=pipeline
@@ -98,17 +112,26 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(self, **kwargs):
+    def _create_appconfig_pipeline(self, credential, base_url=None, aad_mode=False, **kwargs):
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
+            if aad_mode:
+                scope = base_url.strip("/") + "/.default"
+                if hasattr(credential, "get_token"):
+                    credential_policy = BearerTokenCredentialPolicy(credential, scope)
+                else:
+                    raise TypeError("Please provide an instance from azure-identity "
+                                    "or a class that implement the 'get_token protocol")
+            else:
+                credential_policy = AppConfigRequestsCredentialsPolicy(credential)
             policies = [
                 self._config.headers_policy,
                 self._config.user_agent_policy,
-                AppConfigRequestsCredentialsPolicy(self._config.credentials),
-                SyncTokenPolicy(),
+                credential_policy,
                 self._config.retry_policy,
+                SyncTokenPolicy(),
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs)
@@ -121,18 +144,18 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_configuration_settings(
-        self, keys=None, labels=None, **kwargs
-    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+        self, key_filter=None, label_filter=None, **kwargs
+    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
 
-        :param keys: filter results based on their keys. '*' can be
+        :param key_filter: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type keys: list[str]
-        :param labels: filter results based on their label. '*' can be
+        :type key_filter: str
+        :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
+        :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
@@ -153,7 +176,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_listed = client.list_configuration_settings(
-                labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
+                label_filter="*Labe*", key_filter="*Ke*", accept_datetime=accept_datetime
             )
             for item in filtered_listed:
                 pass  # do something
@@ -161,16 +184,14 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ['locked' if x == 'read_only' else x for x in select]
-        encoded_labels = escape_and_tostr(labels)
-        encoded_keys = escape_and_tostr(keys)
         error_map = {
             401: ClientAuthenticationError
         }
 
         try:
             return self._impl.get_key_values(
-                label=encoded_labels,
-                key=encoded_keys,
+                label=label_filter,
+                key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
                 error_map=error_map,
@@ -413,18 +434,18 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, keys=None, labels=None, **kwargs
-    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+        self, key_filter=None, label_filter=None, **kwargs
+    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
 
-        :param keys: filter results based on their keys. '*' can be
+        :param key_filter: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type keys: list[str]
-        :param labels: filter results based on their label. '*' can be
+        :type key_filter: str
+        :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
+        :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
@@ -445,7 +466,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_revisions = client.list_revisions(
-                labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
+                label_filter="*Labe*", key_filter="*Ke*", accept_datetime=accept_datetime
             )
             for item in filtered_revisions:
                 pass  # do something
@@ -453,16 +474,14 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ['locked' if x == 'read_only' else x for x in select]
-        encoded_labels = escape_and_tostr(labels)
-        encoded_keys = escape_and_tostr(keys)
         error_map = {
             401: ClientAuthenticationError
         }
 
         try:
             return self._impl.get_revisions(
-                label=encoded_labels,
-                key=encoded_keys,
+                label=label_filter,
+                key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
                 error_map=error_map,

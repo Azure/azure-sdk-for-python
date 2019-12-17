@@ -5,7 +5,7 @@
 import logging
 import six
 
-from uamqp import errors, compat  # type: ignore
+from uamqp import errors, compat
 
 from ._constants import NO_RETRY_ERRORS
 
@@ -23,11 +23,11 @@ def _error_handler(error):
     :type error: Exception
     :rtype: ~uamqp.errors.ErrorAction
     """
-    if error.condition == b'com.microsoft:server-busy':
+    if error.condition == b"com.microsoft:server-busy":
         return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition == b'com.microsoft:timeout':
+    if error.condition == b"com.microsoft:timeout":
         return errors.ErrorAction(retry=True, backoff=2)
-    if error.condition == b'com.microsoft:operation-cancelled':
+    if error.condition == b"com.microsoft:operation-cancelled":
         return errors.ErrorAction(retry=True)
     if error.condition == b"com.microsoft:container-close":
         return errors.ErrorAction(retry=True, backoff=4)
@@ -54,14 +54,14 @@ class EventHubError(Exception):
         self.details = details
         if details and isinstance(details, Exception):
             try:
-                condition = details.condition.value.decode('UTF-8')
+                condition = details.condition.value.decode("UTF-8")
             except AttributeError:
                 try:
-                    condition = details.condition.decode('UTF-8')
+                    condition = details.condition.decode("UTF-8")
                 except AttributeError:
                     condition = None
             if condition:
-                _, _, self.error = condition.partition(':')
+                _, _, self.error = condition.partition(":")
                 self.message += "\nError: {}".format(self.error)
             try:
                 self._parse_error(details.description)
@@ -73,19 +73,23 @@ class EventHubError(Exception):
 
     def _parse_error(self, error_list):
         details = []
-        self.message = error_list if isinstance(error_list, six.text_type) else error_list.decode('UTF-8')
+        self.message = (
+            error_list
+            if isinstance(error_list, six.text_type)
+            else error_list.decode("UTF-8")
+        )
         details_index = self.message.find(" Reference:")
         if details_index >= 0:
-            details_msg = self.message[details_index + 1:]
+            details_msg = self.message[details_index + 1 :]
             self.message = self.message[0:details_index]
 
             tracking_index = details_msg.index(", TrackingId:")
             system_index = details_msg.index(", SystemTracker:")
             timestamp_index = details_msg.index(", Timestamp:")
             details.append(details_msg[:tracking_index])
-            details.append(details_msg[tracking_index + 2: system_index])
-            details.append(details_msg[system_index + 2: timestamp_index])
-            details.append(details_msg[timestamp_index + 2:])
+            details.append(details_msg[tracking_index + 2 : system_index])
+            details.append(details_msg[system_index + 2 : timestamp_index])
+            details.append(details_msg[timestamp_index + 2 :])
             self.details = details
 
 
@@ -135,8 +139,11 @@ def _create_eventhub_exception(exception):
     elif isinstance(exception, errors.MessageHandlerError):
         error = ConnectionLostError(str(exception), exception)
     elif isinstance(exception, errors.AMQPConnectionError):
-        error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
+        error_type = (
+            AuthenticationError
+            if str(exception).startswith("Unable to open authentication session")
             else ConnectError
+        )
         error = error_type(str(exception), exception)
     elif isinstance(exception, compat.TimeoutException):
         error = ConnectionLostError(str(exception), exception)
@@ -145,7 +152,9 @@ def _create_eventhub_exception(exception):
     return error
 
 
-def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
+def _handle_exception(
+    exception, closable
+):  # pylint:disable=too-many-branches, too-many-statements
     try:  # closable is a producer/consumer object
         name = closable._name  # pylint: disable=protected-access
     except AttributeError:  # closable is an client object
@@ -157,14 +166,17 @@ def _handle_exception(exception, closable):  # pylint:disable=too-many-branches,
     elif isinstance(exception, EventHubError):
         closable.close()
         raise exception
-    elif isinstance(exception, (
+    elif isinstance(
+        exception,
+        (
             errors.MessageAccepted,
             errors.MessageAlreadySettled,
             errors.MessageModified,
             errors.MessageRejected,
             errors.MessageReleased,
-            errors.MessageContentTooLarge)
-            ):
+            errors.MessageContentTooLarge,
+        ),
+    ):
         _LOGGER.info("%r Event data error (%r)", name, exception)
         error = EventDataError(str(exception), exception)
         raise error

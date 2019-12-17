@@ -120,13 +120,13 @@ class TestRequestsTransport(unittest.TestCase):
         # by the retry policy.
         with pytest.raises(AzureError):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-                response = pipeline.run(request, connection_timeout=0.000001)
+                response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
 
     def test_retry_code_class_variables(self):
         retry_policy = RetryPolicy()
         assert retry_policy._RETRY_CODES is not None
-        assert len(retry_policy._RETRY_CODES) == 498
         assert 408 in retry_policy._RETRY_CODES
+        assert 429 in retry_policy._RETRY_CODES
         assert 501 not in retry_policy._RETRY_CODES
 
     def test_basic_requests_separate_session(self):

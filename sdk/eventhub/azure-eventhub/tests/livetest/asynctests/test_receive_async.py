@@ -25,7 +25,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
-        task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="-1"))
+        task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="@latest"))
         await asyncio.sleep(10)
         assert on_event.called is False
         senders[0].send(EventData(b"Receiving only a single event"))

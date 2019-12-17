@@ -16,10 +16,12 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
+    UserAgentPolicy,
 )
 from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
 
-from azure.identity._internal import MsalTransportResponse
+from ..._internal import MsalTransportResponse
+from ..._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -41,6 +43,7 @@ class MsalTransportAdapter:
 
         config = config or self._create_config(**kwargs)
         policies = policies or [
+            config.user_agent_policy,
             config.proxy_policy,
             config.retry_policy,
             config.logging_policy,
@@ -118,4 +121,5 @@ class MsalTransportAdapter:
         config.proxy_policy = ProxyPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         return config

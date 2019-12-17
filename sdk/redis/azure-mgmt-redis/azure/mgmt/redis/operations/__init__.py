@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .redis_operations import RedisOperations
-from .firewall_rules_operations import FirewallRulesOperations
-from .patch_schedules_operations import PatchSchedulesOperations
-from .linked_server_operations import LinkedServerOperations
+from ._operations import Operations
+from ._redis_operations import RedisOperations
+from ._firewall_rules_operations import FirewallRulesOperations
+from ._patch_schedules_operations import PatchSchedulesOperations
+from ._linked_server_operations import LinkedServerOperations
 
 __all__ = [
     'Operations',

@@ -1,6 +1,8 @@
-# Change Log azure-storage-file
+# Release History
 
-## Version 12.0.0:
+## 12.0.1 (Unreleased)
+
+## 12.0.0
 
 **New features**
 - Added `delete_directory` method to the `share_client`.
@@ -12,7 +14,7 @@
 **Breaking changes**
 - `close_handle(handle)` and `close_all_handles()` no longer return int. These functions return a dictionary which has the number of handles closed and number of handles failed to be closed.
 
-## Version 12.0.0b5:
+## 12.0.0b5
 
 **Important: This package was previously named azure-storage-file**
 
@@ -67,7 +69,7 @@ the following APIs:
 - `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
 
 
-## Version 12.0.0b4:
+## 12.0.0b4
 
 **Breaking changes**
 
@@ -83,7 +85,7 @@ the following APIs:
 - `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which
 takes parameters as a string.
 
-## Version 12.0.0b3:
+## 12.0.0b3
 
 **New features**
 - Added upload_range_from_url API to write the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
@@ -103,7 +105,7 @@ takes parameters as a string.
 - Fix where content-type was being added in the request when not mentioned explicitly.
 
 
-## Version 12.0.0b2:
+## 12.0.0b2
 
 **Breaking changes**
 - Renamed `copy_file_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_file_properties` operation.
@@ -132,7 +134,7 @@ takes parameters as a string.
 - General refactor of duplicate and shared code.
 
 
-## Version 12.0.0b1:
+## 12.0.0b1
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Files. For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://aka.ms/azure-sdk-preview1-python.
@@ -173,36 +175,36 @@ https://aka.ms/azure-sdk-preview1-python.
 - No longer have specific operations for `exists` - use `get_properties` instead.
 - Operation `update_range` has been renamed to `upload_range`.
 
-## Version 2.0.1:
+## 2.0.1
 - Updated dependency on azure-storage-common.
 
-## Version 2.0.0:
+## 2.0.0
 - Support for 2018-11-09 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Added an option to get share stats in bytes.
 - Added support for listing and closing file handles.
 
-## Version 1.4.0:
+## 1.4.0
 
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 
-## Version 1.3.1:
+## 1.3.1
 
 - Fixed design flaw where get_file_to_* methods buffer entire file when max_connections is set to 1.
 
-## Version 1.3.0:
+## 1.3.0
 
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 
-## Version 1.2.0rc1:
+## 1.2.0rc1
 
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 
-## Version 1.1.0:
+## 1.1.0
 
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## Version 1.0.0:
+## 1.0.0
 
 - The package has switched from Apache 2.0 to the MIT license.
 - Fixed bug where get_file_to_* cannot get a single byte when start_range and end_range are both equal to 0.
