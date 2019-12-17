@@ -4,4 +4,3 @@
 ../azure-storage-blob
 -e ../../identity/azure-identity
 pytest
-coverage
