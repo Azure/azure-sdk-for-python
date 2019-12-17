@@ -304,7 +304,7 @@ Thank you to brandondahler, schaefi for their contributions.
 * azure-common[autorest] == 1.1.4, provides automatic autorest right dependencies
 * azure-storage 0.32.0
 
-  * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+  * `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
 
 
 2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
@@ -338,7 +338,7 @@ You can remove the involved parameter safely, as it should not have been there i
 * azure-common[autorest] == 1.1.3, provides automatic autorest right dependencies
 * azure-storage 0.31.0
 
-  * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+  * `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
 
 2016-03-31 azure-servicemanagement-legacy 0.20.3
 ++++++++++++++++++++++++++++++++++++++++++++++++
@@ -409,7 +409,7 @@ Our goal is to release a stable version by the end of March 2016.  Please send u
 
 **WHAT'S NEW**
 
-* New ARM generated code based on `Swagger specification of the Azure REST APIs<https://github.com/Azure/azure-rest-api-specs>`__
+* New ARM generated code based on `Swagger specification of the Azure REST APIs <https://github.com/Azure/azure-rest-api-specs>`__
 * New libraries
 
   * Azure Active Directory Graph API
@@ -439,12 +439,12 @@ Our goal is to release a stable version by the end of March 2016.  Please send u
 
 **BREAKING CHANGES**
 
-We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 `here<https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0>`__.
+We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 `here <https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0>`__.
 
 **Dependencies**
 
 azure-storage 0.30.0
-  * Major version. `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+  * Major version. `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
 
 2016-01-20 Version 1.0.3
 ++++++++++++++++++++++++

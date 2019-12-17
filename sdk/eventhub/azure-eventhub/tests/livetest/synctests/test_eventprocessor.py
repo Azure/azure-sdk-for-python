@@ -34,8 +34,8 @@ def test_loadbalancer_balance():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            consumer = MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            consumer = MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
             return consumer
 
         def get_partition_ids(self):
@@ -103,8 +103,8 @@ def test_loadbalancer_list_ownership_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
@@ -120,6 +120,12 @@ def test_loadbalancer_list_ownership_error():
         def close(self):
             pass
 
+    def on_error(partition_context, error):
+        assert partition_context is None
+        assert isinstance(error, RuntimeError)
+        on_error.called = True
+
+    on_error.called = False
     eventhub_client = MockEventHubClient()
     checkpoint_store = ErrorCheckpointStore()
 
@@ -127,6 +133,7 @@ def test_loadbalancer_list_ownership_error():
                                      consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
+                                     on_error=on_error,
                                      load_balancing_interval=1)
 
     thread = threading.Thread(target=event_processor.start)
@@ -138,6 +145,7 @@ def test_loadbalancer_list_ownership_error():
     thread.join()
     assert event_processor_running is True
     assert event_processor_partitions == 0
+    assert on_error.called is True
 
 
 def test_partition_processor():
@@ -165,8 +173,8 @@ def test_partition_processor():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
@@ -234,8 +242,8 @@ def test_partition_processor_process_events_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
@@ -287,8 +295,8 @@ def test_partition_processor_process_eventhub_consumer_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
@@ -349,8 +357,8 @@ def test_partition_processor_process_error_close_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
@@ -422,8 +430,8 @@ def test_partition_processor_process_update_checkpoint_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]

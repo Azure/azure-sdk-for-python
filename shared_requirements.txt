@@ -1,3 +1,4 @@
+azure-ai-nspkg
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
 azure-cognitiveservices-nspkg
@@ -109,6 +110,8 @@ six>=1.6
 #override azure-keyvault-certificates msrest>=0.6.0
 #override azure-keyvault-keys msrest>=0.6.0
 #override azure-keyvault-secrets msrest>=0.6.0
+#override azure-ai-textanalytics msrest>=0.6.0
+#override azure-ai-textanalytics azure-core<2.0.0,>=1.1.0
 #override azure-storage-blob msrest>=0.6.10
 #override azure-storage-queue msrest>=0.6.10
 #override azure-storage-file-share msrest>=0.6.10
@@ -126,4 +129,3 @@ opencensus-ext-azure>=0.3.1
 #override azure-storage-queue azure-core<2.0.0,>=1.1.0
 #override azure-storage-file-share azure-core<2.0.0,>=1.1.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.1.0
-#override azure-cognitiveservices-language-textanalytics msrest>=0.6.0

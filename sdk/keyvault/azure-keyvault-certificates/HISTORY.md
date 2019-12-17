@@ -1,11 +1,15 @@
 # Release History
 
-# 4.0.0b7 Unreleased
+## 4.0.0b7 (Unreleased)
 - Challenge authentication policy preserves request options
 ([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
+- Added `vault_url` property to `CertificateOperation`
+- Removed `id`, `expires_on`, `not_before`, and `recover_level` properties from `CertificatePolicy`
+- Removed `vault_url` property from `CertificateIssuer`
+- Removed `vault_url` property from `IssuerProperties`
 
 
-### 4.0.0b6
+## 4.0.0b6 (2019-12-04)
 - Updated `msrest` requirement to >=0.6.0
 - Renamed `get_policy` to `get_certificate_policy`
 - Renamed `update_policy` to `update_certificate_policy`
@@ -27,7 +31,7 @@ directly onto `CertificateIssuer`
 - Renamed `SecretContentType` enum class to `CertificateContentType`
 
 
-### 4.0.0b5
+## 4.0.0b5 (2019-11-01)
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
 - Renamed the sync method `create_certificate` to `begin_create_certificate`
 - Renamed `restore_certificate` to `restore_certificate_backup`
@@ -57,7 +61,7 @@ directly onto `CertificateIssuer`
 - `CertificatePolicy` now has a public class method `get_default` allowing users to get the default `CertificatePolicy`
 - Logging can now be enabled properly on the client level
 
-### 4.0.0b4 (2019-10-08)
+## 4.0.0b4 (2019-10-08)
 - Enums `JsonWebKeyCurveName` and `JsonWebKeyType` have been renamed to `KeyCurveName` and `KeyType`, respectively.
 - Both async and sync versions of `create_certificate` now return pollers that return the created `Certificate` if creation is successful,
 and a `CertificateOperation` if not.
@@ -70,7 +74,7 @@ for details.
 - The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
 
-### 4.0.0b3 (2019-09-11)
+## 4.0.0b3 (2019-09-11)
 Version 4.0.0b3 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Key Vault's certificates.
 
  This library is not a direct replacement for `azure-keyvault`. Applications
