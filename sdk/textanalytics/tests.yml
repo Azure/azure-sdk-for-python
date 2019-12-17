@@ -13,6 +13,7 @@ jobs:
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: textanalytics
       EnvVars:
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         TEXT_ANALYTICS_ACCOUNT_NAME: $(python-textanalytics-test-textanalytics-account-name)
         TEXT_ANALYTICS_KEY: $(python-textanalytics-test-textanalytics-account-key)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
