@@ -12,6 +12,7 @@ jobs:
     parameters:
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: textanalytics
+      MaxParallel: 1
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         TEXT_ANALYTICS_ACCOUNT_NAME: $(python-textanalytics-test-textanalytics-account-name)
