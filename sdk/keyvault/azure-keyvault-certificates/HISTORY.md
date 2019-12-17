@@ -3,6 +3,11 @@
 # 4.0.0b7 Unreleased
 - Challenge authentication policy preserves request options
 ([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
+- Added `vault_url` property to `CertificateOperation`
+- Removed `id`, `expires_on`, `not_before`, and `recover_level` properties from `CertificatePolicy`
+- Removed `vault_url` property from `CertificateIssuer`
+- Removed `vault_url` property from `IssuerProperties`
+
 
 
 ### 4.0.0b6
