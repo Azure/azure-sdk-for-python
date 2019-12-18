@@ -750,6 +750,7 @@ class StorageContainerTest(StorageTestCase):
         data = b'hello world'
         container.get_blob_client('blob1').upload_blob(data)
         container.get_blob_client('blob2').upload_blob(data)
+        container.get_blob_client(u'blob3\u00e9'.encode('utf-8')).upload_blob(data)
 
         # Act
         blobs = list(container.list_blobs())
@@ -760,6 +761,31 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(blobs[0])
         self.assertNamedItemInContainer(blobs, 'blob1')
         self.assertNamedItemInContainer(blobs, 'blob2')
+        self.assertNamedItemInContainer(blobs, u'blob3\u00e9')
+        self.assertEqual(blobs[0].size, 11)
+        self.assertEqual(blobs[1].content_settings.content_type,
+                         'application/octet-stream')
+        self.assertIsNotNone(blobs[0].creation_time)
+
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_no_bom(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        container.get_blob_client('blob1').upload_blob(data)
+        container.get_blob_client('blob2').upload_blob(data)
+        container.get_blob_client(u'blob3\u00e9'.encode('utf-8')).upload_blob(data)
+
+        # Act
+        blobs = list(container.list_blobs())
+
+        # Assert
+        self.assertIsNotNone(blobs)
+        self.assertGreaterEqual(len(blobs), 2)
+        self.assertIsNotNone(blobs[0])
+        self.assertNamedItemInContainer(blobs, 'blob1')
+        self.assertNamedItemInContainer(blobs, 'blob2')
+        self.assertNamedItemInContainer(blobs, u'blob3\u00e9')
         self.assertEqual(blobs[0].size, 11)
         self.assertEqual(blobs[1].content_settings.content_type,
                          'application/octet-stream')

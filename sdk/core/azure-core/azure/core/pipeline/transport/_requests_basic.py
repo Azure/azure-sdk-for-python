@@ -66,11 +66,6 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     def body(self):
         return self.internal_response.content
 
-    def text(self, encoding=None):
-        if encoding:
-            self.internal_response.encoding = encoding
-        return self.internal_response.text
-
 
 class StreamDownloadGenerator(object):
     """Generator for streaming response data.
