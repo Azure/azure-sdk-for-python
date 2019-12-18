@@ -49,8 +49,11 @@ class EventProcessorMixin(object):
         {}
     )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
 
-    def get_init_event_position(self, partition_id, checkpoint):
-        # type: (str, Optional[Dict[str, Any]]) -> Tuple[Union[str, int, datetime], bool]
+    def get_init_event_position(self, partition_id, checkpoint, has_checkpoint_store, last_offset):
+        # type: (str, Optional[Dict[str, Any]], bool, str) -> Tuple[Union[str, int, datetime], bool]
+        if has_checkpoint_store is False and last_offset:
+            return last_offset, False
+
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
 
         event_position_inclusive = False
@@ -70,7 +73,10 @@ class EventProcessorMixin(object):
             event_position = cast(
                 Union[int, str, datetime], self._initial_event_position
             )
-
+        if event_position == "-1":
+            # uamqp will wait indefinitely (or very long time) when pos is "-1" and inclusive is False
+            # Before uamqp fixes this problem, so we make inclusive True when event_position="-1".
+            event_position_inclusive = True
         return event_position, event_position_inclusive
 
     def create_consumer(

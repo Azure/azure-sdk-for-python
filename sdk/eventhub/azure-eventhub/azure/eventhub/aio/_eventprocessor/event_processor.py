@@ -195,10 +195,9 @@ class EventProcessor(
     ) -> None:
         with self._context(event):
             try:
-                if self._track_last_enqueued_event_properties:
-                    partition_context._last_received_event = (  # pylint: disable=protected-access
-                        event
-                    )
+                partition_context._last_received_event = (  # pylint: disable=protected-access
+                    event
+                )
                 await self._event_handler(partition_context, event)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
@@ -210,10 +209,7 @@ class EventProcessor(
     ) -> None:  # pylint: disable=too-many-statements
         try:  # pylint:disable=too-many-nested-blocks
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
-            (
-                initial_event_position,
-                event_position_inclusive,
-            ) = self.get_init_event_position(partition_id, checkpoint)
+
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
             else:
@@ -225,6 +221,16 @@ class EventProcessor(
                     self._checkpoint_store,
                 )
                 self._partition_contexts[partition_id] = partition_context
+            try:
+                last_offset = partition_context._last_received_event.offset  # pylint: disable=protected-access
+            except AttributeError:
+                last_offset = None
+            (
+                initial_event_position,
+                event_position_inclusive,
+            ) = self.get_init_event_position(
+                partition_id, checkpoint, self._checkpoint_store is not None, last_offset
+            )
 
             event_received_callback = partial(
                 self._on_event_received, partition_context

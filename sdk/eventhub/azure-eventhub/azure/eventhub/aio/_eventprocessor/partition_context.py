@@ -53,9 +53,7 @@ class PartitionContext(object):
 
         :rtype: dict or None
         """
-        if self._last_received_event:
-            return get_last_enqueued_event_properties(self._last_received_event)
-        return None
+        return get_last_enqueued_event_properties(self._last_received_event)
 
     async def update_checkpoint(self, event: "EventData") -> None:
         """Updates the receive checkpoint to the given events offset.

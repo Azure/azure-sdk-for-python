@@ -55,9 +55,7 @@ class PartitionContext(object):
 
         :rtype: dict or None
         """
-        if self._last_received_event:
-            return get_last_enqueued_event_properties(self._last_received_event)
-        return None
+        return get_last_enqueued_event_properties(self._last_received_event)
 
     def update_checkpoint(self, event):
         # type: (EventData) -> None

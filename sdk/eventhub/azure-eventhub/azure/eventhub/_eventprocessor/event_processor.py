@@ -144,10 +144,16 @@ class EventProcessor(
                         self._partition_contexts[partition_id] = partition_context
 
                     checkpoint = checkpoints.get(partition_id) if checkpoints else None
+                    try:
+                        last_offset = partition_context._last_received_event.offset  # pylint: disable=protected-access
+                    except AttributeError:
+                        last_offset = None
                     (
                         initial_event_position,
                         event_postition_inclusive,
-                    ) = self.get_init_event_position(partition_id, checkpoint)
+                    ) = self.get_init_event_position(
+                        partition_id, checkpoint, self._checkpoint_store is not None, last_offset
+                    )
                     event_received_callback = partial(
                         self._on_event_received, partition_context
                     )
@@ -188,10 +194,9 @@ class EventProcessor(
     def _on_event_received(self, partition_context, event):
         # type: (PartitionContext, EventData) -> None
         with self._context(event):
-            if self._track_last_enqueued_event_properties:
-                partition_context._last_received_event = (  # pylint: disable=protected-access
-                    event
-                )
+            partition_context._last_received_event = (  # pylint: disable=protected-access
+                event
+            )
             self._handle_callback(self._event_handler, partition_context, event)
 
     def _load_balancing(self):
