@@ -194,8 +194,9 @@ class CopyFileSmbInfo(GenCopyFileSmbInfo):
     :param file_attributes: Specifies either the option to copy file
         attributes from a source file(source) to a target file or a list of
         attributes to set on a target file.
-        eg."source": copy file attributes from a source file(source); "None": All attribute values will be cleared;
-        If this is not set, the default value is “Archive”.
+        eg."source": copy file attributes from a source file(source),
+        "None": All attribute values will be cleared,
+        If this is not set, the default value is "Archive".
     :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
     :param file_creation_time: Specifies either the option to copy file
         creation time from a source file(source) to a target file or a time value
