@@ -39,15 +39,15 @@ class CognitiveServiceTest(AzureTestCase):
         super(CognitiveServiceTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ACCOUNT_NAME")
+        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("AZURE_TENANT_ID"),
-                self.get_settings_value("AZURE_CLIENT_ID"),
-                self.get_settings_value("AZURE_CLIENT_SECRET"),
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 
@@ -63,11 +63,13 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                  legacy=False,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None,
+                 random_name_enabled=True):
         super(CognitiveServicesAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs)
+                                                     client_kwargs=client_kwargs,
+                                                     random_name_enabled=random_name_enabled)
         self.location = location
         self.sku = sku
         self.kind = kind
