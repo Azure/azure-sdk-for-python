@@ -5,7 +5,7 @@
 
 ### Features
 
-- Support fixed retr   #6419
+- Support fixed retry   #6419
 
 ## 1.1.1 (2019-12-03) 
 
