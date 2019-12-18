@@ -21,14 +21,23 @@ def verify_packages(package_file_path):
         packages = packages_file.readlines()
     packages = [p.replace('\n', '') for p in packages]
 
-    # find installed packages
-    installed_pkgs = [
-        p for p in freeze.freeze() if p.startswith("azure-")
-    ]
+    # packages.txt is created by package installation script. But this script can be reused to verify installed packages
+    # Add a sanity check to ensure content in file is in expected format
+    invalid_lines = [p for p in packages if '==' not in p]
+    if invalid_lines:
+        logging.error("packages.txt has package details in invalid format. Expected format is <package-name>==<version>")
+        sys.exit(1)
 
-    missing_packages = [p for p in packages if p not in installed_pkgs]
+    # find installed and expected packages
+    installed = dict(p.split('==') for p in freeze.freeze() if p.startswith('azure'))
+    expected = dict(p.split('==') for p in packages)
+
+    missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]
+
     if missing_packages:
-        logging.error("Version is not correct for packages: %s", missing_packages)
+        logging.error("Version is incorrect for following package[s]")
+        for package in missing_packages:
+            logging.error("%s, Expected[%s], Installed[%s]", package, expected[package], installed[package])
         sys.exit(1)
     else:
         logging.info("Verified package version")

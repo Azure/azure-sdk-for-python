@@ -14,7 +14,6 @@ import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement
 from pypi_tools.pypi import PyPIClient
-from pip._internal.operations import freeze
 
 setup_parser_path = os.path.abspath(
     os.path.join(os.path.abspath(__file__), "..", "..", "versioning")
@@ -28,7 +27,7 @@ PKGS_TXT_FILE = "packages.txt"
 EXCLUDED_PKGS = ['azure-common',]
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
-    # This method identifies latest/ minimal version of dependent packages and install them from pyPI
+    # This method identifies latest/ minimal version of dependent packages and installs them from pyPI
     # dependency type must either be latest or minimum
     # Latest dependency will find latest released package that satisfies requires of given package name
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
@@ -43,8 +42,8 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
         install_packages(released_packages, dev_req_file_path)
 
     if released_packages:
-        # create a file with list of packages and version found based on minimum or latest check on PyPI
-        # This file can be used to verify we have correct version installed
+        # create a file with list of packages and versions found based on minimum or latest check on PyPI
+        # This file can be used to verify if we have correct version installed
         pkgs_file_path = os.path.join(temp_dir, PKGS_TXT_FILE)
         with open(pkgs_file_path, "w") as pkgs_file:
             for package in released_packages:
@@ -56,7 +55,7 @@ def find_released_packages(setup_py_path, dependency_type):
     # this method returns list of required available package on PyPI in format <package-name>==<version>
 
     # parse setup.py and find install requires
-    requires = [r for r in get_install_requires(setup_py_path) if r.startswith('azure-') and '-nspkg' not in r]
+    requires = [r for r in get_install_requires(setup_py_path) if r.startswith('azure') and '-nspkg' not in r]
 
     # Get available version on PyPI for each required package
     avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
@@ -66,7 +65,7 @@ def find_released_packages(setup_py_path, dependency_type):
 def parse_req(req):
     req_object = Requirement.parse(req)
     pkg_name = req_object.key
-    spec = str(req_object).replace(pkg_name, "")
+    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return pkg_name, spec
 
 
@@ -91,7 +90,7 @@ def process_requirement(req, dependency_type):
 
     # return first version that matches specifier in <package-name>==<version> format
     for version in versions:
-        if version in SpecifierSet(spec):
+        if version in spec:
             logging.info("Found %s version %s that matches specifier %s", dependency_type, version, spec)
             return pkg_name + "==" + version
 
@@ -160,7 +159,8 @@ if __name__ == "__main__":
         "-d",
         "--dependency-type",
         dest="dependency_type",
-        help="dependency type to install. Option is either 'Latest' or 'Minimum'",
+        choices=['Latest', 'Minimum'],
+        help="Dependency type to install. Dependency type is either 'Latest' or 'Minimum'",
         required=True,
     )
 
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     setup_path = os.path.join(os.path.abspath(args.target_package), "setup.py")
 
     if not(os.path.exists(setup_path) and os.path.exists(args.work_dir)):
-        logging.error("Invalid arguements. Please make sure target directory and working directory are valid path")
+        logging.error("Invalid arguments. Please make sure target directory and working directory are valid path")
         sys.exit(1)
 
     install_dependent_packages(setup_path, args.dependency_type, args.work_dir)

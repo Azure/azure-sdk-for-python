@@ -116,7 +116,7 @@ jobs:
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist,latestdependency,minimumdependency'
+        ToxTestEnv: 'whl,sdist'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
