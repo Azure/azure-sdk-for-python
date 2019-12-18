@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef38e13fe?restype=share
+    uri: https://storagename.file.core.windows.net/utsharef38e13fe?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
+    uri: https://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
   response:
     body:
       string: ''
@@ -127,7 +127,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe?comp=lease
+    uri: https://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe?comp=lease
   response:
     body:
       string: ''
@@ -187,7 +187,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
+    uri: https://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
   response:
     body:
       string: ''
@@ -240,7 +240,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: http://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
+    uri: https://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -287,7 +287,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: http://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
+    uri: https://storagename.file.core.windows.net/utsharef38e13fe/filef38e13fe
   response:
     body:
       string: ''

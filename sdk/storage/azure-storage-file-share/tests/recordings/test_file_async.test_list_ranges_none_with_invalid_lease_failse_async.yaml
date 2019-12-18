@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharedf9b1c4e?restype=share
+    uri: https://storagename.file.core.windows.net/utsharedf9b1c4e?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e
+    uri: https://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e
   response:
     body:
       string: ''
@@ -127,7 +127,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e?comp=lease
+    uri: https://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e?comp=lease
   response:
     body:
       string: ''
@@ -177,7 +177,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: http://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e?comp=rangelist
+    uri: https://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e?comp=rangelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithFileOperation</Code><Message>The
@@ -223,7 +223,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: http://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e?comp=rangelist
+    uri: https://storagename.file.core.windows.net/utsharedf9b1c4e/filedf9b1c4e?comp=rangelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges />"

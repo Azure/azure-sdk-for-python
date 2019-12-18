@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1dfb1946?restype=share
+    uri: https://storagename.file.core.windows.net/utshare1dfb1946?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946
+    uri: https://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946
   response:
     body:
       string: ''
@@ -127,7 +127,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946?comp=lease
+    uri: https://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946?comp=lease
   response:
     body:
       string: ''
@@ -179,7 +179,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946?comp=lease
+    uri: https://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946?comp=lease
   response:
     body:
       string: ''
@@ -239,7 +239,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946
+    uri: https://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithFileOperation</Code><Message>The
@@ -297,7 +297,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946
+    uri: https://storagename.file.core.windows.net/utshare1dfb1946/file1dfb1946
   response:
     body:
       string: ''

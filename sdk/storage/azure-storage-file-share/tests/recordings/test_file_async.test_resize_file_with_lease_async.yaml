@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef697141c?restype=share
+    uri: https://storagename.file.core.windows.net/utsharef697141c?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef697141c/filef697141c
+    uri: https://storagename.file.core.windows.net/utsharef697141c/filef697141c
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=range
+    uri: https://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=range
   response:
     body:
       string: ''
@@ -202,7 +202,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=lease
+    uri: https://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=lease
   response:
     body:
       string: ''
@@ -258,7 +258,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=properties
+    uri: https://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -315,7 +315,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=properties
+    uri: https://storagename.file.core.windows.net/utsharef697141c/filef697141c?comp=properties
   response:
     body:
       string: ''
@@ -368,7 +368,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: http://storagename.file.core.windows.net/utsharef697141c/filef697141c
+    uri: https://storagename.file.core.windows.net/utsharef697141c/filef697141c
   response:
     body:
       string: ''

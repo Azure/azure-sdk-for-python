@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea19147a?restype=share
+    uri: https://storagename.file.core.windows.net/utsharea19147a?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea19147a/filea19147a
+    uri: https://storagename.file.core.windows.net/utsharea19147a/filea19147a
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=range
+    uri: https://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=range
   response:
     body:
       string: ''
@@ -202,7 +202,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=lease
+    uri: https://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=lease
   response:
     body:
       string: ''
@@ -256,7 +256,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=range
+    uri: https://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=range
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -311,7 +311,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=range
+    uri: https://storagename.file.core.windows.net/utsharea19147a/filea19147a?comp=range
   response:
     body:
       string: ''
@@ -364,7 +364,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: http://storagename.file.core.windows.net/utsharea19147a/filea19147a
+    uri: https://storagename.file.core.windows.net/utsharea19147a/filea19147a
   response:
     body:
       string: !!binary |

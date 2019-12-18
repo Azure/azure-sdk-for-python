@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956?restype=share
+    uri: https://storagename.file.core.windows.net/utshare1da11956?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=range
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=range
   response:
     body:
       string: ''
@@ -202,7 +202,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=lease
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=lease
   response:
     body:
       string: ''
@@ -256,7 +256,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=metadata
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=metadata
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -303,7 +303,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=lease
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=lease
   response:
     body:
       string: ''
@@ -353,7 +353,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=metadata
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=metadata
   response:
     body:
       string: ''
@@ -399,7 +399,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956
   response:
     body:
       string: ''
@@ -465,7 +465,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=lease
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=lease
   response:
     body:
       string: ''
@@ -521,7 +521,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=metadata
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956?comp=metadata
   response:
     body:
       string: ''
@@ -567,7 +567,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: http://storagename.file.core.windows.net/utshare1da11956/file1da11956
+    uri: https://storagename.file.core.windows.net/utshare1da11956/file1da11956
   response:
     body:
       string: ''

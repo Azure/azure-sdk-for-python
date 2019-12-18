@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e?restype=share
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/testfile
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/testfile
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/testfile?comp=range
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/testfile?comp=range
   response:
     body:
       string: ''
@@ -204,7 +204,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/testfile?comp=range
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/testfile?comp=range
   response:
     body:
       string: ''
@@ -253,7 +253,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e?restype=share
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
@@ -309,7 +309,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate
   response:
     body:
       string: ''
@@ -368,7 +368,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=lease
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=lease
   response:
     body:
       string: ''
@@ -412,7 +412,7 @@ interactions:
       x-ms-client-request-id:
       - 120c9b90-1d45-11ea-90d4-001a7dda7113
       x-ms-copy-source:
-      - http://emilystageaccount.file.core.windows.net/utshare539b1a3e/testfile?se=2019-12-13T02%3A08%3A28Z&sp=r&sv=2019-07-07&sr=f&sig=PxyPdublIkC7GQrvvJrldZHl3PTmhjNBlOtfGUz5SnI%3D
+      - https://emilystageaccount.file.core.windows.net/utshare539b1a3e/testfile?se=2019-12-13T02%3A08%3A28Z&sp=r&sv=2019-07-07&sr=f&sig=PxyPdublIkC7GQrvvJrldZHl3PTmhjNBlOtfGUz5SnI%3D
       x-ms-date:
       - Fri, 13 Dec 2019 01:08:28 GMT
       x-ms-range:
@@ -424,7 +424,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=range
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=range
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -467,7 +467,7 @@ interactions:
       x-ms-client-request-id:
       - 12406afa-1d45-11ea-bb89-001a7dda7113
       x-ms-copy-source:
-      - http://emilystageaccount.file.core.windows.net/utshare539b1a3e/testfile?se=2019-12-13T02%3A08%3A28Z&sp=r&sv=2019-07-07&sr=f&sig=PxyPdublIkC7GQrvvJrldZHl3PTmhjNBlOtfGUz5SnI%3D
+      - https://emilystageaccount.file.core.windows.net/utshare539b1a3e/testfile?se=2019-12-13T02%3A08%3A28Z&sp=r&sv=2019-07-07&sr=f&sig=PxyPdublIkC7GQrvvJrldZHl3PTmhjNBlOtfGUz5SnI%3D
       x-ms-date:
       - Fri, 13 Dec 2019 01:08:28 GMT
       x-ms-lease-id:
@@ -481,7 +481,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=range
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=range
   response:
     body:
       string: ''
@@ -530,7 +530,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=rangelist
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=rangelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges><Range><Start>0</Start><End>511</End></Range></Ranges>"
@@ -583,7 +583,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: http://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate
   response:
     body:
       string: abcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnop

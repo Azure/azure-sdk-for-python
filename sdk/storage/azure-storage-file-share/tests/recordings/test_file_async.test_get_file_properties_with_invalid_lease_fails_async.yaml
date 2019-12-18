@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare19451d2a?restype=share
+    uri: https://storagename.file.core.windows.net/utshare19451d2a?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare19451d2a/file19451d2a
+    uri: https://storagename.file.core.windows.net/utshare19451d2a/file19451d2a
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utshare19451d2a/file19451d2a?comp=range
+    uri: https://storagename.file.core.windows.net/utshare19451d2a/file19451d2a?comp=range
   response:
     body:
       string: ''
@@ -198,7 +198,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: http://storagename.file.core.windows.net/utshare19451d2a/file19451d2a
+    uri: https://storagename.file.core.windows.net/utshare19451d2a/file19451d2a
   response:
     body:
       string: ''
@@ -238,7 +238,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: http://storagename.file.core.windows.net/utshare19451d2a/file19451d2a
+    uri: https://storagename.file.core.windows.net/utshare19451d2a/file19451d2a
   response:
     body:
       string: ''

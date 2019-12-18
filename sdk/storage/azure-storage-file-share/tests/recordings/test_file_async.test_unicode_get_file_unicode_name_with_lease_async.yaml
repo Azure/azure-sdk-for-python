@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56?restype=share
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56?restype=share
   response:
     body:
       string: ''
@@ -68,7 +68,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
       string: ''
@@ -127,7 +127,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?comp=lease
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?comp=lease
   response:
     body:
       string: ''
@@ -185,7 +185,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
@@ -244,7 +244,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
       string: ''
@@ -307,7 +307,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?comp=range
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?comp=range
   response:
     body:
       string: ''
@@ -370,7 +370,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithFileOperation</Code><Message>The
@@ -418,7 +418,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: http://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
+    uri: https://storagename.file.core.windows.net/utsharea14d1b56/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
   response:
     body:
       string: hello world
