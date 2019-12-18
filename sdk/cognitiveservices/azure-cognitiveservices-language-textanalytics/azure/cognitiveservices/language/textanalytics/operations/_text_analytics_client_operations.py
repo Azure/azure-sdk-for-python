@@ -9,69 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from msrest.exceptions import HttpOperationError
-from . import models
+from .. import models
 
 
-class TextAnalyticsClientConfiguration(Configuration):
-    """Configuration for TextAnalyticsClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/text/analytics/v2.1'
-
-        super(TextAnalyticsClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-language-textanalytics/{}'.format(VERSION))
-
-        self.endpoint = endpoint
-        self.credentials = credentials
-
-
-class TextAnalyticsClient(SDKClient):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
-
-    :ivar config: Configuration for client.
-    :vartype config: TextAnalyticsClientConfiguration
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        self.config = TextAnalyticsClientConfiguration(endpoint, credentials)
-        super(TextAnalyticsClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = 'v2.1'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class TextAnalyticsClientOperationsMixin(object):
 
     def detect_language(
             self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -136,7 +78,6 @@ class TextAnalyticsClient(SDKClient):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('LanguageBatchResult', response)
 
@@ -212,7 +153,6 @@ class TextAnalyticsClient(SDKClient):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('EntitiesBatchResult', response)
 
@@ -288,7 +228,6 @@ class TextAnalyticsClient(SDKClient):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('KeyPhraseBatchResult', response)
 
@@ -321,10 +260,12 @@ class TextAnalyticsClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: SentimentBatchResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.SentimentBatchResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
         """
         multi_language_batch_input = None
         if documents is not None:
@@ -359,15 +300,12 @@ class TextAnalyticsClient(SDKClient):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 500]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SentimentBatchResult', response)
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
