@@ -146,14 +146,14 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request_id = _Unset()
+        request_id = unset = object()
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
         elif self._request_id is not _Unset:
             request_id = self._request_id   # type: ignore
         elif self._auto_request_id:
             request_id = str(uuid.uuid1())  # type: ignore
-        if not isinstance(request_id, _Unset):
+        if request_id is not unset:
             header = {"x-ms-client-request-id": request_id}
             request.http_request.headers.update(header)
 
