@@ -29,29 +29,32 @@ if TYPE_CHECKING:
     from .._common import EventData
     from .._consumer import EventHubConsumer
     from .._consumer_client import EventHubConsumerClient
+    from .checkpoint_store import CheckpointStore
     from ..aio._consumer_async import EventHubConsumer as EventHubConsumerAsync
     from ..aio._consumer_client_async import (
         EventHubConsumerClient as EventHubConsumerClientAsync,
     )
+    from ..aio._eventprocessor.checkpoint_store import CheckpointStore as CheckpointStoreAsync
 
 
 class EventProcessorMixin(object):
+    if TYPE_CHECKING:
+        _eventhub_client = (
+            None
+        )  # type: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]]
+        _consumer_group = ""  # type: str
+        _owner_level = None  # type: Optional[int]
+        _prefetch = None  # type: Optional[int]
+        _track_last_enqueued_event_properties = False  # type: bool
+        _checkpoint_store = None  # type: Optional[Union[CheckpointStore, CheckpointStoreAsync]]
+        _initial_event_position_inclusive = {}  # type: Union[bool, Dict[str, bool]]
+        _initial_event_position = (
+            {}
+        )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
 
-    _eventhub_client = (
-        None
-    )  # type: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]]
-    _consumer_group = ""  # type: str
-    _owner_level = None  # type: Optional[int]
-    _prefetch = None  # type: Optional[int]
-    _track_last_enqueued_event_properties = False  # type: bool
-    _initial_event_position_inclusive = {}  # type: Union[bool, Dict[str, bool]]
-    _initial_event_position = (
-        {}
-    )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
-
-    def get_init_event_position(self, partition_id, checkpoint, has_checkpoint_store, last_offset):
-        # type: (str, Optional[Dict[str, Any]], bool, Optional[str]) -> Tuple[Union[str, int, datetime], bool]
-        if has_checkpoint_store is False and last_offset:
+    def get_init_event_position(self, partition_id, checkpoint, last_offset):
+        # type: (str, Optional[Dict[str, Any]], Optional[str]) -> Tuple[Union[str, int, datetime], bool]
+        if not self._checkpoint_store and last_offset:
             return last_offset, False
 
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
@@ -73,10 +76,6 @@ class EventProcessorMixin(object):
             event_position = cast(
                 Union[int, str, datetime], self._initial_event_position
             )
-        if event_position == "-1":
-            # uamqp will wait indefinitely (or very long time) when pos is "-1" and inclusive is False
-            # Before uamqp fixes this problem, so we make inclusive True when event_position="-1".
-            event_position_inclusive = True
         return event_position, event_position_inclusive
 
     def create_consumer(

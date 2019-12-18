@@ -153,7 +153,7 @@ class EventProcessor(
                         initial_event_position,
                         event_postition_inclusive,
                     ) = self.get_init_event_position(
-                        partition_id, checkpoint, self._checkpoint_store is not None, last_offset
+                        partition_id, checkpoint, last_offset
                     )
                     event_received_callback = partial(
                         self._on_event_received, partition_context

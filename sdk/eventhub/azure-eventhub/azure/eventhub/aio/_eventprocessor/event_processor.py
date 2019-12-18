@@ -218,7 +218,7 @@ class EventProcessor(
                     self._eventhub_name,
                     self._consumer_group,
                     partition_id,
-                    self._checkpoint_store,
+                    cast(CheckpointStore, self._checkpoint_store),
                 )
                 self._partition_contexts[partition_id] = partition_context
             try:
@@ -230,7 +230,7 @@ class EventProcessor(
                 initial_event_position,
                 event_position_inclusive,
             ) = self.get_init_event_position(
-                partition_id, checkpoint, self._checkpoint_store is not None, last_offset
+                partition_id, checkpoint, last_offset
             )
 
             event_received_callback = partial(
