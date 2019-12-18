@@ -28,7 +28,7 @@ from ._base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
 from ._authentication import BearerTokenCredentialPolicy
 from ._custom_hook import CustomHookPolicy
 from ._redirect import RedirectPolicy
-from ._retry import RetryPolicy
+from ._retry import RetryPolicy, RetryType
 from ._distributed_tracing import DistributedTracingPolicy
 from ._universal import (
     HeadersPolicy,
@@ -48,6 +48,7 @@ __all__ = [
     'UserAgentPolicy',
     'NetworkTraceLoggingPolicy',
     'ContentDecodePolicy',
+    'RetryType',
     'RetryPolicy',
     'RedirectPolicy',
     'ProxyPolicy',

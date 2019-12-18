@@ -32,6 +32,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 import email
+from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
@@ -46,6 +47,9 @@ from ._base import HTTPPolicy, RequestHistory
 
 _LOGGER = logging.getLogger(__name__)
 
+class RetryType(Enum):
+    Exponential = 1
+    Fixed = 2
 
 class RetryPolicy(HTTPPolicy):
     """A retry policy.
@@ -73,6 +77,8 @@ class RetryPolicy(HTTPPolicy):
 
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
 
+    :keyword RetryType retry_type: Fixed or exponential delay between retries, default is exponential.
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/test_example_sync.py
@@ -95,6 +101,7 @@ class RetryPolicy(HTTPPolicy):
         self.status_retries = kwargs.pop('retry_status', 3)
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
+        self.retry_type = kwargs.pop('retry_type', RetryType.Exponential)
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
@@ -139,7 +146,10 @@ class RetryPolicy(HTTPPolicy):
         if consecutive_errors_len <= 1:
             return 0
 
-        backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
+        if self.retry_type == RetryType.Fixed:
+            backoff_value = settings['backoff']
+        else:
+            backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
         return min(settings['max_backoff'], backoff_value)
 
     def parse_retry_after(self, retry_after):
