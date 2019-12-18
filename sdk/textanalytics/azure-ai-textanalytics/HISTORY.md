@@ -1,6 +1,6 @@
 # Change Log azure-ai-textanalytics
 
-## 2020-01-06 1.0.0b1
+## 1.0.0b1 (2020-01-06)
 
 Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Text Analytics. For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://azure.github.io/azure-sdk/releases/latest/python.html.
@@ -75,7 +75,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
     - There is one exception type derived from this base type for authentication errors:
         - `ClientAuthenticationError`: Authentication failed.
 
-### 2019-03-12 0.2.0
+## 0.2.0 (2019-03-12)
 
 **Features**
 
@@ -111,6 +111,6 @@ This version uses a next-generation code generator that *might* introduce breaki
 - Compatibility of the sdist with wheel 0.31.0
 
 
-### 2018-01-12 0.1.0
+## 0.1.0 (2018-01-12)
 
 * Initial Release
