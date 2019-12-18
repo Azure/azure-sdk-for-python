@@ -145,7 +145,8 @@ class EventProcessor(
 
                     checkpoint = checkpoints.get(partition_id) if checkpoints else None
                     try:
-                        last_offset = partition_context._last_received_event.offset  # pylint: disable=protected-access
+                        last_received_event = partition_context._last_received_event  # pylint: disable=protected-access
+                        last_offset = last_received_event.offset if last_received_event else None
                     except AttributeError:
                         last_offset = None
                     (

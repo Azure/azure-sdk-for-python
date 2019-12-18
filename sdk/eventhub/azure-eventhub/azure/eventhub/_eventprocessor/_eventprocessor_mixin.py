@@ -50,7 +50,7 @@ class EventProcessorMixin(object):
     )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
 
     def get_init_event_position(self, partition_id, checkpoint, has_checkpoint_store, last_offset):
-        # type: (str, Optional[Dict[str, Any]], bool, str) -> Tuple[Union[str, int, datetime], bool]
+        # type: (str, Optional[Dict[str, Any]], bool, Optional[str]) -> Tuple[Union[str, int, datetime], bool]
         if has_checkpoint_store is False and last_offset:
             return last_offset, False
 
