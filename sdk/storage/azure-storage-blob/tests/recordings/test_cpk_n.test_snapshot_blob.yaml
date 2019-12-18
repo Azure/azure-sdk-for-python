@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 18 Dec 2019 02:11:18 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       etag:
-      - '"0x8D7835F921D73DA"'
+      - '"0x8D78388A66ABA38"'
       last-modified:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       x-ms-encryption-scope:
       - antjoscope1
       x-ms-version:
@@ -73,11 +73,11 @@ interactions:
       content-md5:
       - Yge131eW6WNBDTvEtqQhiw==
       date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       etag:
-      - '"0x8D7835F9241B97A"'
+      - '"0x8D78388A68B922E"'
       last-modified:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -105,7 +105,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -114,14 +114,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
         blob is encrypted with customer specified encryption, but it was not provided
-        in the request.\nRequestId:cbc95446-a01e-001f-1648-b5213f000000\nTime:2019-12-18T02:11:19.7034323Z</Message></Error>"
+        in the request.\nRequestId:4de2cbff-c01e-0044-6c71-b51804000000\nTime:2019-12-18T07:05:23.0817242Z</Message></Error>"
     headers:
       content-length:
       - '301'
       content-type:
       - application/xml
       date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -146,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:23 GMT
       x-ms-encryption-scope:
       - antjoscope1
       x-ms-version:
@@ -160,17 +160,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       etag:
-      - '"0x8D7835F9241B97A"'
+      - '"0x8D78388A68B922E"'
       last-modified:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-snapshot:
-      - '2019-12-18T02:11:19.8636432Z'
+      - '2019-12-18T07:05:23.2269520Z'
       x-ms-version:
       - '2019-07-07'
     status:
@@ -190,7 +190,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 18 Dec 2019 02:11:19 GMT
+      - Wed, 18 Dec 2019 07:05:23 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -202,7 +202,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Dec 2019 02:11:20 GMT
+      - Wed, 18 Dec 2019 07:05:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

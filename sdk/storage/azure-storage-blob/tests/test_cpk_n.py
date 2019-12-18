@@ -326,6 +326,7 @@ class StorageCPKNTest(StorageTestCase):
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.readall(), b'AAABBBCCC')
+        self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
