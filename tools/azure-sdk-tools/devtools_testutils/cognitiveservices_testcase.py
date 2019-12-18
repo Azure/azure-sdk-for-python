@@ -45,9 +45,9 @@ class CognitiveServiceTest(AzureTestCase):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("AZURE_TENANT_ID"),
-                self.get_settings_value("AZURE_CLIENT_ID"),
-                self.get_settings_value("AZURE_CLIENT_SECRET"),
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 
