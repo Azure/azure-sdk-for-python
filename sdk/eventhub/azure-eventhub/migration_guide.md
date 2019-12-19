@@ -63,36 +63,35 @@ In V5, EventHubConsumerClient.receive() calls user callback on_event to process 
 For example, this code which receives from a partition in V1:
 
 ```python
-
+client = EventHubClientAsync.from_connection_string(connection_str)
+receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
+try:
+    await client.run_async()
+    logger = logging.getLogger("azure.eventhub")
+    received = await receiver.receive(timeout=5)
+    for event_data in received:
+        logger.info("Message received:{}".format(event_data.body_as_str()))
+except:
+    raise
+finally:
+    await client.stop_async()
 ```
 
 Becomes this in V5:
 
 ```python
-import asyncio
-import os
-from azure.eventhub.aio import EventHubConsumerClient
-
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-
-
 async def on_event(partition_context, event):
     print("Received event from partition: {}".format(partition_context.partition_id))
     print(event)
 
-async def main():
-    client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        consumer_group="$default",
-        eventhub_name=EVENTHUB_NAME
-    )
-    async with client:
-        await client.receive(on_event=on_event)
+client = EventHubConsumerClient.from_connection_string(
+    conn_str=CONNECTION_STR,
+    consumer_group="$default",
+    eventhub_name=EVENTHUB_NAME
+)
 
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+async with client:
+    await client.receive(on_event=on_event, partition_id="0", starting_position="@latest")
 ```
 
 ### Migrating code from `EventHubClient` and `SenderAsync` to `EventHubProducerClient` for sending events
@@ -105,35 +104,31 @@ Batching merges information from multiple events into a single send, reducing
 the amount of network communication needed vs sending events one at a time.
 This method deterministically tells you whether the batch of events are sent to the event hub.
 
-So in V2:
+So in V1:
 ```python
-
+client = EventHubClientAsync.from_connection_string(connection_str)
+sender = client.add_async_sender(partition="0")
+try:
+    await client.run_async()
+    event_data = EventData(b"A single event")
+    await sender.send(event_data)
+except:
+    raise
+finally:
+    await client.stop_async()
 ```
 
 In V5:
 ```python
-import asyncio
-import os
-
-from azure.eventhub.aio import EventHubProducerClient
-from azure.eventhub import EventData
-
-EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-
-
-async def run(producer):
-    async with producer:
-        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
-        while True:
-            try:
-                event_data_batch.add(EventData('Message inside EventBatchData'))
-            except ValueError:
-                break
-        await producer.send_batch(event_data_batch)
 producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, eventhub_name=EVENTHUB_NAME)
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run)
+async with producer:
+    event_data_batch = await producer.create_batch(max_size_in_bytes=10000, partition_id="0")
+    while True:
+        try:
+            event_data_batch.add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            break
+    await producer.send_batch(event_data_batch)
 ```
 
 ### Migrating code from `EventProcessorHost` to `EventHubConsumerClient` for receiving events
@@ -165,14 +160,6 @@ async def on_event(partition_context, event):
     print("Received event from partition: {}".format(partition_context.partition_id))
     await partition_context.update_checkpoint(event)
 
-
-async def receive(client):
-    try:
-        await client.receive(on_event=on_event)
-    except KeyboardInterrupt:
-        await client.close()
-
-
 async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "container_name_to_store_checkpoint")
     client = EventHubConsumerClient.from_connection_string(
@@ -181,7 +168,7 @@ async def main():
         checkpoint_store=checkpoint_store,
     )
     async with client:
-        await receive(client)
+        await client.receive(on_event)
 
 
 if __name__ == '__main__':
