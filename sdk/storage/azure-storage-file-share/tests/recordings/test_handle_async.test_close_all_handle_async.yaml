@@ -24,16 +24,16 @@ interactions:
         /><FileId>0</FileId><ParentId>0</ParentId><SessionId>9479483953728458157</SessionId><ClientIp>167.220.2.5:3263</ClientIp><OpenTime>Tue,
         10 Dec 2019 00:29:52 GMT</OpenTime></Handle></Entries><NextMarker /></EnumerationResults>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Content-Type
       : application/xml
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Date
       : Tue, 10 Dec 2019 00:30:18 GMT
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Transfer-Encoding
       : chunked
       x-ms-request-id: 72cc6b4f-f01a-002d-07f0-ae2148000000
@@ -70,13 +70,13 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Content-Length
       : '0'
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Date
       : Tue, 10 Dec 2019 00:30:18 GMT
-      ? !!python/object/new:multidict._istr.istr
+      ? !!python/object/new:multidict._multidict.istr
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-number-of-handles-closed: '2'
