@@ -10,6 +10,35 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
+
+
+class ArmErrorResponse(Model):
+    """ArmErrorResponse.
+
+    :param error:
+    :type error: ~azure.mgmt.advisor.models.ARMErrorResponseBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ARMErrorResponseBody'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ArmErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ArmErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ArmErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ArmErrorResponseException, self).__init__(deserialize, response, 'ArmErrorResponse', *args)
 
 
 class ARMErrorResponseBody(Model):
@@ -42,60 +71,115 @@ class CloudError(Model):
     }
 
 
-class ConfigData(Model):
-    """The Advisor configuration data structure.
+class Resource(Model):
+    """An Azure resource.
 
-    :param id: The resource Id of the configuration resource.
-    :type id: str
-    :param type: The type of the configuration resource.
-    :type type: str
-    :param name: The name of the configuration resource.
-    :type name: str
-    :param properties: The list of property name/value pairs.
-    :type properties: ~azure.mgmt.advisor.models.ConfigDataProperties
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ConfigDataProperties'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, type: str=None, name: str=None, properties=None, **kwargs) -> None:
-        super(ConfigData, self).__init__(**kwargs)
-        self.id = id
-        self.type = type
-        self.name = name
-        self.properties = properties
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
 
 
-class ConfigDataProperties(Model):
-    """The list of property name/value pairs.
+class ConfigData(Resource):
+    """The Advisor configuration data structure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     :param exclude: Exclude the resource from Advisor evaluations. Valid
      values: False (default) or True.
     :type exclude: bool
     :param low_cpu_threshold: Minimum percentage threshold for Advisor low CPU
      utilization evaluation. Valid only for subscriptions. Valid values: 5
-     (default), 10, 15 or 20.
-    :type low_cpu_threshold: str
+     (default), 10, 15 or 20. Possible values include: '5', '10', '15', '20'
+    :type low_cpu_threshold: str or ~azure.mgmt.advisor.models.CpuThreshold
+    :param digests: Advisor digest configuration. Valid only for subscriptions
+    :type digests: list[~azure.mgmt.advisor.models.DigestConfig]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'exclude': {'key': 'properties.exclude', 'type': 'bool'},
+        'low_cpu_threshold': {'key': 'properties.lowCpuThreshold', 'type': 'str'},
+        'digests': {'key': 'properties.digests', 'type': '[DigestConfig]'},
+    }
+
+    def __init__(self, *, exclude: bool=None, low_cpu_threshold=None, digests=None, **kwargs) -> None:
+        super(ConfigData, self).__init__(**kwargs)
+        self.exclude = exclude
+        self.low_cpu_threshold = low_cpu_threshold
+        self.digests = digests
+
+
+class DigestConfig(Model):
+    """Advisor Digest configuration entity.
+
+    :param action_group_resource_id: Action group resource id used by digest.
+    :type action_group_resource_id: str
+    :param frequency: Frequency that digest will be triggered. Value must
+     conform to ISO 8601 standard and must be greater than equal to 7 day and
+     less than or equal to 30 days.
+    :type frequency: str
+    :param categories: Categories to send digest for. If categories are not
+     provided, then digest will be sent for all categories.
+    :type categories: list[str or ~azure.mgmt.advisor.models.Category]
+    :param language: Language for digest content body. Value must be ISO 639-1
+     code for one of Azure portal supported languages. Otherwise, it will be
+     converted into one. Default value is English (en).
+    :type language: str
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'exclude': {'key': 'exclude', 'type': 'bool'},
-        'low_cpu_threshold': {'key': 'low_cpu_threshold', 'type': 'str'},
+        'action_group_resource_id': {'key': 'actionGroupResourceId', 'type': 'str'},
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'language': {'key': 'language', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, exclude: bool=None, low_cpu_threshold: str=None, **kwargs) -> None:
-        super(ConfigDataProperties, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.exclude = exclude
-        self.low_cpu_threshold = low_cpu_threshold
+    def __init__(self, *, action_group_resource_id: str=None, frequency: str=None, categories=None, language: str=None, **kwargs) -> None:
+        super(DigestConfig, self).__init__(**kwargs)
+        self.action_group_resource_id = action_group_resource_id
+        self.frequency = frequency
+        self.categories = categories
+        self.language = language
 
 
 class MetadataEntity(Model):
@@ -208,39 +292,6 @@ class OperationEntity(Model):
         super(OperationEntity, self).__init__(**kwargs)
         self.name = name
         self.display = display
-
-
-class Resource(Model):
-    """An Azure resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class ResourceRecommendationBase(Resource):

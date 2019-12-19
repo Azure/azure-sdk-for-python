@@ -17,6 +17,14 @@ class Scenario(str, Enum):
     alerts = "Alerts"
 
 
+class CpuThreshold(str, Enum):
+
+    five = "5"
+    one_zero = "10"
+    one_five = "15"
+    two_zero = "20"
+
+
 class Category(str, Enum):
 
     high_availability = "HighAvailability"
