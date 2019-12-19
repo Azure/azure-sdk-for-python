@@ -174,7 +174,7 @@ These results/errors will be index-matched with the order of the provided docume
 ## Examples
 The following section provides several code snippets covering some of the most common Text Analytics tasks, including:
 
-* [Analyze Sentiment](#analyze-sentient "Analyze sentiment")
+* [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
 * [Recognize Entities](#recognize-entities "Recognize entities")
 * [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
 * [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
