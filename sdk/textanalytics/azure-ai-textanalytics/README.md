@@ -146,7 +146,7 @@ The input, sometimes called a **document**, is a single unit of input to be anal
 For the single text operations, input is simply passed as a string. 
 For the batched operations, the inputs are passed as a list of documents. 
 
-Documents can be passed as a list of string, e.g.
+Documents can be passed as a list of strings, e.g.
 ```python
 docs = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
 ```
