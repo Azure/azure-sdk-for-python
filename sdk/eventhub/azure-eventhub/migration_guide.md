@@ -18,6 +18,11 @@ We've also merged the functionality from `EventProcessorHost` into
 `EventHubConsumerClient`, allowing `EventHubConsumerClient` to be the single
 point of entry for receiving of any type (from single partition, all partitions, or with load balancing and checkpointing features) within Event Hubs.
 
+V5 has both sync and async APIs. Sync API is under package azure.eventhub whereas async API is under package azure.eventhub.aio.
+They have the same class names under the two packages. For instance, class `EventHubConsumerClient` with sync API under package `azure.eventhub` has its 
+async counterpart under package `auzre.eventhub.aio`.
+
+The code samples in this migration guide use async APIs.
 
 ### Client constructors
 
@@ -31,13 +36,13 @@ point of entry for receiving of any type (from single partition, all partitions,
 
 | In v1                                          | Equivalent in v5                                                 | Sample |
 |------------------------------------------------|------------------------------------------------------------------|--------|
-| `EventHubClient.add_receiver()` and `Receiver.receive()`                       | `EventHubConsumerClient.receive()`                               | [receiveEvents](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/eventhub/event-hubs/samples/receiveEvents.ts) |
+| `EventHubClient.add_receiver()` and `Receiver.receive()`                       | `EventHubConsumerClient.receive()`                               | [receive events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_async.py) |
 
 ### Sending events
 
 | In v1                                          | Equivalent in v5                                                 | Sample |
 |------------------------------------------------|------------------------------------------------------------------|--------|
-| `EventHubClient.add_sender()` and `Sender.send()`                          | `EventHubProducerClient.send_batch()`                               | [sendEvents](https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/eventhub/event-hubs/samples/sendEvents.ts) |
+| `EventHubClient.add_sender()` and `Sender.send()`                          | `EventHubProducerClient.send_batch()`                               | [send events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_async.py) |
 
 ### Minor renames
 
@@ -45,9 +50,9 @@ TODO: add some minor renames
 
 ## Migration samples
 
-* [Receiving events](#migrating-code-from-eventhubclient-and-receiver-to-eventhubconsumerclient-for-receiving-events)
-* [Receiving events with checkpointing](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
-* [Sending events](#migrating-code-from-eventhubclient-to-eventhubproducerclient-for-sending-events)
+* [Receiving events](#migrating-code-from-eventhubclient-and-receiverasync-to-eventhubconsumerclient-for-receiving-events)
+* [Receiving events with checkpointing](#migrating-code-from-eventhubclient-and-senderasync-to-eventhubproducerclient-for-sending-events)
+* [Sending events](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
 
 ### Migrating code from `EventHubClient` and `ReceiverAsync` to `EventHubConsumerClient` for receiving events
 
