@@ -21,7 +21,6 @@ point of entry for receiving of any type (from single partition, all partitions,
 V5 has both sync and async APIs. Sync API is under package azure.eventhub whereas async API is under package azure.eventhub.aio.
 They have the same class names under the two packages. For instance, class `EventHubConsumerClient` with sync API under package `azure.eventhub` has its 
 async counterpart under package `auzre.eventhub.aio`.
-
 The code samples in this migration guide use async APIs.
 
 ### Client constructors
@@ -44,10 +43,6 @@ The code samples in this migration guide use async APIs.
 |------------------------------------------------|------------------------------------------------------------------|--------|
 | `EventHubClient.add_sender()` and `Sender.send()`                          | `EventHubProducerClient.send_batch()`                               | [send events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_async.py) |
 
-### Minor renames
-
-TODO: add some minor renames
-
 ## Migration samples
 
 * [Receiving events](#migrating-code-from-eventhubclient-and-receiverasync-to-eventhubconsumerclient-for-receiving-events)
@@ -60,7 +55,7 @@ In V1, `ReceiverAsync.receive()` returns a list of EventData.
 
 In V5, EventHubConsumerClient.receive() calls user callback on_event to process events.
 
-For example, this code which receives from a partition in V1:
+For example, this code which keeps receiving from a partition in V1:
 
 ```python
 client = EventHubClientAsync.from_connection_string(connection_str)
@@ -68,11 +63,10 @@ receiver = client.add_async_receiver(consumer_group="$default", partition="0", o
 try:
     await client.run_async()
     logger = logging.getLogger("azure.eventhub")
-    received = await receiver.receive(timeout=5)
-    for event_data in received:
-        logger.info("Message received:{}".format(event_data.body_as_str()))
-except:
-    raise
+    while True:
+        received = await receiver.receive(timeout=5)
+        for event_data in received:
+            logger.info("Message received:{}".format(event_data.body_as_str()))
 finally:
     await client.stop_async()
 ```
@@ -80,16 +74,13 @@ finally:
 Becomes this in V5:
 
 ```python
+logger = logging.getLogger("azure.eventhub")
 async def on_event(partition_context, event):
-    print("Received event from partition: {}".format(partition_context.partition_id))
-    print(event)
+    logger.info("Message received:{}".format(event.body_as_str()))
 
 client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    consumer_group="$default",
-    eventhub_name=EVENTHUB_NAME
+    conn_str=CONNECTION_STR, consumer_group="$default", eventhub_name=EVENTHUB_NAME
 )
-
 async with client:
     await client.receive(on_event=on_event, partition_id="0", starting_position="@latest")
 ```
@@ -112,8 +103,6 @@ try:
     await client.run_async()
     event_data = EventData(b"A single event")
     await sender.send(event_data)
-except:
-    raise
 finally:
     await client.stop_async()
 ```
@@ -122,12 +111,8 @@ In V5:
 ```python
 producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, eventhub_name=EVENTHUB_NAME)
 async with producer:
-    event_data_batch = await producer.create_batch(max_size_in_bytes=10000, partition_id="0")
-    while True:
-        try:
-            event_data_batch.add(EventData('Message inside EventBatchData'))
-        except ValueError:
-            break
+    event_data_batch = await producer.create_batch(partition_id="0")
+    event_data_batch.add(EventData(b"A single event"))
     await producer.send_batch(event_data_batch)
 ```
 
@@ -141,6 +126,72 @@ pass a `CheckpointStore` to the constructor.
 
 So in V1:
 ```python
+import logging
+import asyncio
+import os
+
+from azure.eventprocessorhost import (
+    AbstractEventProcessor,
+    AzureStorageCheckpointLeaseManager,
+    EventHubConfig,
+    EventProcessorHost,
+    EPHOptions)
+
+logger = logging.getLogger("azure.eventhub")
+
+
+class EventProcessor(AbstractEventProcessor):
+    def __init__(self, params=None):
+        super().__init__(params)
+        self._msg_counter = 0
+
+    async def open_async(self, context):
+        logger.info("Connection established {}".format(context.partition_id))
+
+    async def close_async(self, context, reason):
+        logger.info("Connection closed (reason {}, id {})".format(
+            reason,
+            context.partition_id))
+
+    async def process_events_async(self, context, messages):
+        self._msg_counter += len(messages)
+        logger.info("Partition id {}, Events processed {}".format(context.partition_id, self._msg_counter))
+        await context.checkpoint_async()
+
+    async def process_error_async(self, context, error):
+        logger.error("Event Processor Error {!r}".format(error))
+
+# Storage Account Credentials
+STORAGE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT')
+STORAGE_KEY = os.environ.get('AZURE_STORAGE_ACCESS_KEY')
+LEASE_CONTAINER_NAME = "leases"
+
+NAMESPACE = os.environ.get('EVENT_HUB_NAMESPACE')
+EVENTHUB = os.environ.get('EVENT_HUB_NAME')
+USER = os.environ.get('EVENT_HUB_SAS_POLICY')
+KEY = os.environ.get('EVENT_HUB_SAS_KEY')
+
+# Eventhub config and storage manager
+eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
+eh_options = EPHOptions()
+eh_options.debug_trace = False
+storage_manager = AzureStorageCheckpointLeaseManager(
+    STORAGE_ACCOUNT_NAME, STORAGE_KEY, LEASE_CONTAINER_NAME)
+
+# Event loop and host
+loop = asyncio.get_event_loop()
+host = EventProcessorHost(
+    EventProcessor,
+    eh_config,
+    storage_manager,
+    ep_params=["param1","param2"],
+    eph_options=eh_options,
+    loop=loop)
+try:
+    loop.run_until_complete(host.open_async())
+finally:
+    await host.close_async()
+    loop.stop()
 
 ```
 
@@ -148,28 +199,50 @@ And in V5:
 ```python
 import asyncio
 import os
+import logging
+from collections import defaultdict
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
+logging.basicConfig(level=logging.INFO)
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+logger = logging.getLogger("azure.eventhub")
 
-
+events_processed = defaultdict(int)
 async def on_event(partition_context, event):
-    # put your code here
-    print("Received event from partition: {}".format(partition_context.partition_id))
-    await partition_context.update_checkpoint(event)
+    partition_id = partition_context.partition_id
+    events_processed[partition_id] += 1
+    logger.info("Partition id {}, Events processed {}".format(partition_id, events_processed[partition_id]))
+    if events_processed[partition_id] % 10 == 0:
+        await partition_context.update_checkpoint(event)
+
+async def on_partition_initialize(context):
+    logger.info("Partition {} initialized".format(context.partition_id))
+
+async def on_partition_close(context, reason):
+    logger.info("Partition {} has closed, reason {})".format(context.partition_id, reason))
+
+async def on_error(context, error):
+    if context:
+        logger.error("Partition {} has a partition related error {!r}.".format(context.partition_id, error))
+    else:
+        logger.error("Receiving event has a non-partition error {!r}".format(error))
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "container_name_to_store_checkpoint")
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "aStorageBlobContainerName")
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
         checkpoint_store=checkpoint_store,
     )
     async with client:
-        await client.receive(on_event)
-
+        await client.receive(
+            on_event,
+            on_error=on_error,  # optional
+            on_partition_initialize=on_partition_initialize,  # optional
+            on_partition_close=on_partition_close,  # optional
+        )
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
