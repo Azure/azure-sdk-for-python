@@ -142,9 +142,9 @@ result = single_analyze_sentiment(endpoint=endpoint, credential=credential, inpu
 ```
 
 #### Input
-The input, sometimes called a **document**, is a single unit of input to be analyzed by the predictive models in the Text Analytics service.
-For the single text operations, input is simply passed as a string. 
-For the batched operations, the inputs are passed as a list of documents. 
+A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
+For the single text operations, the input document is simply passed as a string, e.g. `"hello world"`. 
+For the batched operations, the input is passed as a list of documents. 
 
 Documents can be passed as a list of strings, e.g.
 ```python
