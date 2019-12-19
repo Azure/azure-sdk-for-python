@@ -41,10 +41,7 @@ class PricingsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+        """Lists Security Center pricing configurations in the subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -99,10 +96,8 @@ class PricingsOperations(object):
 
     def get(
             self, pricing_name, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+        """Gets a provided Security Center pricing configuration in the
+        subscription.
 
         :param pricing_name: name of the pricing configuration
         :type pricing_name: str
@@ -160,10 +155,8 @@ class PricingsOperations(object):
 
     def update(
             self, pricing_name, pricing_tier, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+        """Updates a provided Security Center pricing configuration in the
+        subscription.
 
         :param pricing_name: name of the pricing configuration
         :type pricing_name: str
