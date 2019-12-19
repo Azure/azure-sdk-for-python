@@ -16,14 +16,16 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ArtifactSourcesOperations(object):
-    """ArtifactSourcesOperations operations.
+class ServicesOperations(object):
+    """ServicesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2018-09-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-11-01-preview".
     """
 
     models = models
@@ -33,32 +35,33 @@ class ArtifactSourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-09-01-preview"
+        self.api_version = "2019-11-01-preview"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, artifact_source_name, artifact_source_info=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an artifact source.
+            self, resource_group_name, service_topology_name, service_name, service_info, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a service in the service topology.
 
-        Synchronously creates a new artifact source or updates an existing
-        artifact source.
+        Synchronously creates a new service or updates an existing service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param artifact_source_name: The name of the artifact source.
-        :type artifact_source_name: str
-        :param artifact_source_info: Source object that defines the resource.
-        :type artifact_source_info:
-         ~azure.mgmt.deploymentmanager.models.ArtifactSource
+        :param service_topology_name: The name of the service topology .
+        :type service_topology_name: str
+        :param service_name: The name of the service resource.
+        :type service_name: str
+        :param service_info: The service object
+        :type service_info:
+         ~azure.mgmt.deploymentmanager.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ArtifactSource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.deploymentmanager.models.ArtifactSource or
+        :return: ServiceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.deploymentmanager.models.ServiceResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -67,7 +70,8 @@ class ArtifactSourcesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'artifactSourceName': self._serialize.url("artifact_source_name", artifact_source_name, 'str')
+            'serviceTopologyName': self._serialize.url("service_topology_name", service_topology_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -87,10 +91,7 @@ class ArtifactSourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if artifact_source_info is not None:
-            body_content = self._serialize.body(artifact_source_info, 'ArtifactSource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(service_info, 'ServiceResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -102,33 +103,34 @@ class ArtifactSourcesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 201:
-            deserialized = self._deserialize('ArtifactSource', response)
+            deserialized = self._deserialize('ServiceResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/artifactSources/{artifactSourceName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}'}
 
     def get(
-            self, resource_group_name, artifact_source_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an artifact source.
+            self, resource_group_name, service_topology_name, service_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param artifact_source_name: The name of the artifact source.
-        :type artifact_source_name: str
+        :param service_topology_name: The name of the service topology .
+        :type service_topology_name: str
+        :param service_name: The name of the service resource.
+        :type service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ArtifactSource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.deploymentmanager.models.ArtifactSource or
+        :return: ServiceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.deploymentmanager.models.ServiceResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -137,7 +139,8 @@ class ArtifactSourcesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'artifactSourceName': self._serialize.url("artifact_source_name", artifact_source_name, 'str')
+            'serviceTopologyName': self._serialize.url("service_topology_name", service_topology_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -165,26 +168,27 @@ class ArtifactSourcesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('ArtifactSource', response)
+            deserialized = self._deserialize('ServiceResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/artifactSources/{artifactSourceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}'}
 
     def delete(
-            self, resource_group_name, artifact_source_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an artifact source.
+            self, resource_group_name, service_topology_name, service_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param artifact_source_name: The name of the artifact source.
-        :type artifact_source_name: str
+        :param service_topology_name: The name of the service topology .
+        :type service_topology_name: str
+        :param service_name: The name of the service resource.
+        :type service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -199,7 +203,8 @@ class ArtifactSourcesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'artifactSourceName': self._serialize.url("artifact_source_name", artifact_source_name, 'str')
+            'serviceTopologyName': self._serialize.url("service_topology_name", service_topology_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -228,4 +233,66 @@ class ArtifactSourcesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/artifactSources/{artifactSourceName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services/{serviceName}'}
+
+    def list(
+            self, resource_group_name, service_topology_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the services in the service topology.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param service_topology_name: The name of the service topology .
+        :type service_topology_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.deploymentmanager.models.ServiceResource] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.list.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'serviceTopologyName': self._serialize.url("service_topology_name", service_topology_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ServiceResource]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeploymentManager/serviceTopologies/{serviceTopologyName}/services'}

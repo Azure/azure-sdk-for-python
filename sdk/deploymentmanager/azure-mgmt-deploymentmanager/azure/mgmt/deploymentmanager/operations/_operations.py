@@ -19,11 +19,13 @@ from .. import models
 class Operations(object):
     """Operations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2018-09-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-11-01-preview".
     """
 
     models = models
@@ -33,30 +35,26 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-09-01-preview"
+        self.api_version = "2019-11-01-preview"
 
         self.config = config
 
-    def get(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets an operation resource.
+        """Lists the supported operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.deploymentmanager.models.Operation] or
+        :return: OperationsList or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.deploymentmanager.models.OperationsList or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -82,13 +80,12 @@ class Operations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('[Operation]', response)
+            deserialized = self._deserialize('OperationsList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DeploymentManager/operations'}
+    list.metadata = {'url': '/providers/Microsoft.DeploymentManager/operations'}
