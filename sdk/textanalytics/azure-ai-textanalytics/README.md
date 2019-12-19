@@ -305,7 +305,7 @@ for doc in result:
     print(doc.key_phrases)
 ```
 
-Please refer to the service documentation for a conceptual discussion of [key_phrase_extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction).
+Please refer to the service documentation for a conceptual discussion of [key phrase extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction).
 
 ### Detect languages
 Detect language in a batch of documents.
