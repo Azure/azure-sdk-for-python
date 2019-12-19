@@ -206,6 +206,8 @@ for doc in result:
     ))
 ```
 
+Please refer to the service documentation for a conceptual discussion of [sentiment analysis](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis).
+
 ### Recognize entities
 Recognize entities in a batch of documents.
 
@@ -228,6 +230,9 @@ for doc in result:
               "\tConfidence Score: \t", entity.score)
 ```
 
+Please refer to the service documentation for a conceptual discussion of [named entity recognition](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
+and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
+
 ### Recognize PII entities
 Recognize PII entities in a batch of documents.
 
@@ -248,6 +253,8 @@ for doc in result:
         print("Entity: \t", entity.text, "\tType: \t", entity.type,
               "\tConfidence Score: \t", entity.score)
 ```
+
+Please refer to the service documentation for [supported PII entity types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal).
 
 ### Recognize linked entities
 Recognize linked entities in a batch of documents.
@@ -275,6 +282,9 @@ for doc in result:
             print("Length: {}\n".format(match.length))
 ```
 
+Please refer to the service documentation for a conceptual discussion of [entity linking](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
+and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
+
 ### Extract key phrases
 Extract key phrases in a batch of documents.
 
@@ -294,6 +304,8 @@ result = text_analytics_client.extract_key_phrases(documents, language="en")
 for doc in result:
     print(doc.key_phrases)
 ```
+
+Please refer to the service documentation for a conceptual discussion of [key_phrase_extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction).
 
 ### Detect languages
 Detect language in a batch of documents.
@@ -316,6 +328,9 @@ for doc in result:
     print("ISO6391 name: {}".format(doc.detected_languages[0].iso6391_name))
     print("Confidence score: {}\n".format(doc.detected_languages[0].score))
 ```
+
+Please refer to the service documentation for a conceptual discussion of [language detection](https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection)
+and [language and regional support](https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support).
 
 ## Optional Configuration
 
