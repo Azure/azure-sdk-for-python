@@ -51,7 +51,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     RedirectPolicy,
     RetryPolicy,
-    RetryType
+    RetryMode
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -141,11 +141,11 @@ class TestRequestsTransport(unittest.TestCase):
         backoff_time = retry_policy.get_backoff_time(settings)
         assert backoff_time == 4
 
-        retry_policy = RetryPolicy(retry_type=RetryType.Fixed)
+        retry_policy = RetryPolicy(retry_mode=RetryMode.Fixed)
         backoff_time = retry_policy.get_backoff_time(settings)
         assert backoff_time == 1
 
-        retry_policy = RetryPolicy(retry_type=RetryType.Exponential)
+        retry_policy = RetryPolicy(retry_mode=RetryMode.Exponential)
         backoff_time = retry_policy.get_backoff_time(settings)
         assert backoff_time == 4
 
