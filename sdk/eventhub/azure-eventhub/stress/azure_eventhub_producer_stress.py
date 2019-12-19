@@ -86,8 +86,8 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
-        self.argument_parser.add_argument("--uamqp_debug", help="uamqp logging enable", type=bool, default=False)
-        self.argument_parser.add_argument("--print_console", help="print to console", type=bool, default=False)
+        self.argument_parser.add_argument("--uamqp_debug", help="uamqp logging enable", action="store_true")
+        self.argument_parser.add_argument("--print_console", action="store_true")
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
