@@ -201,7 +201,7 @@ class CopyFileSmbInfo(GenCopyFileSmbInfo):
     :param file_creation_time: Specifies either the option to copy file
         creation time from a source file(source) to a target file or a time value
         in ISO 8601 format to set as creation time on a target file.
-        If this is not set, creation time will be set to the date time value of the creation (or when it was overwritten)
+        If this is not set, creation time will be set to the date time value of the creation(or when it was overwritten)
         of the target file by copy engine.
     :paramtype file_creation_time: str or ~datetime.datetime
     :param file_last_write_time: Specifies either the option to copy file last

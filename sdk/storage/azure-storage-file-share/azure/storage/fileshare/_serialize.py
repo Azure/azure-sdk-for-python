@@ -59,4 +59,3 @@ def validate_copy_mode(copy_mode, permission, permission_key):
             raise ValueError("permission/permission_key shouldn't be specified without copy mode")
     else:
         raise ValueError("Invalid copy mode")
-
