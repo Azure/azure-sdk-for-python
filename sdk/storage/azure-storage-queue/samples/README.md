@@ -1,17 +1,18 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-storage-queue
+  - azure-storage
+urlFragment: storage-queue-samples
 ---
 
-# Azure Storage Queues client library for Python Samples
+# Azure Storage Queue client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Storage Queue client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations 
-with queues and require Python 3.5 or later. 
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
+with queues and require Python 3.5 or later.
 
 ## Contents
 

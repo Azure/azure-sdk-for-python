@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 import pytest
+import aiohttp
 import asyncio
 import requests
 import time
@@ -304,6 +305,50 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         md = (await blob.get_blob_properties()).metadata
         self.assertDictEqual(md, metadata)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_blob_with_generator_async(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
+
+        # Act
+        def gen():
+            yield "hello"
+            yield "world!"
+            yield " eom"
+        blob = self.bsc.get_blob_client(self.container_name, "gen_blob")
+        resp = await blob.upload_blob(data=gen())
+
+        # Assert
+        self.assertIsNotNone(resp.get('etag'))
+        content = await (await blob.download_blob()).readall()
+        self.assertEqual(content, b"helloworld! eom")
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_blob_with_requests_async(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
+        # Act
+        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        data = requests.get(uri, stream=True)
+        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
+        resp = await blob.upload_blob(data=data.raw, overwrite=True)
+
+        self.assertIsNotNone(resp.get('etag'))
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_blob_with_aiohttp_async(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, "gutenberg_async")
+        # Act
+        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(uri) as data:
+                async for text, _ in data.content.iter_chunks():
+                    resp = await blob.upload_blob(data=text, overwrite=True)
+                    self.assertIsNotNone(resp.get('etag'))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

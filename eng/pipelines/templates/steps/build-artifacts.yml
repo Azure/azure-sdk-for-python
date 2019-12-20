@@ -40,6 +40,11 @@ steps:
       pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
     displayName: 'Prep Environment'
 
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
@@ -77,5 +82,5 @@ steps:
     condition: succeededOrFailed()
     displayName: 'Publish Artifacts'
     inputs:
-      artifactName: 'docs'
+      artifactName: 'documentation'
       pathtoPublish: '$(Build.SourcesDirectory)/_docs'

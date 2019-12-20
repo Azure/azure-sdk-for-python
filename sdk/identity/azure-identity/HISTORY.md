@@ -1,9 +1,26 @@
 # Release History
 
-### 1.1.0b1 Unreleased
+## 1.1.1 (Unreleased)
+
+- All credential pipelines include `ProxyPolicy`
+([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
 
 
-### 2019-11-05 1.0.1
+## 1.1.0 (2019-11-27)
+
+- Constructing `DefaultAzureCredential` no longer raises `ImportError` on Python
+3.8 on Windows ([8294](https://github.com/Azure/azure-sdk-for-python/pull/8294))
+- `InteractiveBrowserCredential` raises when unable to open a web browser
+([8465](https://github.com/Azure/azure-sdk-for-python/pull/8465))
+- `InteractiveBrowserCredential` prompts for account selection
+([8470](https://github.com/Azure/azure-sdk-for-python/pull/8470))
+- The credentials composing `DefaultAzureCredential` are configurable by keyword
+arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
+- `SharedTokenCacheCredential` accepts an optional `tenant_id` keyword argument
+([8689](https://github.com/Azure/azure-sdk-for-python/pull/8689))
+
+
+## 1.0.1 (2019-11-05)
 
 - `ClientCertificateCredential` uses application and tenant IDs correctly
 ([8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))

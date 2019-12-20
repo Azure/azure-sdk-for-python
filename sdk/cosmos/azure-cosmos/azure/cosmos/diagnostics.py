@@ -19,14 +19,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Diagnostic tools for Cosmos
+"""Diagnostic tools for Azure Cosmos database service operations.
 """
 
 from requests.structures import CaseInsensitiveDict
 
 
 class RecordDiagnostics(object):
-    """ Record Response headers from Cosmos read operations.
+    """Record Response headers from Cosmos read operations.
 
     The full response headers are stored in the ``headers`` property.
 
@@ -41,8 +41,6 @@ class RecordDiagnostics(object):
 
         >>> rh.headers['x-ms-activity-id']
         '6243eeed-f06a-413d-b913-dcf8122d0642'
-
-
 
     """
 

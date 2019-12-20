@@ -27,13 +27,6 @@
     ],
     "service_name": "Cognitive Services Recognizer"
   },
-  "azure-cognitiveservices-inkrecognizer": {
-    "category": "Client",
-    "namespaces": [
-      "azure.cognitiveservices.inkrecognizer"
-    ],
-    "service_name": "Cognitive Services Recognizer"
-  },
   "azure-cognitiveservices-personalizer": {
     "category": "Client",
     "namespaces": [

@@ -181,19 +181,6 @@ class ReplicationLinkPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ReplicationLinkPaged, self).__init__(*args, **kwargs)
-class ServerAzureADAdministratorPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ServerAzureADAdministrator <azure.mgmt.sql.models.ServerAzureADAdministrator>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ServerAzureADAdministrator]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ServerAzureADAdministratorPaged, self).__init__(*args, **kwargs)
 class ServerCommunicationLinkPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ServerCommunicationLink <azure.mgmt.sql.models.ServerCommunicationLink>` object
@@ -948,3 +935,42 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class ServerAzureADAdministratorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerAzureADAdministrator <azure.mgmt.sql.models.ServerAzureADAdministrator>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerAzureADAdministrator]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerAzureADAdministratorPaged, self).__init__(*args, **kwargs)
+class WorkloadGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadGroup <azure.mgmt.sql.models.WorkloadGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadGroupPaged, self).__init__(*args, **kwargs)
+class WorkloadClassifierPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadClassifier <azure.mgmt.sql.models.WorkloadClassifier>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadClassifier]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadClassifierPaged, self).__init__(*args, **kwargs)

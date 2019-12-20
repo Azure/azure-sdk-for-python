@@ -1,2 +1,4 @@
 include *.rst
 include azure/__init__.py
+recursive-include tests *.py
+recursive-include examples *.py

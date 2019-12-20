@@ -103,10 +103,11 @@ class PipelineClient(PipelineClientBase):
             policies = [
                 config.headers_policy,
                 config.user_agent_policy,
-                config.authentication_policy,
+                config.proxy_policy,
                 ContentDecodePolicy(),
                 config.redirect_policy,
                 config.retry_policy,
+                config.authentication_policy,
                 config.custom_hook_policy,
                 config.logging_policy,
                 DistributedTracingPolicy(**kwargs),

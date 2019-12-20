@@ -19,13 +19,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Represents an offer in the Azure Cosmos DB SQL API service.
+"""Create offers in the Azure Cosmos DB SQL API service.
 """
 from typing import Dict, Any
 
 
 class Offer(object):
-    """ Represents a offer in an Azure Cosmos DB SQL API container.
+    """Represents a offer in an Azure Cosmos DB SQL API container.
 
     To read and update offers use the associated methods on the :class:`Container`.
     """

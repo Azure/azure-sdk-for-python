@@ -24,7 +24,7 @@
 
 
 class RetryOptions(object):
-    """The retry options to be applied to all requests when retrying
+    """The retry options to be applied to all requests when retrying.
 
     :ivar int MaxRetryAttemptCount:
         Max number of retries to be performed for a request. Default value 9.

@@ -787,6 +787,26 @@ class StorageShareTest(FileTestCase):
             fsc.get_service_properties()
             assert transport.session is not None
 
+    @record
+    def test_delete_directory_from_share(self):
+        # Arrange
+        share = self._create_share()
+        dir1 = share.create_directory('dir1')
+        share.create_directory('dir2')
+        share.create_directory('dir3')
+
+        # Act
+        resp = list(share.list_directories_and_files())
+        self.assertEqual(len(resp), 3)
+
+        share.delete_directory('dir3')
+
+        # Assert
+        resp = list(share.list_directories_and_files())
+        self.assertEqual(len(resp), 2)
+
+        self._delete_shares()
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

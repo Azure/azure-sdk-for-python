@@ -3,6 +3,148 @@
 Release History
 ===============
 
+0.11.0 (2019-12-07)
++++++++++++++++++++
+
+**Features**
+
+- Model GremlinDatabaseGetResults has a new parameter resource
+- Model ThroughputSettingsGetResults has a new parameter resource
+- Model SqlStoredProcedureGetResults has a new parameter resource
+- Model MongoDBDatabaseGetResults has a new parameter resource
+- Model SqlUserDefinedFunctionGetResults has a new parameter resource
+- Model TableGetResults has a new parameter resource
+- Model IndexingPolicy has a new parameter composite_indexes
+- Model IndexingPolicy has a new parameter spatial_indexes
+- Model CassandraKeyspaceGetResults has a new parameter resource
+- Model SqlDatabaseGetResults has a new parameter resource
+
+**Breaking changes**
+
+- Model GremlinDatabaseGetResults no longer has parameter _etag
+- Model GremlinDatabaseGetResults no longer has parameter gremlin_database_get_results_id
+- Model GremlinDatabaseGetResults no longer has parameter _ts
+- Model GremlinDatabaseGetResults no longer has parameter _rid
+- Model ThroughputSettingsGetResults no longer has parameter minimum_throughput
+- Model ThroughputSettingsGetResults no longer has parameter offer_replace_pending
+- Model ThroughputSettingsGetResults no longer has parameter throughput
+- Model SqlStoredProcedureGetResults no longer has parameter _etag
+- Model SqlStoredProcedureGetResults no longer has parameter _ts
+- Model SqlStoredProcedureGetResults no longer has parameter _rid
+- Model SqlStoredProcedureGetResults no longer has parameter body
+- Model SqlStoredProcedureGetResults no longer has parameter sql_stored_procedure_get_results_id
+- Model MongoDBDatabaseGetResults no longer has parameter _etag
+- Model MongoDBDatabaseGetResults no longer has parameter mongo_db_database_get_results_id
+- Model MongoDBDatabaseGetResults no longer has parameter _ts
+- Model MongoDBDatabaseGetResults no longer has parameter _rid
+- Model SqlUserDefinedFunctionGetResults no longer has parameter _etag
+- Model SqlUserDefinedFunctionGetResults no longer has parameter sql_user_defined_function_get_results_id
+- Model SqlUserDefinedFunctionGetResults no longer has parameter _ts
+- Model SqlUserDefinedFunctionGetResults no longer has parameter _rid
+- Model SqlUserDefinedFunctionGetResults no longer has parameter body
+- Model TableGetResults no longer has parameter _etag
+- Model TableGetResults no longer has parameter table_get_results_id
+- Model TableGetResults no longer has parameter _ts
+- Model TableGetResults no longer has parameter _rid
+- Model CassandraKeyspaceGetResults no longer has parameter _etag
+- Model CassandraKeyspaceGetResults no longer has parameter cassandra_keyspace_get_results_id
+- Model CassandraKeyspaceGetResults no longer has parameter _ts
+- Model CassandraKeyspaceGetResults no longer has parameter _rid
+- Model SqlDatabaseGetResults no longer has parameter _colls
+- Model SqlDatabaseGetResults no longer has parameter _etag
+- Model SqlDatabaseGetResults no longer has parameter _users
+- Model SqlDatabaseGetResults no longer has parameter sql_database_get_results_id
+- Model SqlDatabaseGetResults no longer has parameter _rid
+- Model SqlDatabaseGetResults no longer has parameter _ts
+- Model GremlinGraphGetResults has a new signature
+- Model CassandraTableGetResults has a new signature
+- Model SqlTriggerGetResults has a new signature
+- Model SqlContainerGetResults has a new signature
+- Model MongoDBCollectionGetResults has a new signature
+
+0.10.0 (2019-11-13)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseAccountCreateUpdateParameters has a new parameter disable_key_based_metadata_write_access
+- Model ContainerPartitionKey has a new parameter version
+- Added operation DatabaseAccountsOperations.update
+- Added operation group SqlResourcesOperations
+- Added operation group MongoDBResourcesOperations
+- Added operation group TableResourcesOperations
+- Added operation group GremlinResourcesOperations
+- Added operation group CassandraResourcesOperations
+
+**Breaking changes**
+
+- CosmosDB has been renamed to CosmosDBManagementClient
+- CosmosDBConfiguration was renamed to CosmodDBManagementClientConfiguration
+- Model MongoDBCollectionCreateUpdateParameters has a new signature
+- Model GremlinGraphCreateUpdateParameters has a new signature
+- Model CassandraKeyspaceCreateUpdateParameters has a new signature
+- Model GremlinDatabaseCreateUpdateParameters has a new signature
+- Model SqlContainerCreateUpdateParameters has a new signature
+- Model CassandraTableCreateUpdateParameters has a new signature
+- Model TableCreateUpdateParameters has a new signature
+- Model MongoDBDatabaseCreateUpdateParameters has a new signature
+- Model SqlDatabaseCreateUpdateParameters has a new signature
+- Removed operation DatabaseAccountsOperations.get_gremlin_graph_throughput
+- Removed operation DatabaseAccountsOperations.update_cassandra_keyspace_throughput
+- Removed operation DatabaseAccountsOperations.delete_sql_database
+- Removed operation DatabaseAccountsOperations.update_sql_database_throughput
+- Removed operation DatabaseAccountsOperations.update_mongo_db_database_throughput
+- Removed operation DatabaseAccountsOperations.delete_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.list_mongo_db_databases
+- Removed operation DatabaseAccountsOperations.create_update_mongo_db_database
+- Removed operation DatabaseAccountsOperations.create_update_gremlin_graph
+- Removed operation DatabaseAccountsOperations.update_gremlin_database_throughput
+- Removed operation DatabaseAccountsOperations.get_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.delete_gremlin_database
+- Removed operation DatabaseAccountsOperations.create_update_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.get_sql_database
+- Removed operation DatabaseAccountsOperations.get_table
+- Removed operation DatabaseAccountsOperations.update_table_throughput
+- Removed operation DatabaseAccountsOperations.create_update_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.get_gremlin_database
+- Removed operation DatabaseAccountsOperations.create_update_sql_container
+- Removed operation DatabaseAccountsOperations.create_update_gremlin_database
+- Removed operation DatabaseAccountsOperations.get_table_throughput
+- Removed operation DatabaseAccountsOperations.delete_mongo_db_database
+- Removed operation DatabaseAccountsOperations.get_cassandra_table_throughput
+- Removed operation DatabaseAccountsOperations.update_sql_container_throughput
+- Removed operation DatabaseAccountsOperations.get_cassandra_table
+- Removed operation DatabaseAccountsOperations.list_gremlin_databases
+- Removed operation DatabaseAccountsOperations.list_gremlin_graphs
+- Removed operation DatabaseAccountsOperations.list_mongo_db_collections
+- Removed operation DatabaseAccountsOperations.create_update_cassandra_table
+- Removed operation DatabaseAccountsOperations.delete_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.update_cassandra_table_throughput
+- Removed operation DatabaseAccountsOperations.update_gremlin_graph_throughput
+- Removed operation DatabaseAccountsOperations.create_update_table
+- Removed operation DatabaseAccountsOperations.get_mongo_db_database_throughput
+- Removed operation DatabaseAccountsOperations.get_sql_container
+- Removed operation DatabaseAccountsOperations.get_gremlin_database_throughput
+- Removed operation DatabaseAccountsOperations.get_mongo_db_collection_throughput
+- Removed operation DatabaseAccountsOperations.list_cassandra_tables
+- Removed operation DatabaseAccountsOperations.get_sql_database_throughput
+- Removed operation DatabaseAccountsOperations.list_sql_databases
+- Removed operation DatabaseAccountsOperations.list_tables
+- Removed operation DatabaseAccountsOperations.get_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.get_gremlin_graph
+- Removed operation DatabaseAccountsOperations.get_mongo_db_database
+- Removed operation DatabaseAccountsOperations.delete_table
+- Removed operation DatabaseAccountsOperations.list_cassandra_keyspaces
+- Removed operation DatabaseAccountsOperations.list_sql_containers
+- Removed operation DatabaseAccountsOperations.delete_sql_container
+- Removed operation DatabaseAccountsOperations.delete_gremlin_graph
+- Removed operation DatabaseAccountsOperations.get_cassandra_keyspace_throughput
+- Removed operation DatabaseAccountsOperations.get_sql_container_throughput
+- Removed operation DatabaseAccountsOperations.delete_cassandra_table
+- Removed operation DatabaseAccountsOperations.patch
+- Removed operation DatabaseAccountsOperations.create_update_sql_database
+- Removed operation DatabaseAccountsOperations.update_mongo_db_collection_throughput
+
 0.9.0 (2019-11-09)
 ++++++++++++++++++
 

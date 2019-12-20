@@ -11,6 +11,7 @@ import inspect
 import os
 import os.path
 import time
+from datetime import datetime, timedelta
 
 try:
     import unittest.mock as mock
@@ -20,6 +21,7 @@ except ImportError:
 import zlib
 import math
 import sys
+import string
 import random
 import re
 import logging
@@ -31,6 +33,7 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
+from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -255,6 +258,18 @@ class StorageTestCase(AzureMgmtTestCase):
             )
         return self.generate_fake_token()
 
+    def generate_sas_token(self):
+        fake_key = 'a'*30 + 'b'*30
+
+        return '?' + generate_account_sas(
+            account_name = 'test', # name of the storage account
+            account_key = fake_key, # key for the storage account
+            resource_types = ResourceTypes(object=True),
+            permission = AccountSasPermissions(read=True,list=True),
+            start = datetime.now() - timedelta(hours = 24),
+            expiry = datetime.now() + timedelta(days = 8)
+        )
+
     def generate_fake_token(self):
         return FakeTokenCredential()
 
@@ -329,33 +344,23 @@ class LogCaptured(object):
 @pytest.fixture(scope="session")
 def storage_account():
     test_case = AzureMgmtTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer()
-    storage_preparer = StorageAccountPreparer(name_prefix='pyacrstorage')
-
-    # Set what the decorator is supposed to set for us
-    for prep in [rg_preparer, storage_preparer]:
-        prep.live_test = False
-        prep.test_class_instance = test_case
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
+    storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
 
     # Create
-    rg_name = create_random_name("pystorage", 24)
-    storage_name = create_random_name("pyacrstorage", 24)
     try:
-        rg = rg_preparer.create_resource(rg_name)
-        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
+        rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+        StorageTestCase._RESOURCE_GROUP = rg_kwargs['resource_group']
         try:
-            storage_dict = storage_preparer.create_resource(
-                storage_name,
-                resource_group=rg['resource_group']
-            )
+            storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
             # Now the magic begins
-            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
-            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+            StorageTestCase._STORAGE_ACCOUNT = storage_kwargs['storage_account']
+            StorageTestCase._STORAGE_KEY = storage_kwargs['storage_account_key']
             yield
         finally:
             storage_preparer.remove_resource(
                 storage_name,
-                resource_group=rg['resource_group']
+                resource_group=rg_kwargs['resource_group']
             )
             StorageTestCase._STORAGE_ACCOUNT = None
             StorageTestCase._STORAGE_KEY = None

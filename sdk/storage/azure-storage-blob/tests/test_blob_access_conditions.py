@@ -1524,6 +1524,29 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(content.readall(), b'AAABBBCCC')
 
     @GlobalStorageAccountPreparer()
+    def test_put_block_list_with_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'', bsc)
+        blob.stage_block('1', b'AAA')
+        blob.stage_block('2', b'BBB')
+        blob.stage_block('3', b'CCC')
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
+
+        # Act
+        metadata = {'hello': 'world', 'number': '43'}
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        blob.commit_block_list(block_list, metadata=metadata, if_modified_since=test_datetime)
+
+        # Assert
+        content = blob.download_blob()
+        properties = blob.get_blob_properties()
+        self.assertEqual(content.readall(), b'AAABBBCCC')
+        self.assertEqual(properties.metadata, metadata)
+
+    @GlobalStorageAccountPreparer()
     def test_put_block_list_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()

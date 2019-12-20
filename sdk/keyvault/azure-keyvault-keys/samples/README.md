@@ -4,6 +4,8 @@ languages:
   - python
 products:
   - azure
+  - azure-key-vault
+urlFragment: keyvault-keys-samples
 ---
 
 # Azure Key Vault Keys Client Library Python Samples

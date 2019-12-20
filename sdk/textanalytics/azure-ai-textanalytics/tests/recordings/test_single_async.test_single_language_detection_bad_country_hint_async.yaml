@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "This is written in English.", "countryHint":
+      "United States"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '99'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","innerError":{"code":"InvalidCountryHint","message":"Country
+        hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
+        code."},"message":"Invalid Country Hint."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: e5cba042-e68b-4f03-88af-6f752264e08a
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=0
+      date: Thu, 21 Nov 2019 01:17:09 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: cf5de090-c426-4441-a80d-9ea15919a246
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '8'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - showStats=false
+        - ''
+version: 1
