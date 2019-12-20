@@ -10,6 +10,8 @@ from opentelemetry.propagators import extract, inject
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
+from ._version import VERSION
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -20,7 +22,7 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-__version__ = "1.0.0b4"
+__version__ = VERSION
 
 
 def _get_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: str):
@@ -29,7 +31,7 @@ def _get_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: st
     Must comply to opentelemetry.context.propagation.httptextformat.Getter:
     Getter = typing.Callable[[_T, str], typing.List[str]]
     """
-    return [headers[key]]
+    return [headers.get(key, "")]
 
 
 def _set_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: str, value: str):
@@ -55,8 +57,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param name: The name of the OpenTelemetry span to create if a new span is needed
         :type name: str
         """
-        tracer = self.get_current_tracer()
-        self._span_instance = span or tracer.create_span(name=name)
+        current_tracer = self.get_current_tracer()
+        self._span_instance = span or current_tracer.start_span(name=name)
         self._current_ctxt_manager = None
 
     @property
@@ -83,12 +85,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """Get the span kind of this span."""
         value = self.span_instance.kind
         return (
-            SpanKind.CLIENT if value == OpenCensusSpanKind.CLIENT else
-            SpanKind.PRODUCER if value == OpenCensusSpanKind.PRODUCER else
-            SpanKind.SERVER if value == OpenCensusSpanKind.SERVER else
-            SpanKind.CONSUMER if value == OpenCensusSpanKind.CONSUMER else
-            SpanKind.INTERNAL if value == OpenCensusSpanKind.INTERNAL else
-            SpanKind.UNSPECIFIED if value == OpenCensusSpanKind.UNSPECIFIED else
+            SpanKind.CLIENT if value == OpenTelemetrySpanKind.CLIENT else
+            SpanKind.PRODUCER if value == OpenTelemetrySpanKind.PRODUCER else
+            SpanKind.SERVER if value == OpenTelemetrySpanKind.SERVER else
+            SpanKind.CONSUMER if value == OpenTelemetrySpanKind.CONSUMER else
+            SpanKind.INTERNAL if value == OpenTelemetrySpanKind.INTERNAL else
             None
         )
 
@@ -103,7 +104,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             OpenTelemetrySpanKind.SERVER if value == SpanKind.SERVER else
             OpenTelemetrySpanKind.CONSUMER if value == SpanKind.CONSUMER else
             OpenTelemetrySpanKind.INTERNAL if value == SpanKind.INTERNAL else
-            OpenTelemetrySpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
+            OpenTelemetrySpanKind.INTERNAL if value == SpanKind.UNSPECIFIED else
             None
         )
         if kind is None:
@@ -112,7 +113,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __enter__(self):
         """Start a span."""
-        self._span_instance.start()
+        self.start()
         self._current_ctxt_manager = self.get_current_tracer().use_span(self._span_instance, end_on_exit=True)
         self._current_ctxt_manager.__enter__()
         return self
@@ -120,7 +121,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
         if not self._current_ctxt_manager:
-            raise ValueError("Trying to manually exit a ctxt manager that didn't started")
+            raise ValueError("Trying to manually exit a ctxt manager that didn't start")
         self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
 
     def start(self):
@@ -194,7 +195,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         ctx = extract(_get_headers_from_http_request_headers, headers)
         current_span = cls.get_current_span()
-        current_span.add_link(ctx)
+        current_span.links.append(ctx)
 
     @classmethod
     def get_current_span(cls):
@@ -224,7 +225,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         # type: (Span) -> None
         """Not supported by OpenTelemetry.
         """
-        raise NotImplementedError("set_current_span is not supported by OpenTelemetry plugin. Use ChangeContext instead.")
+        raise NotImplementedError("set_current_span is not supported by OpenTelemetry plugin. Use change_context instead.")
 
     @classmethod
     def set_current_tracer(cls, tracer):
