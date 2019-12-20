@@ -17,6 +17,7 @@ from uamqp import types
 from uamqp.message import MessageHeader
 
 from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 
 from ._version import VERSION
 from ._constants import (
@@ -136,6 +137,7 @@ def trace_message(event, parent_span=None):
                 span_impl_type.get_current_span()
             )
             message_span = current_span.span(name="Azure.EventHubs.message")
+            message_span.kind = SpanKind.PRODUCER
             message_span.start()
             app_prop = dict(event.properties) if event.properties else dict()
             app_prop.setdefault(
