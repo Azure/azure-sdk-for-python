@@ -50,7 +50,8 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
-    RetryPolicy
+    RetryPolicy,
+    RetryMode
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -128,6 +129,25 @@ class TestRequestsTransport(unittest.TestCase):
         assert 408 in retry_policy._RETRY_CODES
         assert 429 in retry_policy._RETRY_CODES
         assert 501 not in retry_policy._RETRY_CODES
+
+    def test_retry_types(self):
+        history = ["1", "2", "3"]
+        settings = {
+            'history': history,
+            'backoff': 1,
+            'max_backoff': 10
+        }
+        retry_policy = RetryPolicy()
+        backoff_time = retry_policy.get_backoff_time(settings)
+        assert backoff_time == 4
+
+        retry_policy = RetryPolicy(retry_mode=RetryMode.Fixed)
+        backoff_time = retry_policy.get_backoff_time(settings)
+        assert backoff_time == 1
+
+        retry_policy = RetryPolicy(retry_mode=RetryMode.Exponential)
+        backoff_time = retry_policy.get_backoff_time(settings)
+        assert backoff_time == 4
 
     def test_basic_requests_separate_session(self):
 
