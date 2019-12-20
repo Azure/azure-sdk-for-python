@@ -3,6 +3,10 @@
 
 ## 1.1.2 (Unreleased)
 
+### Features
+
+- Support fixed retry   #6419
+
 ## 1.1.1 (2019-12-03) 
 
 ### Bug fixes
