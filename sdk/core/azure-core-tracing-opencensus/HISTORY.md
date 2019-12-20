@@ -1,9 +1,13 @@
 
 # Release History
 
--------------------
+## 1.0.0 (2019-XX-XX)
 
-## 2019-10-07 Version 1.0.0b4
+### Features
+
+- Implement new "change_context" API
+
+## 1.0.0b4 (2019-10-07)
 
 ### Features
 

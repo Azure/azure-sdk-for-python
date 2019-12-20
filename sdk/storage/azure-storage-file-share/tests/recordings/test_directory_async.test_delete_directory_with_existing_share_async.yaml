@@ -1,0 +1,194 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 672407a4-1d1a-11ea-8c35-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:03:02 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharecd351c3a?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:03:05 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Etag
+      : '"0x8D77F3E4DAC1332"'
+      ? !!python/object/new:multidict._multidict.istr
+      - Last-Modified
+      : Thu, 12 Dec 2019 20:03:06 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 6dea061d-401a-00ac-1f27-b14597000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharecd351c3a
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 673bf65a-1d1a-11ea-b6e3-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:03:02 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharecd351c3a/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:03:05 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Etag
+      : '"0x8D77F3E4DB3563C"'
+      ? !!python/object/new:multidict._multidict.istr
+      - Last-Modified
+      : Thu, 12 Dec 2019 20:03:06 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-12-12T20:03:06.4513084Z'
+      x-ms-file-creation-time: '2019-12-12T20:03:06.4513084Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-12-12T20:03:06.4513084Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 17360570244679638438*10967959146200238639
+      x-ms-request-id: 6dea0620-401a-00ac-2027-b14597000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharecd351c3a/dir1
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 67436b5e-1d1a-11ea-a09c-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:03:02 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharecd351c3a/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:03:05 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 6dea0621-401a-00ac-2127-b14597000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharecd351c3a/dir1
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 674934e2-1d1a-11ea-8597-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:03:02 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utsharecd351c3a/dir1?restype=directory
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:6dea0622-401a-00ac-2227-b14597000000\nTime:2019-12-12T20:03:06.5588268Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '223'
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:03:05 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._multidict.istr
+      - Vary
+      : Origin
+      x-ms-error-code: ResourceNotFound
+      x-ms-request-id: 6dea0622-401a-00ac-2227-b14597000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharecd351c3a/dir1
+        - restype=directory
+        - ''
+version: 1

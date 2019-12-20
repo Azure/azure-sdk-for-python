@@ -42,9 +42,7 @@ def GetAuthorizationHeader(
     :param str resource_id_or_fullname:
     :param str resource_type:
     :param dict headers:
-
-    :return:
-        The authorization headers.
+    :return: The authorization headers.
     :rtype: dict
     """
     # In the AuthorizationToken generation logic, lower casing of ResourceID is required
@@ -73,9 +71,7 @@ def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resourc
     :param str resource_type:
     :param dict headers:
     :param str master_key:
-
-    :return:
-        The authorization token.
+    :return: The authorization token.
     :rtype: dict
 
     """
@@ -114,9 +110,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
     :param dict resource_tokens:
     :param str path:
     :param str resource_id_or_fullname:
-
-    :return:
-        The authorization token.
+    :return: The authorization token.
     :rtype: dict
 
     """
@@ -143,7 +137,6 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
             "users",
             "permissions",
             "attachments",
-            "media",
             "conflicts",
             "offers",
         ]

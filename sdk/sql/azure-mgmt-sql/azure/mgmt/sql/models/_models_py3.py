@@ -101,6 +101,57 @@ class AutomaticTuningServerOptions(Model):
         self.reason_desc = None
 
 
+class AutoPauseDelayTimeRange(Model):
+    """Supported auto pause delay time range.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar min_value: Minimum value
+    :vartype min_value: int
+    :ivar max_value: Maximum value
+    :vartype max_value: int
+    :ivar step_size: Step value for discrete values between the minimum value
+     and the maximum value.
+    :vartype step_size: int
+    :ivar default: Default value is no value is provided
+    :vartype default: int
+    :ivar unit: Unit of time that delay is expressed in. Possible values
+     include: 'Minutes'
+    :vartype unit: str or ~azure.mgmt.sql.models.PauseDelayTimeUnit
+    :ivar do_not_pause_value: Value that is used to not pause (infinite delay
+     before pause)
+    :vartype do_not_pause_value: int
+    """
+
+    _validation = {
+        'min_value': {'readonly': True},
+        'max_value': {'readonly': True},
+        'step_size': {'readonly': True},
+        'default': {'readonly': True},
+        'unit': {'readonly': True},
+        'do_not_pause_value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'min_value': {'key': 'minValue', 'type': 'int'},
+        'max_value': {'key': 'maxValue', 'type': 'int'},
+        'step_size': {'key': 'stepSize', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'do_not_pause_value': {'key': 'doNotPauseValue', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AutoPauseDelayTimeRange, self).__init__(**kwargs)
+        self.min_value = None
+        self.max_value = None
+        self.step_size = None
+        self.default = None
+        self.unit = None
+        self.do_not_pause_value = None
+
+
 class Resource(Model):
     """ARM resource.
 
@@ -750,7 +801,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -843,6 +894,11 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -866,9 +922,10 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
         self.state = state
@@ -879,6 +936,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class DatabaseOperation(ProxyResource):
@@ -1372,9 +1430,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -1707,6 +1765,12 @@ class EditionCapability(Model):
     :ivar zone_redundant: Whether or not zone redundancy is supported for the
      edition.
     :vartype zone_redundant: bool
+    :ivar read_scale: The read scale capability for the edition.
+    :vartype read_scale: ~azure.mgmt.sql.models.ReadScaleCapability
+    :ivar supported_storage_capabilities: The list of supported storage
+     capabilities for this edition
+    :vartype supported_storage_capabilities:
+     list[~azure.mgmt.sql.models.StorageCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -1718,6 +1782,8 @@ class EditionCapability(Model):
         'name': {'readonly': True},
         'supported_service_level_objectives': {'readonly': True},
         'zone_redundant': {'readonly': True},
+        'read_scale': {'readonly': True},
+        'supported_storage_capabilities': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -1725,6 +1791,8 @@ class EditionCapability(Model):
         'name': {'key': 'name', 'type': 'str'},
         'supported_service_level_objectives': {'key': 'supportedServiceLevelObjectives', 'type': '[ServiceObjectiveCapability]'},
         'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'read_scale': {'key': 'readScale', 'type': 'ReadScaleCapability'},
+        'supported_storage_capabilities': {'key': 'supportedStorageCapabilities', 'type': '[StorageCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -1734,6 +1802,8 @@ class EditionCapability(Model):
         self.name = None
         self.supported_service_level_objectives = None
         self.zone_redundant = None
+        self.read_scale = None
+        self.supported_storage_capabilities = None
         self.status = None
         self.reason = reason
 
@@ -2363,6 +2433,9 @@ class ElasticPoolPerformanceLevelCapability(Model):
      per database max performance levels.
     :vartype supported_per_database_max_performance_levels:
      list[~azure.mgmt.sql.models.ElasticPoolPerDatabaseMaxPerformanceLevelCapability]
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     performance level.
+    :vartype zone_redundant: bool
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -2379,6 +2452,7 @@ class ElasticPoolPerformanceLevelCapability(Model):
         'supported_max_sizes': {'readonly': True},
         'supported_per_database_max_sizes': {'readonly': True},
         'supported_per_database_max_performance_levels': {'readonly': True},
+        'zone_redundant': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -2391,6 +2465,7 @@ class ElasticPoolPerformanceLevelCapability(Model):
         'supported_max_sizes': {'key': 'supportedMaxSizes', 'type': '[MaxSizeRangeCapability]'},
         'supported_per_database_max_sizes': {'key': 'supportedPerDatabaseMaxSizes', 'type': '[MaxSizeRangeCapability]'},
         'supported_per_database_max_performance_levels': {'key': 'supportedPerDatabaseMaxPerformanceLevels', 'type': '[ElasticPoolPerDatabaseMaxPerformanceLevelCapability]'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -2405,6 +2480,7 @@ class ElasticPoolPerformanceLevelCapability(Model):
         self.supported_max_sizes = None
         self.supported_per_database_max_sizes = None
         self.supported_per_database_max_performance_levels = None
+        self.zone_redundant = None
         self.status = None
         self.reason = reason
 
@@ -2594,7 +2670,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2687,6 +2763,11 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2709,9 +2790,10 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(ExtendedDatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.state = state
@@ -2722,6 +2804,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
@@ -2747,7 +2830,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2840,6 +2923,11 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2862,9 +2950,10 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(ExtendedServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.state = state
@@ -2875,6 +2964,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class FailoverGroup(ProxyResource):
@@ -3562,6 +3652,90 @@ class InstancePool(TrackedResource):
         self.license_type = license_type
 
 
+class InstancePoolEditionCapability(Model):
+    """The instance pool capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The instance pool version name.
+    :vartype name: str
+    :ivar supported_families: The supported families.
+    :vartype supported_families:
+     list[~azure.mgmt.sql.models.InstancePoolFamilyCapability]
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'supported_families': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_families': {'key': 'supportedFamilies', 'type': '[InstancePoolFamilyCapability]'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(InstancePoolEditionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_families = None
+        self.status = None
+        self.reason = reason
+
+
+class InstancePoolFamilyCapability(Model):
+    """The instance pool family capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Family name.
+    :vartype name: str
+    :ivar supported_license_types: List of supported license types.
+    :vartype supported_license_types:
+     list[~azure.mgmt.sql.models.LicenseTypeCapability]
+    :ivar supported_vcores_values: List of supported virtual cores values.
+    :vartype supported_vcores_values:
+     list[~azure.mgmt.sql.models.InstancePoolVcoresCapability]
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'supported_license_types': {'readonly': True},
+        'supported_vcores_values': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_license_types': {'key': 'supportedLicenseTypes', 'type': '[LicenseTypeCapability]'},
+        'supported_vcores_values': {'key': 'supportedVcoresValues', 'type': '[InstancePoolVcoresCapability]'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(InstancePoolFamilyCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_license_types = None
+        self.supported_vcores_values = None
+        self.status = None
+        self.reason = reason
+
+
 class InstancePoolUpdate(Model):
     """An update to an Instance pool.
 
@@ -3576,6 +3750,49 @@ class InstancePoolUpdate(Model):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(InstancePoolUpdate, self).__init__(**kwargs)
         self.tags = tags
+
+
+class InstancePoolVcoresCapability(Model):
+    """The managed instance virtual cores capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The virtual cores identifier.
+    :vartype name: str
+    :ivar value: The virtual cores value.
+    :vartype value: int
+    :ivar storage_limit: Storage limit.
+    :vartype storage_limit: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+        'storage_limit': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'int'},
+        'storage_limit': {'key': 'storageLimit', 'type': 'MaxSizeCapability'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(InstancePoolVcoresCapability, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
+        self.storage_limit = None
+        self.status = None
+        self.reason = reason
 
 
 class Job(ProxyResource):
@@ -5132,11 +5349,6 @@ class ManagedInstanceFamilyCapability(Model):
     :ivar supported_vcores_values: List of supported virtual cores values.
     :vartype supported_vcores_values:
      list[~azure.mgmt.sql.models.ManagedInstanceVcoresCapability]
-    :ivar included_max_size: Included size.
-    :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
-    :ivar supported_storage_sizes: Storage size ranges.
-    :vartype supported_storage_sizes:
-     list[~azure.mgmt.sql.models.MaxSizeRangeCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -5149,8 +5361,6 @@ class ManagedInstanceFamilyCapability(Model):
         'sku': {'readonly': True},
         'supported_license_types': {'readonly': True},
         'supported_vcores_values': {'readonly': True},
-        'included_max_size': {'readonly': True},
-        'supported_storage_sizes': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -5159,8 +5369,6 @@ class ManagedInstanceFamilyCapability(Model):
         'sku': {'key': 'sku', 'type': 'str'},
         'supported_license_types': {'key': 'supportedLicenseTypes', 'type': '[LicenseTypeCapability]'},
         'supported_vcores_values': {'key': 'supportedVcoresValues', 'type': '[ManagedInstanceVcoresCapability]'},
-        'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
-        'supported_storage_sizes': {'key': 'supportedStorageSizes', 'type': '[MaxSizeRangeCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -5171,8 +5379,6 @@ class ManagedInstanceFamilyCapability(Model):
         self.sku = None
         self.supported_license_types = None
         self.supported_vcores_values = None
-        self.included_max_size = None
-        self.supported_storage_sizes = None
         self.status = None
         self.reason = reason
 
@@ -5404,6 +5610,17 @@ class ManagedInstanceVcoresCapability(Model):
     :vartype name: str
     :ivar value: The virtual cores value.
     :vartype value: int
+    :ivar included_max_size: Included size.
+    :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar supported_storage_sizes: Storage size ranges.
+    :vartype supported_storage_sizes:
+     list[~azure.mgmt.sql.models.MaxSizeRangeCapability]
+    :ivar instance_pool_supported: True if this service objective is supported
+     for managed instances in an instance pool.
+    :vartype instance_pool_supported: bool
+    :ivar standalone_supported: True if this service objective is supported
+     for standalone managed instances.
+    :vartype standalone_supported: bool
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -5414,12 +5631,20 @@ class ManagedInstanceVcoresCapability(Model):
     _validation = {
         'name': {'readonly': True},
         'value': {'readonly': True},
+        'included_max_size': {'readonly': True},
+        'supported_storage_sizes': {'readonly': True},
+        'instance_pool_supported': {'readonly': True},
+        'standalone_supported': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'int'},
+        'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
+        'supported_storage_sizes': {'key': 'supportedStorageSizes', 'type': '[MaxSizeRangeCapability]'},
+        'instance_pool_supported': {'key': 'instancePoolSupported', 'type': 'bool'},
+        'standalone_supported': {'key': 'standaloneSupported', 'type': 'bool'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -5428,6 +5653,10 @@ class ManagedInstanceVcoresCapability(Model):
         super(ManagedInstanceVcoresCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
+        self.included_max_size = None
+        self.supported_storage_sizes = None
+        self.instance_pool_supported = None
+        self.standalone_supported = None
         self.status = None
         self.reason = reason
 
@@ -5443,6 +5672,10 @@ class ManagedInstanceVersionCapability(Model):
     :ivar supported_editions: The list of supported managed instance editions.
     :vartype supported_editions:
      list[~azure.mgmt.sql.models.ManagedInstanceEditionCapability]
+    :ivar supported_instance_pool_editions: The list of supported instance
+     pool editions.
+    :vartype supported_instance_pool_editions:
+     list[~azure.mgmt.sql.models.InstancePoolEditionCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -5453,12 +5686,14 @@ class ManagedInstanceVersionCapability(Model):
     _validation = {
         'name': {'readonly': True},
         'supported_editions': {'readonly': True},
+        'supported_instance_pool_editions': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'supported_editions': {'key': 'supportedEditions', 'type': '[ManagedInstanceEditionCapability]'},
+        'supported_instance_pool_editions': {'key': 'supportedInstancePoolEditions', 'type': '[InstancePoolEditionCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -5467,6 +5702,7 @@ class ManagedInstanceVersionCapability(Model):
         super(ManagedInstanceVersionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_editions = None
+        self.supported_instance_pool_editions = None
         self.status = None
         self.reason = reason
 
@@ -5490,9 +5726,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -5884,6 +6120,39 @@ class MetricValue(Model):
         self.minimum = None
         self.timestamp = None
         self.total = None
+
+
+class MinCapacityCapability(Model):
+    """The min capacity capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Min capacity value
+    :vartype value: float
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(MinCapacityCapability, self).__init__(**kwargs)
+        self.value = None
+        self.status = None
+        self.reason = reason
 
 
 class Name(Model):
@@ -6279,6 +6548,39 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         self.status = status
         self.description = description
         self.actions_required = None
+
+
+class ReadScaleCapability(Model):
+    """The read scale capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar max_number_of_replicas: The maximum number of read scale replicas.
+    :vartype max_number_of_replicas: int
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'max_number_of_replicas': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'max_number_of_replicas': {'key': 'maxNumberOfReplicas', 'type': 'int'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(ReadScaleCapability, self).__init__(**kwargs)
+        self.max_number_of_replicas = None
+        self.status = None
+        self.reason = reason
 
 
 class RecommendedElasticPool(ProxyResource):
@@ -7102,7 +7404,7 @@ class ServerAutomaticTuning(ProxyResource):
 
 
 class ServerAzureADAdministrator(ProxyResource):
-    """An server Active Directory Administrator.
+    """Azure Active Directory administrator.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7115,15 +7417,14 @@ class ServerAzureADAdministrator(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar administrator_type: Required. The type of administrator. Default
-     value: "ActiveDirectory" .
+    :ivar administrator_type: Required. Type of the sever administrator.
+     Default value: "ActiveDirectory" .
     :vartype administrator_type: str
-    :param login: Required. The server administrator login value.
+    :param login: Required. Login name of the server administrator.
     :type login: str
-    :param sid: Required. The server administrator Sid (Secure ID).
+    :param sid: Required. SID (object ID) of the server administrator.
     :type sid: str
-    :param tenant_id: Required. The server Active Directory Administrator
-     tenant id.
+    :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
     """
 
@@ -7134,7 +7435,6 @@ class ServerAzureADAdministrator(ProxyResource):
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
-        'tenant_id': {'required': True},
     }
 
     _attribute_map = {
@@ -7149,7 +7449,7 @@ class ServerAzureADAdministrator(ProxyResource):
 
     administrator_type = "ActiveDirectory"
 
-    def __init__(self, *, login: str, sid: str, tenant_id: str, **kwargs) -> None:
+    def __init__(self, *, login: str, sid: str, tenant_id: str=None, **kwargs) -> None:
         super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.login = login
         self.sid = sid
@@ -7176,7 +7476,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -7269,6 +7569,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -7290,9 +7595,10 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(ServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.state = state
         self.storage_endpoint = storage_endpoint
@@ -7302,6 +7608,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class ServerCommunicationLink(ProxyResource):
@@ -7765,9 +8072,9 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -7884,6 +8191,18 @@ class ServiceObjectiveCapability(Model):
      list[~azure.mgmt.sql.models.LicenseTypeCapability]
     :ivar included_max_size: The included (free) max size.
     :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     service objective.
+    :vartype zone_redundant: bool
+    :ivar supported_auto_pause_delay: Supported time range for auto pause
+     delay
+    :vartype supported_auto_pause_delay:
+     ~azure.mgmt.sql.models.AutoPauseDelayTimeRange
+    :ivar supported_min_capacities: List of supported min capacities
+    :vartype supported_min_capacities:
+     list[~azure.mgmt.sql.models.MinCapacityCapability]
+    :ivar compute_model: The compute model
+    :vartype compute_model: str
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -7899,6 +8218,10 @@ class ServiceObjectiveCapability(Model):
         'sku': {'readonly': True},
         'supported_license_types': {'readonly': True},
         'included_max_size': {'readonly': True},
+        'zone_redundant': {'readonly': True},
+        'supported_auto_pause_delay': {'readonly': True},
+        'supported_min_capacities': {'readonly': True},
+        'compute_model': {'readonly': True},
         'status': {'readonly': True},
     }
 
@@ -7910,6 +8233,10 @@ class ServiceObjectiveCapability(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'supported_license_types': {'key': 'supportedLicenseTypes', 'type': '[LicenseTypeCapability]'},
         'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'supported_auto_pause_delay': {'key': 'supportedAutoPauseDelay', 'type': 'AutoPauseDelayTimeRange'},
+        'supported_min_capacities': {'key': 'supportedMinCapacities', 'type': '[MinCapacityCapability]'},
+        'compute_model': {'key': 'computeModel', 'type': 'str'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
@@ -7923,6 +8250,10 @@ class ServiceObjectiveCapability(Model):
         self.sku = None
         self.supported_license_types = None
         self.included_max_size = None
+        self.zone_redundant = None
+        self.supported_auto_pause_delay = None
+        self.supported_min_capacities = None
+        self.compute_model = None
         self.status = None
         self.reason = reason
 
@@ -8156,6 +8487,40 @@ class SloUsageMetric(Model):
         self.service_level_objective = None
         self.service_level_objective_id = None
         self.in_range_time_ratio = None
+
+
+class StorageCapability(Model):
+    """The storage account type capability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar storage_account_type: The storage account type for the database's
+     backups. Possible values include: 'GRS', 'LRS', 'ZRS'
+    :vartype storage_account_type: str or ~azure.mgmt.sql.models.enum
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
+    """
+
+    _validation = {
+        'storage_account_type': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(StorageCapability, self).__init__(**kwargs)
+        self.storage_account_type = None
+        self.status = None
+        self.reason = reason
 
 
 class SubscriptionUsage(ProxyResource):
@@ -9219,3 +9584,124 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
         self.errors = None
         self.storage_container_path = None
         self.number_of_failed_security_checks = None
+
+
+class WorkloadClassifier(ProxyResource):
+    """Workload classifier operations for a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param member_name: Required. The workload classifier member name.
+    :type member_name: str
+    :param label: The workload classifier label.
+    :type label: str
+    :param context: The workload classifier context.
+    :type context: str
+    :param start_time: The workload classifier start time for classification.
+    :type start_time: str
+    :param end_time: The workload classifier end time for classification.
+    :type end_time: str
+    :param importance: The workload classifier importance.
+    :type importance: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'member_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'member_name': {'key': 'properties.memberName', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'context': {'key': 'properties.context', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'str'},
+        'end_time': {'key': 'properties.endTime', 'type': 'str'},
+        'importance': {'key': 'properties.importance', 'type': 'str'},
+    }
+
+    def __init__(self, *, member_name: str, label: str=None, context: str=None, start_time: str=None, end_time: str=None, importance: str=None, **kwargs) -> None:
+        super(WorkloadClassifier, self).__init__(**kwargs)
+        self.member_name = member_name
+        self.label = label
+        self.context = context
+        self.start_time = start_time
+        self.end_time = end_time
+        self.importance = importance
+
+
+class WorkloadGroup(ProxyResource):
+    """Workload group operations for a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param min_resource_percent: Required. The workload group minimum
+     percentage resource.
+    :type min_resource_percent: int
+    :param max_resource_percent: Required. The workload group cap percentage
+     resource.
+    :type max_resource_percent: int
+    :param min_resource_percent_per_request: Required. The workload group
+     request minimum grant percentage.
+    :type min_resource_percent_per_request: float
+    :param max_resource_percent_per_request: The workload group request
+     maximum grant percentage.
+    :type max_resource_percent_per_request: float
+    :param importance: The workload group importance level.
+    :type importance: str
+    :param query_execution_timeout: The workload group query execution
+     timeout.
+    :type query_execution_timeout: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'min_resource_percent': {'required': True},
+        'max_resource_percent': {'required': True},
+        'min_resource_percent_per_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'min_resource_percent': {'key': 'properties.minResourcePercent', 'type': 'int'},
+        'max_resource_percent': {'key': 'properties.maxResourcePercent', 'type': 'int'},
+        'min_resource_percent_per_request': {'key': 'properties.minResourcePercentPerRequest', 'type': 'float'},
+        'max_resource_percent_per_request': {'key': 'properties.maxResourcePercentPerRequest', 'type': 'float'},
+        'importance': {'key': 'properties.importance', 'type': 'str'},
+        'query_execution_timeout': {'key': 'properties.queryExecutionTimeout', 'type': 'int'},
+    }
+
+    def __init__(self, *, min_resource_percent: int, max_resource_percent: int, min_resource_percent_per_request: float, max_resource_percent_per_request: float=None, importance: str=None, query_execution_timeout: int=None, **kwargs) -> None:
+        super(WorkloadGroup, self).__init__(**kwargs)
+        self.min_resource_percent = min_resource_percent
+        self.max_resource_percent = max_resource_percent
+        self.min_resource_percent_per_request = min_resource_percent_per_request
+        self.max_resource_percent_per_request = max_resource_percent_per_request
+        self.importance = importance
+        self.query_execution_timeout = query_execution_timeout

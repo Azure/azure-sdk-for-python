@@ -4,11 +4,9 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from ._generated import KeyVaultClient
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .._user_agent import USER_AGENT
@@ -18,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
+    from azure.core.configuration import Configuration
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
@@ -56,8 +55,8 @@ class KeyVaultClientBase(object):
 
         return config
 
-    def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
-        # type: (str, TokenCredential, Optional[HttpTransport], Optional[str], **Any) -> None
+    def __init__(self, vault_url, credential, **kwargs):
+        # type: (str, TokenCredential, **Any) -> None
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -68,22 +67,22 @@ class KeyVaultClientBase(object):
 
         self._vault_url = vault_url.strip(" /")
 
-        client = kwargs.pop("generated_client", None)
+        client = kwargs.get("generated_client")
         if client:
             # caller provided a configured client -> nothing left to initialize
             self._client = client
             return
 
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = self._create_config(credential, api_version=api_version, **kwargs)
-        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport, **kwargs)
-        self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=False, **kwargs)
+        config = self._create_config(credential, **kwargs)
+        transport = kwargs.pop("transport", None)
+        pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False)
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):
         # type: (Configuration, HttpTransport, **Any) -> Pipeline
+        logging_policy = HttpLoggingPolicy(**kwargs)
+        logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -92,7 +91,8 @@ class KeyVaultClientBase(object):
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            logging_policy,
         ]
 
         if transport is None:

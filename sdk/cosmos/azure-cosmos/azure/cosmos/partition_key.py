@@ -19,9 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""Create partition keys in the Azure Cosmos DB SQL API service.
+"""
 
 class NonePartitionKeyValue(object):
-    """Represents none value for partitionKey when it's missing in a containers.
+    """Represents None value for partitionKey when it's missing in a container.
     """
 
 
@@ -38,14 +40,14 @@ class _Undefined(object):
 
 
 class PartitionKey(dict):
-    """ Key used to partition a container into logical partitions.
+    """Key used to partition a container into logical partitions.
 
     See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
-    for more information on how to choose partition keys.
+    for information on how to choose partition keys.
 
     :ivar path: The path of the partition key
-    :ivar kind: What kind of partition key is being defined
-    :ivar version: The version of the partition key
+    :ivar kind: What kind of partition key is being defined (default: "Hash")
+    :ivar version: The version of the partition key (default: 2)
     """
 
     def __init__(self, path, kind="Hash", version=2):  # pylint: disable=super-init-not-called
@@ -53,6 +55,10 @@ class PartitionKey(dict):
         self.path = path
         self.kind = kind
         self.version = version
+
+    def __repr__(self):
+        # type () -> str
+        return "<PartitionKey [{}]>".format(self.path)[:1024]
 
     @property
     def kind(self):

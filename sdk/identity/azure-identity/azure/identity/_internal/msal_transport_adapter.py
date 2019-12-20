@@ -9,8 +9,18 @@ import json
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    RetryPolicy,
+    UserAgentPolicy,
+)
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+
+from .user_agent import USER_AGENT
 
 try:
     from unittest import mock
@@ -48,8 +58,7 @@ class MsalTransportResponse:
 
 
 class MsalTransportAdapter(object):
-    """
-    Wraps an azure-core pipeline with the shape of requests.Session.
+    """Wraps an azure-core pipeline with the shape of ``requests.Session``.
 
     Used as a context manager, patches msal.authority to intercept calls to requests.
     """
@@ -74,11 +83,20 @@ class MsalTransportAdapter(object):
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
         config.proxy_policy = ProxyPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         return config
 
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         config = config or self._create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy]
+        policies = policies or [
+            ContentDecodePolicy(),
+            config.user_agent_policy,
+            config.proxy_policy,
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
         if not transport:
             transport = RequestsTransport(**kwargs)
         return Pipeline(transport=transport, policies=policies)

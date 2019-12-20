@@ -14,10 +14,10 @@ except ImportError:
     import mock
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-from azure.core.pipeline.transport.base import HttpClientTransportResponse, HttpTransport, _deserialize_response
+from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
-
+import logging
 import pytest
 
 
@@ -385,3 +385,38 @@ def test_recursive_multipart_receive():
 
     internal_response0 = internal_response[0]
     assert internal_response0.status_code == 400
+
+def test_close_unopened_transport():
+    transport = RequestsTransport()
+    transport.close()
+
+def test_timeout(caplog):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=100)
+
+    assert "Tuple timeout setting is deprecated" not in caplog.text
+
+def test_tuple_timeout(caplog):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100))
+
+    assert "Tuple timeout setting is deprecated" in caplog.text
+
+def test_conflict_timeout(caplog):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with pytest.raises(ValueError):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)

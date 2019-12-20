@@ -33,7 +33,7 @@ class CreateCertificatePoller(PollingMethod):
             while not self.finished():
                 self._update_status()
                 time.sleep(self._polling_interval)
-            if self._pending_certificate_op.status.lower() == 'completed':
+            if self._pending_certificate_op.status.lower() == "completed":
                 self._resource = self._get_certificate_command()
             else:
                 self._resource = self._pending_certificate_op
@@ -43,14 +43,14 @@ class CreateCertificatePoller(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        if self._pending_certificate_op.issuer_name.lower() == 'unknown':
+        if self._pending_certificate_op.issuer_name.lower() == "unknown":
             return True
-        return self._pending_certificate_op.status.lower() != 'inprogress'
+        return self._pending_certificate_op.status.lower() != "inprogress"
 
     def resource(self):
-        # type: () -> Any
+        # type: () -> Union[KeyVaultCertificate, CertificateOperation]
         return self._resource
 
     def status(self):
-        # type: () ->str
+        # type: () -> str
         return self._pending_certificate_op.status.lower()

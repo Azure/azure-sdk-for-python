@@ -14,12 +14,12 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.1 azure-mgmt-compute/8.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyarmset53ac1097\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097\"\
@@ -35,7 +35,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 02:21:12 GMT
+      - Tue, 22 Oct 2019 05:17:19 GMT
       expires:
       - '-1'
       pragma:
@@ -68,12 +68,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.1 azure-mgmt-compute/8.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyarmset53ac1097\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097\"\
@@ -90,7 +90,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 02:21:12 GMT
+      - Tue, 22 Oct 2019 05:17:19 GMT
       expires:
       - '-1'
       pragma:
@@ -121,12 +121,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.1 azure-mgmt-compute/8.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyarmset53ac1097\"\
@@ -145,7 +145,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 02:21:12 GMT
+      - Tue, 22 Oct 2019 05:17:19 GMT
       expires:
       - '-1'
       pragma:
@@ -176,12 +176,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.1 azure-mgmt-compute/8.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097/vmSizes?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097/vmSizes?api-version=2019-07-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"Standard_B1ls\",\r\
@@ -768,7 +768,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 02:21:13 GMT
+      - Tue, 22 Oct 2019 05:17:19 GMT
       expires:
       - '-1'
       pragma:
@@ -801,12 +801,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.1 azure-mgmt-compute/8.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-compute/9.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2019-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2019-07-01
   response:
     body:
       string: ''
@@ -816,7 +816,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 16 Sep 2019 02:21:15 GMT
+      - Tue, 22 Oct 2019 05:17:21 GMT
       expires:
       - '-1'
       pragma:

@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for session read/write unavailable retry policy implementation in the Azure Cosmos database service.
+"""Internal class for session read/write unavailable retry policy implementation
+in the Azure Cosmos database service.
 """
 
 import logging
@@ -62,11 +63,8 @@ class _SessionRetryPolicy(object):
     def ShouldRetry(self, _exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.CosmosHttpResponseError instance) exception:
-
-        :rtype:
-            boolean
-
+        :param (exceptions.CosmosHttpResponseError instance) exception:
+        :rtype: boolean
         """
         self.session_token_retry_count += 1
         # clear previous location-based routing directive

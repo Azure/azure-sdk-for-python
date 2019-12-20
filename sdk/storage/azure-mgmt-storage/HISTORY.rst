@@ -3,6 +3,59 @@
 Release History
 ===============
 
+7.0.0 (2019-12-04)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccountCreateParameters has a new parameter routing_preference
+- Model BlobServiceProperties has a new parameter sku
+- Model FileServiceProperties has a new parameter share_delete_retention_policy
+- Model FileServiceProperties has a new parameter sku
+- Model StorageAccount has a new parameter routing_preference
+- Model StorageAccountUpdateParameters has a new parameter routing_preference
+- Model Endpoints has a new parameter internet_endpoints
+- Model Endpoints has a new parameter microsoft_endpoints
+
+**Breaking changes**
+
+- Operation FileServicesOperations.set_service_properties has a new signature
+- Model Sku has a new signature
+
+6.0.0 (2019-10-25)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter private_endpoint_connections
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group PrivateLinkResourcesOperations
+
+**Breaking changes**
+
+- Operation FileSharesOperations.list has a new signature
+- Operation BlobContainersOperations.list has a new signature
+
+5.0.0 (2019-10-21)
+++++++++++++++++++
+
+**Features**
+
+- Model AzureFilesIdentityBasedAuthentication has a new parameter active_directory_properties
+
+**Breaking changes**
+
+- Operation StorageAccountsOperations.list_keys has a new signature
+   
+4.2.0 (2019-10-07)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccountCreateParameters has a new parameter large_file_shares_state
+- Model StorageAccountUpdateParameters has a new parameter large_file_shares_state
+- Model StorageAccount has a new parameter large_file_shares_state
+
 4.1.0 (2019-09-27)
 ++++++++++++++++++
 

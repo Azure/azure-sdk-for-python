@@ -21,7 +21,7 @@ PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
 NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(PACKAGE_FOLDER_PATH, 'version.py'), 'r') as fd:
+with open(os.path.join(PACKAGE_FOLDER_PATH, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -54,23 +54,21 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     packages=find_packages(
         exclude=[
             "samples",
-            "samples.Shared",
-            "samples.Shared.config",
             "test",
-            "doc",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
         ]
     ),
     install_requires=[
       'six >=1.6',
-      'azure-core<2.0.0,>=1.0.0b3'
+      'azure-core<2.0.0,>=1.0.0'
     ],
     extras_require={
       ":python_version<'3.4'": ['enum34>=1.0.4'],

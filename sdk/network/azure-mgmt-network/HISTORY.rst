@@ -3,6 +3,98 @@
 Release History
 ===============
 
+8.0.0 (2019-11-12)
+++++++++++++++++++
+
+**Features**
+
+- Model PrivateLinkServiceConnectionState has a new parameter actions_required
+- Model ConnectivityParameters has a new parameter preferred_ip_version
+
+**Breaking changes**
+
+- Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
+7.0.0 (2019-10-22)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewayHttpListener has a new parameter hostnames
+- Model ApplicationGatewayHttpListener has a new parameter firewall_policy
+- Model ApplicationGatewayPathRule has a new parameter firewall_policy
+- Model P2SVpnGateway has a new parameter p2_sconnection_configurations
+- Model VpnServerConfiguration has a new parameter vpn_client_root_certificates
+- Model VpnServerConfiguration has a new parameter radius_server_root_certificates
+- Model VpnServerConfiguration has a new parameter radius_client_root_certificates
+- Model VpnServerConfiguration has a new parameter vpn_client_revoked_certificates
+- Model ExpressRouteConnection has a new parameter enable_internet_security
+- Model AzureFirewallApplicationRule has a new parameter source_ip_groups
+- Model WebApplicationFirewallPolicy has a new parameter path_based_rules
+- Model WebApplicationFirewallPolicy has a new parameter http_listeners
+- Model PrivateLinkService has a new parameter enable_proxy_protocol
+- Model AzureFirewallNetworkRule has a new parameter destination_ip_groups
+- Model AzureFirewallNetworkRule has a new parameter source_ip_groups
+- Model AzureFirewallNetworkRule has a new parameter destination_fqdns
+- Model VirtualWAN has a new parameter virtual_wan_type
+- Model VirtualHub has a new parameter sku
+- Model VirtualHub has a new parameter virtual_hub_route_table_v2s
+- Model AzureFirewallNatRule has a new parameter translated_fqdn
+- Model AzureFirewallNatRule has a new parameter source_ip_groups
+- Model PrivateEndpointConnection has a new parameter link_identifier
+- Model AzureFirewall has a new parameter additional_properties
+- Added operation RouteFiltersOperations.update_tags
+- Added operation ServiceEndpointPoliciesOperations.update_tags
+- Added operation PrivateLinkServicesOperations.get_private_endpoint_connection
+- Added operation PrivateLinkServicesOperations.list_private_endpoint_connections
+- Added operation group VirtualHubRouteTableV2sOperations
+- Added operation group IpGroupsOperations
+
+**Breaking changes**
+
+- Operation AzureFirewallsOperations.update_tags has a new signature
+- Operation ExpressRouteCircuitAuthorizationsOperations.create_or_update has a new signature
+- Model P2SVpnGateway no longer has parameter p2s_connection_configurations
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_vpn_client_root_certificates
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_radius_client_root_certificates
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_vpn_client_revoked_certificates
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_radius_server_root_certificates
+- Removed operation RouteFiltersOperations.update
+- Removed operation VirtualRoutersOperations.update
+- Removed operation RouteFilterRulesOperations.update
+- Removed operation VirtualRouterPeeringsOperations.update
+- Removed operation FirewallPoliciesOperations.update_tags
+- Removed operation ServiceEndpointPoliciesOperations.update
+
+6.0.0 (2019-10-09)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetwork has a new parameter bgp_communities
+- Model VirtualHub has a new parameter azure_firewall
+- Model VirtualHub has a new parameter security_provider_name
+- Model P2SVpnGateway has a new parameter p2s_connection_configurations
+- Model P2SVpnGateway has a new parameter vpn_server_configuration
+- Model AzureFirewall has a new parameter sku
+- Model VirtualNetworkGateway has a new parameter inbound_dns_forwarding_endpoint
+- Model VirtualNetworkGateway has a new parameter enable_dns_forwarding
+- Added operation P2sVpnGatewaysOperations.get_p2s_vpn_connection_health_detailed
+- Added operation NetworkManagementClientOperationsMixin.generatevirtualwanvpnserverconfigurationvpnprofile
+- Added operation group VpnServerConfigurationsOperations
+- Added operation group VpnServerConfigurationsAssociatedWithVirtualWanOperations
+- Added operation group AvailableServiceAliasesOperations
+
+**Breaking changes** 
+
+- Model WebApplicationFirewallPolicy has a new required parameter managed_rules
+- Model P2SVpnGateway no longer has parameter vpn_client_address_pool
+- Model P2SVpnGateway no longer has parameter custom_routes
+- Model P2SVpnGateway no longer has parameter p2_svpn_server_configuration
+- Model VirtualWAN no longer has parameter security_provider_name
+- Model VirtualWAN no longer has parameter p2_svpn_server_configurations
+- Model PolicySettings has a new signature
+
 5.1.0 (2019-10-03)
 ++++++++++++++++++
 

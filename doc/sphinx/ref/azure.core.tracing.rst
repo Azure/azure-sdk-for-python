@@ -1,17 +1,8 @@
 azure.core.tracing package
 ==========================
 
-
 Submodules
 ----------
-
-azure.core.tracing.abstract\_span module
-----------------------------------------
-
-.. automodule:: azure.core.tracing.abstract_span
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 azure.core.tracing.common module
 --------------------------------

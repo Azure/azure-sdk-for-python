@@ -24,7 +24,7 @@ class PeerAsnsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-08-01-preview".
+    :ivar api_version: The client API version. Constant value: "2019-09-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class PeerAsnsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01-preview"
+        self.api_version = "2019-09-01-preview"
 
         self.config = config
 

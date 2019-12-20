@@ -66,6 +66,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        'Programming Language :: Python :: 3.8',
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -75,10 +76,10 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            "azure.keyvault"
+            "azure.keyvault",
         ]
     ),
-    install_requires=["azure-core<2.0.0,>=1.0.0b2", "azure-common~=1.1", "msrest>=0.5.0"],
+    install_requires=["azure-core<2.0.0,>=1.0.0", "azure-common~=1.1", "msrest>=0.6.0"],
     extras_require={
         ":python_version<'3.0'": ["azure-keyvault-nspkg"],
         ":python_version<'3.4'": ["enum34>=1.0.4"],

@@ -219,6 +219,38 @@ class AutomaticOSUpgradeProperties(Model):
         self.automatic_os_upgrade_supported = kwargs.get('automatic_os_upgrade_supported', None)
 
 
+class AutomaticRepairsPolicy(Model):
+    """Specifies the configuration parameters for automatic repairs on the virtual
+    machine scale set.
+
+    :param enabled: Specifies whether automatic repairs should be enabled on
+     the virtual machine scale set. The default value is false.
+    :type enabled: bool
+    :param grace_period: The amount of time for which automatic repairs are
+     suspended due to a state change on VM. The grace time starts after the
+     state change has completed. This helps avoid premature or accidental
+     repairs. The time duration should be specified in ISO 8601 format. The
+     default value is 5 minutes (PT5M).
+    :type grace_period: str
+    :param max_instance_repairs_percent: The percentage (capacity of scaleset)
+     of virtual machines that will be simultaneously repaired. The default
+     value is 20%.
+    :type max_instance_repairs_percent: int
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'grace_period': {'key': 'gracePeriod', 'type': 'str'},
+        'max_instance_repairs_percent': {'key': 'maxInstanceRepairsPercent', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutomaticRepairsPolicy, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.grace_period = kwargs.get('grace_period', None)
+        self.max_instance_repairs_percent = kwargs.get('max_instance_repairs_percent', None)
+
+
 class Resource(Model):
     """The Resource model definition.
 
@@ -416,23 +448,22 @@ class AvailabilitySetUpdate(UpdateResource):
 
 
 class BillingProfile(Model):
-    """Specifies the billing related details of a low priority VM or VMSS.
+    """Specifies the billing related details of a Azure Spot VM or VMSS.
     <br><br>Minimum api-version: 2019-03-01.
 
     :param max_price: Specifies the maximum price you are willing to pay for a
-     low priority VM/VMSS. This price is in US Dollars. <br><br> This price
-     will be compared with the current low priority price for the VM size.
-     Also, the prices are compared at the time of create/update of low priority
-     VM/VMSS and the operation will only succeed if  the maxPrice is greater
-     than the current low priority price. <br><br> The maxPrice will also be
-     used for evicting a low priority VM/VMSS if the current low priority price
-     goes beyond the maxPrice after creation of VM/VMSS. <br><br> Possible
-     values are: <br><br> - Any decimal value greater than zero. Example:
-     $0.01538 <br><br> -1 – indicates default price to be up-to on-demand.
-     <br><br> You can set the maxPrice to -1 to indicate that the low priority
-     VM/VMSS should not be evicted for price reasons. Also, the default max
-     price is -1 if it is not provided by you. <br><br>Minimum api-version:
-     2019-03-01.
+     Azure Spot VM/VMSS. This price is in US Dollars. <br><br> This price will
+     be compared with the current Azure Spot price for the VM size. Also, the
+     prices are compared at the time of create/update of Azure Spot VM/VMSS and
+     the operation will only succeed if  the maxPrice is greater than the
+     current Azure Spot price. <br><br> The maxPrice will also be used for
+     evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond
+     the maxPrice after creation of VM/VMSS. <br><br> Possible values are:
+     <br><br> - Any decimal value greater than zero. Example: 0.01538 <br><br>
+     -1 – indicates default price to be up-to on-demand. <br><br> You can set
+     the maxPrice to -1 to indicate that the Azure Spot VM/VMSS should not be
+     evicted for price reasons. Also, the default max price is -1 if it is not
+     provided by you. <br><br>Minimum api-version: 2019-03-01.
     :type max_price: float
     """
 
@@ -3328,6 +3359,9 @@ class OSProfile(Model):
      should be allowed on the virtual machine. <br><br>This may only be set to
      False when no extensions are present on the virtual machine.
     :type allow_extension_operations: bool
+    :param require_guest_provision_signal: Specifies whether the guest
+     provision signal is required from the virtual machine.
+    :type require_guest_provision_signal: bool
     """
 
     _attribute_map = {
@@ -3339,6 +3373,7 @@ class OSProfile(Model):
         'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
         'allow_extension_operations': {'key': 'allowExtensionOperations', 'type': 'bool'},
+        'require_guest_provision_signal': {'key': 'requireGuestProvisionSignal', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3351,6 +3386,7 @@ class OSProfile(Model):
         self.linux_configuration = kwargs.get('linux_configuration', None)
         self.secrets = kwargs.get('secrets', None)
         self.allow_extension_operations = kwargs.get('allow_extension_operations', None)
+        self.require_guest_provision_signal = kwargs.get('require_guest_provision_signal', None)
 
 
 class Plan(Model):
@@ -5012,16 +5048,16 @@ class VirtualMachine(Resource):
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
-     'Regular', 'Low'
+     'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for the low priority
+    :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
      api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a low
-     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
@@ -5824,6 +5860,9 @@ class VirtualMachineScaleSet(Resource):
     :type plan: ~azure.mgmt.compute.v2019_03_01.models.Plan
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: ~azure.mgmt.compute.v2019_03_01.models.UpgradePolicy
+    :param automatic_repairs_policy: Policy for automatic repairs.
+    :type automatic_repairs_policy:
+     ~azure.mgmt.compute.v2019_03_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetVMProfile
@@ -5892,6 +5931,7 @@ class VirtualMachineScaleSet(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
+        'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
@@ -5912,6 +5952,7 @@ class VirtualMachineScaleSet(Resource):
         self.sku = kwargs.get('sku', None)
         self.plan = kwargs.get('plan', None)
         self.upgrade_policy = kwargs.get('upgrade_policy', None)
+        self.automatic_repairs_policy = kwargs.get('automatic_repairs_policy', None)
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.provisioning_state = None
         self.overprovision = kwargs.get('overprovision', None)
@@ -6829,12 +6870,20 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :type plan: ~azure.mgmt.compute.v2019_03_01.models.Plan
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: ~azure.mgmt.compute.v2019_03_01.models.UpgradePolicy
+    :param automatic_repairs_policy: Policy for automatic repairs.
+    :type automatic_repairs_policy:
+     ~azure.mgmt.compute.v2019_03_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetUpdateVMProfile
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
@@ -6849,6 +6898,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      is scaled-in.
     :type scale_in_policy:
      ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -6860,11 +6914,14 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
+        'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
@@ -6873,11 +6930,14 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.sku = kwargs.get('sku', None)
         self.plan = kwargs.get('plan', None)
         self.upgrade_policy = kwargs.get('upgrade_policy', None)
+        self.automatic_repairs_policy = kwargs.get('automatic_repairs_policy', None)
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.overprovision = kwargs.get('overprovision', None)
+        self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.scale_in_policy = kwargs.get('scale_in_policy', None)
+        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -6998,6 +7058,12 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
 class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     """Describes a virtual machine scale set network profile.
 
+    :param health_probe: A reference to a load balancer probe used to
+     determine the health of an instance in the virtual machine scale set. The
+     reference will be in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
+    :type health_probe:
+     ~azure.mgmt.compute.v2019_03_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations:
@@ -7005,11 +7071,13 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
     """
 
     _attribute_map = {
+        'health_probe': {'key': 'healthProbe', 'type': 'ApiEntityReference'},
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetUpdateNetworkConfiguration]'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
+        self.health_probe = kwargs.get('health_probe', None)
         self.network_interface_configurations = kwargs.get('network_interface_configurations', None)
 
 
@@ -7568,16 +7636,16 @@ class VirtualMachineScaleSetVMProfile(Model):
     :type license_type: str
     :param priority: Specifies the priority for the virtual machines in the
      scale set. <br><br>Minimum api-version: 2017-10-30-preview. Possible
-     values include: 'Regular', 'Low'
+     values include: 'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for virtual machines
-     in a low priority scale set. <br><br>Minimum api-version:
+     in a Azure Spot scale set. <br><br>Minimum api-version:
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a low
-     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot VMSS. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
@@ -7776,16 +7844,16 @@ class VirtualMachineUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
-     'Regular', 'Low'
+     'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for the low priority
+    :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
      api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a low
-     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the

@@ -7,8 +7,42 @@ from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import AuthorizationCodeCredential
 import pytest
+
+from helpers import async_validating_transport, build_aad_response, mock_response, Request
+
+
+@pytest.mark.asyncio
+async def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", policies=[policy], transport=Mock(send=send)
+    )
+
+    await credential.get_token("scope")
+
+    assert policy.on_request.called
+
+
+@pytest.mark.asyncio
+async def test_user_agent():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+    )
+
+    await credential.get_token("scope")
 
 
 @pytest.mark.asyncio

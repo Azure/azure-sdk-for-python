@@ -2,7 +2,7 @@ import uuid
 import time
 from multiprocessing.pool import ThreadPool
 import json
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 
 class ConflictWorker(object):
@@ -27,7 +27,7 @@ class ConflictWorker(object):
         database = None
         try:
             database = create_client.ReadDatabase("dbs/" + self.database_name)
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             print("database not found, needs to be created.")
 
         if not database:
@@ -64,69 +64,69 @@ class ConflictWorker(object):
         udp_collection = self.try_create_document_collection(create_client, database, udp_collection)
 
         lww_sproc = {'id':'resolver',
-                    'body': "function resolver(incomingRecord, existingRecord, isTombstone, conflictingRecords) {\r\n" + 
-                "    var collection = getContext().getCollection();\r\n" + 
-                "\r\n" + 
-                "    if (!incomingRecord) {\r\n" + 
-                "        if (existingRecord) {\r\n" + 
-                "\r\n" + 
-                "            collection.deleteDocument(existingRecord._self, {}, function(err, responseOptions) {\r\n" + 
-                "                if (err) throw err;\r\n" + 
-                "            });\r\n" + 
-                "        }\r\n" + 
-                "    } else if (isTombstone) {\r\n" + 
-                "        // delete always wins.\r\n" + 
-                "    } else {\r\n" + 
-                "        var documentToUse = incomingRecord;\r\n" + 
-                "\r\n" + 
-                "        if (existingRecord) {\r\n" + 
-                "            if (documentToUse.regionId < existingRecord.regionId) {\r\n" + 
-                "                documentToUse = existingRecord;\r\n" + 
-                "            }\r\n" + 
-                "        }\r\n" + 
-                "\r\n" + 
-                "        var i;\r\n" + 
-                "        for (i = 0; i < conflictingRecords.length; i++) {\r\n" + 
-                "            if (documentToUse.regionId < conflictingRecords[i].regionId) {\r\n" + 
-                "                documentToUse = conflictingRecords[i];\r\n" + 
-                "            }\r\n" + 
-                "        }\r\n" + 
-                "\r\n" + 
-                "        tryDelete(conflictingRecords, incomingRecord, existingRecord, documentToUse);\r\n" + 
-                "    }\r\n" + 
-                "\r\n" + 
-                "    function tryDelete(documents, incoming, existing, documentToInsert) {\r\n" + 
-                "        if (documents.length > 0) {\r\n" + 
-                "            collection.deleteDocument(documents[0]._self, {}, function(err, responseOptions) {\r\n" + 
-                "                if (err) throw err;\r\n" + 
-                "\r\n" + 
-                "                documents.shift();\r\n" + 
-                "                tryDelete(documents, incoming, existing, documentToInsert);\r\n" + 
-                "            });\r\n" + 
-                "        } else if (existing) {\r\n" + 
-                "                collection.replaceDocument(existing._self, documentToInsert,\r\n" + 
-                "                    function(err, documentCreated) {\r\n" + 
-                "                        if (err) throw err;\r\n" + 
-                "                    });\r\n" + 
-                "        } else {\r\n" + 
-                "            collection.createDocument(collection.getSelfLink(), documentToInsert,\r\n" + 
-                "                function(err, documentCreated) {\r\n" + 
-                "                    if (err) throw err;\r\n" + 
-                "                });\r\n" + 
-                "        }\r\n" + 
-                "    }\r\n" + 
+                    'body': "function resolver(incomingRecord, existingRecord, isTombstone, conflictingRecords) {\r\n" +
+                "    var collection = getContext().getCollection();\r\n" +
+                "\r\n" +
+                "    if (!incomingRecord) {\r\n" +
+                "        if (existingRecord) {\r\n" +
+                "\r\n" +
+                "            collection.deleteDocument(existingRecord._self, {}, function(err, responseOptions) {\r\n" +
+                "                if (err) throw err;\r\n" +
+                "            });\r\n" +
+                "        }\r\n" +
+                "    } else if (isTombstone) {\r\n" +
+                "        // delete always wins.\r\n" +
+                "    } else {\r\n" +
+                "        var documentToUse = incomingRecord;\r\n" +
+                "\r\n" +
+                "        if (existingRecord) {\r\n" +
+                "            if (documentToUse.regionId < existingRecord.regionId) {\r\n" +
+                "                documentToUse = existingRecord;\r\n" +
+                "            }\r\n" +
+                "        }\r\n" +
+                "\r\n" +
+                "        var i;\r\n" +
+                "        for (i = 0; i < conflictingRecords.length; i++) {\r\n" +
+                "            if (documentToUse.regionId < conflictingRecords[i].regionId) {\r\n" +
+                "                documentToUse = conflictingRecords[i];\r\n" +
+                "            }\r\n" +
+                "        }\r\n" +
+                "\r\n" +
+                "        tryDelete(conflictingRecords, incomingRecord, existingRecord, documentToUse);\r\n" +
+                "    }\r\n" +
+                "\r\n" +
+                "    function tryDelete(documents, incoming, existing, documentToInsert) {\r\n" +
+                "        if (documents.length > 0) {\r\n" +
+                "            collection.deleteDocument(documents[0]._self, {}, function(err, responseOptions) {\r\n" +
+                "                if (err) throw err;\r\n" +
+                "\r\n" +
+                "                documents.shift();\r\n" +
+                "                tryDelete(documents, incoming, existing, documentToInsert);\r\n" +
+                "            });\r\n" +
+                "        } else if (existing) {\r\n" +
+                "                collection.replaceDocument(existing._self, documentToInsert,\r\n" +
+                "                    function(err, documentCreated) {\r\n" +
+                "                        if (err) throw err;\r\n" +
+                "                    });\r\n" +
+                "        } else {\r\n" +
+                "            collection.createDocument(collection.getSelfLink(), documentToInsert,\r\n" +
+                "                function(err, documentCreated) {\r\n" +
+                "                    if (err) throw err;\r\n" +
+                "                });\r\n" +
+                "        }\r\n" +
+                "    }\r\n" +
                 "}"
                 }
         try:
             lww_sproc = create_client.CreateStoredProcedure("dbs/" + self.database_name+ "/colls/" + self.udp_collection_name, lww_sproc)
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             return
 
     def try_create_document_collection (self, client, database, collection):
         read_collection = None
         try:
             read_collection = client.ReadContainer("dbs/" + database['id'] + "/colls/" + collection['id'])
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             print("collection not found, needs to be created.")
 
         if read_collection == None:
@@ -205,7 +205,7 @@ class ConflictWorker(object):
             conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
             conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_link, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
-            
+
             print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.manual_collection_link));
 
             i = 0
@@ -243,7 +243,7 @@ class ConflictWorker(object):
             conflict_document_for_insertion = {'id': id, 'regionId': 0, 'regionEndpoint': self.clients[0].ReadEndpoint}
             conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_link, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
-            
+
             print("1) Performing conflicting delete across %d regions on %s" % (len(self.clients), self.manual_collection_link));
 
             i = 0
@@ -375,7 +375,7 @@ class ConflictWorker(object):
     def run_insert_conflict_on_UDP_async(self):
         while True:
             print("1) Performing conflicting insert across 3 regions on %s" % self.udp_collection_link)
-            
+
             id = str(uuid.uuid4())
             i = 0
             pool = ThreadPool(processes = len(self.clients))
@@ -473,14 +473,14 @@ class ConflictWorker(object):
     def try_insert_document(self, client, collection_uri, document):
         try:
             return client.CreateItem(collection_uri, document)
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             return None
 
     def try_update_document(self, client, collection_uri, document, options):
         try:
             options['partitionKey'] = document['id']
             return client.ReplaceItem(collection_uri + "/docs/" + document['id'], document, options);
-        except (errors.CosmosResourceNotFoundError, errors.CosmosAccessConditionFailedError):
+        except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             # Lost synchronously or no document yet. No conflict is induced.
             return None
 
@@ -489,7 +489,7 @@ class ConflictWorker(object):
             options['partitionKey'] = document['id']
             client.DeleteItem(collection_uri + "/docs/" + document['id'], options)
             return document
-        except (errors.CosmosResourceNotFoundError, errors.CosmosAccessConditionFailedError):
+        except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             #Lost synchronously. No conflict is induced.
             return None
 
@@ -587,14 +587,14 @@ class ConflictWorker(object):
                     options = {'partitionKey': conflict_document[0]['id']}
                     client.ReadItem(conflict_document[0]['_self'], options)
 
-                    self.trace_error("Delete conflict for document %s didnt win @ %s" % 
+                    self.trace_error("Delete conflict for document %s didnt win @ %s" %
                                      (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
-                except errors.CosmosResourceNotFoundError:
+                except exceptions.CosmosResourceNotFoundError:
                     print("Delete conflict won @ %s" % client.ReadEndpoint)
                     return
-                except errors.CosmosHttpResponseError:
+                except exceptions.CosmosHttpResponseError:
                     self.trace_error("Delete conflict for document %s didnt win @ %s" %
                                     (conflict_document[0]['id'], client.ReadEndpoint))
 
@@ -614,7 +614,7 @@ class ConflictWorker(object):
                 existing_document = client.ReadItem(winner_document['_self'], options)
 
                 if int(existing_document['regionId']) == int(winner_document['regionId']):
-                    print("Winner document from region %d found at %s" % 
+                    print("Winner document from region %d found at %s" %
                           (int(existing_document['regionId']), client.ReadEndpoint))
                     break
                 else:
@@ -622,10 +622,10 @@ class ConflictWorker(object):
                                      (int(winner_document["regionId"]), client.WriteEndpoint))
 
                     time.sleep(0.5)
-            except errors.AzureError as e:
-                self.trace_error("Winner document from region %d is not found @ %s, retrying..." % 
+            except exceptions.AzureError as e:
+                self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
                                 (int(winner_document["regionId"]), client.WriteEndpoint))
-                
+
                 time.sleep(0.5)
 
     def validate_UDP_async(self, clients, conflict_document, has_delete_conflict):
@@ -655,10 +655,10 @@ class ConflictWorker(object):
                                      (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
-                except errors.CosmosResourceNotFoundError:
+                except exceptions.CosmosResourceNotFoundError:
                     print("Delete conflict won @ %s" % client.ReadEndpoint)
                     return
-                except errors.CosmosHttpResponseError:
+                except exceptions.CosmosHttpResponseError:
                     self.trace_error("Delete conflict for document %s didnt win @ %s" %
                                     (conflict_document[0]['id'], client.ReadEndpoint))
                     time.sleep(0.5)
@@ -677,7 +677,7 @@ class ConflictWorker(object):
                 existing_document = client.ReadItem(self.udp_collection_link + "/docs/" + winner_document['id'], options)
 
                 if int(existing_document['regionId']) == int(winner_document['regionId']):
-                    print("Winner document from region %d found at %s" % 
+                    print("Winner document from region %d found at %s" %
                           (int(existing_document["regionId"]), client.ReadEndpoint))
                     break
                 else:
@@ -685,7 +685,7 @@ class ConflictWorker(object):
                                      (int(winner_document['regionId']), client.WriteEndpoint))
 
                     time.sleep(0.5)
-            except errors.AzureError:
+            except exceptions.AzureError:
                 self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
                                  (int(winner_document['regionId']), client.WriteEndpoint))
                 time.sleep(0.5)

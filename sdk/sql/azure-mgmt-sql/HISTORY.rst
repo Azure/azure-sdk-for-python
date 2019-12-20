@@ -3,6 +3,46 @@
 Release History
 ===============
 
+0.16.0 (2019-12-17)
++++++++++++++++++++
+
+**Features**
+
+- Model ExtendedServerBlobAuditingPolicy has a new parameter queue_delay_ms
+- Model EditionCapability has a new parameter read_scale
+- Model EditionCapability has a new parameter supported_storage_capabilities
+- Model ServiceObjectiveCapability has a new parameter compute_model
+- Model ServiceObjectiveCapability has a new parameter supported_auto_pause_delay
+- Model ServiceObjectiveCapability has a new parameter zone_redundant
+- Model ServiceObjectiveCapability has a new parameter supported_min_capacities
+- Model ManagedInstanceVersionCapability has a new parameter supported_instance_pool_editions
+- Model DatabaseBlobAuditingPolicy has a new parameter queue_delay_ms
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter queue_delay_ms
+- Model ManagedInstanceVcoresCapability has a new parameter supported_storage_sizes
+- Model ManagedInstanceVcoresCapability has a new parameter instance_pool_supported
+- Model ManagedInstanceVcoresCapability has a new parameter standalone_supported
+- Model ManagedInstanceVcoresCapability has a new parameter included_max_size
+- Model ServerBlobAuditingPolicy has a new parameter queue_delay_ms
+- Model ElasticPoolPerformanceLevelCapability has a new parameter zone_redundant
+- Added operation group WorkloadGroupsOperations
+- Added operation group WorkloadClassifiersOperations
+
+**Breaking changes**
+
+- Operation ServerAzureADAdministratorsOperations.create_or_update has a new signature
+- Model ManagedInstanceFamilyCapability no longer has parameter supported_storage_sizes
+- Model ManagedInstanceFamilyCapability no longer has parameter included_max_size
+
+0.15.0 (2019-11-12)
++++++++++++++++++++
+
+**Breaking changes**
+
+- Operation DatabasesOperations.failover has a new signature
+- Operation ManagedInstanceAdministratorsOperations.get has a new signature
+- Operation ManagedInstanceAdministratorsOperations.delete has a new signature
+- Operation ManagedInstanceAdministratorsOperations.create_or_update has a new signature
+
 0.14.0 (2019-10-04)
 +++++++++++++++++++
 

@@ -51,7 +51,8 @@ with open('HISTORY.md', encoding='utf-8') as f:
 
 exclude_packages = [
         'tests',
-        'examples',
+        'tests.*',
+        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]
@@ -72,7 +73,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-appconfiguration',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -80,13 +81,14 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    install_requires=[        
+    install_requires=[
         "msrest>=0.6.10",
-        "azure-core<2.0.0,>=1.0.0b4",
+        "azure-core<2.0.0,>=1.0.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

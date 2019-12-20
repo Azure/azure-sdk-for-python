@@ -37,7 +37,7 @@ class PageBlobOperations(object):
         self._config = config
         self.x_ms_blob_type = "PageBlob"
 
-    def create(self, content_length, blob_content_length, timeout=None, metadata=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def create(self, content_length, blob_content_length, timeout=None, tier=None, metadata=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request.
@@ -51,6 +51,11 @@ class PageBlobOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
+        :param tier: Optional. Indicates the tier to be set on the page blob.
+         Possible values include: 'P4', 'P6', 'P10', 'P15', 'P20', 'P30',
+         'P40', 'P50', 'P60', 'P70', 'P80'
+        :type tier: str or
+         ~azure.storage.blob.models.PremiumPageBlobAccessTier
         :param metadata: Optional. Specifies a user-defined name-value pair
          associated with the blob. If no name-value pairs are specified, the
          operation will copy the metadata from the source blob or file to the
@@ -147,6 +152,8 @@ class PageBlobOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        if tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("tier", tier, 'str')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-blob-content-length'] = self._serialize.header("blob_content_length", blob_content_length, 'long')
@@ -702,6 +709,7 @@ class PageBlobOperations(object):
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

@@ -24,7 +24,10 @@
 
 import time
 
-from . import errors
+from azure.core.exceptions import AzureError, ClientAuthenticationError
+from azure.core.pipeline.policies import RetryPolicy
+
+from . import exceptions
 from . import _endpoint_discovery_retry_policy
 from . import _resource_throttle_retry_policy
 from . import _default_retry_policy
@@ -35,7 +38,7 @@ from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
-    """Exectutes the function with passed parameters applying all retry policies
+    """Executes the function with passed parameters applying all retry policies
 
     :param object client:
         Document client instance
@@ -64,6 +67,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     )
     while True:
         try:
+            client_timeout = kwargs.get('timeout')
+            start_time = time.time()
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
@@ -80,7 +85,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
 
             return result
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
@@ -113,9 +118,92 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+            if client_timeout:
+                kwargs['timeout'] = client_timeout - (time.time() - start_time)
+                if kwargs['timeout'] <= 0:
+                    raise exceptions.CosmosClientTimeoutError()
 
 
 def ExecuteFunction(function, *args, **kwargs):
-    """ Stub method so that it can be used for mocking purposes as well.
+    """Stub method so that it can be used for mocking purposes as well.
     """
     return function(*args, **kwargs)
+
+
+def _configure_timeout(request, absolute, per_request):
+    # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
+    if absolute is not None:
+        if absolute <= 0:
+            raise exceptions.CosmosClientTimeoutError()
+        if per_request:
+            # Both socket timeout and client timeout have been provided - use the shortest value.
+            request.context.options['connection_timeout'] = min(per_request, absolute)
+        else:
+            # Only client timeout provided.
+            request.context.options['connection_timeout'] = absolute
+    elif per_request:
+        # Only socket timeout provided.
+        request.context.options['connection_timeout'] = per_request
+
+
+class ConnectionRetryPolicy(RetryPolicy):
+
+    def __init__(self, **kwargs):
+        clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        super(ConnectionRetryPolicy, self).__init__(**clean_kwargs)
+
+    def send(self, request):
+        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
+        Also enforces an absolute client-side timeout that spans multiple retry attempts.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises ~azure.core.exceptions.AzureError: Maximum retries exceeded.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
+        """
+        absolute_timeout = request.context.options.pop('timeout', None)
+        per_request_timeout = request.context.options.pop('connection_timeout', 0)
+
+        retry_error = None
+        retry_active = True
+        response = None
+        retry_settings = self.configure_retries(request.context.options)
+        while retry_active:
+            try:
+                start_time = time.time()
+                _configure_timeout(request, absolute_timeout, per_request_timeout)
+
+                response = self.next.send(request)
+                if self.is_retry(retry_settings, response):
+                    retry_active = self.increment(retry_settings, response=response)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport, response=response)
+                        continue
+                break
+            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+                # the authentication policy failed such that the client's request can't
+                # succeed--we'll never have a response to it, so propagate the exception
+                raise
+            except exceptions.CosmosClientTimeoutError as timeout_error:
+                timeout_error.inner_exception = retry_error
+                timeout_error.response = response
+                timeout_error.history = retry_settings['history']
+                raise
+            except AzureError as err:
+                retry_error = err
+                if self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
+            finally:
+                end_time = time.time()
+                if absolute_timeout:
+                    absolute_timeout -= (end_time - start_time)
+
+        self.update_context(response.context, retry_settings)
+        return response

@@ -10,306 +10,310 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .presentation_time_range_py3 import PresentationTimeRange
-    from .filter_track_property_condition_py3 import FilterTrackPropertyCondition
-    from .first_quality_py3 import FirstQuality
-    from .filter_track_selection_py3 import FilterTrackSelection
-    from .account_filter_py3 import AccountFilter
-    from .odata_error_py3 import ODataError
-    from .api_error_py3 import ApiError, ApiErrorException
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
-    from .provider_py3 import Provider
-    from .operation_display_py3 import OperationDisplay
-    from .metric_dimension_py3 import MetricDimension
-    from .metric_py3 import Metric
-    from .service_specification_py3 import ServiceSpecification
-    from .metric_properties_py3 import MetricProperties
-    from .operation_py3 import Operation
-    from .location_py3 import Location
-    from .entity_name_availability_check_output_py3 import EntityNameAvailabilityCheckOutput
-    from .storage_account_py3 import StorageAccount
-    from .sync_storage_keys_input_py3 import SyncStorageKeysInput
-    from .media_service_py3 import MediaService
-    from .subscription_media_service_py3 import SubscriptionMediaService
-    from .check_name_availability_input_py3 import CheckNameAvailabilityInput
-    from .asset_container_sas_py3 import AssetContainerSas
-    from .asset_file_encryption_metadata_py3 import AssetFileEncryptionMetadata
-    from .storage_encrypted_asset_decryption_data_py3 import StorageEncryptedAssetDecryptionData
-    from .asset_streaming_locator_py3 import AssetStreamingLocator
-    from .list_streaming_locators_response_py3 import ListStreamingLocatorsResponse
-    from .asset_py3 import Asset
-    from .asset_filter_py3 import AssetFilter
-    from .list_container_sas_input_py3 import ListContainerSasInput
-    from .content_key_policy_play_ready_explicit_analog_television_restriction_py3 import ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
-    from .content_key_policy_play_ready_content_key_location_py3 import ContentKeyPolicyPlayReadyContentKeyLocation
-    from .content_key_policy_play_ready_content_encryption_key_from_header_py3 import ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader
-    from .content_key_policy_play_ready_content_encryption_key_from_key_identifier_py3 import ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier
-    from .content_key_policy_play_ready_play_right_py3 import ContentKeyPolicyPlayReadyPlayRight
-    from .content_key_policy_token_claim_py3 import ContentKeyPolicyTokenClaim
-    from .content_key_policy_play_ready_license_py3 import ContentKeyPolicyPlayReadyLicense
-    from .content_key_policy_restriction_py3 import ContentKeyPolicyRestriction
-    from .content_key_policy_open_restriction_py3 import ContentKeyPolicyOpenRestriction
-    from .content_key_policy_unknown_restriction_py3 import ContentKeyPolicyUnknownRestriction
-    from .content_key_policy_configuration_py3 import ContentKeyPolicyConfiguration
-    from .content_key_policy_restriction_token_key_py3 import ContentKeyPolicyRestrictionTokenKey
-    from .content_key_policy_symmetric_token_key_py3 import ContentKeyPolicySymmetricTokenKey
-    from .content_key_policy_rsa_token_key_py3 import ContentKeyPolicyRsaTokenKey
-    from .content_key_policy_x509_certificate_token_key_py3 import ContentKeyPolicyX509CertificateTokenKey
-    from .content_key_policy_token_restriction_py3 import ContentKeyPolicyTokenRestriction
-    from .content_key_policy_clear_key_configuration_py3 import ContentKeyPolicyClearKeyConfiguration
-    from .content_key_policy_unknown_configuration_py3 import ContentKeyPolicyUnknownConfiguration
-    from .content_key_policy_widevine_configuration_py3 import ContentKeyPolicyWidevineConfiguration
-    from .content_key_policy_play_ready_configuration_py3 import ContentKeyPolicyPlayReadyConfiguration
-    from .content_key_policy_fair_play_configuration_py3 import ContentKeyPolicyFairPlayConfiguration
-    from .content_key_policy_option_py3 import ContentKeyPolicyOption
-    from .content_key_policy_properties_py3 import ContentKeyPolicyProperties
-    from .content_key_policy_py3 import ContentKeyPolicy
-    from .preset_py3 import Preset
-    from .codec_py3 import Codec
-    from .audio_py3 import Audio
-    from .aac_audio_py3 import AacAudio
-    from .face_detector_preset_py3 import FaceDetectorPreset
-    from .audio_analyzer_preset_py3 import AudioAnalyzerPreset
-    from .overlay_py3 import Overlay
-    from .audio_overlay_py3 import AudioOverlay
-    from .copy_video_py3 import CopyVideo
-    from .video_py3 import Video
-    from .image_py3 import Image
-    from .format_py3 import Format
-    from .image_format_py3 import ImageFormat
-    from .jpg_format_py3 import JpgFormat
-    from .png_format_py3 import PngFormat
-    from .copy_audio_py3 import CopyAudio
-    from .deinterlace_py3 import Deinterlace
-    from .rectangle_py3 import Rectangle
-    from .filters_py3 import Filters
-    from .layer_py3 import Layer
-    from .video_layer_py3 import VideoLayer
-    from .h264_layer_py3 import H264Layer
-    from .h264_video_py3 import H264Video
-    from .jpg_layer_py3 import JpgLayer
-    from .jpg_image_py3 import JpgImage
-    from .output_file_py3 import OutputFile
-    from .multi_bitrate_format_py3 import MultiBitrateFormat
-    from .mp4_format_py3 import Mp4Format
-    from .png_layer_py3 import PngLayer
-    from .png_image_py3 import PngImage
-    from .built_in_standard_encoder_preset_py3 import BuiltInStandardEncoderPreset
-    from .standard_encoder_preset_py3 import StandardEncoderPreset
-    from .video_analyzer_preset_py3 import VideoAnalyzerPreset
-    from .transport_stream_format_py3 import TransportStreamFormat
-    from .video_overlay_py3 import VideoOverlay
-    from .transform_output_py3 import TransformOutput
-    from .transform_py3 import Transform
-    from .job_input_py3 import JobInput
-    from .job_input_clip_py3 import JobInputClip
-    from .job_inputs_py3 import JobInputs
-    from .job_input_asset_py3 import JobInputAsset
-    from .job_input_http_py3 import JobInputHttp
-    from .job_error_detail_py3 import JobErrorDetail
-    from .job_error_py3 import JobError
-    from .job_output_py3 import JobOutput
-    from .job_output_asset_py3 import JobOutputAsset
-    from .job_py3 import Job
-    from .track_property_condition_py3 import TrackPropertyCondition
-    from .track_selection_py3 import TrackSelection
-    from .default_key_py3 import DefaultKey
-    from .streaming_policy_content_key_py3 import StreamingPolicyContentKey
-    from .streaming_policy_content_keys_py3 import StreamingPolicyContentKeys
-    from .streaming_policy_play_ready_configuration_py3 import StreamingPolicyPlayReadyConfiguration
-    from .streaming_policy_widevine_configuration_py3 import StreamingPolicyWidevineConfiguration
-    from .streaming_policy_fair_play_configuration_py3 import StreamingPolicyFairPlayConfiguration
-    from .cbcs_drm_configuration_py3 import CbcsDrmConfiguration
-    from .cenc_drm_configuration_py3 import CencDrmConfiguration
-    from .enabled_protocols_py3 import EnabledProtocols
-    from .no_encryption_py3 import NoEncryption
-    from .envelope_encryption_py3 import EnvelopeEncryption
-    from .common_encryption_cenc_py3 import CommonEncryptionCenc
-    from .common_encryption_cbcs_py3 import CommonEncryptionCbcs
-    from .streaming_policy_py3 import StreamingPolicy
-    from .streaming_locator_content_key_py3 import StreamingLocatorContentKey
-    from .streaming_path_py3 import StreamingPath
-    from .list_content_keys_response_py3 import ListContentKeysResponse
-    from .list_paths_response_py3 import ListPathsResponse
-    from .streaming_locator_py3 import StreamingLocator
-    from .hls_py3 import Hls
-    from .live_output_py3 import LiveOutput
-    from .live_event_endpoint_py3 import LiveEventEndpoint
-    from .ip_range_py3 import IPRange
-    from .ip_access_control_py3 import IPAccessControl
-    from .live_event_input_access_control_py3 import LiveEventInputAccessControl
-    from .live_event_input_py3 import LiveEventInput
-    from .live_event_preview_access_control_py3 import LiveEventPreviewAccessControl
-    from .live_event_preview_py3 import LiveEventPreview
-    from .live_event_encoding_py3 import LiveEventEncoding
-    from .cross_site_access_policies_py3 import CrossSiteAccessPolicies
-    from .live_event_action_input_py3 import LiveEventActionInput
-    from .live_event_py3 import LiveEvent
-    from .akamai_signature_header_authentication_key_py3 import AkamaiSignatureHeaderAuthenticationKey
-    from .akamai_access_control_py3 import AkamaiAccessControl
-    from .streaming_endpoint_access_control_py3 import StreamingEndpointAccessControl
-    from .streaming_entity_scale_unit_py3 import StreamingEntityScaleUnit
-    from .streaming_endpoint_py3 import StreamingEndpoint
+    from ._models_py3 import AacAudio
+    from ._models_py3 import AbsoluteClipTime
+    from ._models_py3 import AccountFilter
+    from ._models_py3 import AkamaiAccessControl
+    from ._models_py3 import AkamaiSignatureHeaderAuthenticationKey
+    from ._models_py3 import ApiError, ApiErrorException
+    from ._models_py3 import Asset
+    from ._models_py3 import AssetContainerSas
+    from ._models_py3 import AssetFileEncryptionMetadata
+    from ._models_py3 import AssetFilter
+    from ._models_py3 import AssetStreamingLocator
+    from ._models_py3 import Audio
+    from ._models_py3 import AudioAnalyzerPreset
+    from ._models_py3 import AudioOverlay
+    from ._models_py3 import BuiltInStandardEncoderPreset
+    from ._models_py3 import CbcsDrmConfiguration
+    from ._models_py3 import CencDrmConfiguration
+    from ._models_py3 import CheckNameAvailabilityInput
+    from ._models_py3 import ClipTime
+    from ._models_py3 import Codec
+    from ._models_py3 import CommonEncryptionCbcs
+    from ._models_py3 import CommonEncryptionCenc
+    from ._models_py3 import ContentKeyPolicy
+    from ._models_py3 import ContentKeyPolicyClearKeyConfiguration
+    from ._models_py3 import ContentKeyPolicyConfiguration
+    from ._models_py3 import ContentKeyPolicyFairPlayConfiguration
+    from ._models_py3 import ContentKeyPolicyOpenRestriction
+    from ._models_py3 import ContentKeyPolicyOption
+    from ._models_py3 import ContentKeyPolicyPlayReadyConfiguration
+    from ._models_py3 import ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader
+    from ._models_py3 import ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier
+    from ._models_py3 import ContentKeyPolicyPlayReadyContentKeyLocation
+    from ._models_py3 import ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
+    from ._models_py3 import ContentKeyPolicyPlayReadyLicense
+    from ._models_py3 import ContentKeyPolicyPlayReadyPlayRight
+    from ._models_py3 import ContentKeyPolicyProperties
+    from ._models_py3 import ContentKeyPolicyRestriction
+    from ._models_py3 import ContentKeyPolicyRestrictionTokenKey
+    from ._models_py3 import ContentKeyPolicyRsaTokenKey
+    from ._models_py3 import ContentKeyPolicySymmetricTokenKey
+    from ._models_py3 import ContentKeyPolicyTokenClaim
+    from ._models_py3 import ContentKeyPolicyTokenRestriction
+    from ._models_py3 import ContentKeyPolicyUnknownConfiguration
+    from ._models_py3 import ContentKeyPolicyUnknownRestriction
+    from ._models_py3 import ContentKeyPolicyWidevineConfiguration
+    from ._models_py3 import ContentKeyPolicyX509CertificateTokenKey
+    from ._models_py3 import CopyAudio
+    from ._models_py3 import CopyVideo
+    from ._models_py3 import CrossSiteAccessPolicies
+    from ._models_py3 import DefaultKey
+    from ._models_py3 import Deinterlace
+    from ._models_py3 import EnabledProtocols
+    from ._models_py3 import EntityNameAvailabilityCheckOutput
+    from ._models_py3 import EnvelopeEncryption
+    from ._models_py3 import FaceDetectorPreset
+    from ._models_py3 import Filters
+    from ._models_py3 import FilterTrackPropertyCondition
+    from ._models_py3 import FilterTrackSelection
+    from ._models_py3 import FirstQuality
+    from ._models_py3 import Format
+    from ._models_py3 import H264Layer
+    from ._models_py3 import H264Video
+    from ._models_py3 import Hls
+    from ._models_py3 import Image
+    from ._models_py3 import ImageFormat
+    from ._models_py3 import IPAccessControl
+    from ._models_py3 import IPRange
+    from ._models_py3 import Job
+    from ._models_py3 import JobError
+    from ._models_py3 import JobErrorDetail
+    from ._models_py3 import JobInput
+    from ._models_py3 import JobInputAsset
+    from ._models_py3 import JobInputClip
+    from ._models_py3 import JobInputHttp
+    from ._models_py3 import JobInputs
+    from ._models_py3 import JobOutput
+    from ._models_py3 import JobOutputAsset
+    from ._models_py3 import JpgFormat
+    from ._models_py3 import JpgImage
+    from ._models_py3 import JpgLayer
+    from ._models_py3 import Layer
+    from ._models_py3 import ListContainerSasInput
+    from ._models_py3 import ListContentKeysResponse
+    from ._models_py3 import ListPathsResponse
+    from ._models_py3 import ListStreamingLocatorsResponse
+    from ._models_py3 import LiveEvent
+    from ._models_py3 import LiveEventActionInput
+    from ._models_py3 import LiveEventEncoding
+    from ._models_py3 import LiveEventEndpoint
+    from ._models_py3 import LiveEventInput
+    from ._models_py3 import LiveEventInputAccessControl
+    from ._models_py3 import LiveEventPreview
+    from ._models_py3 import LiveEventPreviewAccessControl
+    from ._models_py3 import LiveOutput
+    from ._models_py3 import Location
+    from ._models_py3 import MediaService
+    from ._models_py3 import Metric
+    from ._models_py3 import MetricDimension
+    from ._models_py3 import MetricProperties
+    from ._models_py3 import Mp4Format
+    from ._models_py3 import MultiBitrateFormat
+    from ._models_py3 import NoEncryption
+    from ._models_py3 import ODataError
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OutputFile
+    from ._models_py3 import Overlay
+    from ._models_py3 import PngFormat
+    from ._models_py3 import PngImage
+    from ._models_py3 import PngLayer
+    from ._models_py3 import PresentationTimeRange
+    from ._models_py3 import Preset
+    from ._models_py3 import Provider
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Rectangle
+    from ._models_py3 import Resource
+    from ._models_py3 import ServiceSpecification
+    from ._models_py3 import StandardEncoderPreset
+    from ._models_py3 import StorageAccount
+    from ._models_py3 import StorageEncryptedAssetDecryptionData
+    from ._models_py3 import StreamingEndpoint
+    from ._models_py3 import StreamingEndpointAccessControl
+    from ._models_py3 import StreamingEntityScaleUnit
+    from ._models_py3 import StreamingLocator
+    from ._models_py3 import StreamingLocatorContentKey
+    from ._models_py3 import StreamingPath
+    from ._models_py3 import StreamingPolicy
+    from ._models_py3 import StreamingPolicyContentKey
+    from ._models_py3 import StreamingPolicyContentKeys
+    from ._models_py3 import StreamingPolicyFairPlayConfiguration
+    from ._models_py3 import StreamingPolicyPlayReadyConfiguration
+    from ._models_py3 import StreamingPolicyWidevineConfiguration
+    from ._models_py3 import SubscriptionMediaService
+    from ._models_py3 import SyncStorageKeysInput
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TrackPropertyCondition
+    from ._models_py3 import TrackSelection
+    from ._models_py3 import Transform
+    from ._models_py3 import TransformOutput
+    from ._models_py3 import TransportStreamFormat
+    from ._models_py3 import Video
+    from ._models_py3 import VideoAnalyzerPreset
+    from ._models_py3 import VideoLayer
+    from ._models_py3 import VideoOverlay
 except (SyntaxError, ImportError):
-    from .presentation_time_range import PresentationTimeRange
-    from .filter_track_property_condition import FilterTrackPropertyCondition
-    from .first_quality import FirstQuality
-    from .filter_track_selection import FilterTrackSelection
-    from .account_filter import AccountFilter
-    from .odata_error import ODataError
-    from .api_error import ApiError, ApiErrorException
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-    from .provider import Provider
-    from .operation_display import OperationDisplay
-    from .metric_dimension import MetricDimension
-    from .metric import Metric
-    from .service_specification import ServiceSpecification
-    from .metric_properties import MetricProperties
-    from .operation import Operation
-    from .location import Location
-    from .entity_name_availability_check_output import EntityNameAvailabilityCheckOutput
-    from .storage_account import StorageAccount
-    from .sync_storage_keys_input import SyncStorageKeysInput
-    from .media_service import MediaService
-    from .subscription_media_service import SubscriptionMediaService
-    from .check_name_availability_input import CheckNameAvailabilityInput
-    from .asset_container_sas import AssetContainerSas
-    from .asset_file_encryption_metadata import AssetFileEncryptionMetadata
-    from .storage_encrypted_asset_decryption_data import StorageEncryptedAssetDecryptionData
-    from .asset_streaming_locator import AssetStreamingLocator
-    from .list_streaming_locators_response import ListStreamingLocatorsResponse
-    from .asset import Asset
-    from .asset_filter import AssetFilter
-    from .list_container_sas_input import ListContainerSasInput
-    from .content_key_policy_play_ready_explicit_analog_television_restriction import ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
-    from .content_key_policy_play_ready_content_key_location import ContentKeyPolicyPlayReadyContentKeyLocation
-    from .content_key_policy_play_ready_content_encryption_key_from_header import ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader
-    from .content_key_policy_play_ready_content_encryption_key_from_key_identifier import ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier
-    from .content_key_policy_play_ready_play_right import ContentKeyPolicyPlayReadyPlayRight
-    from .content_key_policy_token_claim import ContentKeyPolicyTokenClaim
-    from .content_key_policy_play_ready_license import ContentKeyPolicyPlayReadyLicense
-    from .content_key_policy_restriction import ContentKeyPolicyRestriction
-    from .content_key_policy_open_restriction import ContentKeyPolicyOpenRestriction
-    from .content_key_policy_unknown_restriction import ContentKeyPolicyUnknownRestriction
-    from .content_key_policy_configuration import ContentKeyPolicyConfiguration
-    from .content_key_policy_restriction_token_key import ContentKeyPolicyRestrictionTokenKey
-    from .content_key_policy_symmetric_token_key import ContentKeyPolicySymmetricTokenKey
-    from .content_key_policy_rsa_token_key import ContentKeyPolicyRsaTokenKey
-    from .content_key_policy_x509_certificate_token_key import ContentKeyPolicyX509CertificateTokenKey
-    from .content_key_policy_token_restriction import ContentKeyPolicyTokenRestriction
-    from .content_key_policy_clear_key_configuration import ContentKeyPolicyClearKeyConfiguration
-    from .content_key_policy_unknown_configuration import ContentKeyPolicyUnknownConfiguration
-    from .content_key_policy_widevine_configuration import ContentKeyPolicyWidevineConfiguration
-    from .content_key_policy_play_ready_configuration import ContentKeyPolicyPlayReadyConfiguration
-    from .content_key_policy_fair_play_configuration import ContentKeyPolicyFairPlayConfiguration
-    from .content_key_policy_option import ContentKeyPolicyOption
-    from .content_key_policy_properties import ContentKeyPolicyProperties
-    from .content_key_policy import ContentKeyPolicy
-    from .preset import Preset
-    from .codec import Codec
-    from .audio import Audio
-    from .aac_audio import AacAudio
-    from .face_detector_preset import FaceDetectorPreset
-    from .audio_analyzer_preset import AudioAnalyzerPreset
-    from .overlay import Overlay
-    from .audio_overlay import AudioOverlay
-    from .copy_video import CopyVideo
-    from .video import Video
-    from .image import Image
-    from .format import Format
-    from .image_format import ImageFormat
-    from .jpg_format import JpgFormat
-    from .png_format import PngFormat
-    from .copy_audio import CopyAudio
-    from .deinterlace import Deinterlace
-    from .rectangle import Rectangle
-    from .filters import Filters
-    from .layer import Layer
-    from .video_layer import VideoLayer
-    from .h264_layer import H264Layer
-    from .h264_video import H264Video
-    from .jpg_layer import JpgLayer
-    from .jpg_image import JpgImage
-    from .output_file import OutputFile
-    from .multi_bitrate_format import MultiBitrateFormat
-    from .mp4_format import Mp4Format
-    from .png_layer import PngLayer
-    from .png_image import PngImage
-    from .built_in_standard_encoder_preset import BuiltInStandardEncoderPreset
-    from .standard_encoder_preset import StandardEncoderPreset
-    from .video_analyzer_preset import VideoAnalyzerPreset
-    from .transport_stream_format import TransportStreamFormat
-    from .video_overlay import VideoOverlay
-    from .transform_output import TransformOutput
-    from .transform import Transform
-    from .job_input import JobInput
-    from .job_input_clip import JobInputClip
-    from .job_inputs import JobInputs
-    from .job_input_asset import JobInputAsset
-    from .job_input_http import JobInputHttp
-    from .job_error_detail import JobErrorDetail
-    from .job_error import JobError
-    from .job_output import JobOutput
-    from .job_output_asset import JobOutputAsset
-    from .job import Job
-    from .track_property_condition import TrackPropertyCondition
-    from .track_selection import TrackSelection
-    from .default_key import DefaultKey
-    from .streaming_policy_content_key import StreamingPolicyContentKey
-    from .streaming_policy_content_keys import StreamingPolicyContentKeys
-    from .streaming_policy_play_ready_configuration import StreamingPolicyPlayReadyConfiguration
-    from .streaming_policy_widevine_configuration import StreamingPolicyWidevineConfiguration
-    from .streaming_policy_fair_play_configuration import StreamingPolicyFairPlayConfiguration
-    from .cbcs_drm_configuration import CbcsDrmConfiguration
-    from .cenc_drm_configuration import CencDrmConfiguration
-    from .enabled_protocols import EnabledProtocols
-    from .no_encryption import NoEncryption
-    from .envelope_encryption import EnvelopeEncryption
-    from .common_encryption_cenc import CommonEncryptionCenc
-    from .common_encryption_cbcs import CommonEncryptionCbcs
-    from .streaming_policy import StreamingPolicy
-    from .streaming_locator_content_key import StreamingLocatorContentKey
-    from .streaming_path import StreamingPath
-    from .list_content_keys_response import ListContentKeysResponse
-    from .list_paths_response import ListPathsResponse
-    from .streaming_locator import StreamingLocator
-    from .hls import Hls
-    from .live_output import LiveOutput
-    from .live_event_endpoint import LiveEventEndpoint
-    from .ip_range import IPRange
-    from .ip_access_control import IPAccessControl
-    from .live_event_input_access_control import LiveEventInputAccessControl
-    from .live_event_input import LiveEventInput
-    from .live_event_preview_access_control import LiveEventPreviewAccessControl
-    from .live_event_preview import LiveEventPreview
-    from .live_event_encoding import LiveEventEncoding
-    from .cross_site_access_policies import CrossSiteAccessPolicies
-    from .live_event_action_input import LiveEventActionInput
-    from .live_event import LiveEvent
-    from .akamai_signature_header_authentication_key import AkamaiSignatureHeaderAuthenticationKey
-    from .akamai_access_control import AkamaiAccessControl
-    from .streaming_endpoint_access_control import StreamingEndpointAccessControl
-    from .streaming_entity_scale_unit import StreamingEntityScaleUnit
-    from .streaming_endpoint import StreamingEndpoint
-from .account_filter_paged import AccountFilterPaged
-from .operation_paged import OperationPaged
-from .media_service_paged import MediaServicePaged
-from .subscription_media_service_paged import SubscriptionMediaServicePaged
-from .asset_paged import AssetPaged
-from .asset_filter_paged import AssetFilterPaged
-from .content_key_policy_paged import ContentKeyPolicyPaged
-from .transform_paged import TransformPaged
-from .job_paged import JobPaged
-from .streaming_policy_paged import StreamingPolicyPaged
-from .streaming_locator_paged import StreamingLocatorPaged
-from .live_event_paged import LiveEventPaged
-from .live_output_paged import LiveOutputPaged
-from .streaming_endpoint_paged import StreamingEndpointPaged
-from .azure_media_services_enums import (
+    from ._models import AacAudio
+    from ._models import AbsoluteClipTime
+    from ._models import AccountFilter
+    from ._models import AkamaiAccessControl
+    from ._models import AkamaiSignatureHeaderAuthenticationKey
+    from ._models import ApiError, ApiErrorException
+    from ._models import Asset
+    from ._models import AssetContainerSas
+    from ._models import AssetFileEncryptionMetadata
+    from ._models import AssetFilter
+    from ._models import AssetStreamingLocator
+    from ._models import Audio
+    from ._models import AudioAnalyzerPreset
+    from ._models import AudioOverlay
+    from ._models import BuiltInStandardEncoderPreset
+    from ._models import CbcsDrmConfiguration
+    from ._models import CencDrmConfiguration
+    from ._models import CheckNameAvailabilityInput
+    from ._models import ClipTime
+    from ._models import Codec
+    from ._models import CommonEncryptionCbcs
+    from ._models import CommonEncryptionCenc
+    from ._models import ContentKeyPolicy
+    from ._models import ContentKeyPolicyClearKeyConfiguration
+    from ._models import ContentKeyPolicyConfiguration
+    from ._models import ContentKeyPolicyFairPlayConfiguration
+    from ._models import ContentKeyPolicyOpenRestriction
+    from ._models import ContentKeyPolicyOption
+    from ._models import ContentKeyPolicyPlayReadyConfiguration
+    from ._models import ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader
+    from ._models import ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier
+    from ._models import ContentKeyPolicyPlayReadyContentKeyLocation
+    from ._models import ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
+    from ._models import ContentKeyPolicyPlayReadyLicense
+    from ._models import ContentKeyPolicyPlayReadyPlayRight
+    from ._models import ContentKeyPolicyProperties
+    from ._models import ContentKeyPolicyRestriction
+    from ._models import ContentKeyPolicyRestrictionTokenKey
+    from ._models import ContentKeyPolicyRsaTokenKey
+    from ._models import ContentKeyPolicySymmetricTokenKey
+    from ._models import ContentKeyPolicyTokenClaim
+    from ._models import ContentKeyPolicyTokenRestriction
+    from ._models import ContentKeyPolicyUnknownConfiguration
+    from ._models import ContentKeyPolicyUnknownRestriction
+    from ._models import ContentKeyPolicyWidevineConfiguration
+    from ._models import ContentKeyPolicyX509CertificateTokenKey
+    from ._models import CopyAudio
+    from ._models import CopyVideo
+    from ._models import CrossSiteAccessPolicies
+    from ._models import DefaultKey
+    from ._models import Deinterlace
+    from ._models import EnabledProtocols
+    from ._models import EntityNameAvailabilityCheckOutput
+    from ._models import EnvelopeEncryption
+    from ._models import FaceDetectorPreset
+    from ._models import Filters
+    from ._models import FilterTrackPropertyCondition
+    from ._models import FilterTrackSelection
+    from ._models import FirstQuality
+    from ._models import Format
+    from ._models import H264Layer
+    from ._models import H264Video
+    from ._models import Hls
+    from ._models import Image
+    from ._models import ImageFormat
+    from ._models import IPAccessControl
+    from ._models import IPRange
+    from ._models import Job
+    from ._models import JobError
+    from ._models import JobErrorDetail
+    from ._models import JobInput
+    from ._models import JobInputAsset
+    from ._models import JobInputClip
+    from ._models import JobInputHttp
+    from ._models import JobInputs
+    from ._models import JobOutput
+    from ._models import JobOutputAsset
+    from ._models import JpgFormat
+    from ._models import JpgImage
+    from ._models import JpgLayer
+    from ._models import Layer
+    from ._models import ListContainerSasInput
+    from ._models import ListContentKeysResponse
+    from ._models import ListPathsResponse
+    from ._models import ListStreamingLocatorsResponse
+    from ._models import LiveEvent
+    from ._models import LiveEventActionInput
+    from ._models import LiveEventEncoding
+    from ._models import LiveEventEndpoint
+    from ._models import LiveEventInput
+    from ._models import LiveEventInputAccessControl
+    from ._models import LiveEventPreview
+    from ._models import LiveEventPreviewAccessControl
+    from ._models import LiveOutput
+    from ._models import Location
+    from ._models import MediaService
+    from ._models import Metric
+    from ._models import MetricDimension
+    from ._models import MetricProperties
+    from ._models import Mp4Format
+    from ._models import MultiBitrateFormat
+    from ._models import NoEncryption
+    from ._models import ODataError
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OutputFile
+    from ._models import Overlay
+    from ._models import PngFormat
+    from ._models import PngImage
+    from ._models import PngLayer
+    from ._models import PresentationTimeRange
+    from ._models import Preset
+    from ._models import Provider
+    from ._models import ProxyResource
+    from ._models import Rectangle
+    from ._models import Resource
+    from ._models import ServiceSpecification
+    from ._models import StandardEncoderPreset
+    from ._models import StorageAccount
+    from ._models import StorageEncryptedAssetDecryptionData
+    from ._models import StreamingEndpoint
+    from ._models import StreamingEndpointAccessControl
+    from ._models import StreamingEntityScaleUnit
+    from ._models import StreamingLocator
+    from ._models import StreamingLocatorContentKey
+    from ._models import StreamingPath
+    from ._models import StreamingPolicy
+    from ._models import StreamingPolicyContentKey
+    from ._models import StreamingPolicyContentKeys
+    from ._models import StreamingPolicyFairPlayConfiguration
+    from ._models import StreamingPolicyPlayReadyConfiguration
+    from ._models import StreamingPolicyWidevineConfiguration
+    from ._models import SubscriptionMediaService
+    from ._models import SyncStorageKeysInput
+    from ._models import TrackedResource
+    from ._models import TrackPropertyCondition
+    from ._models import TrackSelection
+    from ._models import Transform
+    from ._models import TransformOutput
+    from ._models import TransportStreamFormat
+    from ._models import Video
+    from ._models import VideoAnalyzerPreset
+    from ._models import VideoLayer
+    from ._models import VideoOverlay
+from ._paged_models import AccountFilterPaged
+from ._paged_models import AssetFilterPaged
+from ._paged_models import AssetPaged
+from ._paged_models import ContentKeyPolicyPaged
+from ._paged_models import JobPaged
+from ._paged_models import LiveEventPaged
+from ._paged_models import LiveOutputPaged
+from ._paged_models import MediaServicePaged
+from ._paged_models import OperationPaged
+from ._paged_models import StreamingEndpointPaged
+from ._paged_models import StreamingLocatorPaged
+from ._paged_models import StreamingPolicyPaged
+from ._paged_models import SubscriptionMediaServicePaged
+from ._paged_models import TransformPaged
+from ._azure_media_services_enums import (
     FilterTrackPropertyType,
     FilterTrackPropertyCompareOperation,
     MetricUnit,
@@ -353,148 +357,150 @@ from .azure_media_services_enums import (
 )
 
 __all__ = [
-    'PresentationTimeRange',
-    'FilterTrackPropertyCondition',
-    'FirstQuality',
-    'FilterTrackSelection',
+    'AacAudio',
+    'AbsoluteClipTime',
     'AccountFilter',
-    'ODataError',
+    'AkamaiAccessControl',
+    'AkamaiSignatureHeaderAuthenticationKey',
     'ApiError', 'ApiErrorException',
-    'TrackedResource',
-    'Resource',
-    'ProxyResource',
-    'Provider',
-    'OperationDisplay',
-    'MetricDimension',
-    'Metric',
-    'ServiceSpecification',
-    'MetricProperties',
-    'Operation',
-    'Location',
-    'EntityNameAvailabilityCheckOutput',
-    'StorageAccount',
-    'SyncStorageKeysInput',
-    'MediaService',
-    'SubscriptionMediaService',
-    'CheckNameAvailabilityInput',
+    'Asset',
     'AssetContainerSas',
     'AssetFileEncryptionMetadata',
-    'StorageEncryptedAssetDecryptionData',
-    'AssetStreamingLocator',
-    'ListStreamingLocatorsResponse',
-    'Asset',
     'AssetFilter',
-    'ListContainerSasInput',
-    'ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction',
-    'ContentKeyPolicyPlayReadyContentKeyLocation',
-    'ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader',
-    'ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier',
-    'ContentKeyPolicyPlayReadyPlayRight',
-    'ContentKeyPolicyTokenClaim',
-    'ContentKeyPolicyPlayReadyLicense',
-    'ContentKeyPolicyRestriction',
-    'ContentKeyPolicyOpenRestriction',
-    'ContentKeyPolicyUnknownRestriction',
-    'ContentKeyPolicyConfiguration',
-    'ContentKeyPolicyRestrictionTokenKey',
-    'ContentKeyPolicySymmetricTokenKey',
-    'ContentKeyPolicyRsaTokenKey',
-    'ContentKeyPolicyX509CertificateTokenKey',
-    'ContentKeyPolicyTokenRestriction',
-    'ContentKeyPolicyClearKeyConfiguration',
-    'ContentKeyPolicyUnknownConfiguration',
-    'ContentKeyPolicyWidevineConfiguration',
-    'ContentKeyPolicyPlayReadyConfiguration',
-    'ContentKeyPolicyFairPlayConfiguration',
-    'ContentKeyPolicyOption',
-    'ContentKeyPolicyProperties',
-    'ContentKeyPolicy',
-    'Preset',
-    'Codec',
+    'AssetStreamingLocator',
     'Audio',
-    'AacAudio',
-    'FaceDetectorPreset',
     'AudioAnalyzerPreset',
-    'Overlay',
     'AudioOverlay',
-    'CopyVideo',
-    'Video',
-    'Image',
-    'Format',
-    'ImageFormat',
-    'JpgFormat',
-    'PngFormat',
-    'CopyAudio',
-    'Deinterlace',
-    'Rectangle',
-    'Filters',
-    'Layer',
-    'VideoLayer',
-    'H264Layer',
-    'H264Video',
-    'JpgLayer',
-    'JpgImage',
-    'OutputFile',
-    'MultiBitrateFormat',
-    'Mp4Format',
-    'PngLayer',
-    'PngImage',
     'BuiltInStandardEncoderPreset',
-    'StandardEncoderPreset',
-    'VideoAnalyzerPreset',
-    'TransportStreamFormat',
-    'VideoOverlay',
-    'TransformOutput',
-    'Transform',
-    'JobInput',
-    'JobInputClip',
-    'JobInputs',
-    'JobInputAsset',
-    'JobInputHttp',
-    'JobErrorDetail',
-    'JobError',
-    'JobOutput',
-    'JobOutputAsset',
-    'Job',
-    'TrackPropertyCondition',
-    'TrackSelection',
-    'DefaultKey',
-    'StreamingPolicyContentKey',
-    'StreamingPolicyContentKeys',
-    'StreamingPolicyPlayReadyConfiguration',
-    'StreamingPolicyWidevineConfiguration',
-    'StreamingPolicyFairPlayConfiguration',
     'CbcsDrmConfiguration',
     'CencDrmConfiguration',
-    'EnabledProtocols',
-    'NoEncryption',
-    'EnvelopeEncryption',
-    'CommonEncryptionCenc',
+    'CheckNameAvailabilityInput',
+    'ClipTime',
+    'Codec',
     'CommonEncryptionCbcs',
-    'StreamingPolicy',
-    'StreamingLocatorContentKey',
-    'StreamingPath',
+    'CommonEncryptionCenc',
+    'ContentKeyPolicy',
+    'ContentKeyPolicyClearKeyConfiguration',
+    'ContentKeyPolicyConfiguration',
+    'ContentKeyPolicyFairPlayConfiguration',
+    'ContentKeyPolicyOpenRestriction',
+    'ContentKeyPolicyOption',
+    'ContentKeyPolicyPlayReadyConfiguration',
+    'ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader',
+    'ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier',
+    'ContentKeyPolicyPlayReadyContentKeyLocation',
+    'ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction',
+    'ContentKeyPolicyPlayReadyLicense',
+    'ContentKeyPolicyPlayReadyPlayRight',
+    'ContentKeyPolicyProperties',
+    'ContentKeyPolicyRestriction',
+    'ContentKeyPolicyRestrictionTokenKey',
+    'ContentKeyPolicyRsaTokenKey',
+    'ContentKeyPolicySymmetricTokenKey',
+    'ContentKeyPolicyTokenClaim',
+    'ContentKeyPolicyTokenRestriction',
+    'ContentKeyPolicyUnknownConfiguration',
+    'ContentKeyPolicyUnknownRestriction',
+    'ContentKeyPolicyWidevineConfiguration',
+    'ContentKeyPolicyX509CertificateTokenKey',
+    'CopyAudio',
+    'CopyVideo',
+    'CrossSiteAccessPolicies',
+    'DefaultKey',
+    'Deinterlace',
+    'EnabledProtocols',
+    'EntityNameAvailabilityCheckOutput',
+    'EnvelopeEncryption',
+    'FaceDetectorPreset',
+    'Filters',
+    'FilterTrackPropertyCondition',
+    'FilterTrackSelection',
+    'FirstQuality',
+    'Format',
+    'H264Layer',
+    'H264Video',
+    'Hls',
+    'Image',
+    'ImageFormat',
+    'IPAccessControl',
+    'IPRange',
+    'Job',
+    'JobError',
+    'JobErrorDetail',
+    'JobInput',
+    'JobInputAsset',
+    'JobInputClip',
+    'JobInputHttp',
+    'JobInputs',
+    'JobOutput',
+    'JobOutputAsset',
+    'JpgFormat',
+    'JpgImage',
+    'JpgLayer',
+    'Layer',
+    'ListContainerSasInput',
     'ListContentKeysResponse',
     'ListPathsResponse',
-    'StreamingLocator',
-    'Hls',
-    'LiveOutput',
-    'LiveEventEndpoint',
-    'IPRange',
-    'IPAccessControl',
-    'LiveEventInputAccessControl',
-    'LiveEventInput',
-    'LiveEventPreviewAccessControl',
-    'LiveEventPreview',
-    'LiveEventEncoding',
-    'CrossSiteAccessPolicies',
-    'LiveEventActionInput',
+    'ListStreamingLocatorsResponse',
     'LiveEvent',
-    'AkamaiSignatureHeaderAuthenticationKey',
-    'AkamaiAccessControl',
+    'LiveEventActionInput',
+    'LiveEventEncoding',
+    'LiveEventEndpoint',
+    'LiveEventInput',
+    'LiveEventInputAccessControl',
+    'LiveEventPreview',
+    'LiveEventPreviewAccessControl',
+    'LiveOutput',
+    'Location',
+    'MediaService',
+    'Metric',
+    'MetricDimension',
+    'MetricProperties',
+    'Mp4Format',
+    'MultiBitrateFormat',
+    'NoEncryption',
+    'ODataError',
+    'Operation',
+    'OperationDisplay',
+    'OutputFile',
+    'Overlay',
+    'PngFormat',
+    'PngImage',
+    'PngLayer',
+    'PresentationTimeRange',
+    'Preset',
+    'Provider',
+    'ProxyResource',
+    'Rectangle',
+    'Resource',
+    'ServiceSpecification',
+    'StandardEncoderPreset',
+    'StorageAccount',
+    'StorageEncryptedAssetDecryptionData',
+    'StreamingEndpoint',
     'StreamingEndpointAccessControl',
     'StreamingEntityScaleUnit',
-    'StreamingEndpoint',
+    'StreamingLocator',
+    'StreamingLocatorContentKey',
+    'StreamingPath',
+    'StreamingPolicy',
+    'StreamingPolicyContentKey',
+    'StreamingPolicyContentKeys',
+    'StreamingPolicyFairPlayConfiguration',
+    'StreamingPolicyPlayReadyConfiguration',
+    'StreamingPolicyWidevineConfiguration',
+    'SubscriptionMediaService',
+    'SyncStorageKeysInput',
+    'TrackedResource',
+    'TrackPropertyCondition',
+    'TrackSelection',
+    'Transform',
+    'TransformOutput',
+    'TransportStreamFormat',
+    'Video',
+    'VideoAnalyzerPreset',
+    'VideoLayer',
+    'VideoOverlay',
     'AccountFilterPaged',
     'OperationPaged',
     'MediaServicePaged',

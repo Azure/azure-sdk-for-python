@@ -18,15 +18,20 @@ class AzureAppConfigurationConfiguration(Configuration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param endpoint: The endpoint of the App Configuration instance to send
+     requests to.
+    :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between
      requests.
     :type sync_token: str
     """
 
-    def __init__(self, credentials, sync_token=None, **kwargs):
+    def __init__(self, credentials, endpoint, sync_token=None, **kwargs):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
 
         super(AzureAppConfigurationConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
@@ -35,6 +40,7 @@ class AzureAppConfigurationConfiguration(Configuration):
         self.generate_client_request_id = True
 
         self.credentials = credentials
+        self.endpoint = endpoint
         self.sync_token = sync_token
 
     def _configure(self, **kwargs):

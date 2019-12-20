@@ -1,0 +1,440 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 69a79058-d9a9-11e9-a347-001a7dda7113
+      x-ms-content-length:
+      - '1030'
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare5ebc10c9/utdir5ebc10c9/file5ebc10c9
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      ETag:
+      - '"0x8D73BCD4DEBDF55"'
+      Last-Modified:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-18T00:15:25.7852757Z'
+      x-ms-file-creation-time:
+      - '2019-09-18T00:15:25.7852757Z'
+      x-ms-file-id:
+      - '13835163608398430208'
+      x-ms-file-last-write-time:
+      - '2019-09-18T00:15:25.7852757Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
+      x-ms-request-id:
+      - 67d5903e-401a-006b-0db6-6dd400000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: ' hello world hello python world hello world python hello python world python
+      python hello python hello hello hello python hello python hello python hello
+      python world hello python world world world hello python world python python
+      hello python hello python hello world world python world world hello hello python
+      hello world python hello python hello python world hello python world world
+      hello python world python world hello world world python world hello hello world
+      python python world hello world python python python hello hello world python
+      python python hello hello hello hello python world world world world python
+      hello python hello python hello python hello world python hello hello python
+      hello world hello hello world hello world python hello python world python python
+      hello hello hello hello world python world hello hello python world world world
+      python python world world hello world world python python world world world
+      python python hello python python python world world python world world python
+      world python'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1030'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 69c7f292-d9a9-11e9-93f6-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      x-ms-range:
+      - bytes=0-1029
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare5ebc10c9/utdir5ebc10c9/file5ebc10c9?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - +GLdeO8f37aHpsMHX7khcw==
+      Date:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      ETag:
+      - '"0x8D73BCD4DF5F3EE"'
+      Last-Modified:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 67d59040-401a-006b-0eb6-6dd400000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 69d1641a-d9a9-11e9-9dfa-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      x-ms-range:
+      - bytes=0-32767
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare5ebc10c9/utdir5ebc10c9/file5ebc10c9
+  response:
+    body:
+      string: ' hello world hello python world hello world python hello python world
+        python python hello python hello hello hello python hello python hello python
+        hello python world hello python world world world hello python world python
+        python hello python hello python hello world world python world world hello
+        hello python hello world python hello python hello python world hello python
+        world world hello python world python world hello world world python world
+        hello hello world python python world hello world python python python hello
+        hello world python python python hello hello hello hello python world world
+        world world python hello python hello python hello python hello world python
+        hello hello python hello world hello hello world hello world python hello
+        python world python python hello hello hello hello world python world hello
+        hello python world world world python python world world hello world world
+        python python world world world python python hello python python python world
+        world python world world python world python'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1030'
+      Content-Range:
+      - bytes 0-1029/1030
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      ETag:
+      - '"0x8D73BCD4DF5F3EE"'
+      Last-Modified:
+      - Wed, 18 Sep 2019 00:15:25 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-18T00:15:25.7852757Z'
+      x-ms-file-creation-time:
+      - '2019-09-18T00:15:25.7852757Z'
+      x-ms-file-id:
+      - '13835163608398430208'
+      x-ms-file-last-write-time:
+      - '2019-09-18T00:15:25.7852757Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
+      x-ms-request-id:
+      - 67d59041-401a-006b-0fb6-6dd400000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-type:
+      - File
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - e29794ba-1d1a-11ea-8c13-2816a845e8c6
+      x-ms-content-length:
+      - '1030'
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:06:29 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare5ebc10c9/utdir5ebc10c9/file5ebc10c9
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 12 Dec 2019 20:06:32 GMT
+      ETag:
+      - '"0x8D77F3EC926C71F"'
+      Last-Modified:
+      - Thu, 12 Dec 2019 20:06:33 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-12-12T20:06:33.5676191Z'
+      x-ms-file-creation-time:
+      - '2019-12-12T20:06:33.5676191Z'
+      x-ms-file-id:
+      - '13835163608398430208'
+      x-ms-file-last-write-time:
+      - '2019-12-12T20:06:33.5676191Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 3501246319223038625*10967959146200238639
+      x-ms-request-id:
+      - a1717a86-f01a-0072-0927-b1153e000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: ' hello world hello python world hello world python hello python world python
+      python hello python hello hello hello python hello python hello python hello
+      python world hello python world world world hello python world python python
+      hello python hello python hello world world python world world hello hello python
+      hello world python hello python hello python world hello python world world
+      hello python world python world hello world world python world hello hello world
+      python python world hello world python python python hello hello world python
+      python python hello hello hello hello python world world world world python
+      hello python hello python hello python hello world python hello hello python
+      hello world hello hello world hello world python hello python world python python
+      hello hello hello hello world python world hello hello python world world world
+      python python world world hello world world python python world world world
+      python python hello python python python world world python world world python
+      world python'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1030'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - e2b6a034-1d1a-11ea-8008-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:06:29 GMT
+      x-ms-range:
+      - bytes=0-1029
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare5ebc10c9/utdir5ebc10c9/file5ebc10c9?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - +GLdeO8f37aHpsMHX7khcw==
+      Date:
+      - Thu, 12 Dec 2019 20:06:32 GMT
+      ETag:
+      - '"0x8D77F3EC92E4287"'
+      Last-Modified:
+      - Thu, 12 Dec 2019 20:06:33 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a1717a88-f01a-0072-0a27-b1153e000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - e2bda04c-1d1a-11ea-86bf-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:06:29 GMT
+      x-ms-range:
+      - bytes=0-32767
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare5ebc10c9/utdir5ebc10c9/file5ebc10c9
+  response:
+    body:
+      string: ' hello world hello python world hello world python hello python world
+        python python hello python hello hello hello python hello python hello python
+        hello python world hello python world world world hello python world python
+        python hello python hello python hello world world python world world hello
+        hello python hello world python hello python hello python world hello python
+        world world hello python world python world hello world world python world
+        hello hello world python python world hello world python python python hello
+        hello world python python python hello hello hello hello python world world
+        world world python hello python hello python hello python hello world python
+        hello hello python hello world hello hello world hello world python hello
+        python world python python hello hello hello hello world python world hello
+        hello python world world world python python world world hello world world
+        python python world world world python python hello python python python world
+        world python world world python world python'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1030'
+      Content-Range:
+      - bytes 0-1029/1030
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Thu, 12 Dec 2019 20:06:33 GMT
+      ETag:
+      - '"0x8D77F3EC92E4287"'
+      Last-Modified:
+      - Thu, 12 Dec 2019 20:06:33 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-12-12T20:06:33.5676191Z'
+      x-ms-file-creation-time:
+      - '2019-12-12T20:06:33.5676191Z'
+      x-ms-file-id:
+      - '13835163608398430208'
+      x-ms-file-last-write-time:
+      - '2019-12-12T20:06:33.5676191Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 3501246319223038625*10967959146200238639
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - a1717a89-f01a-0072-0b27-b1153e000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-type:
+      - File
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
+version: 1

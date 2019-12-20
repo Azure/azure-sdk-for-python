@@ -7,7 +7,6 @@ import json
 import os
 import time
 from unittest.mock import Mock, patch
-import uuid
 
 import pytest
 from azure.core.credentials import AccessToken
@@ -23,71 +22,6 @@ from azure.identity.aio._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 
 from helpers import mock_response, Request, async_validating_transport
-
-
-@pytest.mark.asyncio
-async def test_client_secret_credential_cache():
-    expired = "this token's expired"
-    now = int(time.time())
-    expired_on = now - 3600
-    expired_token = AccessToken(expired, expired_on)
-    token_payload = {
-        "access_token": expired,
-        "expires_in": 0,
-        "ext_expires_in": 0,
-        "expires_on": expired_on,
-        "not_before": now,
-        "token_type": "Bearer",
-    }
-    mock_send = Mock(return_value=mock_response(json_payload=token_payload))
-    transport = Mock(send=asyncio.coroutine(mock_send))
-    scope = "scope"
-
-    credential = ClientSecretCredential("client_id", "secret", tenant_id="some-guid", transport=transport)
-
-    # get_token initially returns the expired token because the credential
-    # doesn't check whether tokens it receives from the service have expired
-    token = await credential.get_token(scope)
-    assert token == expired_token
-
-    access_token = "new token"
-    token_payload["access_token"] = access_token
-    token_payload["expires_on"] = now + 3600
-    valid_token = AccessToken(access_token, now + 3600)
-
-    # second call should observe the cached token has expired, and request another
-    token = await credential.get_token(scope)
-    assert token == valid_token
-    assert mock_send.call_count == 2
-
-
-@pytest.mark.asyncio
-async def test_client_secret_credential():
-    client_id = "fake-client-id"
-    secret = "fake-client-secret"
-    tenant_id = "fake-tenant-id"
-    access_token = "***"
-
-    transport = async_validating_transport(
-        requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
-        responses=[
-            mock_response(
-                json_payload={
-                    "token_type": "Bearer",
-                    "expires_in": 42,
-                    "ext_expires_in": 42,
-                    "access_token": access_token,
-                }
-            )
-        ],
-    )
-
-    token = await ClientSecretCredential(
-        client_id=client_id, secret=secret, tenant_id=tenant_id, transport=transport
-    ).get_token("scope")
-
-    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
-    assert token.token == access_token
 
 
 @pytest.mark.asyncio
@@ -255,10 +189,7 @@ async def test_managed_identity_app_service():
         exception.message = success_message
         raise exception
 
-    environment = {
-        EnvironmentVariables.MSI_SECRET: msi_secret,
-        EnvironmentVariables.MSI_ENDPOINT: "https://foo.bar",
-    }
+    environment = {EnvironmentVariables.MSI_SECRET: msi_secret, EnvironmentVariables.MSI_ENDPOINT: "https://foo.bar"}
     with pytest.raises(Exception) as ex:
         with patch("os.environ", environment):
             await ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
@@ -299,32 +230,10 @@ async def test_default_credential_shared_cache_use():
         assert mock_credential.supported.call_count == 1
         mock_credential.supported.reset_mock()
 
-        # unsupported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential shouldn't use shared cache
-        credential = DefaultAzureCredential()
-        assert mock_credential.call_count == 0
-        assert mock_credential.supported.call_count == 1
-
         mock_credential.supported = Mock(return_value=True)
 
-        # supported platform, $AZURE_USERNAME not set -> default credential shouldn't use shared cache
+        # supported platform -> default credential should use shared cache
         credential = DefaultAzureCredential()
-        assert mock_credential.call_count == 0
+        assert mock_credential.call_count == 1
         assert mock_credential.supported.call_count == 1
         mock_credential.supported.reset_mock()
-
-        # supported platform, $AZURE_USERNAME and $AZURE_PASSWORD set -> default credential shouldn't use shared cache
-        # (EnvironmentCredential should be used when both variables are set)
-        with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com", "AZURE_PASSWORD": "***"}):
-            credential = DefaultAzureCredential()
-            assert mock_credential.call_count == 0
-
-        # supported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential should use shared cache
-        with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com"}):
-            expected_token = AccessToken("***", 42)
-            mock_credential.return_value=Mock(get_token=asyncio.coroutine(lambda *_: expected_token))
-
-            credential = DefaultAzureCredential()
-            assert mock_credential.call_count == 1
-
-            token = await credential.get_token("scope")
-            assert token == expected_token

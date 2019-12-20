@@ -6,9 +6,8 @@
 # pylint: disable=unused-argument
 
 from base64 import b64encode, b64decode
-from xml.sax.saxutils import escape as xml_escape
-from xml.sax.saxutils import unescape as xml_unescape
 
+import sys
 import six
 from azure.core.exceptions import DecodeError
 
@@ -133,33 +132,14 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
                 error=error)
 
 
-class TextXMLEncodePolicy(MessageEncodePolicy):
-    """XML message encoding policy for text messages.
-
-    Encodes text (unicode) messages to XML. If the input content
-    is not text, a TypeError will be raised.
-    """
-
-    def encode(self, content):
-        if not isinstance(content, six.text_type):
-            raise TypeError("Message content must be text for XML encoding.")
-        return xml_escape(content)
-
-
-class TextXMLDecodePolicy(MessageDecodePolicy):
-    """Message decoding policy for XML-encoded messages into text.
-
-    Decodes XML-encoded messages to text (unicode).
-    """
-
-    def decode(self, content, response):
-        return xml_unescape(content)
-
-
 class NoEncodePolicy(MessageEncodePolicy):
     """Bypass any message content encoding."""
 
     def encode(self, content):
+        if isinstance(content, six.binary_type) and sys.version_info > (3,):
+            raise TypeError(
+                "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
+            )
         return content
 
 

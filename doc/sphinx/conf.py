@@ -21,7 +21,7 @@ from shutil import copyfile
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../azure'))
+# sys.path.insert(0, os.path.abspath('../azure'))
 
 # FIX FOR EXAMPLE REFERENCES
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
@@ -58,10 +58,20 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctes
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.5', None),
+    # Dependencies
+    'python': ('https://docs.python.org/3.8', None),
     'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
-    'msrest': ('http://msrest.readthedocs.io/en/latest/', None)
+    'msrest': ('http://msrest.readthedocs.io/en/latest/', None),
+    'requests': ('https://requests.kennethreitz.org/en/master/', None),
+    'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
+    'trio': ('https://trio.readthedocs.io/en/stable/', None),
+    'msal': ('https://msal-python.readthedocs.io/en/latest/', None),
+    # Azure packages
+    'azure-core': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.0.0/', None),
+    'azure-identity': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/1.0.0/', None),
 }
+
+autodoc_member_order = 'groupwise'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -81,7 +91,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Azure SDK for Python'
-copyright = u'2016, Microsoft'
+copyright = u'2019, Microsoft'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -170,7 +180,15 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ['_static']
+
+html_css_files = [
+  'css/default_overrides.css'
+]
+
+html_js_files = [
+  'js/get_options.js'
+]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied

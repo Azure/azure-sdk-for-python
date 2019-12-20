@@ -15,8 +15,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -25,7 +25,7 @@ interactions:
     body:
       string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
         deployment ''pytestlinkedafa117b7'' is not valid according to the validation
-        procedure. The tracking id is ''72ea4995-8b9a-4978-901e-5fb88febd227''. See
+        procedure. The tracking id is ''ea0fad74-3da4-4082-b6b1-e41f2494b2f2''. See
         inner errors for details.","details":[{"code":"InvalidDomainNameLabel","message":"The
         domain name label GEN-UNIQUE is invalid. It must conform to the following
         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:32:33 GMT
+      - Sat, 07 Dec 2019 13:49:30 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-ms-failure-cause:
       - gateway
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 400
       message: Bad Request

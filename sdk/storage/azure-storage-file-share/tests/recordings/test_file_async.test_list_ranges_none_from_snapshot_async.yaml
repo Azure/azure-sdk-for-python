@@ -1,0 +1,251 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - bea69dc0-1d1a-11ea-baa6-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:05:29 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharea82c1793?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:05:32 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Etag
+      : '"0x8D77F3EA52F5155"'
+      ? !!python/object/new:multidict._multidict.istr
+      - Last-Modified
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: db0fa66d-c01a-007a-2527-b10e4d000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharea82c1793
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - bec007d2-1d1a-11ea-b9f4-2816a845e8c6
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:05:29 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharea82c1793/filea82c1793
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Etag
+      : '"0x8D77F3EA57421D9"'
+      ? !!python/object/new:multidict._multidict.istr
+      - Last-Modified
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-12-12T20:05:33.6765913Z'
+      x-ms-file-creation-time: '2019-12-12T20:05:33.6765913Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-12-12T20:05:33.6765913Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 3501246319223038625*10967959146200238639
+      x-ms-request-id: 35788ed8-801a-00ba-5027-b18409000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharea82c1793/filea82c1793
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - bf053910-1d1a-11ea-97ea-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:05:29 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharea82c1793?restype=share&comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:05:32 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Etag
+      : '"0x8D77F3EA52F5155"'
+      ? !!python/object/new:multidict._multidict.istr
+      - Last-Modified
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: f90fa4b8-401a-00a7-5b27-b15de3000000
+      x-ms-snapshot: '2019-12-12T20:05:33.0000000Z'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharea82c1793
+        - restype=share&comp=snapshot
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - bf202a18-1d1a-11ea-87df-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:05:30 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharea82c1793/filea82c1793
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 35788eda-801a-00ba-5127-b18409000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharea82c1793/filea82c1793
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - bf2ad298-1d1a-11ea-97ab-2816a845e8c6
+      x-ms-date:
+      - Thu, 12 Dec 2019 20:05:30 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utsharea82c1793/filea82c1793?sharesnapshot=2019-12-12T20:05:33.0000000Z&comp=rangelist
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges />"
+    headers:
+      ? !!python/object/new:multidict._multidict.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._multidict.istr
+      - Date
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Etag
+      : '"0x8D77F3EA57421D9"'
+      ? !!python/object/new:multidict._multidict.istr
+      - Last-Modified
+      : Thu, 12 Dec 2019 20:05:33 GMT
+      ? !!python/object/new:multidict._multidict.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._multidict.istr
+      - Transfer-Encoding
+      : chunked
+      ? !!python/object/new:multidict._multidict.istr
+      - Vary
+      : Origin
+      x-ms-content-length: '1024'
+      x-ms-request-id: f099bc81-301a-00ec-0827-b16c79000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utsharea82c1793/filea82c1793
+        - sharesnapshot=2019-12-12T20:05:33.0000000Z&comp=rangelist
+        - ''
+version: 1

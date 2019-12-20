@@ -44,3 +44,5 @@ stages:
     Artifacts:
     - name: azure_appconfiguration
       safeName: azureappconfiguration
+    - name: azure_mgmt_appconfiguration
+      safeName: azuremgmtappconfiguration

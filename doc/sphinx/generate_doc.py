@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), './package_service_mapping.json')
-GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
+GENERATED_PACKAGES_LIST_FILE = 'toc_tree.rst'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -119,7 +119,8 @@ def generate_doc(config_path, output_directory = "./ref/", project_pattern=None)
                 ))
 
         for multiapi_namespace in MULTIAPI_VERSION_NAMESPACE:
-            if namespace.startswith(multiapi_namespace):
+            length = len(multiapi_namespace.split("."))
+            if namespace.split(".")[0:length] == multiapi_namespace.split(".")[0:length]:
                 _LOGGER.info("MultiAPI namespace on %s", multiapi_namespace)
                 api_package = namespace.split(multiapi_namespace+".")[1]
                 multiapi_found_apiversion.setdefault(multiapi_namespace, []).append(api_package)

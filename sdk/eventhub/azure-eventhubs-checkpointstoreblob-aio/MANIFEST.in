@@ -1,4 +1,0 @@
-include *.md
-include azure/__init__.py
-include azure/eventhub/__init__.py
-include azure/eventhub/extensions/__init__.py

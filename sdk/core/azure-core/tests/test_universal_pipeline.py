@@ -24,18 +24,23 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
+import logging
 try:
     from unittest import mock
 except ImportError:
     import mock
 
 import requests
-
 import pytest
+from os import SEEK_SET
+try:
+    from io import BytesIO
+except ImportError:
+    from cStringIO import StringIO as BytesIO
 
-from azure.core.exceptions import DecodeError
-from azure.core.configuration import Configuration
+from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import (
+    Pipeline,
     PipelineResponse,
     PipelineRequest,
     PipelineContext
@@ -43,13 +48,18 @@ from azure.core.pipeline import (
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
+    RequestsTransportResponse,
+    HttpTransport,
 )
-from azure.core.pipeline.transport import RequestsTransportResponse
 
-from azure.core.pipeline.policies.universal import (
+from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
+    HttpLoggingPolicy,
+    RequestHistory,
+    RetryPolicy,
+    HTTPPolicy,
 )
 
 def test_user_agent():
@@ -62,7 +72,20 @@ def test_user_agent():
         policy.on_request(PipelineRequest(request, PipelineContext(None)))
         assert request.headers["user-agent"].endswith("mytools")
 
-@mock.patch('azure.core.pipeline.policies.universal._LOGGER')
+def test_request_history():
+    class Non_deep_copiable(object):
+        def __deepcopy__(self, memodict={}):
+            raise ValueError()
+
+    body = Non_deep_copiable()
+    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request.body = body
+    request_history = RequestHistory(request)
+    assert request_history.http_request.headers == request.headers
+    assert request_history.http_request.url == request.url
+    assert request_history.http_request.method == request.method
+
+@mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
     request = PipelineRequest(universal_request, PipelineContext(None))
@@ -114,6 +137,29 @@ def test_no_log(mock_http_logger):
     mock_http_logger.debug.assert_not_called()
     mock_http_logger.reset_mock()
 
+    # Let's make this request a failure, retried twice
+    request.context.options['logging_enable'] = True
+    http_logger.on_request(request)
+    http_logger.on_response(request, response)
+
+    first_count = mock_http_logger.debug.call_count
+    assert first_count >= 1
+
+    http_logger.on_request(request)
+    http_logger.on_response(request, response)
+
+    second_count = mock_http_logger.debug.call_count
+    assert second_count == first_count * 2
+
+def test_retry_without_http_response():
+    class NaughtyPolicy(HTTPPolicy):
+        def send(*args):
+            raise AzureError('boo')
+
+    policies = [RetryPolicy(), NaughtyPolicy()]
+    pipeline = Pipeline(policies=policies, transport=None)
+    with pytest.raises(AzureError):
+        pipeline.run(HttpRequest('GET', url='https://foo.bar'))
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()
@@ -147,12 +193,15 @@ def test_raw_deserializer():
     assert result["ugly"] is True
 
     # Be sure I catch the correct exception if it's neither XML nor JSON
-    with pytest.raises(DecodeError):
-        response = build_response(b'gibberish', content_type="application/xml")
-        raw_deserializer.on_response(None, response,)
-    with pytest.raises(DecodeError):
-        response = build_response(b'{{gibberish}}', content_type="application/xml")
+    response = build_response(b'gibberish', content_type="application/xml")
+    with pytest.raises(DecodeError) as err:
         raw_deserializer.on_response(None, response)
+    assert err.value.response is response.http_response
+
+    response = build_response(b'{{gibberish}}', content_type="application/xml")
+    with pytest.raises(DecodeError) as err:
+        raw_deserializer.on_response(None, response)
+    assert err.value.response is response.http_response
 
     # Simple JSON
     response = build_response(b'{"success": true}', content_type="application/json")
@@ -189,3 +238,272 @@ def test_raw_deserializer():
     raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
+
+
+def test_http_logger():
+
+    class MockHandler(logging.Handler):
+        def __init__(self):
+            super(MockHandler, self).__init__()
+            self.messages = []
+        def reset(self):
+            self.messages = []
+        def emit(self, record):
+            self.messages.append(record)
+    mock_handler = MockHandler()
+
+    logger = logging.getLogger("testlogger")
+    logger.addHandler(mock_handler)
+    logger.setLevel(logging.DEBUG)
+
+    policy = HttpLoggingPolicy(logger=logger)
+
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_response = HttpResponse(universal_request, None)
+    http_response.status_code = 202
+    request = PipelineRequest(universal_request, PipelineContext(None))
+
+    # Basics
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    assert all(m.levelname == 'INFO' for m in mock_handler.messages)
+    assert len(mock_handler.messages) == 5
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == 'Request headers:'
+    assert mock_handler.messages[3].message == 'Response status: 202'
+    assert mock_handler.messages[4].message == 'Response headers:'
+
+    mock_handler.reset()
+
+    # Let's make this request a failure, retried twice
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    assert all(m.levelname == 'INFO' for m in mock_handler.messages)
+    assert len(mock_handler.messages) == 10
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == 'Request headers:'
+    assert mock_handler.messages[3].message == 'Response status: 202'
+    assert mock_handler.messages[4].message == 'Response headers:'
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == 'Request headers:'
+    assert mock_handler.messages[3].message == 'Response status: 202'
+    assert mock_handler.messages[4].message == 'Response headers:'
+
+    mock_handler.reset()
+
+    # Headers and query parameters
+
+    policy.allowed_query_params = ['country']
+
+    universal_request.headers = {
+        "Accept": "Caramel",
+        "Hate": "Chocolat",
+    }
+    http_response.headers = {
+        "Content-Type": "Caramel",
+        "HateToo": "Chocolat",
+    }
+    universal_request.url = "http://127.0.0.1/?country=france&city=aix"
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    assert all(m.levelname == 'INFO' for m in mock_handler.messages)
+    assert len(mock_handler.messages) == 9
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/?country=france&city=REDACTED'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == "Request headers:"
+    # Dict not ordered in Python, exact logging order doesn't matter
+    assert set([
+        mock_handler.messages[3].message,
+        mock_handler.messages[4].message
+    ]) == set([
+        "    'Accept': 'Caramel'",
+        "    'Hate': 'REDACTED'"
+    ])
+    assert mock_handler.messages[5].message == "Response status: 202"
+    assert mock_handler.messages[6].message == "Response headers:"
+    # Dict not ordered in Python, exact logging order doesn't matter
+    assert set([
+        mock_handler.messages[7].message,
+        mock_handler.messages[8].message
+    ]) == set([
+        "    'Content-Type': 'Caramel'",
+        "    'HateToo': 'REDACTED'"
+    ])
+
+    mock_handler.reset()
+
+def test_http_logger_operation_level():
+
+    class MockHandler(logging.Handler):
+        def __init__(self):
+            super(MockHandler, self).__init__()
+            self.messages = []
+        def reset(self):
+            self.messages = []
+        def emit(self, record):
+            self.messages.append(record)
+    mock_handler = MockHandler()
+
+    logger = logging.getLogger("testlogger")
+    logger.addHandler(mock_handler)
+    logger.setLevel(logging.DEBUG)
+
+    policy = HttpLoggingPolicy()
+    kwargs={'logger': logger}
+
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_response = HttpResponse(universal_request, None)
+    http_response.status_code = 202
+    request = PipelineRequest(universal_request, PipelineContext(None, **kwargs))
+
+    # Basics
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    assert all(m.levelname == 'INFO' for m in mock_handler.messages)
+    assert len(mock_handler.messages) == 5
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == 'Request headers:'
+    assert mock_handler.messages[3].message == 'Response status: 202'
+    assert mock_handler.messages[4].message == 'Response headers:'
+
+    mock_handler.reset()
+
+    # Let's make this request a failure, retried twice
+
+    request = PipelineRequest(universal_request, PipelineContext(None, **kwargs))
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    policy.on_request(request)
+    response = PipelineResponse(request, http_response, request.context)
+    policy.on_response(request, response)
+
+    assert all(m.levelname == 'INFO' for m in mock_handler.messages)
+    assert len(mock_handler.messages) == 10
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == 'Request headers:'
+    assert mock_handler.messages[3].message == 'Response status: 202'
+    assert mock_handler.messages[4].message == 'Response headers:'
+    assert mock_handler.messages[0].message == "Request URL: 'http://127.0.0.1/'"
+    assert mock_handler.messages[1].message == "Request method: 'GET'"
+    assert mock_handler.messages[2].message == 'Request headers:'
+    assert mock_handler.messages[3].message == 'Response status: 202'
+    assert mock_handler.messages[4].message == 'Response headers:'
+
+    mock_handler.reset()
+
+def test_retry_seekable_stream():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                request.body.seek(0,2)
+                raise AzureError('fail on first')
+            position = request.body.tell()
+            assert position == 0
+            return HttpResponse(request, None)
+
+    data = BytesIO(b"Lots of dataaaa")
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request.set_streamed_data_body(data)
+    http_retry = RetryPolicy(retry_total = 1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    pipeline.run(http_request)
+
+def test_retry_seekable_file():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                for value in request.files.values():
+                    name, body = value[0], value[1]
+                    if name and body and hasattr(body, 'read'):
+                        body.seek(0,2)
+                        raise AzureError('fail on first')
+            for value in request.files.values():
+                name, body = value[0], value[1]
+                if name and body and hasattr(body, 'read'):
+                    position = body.tell()
+                    assert not position
+                    return HttpResponse(request, None)
+
+    file_name = 'test_retry_seekable_file'
+    with open(file_name, "w+") as f:
+        f.write('Lots of dataaaa')
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    headers = {'Content-Type': "multipart/form-data"}
+    http_request.headers = headers
+    form_data_content = {
+        'fileContent': open(file_name, 'rb'),
+        'fileName': file_name,
+    }
+    http_request.set_formdata_body(form_data_content)
+    http_retry = RetryPolicy(retry_total = 1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    pipeline.run(http_request)
+
+def test_retry_on_429():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._count = 0
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self._count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 429
+            return response
+
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_retry = RetryPolicy(retry_total = 1)
+    transport = MockTransport()
+    pipeline = Pipeline(transport, [http_retry])
+    pipeline.run(http_request)
+    assert transport._count == 2

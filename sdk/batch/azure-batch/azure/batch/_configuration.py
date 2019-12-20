@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 from msrestazure import AzureConfiguration
 
-from .version import VERSION
+from ._version import VERSION
 
 
 class BatchServiceClientConfiguration(AzureConfiguration):

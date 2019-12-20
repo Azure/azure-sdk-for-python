@@ -3,14 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
+import warnings
 
 from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
 from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
+from opencensus.trace import config_integration as _config_integration
 
-from azure.core.tracing import SpanKind  # pylint: disable=no-name-in-module
+from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
+
+from ._version import VERSION
 
 try:
     from typing import TYPE_CHECKING
@@ -22,9 +26,13 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-__version__ = "1.0.0b4"
 
-class OpenCensusSpan(object):
+__version__ = VERSION
+
+_config_integration.trace_integrations(['threading'])
+
+
+class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span=None, name="span"):
@@ -40,11 +48,6 @@ class OpenCensusSpan(object):
         """
         tracer = self.get_current_tracer()
         self._span_instance = span or tracer.start_span(name=name)
-        self._span_component = "component"
-        self._http_user_agent = "http.user_agent"
-        self._http_method = "http.method"
-        self._http_url = "http.url"
-        self._http_status_code = "http.status_code"
 
     @property
     def span_instance(self):
@@ -140,28 +143,6 @@ class OpenCensusSpan(object):
         """
         self.span_instance.add_attribute(key, value)
 
-    def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, Optional[HttpResponse]) -> None
-        """
-        Add correct attributes for a http client span.
-
-        :param request: The request made
-        :type request: HttpRequest
-        :param response: The response received by the server. Is None if no response received.
-        :type response: HttpResponse
-        """
-        self.kind = SpanKind.CLIENT
-        self.span_instance.add_attribute(self._span_component, "http")
-        self.span_instance.add_attribute(self._http_method, request.method)
-        self.span_instance.add_attribute(self._http_url, request.url)
-        user_agent = request.headers.get("User-Agent")
-        if user_agent:
-            self.span_instance.add_attribute(self._http_user_agent, user_agent)
-        if response:
-            self._span_instance.add_attribute(self._http_status_code, response.status_code)
-        else:
-            self._span_instance.add_attribute(self._http_status_code, 504)
-
     def get_trace_parent(self):
         """Return traceparent string as defined in W3C trace context specification.
 
@@ -228,7 +209,20 @@ class OpenCensusSpan(object):
         :param span: The span to set the current span as
         :type span: :class: opencensus.trace.Span
         """
+        warnings.warn("set_current_span is deprecated, use change_context instead", DeprecationWarning)
         return execution_context.set_current_span(span)
+
+    @classmethod
+    def change_context(cls, span):
+        # type: (Span) -> ContextManager
+        """Change the context for the life of this context manager.
+        """
+        original_span = cls.get_current_span()
+        try:
+            execution_context.set_current_span(span)
+            yield
+        finally:
+            execution_context.set_current_span(original_span)
 
     @classmethod
     def set_current_tracer(cls, tracer):

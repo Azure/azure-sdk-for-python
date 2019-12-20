@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .client import CryptographyClient
+from ._client import CryptographyClient
 from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from .. import EncryptResult, SignResult, WrapKeyResult
+from .. import EncryptResult, SignResult, WrapResult
 
 __all__ = [
     "CryptographyClient",
@@ -13,5 +13,5 @@ __all__ = [
     "KeyWrapAlgorithm",
     "SignatureAlgorithm",
     "SignResult",
-    "WrapKeyResult",
+    "WrapResult",
 ]

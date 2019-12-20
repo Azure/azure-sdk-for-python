@@ -21,8 +21,8 @@ class ConfigurationSetting(Model):
     :type value: str
     :ivar last_modified:
     :vartype last_modified: datetime
-    :ivar locked:
-    :vartype locked: bool
+    :ivar read_only:
+    :vartype read_only: bool
     :param tags:
     :type tags: dict[str, str]
     """
@@ -33,7 +33,7 @@ class ConfigurationSetting(Model):
         'content_type': {'key': 'content_type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
         'last_modified': {'key': 'last_modified', 'type': 'iso-8601'},
-        'locked': {'key': 'locked', 'type': 'bool'},
+        'read_only': {'key': 'read_only', 'type': 'bool'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -45,7 +45,7 @@ class ConfigurationSetting(Model):
         self.content_type = kwargs.get('content_type', None)
         self.value = kwargs.get('value', None)
         self.last_modified = kwargs.get('last_modified', None)
-        self.locked = kwargs.get('locked', None)
+        self.read_only = kwargs.get('read_only', None)
         self.tags = kwargs.get('tags', None)
 
     @classmethod
@@ -60,6 +60,6 @@ class ConfigurationSetting(Model):
             value=key_value.value,
             last_modified=key_value.last_modified,
             tags=key_value.tags,
-            locked=key_value.locked,
+            read_only=key_value.locked,
             etag=key_value.etag,
         )

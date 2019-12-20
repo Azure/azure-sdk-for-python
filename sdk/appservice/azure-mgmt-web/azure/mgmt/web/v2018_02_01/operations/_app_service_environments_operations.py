@@ -54,9 +54,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServiceEnvironmentResource
         :rtype:
-         ~azure.mgmt.web.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.models.AppServiceEnvironmentResource]
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -124,9 +124,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServiceEnvironmentResource
         :rtype:
-         ~azure.mgmt.web.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.models.AppServiceEnvironmentResource]
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResourcePaged[~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -197,10 +197,11 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AppServiceEnvironmentResource or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -309,7 +310,7 @@ class AppServiceEnvironmentsOperations(object):
         :param hosting_environment_envelope: Configuration details of the App
          Service Environment.
         :type hosting_environment_envelope:
-         ~azure.mgmt.web.models.AppServiceEnvironmentResource
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -319,9 +320,9 @@ class AppServiceEnvironmentsOperations(object):
          AppServiceEnvironmentResource or
          ClientRawResponse<AppServiceEnvironmentResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceEnvironmentResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.AppServiceEnvironmentResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -454,7 +455,7 @@ class AppServiceEnvironmentsOperations(object):
         :param hosting_environment_envelope: Configuration details of the App
          Service Environment.
         :type hosting_environment_envelope:
-         ~azure.mgmt.web.models.AppServiceEnvironmentPatchResource
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentPatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -462,7 +463,8 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AppServiceEnvironmentResource or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -535,9 +537,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of StampCapacity
         :rtype:
-         ~azure.mgmt.web.models.StampCapacityPaged[~azure.mgmt.web.models.StampCapacity]
+         ~azure.mgmt.web.v2018_02_01.models.StampCapacityPaged[~azure.mgmt.web.v2018_02_01.models.StampCapacity]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -608,10 +610,10 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AddressResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.AddressResponse or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.AddressResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_vips.metadata['url']
@@ -729,11 +731,11 @@ class AppServiceEnvironmentsOperations(object):
         :return: An instance of LROPoller that returns WebAppCollection or
          ClientRawResponse<WebAppCollection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WebAppCollection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WebAppCollection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._change_vnet_initial(
             resource_group_name=resource_group_name,
@@ -780,10 +782,11 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.HostingEnvironmentDiagnostics] or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         list[~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentDiagnostics]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_diagnostics.metadata['url']
@@ -846,10 +849,11 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: HostingEnvironmentDiagnostics or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.HostingEnvironmentDiagnostics or
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentDiagnostics or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_diagnostics_item.metadata['url']
@@ -913,9 +917,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of InboundEnvironmentEndpoint
         :rtype:
-         ~azure.mgmt.web.models.InboundEnvironmentEndpointPaged[~azure.mgmt.web.models.InboundEnvironmentEndpoint]
+         ~azure.mgmt.web.v2018_02_01.models.InboundEnvironmentEndpointPaged[~azure.mgmt.web.v2018_02_01.models.InboundEnvironmentEndpoint]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -986,10 +990,10 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: MetricDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.MetricDefinition or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.MetricDefinition or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_metric_definitions.metadata['url']
@@ -1059,9 +1063,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetric
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1137,9 +1141,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of WorkerPoolResource
         :rtype:
-         ~azure.mgmt.web.models.WorkerPoolResourcePaged[~azure.mgmt.web.models.WorkerPoolResource]
+         ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResourcePaged[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1210,10 +1214,10 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: WorkerPoolResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_multi_role_pool.metadata['url']
@@ -1321,7 +1325,7 @@ class AppServiceEnvironmentsOperations(object):
         :type name: str
         :param multi_role_pool_envelope: Properties of the multi-role pool.
         :type multi_role_pool_envelope:
-         ~azure.mgmt.web.models.WorkerPoolResource
+         ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1330,9 +1334,9 @@ class AppServiceEnvironmentsOperations(object):
         :return: An instance of LROPoller that returns WorkerPoolResource or
          ClientRawResponse<WorkerPoolResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WorkerPoolResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WorkerPoolResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_multi_role_pool_initial(
@@ -1375,14 +1379,14 @@ class AppServiceEnvironmentsOperations(object):
         :type name: str
         :param multi_role_pool_envelope: Properties of the multi-role pool.
         :type multi_role_pool_envelope:
-         ~azure.mgmt.web.models.WorkerPoolResource
+         ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: WorkerPoolResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1457,9 +1461,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetricDefinition
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1539,9 +1543,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetric
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1618,9 +1622,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetricDefinition
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1707,9 +1711,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetric
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1791,9 +1795,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SkuInfo
         :rtype:
-         ~azure.mgmt.web.models.SkuInfoPaged[~azure.mgmt.web.models.SkuInfo]
+         ~azure.mgmt.web.v2018_02_01.models.SkuInfoPaged[~azure.mgmt.web.v2018_02_01.models.SkuInfo]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1865,9 +1869,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Usage
         :rtype:
-         ~azure.mgmt.web.models.UsagePaged[~azure.mgmt.web.models.Usage]
+         ~azure.mgmt.web.v2018_02_01.models.UsagePaged[~azure.mgmt.web.v2018_02_01.models.Usage]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -1938,10 +1942,10 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.Operation] or
+        :rtype: list[~azure.mgmt.web.v2018_02_01.models.Operation] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.list_operations.metadata['url']
@@ -2004,9 +2008,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of OutboundEnvironmentEndpoint
         :rtype:
-         ~azure.mgmt.web.models.OutboundEnvironmentEndpointPaged[~azure.mgmt.web.models.OutboundEnvironmentEndpoint]
+         ~azure.mgmt.web.v2018_02_01.models.OutboundEnvironmentEndpointPaged[~azure.mgmt.web.v2018_02_01.models.OutboundEnvironmentEndpoint]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2181,11 +2185,11 @@ class AppServiceEnvironmentsOperations(object):
         :return: An instance of LROPoller that returns WebAppCollection or
          ClientRawResponse<WebAppCollection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WebAppCollection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WebAppCollection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._resume_initial(
             resource_group_name=resource_group_name,
@@ -2231,9 +2235,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServicePlan
         :rtype:
-         ~azure.mgmt.web.models.AppServicePlanPaged[~azure.mgmt.web.models.AppServicePlan]
+         ~azure.mgmt.web.v2018_02_01.models.AppServicePlanPaged[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2307,9 +2311,10 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Site
-        :rtype: ~azure.mgmt.web.models.SitePaged[~azure.mgmt.web.models.Site]
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.SitePaged[~azure.mgmt.web.v2018_02_01.models.Site]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2430,11 +2435,11 @@ class AppServiceEnvironmentsOperations(object):
         :return: An instance of LROPoller that returns WebAppCollection or
          ClientRawResponse<WebAppCollection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WebAppCollection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WebAppCollection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._suspend_initial(
             resource_group_name=resource_group_name,
@@ -2486,9 +2491,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmUsageQuota
         :rtype:
-         ~azure.mgmt.web.models.CsmUsageQuotaPaged[~azure.mgmt.web.models.CsmUsageQuota]
+         ~azure.mgmt.web.v2018_02_01.models.CsmUsageQuotaPaged[~azure.mgmt.web.v2018_02_01.models.CsmUsageQuota]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2562,9 +2567,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of WorkerPoolResource
         :rtype:
-         ~azure.mgmt.web.models.WorkerPoolResourcePaged[~azure.mgmt.web.models.WorkerPoolResource]
+         ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResourcePaged[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2637,10 +2642,10 @@ class AppServiceEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: WorkerPoolResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_worker_pool.metadata['url']
@@ -2751,7 +2756,8 @@ class AppServiceEnvironmentsOperations(object):
         :param worker_pool_name: Name of the worker pool.
         :type worker_pool_name: str
         :param worker_pool_envelope: Properties of the worker pool.
-        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource
+        :type worker_pool_envelope:
+         ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2760,9 +2766,9 @@ class AppServiceEnvironmentsOperations(object):
         :return: An instance of LROPoller that returns WorkerPoolResource or
          ClientRawResponse<WorkerPoolResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.WorkerPoolResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.WorkerPoolResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_worker_pool_initial(
@@ -2807,14 +2813,15 @@ class AppServiceEnvironmentsOperations(object):
         :param worker_pool_name: Name of the worker pool.
         :type worker_pool_name: str
         :param worker_pool_envelope: Properties of the worker pool.
-        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource
+        :type worker_pool_envelope:
+         ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: WorkerPoolResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.WorkerPoolResource or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2892,9 +2899,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetricDefinition
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -2983,9 +2990,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetric
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3065,9 +3072,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetricDefinition
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.models.ResourceMetricDefinition]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinition]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3153,9 +3160,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ResourceMetric
         :rtype:
-         ~azure.mgmt.web.models.ResourceMetricPaged[~azure.mgmt.web.models.ResourceMetric]
+         ~azure.mgmt.web.v2018_02_01.models.ResourceMetricPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3234,9 +3241,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SkuInfo
         :rtype:
-         ~azure.mgmt.web.models.SkuInfoPaged[~azure.mgmt.web.models.SkuInfo]
+         ~azure.mgmt.web.v2018_02_01.models.SkuInfoPaged[~azure.mgmt.web.v2018_02_01.models.SkuInfo]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -3311,9 +3318,9 @@ class AppServiceEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Usage
         :rtype:
-         ~azure.mgmt.web.models.UsagePaged[~azure.mgmt.web.models.Usage]
+         ~azure.mgmt.web.v2018_02_01.models.UsagePaged[~azure.mgmt.web.v2018_02_01.models.Usage]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, Contact
+from azure.keyvault.certificates import CertificateClient, CertificateContact
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for the certificate contacts for a key vault.
 #
-# 1. Create contacts (create_contacts)
+# 1. Create contacts (set_contacts)
 #
 # 2. Get contacts (get_contacts)
 #
@@ -36,16 +36,12 @@ client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     # First we create a list of Contacts that we would like to make the certificate contacts for this key vault.
     contact_list = [
-        Contact(email='admin@contoso.com',
-                name='John Doe',
-                phone='1111111111'),
-        Contact(email='admin2@contoso.com',
-                name='John Doe2',
-                phone='2222222222')
+        CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+        CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
     ]
 
     # Creates and sets the certificate contacts for this key vault.
-    client.create_contacts(contacts=contact_list)
+    client.set_contacts(contact_list)
 
     # Gets the certificate contacts for this key vault.
     contacts = client.get_contacts()

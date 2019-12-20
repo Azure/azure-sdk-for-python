@@ -27,7 +27,7 @@ class CachesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-08-01-preview".
+    :ivar api_version: Client API version. Constant value: "2019-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class CachesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -109,8 +109,7 @@ class CachesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all Caches the user has access to under a resource group and
-        subscription.
+        """Returns all Caches the user has access to under a resource group.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
@@ -233,7 +232,7 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -278,7 +277,7 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -334,10 +333,10 @@ class CachesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}'}
 
 
-    def _create_initial(
+    def _create_or_update_initial(
             self, resource_group_name, cache_name, cache=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -388,16 +387,16 @@ class CachesOperations(object):
 
         return deserialized
 
-    def create(
+    def create_or_update(
             self, resource_group_name, cache_name, cache=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create/update a Cache instance.
+        """Create or update a Cache.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
-        :param cache: Object containing the user selectable properties of the
-         new cache.  If read-only properties are included, they must match the
+        :param cache: Object containing the user-selectable properties of the
+         new Cache. If read-only properties are included, they must match the
          existing values of those properties.
         :type cache: ~azure.mgmt.storagecache.models.Cache
         :param dict custom_headers: headers that will be added to the request
@@ -413,7 +412,7 @@ class CachesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.storagecache.models.Cache]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             cache_name=cache_name,
             cache=cache,
@@ -438,7 +437,7 @@ class CachesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}'}
 
     def update(
             self, resource_group_name, cache_name, cache=None, custom_headers=None, raw=False, **operation_config):
@@ -446,10 +445,10 @@ class CachesOperations(object):
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
-        :param cache: Object containing the user selectable properties of the
-         new cache.  If read-only properties are included, they must match the
+        :param cache: Object containing the user-selectable properties of the
+         Cache. If read-only properties are included, they must match the
          existing values of those properties.
         :type cache: ~azure.mgmt.storagecache.models.Cache
         :param dict custom_headers: headers that will be added to the request
@@ -542,7 +541,7 @@ class CachesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -553,6 +552,8 @@ class CachesOperations(object):
             deserialized = self._deserialize('object', response)
         if response.status_code == 202:
             deserialized = self._deserialize('object', response)
+        if response.status_code == 204:
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -562,13 +563,13 @@ class CachesOperations(object):
 
     def flush(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Tells a cache to write all dirty data to the StorageTarget(s).  During
+        """Tells a Cache to write all dirty data to the Storage Target(s). During
         the flush, clients will see errors returned until the flush is
         complete.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -637,7 +638,7 @@ class CachesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -648,6 +649,8 @@ class CachesOperations(object):
             deserialized = self._deserialize('object', response)
         if response.status_code == 202:
             deserialized = self._deserialize('object', response)
+        if response.status_code == 204:
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -657,11 +660,11 @@ class CachesOperations(object):
 
     def start(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Tells a Stopped state cache to transition to Active state.
+        """Tells a Stopped state Cache to transition to Active state.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -730,7 +733,7 @@ class CachesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -741,6 +744,8 @@ class CachesOperations(object):
             deserialized = self._deserialize('object', response)
         if response.status_code == 202:
             deserialized = self._deserialize('object', response)
+        if response.status_code == 204:
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -750,11 +755,11 @@ class CachesOperations(object):
 
     def stop(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Tells an Active cache to transition to Stopped state.
+        """Tells an Active Cache to transition to Stopped state.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -823,7 +828,7 @@ class CachesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201, 202]:
+        if response.status_code not in [201, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -834,6 +839,8 @@ class CachesOperations(object):
             deserialized = self._deserialize('object', response)
         if response.status_code == 202:
             deserialized = self._deserialize('object', response)
+        if response.status_code == 204:
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -843,11 +850,12 @@ class CachesOperations(object):
 
     def upgrade_firmware(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Tells a cache to upgrade its firmware.
+        """Upgrade a Cache's firmware if a new version is available. Otherwise,
+        this operation has no effect.
 
         :param resource_group_name: Target resource group.
         :type resource_group_name: str
-        :param cache_name: Name of cache.
+        :param cache_name: Name of Cache.
         :type cache_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

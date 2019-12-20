@@ -1413,6 +1413,34 @@ class ResourcesMoveInfo(Model):
         self.target_resource_group = kwargs.get('target_resource_group', None)
 
 
+class ScopedDeployment(Model):
+    """Deployment operation parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location to store the deployment data.
+    :type location: str
+    :param properties: Required. The deployment properties.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ScopedDeployment, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.properties = kwargs.get('properties', None)
+
+
 class Sku(Model):
     """SKU for the resource.
 

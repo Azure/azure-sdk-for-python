@@ -30,11 +30,16 @@ class AzureAppConfigurationOperationsMixin(object):
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_keys.metadata['url']
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 if name is not None:
                     query_parameters['name'] = self._serialize.query("name", name, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
@@ -42,6 +47,10 @@ class AzureAppConfigurationOperationsMixin(object):
                     query_parameters['After'] = self._serialize.query("after", after, 'str')
 
             else:
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                next_link = self._client.format_url(next_link, **path_format_arguments)
                 url = next_link
 
             # Construct headers
@@ -68,10 +77,9 @@ class AzureAppConfigurationOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -98,11 +106,16 @@ class AzureAppConfigurationOperationsMixin(object):
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.check_keys.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -160,11 +173,16 @@ class AzureAppConfigurationOperationsMixin(object):
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_key_values.metadata['url']
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 if key is not None:
                     query_parameters['key'] = self._serialize.query("key", key, 'str')
                 if label is not None:
@@ -176,6 +194,10 @@ class AzureAppConfigurationOperationsMixin(object):
                     query_parameters['$Select'] = self._serialize.query("select", select, '[str]', div=',')
 
             else:
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                next_link = self._client.format_url(next_link, **path_format_arguments)
                 url = next_link
 
             # Construct headers
@@ -202,10 +224,9 @@ class AzureAppConfigurationOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -237,11 +258,16 @@ class AzureAppConfigurationOperationsMixin(object):
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.check_key_values.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -310,6 +336,7 @@ class AzureAppConfigurationOperationsMixin(object):
         # Construct URL
         url = self.get_key_value.metadata['url']
         path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'key': self._serialize.url("key", key, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -387,6 +414,7 @@ class AzureAppConfigurationOperationsMixin(object):
         # Construct URL
         url = self.put_key_value.metadata['url']
         path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'key': self._serialize.url("key", key, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -461,6 +489,7 @@ class AzureAppConfigurationOperationsMixin(object):
         # Construct URL
         url = self.delete_key_value.metadata['url']
         path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'key': self._serialize.url("key", key, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -528,12 +557,14 @@ class AzureAppConfigurationOperationsMixin(object):
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.check_key_value.metadata['url']
         path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'key': self._serialize.url("key", key, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -597,11 +628,16 @@ class AzureAppConfigurationOperationsMixin(object):
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_labels.metadata['url']
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 if name is not None:
                     query_parameters['name'] = self._serialize.query("name", name, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
@@ -611,6 +647,10 @@ class AzureAppConfigurationOperationsMixin(object):
                     query_parameters['$Select'] = self._serialize.query("select", select, '[str]', div=',')
 
             else:
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                next_link = self._client.format_url(next_link, **path_format_arguments)
                 url = next_link
 
             # Construct headers
@@ -637,10 +677,9 @@ class AzureAppConfigurationOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -670,11 +709,16 @@ class AzureAppConfigurationOperationsMixin(object):
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.check_labels.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -735,6 +779,7 @@ class AzureAppConfigurationOperationsMixin(object):
         # Construct URL
         url = self.put_lock.metadata['url']
         path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'key': self._serialize.url("key", key, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -805,6 +850,7 @@ class AzureAppConfigurationOperationsMixin(object):
         # Construct URL
         url = self.delete_lock.metadata['url']
         path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'key': self._serialize.url("key", key, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -874,11 +920,16 @@ class AzureAppConfigurationOperationsMixin(object):
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.get_revisions.metadata['url']
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 if key is not None:
                     query_parameters['key'] = self._serialize.query("key", key, 'str')
                 if label is not None:
@@ -890,6 +941,10 @@ class AzureAppConfigurationOperationsMixin(object):
                     query_parameters['$Select'] = self._serialize.query("select", select, '[str]', div=',')
 
             else:
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+                }
+                next_link = self._client.format_url(next_link, **path_format_arguments)
                 url = next_link
 
             # Construct headers
@@ -916,10 +971,9 @@ class AzureAppConfigurationOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -951,11 +1005,16 @@ class AzureAppConfigurationOperationsMixin(object):
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.check_revisions.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

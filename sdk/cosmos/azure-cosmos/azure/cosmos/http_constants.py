@@ -89,6 +89,9 @@ class HttpHeaders(object):
     # Query
     Query = "x-ms-documentdb-query"
     IsQuery = "x-ms-documentdb-isquery"
+    IsQueryPlanRequest = "x-ms-cosmos-is-query-plan-request"
+    SupportedQueryFeatures = "x-ms-cosmos-supported-query-features"
+    QueryVersion = "x-ms-cosmos-query-version"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -262,9 +265,9 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-
     CurrentVersion = "2018-12-31"
     SDKName = "azure-cosmos"
+    QueryVersion = "1.0"
 
 
 class Delimiters(object):
@@ -291,9 +294,10 @@ class HttpContextProperties(object):
 
 
 class _ErrorCodes(object):
-    """Windows Socket Error Codes
+    """Constants of error codes.
     """
 
+    # Windows Socket Error Codes
     WindowsInterruptedFunctionCall = 10004
     WindowsFileHandleNotValid = 10009
     WindowsPermissionDenied = 10013
@@ -310,8 +314,7 @@ class _ErrorCodes(object):
     WindowsHostIsDown = 10064
     WindowsNoRouteTohost = 10065
 
-    """Linux Error Codes
-    """
+    # Linux Error Codes
     LinuxConnectionReset = 131
 
 
@@ -403,7 +406,6 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
-    Media = "media"
 
     @staticmethod
     def IsCollectionChild(resourceType):

@@ -42,7 +42,9 @@ stages:
   parameters:
     ServiceDirectory: eventhub
     Artifacts:
-    - name: azure_eventhubs
-      safeName: azureeventhubs
-    - name: azure_eventhubs_checkpointstoreblob-aio
-      safeName: azureeventhubscheckpointstoreblobaio
+    - name: azure_eventhub
+      safeName: azureeventhub
+    - name: azure_eventhub_checkpointstoreblob_aio
+      safeName: azureeventhubcheckpointstoreblobaio
+    - name: azure_eventhub_checkpointstoreblob
+      safeName: azureeventhubcheckpointstoreblob

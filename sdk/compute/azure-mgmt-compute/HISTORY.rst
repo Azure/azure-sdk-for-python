@@ -3,6 +3,48 @@
 Release History
 ===============
 
+10.0.0 (2019-11-18)
++++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdate has a new parameter proximity_placement_group
+- Enum VirtualMachinePriorityTypes has new value Spot
+
+**Breaking changes**
+
+- Operation ProximityPlacementGroupsOperations.get has a new signature
+
+9.0.0 (2019-10-22)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdateNetworkProfile has a new parameter health_probe
+- Model VirtualMachineScaleSetUpdate has a new parameter do_not_run_extensions_on_overprovisioned_vms
+- Model VirtualMachineScaleSetUpdate has a new parameter automatic_repairs_policy
+- Model VirtualMachineScaleSetManagedDiskParameters has a new parameter disk_encryption_set
+- Model ImageDataDisk has a new parameter disk_encryption_set
+- Model VirtualMachineScaleSet has a new parameter automatic_repairs_policy
+- Model ImageOSDisk has a new parameter disk_encryption_set
+- Model ManagedDiskParameters has a new parameter disk_encryption_set
+- Model Snapshot has a new parameter encryption
+- Model VirtualMachineScaleSetDataDisk has a new parameter disk_mbps_read_write
+- Model VirtualMachineScaleSetDataDisk has a new parameter disk_iops_read_write
+- Model Disk has a new parameter encryption
+- Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter public_ip_address_version
+- Model DataDisk has a new parameter disk_mbps_read_write
+- Model DataDisk has a new parameter disk_iops_read_write
+- Model OSProfile has a new parameter require_guest_provision_signal
+- Added operation VirtualMachinesOperations.reapply
+- Added operation group DiskEncryptionSetsOperations
+- Added operation group VirtualMachineScaleSetVMExtensionsOperations
+
+**Breaking changes**
+
+- Operation VirtualMachinesOperations.list_all has a new signature
+- Operation ResourceSkusOperations.list has a new signature
+
 8.0.0 (2019-09-12)
 ++++++++++++++++++
 

@@ -23,25 +23,29 @@ if TYPE_CHECKING:
 
 
 class EnvironmentCredential:
-    """
-    Authenticates as a service principal using a client secret or a certificate, or as a user with a username and
-    password, depending on environment variable settings. Configuration is attempted in this order, using these
-    environment variables:
+    """A credential configured by environment variables.
+
+    This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
+    a user with a username and password. Configuration is attempted in this order, using these environment variables:
 
     Service principal with secret:
+      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
-      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
 
     Service principal with certificate:
-      - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
+      - **AZURE_CLIENT_ID**: the service principal's client ID
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key. The
+        certificate must not be password-protected.
 
     User with username and password:
       - **AZURE_CLIENT_ID**: the application's client ID
       - **AZURE_USERNAME**: a username (usually an email address)
       - **AZURE_PASSWORD**: that user's password
+      - **AZURE_TENANT_ID**: (optional) ID of the service principal's tenant. Also called its 'directory' ID.
+        If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
+        school accounts.
     """
 
     def __init__(self, **kwargs):
@@ -51,7 +55,7 @@ class EnvironmentCredential:
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
-                secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
+                client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
@@ -73,12 +77,14 @@ class EnvironmentCredential:
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if not self._credential:
-            raise ClientAuthenticationError(message="Incomplete environment configuration.")
+            raise ClientAuthenticationError(message="Incomplete environment configuration")
         return self._credential.get_token(*scopes, **kwargs)

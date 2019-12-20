@@ -5,7 +5,8 @@
 import os
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.certificates.aio import AdministratorDetails, CertificateClient
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates import AdministratorContact
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -24,12 +25,13 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Get an issuer (get_issuer)
 #
-# 3. List issuers for the key vault (list_issuers)
+# 3. List issuers for the key vault (list_properties_of_issuers)
 #
 # 4. Update an issuer (update_issuer)
 #
 # 5. Delete an issuer (delete_issuer)
 # ----------------------------------------------------------------------------------------------------------
+
 
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
@@ -40,53 +42,53 @@ async def run_sample():
     credential = DefaultAzureCredential()
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
-        # First we specify the AdministratorDetails for our issuers.
-        admin_details = [AdministratorDetails(
-            first_name="John",
-            last_name="Doe",
-            email="admin@microsoft.com",
-            phone="4255555555"
-        )]
+        # First we specify the AdministratorContact for our issuers.
+        admin_contacts = [
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+        ]
 
         # Next we create an issuer with these administrator details
         # The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
         await client.create_issuer(
-            name="issuer1",
-            provider="Test",
-            account_id="keyvaultuser",
-            admin_details=admin_details,
-            enabled=True
+            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
         )
 
         # Now we get this issuer by name
-        issuer1 = await client.get_issuer(name="issuer1")
+        issuer1 = await client.get_issuer("issuer1")
 
         print(issuer1.name)
         print(issuer1.provider)
         print(issuer1.account_id)
 
-        for admin_detail in issuer1.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for contact in issuer1.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
+
+        # Now we update the admnistrator contact for this issuer
+        admin_contacts = [
+            AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+        ]
+        issuer1 = await client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
+
+        for contact in issuer1.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
-        await client.create_issuer(
-            name="issuer2",
-            provider="Test",
-            account_id="keyvaultuser",
-            enabled=True
-        )
+        await client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-        issuers = client.list_issuers()
+        issuers = client.list_properties_of_issuers()
 
         async for issuer in issuers:
             print(issuer.name)
-            print(issuer.properties.provider)
+            print(issuer.provider)
 
         # Finally, we delete our first issuer by name.
-        await client.delete_issuer(name="issuer1")
+        await client.delete_issuer("issuer1")
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

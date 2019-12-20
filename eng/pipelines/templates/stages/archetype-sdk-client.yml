@@ -16,3 +16,4 @@ stages:
         DependsOn: Build
         Artifacts: ${{parameters.Artifacts}}
         ArtifactName: packages
+        DocArtifact: documentation

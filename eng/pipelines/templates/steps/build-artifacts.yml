@@ -17,6 +17,13 @@ steps:
   - script: |
       pip install wheel setuptools packaging
     displayName: 'Prep Py2 Environment'
+    
+  - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
+    parameters:
+      TargetFolder: $(Build.SourcesDirectory)
+      RootFolder: $(Build.SourcesDirectory)
+      BuildSHA: $(Build.SourceVersion)
+      RepoId: 'Azure/azure-sdk-for-python'
 
   - task: PythonScript@0
     displayName: 'Generate Python2 Applicable Namespace Packages'
@@ -32,6 +39,11 @@ steps:
   - script: |
       pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
     displayName: 'Prep Environment'
+
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - task: PythonScript@0
     displayName: 'Generate Packages'
@@ -59,9 +71,16 @@ steps:
       artifactName: 'artifacts' 
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  # Duplicating  the task above to introduce a packages artifact for consistency
+  # with the other pipelines. Also using the newer YAML shortcut. Once we get
+  # past release successfully with unified pipelines we'll look at getting rid
+  # of the duplicated "artifacts" artifact.
+  - publish: $(Build.ArtifactStagingDirectory)
+    artifact: packages 
+
   - task: PublishBuildArtifacts@1
     condition: succeededOrFailed()
     displayName: 'Publish Artifacts'
     inputs:
-      artifactName: 'docs'
+      artifactName: 'documentation'
       pathtoPublish: '$(Build.SourcesDirectory)/_docs'

@@ -51,9 +51,9 @@ class TopLevelDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TopLevelDomain
         :rtype:
-         ~azure.mgmt.web.models.TopLevelDomainPaged[~azure.mgmt.web.models.TopLevelDomain]
+         ~azure.mgmt.web.v2018_02_01.models.TopLevelDomainPaged[~azure.mgmt.web.v2018_02_01.models.TopLevelDomain]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -119,10 +119,10 @@ class TopLevelDomainsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TopLevelDomain or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.TopLevelDomain or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.TopLevelDomain or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -189,9 +189,9 @@ class TopLevelDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TldLegalAgreement
         :rtype:
-         ~azure.mgmt.web.models.TldLegalAgreementPaged[~azure.mgmt.web.models.TldLegalAgreement]
+         ~azure.mgmt.web.v2018_02_01.models.TldLegalAgreementPaged[~azure.mgmt.web.v2018_02_01.models.TldLegalAgreement]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy, for_transfer=for_transfer)
 

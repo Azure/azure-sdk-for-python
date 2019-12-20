@@ -10,12 +10,13 @@ resources:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      MaxParallel: 1
-      BuildTargetingString: $(BuildTargetingString)
+      BuildTargetingString: azure-storage-*
       ServiceDirectory: storage
       EnvVars:
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
         STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
+        STORAGE_DATA_LAKE_ACCOUNT_NAME: $(python-storage-data-lake-account-name)
+        STORAGE_DATA_LAKE_ACCOUNT_KEY: $(python-storage-data-lake-account-key)
         BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
         BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
         REMOTE_STORAGE_ACCOUNT_NAME: $(python-storage-remote-storage-account-name)
@@ -31,3 +32,9 @@ jobs:
         BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
         PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
         TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

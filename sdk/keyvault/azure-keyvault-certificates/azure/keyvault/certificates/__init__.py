@@ -2,26 +2,51 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .client import CertificateClient
-from .enums import ActionType, KeyCurveName, KeyType, SecretContentType, KeyUsageType
-from .models import (
-    AdministratorDetails,
+from ._client import CertificateClient
+from ._enums import(
+    CertificatePolicyAction,
+    KeyCurveName,
+    KeyType,
+    CertificateContentType,
+    KeyUsageType,
+    WellKnownIssuerNames
+)
+from ._models import(
+    AdministratorContact,
+    CertificateContact,
+    CertificateIssuer,
+    CertificateOperation,
+    CertificateOperationError,
     CertificatePolicy,
-    Contact,
-    KeyProperties,
-    LifetimeAction
+    CertificateProperties,
+    DeletedCertificate,
+    IssuerProperties,
+    LifetimeAction,
+    KeyVaultCertificate
 )
 
 __all__ = [
-    "ActionType",
-    "AdministratorDetails",
+    "CertificatePolicyAction",
+    "AdministratorContact",
     "CertificateClient",
+    "CertificateContact",
+    "CertificateIssuer",
+    "CertificateOperation",
+    "CertificateOperationError",
     "CertificatePolicy",
-    "Contact",
+    "CertificateProperties",
+    "DeletedCertificate",
+    "IssuerProperties",
     "KeyCurveName",
     "KeyType",
-    "KeyProperties",
+    "KeyVaultCertificate",
     "KeyUsageType",
     "LifetimeAction",
-    "SecretContentType"
+    "CertificateContentType",
+    "WellKnownIssuerNames",
+    "CertificateIssuer",
+    "IssuerProperties"
 ]
+
+from ._version import VERSION
+__version__ = VERSION

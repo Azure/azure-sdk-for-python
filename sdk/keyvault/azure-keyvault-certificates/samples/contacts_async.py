@@ -5,7 +5,8 @@
 import os
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.certificates.aio import CertificateClient, Contact
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates import CertificateContact
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -20,12 +21,13 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for the certificate contacts for a key vault.
 #
-# 1. Create contacts (create_contacts)
+# 1. Create contacts (set_contacts)
 #
 # 2. Get contacts (get_contacts)
 #
 # 3. Delete contacts (delete_contacts)
 # ----------------------------------------------------------------------------------------------------------
+
 
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
@@ -37,16 +39,12 @@ async def run_sample():
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
         contact_list = [
-            Contact(email='admin@contoso.com',
-                    name='John Doe',
-                    phone='1111111111'),
-            Contact(email='admin2@contoso.com',
-                    name='John Doe2',
-                    phone='2222222222')
+            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
         # Creates and sets the certificate contacts for this key vault.
-        await client.create_contacts(contacts=contact_list)
+        await client.set_contacts(contact_list)
 
         # Gets the certificate contacts for this key vault.
         contacts = await client.get_contacts()
