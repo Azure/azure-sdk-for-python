@@ -236,7 +236,7 @@ class EventHubProducer(
             child = None
             if span_impl_type is not None:
                 child = span_impl_type(name="Azure.EventHubs.send")
-                child.kind = SpanKind.CLIENT  # Should be PRODUCER
+                child.kind = SpanKind.PRODUCER
             self._check_closed()
             wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
             self._unsent_events = [wrapper_event_data.message]
