@@ -208,10 +208,6 @@ class TestConverters(object):
         with mock.patch.dict('sys.modules', {'azure.core.tracing.ext.opentelemetry_span': mod(opentelemetry_span)}):
             assert m._get_opentelemetry_span() is opentelemetry_span
 
-        with mock.patch.dict('sys.modules', {}):
-            assert m._get_opencensus_span() is None
-            assert m._get_opentelemetry_span() is None
-
 
 _standard_settings = ["log_level", "tracing_enabled"]
 
