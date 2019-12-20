@@ -12,6 +12,7 @@ from argparse import ArgumentParser
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
 from azure.identity import ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
 from logger import get_logger
 from process_monitor import ProcessMonitor
 
@@ -62,6 +63,7 @@ class StressTestRunner(object):
         )
         self.argument_parser.add_argument("--conn_str", help="EventHub connection string",
                                           default=os.environ.get('EVENT_HUB_PERF_32_CONN_STR'))
+        parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
         self.argument_parser.add_argument("--eventhub", help="Name of EventHub")
         self.argument_parser.add_argument(
             "--transport_type",
@@ -79,7 +81,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--proxy_port", type=str)
         self.argument_parser.add_argument("--proxy_username", type=str)
         self.argument_parser.add_argument("--proxy_password", type=str)
-        self.argument_parser.add_argument("--address", help="Address URI to the EventHub entity")
+        self.argument_parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.")
         self.argument_parser.add_argument("--sas_policy", help="Name of the shared access policy to authenticate with")
         self.argument_parser.add_argument("--sas_key", help="Shared access key")
         self.argument_parser.add_argument("--aad_client_id", help="AAD client id")
@@ -88,6 +90,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
         self.argument_parser.add_argument("--uamqp_debug", help="uamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
+        self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
@@ -95,7 +98,7 @@ class StressTestRunner(object):
 
         self.running = False
 
-    def create_client(self, client_class):
+    def create_client(self, client_class, is_async=False):
 
         transport_type = TransportType.Amqp if self.args.transport_type == 0 else TransportType.AmqpOverWebsocket
         http_proxy = None
@@ -111,25 +114,31 @@ class StressTestRunner(object):
             client = client_class.from_connection_string(
                 self.args.conn_str,
                 eventhub_name=self.args.eventhub,
+                auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
                 logging_enable=False
             )
-        elif self.args.address:
+        elif self.args.hostname:
             client = client_class(
-                host=self.args.address,
+                fully_qualified_namespace=self.args.hostname,
                 eventhub_name=self.args.eventhub,
                 credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
-                auth_timeout=240,
+                auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
                 logging_enable=self.args.uamqp_debug
             )
         elif self.args.aad_client_id:
+            if is_async:
+                credential = ClientSecretCredentialAsync(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
+            else:
+                credential = ClientSecretCredential(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
             client = client_class(
-                host=self.args.address,
+                fully_qualified_namespace=self.args.hostname,
                 eventhub_name=self.args.eventhub,
-                credential=ClientSecretCredential(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret),
+                auth_timeout=self.args.auth_timeout,
+                credential=credential,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
                 logging_enable=self.args.uamqp_debug)
@@ -156,7 +165,7 @@ class StressTestRunner(object):
                         return super(EventHubProducerClientTest, self_inner).get_partition_ids()
 
             method_name = self.args.method
-            logger = get_logger("{}.log".format(method_name), method_name,
+            logger = get_logger(self.args.log_filename, method_name,
                                 level=logging.INFO, print_console=self.args.print_console)
             test_method = globals()[method_name]
             self.running = True
@@ -231,7 +240,7 @@ class StressTestRunner(object):
             thread.join(timeout=self.args.duration)
 
     async def run_async(self):
-        with ProcessMonitor("producer_stress_async.log", "producer_stress_async"):
+        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_async", print_console=self.args.print_console):
             class EventHubProducerClientTestAsync(EventHubProducerClientAsync):
                 async def get_partition_ids(self_inner):
                     if self.args.partitions != 0:
@@ -240,7 +249,7 @@ class StressTestRunner(object):
                         return await super(EventHubProducerClientTestAsync, self_inner).get_partition_ids()
 
             method_name = self.args.method
-            logger = get_logger("{}.log".format(method_name), method_name,
+            logger = get_logger(self.args.log_filename, method_name,
                                 level=logging.INFO, print_console=self.args.print_console)
             test_method = globals()[method_name]
             self.running = True
@@ -248,14 +257,14 @@ class StressTestRunner(object):
             if self.args.parallel_send_cnt and self.args.parallel_send_cnt > 1:
                 if self.args.parallel_create_new_client:
                     clients = [
-                        self.create_client(EventHubProducerClientTestAsync) for _ in range(self.args.parallel_send_cnt)
+                        self.create_client(EventHubProducerClientTestAsync, is_async=True) for _ in range(self.args.parallel_send_cnt)
                     ]
                 else:
-                    clients = [self.create_client(EventHubProducerClientTestAsync)]
+                    clients = [self.create_client(EventHubProducerClientTestAsync, is_async=True)]
                 await self.run_test_method_parallel_async(test_method, clients, logger)
             else:
-                client = self.create_client(EventHubProducerClientTestAsync)
-                await self.run_test_method_parallel_async(test_method, client, logger)
+                client = self.create_client(EventHubProducerClientTestAsync, is_async=True)
+                await self.run_test_method_async(test_method, client, logger)
 
     async def run_test_method_async(self, test_method, worker, logger):
         deadline = time.time() + self.args.duration

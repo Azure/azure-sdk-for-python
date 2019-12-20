@@ -9,9 +9,13 @@ import asyncio
 import os
 import logging
 from collections import defaultdict
+
+from azure.identity.aio import ClientSecretCredential
 from azure.eventhub.aio import EventHubConsumerClient
+from azure.eventhub import EventHubSharedKeyCredential
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 from azure.eventhub import TransportType
+
 from logger import get_logger
 from process_monitor import ProcessMonitor
 
@@ -20,7 +24,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--link_credit", default=3000, type=int)
 parser.add_argument("--output_interval", type=float, default=1000)
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
-parser.add_argument("--consumer", help="Consumer group name", default="$default")
+parser.add_argument("--consumer_group", help="Consumer group name", default="$default")
 parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
 parser.add_argument("--offset", help="Starting offset", default="-1")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
@@ -51,9 +55,10 @@ parser.add_argument("--storage_conn_str", help="conn str of storage blob to stor
 parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
 parser.add_argument("--uamqp_debug", help="uamqp logging enable", action="store_true")
 parser.add_argument("--print_console", help="print to console", action="store_true")
+parser.add_argument("--log_filename", help="log file name", type=str)
 
 args = parser.parse_args()
-LOGGER = get_logger("stress_receive_async.log", "stress_receive_async", level=logging.INFO, print_console=args.print_console)
+LOGGER = get_logger(args.log_filename, "stress_receive_async", level=logging.INFO, print_console=args.print_console)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()
@@ -105,24 +110,54 @@ def create_client(args):
             "password": args.proxy_password,
         }
 
-    client = EventHubConsumerClientTest.from_connection_string(
-        args.conn_str,
-        args.consumer,
-        eventhub_name=args.eventhub,
-        checkpoint_store=checkpoint_store,
-        load_balancing_interval=args.load_balancing_interval,
-        auth_timeout=args.auth_timeout,
-        logging_enable=args.uamqp_debug,
-        http_proxy=http_proxy,
-        transport_type=transport_type
-    )
+    if args.conn_str:
+        client = EventHubConsumerClientTest.from_connection_string(
+            args.conn_str,
+            args.consumer_group,
+            eventhub_name=args.eventhub,
+            checkpoint_store=checkpoint_store,
+            load_balancing_interval=args.load_balancing_interval,
+            auth_timeout=args.auth_timeout,
+            http_proxy=http_proxy,
+            transport_type=transport_type,
+            logging_enable=args.uamqp_debug
+        )
+    elif args.hostname:
+        client = EventHubConsumerClientTest(
+            fully_qualified_namespace=args.hostname,
+            eventhub_name=args.eventhub,
+            consumer_group=args.consumer_group,
+            credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
+            checkpoint_store=checkpoint_store,
+            load_balancing_interval=args.load_balancing_interval,
+            auth_timeout=args.auth_timeout,
+            http_proxy=http_proxy,
+            transport_type=transport_type,
+            logging_enable=args.uamqp_debug
+        )
+    elif args.aad_client_id:
+        credential = ClientSecretCredential(args.tenant_id, args.aad_client_id, args.aad_secret)
+        client = EventHubConsumerClientTest(
+            fully_qualified_namespace=args.hostname,
+            eventhub_name=args.eventhub,
+            consumer_group=args.consumer_group,
+            credential=credential,
+            checkpoint_store=checkpoint_store,
+            load_balancing_interval=args.load_balancing_interval,
+            auth_timeout=args.auth_timeout,
+            http_proxy=http_proxy,
+            transport_type=transport_type,
+            logging_enable=args.uamqp_debug
+        )
+
+    return client
 
     return client
 
 
 async def run(args):
 
-    with ProcessMonitor("monitor_consumer_stress_async.log", "consumer_stress_async"):
+    with ProcessMonitor("monitor_{}".format(args.log_filename), "consumer_stress_async", print_console=args.print_console):
         kwargs_dict = {
             "prefetch": args.link_credit,
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
