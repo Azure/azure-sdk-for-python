@@ -22,10 +22,10 @@ from .cloud import get_cli_active_cloud
 
 
 def _instantiate_client(client_class, **kwargs):
-    """Instantiate a client from kwargs, removing the subscription_id/tenant_id/base_url argument if unsupported.
+    """Instantiate a client from kwargs, filtering kwargs to match client signature.
     """
     args = get_arg_spec(client_class.__init__).args
-    for key in ['subscription_id', 'tenant_id', 'base_url']:
+    for key in ['subscription_id', 'tenant_id', 'base_url', 'credential', 'credentials']:
         if key not in kwargs:
             continue
         if key not in args:
@@ -52,7 +52,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
     This method will fill automatically the following client parameters:
-    - credentials
+    - credentials/credential
     - subscription_id
     - base_url
 
@@ -74,12 +74,22 @@ def get_client_from_cli_profile(client_class, **kwargs):
     """
     cloud = get_cli_active_cloud()
     parameters = {}
-    if 'credentials' not in kwargs or 'subscription_id' not in kwargs:
+    no_credential_sentinel = object()
+    kwarg_cred = kwargs.pop('credentials', no_credential_sentinel)
+    if kwarg_cred is no_credential_sentinel:
+        kwarg_cred = kwargs.pop('credential', no_credential_sentinel)
+
+    if kwarg_cred is no_credential_sentinel or 'subscription_id' not in kwargs:
         resource, _ = _client_resource(client_class, cloud)
-        credentials, subscription_id, tenant_id = get_azure_cli_credentials(resource=resource,
-                                                                            with_tenant=True)
+        credentials, subscription_id, tenant_id = get_azure_cli_credentials(
+            resource=resource,
+            with_tenant=True,
+        )
+        # Provide both syntax of cred, we have an "inspect" filter later
+        credential_to_pass = credentials if kwarg_cred is no_credential_sentinel else kwarg_cred
         parameters.update({
-            'credentials': kwargs.get('credentials', credentials),
+            'credentials': credential_to_pass,
+            'credential': credential_to_pass,
             'subscription_id': kwargs.get('subscription_id', subscription_id)
         })
 

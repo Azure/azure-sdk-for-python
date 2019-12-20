@@ -46,3 +46,5 @@ stages:
       safeName: azurecore
     - name: azure_core_tracing_opencensus
       safeName: azurecorecoretracingopencensus
+    - name: azure_common
+      safeName: azurecommon
