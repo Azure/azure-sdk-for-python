@@ -5,6 +5,7 @@
 
 ### Features
 
+- Support auto_request_id in RequestIdPolicy   #9163
 - Support fixed retry   #6419
 
 ## 1.1.1 (2019-12-03) 
