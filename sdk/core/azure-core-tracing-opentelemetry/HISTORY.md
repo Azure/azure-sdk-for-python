@@ -3,8 +3,8 @@
 
 -------------------
 
-## 2019-10-07 Version 1.0.0b4
+## 1.0.0 Unreleased
 
 ### Features
 
-- Opencensus implementation of azure-core tracing protocol
+- Opentelemetry implementation of azure-core tracing protocol
