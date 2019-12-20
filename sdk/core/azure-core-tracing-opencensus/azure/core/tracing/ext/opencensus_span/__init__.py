@@ -88,7 +88,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
             OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
             OpenCensusSpanKind.CLIENT if value == SpanKind.PRODUCER else  # No producer in opencensus
             OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
-            OpenCensusSpanKind.SERVER if value == SpanKind.CONSUMER else  # No consumer in opencensus
+            OpenCensusSpanKind.CLIENT if value == SpanKind.CONSUMER else  # No consumer in opencensus
             OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
             None
         )
