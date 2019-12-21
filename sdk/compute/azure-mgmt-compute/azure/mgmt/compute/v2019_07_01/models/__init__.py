@@ -52,8 +52,10 @@ try:
     from ._models_py3 import EncryptionSettingsElement
     from ._models_py3 import Gallery
     from ._models_py3 import GalleryApplication
+    from ._models_py3 import GalleryApplicationUpdate
     from ._models_py3 import GalleryApplicationVersion
     from ._models_py3 import GalleryApplicationVersionPublishingProfile
+    from ._models_py3 import GalleryApplicationVersionUpdate
     from ._models_py3 import GalleryArtifactPublishingProfileBase
     from ._models_py3 import GalleryArtifactSource
     from ._models_py3 import GalleryArtifactVersionSource
@@ -62,10 +64,13 @@ try:
     from ._models_py3 import GalleryIdentifier
     from ._models_py3 import GalleryImage
     from ._models_py3 import GalleryImageIdentifier
+    from ._models_py3 import GalleryImageUpdate
     from ._models_py3 import GalleryImageVersion
     from ._models_py3 import GalleryImageVersionPublishingProfile
     from ._models_py3 import GalleryImageVersionStorageProfile
+    from ._models_py3 import GalleryImageVersionUpdate
     from ._models_py3 import GalleryOSDiskImage
+    from ._models_py3 import GalleryUpdate
     from ._models_py3 import GrantAccessData
     from ._models_py3 import HardwareProfile
     from ._models_py3 import Image
@@ -129,6 +134,7 @@ try:
     from ._models_py3 import StorageProfile
     from ._models_py3 import SubResource
     from ._models_py3 import SubResourceReadOnly
+    from ._models_py3 import SubResourceWithColocationStatus
     from ._models_py3 import TargetRegion
     from ._models_py3 import TerminateNotificationProfile
     from ._models_py3 import ThrottledRequestsInput
@@ -164,6 +170,7 @@ try:
     from ._models_py3 import VirtualMachineScaleSetDataDisk
     from ._models_py3 import VirtualMachineScaleSetExtension
     from ._models_py3 import VirtualMachineScaleSetExtensionProfile
+    from ._models_py3 import VirtualMachineScaleSetExtensionUpdate
     from ._models_py3 import VirtualMachineScaleSetIdentity
     from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
     from ._models_py3 import VirtualMachineScaleSetInstanceView
@@ -250,8 +257,10 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionSettingsElement
     from ._models import Gallery
     from ._models import GalleryApplication
+    from ._models import GalleryApplicationUpdate
     from ._models import GalleryApplicationVersion
     from ._models import GalleryApplicationVersionPublishingProfile
+    from ._models import GalleryApplicationVersionUpdate
     from ._models import GalleryArtifactPublishingProfileBase
     from ._models import GalleryArtifactSource
     from ._models import GalleryArtifactVersionSource
@@ -260,10 +269,13 @@ except (SyntaxError, ImportError):
     from ._models import GalleryIdentifier
     from ._models import GalleryImage
     from ._models import GalleryImageIdentifier
+    from ._models import GalleryImageUpdate
     from ._models import GalleryImageVersion
     from ._models import GalleryImageVersionPublishingProfile
     from ._models import GalleryImageVersionStorageProfile
+    from ._models import GalleryImageVersionUpdate
     from ._models import GalleryOSDiskImage
+    from ._models import GalleryUpdate
     from ._models import GrantAccessData
     from ._models import HardwareProfile
     from ._models import Image
@@ -327,6 +339,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageProfile
     from ._models import SubResource
     from ._models import SubResourceReadOnly
+    from ._models import SubResourceWithColocationStatus
     from ._models import TargetRegion
     from ._models import TerminateNotificationProfile
     from ._models import ThrottledRequestsInput
@@ -362,6 +375,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineScaleSetDataDisk
     from ._models import VirtualMachineScaleSetExtension
     from ._models import VirtualMachineScaleSetExtensionProfile
+    from ._models import VirtualMachineScaleSetExtensionUpdate
     from ._models import VirtualMachineScaleSetIdentity
     from ._models import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
     from ._models import VirtualMachineScaleSetInstanceView
@@ -518,8 +532,10 @@ __all__ = [
     'EncryptionSettingsElement',
     'Gallery',
     'GalleryApplication',
+    'GalleryApplicationUpdate',
     'GalleryApplicationVersion',
     'GalleryApplicationVersionPublishingProfile',
+    'GalleryApplicationVersionUpdate',
     'GalleryArtifactPublishingProfileBase',
     'GalleryArtifactSource',
     'GalleryArtifactVersionSource',
@@ -528,10 +544,13 @@ __all__ = [
     'GalleryIdentifier',
     'GalleryImage',
     'GalleryImageIdentifier',
+    'GalleryImageUpdate',
     'GalleryImageVersion',
     'GalleryImageVersionPublishingProfile',
     'GalleryImageVersionStorageProfile',
+    'GalleryImageVersionUpdate',
     'GalleryOSDiskImage',
+    'GalleryUpdate',
     'GrantAccessData',
     'HardwareProfile',
     'Image',
@@ -595,6 +614,7 @@ __all__ = [
     'StorageProfile',
     'SubResource',
     'SubResourceReadOnly',
+    'SubResourceWithColocationStatus',
     'TargetRegion',
     'TerminateNotificationProfile',
     'ThrottledRequestsInput',
@@ -630,6 +650,7 @@ __all__ = [
     'VirtualMachineScaleSetDataDisk',
     'VirtualMachineScaleSetExtension',
     'VirtualMachineScaleSetExtensionProfile',
+    'VirtualMachineScaleSetExtensionUpdate',
     'VirtualMachineScaleSetIdentity',
     'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
