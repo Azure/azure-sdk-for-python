@@ -35,7 +35,7 @@ class ContainerOperations:
 
         self._config = config
 
-    async def create(self, timeout=None, metadata=None, access=None, request_id=None, *, cls=None, **kwargs):
+    async def create(self, timeout=None, metadata=None, access=None, request_id=None, container_cpk_scope_info=None, *, cls=None, **kwargs):
         """creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
 
@@ -62,6 +62,10 @@ class ContainerOperations:
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param container_cpk_scope_info: Additional parameters for the
+         operation
+        :type container_cpk_scope_info:
+         ~azure.storage.blob.models.ContainerCpkScopeInfo
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -70,6 +74,13 @@ class ContainerOperations:
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        default_encryption_scope = None
+        if container_cpk_scope_info is not None:
+            default_encryption_scope = container_cpk_scope_info.default_encryption_scope
+        deny_encryption_scope_override = None
+        if container_cpk_scope_info is not None:
+            deny_encryption_scope_override = container_cpk_scope_info.deny_encryption_scope_override
+
         restype = "container"
 
         # Construct URL
@@ -94,6 +105,10 @@ class ContainerOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if default_encryption_scope is not None:
+            header_parameters['x-ms-default-encryption-scope'] = self._serialize.header("default_encryption_scope", default_encryption_scope, 'str')
+        if deny_encryption_scope_override is not None:
+            header_parameters['x-ms-deny-encryption-scope-override'] = self._serialize.header("deny_encryption_scope_override", deny_encryption_scope_override, 'bool')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -194,6 +209,8 @@ class ContainerOperations:
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
                 'x-ms-has-immutability-policy': self._deserialize('bool', response.headers.get('x-ms-has-immutability-policy')),
                 'x-ms-has-legal-hold': self._deserialize('bool', response.headers.get('x-ms-has-legal-hold')),
+                'x-ms-default-encryption-scope': self._deserialize('str', response.headers.get('x-ms-default-encryption-scope')),
+                'x-ms-deny-encryption-scope-override': self._deserialize('bool', response.headers.get('x-ms-deny-encryption-scope-override')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
