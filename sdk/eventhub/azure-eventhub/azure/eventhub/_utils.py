@@ -136,22 +136,20 @@ def trace_message(event, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            message_span = current_span.span(name="Azure.EventHubs.message")
-            message_span.kind = SpanKind.PRODUCER
-            message_span.start()
-            app_prop = dict(event.properties) if event.properties else dict()
-            app_prop.setdefault(
-                b"Diagnostic-Id", message_span.get_trace_parent().encode("ascii")
-            )
-            event.properties = app_prop
-            message_span.finish()
+            with current_span.span(name="Azure.EventHubs.message") as message_span:
+                message_span.kind = SpanKind.PRODUCER
+                app_prop = dict(event.properties) if event.properties else dict()
+                app_prop.setdefault(
+                    b"Diagnostic-Id", message_span.get_trace_parent().encode("ascii")
+                )
+                event.properties = app_prop
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_message had an exception %r", exp)
 
 
 def trace_link_message(event, parent_span=None):
     # type: (EventData, Optional[AbstractSpan]) -> None
-    """Link the current event to current span.
+    """Link the current event to current span or provided parent span.
 
     Will extract DiagnosticId if available.
     """
