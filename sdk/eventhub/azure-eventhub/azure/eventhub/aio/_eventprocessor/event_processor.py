@@ -194,20 +194,16 @@ class EventProcessor(
         self, partition_context: PartitionContext, event: EventData
     ) -> None:
         with self._context(event):
-            try:
-                if self._track_last_enqueued_event_properties:
-                    partition_context._last_received_event = (  # pylint: disable=protected-access
-                        event
-                    )
-                await self._event_handler(partition_context, event)
-            except asyncio.CancelledError:  # pylint: disable=try-except-raise
-                raise
-            except Exception as error:  # pylint:disable=broad-except
-                await self._process_error(partition_context, error)
+            if self._track_last_enqueued_event_properties:
+                partition_context._last_received_event = (  # pylint: disable=protected-access
+                    event
+                )
+            await self._event_handler(partition_context, event)
 
     async def _receive(
         self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
     ) -> None:  # pylint: disable=too-many-statements
+        partition_context = None
         try:  # pylint:disable=too-many-nested-blocks
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
             (
@@ -263,11 +259,9 @@ class EventProcessor(
                         self._consumer_group,
                     )
                     raise
-                except EventHubError as eh_error:
-                    await self._process_error(partition_context, eh_error)
-                    break
                 except Exception as error:  # pylint:disable=broad-except
                     await self._process_error(partition_context, error)
+                    break
         finally:
             await self._consumers[partition_id].close()
             await self._close_partition(

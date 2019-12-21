@@ -192,7 +192,7 @@ class EventProcessor(
                 partition_context._last_received_event = (  # pylint: disable=protected-access
                     event
                 )
-            self._handle_callback(self._event_handler, partition_context, event)
+            self._event_handler(partition_context, event)
 
     def _load_balancing(self):
         # type: () -> None
