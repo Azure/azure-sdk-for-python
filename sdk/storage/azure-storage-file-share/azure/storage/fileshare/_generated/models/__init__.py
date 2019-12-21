@@ -63,6 +63,9 @@ from ._azure_file_storage_enums import (
     CopyStatusType,
     DeleteSnapshotsOptionType,
     FileRangeWriteType,
+    LeaseDurationType,
+    LeaseStateType,
+    LeaseStatusType,
     ListSharesIncludeType,
     PermissionCopyModeType,
     StorageErrorCode,
@@ -98,5 +101,8 @@ __all__ = [
     'DeleteSnapshotsOptionType',
     'ListSharesIncludeType',
     'CopyStatusType',
+    'LeaseDurationType',
+    'LeaseStateType',
+    'LeaseStatusType',
     'FileRangeWriteType',
 ]
