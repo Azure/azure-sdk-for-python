@@ -107,6 +107,27 @@ class CopyStatusType(str, Enum):
     failed = "failed"
 
 
+class LeaseDurationType(str, Enum):
+
+    infinite = "infinite"
+    fixed = "fixed"
+
+
+class LeaseStateType(str, Enum):
+
+    available = "available"
+    leased = "leased"
+    expired = "expired"
+    breaking = "breaking"
+    broken = "broken"
+
+
+class LeaseStatusType(str, Enum):
+
+    locked = "locked"
+    unlocked = "unlocked"
+
+
 class FileRangeWriteType(str, Enum):
 
     update = "update"
