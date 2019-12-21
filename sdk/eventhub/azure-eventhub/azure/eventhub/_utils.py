@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+from contextlib import contextmanager
 import sys
 import platform
 import datetime
@@ -121,6 +122,35 @@ def set_message_partition_key(message, partition_key):
         header.durable = True
         message.annotations = annotations
         message.header = header
+
+
+@contextmanager
+def send_context_manager():
+    span_impl_type = (
+        settings.tracing_implementation()
+    )  # type: Type[AbstractSpan]
+
+    if span_impl_type is not None:
+        with span_impl_type(name="Azure.EventHubs.send") as child:
+            child.kind = SpanKind.CLIENT
+            yield child
+    else:
+        yield None
+
+
+def add_link_to_send(event, send_span):
+    """Add Diagnostic-Id from event to span as link.
+    """
+    try:
+        if send_span:
+            if event.properties:
+                traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
+            else:
+                traceparent = ""
+
+            send_span.link(traceparent)
+    except Exception as exp:  # pylint:disable=broad-except
+        _LOGGER.warning("add_link_to_send had an exception %r", exp)
 
 
 def trace_message(event, parent_span=None):
