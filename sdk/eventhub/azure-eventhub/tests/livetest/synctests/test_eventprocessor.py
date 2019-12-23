@@ -202,7 +202,7 @@ def test_partition_processor():
                                      on_error=error_handler,
                                      on_partition_initialize=partition_initialize_handler,
                                      on_partition_close=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=0.3)
 
     thread = threading.Thread(target=event_processor.start)
     thread.start()
