@@ -4,7 +4,7 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
 
-from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind, tracer
+from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind, tracer
 from opentelemetry.context import Context
 from opentelemetry.propagators import extract, inject
 
@@ -195,7 +195,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         ctx = extract(_get_headers_from_http_request_headers, headers)
         current_span = cls.get_current_span()
-        current_span.links.append(ctx)
+        current_span.links.append(Link(ctx))
 
     @classmethod
     def get_current_span(cls):

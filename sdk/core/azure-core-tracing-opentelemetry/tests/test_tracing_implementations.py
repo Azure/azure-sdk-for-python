@@ -88,8 +88,8 @@ class TestOpentelemetryWrapper:
                 assert len(wrapped_class.span_instance.links) == 1
                 link = wrapped_class.span_instance.links[0]
 
-                assert link.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
-                assert link.span_id == int("231ebdc614cb9ddd", 16)
+                assert link.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
+                assert link.context.span_id == int("231ebdc614cb9ddd", 16)
 
             with OpenTelemetrySpan() as wrapped_class:
                 OpenTelemetrySpan.link("00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01")
@@ -97,8 +97,8 @@ class TestOpentelemetryWrapper:
                 assert len(wrapped_class.span_instance.links) == 1
                 link = wrapped_class.span_instance.links[0]
 
-                assert link.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
-                assert link.span_id == int("231ebdc614cb9ddd", 16)
+                assert link.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
+                assert link.context.span_id == int("231ebdc614cb9ddd", 16)
 
 
     def test_add_attribute(self, tracer):
