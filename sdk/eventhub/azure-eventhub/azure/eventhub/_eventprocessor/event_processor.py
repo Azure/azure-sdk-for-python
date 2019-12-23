@@ -20,6 +20,7 @@ from typing import (
 from functools import partial
 
 from .partition_context import PartitionContext
+from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .ownership_manager import OwnershipManager
 from .common import CloseReason
 from ._eventprocessor_mixin import EventProcessorMixin
@@ -70,7 +71,7 @@ class EventProcessor(
             "on_partition_close", None
         )  # type: Optional[Callable[[PartitionContext, CloseReason], None]]
         self._checkpoint_store = kwargs.get(
-            "checkpoint_store", None
+            "checkpoint_store", InMemoryCheckpointStore()
         )  # type: Optional[CheckpointStore]
         self._initial_event_position = kwargs.get(
             "initial_event_position", "-1"
@@ -82,13 +83,13 @@ class EventProcessor(
         self._load_balancing_interval = kwargs.get(
             "load_balancing_interval", 10.0
         )  # type: float
-        self._ownership_timeout = self._load_balancing_interval * 2
+        self._ownership_timeout = self._load_balancing_interval * 6
 
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
 
         # Receive parameters
         self._owner_level = kwargs.get("owner_level", None)  # type: Optional[int]
-        if self._checkpoint_store and self._owner_level is None:
+        if "checkpoint_store" in kwargs and self._owner_level is None:
             self._owner_level = 0
         self._prefetch = kwargs.get("prefetch", None)  # type: Optional[int]
         self._track_last_enqueued_event_properties = kwargs.get(
