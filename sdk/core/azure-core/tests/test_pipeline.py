@@ -45,20 +45,17 @@ import requests
 import pytest
 
 from azure.core.configuration import Configuration
-from azure.core.pipeline import Pipeline, PipelineResponse
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
-    RetryPolicy,
-    RetryMode
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
     RequestsTransport,
-    HttpResponse
 )
 
 from azure.core.exceptions import AzureError
@@ -123,45 +120,6 @@ class TestRequestsTransport(unittest.TestCase):
         with pytest.raises(AzureError):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
                 response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
-
-    def test_retry_code_class_variables(self):
-        retry_policy = RetryPolicy()
-        assert retry_policy._RETRY_CODES is not None
-        assert 408 in retry_policy._RETRY_CODES
-        assert 429 in retry_policy._RETRY_CODES
-        assert 501 not in retry_policy._RETRY_CODES
-
-    def test_retry_types(self):
-        history = ["1", "2", "3"]
-        settings = {
-            'history': history,
-            'backoff': 1,
-            'max_backoff': 10
-        }
-        retry_policy = RetryPolicy()
-        backoff_time = retry_policy.get_backoff_time(settings)
-        assert backoff_time == 4
-
-        retry_policy = RetryPolicy(retry_mode=RetryMode.Fixed)
-        backoff_time = retry_policy.get_backoff_time(settings)
-        assert backoff_time == 1
-
-        retry_policy = RetryPolicy(retry_mode=RetryMode.Exponential)
-        backoff_time = retry_policy.get_backoff_time(settings)
-        assert backoff_time == 4
-
-    def test_retry_after(self):
-        retry_policy = RetryPolicy()
-        request = HttpRequest("GET", "https://bing.com")
-        response = HttpResponse(request, None)
-        response.headers["retry-after-ms"] = "1000"
-        pipeline_response = PipelineResponse(request, response, None)
-        retry_after = retry_policy.get_retry_after(pipeline_response)
-        assert retry_after == 1
-        response.headers.pop("retry-after-ms")
-        response.headers["Retry-After"] = "1000"
-        retry_after = retry_policy.get_retry_after(pipeline_response)
-        assert retry_after == 1000
 
     def test_basic_requests_separate_session(self):
 
