@@ -182,11 +182,11 @@ class RetryPolicy(HTTPPolicy):
         """
         retry_after = response.http_response.headers.get("Retry-After")
         if retry_after:
-            return retry_after
+            return self.parse_retry_after(retry_after)
         retry_after = response.http_response.headers.get("retry-after-ms")
         if retry_after:
             retry_after = retry_after / 1000
-            return retry_after
+            return self.parse_retry_after(retry_after)
         return None
 
     def _sleep_for_retry(self, response, transport):
