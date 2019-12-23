@@ -154,12 +154,12 @@ class TestRequestsTransport(unittest.TestCase):
         retry_policy = RetryPolicy()
         request = HttpRequest("GET", "https://bing.com")
         response = HttpResponse(request, None)
-        response.headers["retry-after-ms"] = 1000
+        response.headers["retry-after-ms"] = "1000"
         pipeline_response = PipelineResponse(request, response, None)
         retry_after = retry_policy.get_retry_after(pipeline_response)
         assert retry_after == 1
         response.headers.pop("retry-after-ms")
-        response.headers["Retry-After"] = 1000
+        response.headers["Retry-After"] = "1000"
         retry_after = retry_policy.get_retry_after(pipeline_response)
         assert retry_after == 1000
 
