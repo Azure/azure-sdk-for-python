@@ -31,3 +31,31 @@ class ServiceLevel(str, Enum):
     standard = "Standard"  #: Standard service level
     premium = "Premium"  #: Premium service level
     ultra = "Ultra"  #: Ultra service level
+
+
+class EndpointType(str, Enum):
+
+    src = "src"
+    dst = "dst"
+
+
+class ReplicationSchedule(str, Enum):
+
+    _10minutely = "_10minutely"
+    hourly = "hourly"
+    daily = "daily"
+    weekly = "weekly"
+    monthly = "monthly"
+
+
+class RelationshipStatus(str, Enum):
+
+    idle = "Idle"
+    transferring = "Transferring"
+
+
+class MirrorState(str, Enum):
+
+    uninitialized = "Uninitialized"
+    mirrored = "Mirrored"
+    broken = "Broken"
