@@ -372,7 +372,7 @@ async def test_partition_processor_process_error_close_error():
         raise RuntimeError("process_error error")
 
     async def partition_close_handler(partition_context, reason):
-        assert reason == CloseReason.SHUTDOWN
+        assert reason == CloseReason.OWNERSHIP_LOST
         partition_close_handler.called = True
         raise RuntimeError("close error")
 
