@@ -20,7 +20,6 @@ import logging
 from functools import partial
 
 from azure.eventhub import EventData
-from azure.eventhub.exceptions import EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
@@ -203,7 +202,6 @@ class EventProcessor(
     async def _receive(
         self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
     ) -> None:  # pylint: disable=too-many-statements
-        partition_context = None
         try:  # pylint:disable=too-many-nested-blocks
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
             (
