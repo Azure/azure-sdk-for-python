@@ -18,8 +18,8 @@ PACKAGE_PPRINT_NAME = "Azure Core OpenTelemetry plugin"
 package_folder_path = "azure/core/tracing/ext/opentelemetry_span"
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
