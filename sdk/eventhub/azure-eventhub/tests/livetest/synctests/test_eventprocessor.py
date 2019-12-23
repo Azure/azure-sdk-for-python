@@ -12,7 +12,7 @@ from azure.eventhub import EventData, CloseReason
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
-from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
+from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._client_base import _Address
 
 
