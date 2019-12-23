@@ -45,7 +45,7 @@ import requests
 import pytest
 
 from azure.core.configuration import Configuration
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
@@ -57,7 +57,8 @@ from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
-    RequestsTransport
+    RequestsTransport,
+    HttpResponse
 )
 
 from azure.core.exceptions import AzureError
@@ -148,6 +149,19 @@ class TestRequestsTransport(unittest.TestCase):
         retry_policy = RetryPolicy(retry_mode=RetryMode.Exponential)
         backoff_time = retry_policy.get_backoff_time(settings)
         assert backoff_time == 4
+
+    def test_retry_after(self):
+        retry_policy = RetryPolicy()
+        request = HttpRequest("GET", "https://bing.com")
+        response = HttpResponse(request, None)
+        response.headers["retry-after-ms"] = 1000
+        pipeline_response = PipelineResponse(request, response, None)
+        retry_after = retry_policy.get_retry_after(pipeline_response)
+        assert retry_after == 1
+        response.headers.pop("retry-after-ms")
+        response.headers["Retry-After"] = 1000
+        retry_after = retry_policy.get_retry_after(pipeline_response)
+        assert retry_after == 1000
 
     def test_basic_requests_separate_session(self):
 

@@ -7,6 +7,7 @@
 
 - Support auto_request_id in RequestIdPolicy   #9163
 - Support fixed retry   #6419
+- Support "retry-after-ms" in response header   #9240
 
 ## 1.1.1 (2019-12-03) 
 
