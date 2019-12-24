@@ -8,14 +8,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-
-from msrest.service_client import SDKClient
-from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
 from .version import VERSION
-from .operations.apps_operations import AppsOperations
-from .operations.operations import Operations
-from . import models
 
 
 class IotCentralClientConfiguration(AzureConfiguration):
@@ -43,44 +38,11 @@ class IotCentralClientConfiguration(AzureConfiguration):
 
         super(IotCentralClientConfiguration, self).__init__(base_url)
 
+        # Starting Autorest.Python 4.0.64, make connection pool activated by default
+        self.keep_alive = True
+
         self.add_user_agent('azure-mgmt-iotcentral/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-
-
-class IotCentralClient(SDKClient):
-    """Use this API to manage IoT Central Applications in your Azure subscription.
-
-    :ivar config: Configuration for client.
-    :vartype config: IotCentralClientConfiguration
-
-    :ivar apps: Apps operations
-    :vartype apps: azure.mgmt.iotcentral.operations.AppsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.iotcentral.operations.Operations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The subscription identifier.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        self.config = IotCentralClientConfiguration(credentials, subscription_id, base_url)
-        super(IotCentralClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-09-01'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
-        self.apps = AppsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
