@@ -80,7 +80,7 @@ class _DictTrie(object):
 class InMemoryCheckpointStore(CheckpointStore):
     def __init__(
         self
-    ) -> None:
+    ):
         self.ownerships_trie = _DictTrie(
             "ownerships_trie",
             path_names=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
