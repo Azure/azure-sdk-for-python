@@ -12,6 +12,32 @@
 from msrest.paging import Paged
 
 
+class AppPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`App <azure.mgmt.iotcentral.models.App>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[App]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AppPaged, self).__init__(*args, **kwargs)
+class AppTemplatePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AppTemplate <azure.mgmt.iotcentral.models.AppTemplate>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AppTemplate]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AppTemplatePaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.iotcentral.models.Operation>` object
