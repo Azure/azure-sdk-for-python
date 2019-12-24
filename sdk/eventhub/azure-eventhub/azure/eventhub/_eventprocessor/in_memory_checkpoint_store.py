@@ -59,7 +59,7 @@ def _set_ele_trie(root, ele, path_names, path_index):
 
 
 class _DictTrie(object):
-    def __init__(self, root_name: str, path_names):
+    def __init__(self, root_name, path_names):
         self._root = _TrieNode(root_name, False)
         self._path_names = path_names
 
