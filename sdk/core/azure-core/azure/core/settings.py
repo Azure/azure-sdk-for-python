@@ -30,7 +30,6 @@ from collections import namedtuple
 from enum import Enum
 import logging
 import os
-import sys
 import six
 from azure.core.tracing import AbstractSpan
 
