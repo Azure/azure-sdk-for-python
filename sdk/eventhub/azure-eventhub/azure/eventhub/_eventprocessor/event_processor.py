@@ -73,7 +73,7 @@ class EventProcessor(
             "checkpoint_store", None
         )  # type: Optional[CheckpointStore]
         self._initial_event_position = kwargs.get(
-            "initial_event_position", "-1"
+            "initial_event_position", "@latest"
         )  # type: Union[str, int, datetime, Dict[str, Any]]
         self._initial_event_position_inclusive = kwargs.get(
             "initial_event_position_inclusive", False

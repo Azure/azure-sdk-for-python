@@ -52,7 +52,7 @@ class EventProcessor(
         *,
         partition_id: Optional[str] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
-        initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "-1",
+        initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
         initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
         load_balancing_interval: float = 10.0,
         owner_level: Optional[int] = None,

@@ -285,7 +285,7 @@ class EventHubConsumerClient(ClientBase):
                 _LOGGER.warning(error)
                 raise ValueError(error)
 
-            initial_event_position = kwargs.pop("starting_position", None)
+            initial_event_position = kwargs.pop("starting_position", "@latest")
             initial_event_position_inclusive = kwargs.pop(
                 "starting_position_inclusive", False
             )
