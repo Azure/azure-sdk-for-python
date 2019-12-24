@@ -291,6 +291,7 @@ async def test_partition_processor_process_events_error(connstr_senders):
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
+                                     initial_event_position="-1",
                                      partition_initialize_handler=None,
                                      partition_close_handler=partition_close_handler,
                                      load_balancing_interval=1)
