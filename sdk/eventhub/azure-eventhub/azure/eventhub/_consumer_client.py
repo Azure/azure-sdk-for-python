@@ -218,6 +218,12 @@ class EventHubConsumerClient(ClientBase):
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
          making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
+        :keyword starting_position: Start receiving from this event position
+         if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
+         a dict with partition ID as the key and position as the value for individual partitions, or a single
+         value for all partitions. The value type can be str, int, datetime.datetime. Also supported are the
+         values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
+        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
         :keyword on_error: The callback function which would be called when there an error occurs during receiving.
          The callback takes two parameters: `partition_context` which contains partition information
          and `error` being the exception. The callback should be defined like so: `on_error(partition_context, error)`.
