@@ -58,7 +58,6 @@ setup(
     ],
     install_requires=[
         'opentelemetry-api>=0.3a0',
-        'opentelemetry-azure-monitor-exporter>=0.1a0',
         'azure-core<2.0.0,>=1.0.0',
     ],
     extras_require={

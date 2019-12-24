@@ -52,6 +52,8 @@ with tracer.start_as_current_span(name="MyApplication"):
     client.delete_container('mycontainer')  # Call will be traced
 ```
 
+Azure Exporter can be found in the package `opentelemetry-azure-monitor-exporter`
+
 
 ## Troubleshooting
 
