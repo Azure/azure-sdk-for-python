@@ -225,10 +225,12 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         # type: (Span) -> None
         """Not supported by OpenTelemetry.
         """
-        raise NotImplementedError("set_current_span is not supported by OpenTelemetry plugin. Use change_context instead.")
+        raise NotImplementedError(
+            "set_current_span is not supported by OpenTelemetry plugin. Use change_context instead."
+        )
 
     @classmethod
-    def set_current_tracer(cls, tracer):
+    def set_current_tracer(cls, _):
         # type: (Tracer) -> None
         """
         Set the given tracer as the current tracer in the execution context.
@@ -236,7 +238,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :type tracer: :class: OpenTelemetry.trace.Tracer
         """
         # Do nothing, if you're able to get two tracer with OpenTelemetry that's a surprise!
-        pass
 
     @classmethod
     def with_current_context(cls, func):
