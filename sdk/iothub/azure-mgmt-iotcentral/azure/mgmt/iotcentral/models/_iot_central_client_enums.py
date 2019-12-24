@@ -9,19 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class AppPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`App <azure.mgmt.iotcentral.models.App>` object
-    """
+class AppSku(str, Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[App]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(AppPaged, self).__init__(*args, **kwargs)
+    f1 = "F1"
+    s1 = "S1"
+    st0 = "ST0"
+    st1 = "ST1"
+    st2 = "ST2"
