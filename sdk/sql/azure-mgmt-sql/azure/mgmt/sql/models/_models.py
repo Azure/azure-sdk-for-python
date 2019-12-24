@@ -7252,6 +7252,9 @@ class SensitivityLabel(ProxyResource):
      recommended sensitivity label only. Specifies whether the sensitivity
      recommendation on this column is disabled (dismissed) or not.
     :vartype is_disabled: bool
+    :param rank: Possible values include: 'None', 'Low', 'Medium', 'High',
+     'Critical'
+    :type rank: str or ~azure.mgmt.sql.models.SensitivityLabelRank
     """
 
     _validation = {
@@ -7270,6 +7273,7 @@ class SensitivityLabel(ProxyResource):
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
         'information_type_id': {'key': 'properties.informationTypeId', 'type': 'str'},
         'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
+        'rank': {'key': 'properties.rank', 'type': 'SensitivityLabelRank'},
     }
 
     def __init__(self, **kwargs):
@@ -7279,6 +7283,7 @@ class SensitivityLabel(ProxyResource):
         self.information_type = kwargs.get('information_type', None)
         self.information_type_id = kwargs.get('information_type_id', None)
         self.is_disabled = None
+        self.rank = kwargs.get('rank', None)
 
 
 class Server(TrackedResource):

@@ -504,6 +504,15 @@ class RestorePointType(str, Enum):
     discrete = "DISCRETE"
 
 
+class SensitivityLabelRank(str, Enum):
+
+    none = "None"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+    critical = "Critical"
+
+
 class ManagementOperationState(str, Enum):
 
     pending = "Pending"
