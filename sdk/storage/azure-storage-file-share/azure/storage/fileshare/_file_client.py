@@ -1054,6 +1054,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             )
             return {
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
+                'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
         except StorageErrorException as error:
             process_storage_error(error)
@@ -1077,6 +1078,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         try_close = True
         continuation_token = None
         total_closed = 0
+        total_failed = 0
         while try_close:
             try:
                 response = self._client.file.force_close_handles(
@@ -1092,8 +1094,10 @@ class ShareFileClient(StorageAccountHostsMixin):
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
             total_closed += response.get('number_of_handles_closed', 0)
+            total_failed += response.get('number_of_handles_failed', 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
         return {
             'closed_handles_count': total_closed,
+            'failed_handles_count': total_failed
         }
