@@ -21,6 +21,8 @@ from .. import models
 class NamespacesOperations(object):
     """NamespacesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -93,7 +95,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckAvailabilityResult', response)
 
@@ -163,7 +164,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('NamespaceResource', response)
         if response.status_code == 201:
@@ -237,7 +237,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('NamespaceResource', response)
 
@@ -379,7 +378,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('NamespaceResource', response)
 
@@ -455,7 +453,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
 
@@ -578,7 +575,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
 
@@ -607,8 +603,7 @@ class NamespacesOperations(object):
          ~azure.mgmt.notificationhubs.models.NamespaceResourcePaged[~azure.mgmt.notificationhubs.models.NamespaceResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -638,6 +633,11 @@ class NamespacesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -648,12 +648,10 @@ class NamespacesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.NamespaceResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.NamespaceResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.NamespaceResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces'}
@@ -673,8 +671,7 @@ class NamespacesOperations(object):
          ~azure.mgmt.notificationhubs.models.NamespaceResourcePaged[~azure.mgmt.notificationhubs.models.NamespaceResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']
@@ -703,6 +700,11 @@ class NamespacesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -713,12 +715,10 @@ class NamespacesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.NamespaceResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.NamespaceResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.NamespaceResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.NotificationHubs/namespaces'}
@@ -742,8 +742,7 @@ class NamespacesOperations(object):
          ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_authorization_rules.metadata['url']
@@ -774,6 +773,11 @@ class NamespacesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -784,12 +788,10 @@ class NamespacesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules'}
@@ -851,7 +853,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SharedAccessAuthorizationRuleListResult', response)
 
@@ -928,7 +929,6 @@ class NamespacesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ResourceListKeys', response)
 
