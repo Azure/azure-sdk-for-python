@@ -36,17 +36,7 @@ class CliCredential(object):
 
             command.extend(['--resource', resource])
 
-        try:
-            get_access_token_stdout = check_output(command, shell=_USE_SHELL, stderr=STDOUT)
-        except CalledProcessError as e:
-            e_msg = e.output if _IS_PY2 else e.output.decode('utf-8')
-            if self._WINDOWS_CMD_NOT_FOUND in e_msg or self._LINUX_CMD_NOT_FOUND in e_msg:
-                raise BaseException(self._CLI_NOT_INSTALLED_ERR)
-            else:
-                raise ClientAuthenticationError(e_msg)
-        except:
-            raise BaseException(self._CLI_NOT_INSTALLED_ERR) # azure cli not installed in mac os
-
+        get_access_token_stdout = self._get_proc_stdout(command)
         get_access_token_object = json.loads(get_access_token_stdout)
         access_token = get_access_token_object['accessToken']
         expires_on = int((
@@ -56,6 +46,20 @@ class CliCredential(object):
             ).total_seconds() + time.time())
 
         return AccessToken(access_token, expires_on)
+
+    def _get_proc_stdout(self, command):
+        try:
+            _stdout = check_output(command, shell=_USE_SHELL, stderr=STDOUT)
+        except CalledProcessError as e:
+            _stderr = e.output if _IS_PY2 else e.output.decode('utf-8')
+            if self._WINDOWS_CMD_NOT_FOUND in _stderr or self._LINUX_CMD_NOT_FOUND in _stderr:
+                raise BaseException(self._CLI_NOT_INSTALLED_ERR)
+            else:
+                raise ClientAuthenticationError(_stderr)
+        except:
+            raise BaseException(self._CLI_NOT_INSTALLED_ERR) # azure cli not installed in mac os
+        else:
+            return _stdout
 
     @classmethod
     def __microseconds_parsed(cls, timestamp):
