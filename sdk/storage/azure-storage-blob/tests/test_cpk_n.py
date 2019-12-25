@@ -80,6 +80,7 @@ class StorageCPKNTest(StorageTestCase):
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_put_block_and_put_block_list(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -121,6 +122,7 @@ class StorageCPKNTest(StorageTestCase):
         self._teardown(bsc)
 
     @pytest.mark.live_test_only
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # parallel operation
@@ -160,6 +162,7 @@ class StorageCPKNTest(StorageTestCase):
         self._teardown(bsc)
 
     @pytest.mark.live_test_only
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
         # problem with the recording framework can only run live
@@ -195,6 +198,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_single_chunk(self, resource_group, location, storage_account, storage_account_key):
         # Act
@@ -227,6 +231,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_put_block_from_url_and_commit_with_cpk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -296,6 +301,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_append_block(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -328,6 +334,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.readall(), b'AAABBBCCC')
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -379,6 +386,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_append_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -413,6 +421,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_update_page(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -450,6 +459,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_update_page_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -504,6 +514,7 @@ class StorageCPKNTest(StorageTestCase):
         self._teardown(bsc)
 
     @pytest.mark.live_test_only
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # Act
@@ -538,6 +549,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_get_set_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -580,6 +592,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertFalse('Up' in md)
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -607,6 +620,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertIsNotNone(blob_snapshot)
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -632,6 +646,7 @@ class StorageCPKNTest(StorageTestCase):
 
         self._teardown(bsc)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_container_with_default_cpk_n(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -655,6 +670,7 @@ class StorageCPKNTest(StorageTestCase):
 
         container_client.delete_container()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_container_with_default_cpk_n_deny_override(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
