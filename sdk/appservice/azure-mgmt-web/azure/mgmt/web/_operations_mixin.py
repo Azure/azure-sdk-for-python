@@ -46,6 +46,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -80,6 +82,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -116,6 +120,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -150,6 +156,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -186,6 +194,8 @@ class WebSiteManagementClientOperationsMixin(object):
         api_version = self._get_api_version('list_billing_meters')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -233,6 +243,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -267,6 +279,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -303,6 +317,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -337,6 +353,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -371,6 +389,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -411,6 +431,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -447,6 +469,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -486,6 +510,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -526,6 +552,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -545,7 +573,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         :param validate_container_settings_request:
         :type validate_container_settings_request:
-         ~azure.mgmt.web.v2018_02_01.models.ValidateContainerSettingsRequest
+         ~azure.mgmt.web.v2018_11_01.models.ValidateContainerSettingsRequest
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
@@ -557,12 +585,14 @@ class WebSiteManagementClientOperationsMixin(object):
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_11_01.models.DefaultErrorResponseException>`
         
         """
         api_version = self._get_api_version('validate_container_settings')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -601,6 +631,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
@@ -640,6 +672,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2016_03_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:

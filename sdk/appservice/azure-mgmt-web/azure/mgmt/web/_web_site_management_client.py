@@ -52,7 +52,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
             'billing_meters': '2016-03-01',
-            'validate_container_settings': '2018-02-01',
+            'validate_container_settings': '2018-11-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -115,6 +115,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2015-08-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2015_08_01.operations.AppServiceCertificateOrdersOperations>`
            * 2018-02-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2018_02_01.operations.AppServiceCertificateOrdersOperations>`
+           * 2018-11-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2018_11_01.operations.AppServiceCertificateOrdersOperations>`
            * 2019-08-01: :class:`AppServiceCertificateOrdersOperations<azure.mgmt.web.v2019_08_01.operations.AppServiceCertificateOrdersOperations>`
         """
         api_version = self._get_api_version('app_service_certificate_orders')
@@ -122,6 +123,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2015_08_01.operations import AppServiceCertificateOrdersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import AppServiceCertificateOrdersOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import AppServiceCertificateOrdersOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import AppServiceCertificateOrdersOperations as OperationClass
         else:
@@ -134,6 +137,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-09-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2016_09_01.operations.AppServiceEnvironmentsOperations>`
            * 2018-02-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2018_02_01.operations.AppServiceEnvironmentsOperations>`
+           * 2018-11-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2018_11_01.operations.AppServiceEnvironmentsOperations>`
            * 2019-08-01: :class:`AppServiceEnvironmentsOperations<azure.mgmt.web.v2019_08_01.operations.AppServiceEnvironmentsOperations>`
         """
         api_version = self._get_api_version('app_service_environments')
@@ -141,6 +145,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_09_01.operations import AppServiceEnvironmentsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import AppServiceEnvironmentsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import AppServiceEnvironmentsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import AppServiceEnvironmentsOperations as OperationClass
         else:
@@ -153,6 +159,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-09-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2016_09_01.operations.AppServicePlansOperations>`
            * 2018-02-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2018_02_01.operations.AppServicePlansOperations>`
+           * 2018-11-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2018_11_01.operations.AppServicePlansOperations>`
            * 2019-08-01: :class:`AppServicePlansOperations<azure.mgmt.web.v2019_08_01.operations.AppServicePlansOperations>`
         """
         api_version = self._get_api_version('app_service_plans')
@@ -160,6 +167,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_09_01.operations import AppServicePlansOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import AppServicePlansOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import AppServicePlansOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import AppServicePlansOperations as OperationClass
         else:
@@ -185,6 +194,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2015-08-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2015_08_01.operations.CertificateRegistrationProviderOperations>`
            * 2018-02-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2018_02_01.operations.CertificateRegistrationProviderOperations>`
+           * 2018-11-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2018_11_01.operations.CertificateRegistrationProviderOperations>`
            * 2019-08-01: :class:`CertificateRegistrationProviderOperations<azure.mgmt.web.v2019_08_01.operations.CertificateRegistrationProviderOperations>`
         """
         api_version = self._get_api_version('certificate_registration_provider')
@@ -192,6 +202,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2015_08_01.operations import CertificateRegistrationProviderOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import CertificateRegistrationProviderOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import CertificateRegistrationProviderOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import CertificateRegistrationProviderOperations as OperationClass
         else:
@@ -226,6 +238,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2016_03_01.operations.DeletedWebAppsOperations>`
            * 2018-02-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2018_02_01.operations.DeletedWebAppsOperations>`
+           * 2018-11-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2018_11_01.operations.DeletedWebAppsOperations>`
            * 2019-08-01: :class:`DeletedWebAppsOperations<azure.mgmt.web.v2019_08_01.operations.DeletedWebAppsOperations>`
         """
         api_version = self._get_api_version('deleted_web_apps')
@@ -233,6 +246,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_03_01.operations import DeletedWebAppsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DeletedWebAppsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import DeletedWebAppsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DeletedWebAppsOperations as OperationClass
         else:
@@ -245,6 +260,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2016_03_01.operations.DiagnosticsOperations>`
            * 2018-02-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2018_02_01.operations.DiagnosticsOperations>`
+           * 2018-11-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2018_11_01.operations.DiagnosticsOperations>`
            * 2019-08-01: :class:`DiagnosticsOperations<azure.mgmt.web.v2019_08_01.operations.DiagnosticsOperations>`
         """
         api_version = self._get_api_version('diagnostics')
@@ -252,6 +268,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_03_01.operations import DiagnosticsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DiagnosticsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import DiagnosticsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DiagnosticsOperations as OperationClass
         else:
@@ -264,6 +282,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2015-04-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2015_04_01.operations.DomainRegistrationProviderOperations>`
            * 2018-02-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2018_02_01.operations.DomainRegistrationProviderOperations>`
+           * 2018-11-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2018_11_01.operations.DomainRegistrationProviderOperations>`
            * 2019-08-01: :class:`DomainRegistrationProviderOperations<azure.mgmt.web.v2019_08_01.operations.DomainRegistrationProviderOperations>`
         """
         api_version = self._get_api_version('domain_registration_provider')
@@ -271,6 +290,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2015_04_01.operations import DomainRegistrationProviderOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DomainRegistrationProviderOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import DomainRegistrationProviderOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DomainRegistrationProviderOperations as OperationClass
         else:
@@ -283,6 +304,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2015-04-01: :class:`DomainsOperations<azure.mgmt.web.v2015_04_01.operations.DomainsOperations>`
            * 2018-02-01: :class:`DomainsOperations<azure.mgmt.web.v2018_02_01.operations.DomainsOperations>`
+           * 2018-11-01: :class:`DomainsOperations<azure.mgmt.web.v2018_11_01.operations.DomainsOperations>`
            * 2019-08-01: :class:`DomainsOperations<azure.mgmt.web.v2019_08_01.operations.DomainsOperations>`
         """
         api_version = self._get_api_version('domains')
@@ -290,6 +312,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2015_04_01.operations import DomainsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DomainsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import DomainsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DomainsOperations as OperationClass
         else:
@@ -302,6 +326,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`ProviderOperations<azure.mgmt.web.v2016_03_01.operations.ProviderOperations>`
            * 2018-02-01: :class:`ProviderOperations<azure.mgmt.web.v2018_02_01.operations.ProviderOperations>`
+           * 2018-11-01: :class:`ProviderOperations<azure.mgmt.web.v2018_11_01.operations.ProviderOperations>`
            * 2019-08-01: :class:`ProviderOperations<azure.mgmt.web.v2019_08_01.operations.ProviderOperations>`
         """
         api_version = self._get_api_version('provider')
@@ -309,6 +334,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_03_01.operations import ProviderOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ProviderOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import ProviderOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import ProviderOperations as OperationClass
         else:
@@ -321,6 +348,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`RecommendationsOperations<azure.mgmt.web.v2016_03_01.operations.RecommendationsOperations>`
            * 2018-02-01: :class:`RecommendationsOperations<azure.mgmt.web.v2018_02_01.operations.RecommendationsOperations>`
+           * 2018-11-01: :class:`RecommendationsOperations<azure.mgmt.web.v2018_11_01.operations.RecommendationsOperations>`
            * 2019-08-01: :class:`RecommendationsOperations<azure.mgmt.web.v2019_08_01.operations.RecommendationsOperations>`
         """
         api_version = self._get_api_version('recommendations')
@@ -328,6 +356,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_03_01.operations import RecommendationsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import RecommendationsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import RecommendationsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import RecommendationsOperations as OperationClass
         else:
@@ -340,6 +370,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-03-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2016_03_01.operations.ResourceHealthMetadataOperations>`
            * 2018-02-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2018_02_01.operations.ResourceHealthMetadataOperations>`
+           * 2018-11-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2018_11_01.operations.ResourceHealthMetadataOperations>`
            * 2019-08-01: :class:`ResourceHealthMetadataOperations<azure.mgmt.web.v2019_08_01.operations.ResourceHealthMetadataOperations>`
         """
         api_version = self._get_api_version('resource_health_metadata')
@@ -347,6 +378,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_03_01.operations import ResourceHealthMetadataOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ResourceHealthMetadataOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import ResourceHealthMetadataOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import ResourceHealthMetadataOperations as OperationClass
         else:
@@ -359,6 +392,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2015-04-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2015_04_01.operations.TopLevelDomainsOperations>`
            * 2018-02-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2018_02_01.operations.TopLevelDomainsOperations>`
+           * 2018-11-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2018_11_01.operations.TopLevelDomainsOperations>`
            * 2019-08-01: :class:`TopLevelDomainsOperations<azure.mgmt.web.v2019_08_01.operations.TopLevelDomainsOperations>`
         """
         api_version = self._get_api_version('top_level_domains')
@@ -366,6 +400,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2015_04_01.operations import TopLevelDomainsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import TopLevelDomainsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import TopLevelDomainsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import TopLevelDomainsOperations as OperationClass
         else:
@@ -378,6 +414,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
            * 2016-08-01: :class:`WebAppsOperations<azure.mgmt.web.v2016_08_01.operations.WebAppsOperations>`
            * 2018-02-01: :class:`WebAppsOperations<azure.mgmt.web.v2018_02_01.operations.WebAppsOperations>`
+           * 2018-11-01: :class:`WebAppsOperations<azure.mgmt.web.v2018_11_01.operations.WebAppsOperations>`
            * 2019-08-01: :class:`WebAppsOperations<azure.mgmt.web.v2019_08_01.operations.WebAppsOperations>`
         """
         api_version = self._get_api_version('web_apps')
@@ -385,6 +422,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_08_01.operations import WebAppsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import WebAppsOperations as OperationClass
+        elif api_version == '2018-11-01':
+            from .v2018_11_01.operations import WebAppsOperations as OperationClass
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebAppsOperations as OperationClass
         else:
