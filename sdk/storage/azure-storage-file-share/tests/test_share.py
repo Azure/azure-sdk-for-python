@@ -306,6 +306,27 @@ class StorageShareTest(FileTestCase):
         self._delete_shares()
 
     @record
+    def test_list_shares_no_options_for_premium_account(self):
+        # Arrange
+        file_url = self.get_premium_file_url()
+        credentials = self.get_premium_account_shared_key_credential()
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+
+        self._create_share()
+        # Act
+        shares = list(self.fsc.list_shares())
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 1)
+        self.assertIsNotNone(shares[0])
+        self.assertIsNotNone(shares[0].provisioned_iops)
+        self.assertIsNotNone(shares[0].provisioned_ingress_mbps)
+        self.assertIsNotNone(shares[0].provisioned_egress_mbps)
+        self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
+        self._delete_shares()
+
+    @record
     def test_list_shares_with_snapshot(self):
         # Arrange
         #share = self._get_share_reference()
@@ -448,6 +469,27 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertEqual(props.quota, 1)
+        self._delete_shares()
+
+    @record
+    def test_get_share_properties_for_premium_account(self):
+        # Arrange
+        file_url = self.get_premium_file_url()
+        credentials = self.get_premium_account_shared_key_credential()
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+
+        share = self._create_share()
+
+        # Act
+        props = share.get_share_properties()
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertIsNotNone(props.quota)
+        self.assertIsNotNone(props.provisioned_iops)
+        self.assertIsNotNone(props.provisioned_ingress_mbps)
+        self.assertIsNotNone(props.provisioned_egress_mbps)
+        self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
         self._delete_shares()
 
     @record

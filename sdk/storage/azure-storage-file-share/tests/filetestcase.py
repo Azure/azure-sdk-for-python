@@ -144,6 +144,12 @@ class FileTestCase(unittest.TestCase):
             "account_key": self.settings.STORAGE_ACCOUNT_KEY
         }
 
+    def get_premium_account_shared_key_credential(self):
+        return {
+            "account_name": self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
+            "account_key": self.settings.PREMIUM_STORAGE_ACCOUNT_KEY
+        }
+
     def get_remote_shared_key_credential(self):
         return {
             "account_name": self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
@@ -154,6 +160,12 @@ class FileTestCase(unittest.TestCase):
         return "{}://{}.file.core.windows.net".format(
             self.settings.PROTOCOL,
             self.settings.STORAGE_ACCOUNT_NAME
+        )
+
+    def get_premium_file_url(self):
+        return "{}://{}.file.core.windows.net".format(
+            self.settings.PROTOCOL,
+            self.settings.PREMIUM_STORAGE_ACCOUNT_NAME
         )
 
     def get_remote_file_url(self):
