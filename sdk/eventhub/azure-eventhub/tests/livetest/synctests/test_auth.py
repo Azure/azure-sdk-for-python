@@ -40,7 +40,7 @@ def test_client_secret_credential(aad_credential, live_eventhub):
         worker = threading.Thread(target=consumer_client.receive, args=(on_event,),
                                   kwargs={"partition_id": '0'})
         worker.start()
-        time.sleep(6)
+        time.sleep(10)
 
     worker.join()
     assert on_event.called is True

@@ -19,7 +19,8 @@ async def test_claim_new_ownership():
         "owner_id": "owner_0"
     }
     checkpoint_store = InMemoryCheckpointStore()
-    await checkpoint_store.claim_ownership([ownership])
+    claimed_ownership = await checkpoint_store.claim_ownership([ownership])
+    assert len(claimed_ownership) == 1
     listed_ownership = await checkpoint_store.list_ownership(TEST_NAMESPACE, TEST_EVENTHUB, TEST_CONSUMER_GROUP)
 
     assert listed_ownership[0] == ownership
@@ -73,7 +74,8 @@ async def test_claim_two_ownerships():
         "owner_id": "owner_1"
     }
     checkpoint_store = InMemoryCheckpointStore()
-    await checkpoint_store.claim_ownership([ownership_0, ownership_1])
+    claimed_ownership = await checkpoint_store.claim_ownership([ownership_0, ownership_1])
+    assert len(claimed_ownership) == 2
     listed_ownership0 = await checkpoint_store.list_ownership(TEST_NAMESPACE, TEST_EVENTHUB, TEST_CONSUMER_GROUP)
     listed_ownership1 = await checkpoint_store.list_ownership(TEST_NAMESPACE, TEST_EVENTHUB, TEST_CONSUMER_GROUP+"1")
     assert listed_ownership0[0]["consumer_group"] == TEST_CONSUMER_GROUP
