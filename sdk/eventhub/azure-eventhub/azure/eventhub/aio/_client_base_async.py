@@ -169,10 +169,9 @@ class ClientBaseAsync(ClientBase):
                 status_code = response.application_properties[b"status-code"]
                 if status_code < 400:
                     return response
-                else:
-                    raise errors.AuthenticationException(
-                        "Management request error. Status code: {}".format(status_code)
-                    )
+                raise errors.AuthenticationException(
+                    "Management request error. Status code: {}".format(status_code)
+                )
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await _handle_exception(exception, self)
                 await self._backoff_async(
