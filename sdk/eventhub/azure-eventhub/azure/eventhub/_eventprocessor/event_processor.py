@@ -112,6 +112,30 @@ class EventProcessor(
         # type: () -> str
         return "EventProcessor: id {}".format(self._id)
 
+    def _process_error(self, partition_context, err):
+        _LOGGER.warning(
+            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+            " has met an error. The exception is %r.",
+            self._id,
+            self._eventhub_name,
+            partition_context.partition_id if partition_context else None,
+            self._consumer_group,
+            err,
+        )
+        if self._error_handler:
+            try:
+                self._error_handler(partition_context, err)
+            except Exception as err_again:  # pylint:disable=broad-except
+                _LOGGER.warning(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                    "An error occurred while running process_error(). The exception is %r.",
+                    self._id,
+                    partition_context.eventhub_name,
+                    partition_context.partition_id,
+                    partition_context.consumer_group,
+                    err_again,
+                )
+
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         # type: (Iterable[str]) -> None
         with self._lock:
@@ -161,29 +185,10 @@ class EventProcessor(
                         ),
                     )
                     if self._partition_initialize_handler:
-                        self._handle_callback(
-                            self._partition_initialize_handler,
-                            self._partition_contexts[partition_id],
-                        )
-
-    def _handle_callback(self, callback, *args):
-        # type: (Callable[..., None], Any) -> None
-        try:
-            callback(*args)
-        except Exception as exp:  # pylint:disable=broad-except
-            partition_context = args[0]  # type: PartitionContext
-            if self._error_handler and callback != self._error_handler:
-                self._handle_callback(self._error_handler, partition_context, exp)
-            else:
-                _LOGGER.warning(
-                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                    " has another error during running process_error(). The exception is %r.",
-                    self._id,
-                    self._eventhub_name,
-                    partition_context.partition_id if partition_context else None,
-                    self._consumer_group,
-                    exp,
-                )
+                        try:
+                            self._partition_initialize_handler(self._partition_contexts[partition_id])
+                        except Exception as err:  # pylint:disable=broad-except
+                            self._process_error(self._partition_contexts[partition_id], err)
 
     def _on_event_received(self, partition_context, event):
         # type: (PartitionContext, EventData) -> None
@@ -238,7 +243,7 @@ class EventProcessor(
                     self._consumer_group,
                     self._load_balancing_interval,
                 )
-                self._handle_callback(self._error_handler, None, err)  # type: ignore
+                self._process_error(None, err)  # type: ignore
                 # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                 # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
                 # They're swallowed here to retry every self._load_balancing_interval seconds.
@@ -267,11 +272,20 @@ class EventProcessor(
         )
 
         if self._partition_close_handler:
-            self._handle_callback(
-                self._partition_close_handler,
-                self._partition_contexts[partition_id],
-                reason,
-            )
+            try:
+                self._partition_close_handler(self._partition_contexts[partition_id], reason)
+            except Exception as err:  # pylint:disable=broad-except
+                _LOGGER.warning(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                    "An error occurred while running close(). The exception is %r.",
+                    self._id,
+                    self._partition_contexts[partition_id].eventhub_name,
+                    self._partition_contexts[partition_id].partition_id,
+                    self._partition_contexts[partition_id].consumer_group,
+                    err,
+                )
+                self._process_error(self._partition_contexts[partition_id], err)
+
         self._ownership_manager.release_ownership(partition_id)
 
     def start(self):
@@ -307,11 +321,7 @@ class EventProcessor(
                         error,
                     )
                     if self._error_handler:
-                        self._handle_callback(
-                            self._error_handler,
-                            self._partition_contexts[partition_id],
-                            error,
-                        )
+                        self._process_error(self._partition_contexts[partition_id], error)
                     self._close_consumer(
                         partition_id, consumer, CloseReason.OWNERSHIP_LOST
                     )

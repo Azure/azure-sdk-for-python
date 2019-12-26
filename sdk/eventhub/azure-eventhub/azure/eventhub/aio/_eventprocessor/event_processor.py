@@ -166,16 +166,16 @@ class EventProcessor(
     async def _close_partition(
         self, partition_context: PartitionContext, reason: CloseReason
     ) -> None:
+        _LOGGER.info(
+            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+            " is being closed. Reason is: %r",
+            self._id,
+            partition_context.eventhub_name,
+            partition_context.partition_id,
+            partition_context.consumer_group,
+            reason,
+        )
         if self._partition_close_handler:
-            _LOGGER.info(
-                "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                " is being closed. Reason is: %r",
-                self._id,
-                partition_context.eventhub_name,
-                partition_context.partition_id,
-                partition_context.consumer_group,
-                reason,
-            )
             try:
                 await self._partition_close_handler(partition_context, reason)
             except Exception as err:  # pylint:disable=broad-except
@@ -188,6 +188,7 @@ class EventProcessor(
                     partition_context.consumer_group,
                     err,
                 )
+                await self._process_error(partition_context, err)
 
     async def _on_event_received(
         self, partition_context: PartitionContext, event: EventData
@@ -243,6 +244,7 @@ class EventProcessor(
                         self._consumer_group,
                         err,
                     )
+                    await self._process_error(partition_context, err)
 
             while self._running:
                 try:
