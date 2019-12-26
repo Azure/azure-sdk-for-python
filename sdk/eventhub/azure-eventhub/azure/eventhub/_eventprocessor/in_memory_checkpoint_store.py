@@ -122,6 +122,7 @@ class InMemoryCheckpointStore(CheckpointStore):
                 self.ownerships_trie.set_ele(
                     ownership
                 )
+                result.append(ownership)
         return result
 
     def update_checkpoint(self, checkpoint):
