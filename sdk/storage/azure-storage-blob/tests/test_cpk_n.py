@@ -21,7 +21,8 @@ from azure.storage.blob import (
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
-
+# The encryption scope are pre-created using management plane tool ArmClient.
+# So we can directly use the scope in the test.
 TEST_ENCRYPTION_KEY_SCOPE = CpkScopeInfo(encryption_scope="antjoscope1")
 TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = ContainerCpkScopeInfo(default_encryption_scope="containerscope")
 TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE = ContainerCpkScopeInfo(default_encryption_scope="containerscope",
@@ -84,8 +85,6 @@ class StorageCPKNTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_block_and_put_block_list(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        # test chunking functionality by reducing the size of each chunk,
-        # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
             self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,

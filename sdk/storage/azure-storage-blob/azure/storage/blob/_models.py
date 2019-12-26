@@ -1022,11 +1022,11 @@ class ContainerCpkScopeInfo(ContainerCpkScopeInfoGen):
     """This scope is then used implicitly for all future writes within the container,
     but can be overridden per-request via explicit request headers.
 
-    :param default_encryption_scope: Optional.  Version 2019-02-02 and later.
+    :param default_encryption_scope: Optional. Version 2019-07-07 and later.
         Specifies the default encryption scope to set on the container and use for
         all future writes.
     :type default_encryption_scope: str
-    :param deny_encryption_scope_override: Optional.  Version 2019-02-02 and
+    :param deny_encryption_scope_override: Optional. Version 2019-07-07 and
         newer.  If true, prevents any request from specifying a different
         encryption scope than the scope set on the container.
     :type deny_encryption_scope_override: bool
@@ -1041,7 +1041,7 @@ class ContainerCpkScopeInfo(ContainerCpkScopeInfoGen):
 class CpkScopeInfo(CpkScopeInfoGen):
     """This indicates the encryption scope that should be used to encrypt the application data
 
-    :param encryption_scope: Optional. Version 2019-02-02 and later.
+    :param encryption_scope: Optional. Version 2019-07-07 and later.
          Specifies the name of the encryption scope to use to encrypt the data
          provided in the request. If not specified, encryption is performed with
          the default account encryption scope.  For more information, see
