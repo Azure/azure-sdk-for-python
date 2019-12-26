@@ -25,8 +25,9 @@ from azure.storage.fileshare import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode
-)
+    StorageErrorCode,
+    CopyFileSmbInfo)
+from azure.storage.fileshare._parser import _datetime_to_str
 from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareServiceClient,
@@ -1043,6 +1044,86 @@ class StorageFileAsyncTest(FileTestCase):
     def test_copy_file_with_existing_file_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_file_with_existing_file_async())
+
+    async def _test_copy_file_with_specifying_acl_copy_behavior_attributes_async(self):
+        # Arrange
+        source_client = await self._create_file()
+        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
+                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
+                                "S-1-5-21-397955417-626881126-188441444-3053964)"
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
+
+        file_creation_time = "2017-05-10T17:52:33.9551860Z"
+        file_attributes = "Temporary|NoScrubData"
+        smb_info = CopyFileSmbInfo(ignore_read_only=True,
+                                   file_attributes=file_attributes,
+                                   file_creation_time=file_creation_time)
+
+        # Act
+        copy = await file_client.start_copy_from_url(source_client.url,
+                                                     file_permission=user_given_permission,
+                                                     file_permission_copy_mode="override",
+                                                     copy_file_smb_info=smb_info
+                                                     )
+
+        # Assert
+        dest_prop = await file_client.get_file_properties()
+        # to make sure the attributes are the same as the set ones
+        self.assertEqual(_datetime_to_str(dest_prop['creation_time']),
+                         file_creation_time)
+        self.assertIn('Temporary', dest_prop['file_attributes'])
+        self.assertIn('NoScrubData', dest_prop['file_attributes'])
+
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = await file_client.download_file()
+        content = await copy_file.readall()
+        self.assertEqual(content, self.short_byte_data)
+
+    @record
+    def test_copy_file_with_specifying_acl_copy_behavior_attributes_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_copy_file_with_specifying_acl_copy_behavior_attributes_async())
+
+    async def _test_copy_file_with_specifying_acl_and_attributes_from_source_async(self):
+        # Arrange
+        source_client = await self._create_file()
+        source_prop = await source_client.get_file_properties()
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            transport=AiohttpTestTransport())
+
+        # Act
+        copy = await file_client.start_copy_from_url(source_client.url,
+                                                     file_permission_copy_mode="source")
+
+        # Assert
+        dest_prop = await file_client.get_file_properties()
+        # to make sure the acl is copied from source
+        self.assertEqual(source_prop['permission_key'], dest_prop['permission_key'])
+
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = await file_client.download_file()
+        content = await copy_file.readall()
+        self.assertEqual(content, self.short_byte_data)
+
+    @record
+    def test_copy_file_with_specifying_acl_and_attributes_from_source_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_copy_file_with_specifying_acl_and_attributes_from_source_async())
 
     async def _test_copy_file_async_private_file_async(self):
         # Arrange
