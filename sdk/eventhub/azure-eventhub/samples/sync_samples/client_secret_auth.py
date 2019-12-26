@@ -32,3 +32,5 @@ with producer:
             # New EventDataBatch object can be created here to send more data
             break
     producer.send_batch(event_data_batch)
+
+print('Send finished.')

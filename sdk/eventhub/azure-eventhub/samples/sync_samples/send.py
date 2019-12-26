@@ -17,6 +17,7 @@ import time
 import os
 from azure.eventhub import EventHubProducerClient, EventData
 
+
 EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
@@ -27,13 +28,6 @@ with producer:
     # Without specifying partition_id or partition_key
     # The events will be distributed to available partitions via round-robin.
     event_data_batch = producer.create_batch(max_size_in_bytes=10000)
-
-    # Specifying partition_id
-    # event_data_batch = producer.create_batch(partition_id='0')
-
-    # Specifying partition_key
-    # event_data_batch = producer.create_batch(partition_key='pkey')
-
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -42,6 +36,16 @@ with producer:
             # New EventDataBatch object can be created here to send more data
             break
 
+    # Specifying partition_id
+    event_data_batch_with_partition_id = producer.create_batch(partition_id='0')
+    event_data_batch_with_partition_id.add(EventData('Message will be sent to target-id partition'))
+
+    # Specifying partition_key
+    event_data_batch_with_partition_key = producer.create_batch(partition_key='pkey')
+    event_data_batch_with_partition_key.add(EventData('Message will be sent to target-key partition'))
+
     producer.send_batch(event_data_batch)
+    producer.send_batch(event_data_batch_with_partition_id)
+    producer.send_batch(event_data_batch_with_partition_key)
 
 print("Send messages in {} seconds".format(time.time() - start_time))
