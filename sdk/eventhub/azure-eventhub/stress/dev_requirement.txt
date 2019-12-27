@@ -1,0 +1,6 @@
+psutil
+--pre azure-eventhub
+azure-servicebus
+azure-storage-blob
+azure-eventhub-checkpointstoreblob
+azure-eventhub-checkpointstoreblob-aio
