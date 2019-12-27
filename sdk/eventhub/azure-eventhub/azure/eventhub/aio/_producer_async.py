@@ -66,7 +66,7 @@ class EventHubProducer(
         self.running = False
         self.closed = False
 
-        self._loop = kwargs.get("loop", None)
+        self._loop = kwargs.get("loop")
         self._max_message_size_on_link = None
         self._client = client
         self._target = target

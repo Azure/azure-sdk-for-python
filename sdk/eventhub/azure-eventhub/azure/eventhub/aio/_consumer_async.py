@@ -81,7 +81,7 @@ class EventHubConsumer(
         self._on_event_received = kwargs[
             "on_event_received"
         ]  # type: Callable[[EventData], Awaitable[None]]
-        self._loop = kwargs.get("loop", None)
+        self._loop = kwargs.get("loop")
         self._client = client
         self._source = source
         self._offset = event_position
