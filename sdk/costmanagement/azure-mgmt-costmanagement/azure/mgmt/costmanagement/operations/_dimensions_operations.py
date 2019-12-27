@@ -18,11 +18,13 @@ from .. import models
 class DimensionsOperations(object):
     """DimensionsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2019-01-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-11-01. Constant value: "2019-11-01".
     """
 
     models = models
@@ -32,11 +34,11 @@ class DimensionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
-    def list_by_subscription(
+    def list(
             self, scope, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Lists the dimensions by the defined scope.
 
@@ -49,9 +51,15 @@ class DimensionsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
+         for EnrollmentAccount scope,
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope, and
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
+         specific for partners.
         :type scope: str
         :param filter: May be used to filter dimensions by
          properties/category, properties/usageStart, properties/usageEnd.
@@ -80,11 +88,10 @@ class DimensionsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_subscription.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -118,6 +125,11 @@ class DimensionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -126,12 +138,10 @@ class DimensionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DimensionPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.DimensionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.DimensionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/dimensions'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/dimensions'}
