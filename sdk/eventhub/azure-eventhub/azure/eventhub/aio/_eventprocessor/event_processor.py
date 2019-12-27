@@ -20,7 +20,6 @@ import logging
 from functools import partial
 
 from azure.eventhub import EventData
-from azure.eventhub.exceptions import EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
@@ -54,7 +53,7 @@ class EventProcessor(
         *,
         partition_id: Optional[str] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
-        initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "-1",
+        initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
         initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
         load_balancing_interval: float = 10.0,
         owner_level: Optional[int] = None,
@@ -168,16 +167,16 @@ class EventProcessor(
     async def _close_partition(
         self, partition_context: PartitionContext, reason: CloseReason
     ) -> None:
+        _LOGGER.info(
+            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+            " is being closed. Reason is: %r",
+            self._id,
+            partition_context.eventhub_name,
+            partition_context.partition_id,
+            partition_context.consumer_group,
+            reason,
+        )
         if self._partition_close_handler:
-            _LOGGER.info(
-                "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                " is being closed. Reason is: %r",
-                self._id,
-                partition_context.eventhub_name,
-                partition_context.partition_id,
-                partition_context.consumer_group,
-                reason,
-            )
             try:
                 await self._partition_close_handler(partition_context, reason)
             except Exception as err:  # pylint:disable=broad-except
@@ -190,21 +189,17 @@ class EventProcessor(
                     partition_context.consumer_group,
                     err,
                 )
+                await self._process_error(partition_context, err)
 
     async def _on_event_received(
         self, partition_context: PartitionContext, event: EventData
     ) -> None:
         with self._context(event):
-            try:
-                if self._track_last_enqueued_event_properties:
-                    partition_context._last_received_event = (  # pylint: disable=protected-access
-                        event
-                    )
-                await self._event_handler(partition_context, event)
-            except asyncio.CancelledError:  # pylint: disable=try-except-raise
-                raise
-            except Exception as error:  # pylint:disable=broad-except
-                await self._process_error(partition_context, error)
+            if self._track_last_enqueued_event_properties:
+                partition_context._last_received_event = (  # pylint: disable=protected-access
+                    event
+                )
+            await self._event_handler(partition_context, event)
 
     async def _receive(
         self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
@@ -250,6 +245,7 @@ class EventProcessor(
                         self._consumer_group,
                         err,
                     )
+                    await self._process_error(partition_context, err)
 
             while self._running:
                 try:
@@ -264,11 +260,9 @@ class EventProcessor(
                         self._consumer_group,
                     )
                     raise
-                except EventHubError as eh_error:
-                    await self._process_error(partition_context, eh_error)
-                    break
                 except Exception as error:  # pylint:disable=broad-except
                     await self._process_error(partition_context, error)
+                    break
         finally:
             await self._consumers[partition_id].close()
             await self._close_partition(

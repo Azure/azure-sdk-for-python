@@ -345,7 +345,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 partition_initialize_handler=on_partition_initialize,
                 partition_close_handler=on_partition_close,
                 load_balancing_interval=self._load_balancing_interval,
-                initial_event_position=starting_position or "-1",
+                initial_event_position=starting_position if starting_position is not None else "@latest",
                 initial_event_position_inclusive=starting_position_inclusive or False,
                 owner_level=owner_level,
                 prefetch=prefetch,

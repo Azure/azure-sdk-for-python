@@ -172,16 +172,7 @@ class EventHubConsumer(
             try:
                 await self._open()
                 await cast(ReceiveClientAsync, self._handler).do_work_async()
-                while not self._event_queue.empty():
-                    message = self._event_queue.get()
-                    event_data = EventData._from_message(  # pylint:disable=protected-access
-                        message
-                    )
-                    self._last_received_event = event_data
-                    trace_link_message(event_data)
-                    await self._on_event_received(event_data)
-                    self._event_queue.task_done()
-                return
+                break
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint: disable=broad-except
@@ -203,3 +194,14 @@ class EventHubConsumer(
                         last_exception,
                     )
                     raise last_exception
+
+        while not self._event_queue.empty():
+            message = self._event_queue.get()
+            event_data = EventData._from_message(  # pylint:disable=protected-access
+                message
+            )
+            self._last_received_event = event_data
+            trace_link_message(event_data)
+            await self._on_event_received(event_data)
+            self._event_queue.task_done()
+        return
