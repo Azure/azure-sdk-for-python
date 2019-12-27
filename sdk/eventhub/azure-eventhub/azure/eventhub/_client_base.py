@@ -229,7 +229,12 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     status_code_field=b"status-code",
                     description_fields=b"status-description",
                 )
-                return response
+                status_code = response.application_properties[b"status-code"]
+                if status_code < 400:
+                    return response
+                raise errors.AuthenticationException(
+                    "Management request error. Status code: {}".format(status_code)
+                )
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = _handle_exception(exception, self)
                 self._backoff(
