@@ -2,7 +2,7 @@ import pytest
 import asyncio
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
+from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
 
 

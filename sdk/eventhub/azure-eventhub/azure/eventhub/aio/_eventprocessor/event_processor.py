@@ -23,6 +23,7 @@ from azure.eventhub import EventData
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
+from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
@@ -80,15 +81,15 @@ class EventProcessor(
         self._error_handler = error_handler
         self._partition_initialize_handler = partition_initialize_handler
         self._partition_close_handler = partition_close_handler
-        self._checkpoint_store = checkpoint_store
+        self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
         self._initial_event_position = initial_event_position
         self._initial_event_position_inclusive = initial_event_position_inclusive
         self._load_balancing_interval = load_balancing_interval
-        self._ownership_timeout = self._load_balancing_interval * 2
+        self._ownership_timeout = self._load_balancing_interval * 6
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
-        if self._checkpoint_store and self._owner_level is None:
+        if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
         self._prefetch = prefetch
         self._track_last_enqueued_event_properties = (

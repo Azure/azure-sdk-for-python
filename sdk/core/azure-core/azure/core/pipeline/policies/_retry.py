@@ -157,10 +157,10 @@ class RetryPolicy(HTTPPolicy):
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
-        :rtype: int
+        :rtype: float
         """
         try:
-            seconds = int(retry_after)
+            seconds = float(retry_after)
         except TypeError:
             retry_date_tuple = email.utils.parsedate(retry_after)
             if retry_date_tuple is None:
@@ -178,12 +178,16 @@ class RetryPolicy(HTTPPolicy):
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: Value of Retry-After in seconds.
-        :rtype: int
+        :rtype: float
         """
         retry_after = response.http_response.headers.get("Retry-After")
-        if retry_after is None:
-            return None
-        return self.parse_retry_after(retry_after)
+        if retry_after:
+            return self.parse_retry_after(retry_after)
+        retry_after = response.http_response.headers.get("retry-after-ms")
+        if retry_after:
+            parsed_retry_after = self.parse_retry_after(retry_after)
+            return parsed_retry_after / 1000.0
+        return None
 
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.

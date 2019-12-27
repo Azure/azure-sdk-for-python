@@ -11,7 +11,7 @@ import time
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
-from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
+from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub.aio._eventprocessor._ownership_manager import OwnershipManager
 from azure.eventhub.exceptions import OwnershipLostError, EventHubError
 from azure.eventhub._client_base import _Address

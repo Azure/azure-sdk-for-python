@@ -16,7 +16,7 @@ from logging.handlers import RotatingFileHandler
 collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("tests/livetest/asynctests")
-    collect_ignore.append("tests/eventprocessor")
+    collect_ignore.append("tests/unittest/asynctests")
     collect_ignore.append("features")
     collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
