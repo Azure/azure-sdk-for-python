@@ -1,0 +1,190 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 06:52:35 GMT
+      x-ms-default-encryption-scope:
+      - containerscope
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainer?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 18 Dec 2019 06:52:35 GMT
+      etag: '"0x8D78386DD7C7070"'
+      last-modified: Wed, 18 Dec 2019 06:52:36 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.blob.core.windows.net
+        - /cpkcontainer
+        - restype=container
+        - ''
+- request:
+    body: aaaa
+    headers:
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 06:52:36 GMT
+      x-ms-encryption-scope:
+      - antjoscope1
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainer/appendblob?comp=appendblock
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:2ac48ed1-a01e-0020-0f6f-b5e99c000000\nTime:2019-12-18T06:52:36.2422117Z</Message></Error>"
+    headers:
+      content-length: '215'
+      content-type: application/xml
+      date: Wed, 18 Dec 2019 06:52:35 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: BlobNotFound
+      x-ms-version: '2019-07-07'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.blob.core.windows.net
+        - /cpkcontainer/appendblob
+        - comp=appendblock
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-date:
+      - Wed, 18 Dec 2019 06:52:36 GMT
+      x-ms-encryption-scope:
+      - antjoscope1
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainer/appendblob
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 18 Dec 2019 06:52:35 GMT
+      etag: '"0x8D78386DD9E19C3"'
+      last-modified: Wed, 18 Dec 2019 06:52:36 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-encryption-scope: antjoscope1
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.blob.core.windows.net
+        - /cpkcontainer/appendblob
+        - ''
+        - ''
+- request:
+    body: aaaa
+    headers:
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 06:52:36 GMT
+      x-ms-encryption-scope:
+      - antjoscope1
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/cpkcontainer/appendblob?comp=appendblock
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 18 Dec 2019 06:52:35 GMT
+      etag: '"0x8D78386DDAAC327"'
+      last-modified: Wed, 18 Dec 2019 06:52:36 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-append-offset: '0'
+      x-ms-blob-committed-block-count: '1'
+      x-ms-content-crc64: 8JRcxVurLRg=
+      x-ms-encryption-scope: antjoscope1
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.blob.core.windows.net
+        - /cpkcontainer/appendblob
+        - comp=appendblock
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 18 Dec 2019 06:52:36 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/cpkcontainer?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 18 Dec 2019 06:52:35 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-07-07'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.blob.core.windows.net
+        - /cpkcontainer
+        - restype=container
+        - ''
+version: 1
