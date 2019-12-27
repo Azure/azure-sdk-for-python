@@ -53,21 +53,21 @@ def _list_leaves_trie(root, result):
         _list_leaves_trie(child, result)
 
 
-def _set_ele_trie(root, ele, path_names, path_index):
-    if path_index == len(path_names) - 1:
-        root.children[ele[path_names[path_index]]] = _TrieNode(ele, True)
+def _set_ele_trie(root, ele, keys_path, path_index):
+    if path_index == len(keys_path) - 1:
+        root.children[ele[keys_path[path_index]]] = _TrieNode(ele, True)
         return
-    next_node = root.get(ele[path_names[path_index]])
+    next_node = root.get(ele[keys_path[path_index]])
     if not next_node:
-        next_node = _TrieNode(ele[path_names[path_index]], False)
-        root.put(ele[path_names[path_index]], next_node)
-    _set_ele_trie(next_node, ele, path_names, path_index + 1)
+        next_node = _TrieNode(ele[keys_path[path_index]], False)
+        root.put(ele[keys_path[path_index]], next_node)
+    _set_ele_trie(next_node, ele, keys_path, path_index + 1)
 
 
 class _DictTrie(object):
-    def __init__(self, root_name, path_names):
+    def __init__(self, root_name, keys_path):
         self._root = _TrieNode(root_name, False)
-        self._path_names = path_names
+        self._keys_path = keys_path
 
     def lookup(self, path):
         return _lookup_trie(self._root, path, 0)
@@ -80,7 +80,7 @@ class _DictTrie(object):
         return result
 
     def set_ele(self, ele):
-        _set_ele_trie(self._root, ele, self._path_names, 0)
+        _set_ele_trie(self._root, ele, self._keys_path, 0)
 
 
 class InMemoryCheckpointStore(CheckpointStore):
@@ -89,11 +89,11 @@ class InMemoryCheckpointStore(CheckpointStore):
     ):
         self._ownerships_trie = _DictTrie(
             "ownerships_trie",
-            path_names=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
+            keys_path=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
         )
         self._checkpoints_trie = _DictTrie(
             "checkpoints_trie",
-            path_names=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
+            keys_path=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
         )
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
