@@ -199,6 +199,27 @@ def execute_tox_parallel(tox_command_tuples):
         exit(1)
 
 
+def replace_dev_reqs(file):
+    for req_file in requirements_files:
+        adjusted_req_lines = []
+
+        with open(req_file, "r") as f:
+            for line in f:
+                args = [
+                    part.strip()
+                    for part in line.split()
+                    if part and not part.strip() == "-e"
+                ]
+                amended_line = " ".join(args)
+                adjusted_req_lines.append(amended_line)
+
+        with open(req_file, "w") as f:
+            # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
+            # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
+            # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
+            f.write("\n".join(adjusted_req_lines))
+
+
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.join(cmd_tuple[1], "./.tox/")
@@ -259,6 +280,9 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             logging.info("No dev_requirements present.")
             with open(destination_dev_req, "w+") as file:
                 file.write("\n")
+
+        if in_ci():
+            replace_dev_reqs(destination_dev_req)
 
         if parsed_args.tox_env:
             tox_execution_array.extend(["-e", parsed_args.tox_env])
