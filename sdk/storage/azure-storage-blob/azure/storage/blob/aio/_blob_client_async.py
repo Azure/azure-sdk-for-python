@@ -1314,6 +1314,75 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return get_page_ranges_result(ranges)
 
     @distributed_trace_async
+    async def get_managed_disk_page_range_diff( # type: ignore
+            self, offset=None, # type: Optional[int]
+            length=None,  # type: Optional[int]
+            prev_snapshot_url=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        """Returns the list of valid page ranges for a Page Blob or snapshot
+        of a page blob in managed disk account.
+
+        :param int offset:
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :param int length:
+            Number of bytes to use for getting valid page ranges.
+            If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :param prev_snapshot_url: This header is only supported in
+            service versions 2019-04-19 and after and specifies the URL of a
+            previous snapshot of the target blob. The response will only contain
+            pages that were changed between the target blob and its previous
+            snapshot.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled page ranges, the 2nd element is cleared page ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        """
+        options = self._get_page_ranges_options(
+            offset=offset,
+            length=length,
+            prev_snapshot_url=prev_snapshot_url,
+            **kwargs)
+        try:
+            ranges = await self._client.page_blob.get_page_ranges_diff(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return get_page_ranges_result(ranges)
+
+    @distributed_trace_async
     async def set_sequence_number( # type: ignore
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
