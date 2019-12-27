@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import time
+import datetime
 import argparse
 import asyncio
 import os
@@ -20,13 +21,30 @@ from logger import get_logger
 from process_monitor import ProcessMonitor
 
 
+def parse_starting_position(args):
+    starting_position = None
+    if args.starting_offset:
+        starting_position = str(args.starting_offset)
+    if args.starting_sequence_number:
+        starting_position = int(args.starting_sequence_number)
+    if args.starting_datetime:
+        starting_position = datetime.datetime.strptime(str(args.starting_datetime), '%Y-%m-%d %H:%M:%S')
+
+    if not starting_position:
+        starting_position = "-1"
+
+    return starting_position
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--link_credit", default=3000, type=int)
 parser.add_argument("--output_interval", type=float, default=1000)
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
 parser.add_argument("--consumer_group", help="Consumer group name", default="$default")
 parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
-parser.add_argument("--offset", help="Starting offset", default="-1")
+parser.add_argument("--starting_offset", help="Starting offset", type=str)
+parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
+parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss", type=str)
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
 parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
@@ -43,7 +61,7 @@ parser.add_argument(
     type=int,
     default=0
 )
-parser.add_argument("--parallel_recv_cnt", help="Number of parallelling receiving", type=int)
+parser.add_argument("--parallel_recv_cnt", help="Number of receive clients doing parallel receiving", type=int)
 parser.add_argument("--proxy_hostname", type=str)
 parser.add_argument("--proxy_port", type=str)
 parser.add_argument("--proxy_username", type=str)
@@ -53,11 +71,12 @@ parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
 parser.add_argument("--storage_conn_str", help="conn str of storage blob to store ownership and checkpoint data")
 parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
-parser.add_argument("--uamqp_debug", help="uamqp logging enable", action="store_true")
+parser.add_argument("--uamqp_logging_enable ", help="uamqp logging enable", action="store_true")
 parser.add_argument("--print_console", help="print to console", action="store_true")
 parser.add_argument("--log_filename", help="log file name", type=str)
 
 args = parser.parse_args()
+starting_position = parse_starting_position(args)
 LOGGER = get_logger(args.log_filename, "stress_receive_async", level=logging.INFO, print_console=args.print_console)
 LOG_PER_COUNT = args.output_interval
 
@@ -120,7 +139,7 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_debug
+            logging_enable=args.uamqp_logging_enable
         )
     elif args.hostname:
         client = EventHubConsumerClientTest(
@@ -133,7 +152,7 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_debug
+            logging_enable=args.uamqp_logging_enable
         )
     elif args.aad_client_id:
         credential = ClientSecretCredential(args.tenant_id, args.aad_client_id, args.aad_secret)
@@ -147,10 +166,8 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_debug
+            logging_enable=args.uamqp_logging_enable
         )
-
-    return client
 
     return client
 
@@ -161,7 +178,8 @@ async def run(args):
         kwargs_dict = {
             "prefetch": args.link_credit,
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
-            "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties
+            "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
+            "starting_position": starting_position
         }
         if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:
             clients = [create_client(args) for _ in range(args.parallel_recv_cnt)]

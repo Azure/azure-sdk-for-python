@@ -130,8 +130,8 @@ def generate_command_send_config(send_config, proxy_config):
         if send_config["parallel_create_new_client"] and send_config.getboolean("parallel_create_new_client"):
             partial_command += " --parallel_create_new_client"
     partial_command += (" --payload {}".format(send_config["payload"]))
-    if send_config.getboolean("uamqp_debug"):
-        partial_command += " --uamqp_debug"
+    if send_config.getboolean("uamqp_logging_enable"):
+        partial_command += " --uamqp_logging_enable"
     if send_config.getboolean("use_http_proxy"):
         partial_command += (
             " --proxy_hostname {} --proxy_port {} --proxy_username {} --proxy_password {}".format(
@@ -150,15 +150,20 @@ def generate_command_receive_config(receive_config, proxy_config):
     partial_command += " --link_credit {}".format(receive_config["link_credit"])
     if receive_config["consumer_group"]:
         partial_command += " --consumer_group {}".format(receive_config["consumer_group"])
-    partial_command += " --offset {}".format(receive_config["starting_offset"])
+    if receive_config["starting_offset"]:
+        partial_command += " --starting_offset {}".format(receive_config["starting_offset"])
+    if receive_config["starting_sequence_number"]:
+        partial_command += " --starting_sequence_number {}".format(receive_config["starting_sequence_number"])
+    if receive_config["starting_datetime"]:
+        partial_command += " --starting_datetime \"{}\"".format(receive_config["starting_datetime"])
     partial_command += " --partitions {}".format(receive_config["partitions"])
     partial_command += " --load_balancing_interval {}".format(receive_config["load_balancing_interval"])
     partial_command += " --transport_type {}".format(receive_config["transport_type"])
 
     if receive_config.getboolean("track_last_enqueued_event_properties"):
         partial_command += " --track_last_enqueued_event_properties"
-    if receive_config.getboolean("uamqp_debug"):
-        partial_command += " --uamqp_debug"
+    if receive_config.getboolean("uamqp_logging_enable"):
+        partial_command += " --uamqp_logging_enable"
     if receive_config.getboolean("use_http_proxy"):
         partial_command += (
             " --proxy_hostname {} --proxy_port {} --proxy_username {} --proxy_password {}".format(
@@ -168,6 +173,7 @@ def generate_command_receive_config(receive_config, proxy_config):
                 proxy_config["proxy_password"]
             )
         )
+
     if receive_config["parallel_recv_cnt"]:
         partial_command += " --parallel_recv_cnt".format(receive_config["parallel_recv_cnt"])
     if receive_config["recv_partition_id"]:

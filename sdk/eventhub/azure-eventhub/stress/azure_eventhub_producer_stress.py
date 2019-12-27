@@ -88,7 +88,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
-        self.argument_parser.add_argument("--uamqp_debug", help="uamqp logging enable", action="store_true")
+        self.argument_parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
         self.args, _ = parser.parse_known_args()
@@ -127,7 +127,7 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_debug
+                logging_enable=self.args.uamqp_logging_enable
             )
         elif self.args.aad_client_id:
             if is_async:
@@ -141,7 +141,8 @@ class StressTestRunner(object):
                 credential=credential,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_debug)
+                logging_enable=self.args.uamqp_logging_enable
+            )
         else:
             raise ValueError("Argument error. Must have one of connection string, sas and aad credentials")
 
