@@ -2,6 +2,7 @@ import os
 import argparse
 
 from version_shared import get_packages, set_version_py, set_dev_classifier
+from update_changelog import update_version_in_changelog
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
@@ -9,6 +10,7 @@ if __name__ == '__main__':
     parser.add_argument('--package-name', required=True, help='name of package (accetps both formats: azure-service-package and azure_service_pacage)')
     parser.add_argument('--new-version', required=True, help='new package version')
     parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
+    parser.add_argument('--unreleased', help='Set version as unreleased in change log', default=False)
     parser.add_argument(
         dest="glob_string",
         nargs="?",
@@ -35,3 +37,4 @@ if __name__ == '__main__':
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
+    update_version_in_changelog(target_package[0], new_version, False, args.unreleased)

@@ -12,6 +12,7 @@ import argparse
 from packaging.version import parse
 
 from version_shared import get_packages, set_version_py, set_dev_classifier
+from update_changelog import update_version_in_changelog
 
 def increment_version(old_version):
     parsed_version = parse(old_version)
@@ -53,3 +54,4 @@ if __name__ == '__main__':
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
+    update_version_in_changelog(target_package[0], new_version, True, True)
