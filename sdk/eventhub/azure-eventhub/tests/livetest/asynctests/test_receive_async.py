@@ -74,7 +74,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     async with client2:
         task = asyncio.ensure_future(
             client2.receive(on_event,
-                            starting_position= on_event.event_position, starting_position_inclusive=inclusive,
+                            starting_position=on_event.event_position, starting_position_inclusive=inclusive,
                             track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event.body_as_str() == expected_result
