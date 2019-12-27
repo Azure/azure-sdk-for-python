@@ -71,7 +71,7 @@ parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
 parser.add_argument("--storage_conn_str", help="conn str of storage blob to store ownership and checkpoint data")
 parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
-parser.add_argument("--uamqp_logging_enable ", help="uamqp logging enable", action="store_true")
+parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
 parser.add_argument("--print_console", help="print to console", action="store_true")
 parser.add_argument("--log_filename", help="log file name", type=str)
 

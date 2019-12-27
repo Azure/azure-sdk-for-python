@@ -88,14 +88,22 @@ def create_stress_eventhub(stress_config, eventhub_name):
 
 def create_resource_for_task_if_needed(stress_config, task_name):
     if "large_partitions" in task_name or (not stress_config["BASIC_CONFIG"].getboolean("create_new_eventhub")):
-        return
+        print("    ---- No resources would be created, using existing resources.")
+        return (
+            stress_config["CREDENTIALS"]["EVENT_HUB_NAME"],
+            stress_config["CREDENTIALS"]["AZURE_STORAGE_BLOB_CONTAINER_NAME"]
+        )
 
     resource_name = str.replace(task_name, "_", "-")
     eventhub_name, blob_name = None, None
     if "send" in task_name:
+        print("    ---- New eventhub creating...")
         eventhub_name = create_stress_eventhub(stress_config, resource_name)
+        print("    ---- New eventhub {} is created.".format(eventhub_name))
     if "checkpointstore" in task_name:
+        print("    ---- New blob creating...")
         blob_name = create_stress_blob(stress_config, resource_name)
+        print("    ---- New blob {} created.".format(blob_name))
 
     return eventhub_name, blob_name
 
@@ -206,30 +214,12 @@ def generate_command_resource_config(credential_config, eventhub_name, blob_name
     if blob_name:
         if credential_config["AZURE_STORAGE_CONN_STR"]:
             partial_command += " --storage_conn_str \"{}\"".format(credential_config["AZURE_STORAGE_CONN_STR"])
-        partial_command += " --storage_container_name {}".format(blob_name)
+        partial_command += " --storage_container_name \"{}\"".format(blob_name)
 
     return partial_command
 
 
 def generate_running_command(task_name, stress_config, eventhub_name, blob_name):
-    commands = []
-
-    basic_config = stress_config["BASIC_CONFIG"]
-    send_config = stress_config["EVENTHUB_SEND_CONFIG"]
-    receive_config = stress_config["EVENTHUB_RECEIVE_CONFIG"]
-    proxy_config = stress_config["PROXY"]
-
-    if "send" in task_name:
-        command = "python ./azure_eventhub_producer_stress.py -m {}".format(
-            "stress_send_sync" if "sync" in task_name else "stress_send_async"
-        )
-
-        commands.append(command)
-
-    if "receive" in task_name:
-        commands.append(command)
-        pass
-
     commands = []
 
     if "send" in task_name:
@@ -284,9 +274,10 @@ if __name__ == '__main__':
             )
         )
 
-    print("#### Generating commands done.")
     for command in python_commands:
         print("    ---- ", command)
+
+    print("#### Generating commands done.")
 
     for command in python_commands:
         Popen(command)
