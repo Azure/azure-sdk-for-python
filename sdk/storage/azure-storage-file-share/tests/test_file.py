@@ -690,8 +690,6 @@ class StorageFileTest(FileTestCase):
     @record
     def test_clear_range(self):
         # Arrange
-        # TODO: update swagger and fix this test
-        pytest.skip("TODO: fix swagger!")
         file_client = self._create_file()
 
         # Act
