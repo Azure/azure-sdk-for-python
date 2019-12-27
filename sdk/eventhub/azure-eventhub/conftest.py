@@ -184,7 +184,7 @@ def connstr_receivers(connection_str, live_eventhub_config):
             live_eventhub_config['event_hub'],
             live_eventhub_config['consumer_group'],
             p)
-        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
+        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
         receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers
