@@ -194,12 +194,21 @@ class StressTestRunner(object):
             start_time = time.perf_counter()
             while self.running and time.time() < deadline:
                 try:
+                    cur_iter_start_time = time.perf_counter()
                     processed = test_method(worker, self.args, logger)
+                    now_time = time.perf_counter()
+                    cur_iter_time_elapsed = now_time - cur_iter_start_time
                     total_processed += processed
                     iter_processed += processed
                     if iter_processed >= self.args.output_interval:
-                        time_elapsed = time.perf_counter() - start_time
-                        logger.info("Total sent: %r, Time elapsed: %r, Speed: %r/s", total_processed, time_elapsed, total_processed / time_elapsed)
+                        time_elapsed = now_time - start_time
+                        logger.info(
+                            "Total sent: %r, Time elapsed: %r, Speed: %r/s, Current Iteration Speed: %r/s",
+                            total_processed,
+                            time_elapsed,
+                            total_processed / time_elapsed,
+                            processed / cur_iter_time_elapsed
+                        )
                         iter_processed -= self.args.output_interval
                 except KeyboardInterrupt:
                     logger.info("keyboard interrupted")
@@ -275,16 +284,20 @@ class StressTestRunner(object):
             start_time = time.perf_counter()
             while self.running and time.time() < deadline:
                 try:
+                    cur_iter_start_time = time.perf_counter()
                     processed = await test_method(worker, self.args, logger)
+                    now_time = time.perf_counter()
+                    cur_iter_time_elapsed = now_time - cur_iter_start_time
                     total_processed += processed
                     iter_processed += processed
                     if iter_processed >= self.args.output_interval:
-                        time_elapsed = time.perf_counter() - start_time
+                        time_elapsed = now_time - start_time
                         logger.info(
-                            "Total sent: %r, Time elapsed: %r, Speed: %r/s",
+                            "Total sent: %r, Time elapsed: %r, Overall Speed: %r/s, Current Iteration Speed: %r/s",
                             total_processed,
                             time_elapsed,
-                            total_processed / time_elapsed
+                            total_processed / time_elapsed,
+                            processed / cur_iter_time_elapsed,
                         )
                         iter_processed -= self.args.output_interval
                 except KeyboardInterrupt:
