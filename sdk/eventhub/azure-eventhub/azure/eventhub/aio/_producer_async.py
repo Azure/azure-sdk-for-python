@@ -61,13 +61,12 @@ class EventHubProducer(
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
-        loop = kwargs.get("loop", None)
         idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
         self.closed = False
 
-        self._loop = loop or get_running_loop()
+        self._loop = kwargs.get("loop", None)
         self._max_message_size_on_link = None
         self._client = client
         self._target = target

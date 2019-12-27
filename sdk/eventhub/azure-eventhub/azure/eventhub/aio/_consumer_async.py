@@ -74,7 +74,6 @@ class EventHubConsumer(
             "track_last_enqueued_event_properties", False
         )
         idle_timeout = kwargs.get("idle_timeout", None)
-        loop = kwargs.get("loop", None)
 
         self.running = False
         self.closed = False
@@ -82,7 +81,7 @@ class EventHubConsumer(
         self._on_event_received = kwargs[
             "on_event_received"
         ]  # type: Callable[[EventData], Awaitable[None]]
-        self._loop = loop or get_running_loop()
+        self._loop = kwargs.get("loop", None)
         self._client = client
         self._source = source
         self._offset = event_position
