@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from sys import platform
 import configparser
 from subprocess import Popen
 from typing import cast
@@ -285,6 +286,6 @@ if __name__ == '__main__':
     print("#### Generating commands done.")
 
     for command in python_commands:
-        Popen(command)
+        Popen(command, shell=(platform != "win32"))
 
     print("#### All the process has been started!")
