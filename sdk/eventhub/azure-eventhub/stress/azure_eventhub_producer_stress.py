@@ -157,7 +157,7 @@ class StressTestRunner(object):
             self.run_sync()
 
     def run_sync(self):
-        with ProcessMonitor("monitor_producer_stress_sync.log", "producer_stress_sync"):
+        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_sync", print_console=self.args.print_console):
             class EventHubProducerClientTest(EventHubProducerClient):
                 def get_partition_ids(self_inner):
                     if self.args.partitions != 0:
