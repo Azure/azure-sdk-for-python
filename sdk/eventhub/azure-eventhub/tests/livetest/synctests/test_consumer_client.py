@@ -4,7 +4,7 @@ import threading
 import sys
 from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
+from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
 
 
