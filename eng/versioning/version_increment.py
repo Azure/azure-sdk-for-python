@@ -27,6 +27,7 @@ def increment_version(old_version):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
     parser.add_argument('--package-name', required=True, help='name of package (accetps both formats: azure-service-package and azure_service_pacage)')
+    parser.add_argument('--skip-changelog', help='Skip updating new version in change log', default=False)
     parser.add_argument(
         dest="glob_string",
         nargs="?",
@@ -54,4 +55,6 @@ if __name__ == '__main__':
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
-    update_version_in_changelog(target_package[0], new_version, True, True)
+
+    if not args.skip_changelog:
+        update_version_in_changelog(target_package[0], new_version, True, True)

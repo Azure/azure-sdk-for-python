@@ -11,6 +11,7 @@ if __name__ == '__main__':
     parser.add_argument('--new-version', required=True, help='new package version')
     parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
     parser.add_argument('--unreleased', help='Set version as unreleased in change log', default=False)
+    parser.add_argument('--skip-changelog', help='Skip updating new version in change log', default=False)
     parser.add_argument(
         dest="glob_string",
         nargs="?",
@@ -37,4 +38,6 @@ if __name__ == '__main__':
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
-    update_version_in_changelog(target_package[0], new_version, False, args.unreleased)
+
+    if not args.skip_changelog:
+        update_version_in_changelog(target_package[0], new_version, False, args.unreleased)
