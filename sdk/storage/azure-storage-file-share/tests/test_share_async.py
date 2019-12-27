@@ -365,6 +365,37 @@ class StorageShareTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_shares_no_options_async())
 
+    async def _test_list_shares_no_options_for_premium_account_async(self):
+        # Arrange
+        # TODO: add recordings to this test
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        file_url = self.get_premium_file_url()
+        credentials = self.get_premium_account_shared_key_credential()
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+
+        share = await self._create_share()
+
+        # Act
+        shares = []
+        async for s in self.fsc.list_shares():
+            shares.append(s)
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 1)
+        self.assertIsNotNone(shares[0])
+        self.assertIsNotNone(shares[0].provisioned_iops)
+        self.assertIsNotNone(shares[0].provisioned_ingress_mbps)
+        self.assertIsNotNone(shares[0].provisioned_egress_mbps)
+        self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
+
+    @record
+    def test_list_shares_no_options_for_premium_account_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_list_shares_no_options_for_premium_account_async())
+
     async def _test_list_shares_with_snapshot_async(self):
         # Arrange
         share = self._get_share_reference()
@@ -542,6 +573,31 @@ class StorageShareTest(FileTestCase):
     def test_set_share_properties_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_share_properties_async())
+
+    async def _test_get_share_properties_for_premium_account_async(self):
+        # Arrange
+        file_url = self.get_premium_file_url()
+        credentials = self.get_premium_account_shared_key_credential()
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+
+        share = await self._create_share()
+
+        # Act
+        props = await share.get_share_properties()
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertIsNotNone(props.quota)
+        self.assertIsNotNone(props.quota)
+        self.assertIsNotNone(props.provisioned_iops)
+        self.assertIsNotNone(props.provisioned_ingress_mbps)
+        self.assertIsNotNone(props.provisioned_egress_mbps)
+        self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
+
+    @record
+    def test_get_share_properties_for_premium_account_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_share_properties_for_premium_account_async())
 
     async def _test_delete_share_with_existing_share_async(self):
         # Arrange

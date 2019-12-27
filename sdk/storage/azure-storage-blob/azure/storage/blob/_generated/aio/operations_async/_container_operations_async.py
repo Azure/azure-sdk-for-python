@@ -209,6 +209,8 @@ class ContainerOperations:
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
                 'x-ms-has-immutability-policy': self._deserialize('bool', response.headers.get('x-ms-has-immutability-policy')),
                 'x-ms-has-legal-hold': self._deserialize('bool', response.headers.get('x-ms-has-legal-hold')),
+                'x-ms-default-encryption-scope': self._deserialize('str', response.headers.get('x-ms-default-encryption-scope')),
+                'x-ms-deny-encryption-scope-override': self._deserialize('bool', response.headers.get('x-ms-deny-encryption-scope-override')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

@@ -184,7 +184,7 @@ class FileOperations:
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    async def download(self, timeout=None, range=None, range_get_content_md5=None, *, cls=None, **kwargs):
+    async def download(self, timeout=None, range=None, range_get_content_md5=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """Reads or downloads a file from the system, including its metadata and
         properties.
 
@@ -200,6 +200,10 @@ class FileOperations:
          hash for the range, as long as the range is less than or equal to 4 MB
          in size.
         :type range_get_content_md5: bool
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: object or the result of cls(response)
@@ -208,6 +212,10 @@ class FileOperations:
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         # Construct URL
         url = self.download.metadata['url']
         path_format_arguments = {
@@ -228,6 +236,8 @@ class FileOperations:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         if range_get_content_md5 is not None:
             header_parameters['x-ms-range-get-content-md5'] = self._serialize.header("range_get_content_md5", range_get_content_md5, 'bool')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -274,6 +284,9 @@ class FileOperations:
                 'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
                 'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
                 'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
         if response.status_code == 206:
@@ -309,6 +322,9 @@ class FileOperations:
                 'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
                 'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
                 'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
 
@@ -318,7 +334,7 @@ class FileOperations:
         return deserialized
     download.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    async def get_properties(self, sharesnapshot=None, timeout=None, *, cls=None, **kwargs):
+    async def get_properties(self, sharesnapshot=None, timeout=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """Returns all user-defined metadata, standard HTTP properties, and system
         properties for the file. It does not return the content of the file.
 
@@ -330,6 +346,10 @@ class FileOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -338,6 +358,10 @@ class FileOperations:
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         # Construct URL
         url = self.get_properties.metadata['url']
         path_format_arguments = {
@@ -355,6 +379,8 @@ class FileOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
@@ -395,6 +421,9 @@ class FileOperations:
                 'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
                 'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
                 'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -688,7 +717,7 @@ class FileOperations:
          using renew or change.
         :type duration: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format.
-         The Blob service returns 400 (Invalid request) if the proposed lease
+         The File service returns 400 (Invalid request) if the proposed lease
          ID is not in the correct format. See Guid Constructor (String) for a
          list of valid GUID string formats.
         :type proposed_lease_id: str
@@ -835,7 +864,7 @@ class FileOperations:
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format.
-         The Blob service returns 400 (Invalid request) if the proposed lease
+         The File service returns 400 (Invalid request) if the proposed lease
          ID is not in the correct format. See Guid Constructor (String) for a
          list of valid GUID string formats.
         :type proposed_lease_id: str
@@ -1196,7 +1225,7 @@ class FileOperations:
             return cls(response, None, response_headers)
     upload_range_from_url.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    async def get_range_list(self, sharesnapshot=None, timeout=None, range=None, *, cls=None, **kwargs):
+    async def get_range_list(self, sharesnapshot=None, timeout=None, range=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime
@@ -1210,6 +1239,10 @@ class FileOperations:
         :param range: Specifies the range of bytes over which to list ranges,
          inclusively.
         :type range: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: list or the result of cls(response)
@@ -1218,6 +1251,10 @@ class FileOperations:
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
         comp = "rangelist"
 
         # Construct URL
@@ -1241,6 +1278,8 @@ class FileOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)

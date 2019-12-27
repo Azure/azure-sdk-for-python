@@ -45,3 +45,17 @@ def get_source_conditions(kwargs):
         source_if_match=if_match or kwargs.pop('source_if_match', None),
         source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
     )
+
+
+def validate_copy_mode(copy_mode, permission, permission_key):
+    if copy_mode == "source":
+        if permission or permission_key:
+            raise ValueError("Copy mode should be 'override' if permission/permission_key is specified")
+    elif copy_mode == "override":
+        if not (permission or permission_key):
+            raise ValueError("permission/permission_key should be specified with 'override' mode")
+    elif not copy_mode:
+        if permission_key or permission_key:
+            raise ValueError("permission/permission_key shouldn't be specified without copy mode")
+    else:
+        raise ValueError("Invalid copy mode")

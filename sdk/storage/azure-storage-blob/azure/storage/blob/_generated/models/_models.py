@@ -543,11 +543,11 @@ class ClearRange(Model):
 class ContainerCpkScopeInfo(Model):
     """Additional parameters for create operation.
 
-    :param default_encryption_scope: Optional.  Version 2019-02-02 and later.
+    :param default_encryption_scope: Optional.  Version 2019-07-07 and later.
      Specifies the default encryption scope to set on the container and use for
      all future writes.
     :type default_encryption_scope: str
-    :param deny_encryption_scope_override: Optional.  Version 2019-02-02 and
+    :param deny_encryption_scope_override: Optional.  Version 2019-07-07 and
      newer.  If true, prevents any request from specifying a different
      encryption scope than the scope set on the container.
     :type deny_encryption_scope_override: bool
@@ -622,6 +622,10 @@ class ContainerProperties(Model):
     :type has_immutability_policy: bool
     :param has_legal_hold:
     :type has_legal_hold: bool
+    :param default_encryption_scope:
+    :type default_encryption_scope: str
+    :param deny_encryption_scope_override:
+    :type deny_encryption_scope_override: bool
     """
 
     _validation = {
@@ -638,6 +642,8 @@ class ContainerProperties(Model):
         'public_access': {'key': 'PublicAccess', 'type': 'str', 'xml': {'name': 'PublicAccess'}},
         'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool', 'xml': {'name': 'HasImmutabilityPolicy'}},
         'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool', 'xml': {'name': 'HasLegalHold'}},
+        'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str', 'xml': {'name': 'DefaultEncryptionScope'}},
+        'deny_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool', 'xml': {'name': 'DenyEncryptionScopeOverride'}},
     }
     _xml_map = {
     }
@@ -652,6 +658,8 @@ class ContainerProperties(Model):
         self.public_access = kwargs.get('public_access', None)
         self.has_immutability_policy = kwargs.get('has_immutability_policy', None)
         self.has_legal_hold = kwargs.get('has_legal_hold', None)
+        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
+        self.deny_encryption_scope_override = kwargs.get('deny_encryption_scope_override', None)
 
 
 class CorsRule(Model):
@@ -749,7 +757,7 @@ class CpkInfo(Model):
 class CpkScopeInfo(Model):
     """Additional parameters for a set of operations.
 
-    :param encryption_scope: Optional. Version 2019-02-02 and later.
+    :param encryption_scope: Optional. Version 2019-07-07 and later.
      Specifies the name of the encryption scope to use to encrypt the data
      provided in the request. If not specified, encryption is performed with
      the default account encryption scope.  For more information, see

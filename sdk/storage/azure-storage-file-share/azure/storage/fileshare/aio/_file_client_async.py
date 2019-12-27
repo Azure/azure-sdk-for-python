@@ -25,6 +25,8 @@ from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterS
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._serialize import validate_copy_mode
+from .._models import CopyFileSmbInfo
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
 from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
@@ -344,6 +346,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     async def start_copy_from_url(
         self,
         source_url,  # type: str
+        file_permission_copy_mode=None,  # type: Optional[str]
+        file_permission=None,  # type: Optional[str]
+        file_permission_key=None,  # type: Optional[str]
+        copy_file_smb_info=None,
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -355,6 +361,21 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param str source_url:
             Specifies the URL of the source file.
+        :param file_permission_copy_mode: Specifies the option to copy file
+            security descriptor from source file or to set it using the value which is
+            defined by the header value of x-ms-file-permission or
+            x-ms-file-permission-key. Possible values include: 'source', 'override'
+        :param str file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :param str file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :param ~azure.storage.fileshare.CopyFileSmbInfo copy_file_smb_info:
+            Additional parameters for the operation
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword int timeout:
@@ -375,9 +396,20 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
+        file_permission = _get_file_permission(file_permission, file_permission_key, None)
+        validate_copy_mode(file_permission_copy_mode, file_permission, file_permission_key)
+
+        copy_file_smb_info = copy_file_smb_info or CopyFileSmbInfo()
+        copy_file_smb_info.file_permission_copy_mode = file_permission_copy_mode
+
         try:
             return await self._client.file.start_copy(
-                source_url, timeout=timeout, metadata=metadata, headers=headers, cls=return_response_headers, **kwargs
+                source_url,
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
+                copy_file_smb_info=copy_file_smb_info,
+                metadata=metadata, timeout=timeout,
+                headers=headers, cls=return_response_headers, **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
@@ -880,6 +912,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             )
             return {
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
+                'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
         except StorageErrorException as error:
             process_storage_error(error)
@@ -904,6 +937,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         try_close = True
         continuation_token = None
         total_closed = 0
+        total_failed = 0
         while try_close:
             try:
                 response = await self._client.file.force_close_handles(
@@ -919,8 +953,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
             total_closed += response.get('number_of_handles_closed', 0)
+            total_failed += response.get('number_of_handles_failed', 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
         return {
             'closed_handles_count': total_closed,
+            'failed_handles_count': total_failed
         }

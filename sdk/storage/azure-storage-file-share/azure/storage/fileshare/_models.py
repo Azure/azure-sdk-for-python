@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from azure.core.paging import PageIterator
-from ._parser import _parse_datetime_from_str
+from ._parser import _parse_datetime_from_str, _datetime_to_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import StorageErrorException
@@ -15,6 +15,7 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._generated.models import CopyFileSmbInfo as GenCopyFileSmbInfo
 from ._generated.models import DirectoryItem
 
 
@@ -184,6 +185,44 @@ class AccessPolicy(GenAccessPolicy):
         self.permission = permission
 
 
+class CopyFileSmbInfo(GenCopyFileSmbInfo):
+    """Additional parameters for start_copy operation.
+
+    :param ignore_read_only: Specifies the option to overwrite the target file
+        if it already exists and has read-only attribute set.
+    :type ignore_read_only: bool
+    :param file_attributes: Specifies either the option to copy file
+        attributes from a source file(source) to a target file or a list of
+        attributes to set on a target file.
+        eg."source": copy file attributes from a source file(source),
+        "None": All attribute values will be cleared,
+        If this is not set, the default value is "Archive".
+    :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+    :param file_creation_time: Specifies either the option to copy file
+        creation time from a source file(source) to a target file or a time value
+        in ISO 8601 format to set as creation time on a target file.
+        If this is not set, creation time will be set to the date time value of the creation(or when it was overwritten)
+        of the target file by copy engine.
+    :paramtype file_creation_time: str or ~datetime.datetime
+    :param file_last_write_time: Specifies either the option to copy file last
+        write time from a source file(source) to a target file or a time value in
+        ISO 8601 format to set as last write time on a target file.
+        If this is not set, value will be the last write time to the file by copy engine.
+    :paramtype file_last_write_time: str or ~datetime.datetime
+    :param set_archive_attribute: Specifies the option to set archive
+        attribute on a target file. True means archive attribute will be set on a
+        target file despite attribute overrides or a source file state.
+    :type set_archive_attribute: bool
+    """
+
+    def __init__(self, **kwargs):
+        self.ignore_read_only = kwargs.get('ignore_read_only', None)
+        self.file_attributes = kwargs.get('file_attributes', None)
+        self.file_creation_time = _datetime_to_str(kwargs.get('file_creation_time', ""))
+        self.file_last_write_time = _datetime_to_str(kwargs.get('file_last_write_time', ""))
+        self.set_archive_attribute = kwargs.get('set_archive_attribute', None)
+
+
 class ContentSettings(DictMixin):
     """Used to store the content settings of a file.
 
@@ -257,8 +296,12 @@ class ShareProperties(DictMixin):
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.quota = kwargs.get('x-ms-share-quota')
+        self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
         self.metadata = kwargs.get('metadata')
         self.snapshot = None
+        self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
+        self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
+        self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -267,8 +310,12 @@ class ShareProperties(DictMixin):
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
         props.quota = generated.properties.quota
+        props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
         props.metadata = generated.metadata
         props.snapshot = generated.snapshot
+        props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
+        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
+        props.provisioned_iops = generated.properties.provisioned_iops
         return props
 
 
