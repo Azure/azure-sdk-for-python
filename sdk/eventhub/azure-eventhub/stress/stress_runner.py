@@ -142,6 +142,7 @@ def generate_command_send_config(send_config, proxy_config):
         if send_config["parallel_create_new_client"] and send_config.getboolean("parallel_create_new_client"):
             partial_command += " --parallel_create_new_client"
     partial_command += (" --payload {}".format(send_config["payload"]))
+    partial_command += (" --partitions {}".format(send_config["partitions"]))
     if send_config.getboolean("uamqp_logging_enable"):
         partial_command += " --uamqp_logging_enable"
     if send_config.getboolean("use_http_proxy"):
