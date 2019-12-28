@@ -115,22 +115,31 @@ class EventProcessor(
     async def _cancel_tasks_for_partitions(
         self, to_cancel_partitions: Iterable[str]
     ) -> None:
+        _LOGGER.debug(
+            "EventProcessor %r tries to cancel partitions %r",
+            self._id,
+            to_cancel_partitions
+        )
         for partition_id in to_cancel_partitions:
             task = self._tasks.get(partition_id)
             if task:
                 task.cancel()
-        if to_cancel_partitions:
-            _LOGGER.info(
-                "EventProcessor %r has cancelled partitions %r",
-                self._id,
-                to_cancel_partitions
-            )
+                _LOGGER.info(
+                    "EventProcessor %r has cancelled partition %r",
+                    self._id,
+                    partition_id
+                )
 
     def _create_tasks_for_claimed_ownership(
         self,
         claimed_partitions: Iterable[str],
         checkpoints: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> None:
+        _LOGGER.debug(
+            "EventProcessor %r tries to claim partition %r",
+            self._id,
+            claimed_partitions
+        )
         for partition_id in claimed_partitions:
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
