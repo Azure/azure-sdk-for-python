@@ -318,6 +318,7 @@ async def test_partition_processor_process_events_error():
     await asyncio.sleep(10)
     await event_processor.stop()
     # task.cancel()
+    await asyncio.sleep(1)
     await eventhub_client.close()
     assert isinstance(error_handler.error, RuntimeError)
 
@@ -686,7 +687,7 @@ async def test_partition_processor_process_update_checkpoint_error():
 
     async def partition_close_handler(partition_context, reason):
         if partition_context.partition_id == "1":
-            assert reason == CloseReason.SHUTDOWN
+            assert reason == CloseReason.OWNERSHIP_LOST
             partition_close_handler.called = True
 
     eventhub_client = MockEventHubClient()
