@@ -108,8 +108,7 @@ async def on_event_received(partition_context, event):
                     recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
                     LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None
                     )
-        if args.storage_conn_str:
-            await partition_context.update_checkpoint(event)
+        await partition_context.update_checkpoint(event)
 
 
 def create_client(args):
