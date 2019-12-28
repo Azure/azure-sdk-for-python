@@ -121,9 +121,9 @@ class EventProcessor(
                 task.cancel()
         if to_cancel_partitions:
             _LOGGER.info(
-                "EventProcesor %r has cancelled partitions %r",
+                "EventProcessor %r has cancelled partitions %r",
                 self._id,
-                to_cancel_partitions,
+                to_cancel_partitions
             )
 
     def _create_tasks_for_claimed_ownership(
@@ -136,6 +136,11 @@ class EventProcessor(
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 self._tasks[partition_id] = self._loop.create_task(
                     self._receive(partition_id, checkpoint)
+                )
+                _LOGGER.info(
+                    "EventProcessor %r has claimed partition %r",
+                    self._id,
+                    partition_id
                 )
 
     async def _process_error(
@@ -265,6 +270,7 @@ class EventProcessor(
                     break
         finally:
             await self._consumers[partition_id].close()
+            del self._consumers[partition_id]
             await self._close_partition(
                 partition_context,
                 CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
@@ -291,7 +297,7 @@ class EventProcessor(
                         await self._ownership_manager.claim_ownership()
                     )
                     if claimed_partition_ids:
-                        existing_pids = set(self._consumers.keys())
+                        existing_pids = set(self._tasks.keys())
                         claimed_pids = set(claimed_partition_ids)
                         to_cancel_pids = existing_pids - claimed_pids
                         newly_claimed_pids = claimed_pids - existing_pids
