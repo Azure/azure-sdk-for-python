@@ -16,7 +16,6 @@ from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
 from ..exceptions import _error_handler
 from .._utils import create_properties, trace_link_message, event_position_selector
-from ._eventprocessor.utils import get_running_loop
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
@@ -81,7 +80,7 @@ class EventHubConsumer(
         self._on_event_received = kwargs[
             "on_event_received"
         ]  # type: Callable[[EventData], Awaitable[None]]
-        self._loop = kwargs.get("loop")
+        self._loop = kwargs.get("loop", None)
         self._client = client
         self._source = source
         self._offset = event_position
