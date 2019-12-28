@@ -19,7 +19,6 @@ from ..exceptions import _error_handler, OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import create_properties, set_message_partition_key, trace_message
 from .._constants import TIMEOUT_SYMBOL
-from ._eventprocessor.utils import get_running_loop
 from ._client_base_async import ConsumerProducerMixin
 
 if TYPE_CHECKING:
@@ -61,13 +60,12 @@ class EventHubProducer(
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
-        loop = kwargs.get("loop", None)
         idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
         self.closed = False
 
-        self._loop = loop or get_running_loop()
+        self._loop = kwargs.get("loop", None)
         self._max_message_size_on_link = None
         self._client = client
         self._target = target
