@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+#--------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -261,7 +261,36 @@ async def test_partition_processor():
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_partition_processor_process_events_error(connstr_senders):
+async def test_partition_processor_process_events_error():
+
+    class MockEventHubClient(object):
+        eventhub_name = "test_eventhub_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            consumer = MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
+            return consumer
+
+        async def get_partition_ids(self):
+            return ["0", "1"]
+
+        async def close(self):
+            pass
+
+    class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
+        async def receive(self):
+            await asyncio.sleep(0.1)
+            await self._on_event_received(EventData("mock events"))
+
+        async def close(self):
+            pass
+
     async def event_handler(partition_context, event):
         if partition_context.partition_id == "1":
             raise RuntimeError("processing events error")
@@ -274,16 +303,7 @@ async def test_partition_processor_process_events_error(connstr_senders):
         else:
             raise RuntimeError("There shouldn't be an error for partition other than 1")
 
-    async def partition_close_handler(partition_context, reason):
-        if partition_context.partition_id == "1":
-            assert reason == CloseReason.OWNERSHIP_LOST
-        else:
-            assert reason == CloseReason.SHUTDOWN
-
-    connection_str, senders = connstr_senders
-    for sender in senders:
-        sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    eventhub_client = MockEventHubClient()
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
@@ -293,7 +313,6 @@ async def test_partition_processor_process_events_error(connstr_senders):
                                      error_handler=error_handler,
                                      initial_event_position="-1",
                                      partition_initialize_handler=None,
-                                     partition_close_handler=partition_close_handler,
                                      load_balancing_interval=1)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
@@ -354,7 +373,6 @@ async def test_partition_processor_process_eventhub_consumer_error():
     task.cancel()
     assert isinstance(error_handler.error, EventHubError)
     assert partition_close_handler.reason == CloseReason.OWNERSHIP_LOST
-
 
 
 @pytest.mark.asyncio
@@ -625,7 +643,35 @@ def test_balance_ownership(ownerships, partitions, expected_result):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_partition_processor_process_update_checkpoint_error(connstr_senders):
+async def test_partition_processor_process_update_checkpoint_error():
+
+    class MockEventHubClient(object):
+        eventhub_name = "test_eventhub_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+            consumer = MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
+            return consumer
+
+        async def get_partition_ids(self):
+            return ["0", "1"]
+
+        async def close(self):
+            pass
+
+    class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
+        async def receive(self):
+            await asyncio.sleep(0.1)
+            await self._on_event_received(EventData("mock events"))
+
+        async def close(self):
+            pass
 
     class ErrorCheckpointStore(InMemoryCheckpointStore):
         async def update_checkpoint(self, checkpoint):
@@ -643,10 +689,7 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
             assert reason == CloseReason.SHUTDOWN
             partition_close_handler.called = True
 
-    connection_str, senders = connstr_senders
-    for sender in senders:
-        sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    eventhub_client = MockEventHubClient()
     checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
