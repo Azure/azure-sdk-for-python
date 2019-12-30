@@ -31,9 +31,9 @@ class SingleTextAnalyticsTest(CognitiveServiceTest):
             country_hint="US"
         )
 
-        self.assertEqual(response.detected_languages[0].name, "English")
-        self.assertEqual(response.detected_languages[0].iso6391_name, "en")
-        self.assertEqual(response.detected_languages[0].score, 1.0)
+        self.assertEqual(response.primary_language.name, "English")
+        self.assertEqual(response.primary_language.iso6391_name, "en")
+        self.assertEqual(response.primary_language.score, 1.0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

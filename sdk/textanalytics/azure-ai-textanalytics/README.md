@@ -124,11 +124,11 @@ cognitive services.
 
 ## Key concepts
 
-#### Client
+### Client
 The Text Analytics client library provides a [TextAnalyticsClient](https://aka.ms/azsdk-python-textanalytics-textanalyticsclient) to do analysis on batches of documents.
 It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction. 
 
-#### Single text operations
+### Single text operations
 The Text Analytics client library also provides module-level operations which can be performed on a single string
 rather than a batch of documents. Each synchronous and asynchronous batching operation has a singular counterpart. 
 The endpoint and credential are passed in with the desired text and other optional parameters, e.g. 
@@ -141,7 +141,7 @@ text = "I did not like the restaurant. The food was too spicy."
 result = single_analyze_sentiment(endpoint=endpoint, credential=credential, input_text=text, language="en")
 ```
 
-#### Input
+### Input
 A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
 For the single text operations, the input document is simply passed as a string, e.g. `"hello world"`. 
 For the batched operations, the input is passed as a list of documents. 
@@ -164,7 +164,7 @@ documents = [
 ]
 ```
 
-#### Operation Result
+### Operation Result
 An operation result, such as [AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), 
 is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
 With a batching operation, a list is returned containing a collection of operation results and any document errors. 
@@ -324,9 +324,9 @@ documents = [
 result = text_analytics_client.detect_languages(documents)
 
 for doc in result:
-    print("Language detected: {}".format(doc.detected_languages[0].name))
-    print("ISO6391 name: {}".format(doc.detected_languages[0].iso6391_name))
-    print("Confidence score: {}\n".format(doc.detected_languages[0].score))
+    print("Language detected: {}".format(doc.primary_language.name))
+    print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
+    print("Confidence score: {}\n".format(doc.primary_language.score))
 ```
 
 Please refer to the service documentation for a conceptual discussion of [language detection](https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection)
