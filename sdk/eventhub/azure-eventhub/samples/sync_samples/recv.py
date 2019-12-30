@@ -6,13 +6,19 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition.
+An example to show receiving events from an Event Hub.
 """
 import os
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+
+
+def on_event(partition_context, event):
+    # put your code here.
+    # If the operation is i/o intensive, multi-thread will have better performance
+    print("Received event from partition: {}".format(partition_context.partition_id))
 
 
 def on_partition_initialize(partition_context):
@@ -30,11 +36,6 @@ def on_error(partition_context, error):
     # put your code here
     print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
                                                                        error))
-
-
-def on_event(partition_context, event):
-    # put your code here
-    print("Received event from partition: {}".format(partition_context.partition_id))
 
 
 if __name__ == '__main__':

@@ -6,11 +6,12 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub asynchronously.
+An example to show receiving events from an Event Hub for a period of time asynchronously.
 """
 
 import asyncio
 import os
+import time
 from azure.eventhub.aio import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -18,38 +19,25 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 async def on_event(partition_context, event):
-    # put your code here.
-    # If the operation is i/o intensive, async will have better performance
+    # put your code here
     print("Received event from partition: {}".format(partition_context.partition_id))
 
 
-def on_partition_initialize(partition_context):
+async def on_partition_initialize(partition_context):
     # put your code here
     print("Partition: {} has been initialized".format(partition_context.partition_id))
 
 
-def on_partition_close(partition_context, reason):
+async def on_partition_close(partition_context, reason):
     # put your code here
     print("Partition: {} has been closed, reason for closing: {}".format(partition_context.partition_id,
                                                                          reason))
 
 
-def on_error(partition_context, error):
+async def on_error(partition_context, error):
     # put your code here
     print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
                                                                        error))
-
-
-async def receive(client):
-    try:
-        await client.receive(
-            on_event=on_event,
-            on_error=on_error,
-            on_partition_close=on_partition_close,
-            on_partition_initialize=on_partition_initialize
-        )
-    except KeyboardInterrupt:
-        await client.close()
 
 
 async def main():
@@ -58,8 +46,26 @@ async def main():
         consumer_group="$default",
         eventhub_name=EVENTHUB_NAME
     )
-    async with client:
-        await receive(client)
+
+    duration = 15
+    print('Consumer will keep receiving for {} seconds, start time is {}'.format(duration, time.time()))
+
+    try:
+        task = asyncio.ensure_future(
+            client.receive(
+                on_event=on_event,
+                on_error=on_error,
+                on_partition_close=on_partition_close,
+                on_partition_initialize=on_partition_initialize
+            )
+        )
+        await asyncio.sleep(duration)
+        await client.close()
+        await task
+    except KeyboardInterrupt:
+        await client.close()
+
+    print('Consumer has stopped receiving, end time is {}'.format(time.time()))
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
