@@ -140,20 +140,28 @@ class EventProcessor(
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         # type: (Iterable[str]) -> None
         with self._lock:
+            _LOGGER.debug(
+                "EventProcessor %r tries to cancel partitions %r",
+                self._id,
+                to_cancel_partitions
+            )
             for partition_id in to_cancel_partitions:
                 if partition_id in self._consumers:
                     self._consumers[partition_id].stop = True
-
-        if to_cancel_partitions:
-            _LOGGER.info(
-                "EventProcesor %r has cancelled partitions %r",
-                self._id,
-                to_cancel_partitions,
-            )
+                    _LOGGER.info(
+                        "EventProcessor %r has cancelled partition %r",
+                        self._id,
+                        partition_id
+                    )
 
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
         # type: (Iterable[str], Optional[Dict[str, Dict[str, Any]]]) -> None
         with self._lock:
+            _LOGGER.debug(
+                "EventProcessor %r tries to claim partition %r",
+                self._id,
+                claimed_partitions
+            )
             for partition_id in claimed_partitions:
                 if partition_id not in self._consumers:
                     if partition_id in self._partition_contexts:
@@ -190,6 +198,11 @@ class EventProcessor(
                             self._partition_initialize_handler(self._partition_contexts[partition_id])
                         except Exception as err:  # pylint:disable=broad-except
                             self._process_error(self._partition_contexts[partition_id], err)
+                    _LOGGER.info(
+                        "EventProcessor %r has claimed partition %r",
+                        self._id,
+                        partition_id
+                    )
 
     def _on_event_received(self, partition_context, event):
         # type: (PartitionContext, EventData) -> None

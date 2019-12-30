@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
-# -----------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------
 from typing import (
     Dict,
     Callable,
@@ -115,27 +115,41 @@ class EventProcessor(
     async def _cancel_tasks_for_partitions(
         self, to_cancel_partitions: Iterable[str]
     ) -> None:
+        _LOGGER.debug(
+            "EventProcessor %r tries to cancel partitions %r",
+            self._id,
+            to_cancel_partitions
+        )
         for partition_id in to_cancel_partitions:
             task = self._tasks.get(partition_id)
             if task:
                 task.cancel()
-        if to_cancel_partitions:
-            _LOGGER.info(
-                "EventProcesor %r has cancelled partitions %r",
-                self._id,
-                to_cancel_partitions,
-            )
+                _LOGGER.info(
+                    "EventProcessor %r has cancelled partition %r",
+                    self._id,
+                    partition_id
+                )
 
     def _create_tasks_for_claimed_ownership(
         self,
         claimed_partitions: Iterable[str],
         checkpoints: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> None:
+        _LOGGER.debug(
+            "EventProcessor %r tries to claim partition %r",
+            self._id,
+            claimed_partitions
+        )
         for partition_id in claimed_partitions:
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 self._tasks[partition_id] = self._loop.create_task(
                     self._receive(partition_id, checkpoint)
+                )
+                _LOGGER.info(
+                    "EventProcessor %r has claimed partition %r",
+                    self._id,
+                    partition_id
                 )
 
     async def _process_error(
@@ -265,6 +279,7 @@ class EventProcessor(
                     break
         finally:
             await self._consumers[partition_id].close()
+            del self._consumers[partition_id]
             await self._close_partition(
                 partition_context,
                 CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
@@ -291,7 +306,7 @@ class EventProcessor(
                         await self._ownership_manager.claim_ownership()
                     )
                     if claimed_partition_ids:
-                        existing_pids = set(self._consumers.keys())
+                        existing_pids = set(self._tasks.keys())
                         claimed_pids = set(claimed_partition_ids)
                         to_cancel_pids = existing_pids - claimed_pids
                         newly_claimed_pids = claimed_pids - existing_pids
