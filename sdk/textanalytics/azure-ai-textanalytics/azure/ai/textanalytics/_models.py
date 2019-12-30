@@ -139,6 +139,8 @@ class DetectLanguageResult(DictMixin):
     :param detected_languages: A list of extracted languages.
     :type detected_languages:
      list[~azure.ai.textanalytics.DetectedLanguage]
+    :param primary_language: The primary language detected in the document.
+    :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
     :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
@@ -150,6 +152,7 @@ class DetectLanguageResult(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.detected_languages = kwargs.get("detected_languages", None)
+        self.primary_language = kwargs.get("primary_language", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 

@@ -42,19 +42,19 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
 
         response = text_analytics.detect_languages(docs, show_stats=True)
 
-        self.assertEqual(response[0].detected_languages[0].name, "English")
-        self.assertEqual(response[1].detected_languages[0].name, "Spanish")
-        self.assertEqual(response[2].detected_languages[0].name, "Japanese")
-        self.assertEqual(response[3].detected_languages[0].name, "German")
-        self.assertEqual(response[0].detected_languages[0].iso6391_name, "en")
-        self.assertEqual(response[1].detected_languages[0].iso6391_name, "es")
-        self.assertEqual(response[2].detected_languages[0].iso6391_name, "ja")
-        self.assertEqual(response[3].detected_languages[0].iso6391_name, "de")
+        self.assertEqual(response[0].primary_language.name, "English")
+        self.assertEqual(response[1].primary_language.name, "Spanish")
+        self.assertEqual(response[2].primary_language.name, "Japanese")
+        self.assertEqual(response[3].primary_language.name, "German")
+        self.assertEqual(response[0].primary_language.iso6391_name, "en")
+        self.assertEqual(response[1].primary_language.iso6391_name, "es")
+        self.assertEqual(response[2].primary_language.iso6391_name, "ja")
+        self.assertEqual(response[3].primary_language.iso6391_name, "de")
 
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.detected_languages[0].score)
+            self.assertIsNotNone(doc.primary_language.score)
 
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -338,10 +338,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         ]
 
         response = text_analytics.detect_languages(docs)
-        self.assertEqual(response[0].detected_languages[0].name, "English")
-        self.assertEqual(response[1].detected_languages[0].name, "Spanish")
-        self.assertEqual(response[2].detected_languages[0].name, "Japanese")
-        self.assertEqual(response[3].detected_languages[0].name, "German")
+        self.assertEqual(response[0].primary_language.name, "English")
+        self.assertEqual(response[1].primary_language.name, "Spanish")
+        self.assertEqual(response[2].primary_language.name, "Japanese")
+        self.assertEqual(response[3].primary_language.name, "German")
         self.assertTrue(response[4].is_error)
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -357,10 +357,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         ]
 
         response = text_analytics.detect_languages(docs)
-        self.assertEqual(response[0].detected_languages[0].name, "English")
-        self.assertEqual(response[1].detected_languages[0].name, "Spanish")
-        self.assertEqual(response[2].detected_languages[0].name, "Japanese")
-        self.assertEqual(response[3].detected_languages[0].name, "German")
+        self.assertEqual(response[0].primary_language.name, "English")
+        self.assertEqual(response[1].primary_language.name, "Spanish")
+        self.assertEqual(response[2].primary_language.name, "Japanese")
+        self.assertEqual(response[3].primary_language.name, "German")
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
