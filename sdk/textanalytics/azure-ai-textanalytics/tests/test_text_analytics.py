@@ -24,4 +24,4 @@ class TextAnalyticsTest(CognitiveServiceTest):
             }]
         )
 
-        self.assertEqual(response[0].detected_languages[0].name, "English")
+        self.assertEqual(response[0].primary_language.name, "English")
