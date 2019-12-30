@@ -711,3 +711,49 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
 
         with self.assertRaises(TypeError):
             response = text_analytics.analyze_sentiment(docs)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_client_passed_default_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key, default_country_hint="CA")
+
+        def callback(resp):
+            country_str = "\"countryHint\": \"CA\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 3)
+
+        def callback_2(resp):
+            country_str = "\"countryHint\": \"DE\""
+            country = resp.http_request.body.count(country_str)
+            self.assertEqual(country, 3)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.detect_languages(docs, response_hook=callback)
+        response = text_analytics.detect_languages(docs, country_hint="DE", response_hook=callback_2)
+        response = text_analytics.detect_languages(docs, response_hook=callback)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_client_passed_default_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key, default_language="es")
+
+        def callback(resp):
+            language_str = "\"language\": \"es\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 3)
+
+        def callback_2(resp):
+            language_str = "\"language\": \"en\""
+            language = resp.http_request.body.count(language_str)
+            self.assertEqual(language, 3)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback_2)
+        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
