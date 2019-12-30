@@ -1034,32 +1034,31 @@ class StorageFileTest(FileTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    # TODO:uncomment this in STG71 copy file PR
-    # @record
-    # def test_copy_existing_file_with_lease(self):
-    #     # Arrange
-    #     source_client = self._create_file()
-    #     file_client = ShareFileClient(
-    #         self.get_file_url(),
-    #         share_name=self.share_name,
-    #         file_path='file1copy',
-    #         credential=self.settings.STORAGE_ACCOUNT_KEY)
-    #     file_client.create_file(1024)
-    #     lease = file_client.acquire_lease()
-    #
-    #     # Act
-    #     with self.assertRaises(HttpResponseError):
-    #         file_client.start_copy_from_url(source_client.url)
-    #
-    #     copy = file_client.start_copy_from_url(source_client.url, lease=lease)
-    #
-    #     # Assert
-    #     self.assertIsNotNone(copy)
-    #     self.assertEqual(copy['copy_status'], 'success')
-    #     self.assertIsNotNone(copy['copy_id'])
-    #
-    #     copy_file = file_client.download_file().readall()
-    #     self.assertEqual(copy_file, self.short_byte_data)
+    @record
+    def test_copy_existing_file_with_lease(self):
+        # Arrange
+        source_client = self._create_file()
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        file_client.create_file(1024)
+        lease = file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            file_client.start_copy_from_url(source_client.url)
+
+        copy = file_client.start_copy_from_url(source_client.url, lease=lease)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = file_client.download_file().readall()
+        self.assertEqual(copy_file, self.short_byte_data)
 
     @record
     def test_copy_file_with_specifying_acl_copy_behavior_attributes(self):

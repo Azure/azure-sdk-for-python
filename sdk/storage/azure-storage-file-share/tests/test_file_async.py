@@ -1258,6 +1258,37 @@ class StorageFileAsyncTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_file_with_existing_file_async())
 
+    async def _test_copy_existing_file_with_lease_async(self):
+        # Arrange
+        source_client = await self._create_file()
+        file_client = ShareFileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=self.settings.STORAGE_ACCOUNT_KEY)
+        await file_client.create_file(1024)
+        lease = await file_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await file_client.start_copy_from_url(source_client.url)
+
+        copy = await file_client.start_copy_from_url(source_client.url, lease=lease)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = await file_client.download_file()
+        content = await copy_file.readall()
+        self.assertEqual(content, self.short_byte_data)
+
+    @record
+    def test_copy_existing_file_with_lease_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_copy_existing_file_with_lease_async())
+
     async def _test_copy_file_with_specifying_acl_copy_behavior_attributes_async(self):
         # Arrange
         source_client = await self._create_file()
