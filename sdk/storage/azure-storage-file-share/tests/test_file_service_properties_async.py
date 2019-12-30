@@ -17,12 +17,11 @@ from azure.storage.fileshare import (
     RetentionPolicy,
 )
 from azure.storage.fileshare.aio import ShareServiceClient
-
-from filetestcase import (
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.filetestcase import (
     FileTestCase,
-    TestMode,
-    record,
-    not_for_emulator,
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 
@@ -78,7 +77,8 @@ class FileServicePropertiesTest(FileTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    async def _test_file_service_properties_async(self):
+    @GlobalStorageAccountPreparer()
+    async def test_file_service_properties_async(self):
         # Arrange
 
         # Act
@@ -92,13 +92,9 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(props['minute_metrics'], Metrics())
         self._assert_cors_equal(props['cors'], list())
 
-    @record
-    def test_file_service_properties_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_file_service_properties_async())
-
     # --Test cases per feature ---------------------------------------
-    async def _test_set_hour_metrics_async(self):
+    @GlobalStorageAccountPreparer()
+    async def test_set_hour_metrics_async(self):
         # Arrange
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -109,12 +105,8 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @record
-    def test_set_hour_metrics_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_hour_metrics_async())
-
-    async def _test_set_minute_metrics_async(self):
+    @GlobalStorageAccountPreparer()
+    async def test_set_minute_metrics_async(self):
         # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -126,12 +118,8 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @record
-    def test_set_minute_metrics_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_minute_metrics_async())
-
-    async def _test_set_cors_async(self):
+    @GlobalStorageAccountPreparer()
+    async def test_set_cors_async(self):
         # Arrange
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
@@ -156,15 +144,11 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
-    @record
-    def test_set_cors_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_cors_async())
-
     # --Test cases for errors ---------------------------------------
 
 
-    async def _test_too_many_cors_rules_async(self):
+    @GlobalStorageAccountPreparer()
+    async def test_too_many_cors_rules_async(self):
         # Arrange
         cors = []
         for i in range(0, 6):
@@ -173,11 +157,6 @@ class FileServicePropertiesTest(FileTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             await self.fsc.set_service_properties(None, None, cors)
-
-    @record
-    def test_too_many_cors_rules_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_too_many_cors_rules_async())
 
 
 # ------------------------------------------------------------------------------

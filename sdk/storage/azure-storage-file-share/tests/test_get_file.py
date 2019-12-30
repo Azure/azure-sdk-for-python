@@ -17,10 +17,11 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     FileProperties
 )
-from filetestcase import (
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.filetestcase import (
     FileTestCase,
-    TestMode,
-    record,
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 # ------------------------------------------------------------------------------
@@ -103,7 +104,7 @@ class StorageGetFileTest(FileTestCase):
 
     # -- Get test cases for files ----------------------------------------------
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_unicode_get_file_unicode_data(self):
         # Arrange
         file_data = u'hello world啊齄丂狛狜'.encode('utf-8')
@@ -123,7 +124,7 @@ class StorageGetFileTest(FileTestCase):
         # Assert
         self.assertEqual(file_content, file_data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_unicode_get_file_binary_data(self):
         # Arrange
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -145,7 +146,7 @@ class StorageGetFileTest(FileTestCase):
         # Assert
         self.assertEqual(file_content, binary_data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_no_content(self):
         # Arrange
         file_data = b''
@@ -218,7 +219,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_bytes_non_parallel(self):
         # Arrange
         file_client = ShareFileClient(
@@ -247,7 +248,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_bytes_small(self):
         # Arrange
         file_data = self.get_random_bytes(1024)
@@ -362,7 +363,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_non_parallel(self):
         # Arrange
         file_client = ShareFileClient(
@@ -395,7 +396,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_small(self):
         # Arrange
         file_data = self.get_random_bytes(1024)
@@ -513,7 +514,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_non_parallel_from_snapshot(self):
         # Arrange
         # Create a snapshot of the share and delete the file
@@ -557,7 +558,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_small_from_snapshot(self):
         # Arrange
         file_data = self.get_random_bytes(1024)
@@ -656,7 +657,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(1, len(actual))
             self.assertEqual(self.byte_data[0], actual[0])
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_bytes_with_zero_byte(self):
         # Arrange
         file_data = b''
@@ -721,7 +722,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_small(self):
         # Arrange
         file_client = ShareFileClient(
@@ -742,7 +743,7 @@ class StorageGetFileTest(FileTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_non_parallel(self):
         # Arrange
         file_client = ShareFileClient(
@@ -763,7 +764,7 @@ class StorageGetFileTest(FileTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_invalid_range_parallel(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
@@ -795,7 +796,7 @@ class StorageGetFileTest(FileTestCase):
             actual = stream.read()
             self.assertEqual(file_data[start:file_size], actual)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_invalid_range_non_parallel(self):
 
         # Arrange
@@ -883,7 +884,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_text_non_parallel(self):
         # Arrange
         text_file = self._get_file_reference()
@@ -916,7 +917,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_text_small(self):
         # Arrange
         file_data = self.get_random_text_data(1024)
@@ -948,7 +949,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_text_with_encoding(self):
         # Arrange
         text = u'hello 啊齄丂狛狜 world'
@@ -969,7 +970,7 @@ class StorageGetFileTest(FileTestCase):
         # Assert
         self.assertEqual(text, file_content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_to_text_with_encoding_and_progress(self):
         # Arrange
         text = u'hello 啊齄丂狛狜 world'
@@ -1002,7 +1003,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_non_seekable(self):
         # Arrange
         file_client = ShareFileClient(
@@ -1047,7 +1048,7 @@ class StorageGetFileTest(FileTestCase):
 
                 # Assert
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_non_seekable_from_snapshot(self):
         # Arrange
         # Create a snapshot of the share and delete the file
@@ -1112,7 +1113,7 @@ class StorageGetFileTest(FileTestCase):
             with self.assertRaises(ValueError):
                 snapshot_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_exact_get_size(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -1228,7 +1229,7 @@ class StorageGetFileTest(FileTestCase):
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', file_content.properties.content_settings.content_md5)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_server_encryption(self):
 
         #Arrange
@@ -1249,7 +1250,7 @@ class StorageGetFileTest(FileTestCase):
         else:
             self.assertFalse(file_content.properties.server_encrypted)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_properties_server_encryption(self):
 
         # Arrange

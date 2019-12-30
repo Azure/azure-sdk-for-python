@@ -14,11 +14,11 @@ from azure.storage.fileshare import (
     ShareClient,
     ShareDirectoryClient,
     ShareFileClient)
-
-from filetestcase import (
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.filetestcase import (
     FileTestCase,
-    record,
-    TestMode
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 #from azure.storage.common import TokenCredential
 
@@ -342,7 +342,7 @@ class StorageFileClientTest(FileTestCase):
         # Assert the client request ID validation is not throwing when the ID is not echoed
         service.get_service_properties(raw_response_hook=callback)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_user_agent_default(self):
         service = ShareServiceClient(self.get_file_url(), credential=self.account_key)
 
@@ -357,7 +357,7 @@ class StorageFileClientTest(FileTestCase):
 
         service.get_service_properties(raw_response_hook=callback)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_user_agent_custom(self):
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
@@ -385,7 +385,7 @@ class StorageFileClientTest(FileTestCase):
 
         service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_user_agent_append(self):
         service = ShareServiceClient(self.get_file_url(), credential=self.account_key)
 

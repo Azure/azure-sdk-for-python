@@ -16,10 +16,11 @@ from azure.storage.fileshare import (
     RetentionPolicy,
 )
 
-from filetestcase import (
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.filetestcase import (
     FileTestCase,
-    record,
-    not_for_emulator,
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 
@@ -66,7 +67,7 @@ class FileServicePropertiesTest(FileTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_service_properties(self):
         # Arrange
 
@@ -82,7 +83,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_cors_equal(props['cors'], list())
 
     # --Test cases per feature ---------------------------------------
-    @record
+    @GlobalStorageAccountPreparer()
     def test_set_hour_metrics(self):
         # Arrange
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -94,7 +95,7 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_set_minute_metrics(self):
         # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
@@ -107,7 +108,7 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_set_cors(self):
         # Arrange
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
@@ -134,14 +135,14 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @record
+    @GlobalStorageAccountPreparer()
     def test_retention_no_days(self):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_too_many_cors_rules(self):
         # Arrange
         cors = []

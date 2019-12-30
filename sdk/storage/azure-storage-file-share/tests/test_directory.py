@@ -9,16 +9,15 @@ import unittest
 from datetime import timedelta
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare import (
     ShareServiceClient,
     StorageErrorCode,
 )
-from filetestcase import (
+from _shared.filetestcase import (
     FileTestCase,
-    record,
     LogCaptured,
-    TestMode
+    GlobalStorageAccountPreparer
 )
 
 
@@ -49,8 +48,8 @@ class StorageDirectoryTest(FileTestCase):
     # --Helpers-----------------------------------------------------------------
 
     # --Test cases for directories ----------------------------------------------
-    @record
-    def test_create_directories(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_directories(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -60,8 +59,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_directories_with_metadata(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_directories_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         metadata = {'hello': 'world', 'number': '42'}
@@ -73,8 +72,8 @@ class StorageDirectoryTest(FileTestCase):
         md = directory.get_directory_properties().metadata
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_create_directories_fail_on_exist(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_directories_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -86,8 +85,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_subdirectories(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_subdirectories(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -99,8 +98,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(created)
         self.assertEqual(created.directory_path, 'dir1/dir2')
 
-    @record
-    def test_create_subdirectories_with_metadata(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_subdirectories_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -115,8 +114,8 @@ class StorageDirectoryTest(FileTestCase):
         sub_metadata = created.get_directory_properties().metadata
         self.assertEqual(sub_metadata, metadata)
 
-    @record
-    def test_create_file_in_directory(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_file_in_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         file_data = b'12345678' * 1024
         file_name = self.get_resource_name('file')
@@ -130,8 +129,8 @@ class StorageDirectoryTest(FileTestCase):
         file_content = new_file.download_file().readall()
         self.assertEqual(file_content, file_data)
 
-    @record
-    def test_delete_file_in_directory(self):
+    @GlobalStorageAccountPreparer()
+    def test_delete_file_in_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         file_name = self.get_resource_name('file')
         share_client = self.fsc.get_share_client(self.share_name)
@@ -146,8 +145,8 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             new_file.get_file_properties()
 
-    @record
-    def test_delete_subdirectories(self):
+    @GlobalStorageAccountPreparer()
+    def test_delete_subdirectories(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -162,8 +161,8 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             subdir.get_directory_properties()
 
-    @record
-    def test_get_directory_properties(self):
+    @GlobalStorageAccountPreparer()
+    def test_get_directory_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -176,8 +175,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
 
-    @record
-    def test_get_directory_properties_with_snapshot(self):
+    @GlobalStorageAccountPreparer()
+    def test_get_directory_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         metadata = {"test1": "foo", "test2": "bar"}
@@ -197,8 +196,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.last_modified)
         self.assertDictEqual(metadata, props.metadata)
 
-    @record
-    def test_get_directory_metadata_with_snapshot(self):
+    @GlobalStorageAccountPreparer()
+    def test_get_directory_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         metadata = {"test1": "foo", "test2": "bar"}
@@ -216,8 +215,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(snapshot_metadata)
         self.assertDictEqual(metadata, snapshot_metadata)
 
-    @record
-    def test_get_directory_properties_with_non_existing_directory(self):
+    @GlobalStorageAccountPreparer()
+    def test_get_directory_properties_with_non_existing_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
@@ -228,8 +227,8 @@ class StorageDirectoryTest(FileTestCase):
 
             # Assert
 
-    @record
-    def test_directory_exists(self):
+    @GlobalStorageAccountPreparer()
+    def test_directory_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -240,8 +239,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @record
-    def test_directory_not_exists(self):
+    @GlobalStorageAccountPreparer()
+    def test_directory_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
@@ -252,8 +251,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
-    @record
-    def test_directory_parent_not_exists(self):
+    @GlobalStorageAccountPreparer()
+    def test_directory_parent_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('missing1/missing2')
@@ -265,8 +264,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.parent_not_found)
 
-    @record
-    def test_directory_exists_with_snapshot(self):
+    @GlobalStorageAccountPreparer()
+    def test_directory_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -281,8 +280,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @record
-    def test_directory_not_exists_with_snapshot(self):
+    @GlobalStorageAccountPreparer()
+    def test_directory_not_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
@@ -297,8 +296,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
-    @record
-    def test_get_set_directory_metadata(self):
+    @GlobalStorageAccountPreparer()
+    def test_get_set_directory_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -311,8 +310,8 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_set_directory_properties_with_empty_smb_properties(self):
+    @GlobalStorageAccountPreparer()
+    def test_set_directory_properties_with_empty_smb_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory_client = share_client.create_directory('dir1')
@@ -331,8 +330,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(directory_properties_on_creation.permission_key,
                           directory_properties.permission_key)
 
-    @record
-    def test_set_directory_properties_with_file_permission_key(self):
+    @GlobalStorageAccountPreparer()
+    def test_set_directory_properties_with_file_permission_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory_client = share_client.create_directory('dir1')
@@ -356,8 +355,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(directory_properties.creation_time, new_creation_time)
         self.assertEqual(directory_properties.last_write_time, new_last_write_time)
 
-    @record
-    def test_list_subdirectories_and_files(self):
+    @GlobalStorageAccountPreparer()
+    def test_list_subdirectories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -383,8 +382,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 6)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_subdirectories_and_files_with_prefix(self):
+    @GlobalStorageAccountPreparer()
+    def test_list_subdirectories_and_files_with_prefix(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -407,8 +406,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_subdirectories_and_files_with_snapshot(self):
+    @GlobalStorageAccountPreparer()
+    def test_list_subdirectories_and_files_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -436,8 +435,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_nested_subdirectories_and_files(self):
+    @GlobalStorageAccountPreparer()
+    def test_list_nested_subdirectories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -459,8 +458,8 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 2)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_delete_directory_with_existing_share(self):
+    @GlobalStorageAccountPreparer()
+    def test_delete_directory_with_existing_share(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -473,8 +472,8 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             directory.get_directory_properties()
 
-    @record
-    def test_delete_directory_with_non_existing_directory(self):
+    @GlobalStorageAccountPreparer()
+    def test_delete_directory_with_non_existing_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
@@ -485,8 +484,8 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
-    @record
-    def test_get_directory_properties_server_encryption(self):
+    @GlobalStorageAccountPreparer()
+    def test_get_directory_properties_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')

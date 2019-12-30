@@ -15,7 +15,7 @@ import pytest
 from azure.core import MatchConditions
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
@@ -28,10 +28,10 @@ from azure.storage.fileshare import (
     AccountSasPermissions,
     StorageErrorCode,
     NTFSAttributes)
-from filetestcase import (
+from _shared.filetestcase import (
     FileTestCase,
-    TestMode,
-    record,
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 # ------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ class StorageFileTest(FileTestCase):
             return self.wrapped_file.read(count)
 
     # --Test cases for files ----------------------------------------------
-    @record
+    @GlobalStorageAccountPreparer()
     def test_make_file_url(self):
         # Arrange
 
@@ -178,7 +178,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_make_file_url_no_directory(self):
         # Arrange
         share = self.fsc.get_share_client("vhds")
@@ -191,7 +191,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.file.core.windows.net/vhds/my.vhd')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_make_file_url_with_protocol(self):
         # Arrange
         url = self.get_file_url().replace('https', 'http')
@@ -206,7 +206,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_make_file_url_with_sas(self):
         # Arrange
         sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
@@ -224,7 +224,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME +
                          '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -243,7 +243,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(props.etag, resp['etag'])
         self.assertEqual(props.last_modified, resp['last_modified'])
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file_with_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
@@ -270,7 +270,7 @@ class StorageFileTest(FileTestCase):
         with self.assertRaises(ValueError):
             file_client.create_file(1024, file_permission=permission)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file_with_invalid_file_permission(self):
         # Arrange
         file_name = self._get_file_client()
@@ -278,7 +278,7 @@ class StorageFileTest(FileTestCase):
         with self.assertRaises(HttpResponseError):
             file_name.create_file(1024, file_permission="abcde")
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file_will_set_all_smb_properties(self):
         # Arrange
         file_client = self._get_file_client()
@@ -294,7 +294,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(file_properties.file_attributes)
         self.assertIsNotNone(file_properties.last_write_time)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_exists(self):
         # Arrange
         file_client = self._create_file()
@@ -305,7 +305,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_not_exists(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -321,7 +321,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_exists_with_snapshot(self):
         # Arrange
         file_client = self._create_file()
@@ -341,7 +341,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertTrue(props)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_not_exists_with_snapshot(self):
         # Arrange
         share_client = self.fsc.get_share_client(self.share_name)
@@ -361,7 +361,7 @@ class StorageFileTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             snapshot_client.get_file_properties()
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_resize_file(self):
         # Arrange
         file_client = self._create_file()
@@ -373,7 +373,7 @@ class StorageFileTest(FileTestCase):
         props = file_client.get_file_properties()
         self.assertEqual(props.size, 5)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_set_file_properties(self):
         # Arrange
         file_client = self._create_file()
@@ -392,7 +392,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(properties.creation_time)
         self.assertIsNotNone(properties.permission_key)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_set_file_properties_with_file_permission(self):
         # Arrange
         file_client = self._create_file()
@@ -423,7 +423,7 @@ class StorageFileTest(FileTestCase):
         self.assertIn("Archive", properties.file_attributes)
         self.assertIn("Temporary", properties.file_attributes)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_properties(self):
         # Arrange
         file_client = self._create_file()
@@ -435,7 +435,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(properties)
         self.assertEqual(properties.size, len(self.short_byte_data))
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_properties_with_snapshot(self):
         # Arrange
         file_client = self._create_file()
@@ -464,7 +464,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(file_props.size, snapshot_props.size)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_metadata_with_snapshot(self):
         # Arrange
         file_client = self._create_file()
@@ -491,7 +491,7 @@ class StorageFileTest(FileTestCase):
         self.assertDictEqual(metadata2, file_metadata)
         self.assertDictEqual(metadata, file_snapshot_metadata)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_properties_with_non_existing_file(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -507,7 +507,7 @@ class StorageFileTest(FileTestCase):
 
             # Assert
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_get_file_metadata(self):
         # Arrange
         file_client = self._create_file()
@@ -519,7 +519,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(md)
         self.assertEqual(0, len(md))
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_set_file_metadata_with_upper_case(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -536,7 +536,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_delete_file_with_existing_file(self):
         # Arrange
         file_client = self._create_file()
@@ -548,7 +548,7 @@ class StorageFileTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             file_client.get_file_properties()
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_delete_file_with_non_existing_file(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -564,7 +564,7 @@ class StorageFileTest(FileTestCase):
 
             # Assert
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_update_range(self):
         # Arrange
         file_client = self._create_file()
@@ -579,7 +579,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_update_range_with_md5(self):
         # Arrange
         file_client = self._create_file()
@@ -590,7 +590,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self):
         # Arrange
         source_file_name = 'testfile1'
@@ -614,7 +614,7 @@ class StorageFileTest(FileTestCase):
             # when the source file has less bytes than 2050, throw exception
             destination_file_client.upload_range_from_url(source_file_url, offset=0, length=2050, source_offset=0)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_update_range_from_file_url(self):
         # Arrange
         source_file_name = 'testfile'
@@ -649,7 +649,7 @@ class StorageFileTest(FileTestCase):
         self.assertEquals(511, file_ranges[0].get('end'))
         self.assertEquals(data, file_content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_update_big_range_from_file_url(self):
         # Arrange
         source_file_name = 'testfile1'
@@ -685,7 +685,7 @@ class StorageFileTest(FileTestCase):
         self.assertEquals(end, file_ranges[0].get('end'))
         self.assertEquals(data, file_content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_clear_range(self):
         # Arrange
         # TODO: update swagger and fix this test
@@ -700,7 +700,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(b'\x00' * 512, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_update_file_unicode(self):
         # Arrange
         file_client = self._create_file()
@@ -718,7 +718,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_list_ranges_none(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -736,7 +736,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_list_ranges_2(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -762,7 +762,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_list_ranges_none_from_snapshot(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -791,7 +791,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_list_ranges_2_from_snapshot(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -827,7 +827,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(ranges[1]['start'], 1024)
         self.assertEqual(ranges[1]['end'], 1535)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_copy_file_with_existing_file(self):
         # Arrange
         source_client = self._create_file()
@@ -848,7 +848,7 @@ class StorageFileTest(FileTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_copy_file_async_private_file(self):
         # Arrange
         self._create_remote_share()
@@ -867,7 +867,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_copy_file_async_private_file_with_sas(self):
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -899,7 +899,7 @@ class StorageFileTest(FileTestCase):
         actual_data = file_client.download_file().readall()
         self.assertEqual(actual_data, data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_abort_copy_file(self):
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -931,7 +931,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(target_file.readall(), b'')
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_abort_copy_file_with_synchronous_copy_fails(self):
         # Arrange
         source_file = self._create_file()
@@ -951,7 +951,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertEqual(copy_resp['copy_status'], 'success')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_unicode_get_file_unicode_name(self):
         # Arrange
         file_name = '啊齄丂狛狜'
@@ -968,7 +968,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertEqual(content, b'hello world')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_unicode_data(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -986,7 +986,7 @@ class StorageFileTest(FileTestCase):
         content = file_client.download_file().readall()
         self.assertEqual(content, data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_file_unicode_data_and_file_attributes(self):
         # Arrange
         file_client = self._get_file_client()
@@ -1001,7 +1001,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(content, data)
         self.assertIn('Temporary', properties.file_attributes)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_unicode_get_file_binary_data(self):
         # Arrange
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -1320,7 +1320,7 @@ class StorageFileTest(FileTestCase):
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file_from_text(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -1339,7 +1339,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertFileEqual(file_client, data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file_from_text_with_encoding(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -1380,7 +1380,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertFileEqual(file_client, encoded_data)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_create_file_with_md5_small(self):
         # Arrange
         file_name = self._get_file_reference()
@@ -1418,7 +1418,7 @@ class StorageFileTest(FileTestCase):
         # Assert
 
     # --Test cases for sas & acl ------------------------------------------------
-    @record
+    @GlobalStorageAccountPreparer()
     def test_sas_access_file(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1446,7 +1446,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertEqual(self.short_byte_data, content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_sas_signed_identifier(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1480,7 +1480,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         self.assertEqual(self.short_byte_data, content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_account_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1509,7 +1509,7 @@ class StorageFileTest(FileTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_shared_read_access_file(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1538,7 +1538,7 @@ class StorageFileTest(FileTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_shared_read_access_file_with_content_query_params(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1576,7 +1576,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_shared_write_access_file(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -1608,7 +1608,7 @@ class StorageFileTest(FileTestCase):
         file_content = file_client_admin.download_file().readall()
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
-    @record
+    @GlobalStorageAccountPreparer()
     def test_shared_delete_access_file(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
