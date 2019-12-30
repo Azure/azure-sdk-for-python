@@ -23,50 +23,50 @@ USAGE:
 OUTPUT:
     Document text: I had the best day of my life.
     Overall sentiment: positive
-    Overall scores: positive=0.999; neutral=0.999; negative=0.999
+    Overall scores: positive=0.999; neutral=0.001; negative=0.000
 
     Sentence 1 sentiment: positive
-    Sentence score: positive=0.999; neutral=0.999; negative=0.999
+    Sentence score: positive=0.999; neutral=0.001; negative=0.000
     Offset: 0
     Length: 30
 
     ------------------------------------
     Document text: This was a waste of my time. The speaker put me to sleep.
     Overall sentiment: negative
-    Overall scores: positive=0.061; neutral=0.061; negative=0.061
+    Overall scores: positive=0.061; neutral=0.426; negative=0.513
 
     Sentence 1 sentiment: negative
-    Sentence score: positive=0.000; neutral=0.000; negative=0.000
+    Sentence score: positive=0.000; neutral=0.000; negative=1.000
     Offset: 0
     Length: 28
 
     Sentence 2 sentiment: neutral
-    Sentence score: positive=0.122; neutral=0.122; negative=0.122
+    Sentence score: positive=0.122; neutral=0.851; negative=0.026
     Offset: 29
     Length: 28
 
     ------------------------------------
     Document text: No tengo dinero ni nada que dar...
     Overall sentiment: negative
-    Overall scores: positive=0.026; neutral=0.026; negative=0.026
+    Overall scores: positive=0.026; neutral=0.031; negative=0.943
 
     Sentence 1 sentiment: negative
-    Sentence score: positive=0.026; neutral=0.026; negative=0.026
+    Sentence score: positive=0.026; neutral=0.031; negative=0.943
     Offset: 0
     Length: 34
 
     ------------------------------------
     Document text: L'hôtel n'était pas très confortable. L'éclairage était trop sombre.
     Overall sentiment: negative
-    Overall scores: positive=0.165; neutral=0.165; negative=0.165
+    Overall scores: positive=0.165; neutral=0.030; negative=0.806
 
     Sentence 1 sentiment: negative
-    Sentence score: positive=0.186; neutral=0.186; negative=0.186
+    Sentence score: positive=0.186; neutral=0.032; negative=0.783
     Offset: 0
     Length: 37
 
     Sentence 2 sentiment: negative
-    Sentence score: positive=0.143; neutral=0.143; negative=0.143
+    Sentence score: positive=0.143; neutral=0.027; negative=0.829
     Offset: 38
     Length: 30
 
@@ -103,14 +103,14 @@ class AnalyzeSentimentSampleAsync(object):
             print("Document text: {}".format(documents[idx]))
             print("Overall sentiment: {}".format(doc.sentiment))
         # [END batch_analyze_sentiment_async]
-            print("Overall scores: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
+            print("Overall scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
                 doc.document_scores.positive,
                 doc.document_scores.neutral,
                 doc.document_scores.negative,
             ))
             for idx, sentence in enumerate(doc.sentences):
                 print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
-                print("Sentence score: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f}".format(
+                print("Sentence score: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
                     sentence.sentence_scores.positive,
                     sentence.sentence_scores.neutral,
                     sentence.sentence_scores.negative,
