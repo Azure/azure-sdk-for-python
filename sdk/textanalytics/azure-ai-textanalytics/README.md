@@ -1,8 +1,10 @@
 # Azure Text Analytics client library for Python
-Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes four main functions:
+Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes six main functions:
 
 * Sentiment Analysis
 * Named Entity Recognition
+* Personally Identifiable Information (PII) Entity Recognition
+* Linked Entity Recognition
 * Language Detection
 * Key Phrase Extraction
 
@@ -12,8 +14,8 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
-* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Cognitive Services or Text Analytics account](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows) to use this package.
+* You must have an [Azure subscription](https://azure.microsoft.com/free/) and a
+[Cognitive Services or Text Analytics resource](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows) to use this package.
 
 ### Install the package
 Install the Azure Text Analytics client library for Python with [pip](https://pypi.org/project/pip/):
@@ -23,8 +25,8 @@ pip install azure-ai-textanalytics --pre
 ```
 
 ### Create a Cognitive Services or Text Analytics resource
-Text Analytics supports both [multi-service and single-service access](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows). Create a Cognitive Services resource if you plan
-to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
+Text Analytics supports both [multi-service and single-service access](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows). 
+Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
 
 You can create either resource using the
 [Azure Portal](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#create-a-new-azure-cognitive-services-resource)
@@ -48,12 +50,10 @@ az cognitiveservices account create \
     --yes
 ```
 
-### Create the client
-The Azure Text Analytics client library for Python allows you to engage with the Text Analytics service to 
-analyze sentiment, recognize entities, detect language, and extract key phrases from text.
+### Authenticate the client
 Interaction with this service begins with an instance of a [client](#Client). 
-To create a client object, you will need the cognitive services or text analytics endpoint to 
-your resource and a credential that allows you access:
+To create a client object, you will need the cognitive services or text analytics `endpoint` to 
+your resource and a `credential` that allows you access:
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient
@@ -62,7 +62,7 @@ text_analytics = TextAnalyticsClient(endpoint="https://westus2.api.cognitive.mic
 ```
 
 Note that if you create a [custom subdomain](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains) 
-for your resource the endpoint may look different than in the above code snippet. 
+name for your resource the endpoint may look different than in the above code snippet. 
 For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
 
 #### Looking up the endpoint
@@ -89,7 +89,7 @@ cognitive services.
     Use the key as the credential parameter to authenticate the client:
     ```python
     from azure.ai.textanalytics import TextAnalyticsClient
-    service = TextAnalyticsClient(endpoint="https://westus2.api.cognitive.microsoft.com/", credential="<subscription_key>")
+    text = TextAnalyticsClient(endpoint="https://westus2.api.cognitive.microsoft.com/", credential="<subscription_key>")
     ```
 
 2. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory),
@@ -124,93 +124,60 @@ cognitive services.
 
 ## Key concepts
 
-The following are types of text analysis that the service offers:
-
-1. [Sentiment Analysis](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis)
-    
-    Use sentiment analysis to find out what customers think of your brand or topic by analyzing raw text for clues about positive or negative sentiment.
-    Scores closer to `1` indicate positive sentiment, while scores closer to `0` indicate negative sentiment.
-    Sentiment analysis returns scores and labels at a document and sentence level.
-
-2. [Named Entity Recognition](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
-    
-    Use named entity recognition (NER) to identify different entities in text and categorize them into pre-defined classes, or types.
-    Entity recognition in the client library provides three different methods depending on what you are interested in.
-    * `recognize_entities()` can be used to identify and categorize entities in your text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
-    * `recognize_pii_entities()` can be used to recognize personally identifiable information such as SSNs and bank account numbers.
-    * `recognize_linked_entities()` can be used to identify and disambiguate the identity of an entity found in text (For example, determining whether
-    "Mars" is being used as the planet or as the Roman god of war). This process uses Wikipedia as the knowledge base to which recognized entities are linked.
-    
-    See a full list of [Named Entity Recognition Types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal).
-
-3. [Language Detection](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-language-detection)
-    
-    Detect the language of the input text and report a single language code for every document submitted on the request. 
-    The language code is paired with a score indicating the strength of the score.
-    A wide range of languages, variants, dialects, and some regional/cultural languages are supported -
-    see [supported languages](https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support#language-detection) for full details.
-
-4. [Key Phrase Extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction)
-    
-    Extract key phrases to quickly identify the main points in text. 
-    For example, for the input text "The food was delicious and there were wonderful staff", the main talking points returned: "food" and "wonderful staff".
-
-See [Language and regional support](https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support) for what is currently available for each operation.
-
-
-### Client
+#### Client
 The Text Analytics client library provides a [TextAnalyticsClient](https://aka.ms/azsdk-python-textanalytics-textanalyticsclient) to do analysis on batches of documents.
+It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction. 
 
-
-A batch contains the text documents you wish to process, and may contain a per-item ID and language/country hint
-if you choose. For example, a batch can simply be passed as a list of strings:
-```python
-from azure.ai.textanalytics import TextAnalyticsClient
-
-text_analytics_client = TextAnalyticsClient(endpoint, key)
-documents = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
-
-result = text_analytics_client.analyze_sentiment(documents)
-```
-or as a list of [DetectLanguageInput](https://aka.ms/azsdk-python-textanalytics-detectlanguageinput) or [TextDocumentInput](https://aka.ms/azsdk-python-textanalytics-textdocumentinput):
-```python
-from azure.ai.textanalytics import TextAnalyticsClient
-
-text_analytics_client = TextAnalyticsClient(endpoint, key)
-documents = [
-    {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"}, 
-    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites."}, 
-    {"id": "3", "language": "en", "text": "What a great movie!"}
-]
-result = text_analytics_client.analyze_sentiment(documents)
-```
-
-The returned response will be index-matched with the order of the provided documents.
-
-
-### Single text operations
+#### Single text operations
 The Text Analytics client library also provides module-level operations which can be performed on a single string
-of text. 
-
-These operations are an introduction to the client library and have simpler inputs and outputs than
-that of the batched client operations. The endpoint and credential are passed in with the desired text and 
-other optional parameters. 
+rather than a batch of documents. Each synchronous and asynchronous batching operation has a singular counterpart. 
+The endpoint and credential are passed in with the desired text and other optional parameters, e.g. 
+[single_analyze_sentiment()](https://aka.ms/azsdk-python-textanalytics-singleanalyzesentiment):
 
 ```python
 from azure.ai.textanalytics import single_analyze_sentiment
 
 text = "I did not like the restaurant. The food was too spicy."
-result = single_analyze_sentiment(endpoint=endpoint, credential=credential, text_input=text, language="en")
-
-print(result.sentiment)
+result = single_analyze_sentiment(endpoint=endpoint, credential=credential, input_text=text, language="en")
 ```
+
+#### Input
+A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
+For the single text operations, the input document is simply passed as a string, e.g. `"hello world"`. 
+For the batched operations, the input is passed as a list of documents. 
+
+Documents can be passed as a list of strings, e.g.
+```python
+docs = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
+```
+
+or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a 
+list of [DetectLanguageInput](https://aka.ms/azsdk-python-textanalytics-detectlanguageinput) or 
+[TextDocumentInput](https://aka.ms/azsdk-python-textanalytics-textdocumentinput),
+or a dict-like representation of the object:
+
+```python
+documents = [
+    {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"}, 
+    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites."}, 
+    {"id": "3", "language": "en", "text": "What a great movie!"}
+]
+```
+
+#### Operation Result
+An operation result, such as [AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), 
+is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
+With a batching operation, a list is returned containing a collection of operation results and any document errors. 
+These results/errors will be index-matched with the order of the provided documents.
 
 
 ## Examples
 The following section provides several code snippets covering some of the most common Text Analytics tasks, including:
 
-* [Analyze Sentiment](#analyze-sentient "Analyze sentiment")
+* [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
 * [Recognize Entities](#recognize-entities "Recognize entities")
+* [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
+* [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
 * [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 * [Detect Languages](#detect-languages "Detect languages")
 
@@ -230,9 +197,16 @@ documents = [
 
 result = text_analytics_client.analyze_sentiment(documents, language="en")
 
-for text in result:
-    print(text.sentiment)
+for doc in result:
+    print("Overall sentiment: {}".format(doc.sentiment))
+    print("Scores: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
+        doc.document_scores.positive,
+        doc.document_scores.neutral,
+        doc.document_scores.negative,
+    ))
 ```
+
+Please refer to the service documentation for a conceptual discussion of [sentiment analysis](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis).
 
 ### Recognize entities
 Recognize entities in a batch of documents.
@@ -250,9 +224,66 @@ documents = [
 
 result = text_analytics_client.recognize_entities(documents, language="en")
 
-for text in result:
-    print(text.entities)
+for doc in result:
+    for entity in doc.entities:
+        print("Entity: \t", entity.text, "\tType: \t", entity.type,
+              "\tConfidence Score: \t", entity.score)
 ```
+
+Please refer to the service documentation for a conceptual discussion of [named entity recognition](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
+and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
+
+### Recognize PII entities
+Recognize PII entities in a batch of documents.
+
+```python
+from azure.ai.textanalytics import TextAnalyticsClient
+
+text_analytics_client = TextAnalyticsClient(endpoint, key)
+
+documents = [
+    "The employee's SSN is 555-55-5555.",
+    "The employee's phone number is 555-55-5555."
+]
+
+result = text_analytics_client.recognize_pii_entities(documents, language="en")
+
+for doc in result:
+    for entity in doc.entities:
+        print("Entity: \t", entity.text, "\tType: \t", entity.type,
+              "\tConfidence Score: \t", entity.score)
+```
+
+Please refer to the service documentation for [supported PII entity types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal).
+
+### Recognize linked entities
+Recognize linked entities in a batch of documents.
+
+```python
+from azure.ai.textanalytics import TextAnalyticsClient
+
+text_analytics_client = TextAnalyticsClient(endpoint, key)
+
+documents = [
+    "Microsoft was founded by Bill Gates and Paul Allen.",
+    "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia."
+]
+
+result = text_analytics_client.recognize_linked_entities(documents, language="en")
+
+for doc in result:
+    for entity in doc.entities:
+        print("Entity: {}".format(entity.name))
+        print("Url: {}".format(entity.url))
+        print("Data Source: {}".format(entity.data_source))
+        for match in entity.matches:
+            print("Score: {0:.3f}".format(match.score))
+            print("Offset: {}".format(match.offset))
+            print("Length: {}\n".format(match.length))
+```
+
+Please refer to the service documentation for a conceptual discussion of [entity linking](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
+and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
 
 ### Extract key phrases
 Extract key phrases in a batch of documents.
@@ -270,9 +301,11 @@ documents = [
 
 result = text_analytics_client.extract_key_phrases(documents, language="en")
 
-for text in result:
-    print(text.key_phrases)
+for doc in result:
+    print(doc.key_phrases)
 ```
+
+Please refer to the service documentation for a conceptual discussion of [key phrase extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction).
 
 ### Detect languages
 Detect language in a batch of documents.
@@ -290,9 +323,14 @@ documents = [
 
 result = text_analytics_client.detect_languages(documents)
 
-for text in result:
-    print(text.detected_languages[0].name)
+for doc in result:
+    print("Language detected: {}".format(doc.detected_languages[0].name))
+    print("ISO6391 name: {}".format(doc.detected_languages[0].iso6391_name))
+    print("Confidence score: {}\n".format(doc.detected_languages[0].score))
 ```
+
+Please refer to the service documentation for a conceptual discussion of [language detection](https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection)
+and [language and regional support](https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support).
 
 ## Optional Configuration
 
@@ -360,7 +398,7 @@ In a single string of text:
 
 
 ### Additional documentation
-For more extensive documentation on Azure Cognitive Services, see the [Azure Cognitive Services documentation](https://docs.microsoft.com/azure/cognitive-services/) on docs.microsoft.com.
+For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
