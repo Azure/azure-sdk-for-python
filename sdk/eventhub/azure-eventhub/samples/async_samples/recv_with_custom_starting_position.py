@@ -48,13 +48,6 @@ async def send_test_data(producer_client):
         event_data_batch_to_partition_0.add(EventData("Forth event in partition 0"))
         await producer_client.send_batch(event_data_batch_to_partition_0)
 
-        event_data_batch_to_partition_1 = await producer_client.create_batch(partition_id='1')
-        event_data_batch_to_partition_1.add(EventData("First event in partition 1"))
-        event_data_batch_to_partition_1.add(EventData("Second event in partition 1"))
-        event_data_batch_to_partition_1.add(EventData("Third event in partition 1"))
-        event_data_batch_to_partition_1.add(EventData("Forth event in partition 1"))
-        await producer_client.send_batch(event_data_batch_to_partition_1)
-
 
 async def main():
     producer_client = EventHubProducerClient.from_connection_string(
@@ -71,20 +64,17 @@ async def main():
     )
 
     partition_0_prop = await consumer_client.get_partition_properties("0")
-    partition_1_prop = await consumer_client.get_partition_properties("1")
     partition_0_last_enqueued_sequence_number = partition_0_prop["last_enqueued_sequence_number"]
-    partition_1_last_enqueued_sequence_number = partition_1_prop["last_enqueued_sequence_number"]
 
     # client will receive messages from position of the third from last from partition 0
-    # client will receive messages from position of the second from last from partition 1
     starting_position = {
         "0": partition_0_last_enqueued_sequence_number - 3,
-        "1": partition_1_last_enqueued_sequence_number - 2
     }
 
     try:
         async with consumer_client:
             await consumer_client.receive(
+                partition_id="0",
                 on_event=on_event,
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,

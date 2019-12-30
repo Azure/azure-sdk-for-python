@@ -5,6 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+"""
+Examples to show how to create async EventHubProducerClient/EventHubConsumerClient
+"""
 import asyncio
 import os
 from azure.eventhub import TransportType

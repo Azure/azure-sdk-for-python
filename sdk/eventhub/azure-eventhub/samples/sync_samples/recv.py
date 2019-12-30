@@ -14,13 +14,10 @@ from azure.eventhub import EventHubConsumerClient
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-EVENT_POSITION = "-1"
-PARTITION = "0"
-
 
 def on_partition_initialize(partition_context):
     # put your code here
-    print("Partition: {} has been intialized".format(partition_context.partition_id))
+    print("Partition: {} has been initialized".format(partition_context.partition_id))
 
 
 def on_partition_close(partition_context, reason):
@@ -28,10 +25,12 @@ def on_partition_close(partition_context, reason):
     print("Partition: {} has been closed, reason for closing: {}".format(partition_context.partition_id,
                                                                          reason))
 
+
 def on_error(partition_context, error):
     # put your code here
     print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
                                                                        error))
+
 
 def on_event(partition_context, event):
     # put your code here

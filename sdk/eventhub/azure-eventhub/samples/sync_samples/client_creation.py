@@ -5,6 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+"""
+Examples to show how to create EventHubProducerClient/EventHubConsumerClient
+"""
 import os
 from azure.eventhub import (
     EventHubProducerClient,
