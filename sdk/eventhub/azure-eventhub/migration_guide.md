@@ -35,23 +35,23 @@ The code samples in this migration guide use async APIs.
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
-| `EventHubClientAsync.add_async_receiver()` and `Receiver.receive()`| `EventHubConsumerClient.receive()`| [receive events](./samples/async_samples/recv_async.py) |
+| `EventHubClientAsync.add_async_receiver()` and `AsyncReceiver.receive()`| `EventHubConsumerClient.receive()`| [receive events](./samples/async_samples/recv_async.py) |
 
 ### Sending events
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
-| `EventHubClientAsync.add_async_sender()` and `Sender.send()`| `EventHubProducerClient.send_batch()`| [send events](./samples/async_samples/send_async.py) |
+| `EventHubClientAsync.add_async_sender()` and `AsyncSender.send()`| `EventHubProducerClient.send_batch()`| [send events](./samples/async_samples/send_async.py) |
 
 ## Migration samples
 
-* [Receiving events](#migrating-code-from-eventhubclient-and-receiverasync-to-eventhubconsumerclient-for-receiving-events)
-* [Receiving events with checkpointing](#migrating-code-from-eventhubclient-and-senderasync-to-eventhubproducerclient-for-sending-events)
+* [Receiving events](#migrating-code-from-eventhubclient-and-asyncreceiver-to-eventhubconsumerclient-for-receiving-events)
+* [Receiving events with checkpointing](#migrating-code-from-eventhubclient-and-asyncsender-to-eventhubproducerclient-for-sending-events)
 * [Sending events](#migrating-code-from-eventprocessorhost-to-eventhubconsumerclient-for-receiving-events)
 
-### Migrating code from `EventHubClient` and `ReceiverAsync` to `EventHubConsumerClient` for receiving events
+### Migrating code from `EventHubClient` and `AsyncReceiver` to `EventHubConsumerClient` for receiving events
 
-In V1, `ReceiverAsync.receive()` returns a list of EventData.
+In V1, `AsyncReceiver.receive()` returns a list of EventData.
 
 In V5, EventHubConsumerClient.receive() calls user callback on_event to process events.
 
@@ -85,9 +85,9 @@ async with client:
     await client.receive(on_event=on_event, partition_id="0", starting_position="@latest")
 ```
 
-### Migrating code from `EventHubClient` and `SenderAsync` to `EventHubProducerClient` for sending events
+### Migrating code from `EventHubClient` and `AsyncSender` to `EventHubProducerClient` for sending events
 
-In V1, you create an `EventHubClient`, then create a `SenderAsync`, and call `SenderAsync.send` to send an event that may have
+In V1, you create an `EventHubClient`, then create a `AsyncSender`, and call `AsyncSender.send` to send an event that may have
 a list/generator of messages.
 
 In V5, this has been consolidated into a one method - `EventHubProducerClient.send_batch`.
