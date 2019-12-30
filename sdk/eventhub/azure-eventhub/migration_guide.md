@@ -9,39 +9,39 @@ For users new to the Python SDK for Event Hubs, please see the [readme file for 
 
 In the interest of simplifying the API surface we've made two distinct
 clients, rather than having a single `EventHubClient`. 
-* `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
-* `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.aio.html#azure.eventhub.aio.EventHubConsumerClient)
+* `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
+* `EventHubConsumerClient` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubConsumerClient)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubConsumerClient)
 
 We've also merged the functionality from `EventProcessorHost` into 
 `EventHubConsumerClient`, allowing `EventHubConsumerClient` to be the single
 point of entry for receiving of any type (from single partition, all partitions, or with load balancing and checkpointing features) within Event Hubs.
 
-V5 has both sync and async APIs. Sync API is under package azure.eventhub whereas async API is under package azure.eventhub.aio.
+V5 has both sync and async APIs. Sync API is under package `azure.eventhub` whereas async API is under package azure.eventhub.aio.
 They have the same class names under the two packages. For instance, class `EventHubConsumerClient` with sync API under package `azure.eventhub` has its 
 async counterpart under package `auzre.eventhub.aio`.
 The code samples in this migration guide use async APIs.
 
 ### Client constructors
 
-| In v1                                          | Equivalent in v5                                                 | Sample |
-|------------------------------------------------|------------------------------------------------------------------|--------|
-| `EventHubClient()`    | `EventHubProducerClient()` or `EventHubConsumerClient()` | [using credential](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/sync_samples/client_secret_auth.py) |
-| `EventHubClient.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[receive events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_async.py),  [send events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_async.py) |
-| `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_store_async.py) |
+| In v1 | Equivalent in v5 | Sample |
+|---|---|---|
+| `EventHubClientAsync()`    | `EventHubProducerClient()` or `EventHubConsumerClient()` | [using credential](./samples/async_samples/client_secret_auth_async.py ) |
+| `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[receive events](./samples/async_samples/recv_async.py),  [send events](./samples/async_samples/send_async.py) |
+| `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](./samples/async_samples/recv_with_checkpoint_store_async.py) |
 
 ### Receiving events 
 
-| In v1                                          | Equivalent in v5                                                 | Sample |
-|------------------------------------------------|------------------------------------------------------------------|--------|
-| `EventHubClient.add_receiver()` and `Receiver.receive()`                       | `EventHubConsumerClient.receive()`                               | [receive events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_async.py) |
+| In v1 | Equivalent in v5 | Sample |
+|---|---|---|
+| `EventHubClient.add_receiver()` and `Receiver.receive()`| `EventHubConsumerClient.receive()`| [receive events](./samples/async_samples/recv_async.py) |
 
 ### Sending events
 
-| In v1                                          | Equivalent in v5                                                 | Sample |
-|------------------------------------------------|------------------------------------------------------------------|--------|
-| `EventHubClient.add_sender()` and `Sender.send()`                          | `EventHubProducerClient.send_batch()`                               | [send events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_async.py) |
+| In v1 | Equivalent in v5 | Sample |
+|---|---|---|
+| `EventHubClient.add_sender()` and `Sender.send()`| `EventHubProducerClient.send_batch()`| [send events](./samples/async_samples/send_async.py) |
 
 ## Migration samples
 
@@ -58,7 +58,7 @@ In V5, EventHubConsumerClient.receive() calls user callback on_event to process 
 For example, this code which keeps receiving from a partition in V1:
 
 ```python
-client = EventHubClientAsync.from_connection_string(connection_str)
+client = EventHubClientAsync.from_connection_string(connection_str, eventhub=EVENTHUB_NAME)
 receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
 try:
     await client.run_async()
@@ -97,7 +97,7 @@ This method deterministically tells you whether the batch of events are sent to 
 
 So in V1:
 ```python
-client = EventHubClientAsync.from_connection_string(connection_str)
+client = EventHubClientAsync.from_connection_string(connection_str, eventhub=EVENTHUB_NAME)
 sender = client.add_async_sender(partition="0")
 try:
     await client.run_async()
