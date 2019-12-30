@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=too-many-lines
 import functools
 import time
 from io import BytesIO
@@ -28,8 +28,10 @@ from .._shared.response_handlers import return_response_headers, process_storage
 from .._serialize import validate_copy_mode
 from .._models import CopyFileSmbInfo
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
+from .._serialize import get_access_conditions
 from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
+from ._lease_async import ShareFileLeaseClient
 from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
@@ -133,6 +135,36 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         self._loop = loop
 
     @distributed_trace_async
+    async def acquire_lease(self, lease_id=None, **kwargs):
+        # type: (int, Optional[str], **Any) -> BlobLeaseClient
+        """Requests a new lease.
+
+        If the file does not have an active lease, the File
+        Service creates a lease on the blob and returns a new lease.
+
+        :param str lease_id:
+            Proposed lease ID, in a GUID string format. The File Service
+            returns 400 (Invalid request) if the proposed lease ID is not
+            in the correct format.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A ShareFileLeaseClient object.
+        :rtype: ~azure.storage.fileshare.ShareFileLeaseClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_common.py
+                :start-after: [START acquire_lease_on_blob]
+                :end-before: [END acquire_lease_on_blob]
+                :language: python
+                :dedent: 8
+                :caption: Acquiring a lease on a blob.
+        """
+        lease = ShareFileLeaseClient(self, lease_id=lease_id)  # type: ignore
+        await lease.acquire(**kwargs)
+        return lease
+
+    @distributed_trace_async
     async def create_file(  # type: ignore
         self,
         size,  # type: int
@@ -178,6 +210,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             language, disposition, md5, and cache control.
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -192,6 +228,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :dedent: 16
                 :caption: Create a file.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
@@ -221,6 +258,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
+                lease_access_conditions=access_conditions,
                 headers=headers,
                 timeout=timeout,
                 cls=return_response_headers,
@@ -286,6 +324,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Maximum number of parallel connections to use.
         :keyword str encoding:
             Defaults to UTF-8.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -378,6 +420,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Additional parameters for the operation
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
@@ -392,6 +438,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :caption: Copy a file from a URL
         """
         metadata = kwargs.pop('metadata', None)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
@@ -408,8 +455,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_permission=file_permission,
                 file_permission_key=file_permission_key,
                 copy_file_smb_info=copy_file_smb_info,
-                metadata=metadata, timeout=timeout,
-                headers=headers, cls=return_response_headers, **kwargs
+                metadata=metadata,
+                lease_access_conditions=access_conditions,
+                headers=headers,
+                cls=return_response_headers,
+                timeout=timeout,
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
@@ -426,10 +477,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
         :type copy_id: str or ~azure.storage.fileshare.FileProperties
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             copy_id = copy_id.copy.id
@@ -439,7 +495,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             except TypeError:
                 pass
         try:
-            await self._client.file.abort_copy(copy_id=copy_id, timeout=timeout, **kwargs)
+            await self._client.file.abort_copy(copy_id=copy_id,
+                                               lease_access_conditions=access_conditions,
+                                               timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -470,6 +528,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             file. Also note that if enabled, the memory-efficient upload algorithm
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
@@ -491,6 +553,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         range_end = None
         if length is not None:
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
+
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+
         downloader = StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
@@ -500,6 +565,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             name=self.file_name,
             path='/'.join(self.file_path),
             share=self.share_name,
+            lease_access_conditions=access_conditions,
             cls=deserialize_file_stream,
             **kwargs
         )
@@ -512,6 +578,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         """Marks the specified file for deletion. The file is
         later deleted during garbage collection.
 
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -525,9 +595,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :dedent: 16
                 :caption: Delete a file.
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            await self._client.file.delete(timeout=timeout, **kwargs)
+            await self._client.file.delete(lease_access_conditions=access_conditions, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -537,15 +608,24 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
 
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: FileProperties
         :rtype: ~azure.storage.fileshare.FileProperties
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             file_props = await self._client.file.get_properties(
-                sharesnapshot=self.snapshot, timeout=timeout, cls=deserialize_file_properties, **kwargs
+                sharesnapshot=self.snapshot,
+                lease_access_conditions=access_conditions,
+                timeout=timeout,
+                cls=deserialize_file_properties,
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
@@ -592,11 +672,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         file_content_length = kwargs.pop("size", None)
         file_http_headers = FileHTTPHeaders(
@@ -617,6 +702,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
+                lease_access_conditions=access_conditions,
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs
@@ -637,17 +723,23 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
             return await self._client.file.set_metadata(  # type: ignore
-                timeout=timeout, cls=return_response_headers, headers=headers, metadata=metadata, **kwargs
+                metadata=metadata, lease_access_conditions=access_conditions,
+                timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
@@ -678,6 +770,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:
@@ -694,6 +790,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             return await self._client.file.upload_range(  # type: ignore
                 range=content_range,
@@ -701,6 +798,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
+                lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs
             )
@@ -736,6 +834,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param int source_offset:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (length-offset).
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -765,6 +867,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Specifies the start offset of bytes over which to get ranges.
         :param int length:
             Number of bytes to use over which to get ranges.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
@@ -773,6 +879,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
 
         content_range = None
         if offset is not None:
@@ -783,7 +890,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 content_range = "bytes={0}-".format(offset)
         try:
             ranges = await self._client.file.get_range_list(
-                sharesnapshot=self.snapshot, timeout=timeout, range=content_range, **kwargs
+                range=content_range,
+                sharesnapshot=self.snapshot,
+                lease_access_conditions=access_conditions,
+                timeout=timeout,
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
@@ -806,11 +917,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param int length:
             Number of bytes to use for clearing a section of the file.
             The range can be up to 4 MB in size.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
@@ -828,6 +944,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 content_length=0,
                 file_range_write="clear",
                 range=content_range,
+                lease_access_conditions=access_conditions,
                 **kwargs
             )
         except StorageErrorException as error:
@@ -840,11 +957,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param int size:
             Size to resize file to (in bytes)
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareFileLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareFileLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.file.set_http_headers(  # type: ignore
@@ -853,6 +975,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 file_creation_time="preserve",
                 file_last_write_time="preserve",
                 file_permission="preserve",
+                lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 timeout=timeout,
                 **kwargs
