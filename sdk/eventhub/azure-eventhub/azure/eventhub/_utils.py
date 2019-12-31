@@ -165,11 +165,11 @@ def trace_message(event, parent_span=None):
             )
             with current_span.span(name="Azure.EventHubs.message") as message_span:
                 message_span.kind = SpanKind.PRODUCER
-                app_prop = dict(event.properties) if event.properties else dict()
-                app_prop.setdefault(
+                if not event.properties:
+                    event.properties = dict()
+                event.properties.setdefault(
                     b"Diagnostic-Id", message_span.get_trace_parent().encode("ascii")
                 )
-                event.properties = app_prop
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_message had an exception %r", exp)
 
