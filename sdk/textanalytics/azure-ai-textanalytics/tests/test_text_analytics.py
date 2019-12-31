@@ -7,10 +7,11 @@
 
 from azure.ai.textanalytics import TextAnalyticsClient
 from devtools_testutils import ResourceGroupPreparer
-from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
+from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
+from testcase import TextAnalyticsTest as TestAnalyticsTestCase
 
 
-class TextAnalyticsTest(CognitiveServiceTest):
+class TextAnalyticsTest(TestAnalyticsTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

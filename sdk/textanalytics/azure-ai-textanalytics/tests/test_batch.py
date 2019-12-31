@@ -7,15 +7,16 @@
 import pytest
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
-from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
+from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     DetectLanguageInput,
     TextDocumentInput
 )
+from testcase import TextAnalyticsTest
 
 
-class BatchTextAnalyticsTest(CognitiveServiceTest):
+class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):

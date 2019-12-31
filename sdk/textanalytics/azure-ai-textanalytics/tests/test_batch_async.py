@@ -15,7 +15,8 @@ from azure.ai.textanalytics import (
     DetectLanguageInput,
     TextDocumentInput,
 )
-from asynctestcase import AsyncCognitiveServiceTestCase
+
+from asynctestcase import AsyncTextAnalyticsTest
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -29,10 +30,10 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
+class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
     @pytest.mark.live_test_only
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
@@ -47,7 +48,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_detect_language_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -65,7 +66,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_detect_language_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -83,7 +84,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_detect_language_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
         text = ""
@@ -102,7 +103,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_recognize_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -116,7 +117,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_recognize_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -131,7 +132,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_recognize_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -146,7 +147,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_recognize_pii_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -164,7 +165,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_recognize_pii_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -179,7 +180,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_recognize_pii_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -192,7 +193,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_recognize_linked_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -205,7 +206,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_recognize_linked_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -218,7 +219,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_recognize_linked_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -231,7 +232,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_extract_key_phrases_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -246,7 +247,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_extract_key_phrases_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -259,7 +260,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_extract_key_phrases_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -272,7 +273,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_analyze_sentiment_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -287,7 +288,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_analyze_sentiment_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -301,7 +302,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_analyze_sentiment_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -316,7 +317,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_validate_input_string_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -337,7 +338,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_validate_language_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -356,7 +357,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_validate_multilanguage_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -373,7 +374,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_mixing_inputs_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
         docs = [
@@ -386,7 +387,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_out_of_order_ids_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -403,7 +404,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_show_stats_and_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -430,7 +431,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_batch_size_over_limit_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -440,7 +441,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -459,7 +460,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_dont_use_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -478,7 +479,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_per_item_dont_use_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -499,7 +500,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_obj_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -518,7 +519,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_dict_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -535,7 +536,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_obj_per_item_hints_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -557,7 +558,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_dict_per_item_hints_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -577,7 +578,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -596,7 +597,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_dont_use_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -615,7 +616,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_per_item_dont_use_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -636,7 +637,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_obj_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -655,7 +656,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_dict_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -672,7 +673,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_obj_per_item_hints_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -694,7 +695,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_dict_per_item_hints_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -715,7 +716,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_document_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -726,7 +727,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_client_passed_default_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key, default_country_hint="CA")
 
@@ -750,7 +751,7 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_client_passed_default_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key, default_language="es")
 

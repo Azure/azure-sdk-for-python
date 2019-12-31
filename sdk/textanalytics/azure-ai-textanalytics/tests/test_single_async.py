@@ -17,7 +17,7 @@ from azure.ai.textanalytics.aio import (
     single_analyze_sentiment,
     single_extract_key_phrases
 )
-from asynctestcase import AsyncCognitiveServiceTestCase
+from asynctestcase import AsyncTextAnalyticsTest
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -31,13 +31,13 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
+class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
     # single_detect_language ------------------------------------------------------
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_single_language_detection_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         response = await single_detect_language(
             endpoint=cognitiveservices_account,
@@ -52,7 +52,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_bad_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_detect_language(
@@ -63,7 +63,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_empty_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_detect_language(
@@ -74,7 +74,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_bad_type_for_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_detect_language(
@@ -85,7 +85,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_none_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ValueError):
             response = await single_detect_language(
@@ -96,7 +96,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_too_many_chars_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text = ""
         for _ in range(5121):
@@ -110,7 +110,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_empty_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_detect_language(
@@ -121,7 +121,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_non_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_detect_language(
@@ -132,7 +132,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_bad_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_detect_language(
@@ -144,7 +144,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_bad_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_detect_language(
@@ -157,7 +157,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_response_hook_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -174,7 +174,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_dont_use_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -191,7 +191,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_given_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -208,7 +208,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_default_country_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             country_str = "\"countryHint\": \"US\""
@@ -226,7 +226,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_single_recognize_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         response = await single_recognize_entities(
             endpoint=cognitiveservices_account,
@@ -245,7 +245,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_bad_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_entities(
@@ -256,7 +256,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_empty_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_entities(
@@ -267,7 +267,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_bad_type_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_recognize_entities(
@@ -278,7 +278,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_none_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ValueError):
             response = await single_recognize_entities(
@@ -289,7 +289,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_too_many_chars_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text = ""
         for _ in range(5121):
@@ -303,7 +303,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_empty_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
@@ -314,7 +314,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_non_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_recognize_entities(
@@ -325,7 +325,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_bad_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
@@ -337,7 +337,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_bad_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
@@ -350,7 +350,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_response_hook_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -369,7 +369,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_single_recognize_pii_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         response = await single_recognize_pii_entities(
             endpoint=cognitiveservices_account,
@@ -387,7 +387,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_bad_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_pii_entities(
@@ -398,7 +398,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_empty_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_pii_entities(
@@ -409,7 +409,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_bad_type_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_recognize_pii_entities(
@@ -420,7 +420,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_none_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ValueError):
             response = await single_recognize_pii_entities(
@@ -431,7 +431,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_too_many_chars_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text = ""
         for _ in range(5121):
@@ -445,7 +445,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_empty_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
@@ -456,7 +456,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_non_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_recognize_pii_entities(
@@ -467,7 +467,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_bad_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
@@ -479,7 +479,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_bad_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
@@ -492,7 +492,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_response_hook_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -511,7 +511,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_single_recognize_linked_entities_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         response = await single_recognize_linked_entities(
             endpoint=cognitiveservices_account,
@@ -531,7 +531,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_bad_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_linked_entities(
@@ -542,7 +542,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_empty_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_linked_entities(
@@ -553,7 +553,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_bad_type_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_recognize_linked_entities(
@@ -564,7 +564,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_none_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ValueError):
             response = await single_recognize_linked_entities(
@@ -575,7 +575,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_too_many_chars_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text = ""
         for _ in range(5121):
@@ -589,7 +589,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_empty_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
@@ -600,7 +600,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_non_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_recognize_linked_entities(
@@ -611,7 +611,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_bad_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
@@ -623,7 +623,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_bad_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
@@ -636,7 +636,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_response_hook_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -655,7 +655,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_single_extract_key_phrases_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         response = await single_extract_key_phrases(
             endpoint=cognitiveservices_account,
@@ -669,7 +669,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_bad_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_extract_key_phrases(
@@ -680,7 +680,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_empty_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_extract_key_phrases(
@@ -691,7 +691,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_bad_type_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_extract_key_phrases(
@@ -702,7 +702,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_none_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ValueError):
             response = await single_extract_key_phrases(
@@ -713,7 +713,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_too_many_chars_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text = ""
         for _ in range(5121):
@@ -727,7 +727,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_empty_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
@@ -738,7 +738,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_non_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_extract_key_phrases(
@@ -749,7 +749,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_bad_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
@@ -761,7 +761,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_bad_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
@@ -774,7 +774,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_response_hook_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -793,7 +793,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_single_analyze_sentiment_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         response = await single_analyze_sentiment(
             endpoint=cognitiveservices_account,
@@ -809,7 +809,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_bad_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_analyze_sentiment(
@@ -820,7 +820,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_empty_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_analyze_sentiment(
@@ -831,7 +831,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_bad_type_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_analyze_sentiment(
@@ -842,7 +842,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_none_credentials_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(ValueError):
             response = await single_analyze_sentiment(
@@ -853,7 +853,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_too_many_chars_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text = ""
         for _ in range(5121):
@@ -867,7 +867,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_empty_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
@@ -878,7 +878,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_non_text_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(TypeError):
             response = await single_analyze_sentiment(
@@ -889,7 +889,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_bad_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
@@ -901,7 +901,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_bad_model_version_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
@@ -914,7 +914,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_response_hook_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -931,7 +931,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_dont_use_language_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -948,7 +948,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_given_language_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -965,7 +965,7 @@ class SingleTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    @AsyncCognitiveServiceTestCase.await_prepared_test
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_default_language_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             language_str = "\"language\": \"en\""

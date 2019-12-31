@@ -5,40 +5,35 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
-import functools
+
 from azure.core.credentials import AccessToken
-from testcase import TextAnalyticsTest
+from devtools_testutils import AzureTestCase
+from azure_devtools.scenario_tests import ReplayableTest
 
 
-class AsyncFakeTokenCredential(object):
+class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    async def get_token(self, *args):
+    def get_token(self, *args):
         return self.token
 
 
-class AsyncTextAnalyticsTest(TextAnalyticsTest):
-    @staticmethod
-    def await_prepared_test(test_fn):
-        """Synchronous wrapper for async test methods. Used to avoid making changes
-        upstream to AbstractPreparer (which doesn't await the functions it wraps)
-        """
+class TextAnalyticsTest(AzureTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
-        @functools.wraps(test_fn)
-        def run(test_class_instance, *args, **kwargs):
-            loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+    def __init__(self, method_name):
+        super(TextAnalyticsTest, self).__init__(method_name)
 
-        return run
+    def get_oauth_endpoint(self):
+        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
-            from azure.identity.aio import ClientSecretCredential
+            from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
                 self.get_settings_value("TENANT_ID"),
                 self.get_settings_value("CLIENT_ID"),
@@ -47,4 +42,4 @@ class AsyncTextAnalyticsTest(TextAnalyticsTest):
         return self.generate_fake_token()
 
     def generate_fake_token(self):
-        return AsyncFakeTokenCredential()
+        return FakeTokenCredential()

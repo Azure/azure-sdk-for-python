@@ -6,7 +6,7 @@
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from devtools_testutils import ResourceGroupPreparer
-from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
+from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure.ai.textanalytics import (
     single_detect_language,
     single_recognize_entities,
@@ -16,8 +16,10 @@ from azure.ai.textanalytics import (
     single_extract_key_phrases
 )
 
+from testcase import TextAnalyticsTest
 
-class SingleTextAnalyticsTest(CognitiveServiceTest):
+
+class SingleTextAnalyticsTest(TextAnalyticsTest):
 
     # single_detect_language ------------------------------------------------------
 
