@@ -1,10 +1,26 @@
 # Release History
 
-## 5.0.0b7 (Unreleased)
+## 5.0.0 (2020-01-06)
 
 **Breaking changes**
 
-- Removed deprecated property EventData.application_properties and deprecated method EventData.encode_message()
+- `EventData`
+    - Removed deprecated property `application_properties` and deprecated method `encode_message()`
+- `EventHubConsumerClient`
+    - `on_error` would be called when `EventHubConsumerClient` failed to claim ownership of partitions.
+    - `on_partition_cloe` and `on_partition_initialize` would be called in the case of meetings exceptions raised by callback `on_event`.
+        -  `EventHubConsumerClient` would close and re-open the internal partition receiver in this case.
+    - Default starting position from where `EventHubConsumerClient` should resume receiving when meeting an internal error has been re-prioritized.
+        - If there is checkpoint, it will resume from the checkpoint.
+        - If there is no checkpoint but `starting_position` is provided, it will resume from `starting_posititon`.
+        - If there is no checkpoint and `starting_position`, it will resume from the latest position.
+- `get_partition_ids`, `get_partition_properties`, `get_eventhub_properties` would raise `AuthenticationException` when they fail to accomplish the request.
+
+**New features**
+
+- Added InMemoryCheckpointStore as the default checkpoint store which can be used for in-memory checkpoint.
+
+
 
 ## 5.0.0b6 (2019-12-03)
 
