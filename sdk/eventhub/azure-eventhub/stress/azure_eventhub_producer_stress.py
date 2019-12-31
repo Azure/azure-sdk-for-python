@@ -8,6 +8,7 @@ import logging
 import threading
 import time
 import asyncio
+import random
 from argparse import ArgumentParser
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
@@ -21,7 +22,7 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
     batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
     try:
         while True:
-            event_data = EventData(body=b"D" * args.payload)
+            event_data = EventData(body=b"D" * (args.payload if args.payload else random.randint(1, args.payload_max)))
             batch.add(event_data)
     except ValueError:
         producer.send_batch(batch)
@@ -32,7 +33,7 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
     batch = await producer.create_batch()
     try:
         while True:
-            event_data = EventData(body=b"D" * args.payload)
+            event_data = EventData(body=b"D" * (args.payload if args.payload else random.randint(1, args.payload_max)))
             batch.add(event_data)
     except ValueError:
         await producer.send_batch(batch)
@@ -88,6 +89,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
+        self.argument_parser.add_argument("--payload_max", help="payload max size if payload==0", type=int, default=500*1024)
         self.argument_parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
