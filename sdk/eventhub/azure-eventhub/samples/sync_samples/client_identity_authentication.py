@@ -47,7 +47,7 @@ producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_name
                                   credential=credential)
 
 with producer:
-    event_data_batch = producer.create_batch(max_size_in_bytes=10000)
+    event_data_batch = producer.create_batch()
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))

@@ -39,7 +39,12 @@ async def on_event(partition_context, event):
     print("Received event: {} from partition: {}".format(event.body_as_str(), partition_context.partition_id))
 
 
-async def send_test_data(producer_client):
+async def main():
+    producer_client = EventHubProducerClient.from_connection_string(
+        conn_str=CONNECTION_STR,
+        eventhub_name=EVENTHUB_NAME,
+    )
+
     async with producer_client:
         event_data_batch_to_partition_0 = await producer_client.create_batch(partition_id='0')
         event_data_batch_to_partition_0.add(EventData("First event in partition 0"))
@@ -47,15 +52,6 @@ async def send_test_data(producer_client):
         event_data_batch_to_partition_0.add(EventData("Third event in partition 0"))
         event_data_batch_to_partition_0.add(EventData("Forth event in partition 0"))
         await producer_client.send_batch(event_data_batch_to_partition_0)
-
-
-async def main():
-    producer_client = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        eventhub_name=EVENTHUB_NAME,
-    )
-
-    await send_test_data(producer_client)
 
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
@@ -71,18 +67,15 @@ async def main():
         "0": partition_0_last_enqueued_sequence_number - 3,
     }
 
-    try:
-        async with consumer_client:
-            await consumer_client.receive(
-                partition_id="0",
-                on_event=on_event,
-                on_partition_initialize=on_partition_initialize,
-                on_partition_close=on_partition_close,
-                on_error=on_error,
-                starting_position=starting_position
-            )
-    except KeyboardInterrupt:
-        print('Stop receiving.')
+    async with consumer_client:
+        await consumer_client.receive(
+            partition_id="0",
+            on_event=on_event,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close,
+            on_error=on_error,
+            starting_position=starting_position
+        )
 
 
 if __name__ == '__main__':

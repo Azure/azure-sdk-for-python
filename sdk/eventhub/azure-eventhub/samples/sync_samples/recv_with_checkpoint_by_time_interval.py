@@ -21,7 +21,7 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
-partition_recv_time_dict = dict()
+partition_last_checkpoint_time = dict()
 checkpoint_time_interval = 15
 
 
@@ -32,10 +32,10 @@ def on_event(partition_context, event):
     print("Received event from partition: {}".format(p_id))
     now_time = time.time()
     p_id = partition_context.partition_id
-    if (partition_recv_time_dict.get(p_id) is None) or \
-            (now_time - partition_recv_time_dict.get(p_id)) >= checkpoint_time_interval:
+    if (partition_last_checkpoint_time.get(p_id) is None) or \
+            (now_time - partition_last_checkpoint_time.get(p_id)) >= checkpoint_time_interval:
         partition_context.update_checkpoint(event)
-        partition_recv_time_dict[p_id] = now_time
+        partition_last_checkpoint_time[p_id] = now_time
 
 
 if __name__ == '__main__':

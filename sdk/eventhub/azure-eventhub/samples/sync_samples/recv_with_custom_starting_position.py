@@ -37,16 +37,6 @@ def on_event(partition_context, event):
     print("Received event: {} from partition: {}".format(event.body_as_str(), partition_context.partition_id))
 
 
-def send_test_data(producer_client):
-    with producer_client:
-        event_data_batch_to_partition_0 = producer_client.create_batch(partition_id='0')
-        event_data_batch_to_partition_0.add(EventData("First event in partition 0"))
-        event_data_batch_to_partition_0.add(EventData("Second event in partition 0"))
-        event_data_batch_to_partition_0.add(EventData("Third event in partition 0"))
-        event_data_batch_to_partition_0.add(EventData("Forth event in partition 0"))
-        producer_client.send_batch(event_data_batch_to_partition_0)
-
-
 if __name__ == '__main__':
 
     producer_client = EventHubProducerClient.from_connection_string(
@@ -54,7 +44,13 @@ if __name__ == '__main__':
         eventhub_name=EVENTHUB_NAME,
     )
 
-    send_test_data(producer_client)
+    with producer_client:
+        event_data_batch_to_partition_0 = producer_client.create_batch(partition_id='0')
+        event_data_batch_to_partition_0.add(EventData("First event in partition 0"))
+        event_data_batch_to_partition_0.add(EventData("Second event in partition 0"))
+        event_data_batch_to_partition_0.add(EventData("Third event in partition 0"))
+        event_data_batch_to_partition_0.add(EventData("Forth event in partition 0"))
+        producer_client.send_batch(event_data_batch_to_partition_0)
 
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,

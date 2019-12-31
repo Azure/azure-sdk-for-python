@@ -19,6 +19,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exist
 
 
 async def on_event(partition_context, event):
@@ -28,21 +29,18 @@ async def on_event(partition_context, event):
 
 
 async def receive(client):
-    try:
-        """
-        Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
-        a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
-        which also try to receive events from all partitions and use the same storage resource.
-        """
-        await client.receive(on_event=on_event)
-        # With specified partition_id, load-balance will be disabled
-        # await client.receive(on_event=on_event, partition_id = '0'))
-    except KeyboardInterrupt:
-        await client.close()
+    """
+    Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
+    a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
+    which also try to receive events from all partitions and use the same storage resource.
+    """
+    await client.receive(on_event=on_event)
+    # With specified partition_id, load-balance will be disabled
+    # await client.receive(on_event=on_event, partition_id = '0'))
 
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",

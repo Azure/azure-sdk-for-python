@@ -29,17 +29,6 @@ async def on_event(partition_context, event):
     )
 
 
-async def receive(client):
-    try:
-        await client.receive(
-            on_event=on_event,
-            partition_id='0',
-            track_last_enqueued_event_properties=True
-        )
-    except KeyboardInterrupt:
-        await client.close()
-
-
 async def main():
     client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
@@ -47,7 +36,11 @@ async def main():
         eventhub_name=EVENTHUB_NAME,
     )
     async with client:
-        await receive(client)
+        await client.receive(
+            on_event=on_event,
+            partition_id='0',
+            track_last_enqueued_event_properties=True
+        )
 
 
 if __name__ == '__main__':

@@ -23,7 +23,7 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 
-partition_recv_time_dict = dict()
+partition_last_checkpoint_time = dict()
 checkpoint_time_interval = 15
 
 
@@ -33,24 +33,21 @@ async def on_event(partition_context, event):
     print("Received event from partition: {}".format(p_id))
     now_time = time.time()
     p_id = partition_context.partition_id
-    if (partition_recv_time_dict.get(p_id) is None) or \
-            (now_time - partition_recv_time_dict.get(p_id)) >= checkpoint_time_interval:
+    if (partition_last_checkpoint_time.get(p_id) is None) or \
+            (now_time - partition_last_checkpoint_time.get(p_id)) >= checkpoint_time_interval:
         await partition_context.update_checkpoint(event)
-        partition_recv_time_dict[p_id] = now_time
+        partition_last_checkpoint_time[p_id] = now_time
 
 
 async def receive(client):
-    try:
-        """
-        Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
-        a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
-        which also try to receive events from all partitions and use the same storage resource.
-        """
-        await client.receive(on_event=on_event)
-        # With specified partition_id, load-balance will be disabled
-        # await client.receive(on_event=on_event, partition_id = '0'))
-    except KeyboardInterrupt:
-        await client.close()
+    """
+    Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
+    a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
+    which also try to receive events from all partitions and use the same storage resource.
+    """
+    await client.receive(on_event=on_event)
+    # With specified partition_id, load-balance will be disabled
+    # await client.receive(on_event=on_event, partition_id = '0'))
 
 
 async def main():

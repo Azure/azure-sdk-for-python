@@ -21,7 +21,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
-partition_recv_cnt_dict = defaultdict(int)
+partition_recv_cnt_since_last_checkpoint = defaultdict(int)
 checkpoint_batch_event_cnt = 20
 
 
@@ -29,24 +29,21 @@ async def on_event(partition_context, event):
     # put your code here
     p_id = partition_context.partition_id
     print("Received event from partition: {}".format(p_id))
-    partition_recv_cnt_dict[p_id] += 1
-    if partition_recv_cnt_dict[p_id] >= checkpoint_batch_event_cnt:
+    partition_recv_cnt_since_last_checkpoint[p_id] += 1
+    if partition_recv_cnt_since_last_checkpoint[p_id] >= checkpoint_batch_event_cnt:
         await partition_context.update_checkpoint(event)
-        partition_recv_cnt_dict[p_id] -= checkpoint_batch_event_cnt
+        partition_recv_cnt_since_last_checkpoint[p_id] -= checkpoint_batch_event_cnt
 
 
 async def receive(client):
-    try:
-        """
-        Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
-        a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
-        which also try to receive events from all partitions and use the same storage resource.
-        """
-        await client.receive(on_event=on_event)
-        # With specified partition_id, load-balance will be disabled
-        # await client.receive(on_event=on_event, partition_id = '0'))
-    except KeyboardInterrupt:
-        await client.close()
+    """
+    Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
+    a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
+    which also try to receive events from all partitions and use the same storage resource.
+    """
+    await client.receive(on_event=on_event)
+    # With specified partition_id, load-balance will be disabled
+    # await client.receive(on_event=on_event, partition_id = '0'))
 
 
 async def main():

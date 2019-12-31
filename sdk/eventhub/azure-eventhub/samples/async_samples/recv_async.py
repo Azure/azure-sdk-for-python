@@ -23,33 +23,21 @@ async def on_event(partition_context, event):
     print("Received event from partition: {}".format(partition_context.partition_id))
 
 
-def on_partition_initialize(partition_context):
+async def on_partition_initialize(partition_context):
     # put your code here
     print("Partition: {} has been initialized".format(partition_context.partition_id))
 
 
-def on_partition_close(partition_context, reason):
+async def on_partition_close(partition_context, reason):
     # put your code here
     print("Partition: {} has been closed, reason for closing: {}".format(partition_context.partition_id,
                                                                          reason))
 
 
-def on_error(partition_context, error):
+async def on_error(partition_context, error):
     # put your code here
     print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
                                                                        error))
-
-
-async def receive(client):
-    try:
-        await client.receive(
-            on_event=on_event,
-            on_error=on_error,
-            on_partition_close=on_partition_close,
-            on_partition_initialize=on_partition_initialize
-        )
-    except KeyboardInterrupt:
-        await client.close()
 
 
 async def main():
@@ -59,7 +47,12 @@ async def main():
         eventhub_name=EVENTHUB_NAME
     )
     async with client:
-        await receive(client)
+        await client.receive(
+            on_event=on_event,
+            on_error=on_error,
+            on_partition_close=on_partition_close,
+            on_partition_initialize=on_partition_initialize
+        )
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

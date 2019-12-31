@@ -50,7 +50,7 @@ async def run():
                                       credential=credential)
 
     async with producer:
-        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
+        event_data_batch = await producer.create_batch()
         while True:
             try:
                 event_data_batch.add(EventData('Message inside EventBatchData'))

@@ -16,6 +16,7 @@ from azure.eventhub.aio import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+RECEIVE_DURATION = 15
 
 
 async def on_event(partition_context, event):
@@ -47,23 +48,19 @@ async def main():
         eventhub_name=EVENTHUB_NAME
     )
 
-    duration = 15
     print('Consumer will keep receiving for {} seconds, start time is {}'.format(duration, time.time()))
 
-    try:
-        task = asyncio.ensure_future(
-            client.receive(
-                on_event=on_event,
-                on_error=on_error,
-                on_partition_close=on_partition_close,
-                on_partition_initialize=on_partition_initialize
-            )
+    task = asyncio.ensure_future(
+        client.receive(
+            on_event=on_event,
+            on_error=on_error,
+            on_partition_close=on_partition_close,
+            on_partition_initialize=on_partition_initialize
         )
-        await asyncio.sleep(duration)
-        await client.close()
-        await task
-    except KeyboardInterrupt:
-        await client.close()
+    )
+    await asyncio.sleep(RECEIVE_DURATION)
+    await client.close()
+    await task
 
     print('Consumer has stopped receiving, end time is {}'.format(time.time()))
 
