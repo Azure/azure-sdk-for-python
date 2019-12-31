@@ -6,7 +6,8 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub with checkpoint store asynchronously.
+An example to show receiving events from an Event Hub with checkpoint store doing checkpoint
+by every fixed time interval asynchronously.
 In the `receive` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
@@ -14,6 +15,7 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 
 import asyncio
 import os
+import time
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
@@ -21,10 +23,20 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 
+partition_recv_time_dict = dict()
+checkpoint_time_interval = 15
+
+
 async def on_event(partition_context, event):
     # put your code here
-    print("Received event from partition: {}".format(partition_context.partition_id))
-    await partition_context.update_checkpoint(event)
+    p_id = partition_context.partition_id
+    print("Received event from partition: {}".format(p_id))
+    now_time = time.time()
+    p_id = partition_context.partition_id
+    if (partition_recv_time_dict.get(p_id) is None) or \
+            (now_time - partition_recv_time_dict.get(p_id)) >= checkpoint_time_interval:
+        await partition_context.update_checkpoint(event)
+        partition_recv_time_dict[p_id] = now_time
 
 
 async def receive(client):

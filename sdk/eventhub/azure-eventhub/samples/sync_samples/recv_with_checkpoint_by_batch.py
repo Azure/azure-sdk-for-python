@@ -6,12 +6,13 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub with checkpoint store.
+An example to show receiving events from an Event Hub with checkpoint store doing checkpoint by batch.
 In the `receive` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 import os
+from collections import defaultdict
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
@@ -19,12 +20,19 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
+partition_recv_cnt_dict = defaultdict(int)
+checkpoint_batch_event_cnt = 20
+
 
 def on_event(partition_context, event):
-    # Put your code here to do some operations on the event.
+    # put your code here to do some operations on the event.
     # Avoid time-consuming operations.
-    print("Received event from partition: {}".format(partition_context.partition_id))
-    partition_context.update_checkpoint(event)
+    p_id = partition_context.partition_id
+    print("Received event from partition: {}".format(p_id))
+    partition_recv_cnt_dict[p_id] += 1
+    if partition_recv_cnt_dict[p_id] >= checkpoint_batch_event_cnt:
+        partition_context.update_checkpoint(event)
+        partition_recv_cnt_dict[p_id] -= checkpoint_batch_event_cnt
 
 
 if __name__ == '__main__':
