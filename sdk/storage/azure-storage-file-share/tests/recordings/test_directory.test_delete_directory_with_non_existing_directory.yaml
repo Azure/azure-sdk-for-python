@@ -11,39 +11,32 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 50d983e4-d9a6-11e9-8c81-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:53:15 GMT
+      - Tue, 31 Dec 2019 21:17:36 GMT
       x-ms-version:
       - '2019-02-02'
-    method: DELETE
-    uri: https://storagename.file.core.windows.net/utshare5e371aac/dir1?restype=directory
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare5e371aac?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:95ae5bf2-d01a-0046-54b3-6d6773000000\nTime:2019-09-17T23:53:15.6432384Z</Message></Error>"
+      string: ''
     headers:
-      Content-Length:
-      - '223'
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 17 Sep 2019 23:53:14 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Tue, 31 Dec 2019 21:17:37 GMT
+      etag:
+      - '"0x8D78E36DC4186ED"'
+      last-modified:
+      - Tue, 31 Dec 2019 21:17:37 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ResourceNotFound
-      x-ms-request-id:
-      - 95ae5bf2-d01a-0046-54b3-6d6773000000
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 404
-      message: The specified resource does not exist.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -56,11 +49,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 57f97ef4-1d1a-11ea-b5e4-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:02:37 GMT
+      - Tue, 31 Dec 2019 21:17:37 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -68,20 +59,18 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:6dea05f2-401a-00ac-1827-b14597000000\nTime:2019-12-12T20:02:41.1068380Z</Message></Error>"
+        specified resource does not exist.\nRequestId:2b14186e-601a-0010-701f-c03cec000000\nTime:2019-12-31T21:17:37.1805272Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '223'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Thu, 12 Dec 2019 20:02:40 GMT
-      Server:
+      date:
+      - Tue, 31 Dec 2019 21:17:37 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ResourceNotFound
-      x-ms-request-id:
-      - 6dea05f2-401a-00ac-1827-b14597000000
       x-ms-version:
       - '2019-02-02'
     status:
