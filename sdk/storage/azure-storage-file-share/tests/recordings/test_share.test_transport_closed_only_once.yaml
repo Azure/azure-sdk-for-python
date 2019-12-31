@@ -3,41 +3,37 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
       - Tue, 31 Dec 2019 21:33:41 GMT
       x-ms-version:
       - '2019-02-02'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
+    method: GET
+    uri: https://storagename.file.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:fb6ee040-901a-004f-1121-c035b7000000\nTime:2019-12-31T21:33:42.1717079Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>7</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /></StorageServiceProperties>"
     headers:
-      content-length:
-      - '243'
       content-type:
       - application/xml
       date:
       - Tue, 31 Dec 2019 21:33:41 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidResourceName
+      transfer-encoding:
+      - chunked
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -50,16 +46,15 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:42 GMT
+      - Tue, 31 Dec 2019 21:33:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+    uri: https://storagename.file.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
-        /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>7</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
+        /></StorageServiceProperties>"
     headers:
       content-type:
       - application/xml
