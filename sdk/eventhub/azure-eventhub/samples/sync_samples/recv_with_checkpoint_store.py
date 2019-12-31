@@ -18,7 +18,7 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exist
+BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exists.
 
 
 def on_event(partition_context, event):

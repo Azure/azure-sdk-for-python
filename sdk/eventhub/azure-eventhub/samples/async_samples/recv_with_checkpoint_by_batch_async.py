@@ -20,6 +20,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exists.
 
 partition_recv_cnt_since_last_checkpoint = defaultdict(int)
 checkpoint_batch_event_cnt = 20
@@ -47,7 +48,7 @@ async def receive(client):
 
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",

@@ -19,6 +19,7 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exists.
 
 partition_recv_cnt_since_last_checkpoint = defaultdict(int)
 checkpoint_batch_event_cnt = 20
@@ -36,7 +37,7 @@ def on_event(partition_context, event):
 
 
 if __name__ == '__main__':
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_NAME)
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',

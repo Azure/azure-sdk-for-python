@@ -34,8 +34,8 @@ async def create_producer_client():
     # Illustration of commonly used parameters
     producer_client = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STRING,
-        logging_enable=True,  # Enable log for network tracing
         eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True
         retry_total=3,  # Retry up to 3 times to re-do failed operations
         transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
     )
@@ -49,7 +49,7 @@ async def create_producer_client():
             policy=SAS_POLICY,
             key=SAS_KEY
         ),
-        logging_enable=True,  # Enable network tracing log
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True
         retry_total=3,  # Retry up to 3 times to re-do failed operations
         transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
     )
@@ -73,7 +73,7 @@ async def create_consumer_client():
         conn_str=CONNECTION_STRING,
         consumer_group=CONSUMER_GROUP,
         eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string
-        logging_enable=True,  # Enable log for network tracing
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True
         retry_total=3,  # Retry up to 3 times to re-do failed operations
         transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
     )
@@ -88,7 +88,7 @@ async def create_consumer_client():
             policy=SAS_POLICY,
             key=SAS_KEY
         ),
-        logging_enable=True,  # Enable network tracing log
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True
         retry_total=3,  # Retry up to 3 times to re-do failed operations
         transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
     )

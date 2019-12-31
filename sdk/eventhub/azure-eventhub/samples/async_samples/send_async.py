@@ -49,7 +49,7 @@ async def send_event_data_batch_with_limited_size(producer):
 async def send_event_data_batch_with_partition_key(producer):
     # Specifying partition_key
     event_data_batch_with_partition_key = await producer.create_batch(partition_key='pkey')
-    event_data_batch_with_partition_key.add(EventData('Message will be sent to target-key partition'))
+    event_data_batch_with_partition_key.add(EventData('Message will be sent to a partition determined by the partition key'))
 
     await producer.send_batch(event_data_batch_with_partition_key)
 
