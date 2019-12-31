@@ -22,12 +22,6 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 
-async def do_operation(event):
-    pass
-    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
-    # print(event)
-
-
 async def on_event(partition_context, event):
     # put your code here
     print("Received event from partition: {}".format(partition_context.partition_id))
