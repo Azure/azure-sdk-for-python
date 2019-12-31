@@ -77,7 +77,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
         )
 
     def create_resource(self, name, **kwargs):
-        storage_account = StorageTestCase._STORAGE_ACCOUNT
+        storage_account = FileTestCase._STORAGE_ACCOUNT
         if self.is_live:
             self.test_class_instance.scrubber.register_name_pair(
                 storage_account.name,
@@ -91,9 +91,9 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
 
         return {
             'location': 'westus',
-            'resource_group': StorageTestCase._RESOURCE_GROUP,
+            'resource_group': FileTestCase._RESOURCE_GROUP,
             'storage_account': storage_account,
-            'storage_account_key': StorageTestCase._STORAGE_KEY,
+            'storage_account_key': FileTestCase._STORAGE_KEY,
         }
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
@@ -104,7 +104,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         )
 
     def create_resource(self, name, **kwargs):
-        rg = StorageTestCase._RESOURCE_GROUP
+        rg = FileTestCase._RESOURCE_GROUP
         if self.is_live:
             self.test_class_instance.scrubber.register_name_pair(
                 rg.name,
@@ -125,7 +125,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
 class FileTestCase(AzureMgmtTestCase):
 
     def __init__(self, *args, **kwargs):
-        super(StorageTestCase, self).__init__(*args, **kwargs)
+        super(FileTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
 
     def connection_string(self, account, key):
@@ -164,10 +164,9 @@ class FileTestCase(AzureMgmtTestCase):
         if self.is_live:
             time.sleep(seconds)
 
-    def get_file_url(self):
-        return "{}://{}.file.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.STORAGE_ACCOUNT_NAME
+    def get_file_url(self, account_name):
+        return "https://{}.file.core.windows.net".format(
+            account_name
         )
 
     def generate_sas_token(self):
@@ -365,23 +364,23 @@ def storage_account():
     storage_name = create_random_name("pyacrstorage", 24)
     try:
         rg = rg_preparer.create_resource(rg_name)
-        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
+        FileTestCase._RESOURCE_GROUP = rg['resource_group']
         try:
             storage_dict = storage_preparer.create_resource(
                 storage_name,
                 resource_group=rg['resource_group']
             )
             # Now the magic begins
-            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
-            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+            FileTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
+            FileTestCase._STORAGE_KEY = storage_dict['storage_account_key']
             yield
         finally:
             storage_preparer.remove_resource(
                 storage_name,
                 resource_group=rg['resource_group']
             )
-            StorageTestCase._STORAGE_ACCOUNT = None
-            StorageTestCase._STORAGE_KEY = None
+            FileTestCase._STORAGE_ACCOUNT = None
+            FileTestCase._STORAGE_KEY = None
     finally:
         rg_preparer.remove_resource(rg_name)
-        StorageTestCase._RESOURCE_GROUP = None
+        FileTestCase._RESOURCE_GROUP = None

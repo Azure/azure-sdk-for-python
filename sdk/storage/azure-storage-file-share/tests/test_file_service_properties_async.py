@@ -41,7 +41,7 @@ class FileServicePropertiesTest(FileTestCase):
     def setUp(self):
         super(FileServicePropertiesTest, self).setUp()
 
-        url = self.get_file_url()
+        url = self.get_file_url(storage_account.name)
         credential = self.get_shared_key_credential()
         self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
@@ -78,7 +78,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases per service ---------------------------------------
     @GlobalStorageAccountPreparer()
-    async def test_file_service_properties_async(self):
+    async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         # Act
@@ -94,7 +94,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases per feature ---------------------------------------
     @GlobalStorageAccountPreparer()
-    async def test_set_hour_metrics_async(self):
+    async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -106,7 +106,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @GlobalStorageAccountPreparer()
-    async def test_set_minute_metrics_async(self):
+    async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -119,7 +119,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @GlobalStorageAccountPreparer()
-    async def test_set_cors_async(self):
+    async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
@@ -148,7 +148,7 @@ class FileServicePropertiesTest(FileTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    async def test_too_many_cors_rules_async(self):
+    async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         cors = []
         for i in range(0, 6):

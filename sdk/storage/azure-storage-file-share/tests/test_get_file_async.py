@@ -52,7 +52,7 @@ class StorageGetFileTest(FileTestCase):
         self.MAX_SINGLE_GET_SIZE = 32 * 1024
         self.MAX_CHUNK_GET_SIZE = 4 * 1024
 
-        url = self.get_file_url()
+        url = self.get_file_url(storage_account.name)
         credential = self.get_shared_key_credential()
 
         self.fsc = ShareServiceClient(
@@ -97,7 +97,7 @@ class StorageGetFileTest(FileTestCase):
                 pass
             byte_file = self.directory_name + '/' + self.byte_file
             file_client = ShareFileClient(
-                self.get_file_url(),
+                self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=byte_file,
                 credential=self.get_shared_key_credential()
@@ -123,13 +123,13 @@ class StorageGetFileTest(FileTestCase):
     # -- Get test cases for files ----------------------------------------------
 
     @GlobalStorageAccountPreparer()
-    async def test_unicode_get_file_unicode_data_async(self):
+    async def test_unicode_get_file_unicode_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = u'hello world啊齄丂狛狜'.encode('utf-8')
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-                self.get_file_url(),
+                self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -145,7 +145,7 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(file_content, file_data)
 
     @GlobalStorageAccountPreparer()
-    async def test_unicode_get_file_binary_data_async(self):
+    async def test_unicode_get_file_binary_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -153,7 +153,7 @@ class StorageGetFileTest(FileTestCase):
 
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-                self.get_file_url(),
+                self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -169,13 +169,13 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(file_content, binary_data)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_no_content_async(self):
+    async def test_get_file_no_content_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = b''
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-                self.get_file_url(),
+                self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -193,7 +193,7 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(0, file_output.properties.size)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_bytes_async(self):
+    async def test_get_file_to_bytes_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -201,7 +201,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -216,7 +216,7 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(self.byte_data, file_content)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_bytes_with_progress_async(self):
+    async def test_get_file_to_bytes_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -224,7 +224,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -251,11 +251,11 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_bytes_non_parallel_async(self):
+    async def test_get_file_to_bytes_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -282,13 +282,13 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_bytes_small_async(self):
+    async def test_get_file_to_bytes_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = self.get_random_bytes(1024)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -316,7 +316,7 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_async(self):
+    async def test_get_file_to_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -324,7 +324,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -344,7 +344,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_with_iter_async(self):
+    async def test_get_file_with_iter_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -352,7 +352,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -370,7 +370,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_with_progress_async(self):
+    async def test_get_file_to_stream_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -378,7 +378,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -409,11 +409,11 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_non_parallel_async(self):
+    async def test_get_file_to_stream_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -444,13 +444,13 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_small_async(self):
+    async def test_get_file_to_stream_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = self.get_random_bytes(1024)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -482,7 +482,7 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_from_snapshot_async(self):
+    async def test_get_file_to_stream_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -493,14 +493,14 @@ class StorageGetFileTest(FileTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = await share_client.create_snapshot()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
@@ -520,7 +520,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_with_progress_from_snapshot_async(self):
+    async def test_get_file_to_stream_with_progress_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -531,14 +531,14 @@ class StorageGetFileTest(FileTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = await share_client.create_snapshot()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
@@ -570,21 +570,21 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_non_parallel_from_snapshot_async(self):
+    async def test_get_file_to_stream_non_parallel_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = await share_client.create_snapshot()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
@@ -616,13 +616,13 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_stream_small_from_snapshot_async(self):
+    async def test_get_file_to_stream_small_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = self.get_random_bytes(1024)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
@@ -634,7 +634,7 @@ class StorageGetFileTest(FileTestCase):
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             snapshot=share_snapshot,
@@ -666,7 +666,7 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_async(self):
+    async def test_ranged_get_file_to_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -674,7 +674,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -695,7 +695,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[start:end_range + 1], actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_with_single_byte_async(self):
+    async def test_ranged_get_file_to_path_with_single_byte_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -703,7 +703,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -724,13 +724,13 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[0], actual[0])
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_bytes_with_zero_byte_async(self):
+    async def test_ranged_get_file_to_bytes_with_zero_byte_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = b''
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -750,7 +750,7 @@ class StorageGetFileTest(FileTestCase):
             await props.readall()
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_with_progress_async(self):
+    async def test_ranged_get_file_to_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -758,7 +758,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -795,11 +795,11 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_small_async(self):
+    async def test_ranged_get_file_to_path_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -818,11 +818,11 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[1:5], actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_non_parallel_async(self):
+    async def test_ranged_get_file_to_path_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -841,7 +841,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data[1:4], actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_invalid_range_parallel_async(self):
+    async def test_ranged_get_file_to_path_invalid_range_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -852,7 +852,7 @@ class StorageGetFileTest(FileTestCase):
         file_data = self.get_random_bytes(file_size)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -873,7 +873,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(file_data[1:file_size], actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_ranged_get_file_to_path_invalid_range_non_parallel_async(self):
+    async def test_ranged_get_file_to_path_invalid_range_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
 
         # Arrange
         await self._setup()
@@ -881,7 +881,7 @@ class StorageGetFileTest(FileTestCase):
         file_data = self.get_random_bytes(file_size)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -903,7 +903,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(file_data[start:file_size], actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_text_async(self):
+    async def test_get_file_to_text_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -913,7 +913,7 @@ class StorageGetFileTest(FileTestCase):
         text_file = self.get_resource_name('textfile')
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -929,7 +929,7 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(text_data, file_content)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_text_with_progress_async(self):
+    async def test_get_file_to_text_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -939,7 +939,7 @@ class StorageGetFileTest(FileTestCase):
         text_file = self.get_resource_name('textfile')
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -968,13 +968,13 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_text_non_parallel_async(self):
+    async def test_get_file_to_text_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         text_file = self._get_file_reference()
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1003,13 +1003,13 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_text_small_async(self):
+    async def test_get_file_to_text_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_data = self.get_random_text_data(1024)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1037,14 +1037,14 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_text_with_encoding_async(self):
+    async def test_get_file_to_text_with_encoding_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1060,14 +1060,14 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(text, file_content)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_to_text_with_encoding_and_progress_async(self):
+    async def test_get_file_to_text_with_encoding_and_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1095,11 +1095,11 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_non_seekable_async(self):
+    async def test_get_file_non_seekable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1119,7 +1119,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_non_seekable_parallel_async(self):
+    async def test_get_file_non_seekable_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -1127,7 +1127,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1145,21 +1145,21 @@ class StorageGetFileTest(FileTestCase):
                 # Assert
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_non_seekable_from_snapshot_async(self):
+    async def test_get_file_non_seekable_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         # Create a snapshot of the share and delete the file
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = await share_client.create_snapshot()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
@@ -1180,7 +1180,7 @@ class StorageGetFileTest(FileTestCase):
             self.assertEqual(self.byte_data, actual)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_non_seekable_parallel_from_snapshot_async(self):
+    async def test_get_file_non_seekable_parallel_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -1191,14 +1191,14 @@ class StorageGetFileTest(FileTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         share_snapshot = await share_client.create_snapshot()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
@@ -1215,13 +1215,13 @@ class StorageGetFileTest(FileTestCase):
                 await data.readinto(non_seekable_stream)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_exact_get_size_async(self):
+    async def test_get_file_exact_get_size_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup()
         file_name = self._get_file_reference()
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE)
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1249,7 +1249,7 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_exact_chunk_size_async(self):
+    async def test_get_file_exact_chunk_size_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -1259,7 +1259,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE + self.MAX_CHUNK_GET_SIZE)
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1287,7 +1287,7 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_with_md5_async(self):
+    async def test_get_file_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -1295,7 +1295,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1310,14 +1310,14 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(self.byte_data, file_bytes)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_range_with_md5_async(self):
+    async def test_get_file_range_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
 
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1341,12 +1341,12 @@ class StorageGetFileTest(FileTestCase):
         self.assertEqual(b'MDAwMDAwMDA=', file_content.properties.content_settings.content_md5)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_server_encryption_async(self):
+    async def test_get_file_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
 
         #Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1363,12 +1363,12 @@ class StorageGetFileTest(FileTestCase):
             self.assertFalse(file_content.properties.server_encrypted)
 
     @GlobalStorageAccountPreparer()
-    async def test_get_file_properties_server_encryption_async(self):
+    async def test_get_file_properties_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
 
         # Arrange
         await self._setup()
         file_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,

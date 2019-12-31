@@ -31,7 +31,7 @@ class FileServicePropertiesTest(FileTestCase):
     def setUp(self):
         super(FileServicePropertiesTest, self).setUp()
 
-        url = self.get_file_url()
+        url = self.get_file_url(storage_account.name)
         credential = self.get_shared_key_credential()
         self.fsc = ShareServiceClient(url, credential=credential)
 
@@ -68,7 +68,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases per service ---------------------------------------
     @GlobalStorageAccountPreparer()
-    def test_file_service_properties(self):
+    def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         # Act
@@ -84,7 +84,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases per feature ---------------------------------------
     @GlobalStorageAccountPreparer()
-    def test_set_hour_metrics(self):
+    def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -96,7 +96,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @GlobalStorageAccountPreparer()
-    def test_set_minute_metrics(self):
+    def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -109,7 +109,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @GlobalStorageAccountPreparer()
-    def test_set_cors(self):
+    def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
@@ -136,14 +136,14 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases for errors ---------------------------------------
     @GlobalStorageAccountPreparer()
-    def test_retention_no_days(self):
+    def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
     @GlobalStorageAccountPreparer()
-    def test_too_many_cors_rules(self):
+    def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         cors = []
         for i in range(0, 6):

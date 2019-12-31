@@ -36,7 +36,7 @@ TEST_SHARE_PREFIX = 'share'
 class StorageHandleTest(FileTestCase):
     def setUp(self):
         super(StorageHandleTest, self).setUp()
-        file_url = self.get_file_url()
+        file_url = self.get_file_url(storage_account.name)
         credentials = self.get_shared_key_credential()
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
@@ -76,7 +76,7 @@ class StorageHandleTest(FileTestCase):
         self.assertIsNotNone(handles[0].open_time)
 
     @GlobalStorageAccountPreparer()
-    def test_list_handles_on_share(self):
+    def test_list_handles_on_share(self, resource_group, location, storage_account, storage_account_key):
         #pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
@@ -93,7 +93,7 @@ class StorageHandleTest(FileTestCase):
 
 #
     @GlobalStorageAccountPreparer()
-    def test_list_handles_on_share_snapshot(self):
+    def test_list_handles_on_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -108,7 +108,7 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
     @GlobalStorageAccountPreparer()
-    def test_list_handles_with_marker(self):
+    def test_list_handles_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -140,7 +140,7 @@ class StorageHandleTest(FileTestCase):
         self.assertTrue(old_handle_not_present)
 
     @GlobalStorageAccountPreparer()
-    def test_list_handles_on_directory(self):
+    def test_list_handles_on_directory(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -161,7 +161,7 @@ class StorageHandleTest(FileTestCase):
         self.assertTrue(len(handles) == 0)
 
     @GlobalStorageAccountPreparer()
-    def test_list_handles_on_file(self):
+    def test_list_handles_on_file(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -176,7 +176,7 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
     @GlobalStorageAccountPreparer()
-    def test_close_single_handle(self):
+    def test_close_single_handle(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
@@ -198,7 +198,7 @@ class StorageHandleTest(FileTestCase):
         self.assertEqual(1, handles_info['closed_handles_count'])
 
     @GlobalStorageAccountPreparer()
-    def test_close_all_handle(self):
+    def test_close_all_handle(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if not TestMode.need_recording_file(self.test_mode):
