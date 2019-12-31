@@ -18,8 +18,16 @@ from logger import get_logger
 from process_monitor import ProcessMonitor
 
 
+def random_string(length):
+    random_chars = []
+    for i in range(length):
+        random_chars.append(random.choice("abcdefghijklmnopqrstuvwxyz"))
+    return "".join(random_chars)
+
+
 def stress_send_sync(producer: EventHubProducerClient, args, logger):
-    batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
+    partition_key = random_string(5) if args.send_partition_key == "[RANDOM]" else args.send_partition_key
+    batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=partition_key)
     try:
         while True:
             event_data = EventData(body=b"D" * (args.payload if args.payload else random.randint(1, args.payload_max)))
@@ -30,7 +38,8 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
 
 
 async def stress_send_async(producer: EventHubProducerClientAsync, args, logger):
-    batch = await producer.create_batch()
+    partition_key = random_string(5) if args.send_partition_key == "[RANDOM]" else args.send_partition_key
+    batch = await producer.create_batch(partition_id=args.send_partition_id, partition_key=partition_key)
     try:
         while True:
             event_data = EventData(body=b"D" * (args.payload if args.payload else random.randint(1, args.payload_max)))
