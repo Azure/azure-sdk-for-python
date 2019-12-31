@@ -9,19 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class RemediationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Remediation <azure.mgmt.policyinsights.models.Remediation>` object
-    """
+class ResourceDiscoveryMode(str, Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Remediation]'}
-    }
+    existing_non_compliant = "ExistingNonCompliant"  #: Remediate resources that are already known to be non-compliant.
+    re_evaluate_compliance = "ReEvaluateCompliance"  #: Re-evaluate the compliance state of resources and then remediate the resources found to be non-compliant.
 
-    def __init__(self, *args, **kwargs):
 
-        super(RemediationPaged, self).__init__(*args, **kwargs)
+class PolicyStatesResource(str, Enum):
+
+    default = "default"
+    latest = "latest"
