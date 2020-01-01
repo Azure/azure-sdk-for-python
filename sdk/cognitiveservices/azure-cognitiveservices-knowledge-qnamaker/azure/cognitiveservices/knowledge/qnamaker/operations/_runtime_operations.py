@@ -14,8 +14,10 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EndpointKeysOperations(object):
-    """EndpointKeysOperations operations.
+class RuntimeOperations(object):
+    """RuntimeOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -33,26 +35,32 @@ class EndpointKeysOperations(object):
 
         self.config = config
 
-    def get_keys(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets endpoint keys for an endpoint.
+    def generate_answer(
+            self, kb_id, generate_answer_payload, custom_headers=None, raw=False, **operation_config):
+        """GenerateAnswer call to query the knowledgebase.
 
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
+        :param generate_answer_payload: Post body of the request.
+        :type generate_answer_payload:
+         ~azure.cognitiveservices.knowledge.qnamaker.models.QueryDTO
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EndpointKeysDTO or ClientRawResponse if raw=true
+        :return: QnASearchResultList or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointKeysDTO or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.knowledge.qnamaker.models.QnASearchResultList
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_keys.metadata['url']
+        url = self.generate_answer.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'RuntimeEndpoint': self._serialize.url("self.config.runtime_endpoint", self.config.runtime_endpoint, 'str', skip_quote=True),
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -62,51 +70,57 @@ class EndpointKeysOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(generate_answer_payload, 'QueryDTO')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('EndpointKeysDTO', response)
+            deserialized = self._deserialize('QnASearchResultList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_keys.metadata = {'url': '/endpointkeys'}
+    generate_answer.metadata = {'url': '/knowledgebases/{kbId}/generateAnswer'}
 
-    def refresh_keys(
-            self, key_type, custom_headers=None, raw=False, **operation_config):
-        """Re-generates an endpoint key.
+    def train(
+            self, kb_id, feedback_records=None, custom_headers=None, raw=False, **operation_config):
+        """Train call to add suggestions to the knowledgebase.
 
-        :param key_type: Type of Key
-        :type key_type: str
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
+        :param feedback_records: List of feedback records.
+        :type feedback_records:
+         list[~azure.cognitiveservices.knowledge.qnamaker.models.FeedbackRecordDTO]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EndpointKeysDTO or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointKeysDTO or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
         """
+        train_payload = models.FeedbackRecordsDTO(feedback_records=feedback_records)
+
         # Construct URL
-        url = self.refresh_keys.metadata['url']
+        url = self.train.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'keyType': self._serialize.url("key_type", key_type, 'str')
+            'RuntimeEndpoint': self._serialize.url("self.config.runtime_endpoint", self.config.runtime_endpoint, 'str', skip_quote=True),
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -115,25 +129,21 @@ class EndpointKeysOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(train_payload, 'FeedbackRecordsDTO')
+
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('EndpointKeysDTO', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
-    refresh_keys.metadata = {'url': '/endpointkeys/{keyType}'}
+    train.metadata = {'url': '/knowledgebases/{kbId}/train'}
