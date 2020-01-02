@@ -35,10 +35,10 @@ _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 
 class StorageFileClientTest(FileTestCase):
-    def setUp(self):
+    def _setup(self, storage_account, storage_account_key):
         super(StorageFileClientTest, self).setUp()
         self.account_name = storage_account.name
-        self.account_key = self.settings.STORAGE_ACCOUNT_KEY
+        self.account_key = storage_account_key
         self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
@@ -318,7 +318,7 @@ class StorageFileClientTest(FileTestCase):
     def test_client_request_id_echo(self, resource_group, location, storage_account, storage_account_key):
         # client request id is different for every request, so it will never match the recorded one
         pytest.skip("Issue tracked here: https://github.com/Azure/azure-sdk-for-python/issues/8098")
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

@@ -8,37 +8,35 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - eaf25dd0-d9a6-11e9-918a-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:57:34 GMT
+      - Thu, 02 Jan 2020 18:36:17 GMT
       x-ms-version:
       - '2019-02-02'
-    method: HEAD
-    uri: https://storagename.file.core.windows.net/utsharea6d51786/filea6d51786
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharea6d51786?restype=share
   response:
     body:
       string: ''
     headers:
-      Date:
-      - Tue, 17 Sep 2019 23:57:33 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Thu, 02 Jan 2020 18:36:14 GMT
+      etag:
+      - '"0x8D78FB2A662144A"'
+      last-modified:
+      - Thu, 02 Jan 2020 18:36:15 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      x-ms-error-code:
-      - ResourceNotFound
-      x-ms-request-id:
-      - f0545ca5-101a-00e0-11b3-6dd06d000000
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 404
-      message: The specified resource does not exist.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -49,11 +47,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 917c8310-1d1a-11ea-9a16-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:04:13 GMT
+      - Thu, 02 Jan 2020 18:36:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -62,18 +58,14 @@ interactions:
     body:
       string: ''
     headers:
-      Date:
-      - Thu, 12 Dec 2019 20:04:16 GMT
-      Server:
+      date:
+      - Thu, 02 Jan 2020 18:36:15 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-error-code:
       - ResourceNotFound
-      x-ms-request-id:
-      - 5b1bd988-c01a-0071-5e27-b11639000000
       x-ms-version:
       - '2019-02-02'
     status:

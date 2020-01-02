@@ -165,9 +165,10 @@ class FileTestCase(AzureMgmtTestCase):
             time.sleep(seconds)
 
     def get_file_url(self, account_name):
-        return "https://{}.file.core.windows.net".format(
-            account_name
-        )
+        if account_name:
+            return "https://{}.file.core.windows.net".format(
+                account_name
+            )
 
     def generate_sas_token(self):
         fake_key = 'a'*30 + 'b'*30

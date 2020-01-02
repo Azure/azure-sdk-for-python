@@ -133,7 +133,7 @@ class StorageShareTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY
+            credential=storage_account_key
         )
         snapshot_props = await snapshot_client.get_share_properties()
         # Assert
@@ -174,7 +174,7 @@ class StorageShareTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY
+            credential=storage_account_key
         )
 
         deleted = await snapshot_client.delete_share()
@@ -720,7 +720,7 @@ class StorageShareTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_shared_access_share_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -772,7 +772,7 @@ class StorageShareTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         transport = AioHttpTransport()
         url = self.get_file_url(storage_account.name)

@@ -132,7 +132,7 @@ class StorageGetFileTest(FileTestCase):
                 self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
-                credential=self.settings.STORAGE_ACCOUNT_KEY,
+                credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -156,7 +156,7 @@ class StorageGetFileTest(FileTestCase):
                 self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
-                credential=self.settings.STORAGE_ACCOUNT_KEY,
+                credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(binary_data)
@@ -178,7 +178,7 @@ class StorageGetFileTest(FileTestCase):
                 self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
-                credential=self.settings.STORAGE_ACCOUNT_KEY,
+                credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
                 transport=AiohttpTestTransport())
@@ -195,7 +195,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_bytes_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -204,7 +204,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -218,7 +218,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_bytes_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -227,7 +227,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -258,7 +258,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -291,7 +291,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -318,7 +318,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -327,7 +327,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -346,7 +346,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_with_iter_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -355,7 +355,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -372,7 +372,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_stream_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -381,7 +381,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -416,7 +416,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -453,7 +453,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -484,7 +484,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_stream_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -496,7 +496,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -504,7 +504,7 @@ class StorageGetFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -522,7 +522,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_stream_with_progress_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -534,7 +534,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -542,7 +542,7 @@ class StorageGetFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -580,7 +580,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -588,7 +588,7 @@ class StorageGetFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -625,7 +625,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.upload_file(file_data)
 
         # Create a snapshot of the share and delete the file
@@ -638,7 +638,7 @@ class StorageGetFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             snapshot=share_snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -668,7 +668,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_ranged_get_file_to_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -677,7 +677,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -697,7 +697,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_ranged_get_file_to_path_with_single_byte_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -706,7 +706,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -733,7 +733,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
             transport=AiohttpTestTransport())
@@ -752,7 +752,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_ranged_get_file_to_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -761,7 +761,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -802,7 +802,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -825,7 +825,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -843,7 +843,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_ranged_get_file_to_path_invalid_range_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -855,7 +855,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -884,7 +884,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -905,7 +905,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_text_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -916,7 +916,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(text_data)
@@ -931,7 +931,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_to_text_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -942,7 +942,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(text_data)
@@ -977,7 +977,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(text_data)
@@ -1012,7 +1012,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -1047,7 +1047,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(data)
@@ -1070,7 +1070,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(data)
@@ -1102,7 +1102,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1121,7 +1121,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_non_seekable_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1130,7 +1130,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1155,7 +1155,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -1163,7 +1163,7 @@ class StorageGetFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1182,7 +1182,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_non_seekable_parallel_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1194,7 +1194,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -1202,7 +1202,7 @@ class StorageGetFileTest(FileTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1224,7 +1224,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(byte_data)
@@ -1251,7 +1251,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_exact_chunk_size_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1262,7 +1262,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(byte_data)
@@ -1289,7 +1289,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1298,7 +1298,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1312,7 +1312,7 @@ class StorageGetFileTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_get_file_range_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         await self._setup()
@@ -1320,7 +1320,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1349,7 +1349,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1371,7 +1371,7 @@ class StorageGetFileTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 

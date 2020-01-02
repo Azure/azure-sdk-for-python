@@ -50,7 +50,7 @@ class StorageFileClientTest(FileTestCase):
     def setUp(self):
         super(StorageFileClientTest, self).setUp()
         self.account_name = storage_account.name
-        self.account_key = self.settings.STORAGE_ACCOUNT_KEY
+        self.account_key = storage_account_key
         self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 

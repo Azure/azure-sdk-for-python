@@ -230,7 +230,7 @@ class StorageFileAsyncTest(FileTestCase):
     async def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.get_file_url(storage_account.name).replace('https', 'http')
-        fsc = ShareServiceClient(url, credential=self.settings.STORAGE_ACCOUNT_KEY)
+        fsc = ShareServiceClient(url, credential=storage_account_key)
         share = fsc.get_share_client("vhds")
         file_client = share.get_file_client("vhd_dir/my.vhd")
 
@@ -268,7 +268,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY) as file_client:
+            credential=storage_account_key) as file_client:
 
             # Act
             resp = await file_client.create_file(1024)
@@ -289,7 +289,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY) as file_client:
+            credential=storage_account_key) as file_client:
 
             # Act
             resp = await file_client.create_file(1024, metadata=metadata)
@@ -351,7 +351,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path="missingdir/" + file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -371,7 +371,7 @@ class StorageFileAsyncTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         props = await snapshot_client.get_file_properties()
 
         # Assert
@@ -392,7 +392,7 @@ class StorageFileAsyncTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
 
         # Assert
         with self.assertRaises(ResourceNotFoundError):
@@ -492,7 +492,7 @@ class StorageFileAsyncTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         snapshot_props = await snapshot_client.get_file_properties()
 
         # Assert
@@ -516,7 +516,7 @@ class StorageFileAsyncTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
 
         metadata2 = {"test100": "foo100", "test200": "bar200"}
         await file_client.set_file_metadata(metadata2)
@@ -537,7 +537,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -595,7 +595,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
 
         # Act
@@ -767,7 +767,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         await file_client.create_file(1024)
 
@@ -787,7 +787,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         await file_client.create_file(2048)
 
@@ -815,7 +815,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.create_file(1024)
         
         share_client = self.fsc.get_share_client(self.share_name)
@@ -825,7 +825,7 @@ class StorageFileAsyncTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
 
         await file_client.delete_file()
@@ -846,7 +846,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         await file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
@@ -860,7 +860,7 @@ class StorageFileAsyncTest(FileTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
 
         await file_client.delete_file()
@@ -884,7 +884,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
 
         # Act
@@ -911,7 +911,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         with self.assertRaises(HttpResponseError) as e:
             await file_client.start_copy_from_url(source_file.url)
@@ -942,7 +942,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         copy_resp = await file_client.start_copy_from_url(source_url)
 
@@ -977,7 +977,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         copy_resp = await file_client.start_copy_from_url(source_url)
         self.assertEqual(copy_resp['copy_status'], 'pending')
@@ -1000,7 +1000,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         copy_resp = await file_client.start_copy_from_url(source_file.url)
 
@@ -1019,7 +1019,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             transport=AiohttpTestTransport())
         await file_client.upload_file(b'hello world')
 
@@ -1039,7 +1039,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
 
         # Act
         data = u'hello world啊齄丂狛狜'.encode('utf-8')
@@ -1078,7 +1078,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=storage_account_key)
         await file_client.upload_file(binary_data)
 
         # Act
@@ -1092,7 +1092,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_bytes_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1103,7 +1103,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1122,7 +1122,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_bytes_with_index_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1134,7 +1134,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1149,7 +1149,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_bytes_with_index_and_count_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1162,7 +1162,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1177,7 +1177,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange        
@@ -1190,7 +1190,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1206,7 +1206,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange        
@@ -1219,7 +1219,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1246,7 +1246,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange       
@@ -1259,7 +1259,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1276,7 +1276,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_stream_non_seekable_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange      
@@ -1289,7 +1289,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1304,7 +1304,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_stream_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange      
@@ -1317,7 +1317,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1342,7 +1342,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_stream_truncated_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange       
@@ -1355,7 +1355,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1369,7 +1369,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_stream_with_progress_truncated_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange       
@@ -1382,7 +1382,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1416,7 +1416,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1436,7 +1436,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1448,7 +1448,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_from_text_chunked_upload_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1460,7 +1460,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1479,7 +1479,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1490,7 +1490,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_create_file_with_md5_large_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1501,7 +1501,7 @@ class StorageFileAsyncTest(FileTestCase):
             self.get_file_url(storage_account.name),
             share_name=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            credential=storage_account_key,
             max_range_size=4 * 1024)
 
         # Act
@@ -1513,7 +1513,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_sas_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1542,7 +1542,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_sas_signed_identifier_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1577,7 +1577,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_account_sas_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1606,7 +1606,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_shared_read_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1635,7 +1635,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_shared_read_access_file_with_content_query_params_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1673,7 +1673,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_shared_write_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1706,7 +1706,7 @@ class StorageFileAsyncTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     async def test_shared_delete_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
