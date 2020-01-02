@@ -75,6 +75,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._network_span_namer = kwargs.get('network_span_namer', _default_network_span_namer)
+        self._tracing_attributes = kwargs.get('tracing_attributes', {})
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -88,6 +89,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             span_name = namer(request.http_request)
 
             span = span_impl_type(name=span_name)
+            for attr, value in self._tracing_attributes.items():
+                span.add_attribute(attr, value)
             span.start()
 
             headers = span.to_header()
