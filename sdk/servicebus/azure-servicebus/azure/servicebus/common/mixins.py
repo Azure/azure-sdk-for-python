@@ -87,9 +87,9 @@ class ServiceBusMixin(object):
             dead_lettering_on_message_expiration=dead_lettering_on_message_expiration,
             duplicate_detection_history_time_window=duplicate_detection_history_time_window,
             max_delivery_count=max_delivery_count,
-            enable_batched_operations=enable_batched_operations)
+            enable_batched_operations=enable_batched_operations, fail_on_exist=True)
         try:
-            return self.mgmt_client.create_queue(queue_name, queue=queue_properties, fail_on_exist=True)
+            return self.mgmt_client.create_queue(queue_name, queue=queue_properties, fail_on_exist=fail_on_exist)
         except requests.exceptions.ConnectionError as e:
             raise ServiceBusConnectionError("Namespace: {} not found".format(self.service_namespace), e)
 
