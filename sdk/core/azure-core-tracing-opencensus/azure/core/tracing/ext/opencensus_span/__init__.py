@@ -79,17 +79,20 @@ class OpenCensusSpan(HttpSpanMixin, object):
             None
         )
 
+    _KIND_MAPPING = {
+        SpanKind.CLIENT: OpenCensusSpanKind.CLIENT,
+        SpanKind.PRODUCER: OpenCensusSpanKind.CLIENT,  # No producer in opencensus
+        SpanKind.SERVER: OpenCensusSpanKind.SERVER,
+        SpanKind.CONSUMER: OpenCensusSpanKind.CLIENT,  # No consumer in opencensus
+        SpanKind.INTERNAL: OpenCensusSpanKind.UNSPECIFIED,  # No internal in opencensus
+        SpanKind.UNSPECIFIED: OpenCensusSpanKind.UNSPECIFIED,
+    }
 
     @kind.setter
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
-        kind = (
-            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
-            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
-            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
-            None
-        )
+        kind = self._KIND_MAPPING.get(value)
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
         self.span_instance.span_kind = kind

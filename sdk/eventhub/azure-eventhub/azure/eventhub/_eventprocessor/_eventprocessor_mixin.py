@@ -105,7 +105,7 @@ class EventProcessorMixin(object):
         else:
             child = span_impl_type(name="Azure.EventHubs.process")
             self._eventhub_client._add_span_request_attributes(child)  # type: ignore  # pylint: disable=protected-access
-            child.kind = SpanKind.SERVER
+            child.kind = SpanKind.CONSUMER
 
             trace_link_message(event, child)
             with child:
