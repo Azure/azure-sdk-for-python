@@ -33,6 +33,7 @@ TEST_SHARE_PREFIX = 'share'
 
 # ------------------------------------------------------------------------------
 
+@pytest.mark.skip("Need to setup handles again")
 class StorageHandleTest(FileTestCase):
     def setUp(self):
         super(StorageHandleTest, self).setUp()
