@@ -50,7 +50,11 @@ def distributed_trace_async(_func=None, name_of_span=None, tracing_attributes=No
     """
     # https://github.com/python/mypy/issues/2608
     if _func is None:
-        return functools.partial(distributed_trace_async, name_of_span=name_of_span, tracing_attributes=tracing_attributes)
+        return functools.partial(
+            distributed_trace_async,
+            name_of_span=name_of_span,
+            tracing_attributes=tracing_attributes,
+        )
     func = _func  # mypy is happy now
 
     not_none_tracing_attributes = tracing_attributes if tracing_attributes else {}
@@ -58,7 +62,7 @@ def distributed_trace_async(_func=None, name_of_span=None, tracing_attributes=No
     @functools.wraps(func)
     async def wrapper_use_tracer(*args, **kwargs):
         # type: (Any, Any) -> Any
-        merge_span = kwargs.pop('merge_span', False)
+        merge_span = kwargs.pop("merge_span", False)
         passed_in_parent = kwargs.pop("parent_span", None)
 
         span_impl_type = settings.tracing_implementation()
