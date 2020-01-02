@@ -28,7 +28,8 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScorePerLabel
+    SentimentConfidenceScorePerLabel,
+    BatchDocumentErrorException
 )
 
 __all__ = [
@@ -57,7 +58,8 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScorePerLabel'
+    'SentimentConfidenceScorePerLabel',
+    'BatchDocumentErrorException'
 ]
 
 __version__ = VERSION

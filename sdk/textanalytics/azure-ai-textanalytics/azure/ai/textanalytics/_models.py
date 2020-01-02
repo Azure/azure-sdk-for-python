@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 from ._generated.models._models import LanguageInput
 from ._generated.models._models import MultiLanguageInput
 
@@ -375,6 +376,30 @@ class TextDocumentStatistics(DictMixin):
         )
 
 
+class BatchDocumentErrorException(HttpResponseError):
+    """Raised if a property not found on a :class:`DocumentError` is accessed.
+    When iterating over the batched results, used to indicate that a document error
+    was encountered.
+
+    For example, if you have the response from
+    :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`,
+    to only print successful results you can do the following:
+
+    .. code-block:: python
+
+        response = client.detect_languages(documents)
+        for result in response:
+            try:
+                print(result.primary_language.name)
+            except BatchDocumentErrorException:
+                pass
+
+    :param str error_message: The error message including the document id and error code.
+    """
+    def __init__(self, error_message):
+        super(BatchDocumentErrorException, self).__init__(message=error_message)
+
+
 class DocumentError(DictMixin):
     """DocumentError.
 
@@ -390,6 +415,14 @@ class DocumentError(DictMixin):
         self.id = kwargs.get("id", None)
         self.error = kwargs.get("error", None)
         self.is_error = True
+
+    def __getattr__(self, attr):
+        if attr not in ["id", "error", "is_error"]:
+            raise BatchDocumentErrorException("The batched result has a DocumentError with the following details:\n"
+                                              "Id: {}\nError: {} - {}\nResolve the error or filter for only successful "
+                                              "results using the is_error property.".
+                                              format(self.id, self.error["inner_error"]["code"],
+                                                     self.error["inner_error"]["message"]))
 
     @classmethod
     def _from_generated(cls, doc_err):
