@@ -17,12 +17,6 @@ class AsyncCredentialBase(abc.ABC):
     async def __aexit__(self, *args):
         await self.close()
 
-    def __enter__(self):
-        raise TypeError("Use async with instead")
-
-    def __exit__(self, *args):
-        pass
-
     @abc.abstractmethod
     async def get_token(self, *scopes, **kwargs):
         pass
