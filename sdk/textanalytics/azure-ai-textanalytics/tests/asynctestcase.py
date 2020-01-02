@@ -7,11 +7,8 @@
 # --------------------------------------------------------------------------
 import asyncio
 import functools
-from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest
 from azure.core.credentials import AccessToken
-
-
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+from testcase import TextAnalyticsTest
 
 
 class AsyncFakeTokenCredential(object):
@@ -25,7 +22,7 @@ class AsyncFakeTokenCredential(object):
         return self.token
 
 
-class AsyncCognitiveServiceTestCase(CognitiveServiceTest):
+class AsyncTextAnalyticsTest(TextAnalyticsTest):
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -38,9 +35,6 @@ class AsyncCognitiveServiceTestCase(CognitiveServiceTest):
             return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
         return run
-
-    def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
