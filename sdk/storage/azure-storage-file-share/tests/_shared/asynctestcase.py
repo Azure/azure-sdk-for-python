@@ -10,7 +10,7 @@ import functools
 
 from azure.core.credentials import AccessToken
 
-from .testcase import StorageTestCase
+from .filetestcase import FileTestCase
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
@@ -25,7 +25,7 @@ class AsyncFakeTokenCredential(object):
         return self.token
 
 
-class AsyncStorageTestCase(StorageTestCase):
+class AsyncStorageTestCase(FileTestCase):
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes
