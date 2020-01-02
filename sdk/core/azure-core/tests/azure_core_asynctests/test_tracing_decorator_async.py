@@ -75,6 +75,10 @@ class MockClient:
     async def check_name_is_different(self):
         time.sleep(0.001)
 
+    @distributed_trace_async(tracing_attributes={'foo': 'bar'})
+    async def tracing_attr(self):
+        time.sleep(0.001)
+
     @distributed_trace_async
     async def raising_exception(self):
         raise ValueError("Something went horribly wrong here")
@@ -82,6 +86,18 @@ class MockClient:
 
 @pytest.mark.usefixtures("fake_span")
 class TestAsyncDecorator(object):
+
+    @pytest.mark.asyncio
+    async def test_decorator_tracing_attr(self):
+        with FakeSpan(name="parent") as parent:
+            client = MockClient()
+            await client.tracing_attr()
+
+        assert len(parent.children) == 2
+        assert parent.children[0].name == "MockClient.__init__"
+        assert parent.children[1].name == "MockClient.tracing_attr"
+        assert parent.children[1].attributes == {'foo': 'bar'}
+
 
     @pytest.mark.asyncio
     async def test_decorator_has_different_name(self):
