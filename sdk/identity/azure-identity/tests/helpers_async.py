@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import functools
+import sys
 from unittest import mock
 
 from helpers import validating_transport
@@ -30,25 +31,19 @@ def wrap_in_future(fn):
 
 
 class AsyncMockTransport(mock.MagicMock):
-    """MagicMock with do-nothing aenter/exit, for mocking async transport.
+    """Mock with do-nothing aenter/exit for mocking async transport.
 
-    aenter/exit here return completed Futures so they needn't be declared async. If they were async functions,
-    2.7 would raise SyntaxError on importing this module.
-
-    3.9.0, or a future version of 3.8, will obviate this class by implementing aenter/exit on MagicMock
-    (https://bugs.python.org/issue38093).
+    This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
     """
 
-    # pylint:disable=attribute-defined-outside-init
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    async def __aenter__(self):
-        self.entered = True
-
-    async def __aexit__(self, *exc_info):
-        self.exited = True
+        if sys.version_info < (3, 8):
+            self.__aenter__ = mock.Mock(return_value=get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
 
 def async_validating_transport(requests, responses):
     sync_transport = validating_transport(requests, responses)
     return AsyncMockTransport(send=wrap_in_future(sync_transport.send))
-

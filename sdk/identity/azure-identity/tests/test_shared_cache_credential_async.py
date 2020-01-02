@@ -33,7 +33,7 @@ async def test_close():
 
     await credential.close()
 
-    assert transport.exited
+    assert transport.__aexit__.called
 
 
 @pytest.mark.asyncio
@@ -46,7 +46,7 @@ async def test_context_manager():
     async with credential:
         pass
 
-    assert transport.exited
+    assert transport.__aexit__.called
 
 
 @pytest.mark.asyncio

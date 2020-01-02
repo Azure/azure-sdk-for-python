@@ -28,7 +28,7 @@ async def test_close():
 
     await credential.close()
 
-    assert transport.exited
+    assert transport.__aexit__.called
 
 
 @pytest.mark.asyncio
@@ -39,7 +39,7 @@ async def test_context_manager():
     async with credential:
         pass
 
-    assert transport.exited
+    assert transport.__aexit__.called
 
 
 @pytest.mark.asyncio
@@ -112,9 +112,3 @@ async def test_request_body():
     token = await cred.get_token("scope")
 
     assert token.token == access_token
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(test_close())
