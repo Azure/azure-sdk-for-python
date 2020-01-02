@@ -8,9 +8,9 @@
     - Removed deprecated property `application_properties` and deprecated method `encode_message()`
 - `EventHubConsumerClient`
     - `on_error` would be called when `EventHubConsumerClient` failed to claim ownership of partitions.
-    - `on_partition_cloe` and `on_partition_initialize` would be called in the case of meetings exceptions raised by callback `on_event`.
+    - `on_partition_cloe` and `on_partition_initialize` would be called in the case of meeting exceptions raised by callback `on_event`.
         -  `EventHubConsumerClient` would close and re-open the internal partition receiver in this case.
-    - Default starting position from where `EventHubConsumerClient` should resume receiving when meeting an internal error has been re-prioritized.
+    - Default starting position from where `EventHubConsumerClient` should resume receiving when meeting an error has been re-prioritized.
         - If there is checkpoint, it will resume from the checkpoint.
         - If there is no checkpoint but `starting_position` is provided, it will resume from `starting_posititon`.
         - If there is no checkpoint and `starting_position`, it will resume from the latest position.
