@@ -5,19 +5,24 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Type, Optional, Any, AnyStr, List, TYPE_CHECKING
+from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
 from uamqp import types, constants, errors
 from uamqp import SendClientAsync
 
-from azure.core.tracing import SpanKind, AbstractSpan
-from azure.core.settings import settings
+from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
 from ..exceptions import _error_handler, OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
-from .._utils import create_properties, set_message_partition_key, trace_message
+from .._utils import (
+    create_properties,
+    set_message_partition_key,
+    trace_message,
+    send_context_manager,
+    add_link_to_send,
+)
 from .._constants import TIMEOUT_SYMBOL
 from ._client_base_async import ConsumerProducerMixin
 
@@ -177,6 +182,7 @@ class EventHubProducer(
                 set_message_partition_key(event_data.message, partition_key)
             wrapper_event_data = event_data
             trace_message(wrapper_event_data, span)
+            add_link_to_send(wrapper_event_data, span)
         else:
             if isinstance(
                 event_data, EventDataBatch
@@ -187,11 +193,13 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
+                for message in event_data.message._body_gen:  # pylint: disable=protected-access
+                    add_link_to_send(message, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
-                event_data = _set_trace_message(event_data)
+                event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return wrapper_event_data
@@ -228,26 +236,16 @@ class EventHubProducer(
         """
         # Tracing code
         async with self._lock:
-            span_impl_type = (
-                settings.tracing_implementation()
-            )  # type: Type[AbstractSpan]
-            child = None
-            if span_impl_type is not None:
-                child = span_impl_type(name="Azure.EventHubs.send")
-                child.kind = SpanKind.CLIENT  # Should be PRODUCER
-            self._check_closed()
-            wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-            self._unsent_events = [wrapper_event_data.message]
+            with send_context_manager() as child:
+                self._check_closed()
+                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                self._unsent_events = [wrapper_event_data.message]
 
-            if span_impl_type is not None and child is not None:
-                with child:
+                if child:
                     self._client._add_span_request_attributes(  # pylint: disable=protected-access
                         child
                     )
-                    await self._send_event_data_with_retry(
-                        timeout=timeout
-                    )  # pylint:disable=unexpected-keyword-arg
-            else:
+
                 await self._send_event_data_with_retry(
                     timeout=timeout
                 )  # pylint:disable=unexpected-keyword-arg
