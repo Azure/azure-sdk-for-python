@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -29,8 +30,7 @@ class ChainedTokenCredential(SyncChainedTokenCredential, AsyncCredentialBase):
     async def close(self):
         """Close the transport sessions of all credentials in the chain."""
 
-        for credential in self.credentials:
-            await credential.close()
+        await asyncio.gather(*(credential.close() for credential in self.credentials))
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request a token from each credential, in order, returning the first token received.
