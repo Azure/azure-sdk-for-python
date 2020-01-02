@@ -367,5 +367,8 @@ class EventProcessor(
         await self._cancel_tasks_for_partitions(pids)
         _LOGGER.info("EventProcessor %r tasks have been cancelled.", self._id)
         while self._tasks:
+            new_active_pids = [pid for pid, task in self._tasks.items() if not task.done()]
+            if new_active_pids:  # This shouldn't happen. Just to guard.
+                await self._cancel_tasks_for_partitions(new_active_pids)
             await asyncio.sleep(1, loop=self._loop)
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)
