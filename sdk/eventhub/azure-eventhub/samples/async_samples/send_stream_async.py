@@ -33,19 +33,19 @@ async def run():
     bytes_per_message = 256
 
     async with producer:
-        while to_send_message_cnt > 0:
-            event_data_batch = await producer.create_batch(max_size_in_bytes=2048)
-            message_in_batch_cnt = 0
-            while message_in_batch_cnt < to_send_message_cnt:
-                try:
-                    event_data_batch.add(EventData('D' * bytes_per_message))
-                    message_in_batch_cnt += 1
-                except ValueError:
-                    break
+        event_data_batch = await producer.create_batch()
+        for i in range(to_send_message_cnt):
+            event_data = EventData('D' * bytes_per_message)
+            try:
+                event_data_batch.add(event_data)
+            except ValueError:
+                await producer.send_batch(event_data_batch)
+                event_data_batch = await producer.create_batch()
+                event_data_batch.add(event_data)
+        if len(event_data_batch) > 0:
             await producer.send_batch(event_data_batch)
-            to_send_message_cnt -= message_in_batch_cnt
 
 loop = asyncio.get_event_loop()
 start_time = time.time()
 loop.run_until_complete(run())
-print("Send messages in {} seconds".format(time.time() - start_time))
+print("Send messages in {} seconds.".format(time.time() - start_time))

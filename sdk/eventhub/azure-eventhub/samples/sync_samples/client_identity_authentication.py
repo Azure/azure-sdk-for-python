@@ -53,8 +53,8 @@ with producer:
             event_data_batch.add(EventData('Message inside EventBatchData'))
         except ValueError:
             # EventDataBatch object reaches max_size.
-            # New EventDataBatch object can be created here to send more data
+            # New EventDataBatch object can be created here to send more data.
             break
     producer.send_batch(event_data_batch)
 
-print('Send finished.')
+print('Finished sending.')

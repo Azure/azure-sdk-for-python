@@ -19,11 +19,11 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 async def on_event(partition_context, event):
-    print("Received events from partition: {}".format(partition_context.partition_id))
-    # Do some sync or async operations. If the operation is i/o intensive, async will have better performance
+    print("Received events from partition: {}.".format(partition_context.partition_id))
+    # Do some sync or async operations. If the operation is i/o intensive, async will have better performance.
     print(event)
 
-    print("Last enqueued event properties from partition: {} is: {}".format(
+    print("Last enqueued event properties from partition: {} is: {}.".format(
         partition_context.partition_id,
         partition_context.last_enqueued_event_properties)
     )

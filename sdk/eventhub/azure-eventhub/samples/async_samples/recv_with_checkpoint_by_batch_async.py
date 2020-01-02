@@ -20,20 +20,20 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exists.
+BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 partition_recv_cnt_since_last_checkpoint = defaultdict(int)
 checkpoint_batch_event_cnt = 20
 
 
 async def on_event(partition_context, event):
-    # put your code here
+    # Put your code here.
     p_id = partition_context.partition_id
-    print("Received event from partition: {}".format(p_id))
+    print("Received event from partition: {}.".format(p_id))
     partition_recv_cnt_since_last_checkpoint[p_id] += 1
     if partition_recv_cnt_since_last_checkpoint[p_id] >= checkpoint_batch_event_cnt:
         await partition_context.update_checkpoint(event)
-        partition_recv_cnt_since_last_checkpoint[p_id] -= checkpoint_batch_event_cnt
+        partition_recv_cnt_since_last_checkpoint[p_id] = 0
 
 
 async def receive(client):
@@ -43,16 +43,16 @@ async def receive(client):
     which also try to receive events from all partitions and use the same storage resource.
     """
     await client.receive(on_event=on_event)
-    # With specified partition_id, load-balance will be disabled
+    # With specified partition_id, load-balance will be disabled, for example:
     # await client.receive(on_event=on_event, partition_id = '0'))
 
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_NAME)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
-        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing
+        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
     )
     async with client:
         await receive(client)

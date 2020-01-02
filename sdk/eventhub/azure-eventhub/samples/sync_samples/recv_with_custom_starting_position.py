@@ -16,25 +16,32 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 def on_partition_initialize(partition_context):
-    # put your code here
-    print("Partition: {} has been initialized".format(partition_context.partition_id))
+    # Put your code here.
+    print("Partition: {} has been initialized.".format(partition_context.partition_id))
 
 
 def on_partition_close(partition_context, reason):
-    # put your code here
-    print("Partition: {} has been closed, reason for closing: {}".format(partition_context.partition_id,
-                                                                         reason))
+    # Put your code here.
+    print("Partition: {} has been closed, reason for closing: {}.".format(
+        partition_context.partition_id,
+        reason
+    ))
 
 
 def on_error(partition_context, error):
-    # put your code here
-    print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
-                                                                       error))
+    # Put your code here. partition_context can be None in the on_error callback.
+    if partition_context:
+        print("An exception: {} occurred during receiving from Partition: {}.".format(
+            partition_context.partition_id,
+            error
+        ))
+    else:
+        print("An exception: {} occurred during the load balance process.".format(error))
 
 
 def on_event(partition_context, event):
-    # put your code here
-    print("Received event: {} from partition: {}".format(event.body_as_str(), partition_context.partition_id))
+    # Put your code here.
+    print("Received event: {} from partition: {}.".format(event.body_as_str(), partition_context.partition_id))
 
 
 if __name__ == '__main__':
@@ -61,7 +68,7 @@ if __name__ == '__main__':
     partition_0_prop = consumer_client.get_partition_properties("0")
     partition_0_last_enqueued_sequence_number = partition_0_prop["last_enqueued_sequence_number"]
 
-    # client will receive messages from position of the third from last from partition 0
+    # client will receive messages from the position of the third from last event on partition 0.
     starting_position = {
         "0": partition_0_last_enqueued_sequence_number - 3,
     }
@@ -77,4 +84,4 @@ if __name__ == '__main__':
                 starting_position=starting_position
             )
     except KeyboardInterrupt:
-        print('Stop receiving.')
+        print('Stopped receiving.')

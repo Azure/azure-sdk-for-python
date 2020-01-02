@@ -21,7 +21,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_NAME = "your-blob-name"  # Please make sure the blob resource exists.
+BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 
 partition_last_checkpoint_time = dict()
@@ -29,13 +29,13 @@ checkpoint_time_interval = 15
 
 
 async def on_event(partition_context, event):
-    # put your code here
+    # Put your code here.
     p_id = partition_context.partition_id
-    print("Received event from partition: {}".format(p_id))
+    print("Received event from partition: {}.".format(p_id))
     now_time = time.time()
     p_id = partition_context.partition_id
-    if (partition_last_checkpoint_time.get(p_id) is None) or \
-            (now_time - partition_last_checkpoint_time.get(p_id)) >= checkpoint_time_interval:
+    last_checkpoint_time = partition_last_checkpoint_time.get(p_id)
+    if last_checkpoint_time is None or (now_time - last_checkpoint_time) >= checkpoint_time_interval:
         await partition_context.update_checkpoint(event)
         partition_last_checkpoint_time[p_id] = now_time
 
@@ -47,16 +47,16 @@ async def receive(client):
     which also try to receive events from all partitions and use the same storage resource.
     """
     await client.receive(on_event=on_event)
-    # With specified partition_id, load-balance will be disabled
+    # With specified partition_id, load-balance will be disabled, for example:
     # await client.receive(on_event=on_event, partition_id = '0'))
 
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_NAME)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
-        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing
+        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
     )
     async with client:
         await receive(client)

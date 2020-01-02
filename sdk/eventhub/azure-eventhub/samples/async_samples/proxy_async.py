@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show async sending and receiving events behind a proxy
+An example to show async sending and receiving events behind a proxy.
 """
 import os
 import asyncio
@@ -17,16 +17,16 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 HTTP_PROXY = {
-    'proxy_hostname': '127.0.0.1',  # proxy hostname
-    'proxy_port': 3128,  # proxy port
-    'username': 'admin',  # username used for proxy authentication if needed
-    'password': '123456'  # password used for proxy authentication if needed
+    'proxy_hostname': '127.0.0.1',  # proxy hostname.
+    'proxy_port': 3128,  # proxy port.
+    'username': 'admin',  # username used for proxy authentication if needed.
+    'password': '123456'  # password used for proxy authentication if needed.
 }
 
 
 async def on_event(partition_context, event):
-    print("received event from partition: {}".format(partition_context.partition_id))
-    # do some operations on the event
+    # Put your code here.
+    print("received event from partition: {}.".format(partition_context.partition_id))
     print(event)
 
 
@@ -51,14 +51,14 @@ async def main():
                 event_data_batch.add(EventData('Message inside EventBatchData'))
             except ValueError:
                 # EventDataBatch object reaches max_size.
-                # New EventDataBatch object can be created here to send more data
+                # New EventDataBatch object can be created here to send more data.
                 break
         await producer_client.send_batch(event_data_batch)
-        print('Finish sending.')
+        print('Finished sending.')
 
     async with consumer_client:
         await consumer_client.receive(on_event=on_event)
-        print('Finish receiving.')
+        print('Finished receiving.')
 
 
 loop = asyncio.get_event_loop()

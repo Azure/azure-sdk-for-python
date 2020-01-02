@@ -24,7 +24,7 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 async def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
-    # The events will be distributed to available partitions via round-robin.
+    # the events will be distributed to available partitions via round-robin.
     event_data_batch = await producer.create_batch()
     event_data_batch.add(EventData('Single message'))
     await producer.send_batch(event_data_batch)
@@ -32,7 +32,7 @@ async def send_event_data_batch(producer):
 
 async def send_event_data_batch_with_limited_size(producer):
     # Without specifying partition_id or partition_key
-    # The events will be distributed to available partitions via round-robin.
+    # the events will be distributed to available partitions via round-robin.
     event_data_batch_with_limited_size = await producer.create_batch(max_size_in_bytes=1000)
 
     while True:
@@ -40,7 +40,7 @@ async def send_event_data_batch_with_limited_size(producer):
             event_data_batch_with_limited_size.add(EventData('Message inside EventBatchData'))
         except ValueError:
             # EventDataBatch object reaches max_size.
-            # New EventDataBatch object can be created here to send more data
+            # New EventDataBatch object can be created here to send more data.
             break
 
     await producer.send_batch(event_data_batch_with_limited_size)
@@ -55,7 +55,7 @@ async def send_event_data_batch_with_partition_key(producer):
 
 
 async def send_event_data_batch_with_partition_id(producer):
-    # Specifying partition_id
+    # Specifying partition_id.
     event_data_batch_with_partition_id = await producer.create_batch(partition_id='0')
     event_data_batch_with_partition_id.add(EventData('Message will be sent to target-id partition'))
 
@@ -87,4 +87,4 @@ async def run():
 loop = asyncio.get_event_loop()
 start_time = time.time()
 loop.run_until_complete(run())
-print("Send messages in {} seconds".format(time.time() - start_time))
+print("Send messages in {} seconds.".format(time.time() - start_time))

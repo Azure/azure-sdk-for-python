@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show how to create EventHubProducerClient/EventHubConsumerClient
+Examples to show how to create EventHubProducerClient/EventHubConsumerClient.
 """
 import os
 from azure.eventhub import (
@@ -28,22 +28,22 @@ CONSUMER_GROUP = "$Default"
 def create_producer_client():
     print('Examples showing how to create producer client.')
 
-    # Create producer client from connection string
+    # Create producer client from connection string.
 
     producer_client = EventHubProducerClient.from_CONNECTION_STRING(
-        conn_str=CONNECTION_STRING  # connection string contains EventHub name
+        conn_str=CONNECTION_STRING  # connection string contains EventHub name.
     )
 
-    # Illustration of commonly used parameters
+    # Illustration of commonly used parameters.
     producer_client = EventHubProducerClient.from_CONNECTION_STRING(
         conn_str=CONNECTION_STRING,
-        eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string
-        logging_enable=False,  # To enable network tracing log, set logging_enable to True
-        retry_total=3,  # Retry up to 3 times to re-do failed operations
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
+        eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True.
+        retry_total=3,  # Retry up to 3 times to re-do failed operations.
+        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
     )
 
-    # Create producer client from constructor
+    # Create producer client from constructor.
 
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
@@ -52,9 +52,9 @@ def create_producer_client():
             policy=SAS_POLICY,
             key=SAS_KEY
         ),
-        logging_enable=False,  # To enable network tracing log, set logging_enable to True
-        retry_total=3,  # Retry up to 3 times to re-do failed operations
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True.
+        retry_total=3,  # Retry up to 3 times to re-do failed operations.
+        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
     )
 
     print("Calling producer client get eventhub properties:", producer_client.get_eventhub_properties())
@@ -63,24 +63,24 @@ def create_producer_client():
 def create_consumer_client():
     print('Examples showing how to create consumer client.')
 
-    # Create consumer client from connection string
+    # Create consumer client from connection string.
 
     consumer_client = EventHubConsumerClient.from_CONNECTION_STRING(
-        conn_str=CONNECTION_STRING,  # connection string contains EventHub name
+        conn_str=CONNECTION_STRING,  # connection string contains EventHub name.
         consumer_group=CONSUMER_GROUP
     )
 
-    # Illustration of commonly used parameters
+    # Illustration of commonly used parameters.
     consumer_client = EventHubConsumerClient.from_CONNECTION_STRING(
         conn_str=CONNECTION_STRING,
         consumer_group=CONSUMER_GROUP,
-        eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string
-        logging_enable=False,  # To enable network tracing log, set logging_enable to True
-        retry_total=3,  # Retry up to 3 times to re-do failed operations
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
+        eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True.
+        retry_total=3,  # Retry up to 3 times to re-do failed operations.
+        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
     )
 
-    # Create consumer client from constructor
+    # Create consumer client from constructor.
 
     consumer_client = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
@@ -90,9 +90,9 @@ def create_consumer_client():
             policy=SAS_POLICY,
             key=SAS_KEY
         ),
-        logging_enable=False,  # To enable network tracing log, set logging_enable to True
-        retry_total=3,  # Retry up to 3 times to re-do failed operations
-        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True.
+        retry_total=3,  # Retry up to 3 times to re-do failed operations.
+        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
     )
 
     print("Calling consumer client get eventhub properties:", consumer_client.get_eventhub_properties())
