@@ -37,7 +37,7 @@ class StorageHandleTest(FileTestCase):
     def setUp(self):
         super(StorageHandleTest, self).setUp()
         file_url = self.get_file_url(storage_account.name)
-        credentials = self.get_shared_key_credential()
+        credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 

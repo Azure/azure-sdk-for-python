@@ -40,7 +40,7 @@ class StorageDirectoryTest(FileTestCase):
         super(StorageDirectoryTest, self).setUp()
 
         url = self.get_file_url(storage_account.name)
-        credential = self.get_shared_key_credential()
+        credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.share_name = self.get_resource_name('utshare')
 

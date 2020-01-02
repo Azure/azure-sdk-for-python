@@ -60,7 +60,7 @@ class StorageShareTest(FileTestCase):
         super(StorageShareTest, self).setUp()
 
         file_url = self.get_file_url(storage_account.name)
-        credentials = self.get_shared_key_credential()
+        credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.fsc.__aenter__())
@@ -776,7 +776,7 @@ class StorageShareTest(FileTestCase):
             return
         transport = AioHttpTransport()
         url = self.get_file_url(storage_account.name)
-        credential = self.get_shared_key_credential()
+        credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
         async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:

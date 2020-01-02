@@ -65,7 +65,7 @@ class StorageFileAsyncTest(FileTestCase):
         super(StorageFileAsyncTest, self).setUp()
 
         url = self.get_file_url(storage_account.name)
-        credential = self.get_shared_key_credential()
+        credential = storage_account_key
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -121,7 +121,7 @@ class StorageFileAsyncTest(FileTestCase):
         share_name = self.remote_share_name if remote else self.share_name
         async with ShareServiceClient(
                 self.get_file_url(storage_account.name),
-                credential=self.get_shared_key_credential(),
+                credential=storage_account_key,
                 max_range_size=4 * 1024) as fsc:
             if not self.is_playback():
                 try:

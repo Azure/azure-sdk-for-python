@@ -53,7 +53,7 @@ class StorageGetFileTest(FileTestCase):
         self.MAX_CHUNK_GET_SIZE = 4 * 1024
 
         url = self.get_file_url(storage_account.name)
-        credential = self.get_shared_key_credential()
+        credential = storage_account_key
 
         self.fsc = ShareServiceClient(
             url, credential=credential,
@@ -100,7 +100,7 @@ class StorageGetFileTest(FileTestCase):
                 self.get_file_url(storage_account.name),
                 share_name=self.share_name,
                 file_path=byte_file,
-                credential=self.get_shared_key_credential()
+                credential=storage_account_key
             )
             try:
                 await file_client.upload_file(self.byte_data)
