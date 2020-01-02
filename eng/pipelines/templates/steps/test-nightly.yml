@@ -25,7 +25,7 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
-      pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo packaging
+      pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
   - ${{ parameters.BeforeTestSteps }}

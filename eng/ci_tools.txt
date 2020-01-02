@@ -1,0 +1,13 @@
+setuptools
+wheel 
+Jinja2
+packaging
+tox
+tox-monorepo
+pathlib
+twine
+readme-renderer[md]
+doc-warden==0.3.1
+coverage==4.5.4
+codecov
+beautifulsoup4
