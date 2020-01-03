@@ -1,6 +1,9 @@
 # Release History
 
-## 12.1.1 (Unreleased)
+## 12.2.0
+**New features**
+- Added support for encryption scopes that would be used to encrypt the application data. 
+- Added `get_managed_disk_page_range_diff` API which returns the list of valid page ranges diff between a snapshot and managed disk or another snapshot.
 
 ## 12.1.0 (2019-12-04)
 
