@@ -1021,6 +1021,65 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_page_managed_disk_diff(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc, 2048)
+        data = self.get_random_bytes(1536)
+
+        snapshot1 = await blob.create_snapshot()
+        snapshot_blob1 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot1['snapshot'])
+        sas_token1 = generate_blob_sas(
+            snapshot_blob1.account_name,
+            snapshot_blob1.container_name,
+            snapshot_blob1.blob_name,
+            snapshot=snapshot_blob1.snapshot,
+            account_key=snapshot_blob1.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        await blob.upload_page(data, offset=0, length=1536)
+
+        snapshot2 = await blob.create_snapshot()
+        snapshot_blob2 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot2['snapshot'])
+        sas_token2 = generate_blob_sas(
+            snapshot_blob2.account_name,
+            snapshot_blob2.container_name,
+            snapshot_blob2.blob_name,
+            snapshot=snapshot_blob2.snapshot,
+            account_key=snapshot_blob2.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        await blob.clear_page(offset=512, length=512)
+
+        # Act
+        ranges1, cleared1 = await blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob1.url + '&' + sas_token1)
+        ranges2, cleared2 = await blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob2.url + '&' + sas_token2)
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(len(ranges1), 2)
+        self.assertIsInstance(cleared1, list)
+        self.assertEqual(len(cleared1), 1)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(cleared1[0]['start'], 512)
+        self.assertEqual(cleared1[0]['end'], 1023)
+        self.assertEqual(ranges1[1]['start'], 1024)
+        self.assertEqual(ranges1[1]['end'], 1535)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(len(ranges2), 0)
+        self.assertIsInstance(cleared2, list)
+        self.assertEqual(len(cleared2), 1)
+        self.assertEqual(cleared2[0]['start'], 512)
+        self.assertEqual(cleared2[0]['end'], 1023)
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
