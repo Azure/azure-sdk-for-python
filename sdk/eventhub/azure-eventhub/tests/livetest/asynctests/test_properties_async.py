@@ -6,6 +6,7 @@
 
 import pytest
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
+from azure.eventhub.exceptions import AuthenticationError, ConnectError
 
 
 @pytest.mark.liveTest
@@ -16,6 +17,40 @@ async def test_get_properties(live_eventhub):
     )
     properties = await client.get_eventhub_properties()
     assert properties['eventhub_name'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
+    await client.close()
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_get_properties_with_auth_error_async(live_eventhub):
+    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
+        EventHubSharedKeyCredential(live_eventhub['key_name'], "AaBbCcDdEeFf=")
+    )
+    with pytest.raises(AuthenticationError) as e:
+        await client.get_eventhub_properties()
+    await client.close()
+
+    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
+        EventHubSharedKeyCredential("invalid", live_eventhub['access_key'])
+    )
+    with pytest.raises(AuthenticationError) as e:
+        await client.get_eventhub_properties()
+    await client.close()
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_get_properties_with_connect_error(live_eventhub):
+    client = EventHubConsumerClient(live_eventhub['hostname'], "invalid", '$default',
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+    )
+    with pytest.raises(ConnectError) as e:
+        await client.get_eventhub_properties()
+    await client.close()
+
+    client = EventHubConsumerClient("invalid.servicebus.windows.net", live_eventhub['event_hub'], '$default',
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+    )
+    with pytest.raises(ConnectError) as e:
+        await client.get_eventhub_properties()
     await client.close()
 
 @pytest.mark.liveTest

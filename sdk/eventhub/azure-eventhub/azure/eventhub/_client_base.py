@@ -20,7 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 
-from .exceptions import _handle_exception, ClientClosedError
+from .exceptions import _handle_exception, ClientClosedError, AuthenticationError, EventHubError, ConnectError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp
 from ._connection_manager import get_connection_manager
@@ -218,7 +218,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
-            mgmt_client = AMQPClient(self._mgmt_target)
+            mgmt_client = AMQPClient(
+                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+            )
             try:
                 conn = self._conn_manager.get_connection(
                     self._address.hostname, mgmt_auth
@@ -234,7 +236,21 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 status_code = response.application_properties[MGMT_STATUS_CODE]
                 if status_code < 400:
                     return response
-                raise errors.AuthenticationException(
+                if status_code in [401]:
+                    raise AuthenticationError(
+                        "Management authentication failed. Status code: {}, Description: {}".format(
+                            status_code,
+                            response.application_properties.get(MGMT_STATUS_DESC)
+                        )
+                    )
+                if status_code in [404]:
+                    raise ConnectError(
+                        "Management connection failed. Status code: {}, Description: {}".format(
+                            status_code,
+                            response.application_properties.get(MGMT_STATUS_DESC)
+                        )
+                    )
+                raise EventHubError(
                     "Management request error. Status code: {}, Description: {}".format(
                         status_code,
                         response.application_properties.get(MGMT_STATUS_DESC)

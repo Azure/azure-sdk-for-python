@@ -21,7 +21,7 @@ from uamqp import (
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp
-from ..exceptions import ClientClosedError
+from ..exceptions import ClientClosedError, AuthenticationError, EventHubError, ConnectError
 from .._constants import (
     JWT_TOKEN_SCOPE,
     MGMT_OPERATION,
@@ -175,7 +175,21 @@ class ClientBaseAsync(ClientBase):
                 status_code = response.application_properties[MGMT_STATUS_CODE]
                 if status_code < 400:
                     return response
-                raise errors.AuthenticationException(
+                if status_code in [401]:
+                   raise AuthenticationError(
+                       "Management authentication failed. Status code: {}, Description: {}".format(
+                           status_code,
+                           response.application_properties.get(MGMT_STATUS_DESC)
+                       )
+                   )
+                if status_code in [404]:
+                    raise ConnectError(
+                        "Management connection failed. Status code: {}, Description: {}".format(
+                            status_code,
+                            response.application_properties.get(MGMT_STATUS_DESC)
+                        )
+                    )
+                raise EventHubError(
                     "Management request error. Status code: {}, Description: {}".format(
                         status_code,
                         response.application_properties.get(MGMT_STATUS_DESC)
