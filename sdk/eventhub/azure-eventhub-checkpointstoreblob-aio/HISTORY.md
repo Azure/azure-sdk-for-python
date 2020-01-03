@@ -1,7 +1,7 @@
 # Release History
 
 ## 1.0.0 (2020-01-06)
-This release is for version bump only. No feature changes.
+Stable release. No new features or API changes.
 
 ## 1.0.0b6 (2019-12-04)
 

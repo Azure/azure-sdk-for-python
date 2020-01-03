@@ -12,7 +12,7 @@ Please note that this is a sync library, for async version of the Azure EventHub
 ### Install the package
 
 ```
-$ pip install --pre azure-eventhub-checkpointstoreblob
+$ pip install azure-eventhub-checkpointstoreblob
 ```
 
 **Prerequisites**
