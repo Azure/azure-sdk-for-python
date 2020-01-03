@@ -24,9 +24,6 @@ class ChainedTokenCredential(SyncChainedTokenCredential, AsyncCredentialBase):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    async def __aenter__(self):
-        pass
-
     async def close(self):
         """Close the transport sessions of all credentials in the chain."""
 

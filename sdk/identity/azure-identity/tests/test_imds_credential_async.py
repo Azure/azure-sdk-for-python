@@ -16,7 +16,7 @@ async def test_imds_close():
 
     await credential.close()
 
-    assert transport.__aexit__.called
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -27,4 +27,4 @@ async def test_imds_context_manager():
     async with credential:
         pass
 
-    assert transport.__aexit__.called
+    assert transport.__aexit__.call_count == 1

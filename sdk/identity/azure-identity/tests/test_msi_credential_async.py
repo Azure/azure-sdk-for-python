@@ -20,7 +20,7 @@ async def test_close():
 
     await credential.close()
 
-    assert transport.__aexit__.called
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -31,6 +31,7 @@ async def test_context_manager():
         credential = MsiCredential(transport=transport)
 
     async with credential:
-        pass
+        assert transport.__aenter__.call_count == 1
 
-    assert transport.__aexit__.called
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
