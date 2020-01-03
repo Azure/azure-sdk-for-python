@@ -6,18 +6,20 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub.
+An example to show receiving events from an Event Hub for a period of time.
 """
 import os
+import threading
+import time
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+RECEIVE_DURATION = 15
 
 
 def on_event(partition_context, event):
     # Put your code here.
-    # If the operation is i/o intensive, multi-thread will have better performance.
     print("Received event from partition: {}.".format(partition_context.partition_id))
 
 
@@ -52,13 +54,24 @@ if __name__ == '__main__':
         eventhub_name=EVENTHUB_NAME,
     )
 
+    print('Consumer will keep receiving for {} seconds, start time is {}.'.format(RECEIVE_DURATION, time.time()))
+
     try:
-        with consumer_client:
-            consumer_client.receive(
-                on_event=on_event,
-                on_partition_initialize=on_partition_initialize,
-                on_partition_close=on_partition_close,
-                on_error=on_error
-            )
+        thread = threading.Thread(
+            target=consumer_client.receive,
+            kwargs={
+                "on_event": on_event,
+                "on_partition_initialize": on_partition_initialize,
+                "on_partition_close": on_partition_close,
+                "on_error": on_error
+            },
+            daemon=True
+        )
+        thread.start()
+        time.sleep(RECEIVE_DURATION)
+        consumer_client.close()
+        thread.join()
     except KeyboardInterrupt:
-        print('Stopped receiving.')
+        print('Stop receiving.')
+
+    print('Consumer has stopped receiving, end time is {}.'.format(time.time()))
