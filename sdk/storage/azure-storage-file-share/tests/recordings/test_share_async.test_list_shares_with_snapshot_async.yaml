@@ -3,11 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 2b419c2c-1d1b-11ea-80af-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:08:31 GMT
+      - Fri, 03 Jan 2020 01:59:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -16,22 +14,11 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Thu, 12 Dec 2019 20:08:34 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F3F11C8C880"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Thu, 12 Dec 2019 20:08:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 8ab0c369-d01a-0080-5027-b1c7aa000000
+      content-length: '0'
+      date: Fri, 03 Jan 2020 01:59:43 GMT
+      etag: '"0x8D78FF099DFB108"'
+      last-modified: Fri, 03 Jan 2020 01:59:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -40,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.file.core.windows.net
+        - pyacrstoragejabiue52veq7.file.core.windows.net
         - /share50061605
         - restype=share
         - ''
@@ -48,11 +35,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 2b589136-1d1b-11ea-8eec-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:08:31 GMT
+      - Fri, 03 Jan 2020 01:59:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -61,23 +46,12 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Thu, 12 Dec 2019 20:08:34 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F3F11C8C880"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Thu, 12 Dec 2019 20:08:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 8ab0c36c-d01a-0080-5127-b1c7aa000000
-      x-ms-snapshot: '2019-12-12T20:08:35.0000000Z'
+      content-length: '0'
+      date: Fri, 03 Jan 2020 01:59:43 GMT
+      etag: '"0x8D78FF099DFB108"'
+      last-modified: Fri, 03 Jan 2020 01:59:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-snapshot: '2020-01-03T01:59:43.0000000Z'
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -86,7 +60,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.file.core.windows.net
+        - pyacrstoragejabiue52veq7.file.core.windows.net
         - /share50061605
         - restype=share&comp=snapshot
         - ''
@@ -94,11 +68,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 2b74afc2-1d1b-11ea-8af1-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:08:31 GMT
+      - Fri, 03 Jan 2020 01:59:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -107,23 +79,12 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Thu, 12 Dec 2019 20:08:34 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F3F11C8C880"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Thu, 12 Dec 2019 20:08:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 8ab0c36d-d01a-0080-5227-b1c7aa000000
-      x-ms-snapshot: '2019-12-12T20:08:36.0000000Z'
+      content-length: '0'
+      date: Fri, 03 Jan 2020 01:59:43 GMT
+      etag: '"0x8D78FF099DFB108"'
+      last-modified: Fri, 03 Jan 2020 01:59:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-snapshot: '2020-01-03T01:59:44.0000000Z'
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -132,7 +93,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.file.core.windows.net
+        - pyacrstoragejabiue52veq7.file.core.windows.net
         - /share50061605
         - restype=share&comp=snapshot
         - ''
@@ -142,11 +103,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 2b85bb1e-1d1b-11ea-b8a7-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:08:31 GMT
+      - Fri, 03 Jan 2020 01:59:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -154,28 +113,45 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share50061605</Name><Snapshot>2019-12-12T20:08:35.0000000Z</Snapshot><Properties><Last-Modified>Thu,
-        12 Dec 2019 20:08:35 GMT</Last-Modified><Etag>\"0x8D77F3F11C8C880\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Snapshot>2019-12-12T20:08:36.0000000Z</Snapshot><Properties><Last-Modified>Thu,
-        12 Dec 2019 20:08:35 GMT</Last-Modified><Etag>\"0x8D77F3F11C8C880\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Properties><Last-Modified>Thu,
-        12 Dec 2019 20:08:35 GMT</Last-Modified><Etag>\"0x8D77F3F11C8C880\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>listshare0af571bc9</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF0997A8EAB\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare1af571bc9</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF0997FE6D5\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare2af571bc9</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF099853EF5\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare3af571bc9</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF0998A971F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share1e691d71</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:39 GMT</Last-Modified><Etag>\"0x8D78FF097D44F1B\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share20df1504</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF09500CFB6\"</Etag><Quota>1</Quota></Properties></Share><Share><Name>share240e1523</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF099B13BA1\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Snapshot>2020-01-03T01:59:43.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:43 GMT</Last-Modified><Etag>\"0x8D78FF099DFB108\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Snapshot>2020-01-03T01:59:44.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:43 GMT</Last-Modified><Etag>\"0x8D78FF099DFB108\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share50061605</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:43 GMT</Last-Modified><Etag>\"0x8D78FF099DFB108\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share507a1060</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:33 GMT</Last-Modified><Etag>\"0x8D78FF094544439\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share60a5161b</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF094E1164F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share635f1636</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF0972BA421\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share746821bb</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF094BBF801\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share78cd16a6</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF0955FF189\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share7bd421e4</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:39 GMT</Last-Modified><Etag>\"0x8D78FF0976C3735\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share851111bc</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:37 GMT</Last-Modified><Etag>\"0x8D78FF0965A69BE\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share852b11ba</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF097080B7B\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>share8ecc1b3e</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:40 GMT</Last-Modified><Etag>\"0x8D78FF098584187\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea8741778</Name><Snapshot>2020-01-03T01:59:35.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF094F19D80\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharea8741778</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF09520E9AC\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareba41919</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF09932E45C\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharebaf812cc</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:37 GMT</Last-Modified><Etag>\"0x8D78FF096A3890C\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharec6fa1c20</Name><Snapshot>2020-01-03T01:59:41.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:41 GMT</Last-Modified><Etag>\"0x8D78FF098B01759\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharec6fa1c20</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:41 GMT</Last-Modified><Etag>\"0x8D78FF098B01759\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharee11d13a6</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF09472A4B2\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareeec718b6</Name><Snapshot>2020-01-03T01:59:38.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF096CFF79C\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>shareeec718b6</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF096CFF79C\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef1514c2</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:41 GMT</Last-Modified><Etag>\"0x8D78FF098FD5F10\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef70c142f</Name><Snapshot>2020-01-03T01:59:34.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF0948FDF5D\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef70c142f</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF0948FDF5D\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>sharef8391431</Name><Properties><Last-Modified>Fri,
+        03 Jan 2020 01:59:33 GMT</Last-Modified><Etag>\"0x8D78FF0941C81B3\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Thu, 12 Dec 2019 20:08:34 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._multidict.istr
-      - Transfer-Encoding
-      : chunked
-      ? !!python/object/new:multidict._multidict.istr
-      - Vary
-      : Origin
-      x-ms-request-id: 8ab0c36e-d01a-0080-5327-b1c7aa000000
+      content-type: application/xml
+      date: Fri, 03 Jan 2020 01:59:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -184,7 +160,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.file.core.windows.net
+        - pyacrstoragejabiue52veq7.file.core.windows.net
         - /
         - include=snapshots&comp=list
         - ''

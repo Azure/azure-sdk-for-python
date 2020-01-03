@@ -5,19 +5,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:37 GMT
+      - Fri, 03 Jan 2020 01:59:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/share851111bc?restype=share
+    uri: https://storagename.file.core.windows.net/sharef8391431?restype=share
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:59:37 GMT
-      etag: '"0x8D78FF0965A69BE"'
-      last-modified: Fri, 03 Jan 2020 01:59:37 GMT
+      date: Fri, 03 Jan 2020 01:59:33 GMT
+      etag: '"0x8D78FF0941C81B3"'
+      last-modified: Fri, 03 Jan 2020 01:59:33 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -28,30 +28,32 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstoragejabiue52veq7.file.core.windows.net
-        - /share851111bc
+        - /sharef8391431
         - restype=share
         - ''
 - request:
-    body: null
+    body: '{"permission": "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)"}'
     headers:
+      Content-Length:
+      - '207'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:37 GMT
+      - Fri, 03 Jan 2020 01:59:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/share851111bc?restype=share&comp=snapshot
+    uri: https://storagename.file.core.windows.net/sharef8391431?restype=share&comp=filepermission
   response:
     body:
       string: ''
     headers:
-      content-length: '0'
-      date: Fri, 03 Jan 2020 01:59:37 GMT
-      etag: '"0x8D78FF0965A69BE"'
-      last-modified: Fri, 03 Jan 2020 01:59:37 GMT
+      date: Fri, 03 Jan 2020 01:59:33 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2020-01-03T01:59:37.0000000Z'
+      transfer-encoding: chunked
+      x-ms-file-permission-key: 4383776365277524*12090018390305186981
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -61,70 +63,76 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstoragejabiue52veq7.file.core.windows.net
-        - /share851111bc
-        - restype=share&comp=snapshot
+        - /sharef8391431
+        - restype=share&comp=filepermission
         - ''
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:37 GMT
+      - Fri, 03 Jan 2020 01:59:33 GMT
+      x-ms-file-permission-key:
+      - 4383776365277524*12090018390305186981
       x-ms-version:
       - '2019-02-02'
-    method: DELETE
-    uri: https://storagename.file.core.windows.net/share851111bc?restype=share
+    method: GET
+    uri: https://storagename.file.core.windows.net/sharef8391431?restype=share&comp=filepermission
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareHasSnapshots</Code><Message>The
-        share has snapshots and the operation requires no snapshots.\nRequestId:8632e25d-901a-006c-3ad9-c13ede000000\nTime:2020-01-03T01:59:37.5136301Z</Message></Error>"
+      string: '{"permission":"O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL"}'
     headers:
-      content-length: '250'
-      content-type: application/xml
-      date: Fri, 03 Jan 2020 01:59:37 GMT
+      content-length: '225'
+      date: Fri, 03 Jan 2020 01:59:33 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: ShareHasSnapshots
       x-ms-version: '2019-02-02'
     status:
-      code: 409
-      message: The share has snapshots and the operation requires no snapshots.
+      code: 200
+      message: OK
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstoragejabiue52veq7.file.core.windows.net
-        - /share851111bc
-        - restype=share
+        - /sharef8391431
+        - restype=share&comp=filepermission
         - ''
 - request:
-    body: null
+    body: '{"permission": "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL"}'
     headers:
+      Content-Length:
+      - '226'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:37 GMT
+      - Fri, 03 Jan 2020 01:59:33 GMT
       x-ms-version:
       - '2019-02-02'
-    method: DELETE
-    uri: https://storagename.file.core.windows.net/share851111bc?sharesnapshot=2020-01-03T01:59:37.0000000Z&restype=share
+    method: PUT
+    uri: https://storagename.file.core.windows.net/sharef8391431?restype=share&comp=filepermission
   response:
     body:
       string: ''
     headers:
-      content-length: '0'
-      date: Fri, 03 Jan 2020 01:59:37 GMT
+      date: Fri, 03 Jan 2020 01:59:33 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-file-permission-key: 4383776365277524*12090018390305186981
       x-ms-version: '2019-02-02'
     status:
-      code: 202
-      message: Accepted
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstoragejabiue52veq7.file.core.windows.net
-        - /share851111bc
-        - sharesnapshot=2020-01-03T01:59:37.0000000Z&restype=share
+        - /sharef8391431
+        - restype=share&comp=filepermission
         - ''
 version: 1
