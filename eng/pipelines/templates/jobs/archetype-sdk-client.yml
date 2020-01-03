@@ -107,8 +107,6 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - checkout: self
-      path: AzureSDKEngrSystem/Python/SourcesDirectory
     - template: ../steps/build-test.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
