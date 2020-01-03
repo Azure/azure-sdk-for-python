@@ -78,7 +78,7 @@ class EventHubConsumerClient(ClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
             :start-after: [START create_eventhub_consumer_client_sync]
             :end-before: [END create_eventhub_consumer_client_sync]
             :language: python
@@ -181,7 +181,7 @@ class EventHubConsumerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START create_eventhub_consumer_client_from_conn_str_sync]
                 :end-before: [END create_eventhub_consumer_client_from_conn_str_sync]
                 :language: python
@@ -250,7 +250,7 @@ class EventHubConsumerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_consumer_client_receive_sync]
                 :end-before: [END eventhub_consumer_client_receive_sync]
                 :language: python
@@ -369,7 +369,7 @@ class EventHubConsumerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_consumer_client_close_sync]
                 :end-before: [END eventhub_consumer_client_close_sync]
                 :language: python
