@@ -75,7 +75,13 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 ```bash
 pip install azure-eventhub
 ```
-To run receiving samples with blob checkpoint store for persist checkpoint, please install the corresponding checkpoint library:
+
+To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
+```bash
+pip install azure-identity
+```
+
+To run receiving samples that utilize blob checkpoint store for persist checkpoint, please install the corresponding checkpoint store library:
 ```bash
 pip install azure-eventhub-checkpointstoreblob  # sync version
 pip install azure-eventhub-checkpointstoreblob-aio  # async version
