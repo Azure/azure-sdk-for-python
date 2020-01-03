@@ -68,6 +68,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     :keyword network_span_namer: A callable to customize the span name
     :type network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
+    :keyword tracing_attributes: Attributes to set on all created spans
+    :type tracing_attributes: dict[str, str]
     """
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _REQUEST_ID = "x-ms-client-request-id"
