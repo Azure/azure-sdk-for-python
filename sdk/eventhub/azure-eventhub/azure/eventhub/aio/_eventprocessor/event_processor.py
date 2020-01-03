@@ -216,6 +216,20 @@ class EventProcessor(
                 )
             await self._event_handler(partition_context, event)
 
+    async def _clean_receive(self, partition_context):
+        partition_id = partition_context.partition_id
+        try:
+            await self._consumers[partition_id].close()
+            del self._consumers[partition_id]
+            await self._close_partition(
+                partition_context,
+                CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
+            )
+            await self._ownership_manager.release_ownership(partition_id)
+        finally:
+            if partition_id in self._tasks:
+                del self._tasks[partition_id]
+
     async def _receive(
         self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
     ) -> None:  # pylint: disable=too-many-statements
@@ -279,17 +293,7 @@ class EventProcessor(
                     await self._process_error(partition_context, error)
                     break
         finally:
-            try:
-                await self._consumers[partition_id].close()
-                del self._consumers[partition_id]
-                await self._close_partition(
-                    partition_context,
-                    CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
-                )
-                await self._ownership_manager.release_ownership(partition_id)
-            finally:
-                if partition_id in self._tasks:
-                    del self._tasks[partition_id]
+            await asyncio.shield(self._clean_receive(partition_context))
 
     async def start(self) -> None:
         """Start the EventProcessor.
