@@ -18,16 +18,33 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 async def on_event(partition_context, event):
-    print("Received event from partition: {}".format(partition_context.partition_id))
-    # Do some sync or async operations. If the operation is i/o intensive, async will have better performance
-    # print(event)
+    # Put your code here.
+    # If the operation is i/o intensive, async will have better performance.
+    print("Received event from partition: {}.".format(partition_context.partition_id))
 
 
-async def receive(client):
-    try:
-        await client.receive(on_event=on_event)
-    except KeyboardInterrupt:
-        await client.close()
+async def on_partition_initialize(partition_context):
+    # Put your code here.
+    print("Partition: {} has been initialized.".format(partition_context.partition_id))
+
+
+async def on_partition_close(partition_context, reason):
+    # Put your code here.
+    print("Partition: {} has been closed, reason for closing: {}.".format(
+        partition_context.partition_id,
+        reason
+    ))
+
+
+async def on_error(partition_context, error):
+    # Put your code here. partition_context can be None in the on_error callback.
+    if partition_context:
+        print("An exception: {} occurred during receiving from Partition: {}.".format(
+            partition_context.partition_id,
+            error
+        ))
+    else:
+        print("An exception: {} occurred during the load balance process.".format(error))
 
 
 async def main():
@@ -37,7 +54,12 @@ async def main():
         eventhub_name=EVENTHUB_NAME
     )
     async with client:
-        await receive(client)
+        await client.receive(
+            on_event=on_event,
+            on_error=on_error,
+            on_partition_close=on_partition_close,
+            on_partition_initialize=on_partition_initialize
+        )
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

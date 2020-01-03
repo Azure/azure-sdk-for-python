@@ -49,7 +49,7 @@ class EventHubProducerClient(ClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
             :start-after: [START create_eventhub_producer_client_sync]
             :end-before: [END create_eventhub_producer_client_sync]
             :language: python
@@ -153,7 +153,7 @@ class EventHubProducerClient(ClientBase):
 
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
@@ -172,7 +172,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START create_eventhub_producer_client_from_conn_str_sync]
                 :end-before: [END create_eventhub_producer_client_from_conn_str_sync]
                 :language: python
@@ -200,7 +200,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_send_sync]
                 :end-before: [END eventhub_producer_client_send_sync]
                 :language: python
@@ -237,7 +237,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_create_batch_sync]
                 :end-before: [END eventhub_producer_client_create_batch_sync]
                 :language: python
@@ -322,7 +322,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_close_sync]
                 :end-before: [END eventhub_producer_client_close_sync]
                 :language: python

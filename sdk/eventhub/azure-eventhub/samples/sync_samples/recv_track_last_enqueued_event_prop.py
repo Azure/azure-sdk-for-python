@@ -16,18 +16,15 @@ from azure.eventhub import EventHubConsumerClient
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-EVENT_POSITION = "-1"
-PARTITION = "0"
-
 
 def on_event(partition_context, event):
-    print("Received event from partition {}".format(partition_context.partition_id))
+    print("Received event from partition {}.".format(partition_context.partition_id))
     
-    # Put your code here to do some operations on the event.
+    # Put your code here. to do some operations on the event.
     # Avoid time-consuming operations.
     print(event)
 
-    print("Last enqueued event properties from partition: {} is: {}".format(
+    print("Last enqueued event properties from partition: {} is: {}.".format(
         partition_context.partition_id,
         partition_context.last_enqueued_event_properties)
     )
@@ -48,4 +45,4 @@ if __name__ == '__main__':
                 track_last_enqueued_event_properties=True
             )
     except KeyboardInterrupt:
-        print('Stop receiving.')
+        print('Stopped receiving.')

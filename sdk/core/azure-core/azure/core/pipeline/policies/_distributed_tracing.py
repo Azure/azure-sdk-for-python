@@ -68,6 +68,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     :keyword network_span_namer: A callable to customize the span name
     :type network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
+    :keyword tracing_attributes: Attributes to set on all created spans
+    :type tracing_attributes: dict[str, str]
     """
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _REQUEST_ID = "x-ms-client-request-id"
@@ -75,6 +77,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._network_span_namer = kwargs.get('network_span_namer', _default_network_span_namer)
+        self._tracing_attributes = kwargs.get('tracing_attributes', {})
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -88,6 +91,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             span_name = namer(request.http_request)
 
             span = span_impl_type(name=span_name)
+            for attr, value in self._tracing_attributes.items():
+                span.add_attribute(attr, value)
             span.start()
 
             headers = span.to_header()

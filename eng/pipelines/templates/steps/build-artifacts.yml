@@ -15,7 +15,7 @@ steps:
       versionSpec: '2.7'
 
   - script: |
-      pip install wheel setuptools packaging
+      pip install -r eng/ci_tools.txt
     displayName: 'Prep Py2 Environment'
     
   - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
@@ -37,7 +37,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - script: |
-      pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
+      pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
   - template: ../steps/set-dev-build.yml
