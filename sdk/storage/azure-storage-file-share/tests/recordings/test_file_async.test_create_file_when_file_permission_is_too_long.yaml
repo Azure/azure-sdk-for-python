@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 03 Jan 2020 00:26:46 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare6c091ab0?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 03 Jan 2020 00:26:49 GMT
+      etag: '"0x8D78FE39FD7B958"'
+      last-modified: Fri, 03 Jan 2020 00:26:49 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragemayc3xagvnec.file.core.windows.net
+        - /utshare6c091ab0
+        - restype=share
+        - ''
+version: 1
