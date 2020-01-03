@@ -14,13 +14,13 @@
         - If there is checkpoint, it will resume from the checkpoint.
         - If there is no checkpoint but `starting_position` is provided, it will resume from `starting_posititon`.
         - If there is no checkpoint or `starting_position`, it will resume from the latest position.
-- `get_partition_ids`, `get_partition_properties`, `get_eventhub_properties` would raise `AuthenticationException` when they fail to accomplish the request.
-
-**New features**
-
-- Added InMemoryCheckpointStore as the default checkpoint store which can be used for in-memory checkpoint.
-
-
+- `PartitionContext`
+    - `update_checkpoint` would do in-memory checkpoint instead of doing nothing when checkpoint store is not explicitly provided.
+        - The in-memory checkpoints would be used for `EventHubConsumerClient` receiving recovering.
+- `get_partition_ids`, `get_partition_properties`, `get_eventhub_properties` would raise error in the case of service returning an error status code.
+    - `AuthenticationError` would be raised when service returning error code 401.
+    - `ConnectError` would be raised when service returning error code 404.
+    - `EventHubError` would be raised when service returning other error codes.
 
 ## 5.0.0b6 (2019-12-03)
 
