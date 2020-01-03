@@ -5,19 +5,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:34:01 GMT
+      - Fri, 03 Jan 2020 01:33:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharef8131cca?restype=share
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1?restype=share
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:34:01 GMT
-      etag: '"0x8D78FED030A0E54"'
-      last-modified: Fri, 03 Jan 2020 01:34:01 GMT
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF7E7E00E"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -28,7 +28,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca
+        - /utshare5bf615d1
         - restype=share
         - ''
 - request:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:34:01 GMT
+      - Fri, 03 Jan 2020 01:33:43 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -49,21 +49,21 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharef8131cca/utdirf8131cca?restype=directory
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1?restype=directory
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:34:01 GMT
-      etag: '"0x8D78FED0310592E"'
-      last-modified: Fri, 03 Jan 2020 01:34:01 GMT
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF7F10925"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2020-01-03T01:34:01.7638702Z'
-      x-ms-file-creation-time: '2020-01-03T01:34:01.7638702Z'
+      x-ms-file-change-time: '2020-01-03T01:33:43.1037221Z'
+      x-ms-file-creation-time: '2020-01-03T01:33:43.1037221Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2020-01-03T01:34:01.7638702Z'
+      x-ms-file-last-write-time: '2020-01-03T01:33:43.1037221Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 17060344783156473983*9518818658170791926
       x-ms-request-server-encrypted: 'true'
@@ -76,7 +76,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca/utdirf8131cca
+        - /utshare5bf615d1/utdir5bf615d1
         - restype=directory
         - ''
 - request:
@@ -87,7 +87,7 @@ interactions:
       x-ms-content-length:
       - '65541'
       x-ms-date:
-      - Fri, 03 Jan 2020 01:34:01 GMT
+      - Fri, 03 Jan 2020 01:33:43 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -101,21 +101,21 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharef8131cca/utdirf8131cca/bytefilef8131cca
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:34:01 GMT
-      etag: '"0x8D78FED0327198D"'
-      last-modified: Fri, 03 Jan 2020 01:34:01 GMT
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF805A64B"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-01-03T01:34:01.9129741Z'
-      x-ms-file-creation-time: '2020-01-03T01:34:01.9129741Z'
+      x-ms-file-change-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-creation-time: '2020-01-03T01:33:43.2388171Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2020-01-03T01:34:01.9129741Z'
+      x-ms-file-last-write-time: '2020-01-03T01:33:43.2388171Z'
       x-ms-file-parent-id: '13835128424026341376'
       x-ms-file-permission-key: 3222689895013977976*9518818658170791926
       x-ms-request-server-encrypted: 'true'
@@ -128,7 +128,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca/utdirf8131cca/bytefilef8131cca
+        - /utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
         - ''
         - ''
 - request:
@@ -141,7 +141,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:34:02 GMT
+      - Fri, 03 Jan 2020 01:33:43 GMT
       x-ms-range:
       - bytes=0-65540
       x-ms-version:
@@ -149,16 +149,16 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharef8131cca/utdirf8131cca/bytefilef8131cca?comp=range
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1?comp=range
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
-      date: Fri, 03 Jan 2020 01:34:02 GMT
-      etag: '"0x8D78FED0334D7AC"'
-      last-modified: Fri, 03 Jan 2020 01:34:02 GMT
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF8118F55"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
@@ -170,60 +170,157 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca/utdirf8131cca/bytefilef8131cca
+        - /utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
         - comp=range
         - ''
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-content-length:
-      - '0'
       x-ms-date:
-      - Fri, 03 Jan 2020 01:34:02 GMT
+      - Fri, 03 Jan 2020 01:33:43 GMT
+      x-ms-range:
+      - bytes=0-1023
+      x-ms-range-get-content-md5:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
+  response:
+    body:
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      content-range: bytes 0-1023/65541
+      content-type: application/octet-stream
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF8118F55"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-creation-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 3222689895013977976*9518818658170791926
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
+      x-ms-version: '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageykhxdwhli2id.file.core.windows.net
+        - /utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 03 Jan 2020 01:33:43 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '65541'
+      content-type: application/octet-stream
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF8118F55"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-creation-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 3222689895013977976*9518818658170791926
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageykhxdwhli2id.file.core.windows.net
+        - /utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-md5:
+      - TURBd01EQXdNREE9
+      x-ms-content-type:
+      - application/octet-stream
+      x-ms-date:
+      - Fri, 03 Jan 2020 01:33:43 GMT
       x-ms-file-attributes:
-      - none
+      - preserve
       x-ms-file-creation-time:
-      - now
+      - preserve
       x-ms-file-last-write-time:
-      - now
+      - preserve
       x-ms-file-permission:
-      - Inherit
-      x-ms-type:
-      - file
+      - preserve
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharef8131cca/utdirf8131cca/filef8131cca
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1?comp=properties
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:34:01 GMT
-      etag: '"0x8D78FED0347EDF4"'
-      last-modified: Fri, 03 Jan 2020 01:34:02 GMT
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF83C297B"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-01-03T01:34:02.1281268Z'
-      x-ms-file-creation-time: '2020-01-03T01:34:02.1281268Z'
-      x-ms-file-id: '13835163608398430208'
-      x-ms-file-last-write-time: '2020-01-03T01:34:02.1281268Z'
+      x-ms-file-change-time: '2020-01-03T01:33:43.5960699Z'
+      x-ms-file-creation-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2020-01-03T01:33:43.2388171Z'
       x-ms-file-parent-id: '13835128424026341376'
       x-ms-file-permission-key: 3222689895013977976*9518818658170791926
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca/utdirf8131cca/filef8131cca
-        - ''
+        - /utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
+        - comp=properties
         - ''
 - request:
     body: null
@@ -233,72 +330,50 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:34:02 GMT
+      - Fri, 03 Jan 2020 01:33:43 GMT
       x-ms-range:
-      - bytes=0-4
+      - bytes=0-1023
+      x-ms-range-get-content-md5:
+      - 'true'
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/utsharef8131cca/utdirf8131cca/filef8131cca
+    uri: https://storagename.file.core.windows.net/utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:c2c037ab-101a-0050-7cd5-c11502000000\nTime:2020-01-03T01:34:02.1716452Z</Message></Error>"
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
-      content-length: '249'
-      content-range: bytes */0
-      content-type: application/xml
-      date: Fri, 03 Jan 2020 01:34:01 GMT
+      accept-ranges: bytes
+      content-length: '1024'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      content-range: bytes 0-1023/65541
+      content-type: application/octet-stream
+      date: Fri, 03 Jan 2020 01:33:42 GMT
+      etag: '"0x8D78FECF83C297B"'
+      last-modified: Fri, 03 Jan 2020 01:33:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidRange
+      x-ms-content-md5: TURBd01EQXdNREE9
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2020-01-03T01:33:43.5960699Z'
+      x-ms-file-creation-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2020-01-03T01:33:43.2388171Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 3222689895013977976*9518818658170791926
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
       x-ms-version: '2019-02-02'
     status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
+      code: 206
+      message: Partial Content
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca/utdirf8131cca/filef8131cca
-        - ''
-        - ''
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-date:
-      - Fri, 03 Jan 2020 01:34:02 GMT
-      x-ms-range:
-      - bytes=3-7
-      x-ms-version:
-      - '2019-02-02'
-    method: GET
-    uri: https://storagename.file.core.windows.net/utsharef8131cca/utdirf8131cca/filef8131cca
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:c2c037ae-101a-0050-7fd5-c11502000000\nTime:2020-01-03T01:34:02.2026677Z</Message></Error>"
-    headers:
-      content-length: '249'
-      content-range: bytes */0
-      content-type: application/xml
-      date: Fri, 03 Jan 2020 01:34:01 GMT
-      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: InvalidRange
-      x-ms-version: '2019-02-02'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageykhxdwhli2id.file.core.windows.net
-        - /utsharef8131cca/utdirf8131cca/filef8131cca
+        - /utshare5bf615d1/utdir5bf615d1/bytefile5bf615d1
         - ''
         - ''
 version: 1
