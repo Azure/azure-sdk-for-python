@@ -277,7 +277,7 @@ class FileTestCase(AzureMgmtTestCase):
         return self.generate_fake_token()
 
     def is_file_encryption_enabled(self):
-        return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
+        return True
     
     def generate_fake_token(self):
         return FakeTokenCredential()
