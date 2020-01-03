@@ -53,6 +53,10 @@ Libraries which enable you to provision specific resources. They are responsible
 * File an issue via [Github Issues](../../issues)
 * Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
+### Community
+
+* Chat with other community members [![Join the chat at https://gitter.im/azure/azure-sdk-for-python](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/azure/azure-sdk-for-python?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
