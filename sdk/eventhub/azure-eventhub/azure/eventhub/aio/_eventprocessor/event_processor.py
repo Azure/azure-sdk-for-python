@@ -143,15 +143,14 @@ class EventProcessor(
         for partition_id in claimed_partitions:
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
-                if self._running:
-                    self._tasks[partition_id] = self._loop.create_task(
-                        self._receive(partition_id, checkpoint)
-                    )
-                    _LOGGER.info(
-                        "EventProcessor %r has claimed partition %r",
-                        self._id,
-                        partition_id
-                    )
+                self._tasks[partition_id] = self._loop.create_task(
+                    self._receive(partition_id, checkpoint)
+                )
+                _LOGGER.info(
+                    "EventProcessor %r has claimed partition %r",
+                    self._id,
+                    partition_id
+                )
 
     async def _process_error(
         self, partition_context: PartitionContext, err: Exception
