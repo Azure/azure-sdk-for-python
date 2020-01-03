@@ -846,3 +846,19 @@ class PipelineClientBase(object):
             "MERGE", url, params, headers, content, form_content, None
         )
         return request
+
+    def options(self, url, params=None, headers=None, content=None, form_content=None):
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        """Create a OPTIONS request object.
+
+        :param str url: The request URL.
+        :param dict params: Request URL parameters.
+        :param dict headers: Headers
+        :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
+        """
+        request = self._request(
+            "OPTIONS", url, params, headers, content, form_content, None
+        )
+        return request
