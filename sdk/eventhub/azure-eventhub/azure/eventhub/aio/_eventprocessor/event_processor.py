@@ -279,15 +279,17 @@ class EventProcessor(
                     await self._process_error(partition_context, error)
                     break
         finally:
-            await self._consumers[partition_id].close()
-            del self._consumers[partition_id]
-            await self._close_partition(
-                partition_context,
-                CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
-            )
-            await self._ownership_manager.release_ownership(partition_id)
-            if partition_id in self._tasks:
-                del self._tasks[partition_id]
+            try:
+                await self._consumers[partition_id].close()
+                del self._consumers[partition_id]
+                await self._close_partition(
+                    partition_context,
+                    CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
+                )
+                await self._ownership_manager.release_ownership(partition_id)
+            finally:
+                if partition_id in self._tasks:
+                    del self._tasks[partition_id]
 
     async def start(self) -> None:
         """Start the EventProcessor.
@@ -367,8 +369,5 @@ class EventProcessor(
         await self._cancel_tasks_for_partitions(pids)
         _LOGGER.info("EventProcessor %r tasks have been cancelled.", self._id)
         while self._tasks:
-            new_active_pids = [pid for pid, task in self._tasks.items() if not task.done()]
-            if new_active_pids:  # This shouldn't happen. Just to guard.
-                await self._cancel_tasks_for_partitions(new_active_pids)
             await asyncio.sleep(1, loop=self._loop)
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)
