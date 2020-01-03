@@ -216,7 +216,7 @@ class EventProcessor(
                 )
             await self._event_handler(partition_context, event)
 
-    async def _clean_receive(self, partition_context):
+    async def _close_consumer(self, partition_context):
         partition_id = partition_context.partition_id
         try:
             await self._consumers[partition_id].close()
@@ -293,7 +293,7 @@ class EventProcessor(
                     await self._process_error(partition_context, error)
                     break
         finally:
-            await asyncio.shield(self._clean_receive(partition_context))
+            await asyncio.shield(self._close_consumer(partition_context))
 
     async def start(self) -> None:
         """Start the EventProcessor.
