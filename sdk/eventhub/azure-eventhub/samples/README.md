@@ -31,13 +31,13 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [recv.py](./sync_samples/recv.py) ([async version](./async_samples/recv_async.py)) - Examples to receive events:
     - Receive events
 
-- [recv_track_last_enqueued_event_info.py](./sync_samples/recv_track_last_enqueued_event_prop.py) ([async version](./async_samples/recv_track_last_enqueued_event_prop_async.py)) - Examples to get the latest enqueued event properties of a partition while receiving:
+- [recv_track_last_enqueued_event_prop.py](./sync_samples/recv_track_last_enqueued_event_prop.py) ([async version](./async_samples/recv_track_last_enqueued_event_prop_async.py)) - Examples to get the latest enqueued event properties of a partition while receiving:
     - Get the latest enqueued event properties of a partition while receiving
 
 - [recv_with_custom_starting_position.py](./sync_samples/recv_with_custom_starting_position.py) ([async version](./async_samples/recv_with_custom_starting_position_async.py)) - Examples to start receiving from a specific position:
     - Start receiving from a specific position
 
-- [recv_with_checkpoint_store](./sync_samples/recv_with_checkpoint_store.py) ([async version](./async_samples/recv_with_checkpoint_store_async.py)) - Examples to receive events and do checkpoint using blob checkpoint store:
+- [recv_with_checkpoint_store.py](./sync_samples/recv_with_checkpoint_store.py) ([async version](./async_samples/recv_with_checkpoint_store_async.py)) - Examples to receive events and do checkpoint using blob checkpoint store:
     - Receive events and do checkpoint using blob checkpoint store
 
 - [recv_with_checkpoint_by_batch.py](./sync_samples/recv_with_checkpoint_by_batch.py) ([async version](./async_samples/recv_with_checkpoint_by_batch_async.py)) - Examples to receive events and do checkpoint by batch using blob checkpoint store:
