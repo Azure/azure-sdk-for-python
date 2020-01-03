@@ -2027,8 +2027,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-        """Returns the list of valid page ranges for a Page Blob or snapshot
-        of a page blob in managed disk account.
+        """Returns the list of valid page ranges for a managed disk or snapshot.
 
         :param int offset:
             Start of byte range to use for getting valid page ranges.
