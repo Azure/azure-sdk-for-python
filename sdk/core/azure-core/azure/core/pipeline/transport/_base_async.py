@@ -183,10 +183,3 @@ class AsyncHttpTransport(
 
     async def sleep(self, duration):
         await asyncio.sleep(duration)
-
-    def __enter__(self):
-        raise TypeError("Use async with instead")
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # __exit__ should exist in pair with __enter__ but never executed
-        pass  # pragma: no cover
