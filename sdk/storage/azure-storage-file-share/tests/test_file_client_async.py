@@ -16,10 +16,10 @@ from azure.storage.fileshare.aio import (
     ShareFileClient)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.filetestcase import (
-    FileTestCase,
     LogCaptured,
     GlobalStorageAccountPreparer
 )
+from _shared.asynctestcase import AsyncStorageTestCase
 #from azure.storage.common import TokenCredential
 
 # ------------------------------------------------------------------------------
@@ -46,9 +46,8 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageFileClientTest(FileTestCase):
-    def setUp(self):
-        super(StorageFileClientTest, self).setUp()
+class StorageFileClientTest(AsyncStorageTestCase):
+    def _setup(self, storage_account, storage_account_key):
         self.account_name = storage_account.name
         self.account_key = storage_account_key
         self.sas_token = self.generate_sas_token()
@@ -68,7 +67,7 @@ class StorageFileClientTest(FileTestCase):
     # --Direct Parameters Test Cases --------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_create_service_with_key_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
 
         for client, url in SERVICES.items():
             # Act
@@ -82,7 +81,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_sas_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
 
         for service_type in SERVICES:
             # Act
@@ -98,6 +97,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_token_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         for service_type in SERVICES:
             # Act
             # token credential is not available for FileService
@@ -107,7 +107,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_china_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         url = self.get_file_url(storage_account.name).replace('core.windows.net', 'core.chinacloudapi.cn')
         for service_type in SERVICES.items():
             # Act
@@ -126,7 +126,7 @@ class StorageFileClientTest(FileTestCase):
                              '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
     @GlobalStorageAccountPreparer()
     def test_create_service_protocol_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         url = self.get_file_url(storage_account.name).replace('https', 'http')
         for service_type in SERVICES.items():
             # Act
@@ -139,7 +139,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_empty_key_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         for service_type in SERVICES:
             # Act
             # Passing an empty key to create account should fail.
@@ -153,7 +153,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
@@ -173,7 +173,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_key_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
 
         for service_type in SERVICES.items():
@@ -187,7 +187,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_sas_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.account_name, self.sas_token)
 
         for service_type in SERVICES.items():
@@ -203,7 +203,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_endpoint_protocol_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
             self.account_name, self.account_key)
 
@@ -224,7 +224,7 @@ class StorageFileClientTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_emulated_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         for service_type in SERVICES.items():
             conn_string = 'UseDevelopmentStorage=true;'
 
@@ -236,7 +236,7 @@ class StorageFileClientTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_fails_if_secondary_without_primary_async(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
-            # Arrange
+            self._setup(storage_account, storage_account_key)
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
                 self.account_name, self.account_key, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -250,7 +250,7 @@ class StorageFileClientTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary_async(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
-            # Arrange
+            self._setup(storage_account, storage_account_key)
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
                 self.account_name, self.account_key,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
@@ -268,7 +268,9 @@ class StorageFileClientTest(FileTestCase):
             self.assertEqual(service.primary_hostname, 'www.mydomain.com')
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
+    @GlobalStorageAccountPreparer()
     def test_create_service_with_custom_account_endpoint_path(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};FileEndpoint={};'.format(
@@ -339,7 +341,9 @@ class StorageFileClientTest(FileTestCase):
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/file?'))
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         service = ShareServiceClient(self.get_file_url(storage_account.name), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
@@ -354,7 +358,9 @@ class StorageFileClientTest(FileTestCase):
         await service.get_service_properties(raw_response_hook=callback)
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
             self.get_file_url(storage_account.name), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
@@ -382,7 +388,9 @@ class StorageFileClientTest(FileTestCase):
         await service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_append_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         service = ShareServiceClient(self.get_file_url(storage_account.name), credential=self.account_key, transport=AiohttpTestTransport())
 
         def callback(response):
@@ -399,8 +407,9 @@ class StorageFileClientTest(FileTestCase):
 
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_closing_pipeline_client_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
 
         for client, url in SERVICES.items():
             # Act
@@ -413,8 +422,9 @@ class StorageFileClientTest(FileTestCase):
                 service.close()
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_closing_pipeline_client_simple_async(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        self._setup(storage_account, storage_account_key)
 
         for client, url in SERVICES.items():
             # Act
@@ -423,6 +433,3 @@ class StorageFileClientTest(FileTestCase):
             service.close()
 
 
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
