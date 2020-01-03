@@ -176,12 +176,12 @@ class ClientBaseAsync(ClientBase):
                 if status_code < 400:
                     return response
                 if status_code in [401]:
-                   raise AuthenticationError(
-                       "Management authentication failed. Status code: {}, Description: {}".format(
-                           status_code,
-                           response.application_properties.get(MGMT_STATUS_DESC)
-                       )
-                   )
+                    raise AuthenticationError(
+                        "Management authentication failed. Status code: {}, Description: {}".format(
+                            status_code,
+                            response.application_properties.get(MGMT_STATUS_DESC)
+                        )
+                    )
                 if status_code in [404]:
                     raise ConnectError(
                         "Management connection failed. Status code: {}, Description: {}".format(
