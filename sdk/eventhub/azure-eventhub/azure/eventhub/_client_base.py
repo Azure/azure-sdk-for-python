@@ -29,6 +29,8 @@ from ._constants import (
     JWT_TOKEN_SCOPE,
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
+    MGMT_STATUS_CODE,
+    MGMT_STATUS_DESC
 )
 
 if TYPE_CHECKING:
@@ -226,14 +228,17 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     mgmt_msg,
                     constants.READ_OPERATION,
                     op_type=op_type,
-                    status_code_field=b"status-code",
-                    description_fields=b"status-description",
+                    status_code_field=MGMT_STATUS_CODE,
+                    description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = response.application_properties[b"status-code"]
+                status_code = response.application_properties[MGMT_STATUS_CODE]
                 if status_code < 400:
                     return response
                 raise errors.AuthenticationException(
-                    "Management request error. Status code: {}".format(status_code)
+                    "Management request error. Status code: {}, Description: {}".format(
+                        status_code,
+                        response.application_properties.get(MGMT_STATUS_DESC)
+                    )
                 )
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = _handle_exception(exception, self)
