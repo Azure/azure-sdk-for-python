@@ -143,15 +143,14 @@ class EventProcessor(
         for partition_id in claimed_partitions:
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
-                if self._running:
-                    self._tasks[partition_id] = self._loop.create_task(
-                        self._receive(partition_id, checkpoint)
-                    )
-                    _LOGGER.info(
-                        "EventProcessor %r has claimed partition %r",
-                        self._id,
-                        partition_id
-                    )
+                self._tasks[partition_id] = self._loop.create_task(
+                    self._receive(partition_id, checkpoint)
+                )
+                _LOGGER.info(
+                    "EventProcessor %r has claimed partition %r",
+                    self._id,
+                    partition_id
+                )
 
     async def _process_error(
         self, partition_context: PartitionContext, err: Exception
@@ -279,17 +278,15 @@ class EventProcessor(
                     await self._process_error(partition_context, error)
                     break
         finally:
-            try:
-                await self._consumers[partition_id].close()
-                del self._consumers[partition_id]
-                await self._close_partition(
-                    partition_context,
-                    CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
-                )
-                await self._ownership_manager.release_ownership(partition_id)
-            finally:
-                if partition_id in self._tasks:
-                    del self._tasks[partition_id]
+            await self._consumers[partition_id].close()
+            del self._consumers[partition_id]
+            await self._close_partition(
+                partition_context,
+                CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
+            )
+            await self._ownership_manager.release_ownership(partition_id)
+            if partition_id in self._tasks:
+                del self._tasks[partition_id]
 
     async def start(self) -> None:
         """Start the EventProcessor.
