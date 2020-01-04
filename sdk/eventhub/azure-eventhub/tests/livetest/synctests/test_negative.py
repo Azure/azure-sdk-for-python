@@ -57,11 +57,13 @@ def test_send_batch_with_invalid_key(live_eventhub):
         'invalid',
         live_eventhub['event_hub'])
     client = EventHubProducerClient.from_connection_string(conn_str)
-    with pytest.raises(ConnectError):
-        batch = EventDataBatch()
-        batch.add(EventData("test data"))
-        client.send_batch(batch)
-    client.close()
+    try:
+        with pytest.raises(ConnectError):
+            batch = EventDataBatch()
+            batch.add(EventData("test data"))
+            client.send_batch(batch)
+    finally:
+        client.close()
 
 
 @pytest.mark.liveTest
