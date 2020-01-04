@@ -105,7 +105,7 @@ class EventHubConsumer(
         partition = self._source.split("/")[-1]
         self._partition = partition
         self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
-        if owner_level:
+        if owner_level is not None:
             self._link_properties[types.AMQPSymbol(EPOCH_SYMBOL)] = types.AMQPLong(
                 int(owner_level)
             )
