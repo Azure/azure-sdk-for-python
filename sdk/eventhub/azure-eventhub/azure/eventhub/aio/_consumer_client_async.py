@@ -64,8 +64,14 @@ class EventHubConsumerClient(ClientBaseAsync):
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
-     value is 3.
+    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+     Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
+     by a while-loop calling internal receive method in each iteration. In the `receive` case,
+     `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
+     If retry attempts exhaust, the `on_error` callback would be called if provided carrying the error information,
+     the failed internal partition consumer is to be closed (`on_partition_close` would be called if provided) and
+     new internal partition consumer be created (`on_partition_initialize` would be called if provided) to resume
+     receiving.
     :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
      if there is no further activity. By default the value is None, meaning that the service determines when to
      close an idle connection.
@@ -76,8 +82,9 @@ class EventHubConsumerClient(ClientBaseAsync):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
-     events. If None, this `EventHubConsumerClient` instance will receive events without load-balancing and
-     checkpointing. The checkpoint store will be used in both cases of receiving from all partitions or a single
+     events. If not provided, `update_checkpoint` method `PartitionContext` object could still be called for in-memory
+     checkpoint, however, the `EventHubConsumerClient` instance will receive events without load-balancing,
+     The checkpoint store will be used in both cases of receiving from all partitions or a single
      partition, however in the latter case load-balancing does not apply.
     :paramtype checkpoint_store: ~azure.eventhub.aio.CheckpointStore
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
@@ -183,7 +190,13 @@ class EventHubConsumerClient(ClientBaseAsync):
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-         Default value is 3.
+         Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
+         by a while-loop calling internal receive method in each iteration. In the `receive` case,
+         `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
+         If retry attempts exhaust, the `on_error` callback would be called if provided carrying the error information,
+         the failed internal partition consumer is to be closed (`on_partition_close` would be called if provided) and
+         new internal partition consumer be created (`on_partition_initialize` would be called if provided) to resume
+         receiving.
         :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
          if there is no further activity. By default the value is None, meaning that the service determines when to
          close an idle connection.
@@ -191,8 +204,9 @@ class EventHubConsumerClient(ClientBaseAsync):
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
         :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
-         events. If None, this `EventHubConsumerClient` instance will receive events without load-balancing and
-         checkpointing. The checkpoint store will be used in both cases of receiving from all partitions or a single
+         events. If not provided, `update_checkpoint` method `PartitionContext` object could still be called for
+         in-memory checkpoint, however, the `EventHubConsumerClient` instance will receive events without
+         load-balancing, The checkpoint store will be used in both cases of receiving from all partitions or a single
          partition, however in the latter case load-balancing does not apply.
         :paramtype checkpoint_store: ~azure.eventhub.aio.CheckpointStore
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
@@ -251,7 +265,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         :param on_event: The callback function for handling a received event. The callback takes two
          parameters: `partition_context` which contains partition context and `event` which is the received event.
-         The callback function should be defined like so: `on_event(partition_context, event)`.
+         The callback function should be defined like: `on_event(partition_context, event)`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
         :type on_event: Callable[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.EventData]
@@ -280,20 +294,25 @@ class EventHubConsumerClient(ClientBaseAsync):
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
         :paramtype starting_position_inclusive: bool or dict[str,bool]
-        :keyword on_error: The callback function which would be called when there an error occurs during receiving.
+        :keyword on_error: The callback function which would be called when error is raised during receiving
+         after retry attempts exhaust and during the process of load balance.
          The callback takes two parameters: `partition_context` which contains partition information
-         and `error` being the exception. The callback should be defined like so: `on_error(partition_context, error)`.
+         and `error` being the exception. `partition_context` could be None if the error is raised during
+         the process of load balance. The callback should be defined like: `on_error(partition_context, error)`.
          The `on_error` callback will also be called if an unhandled exception is raised during
          the `on_event` callback.
         :paramtype on_error: Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
-         partition finishes initialization. The callback takes a single parameter: `partition_context`
+         partition finishes initialization. It would also be called when a new internal partition consumer is created
+         to take over the receiving for a failed and closed internal partition consumer.
+         The callback takes a single parameter: `partition_context`
          which contains the partition information. The callback should be defined
-         like so: `on_partition_initialize(partition_context)`.
+         like: `on_partition_initialize(partition_context)`.
         :paramtype on_partition_initialize: Callable[[~azure.eventhub.aio.PartitionContext]]
         :keyword on_partition_close: The callback function that will be called after a consumer for a certain
-         partition is closed. The callback takes two parameters: `partition_context` which contains partition
-         information and `reason` for the close. The callback should be defined like so:
+         partition is closed. It would be also called when error is raised during receiving after retry attempts
+         exhaust. The callback takes two parameters: `partition_context` which contains partition
+         information and `reason` for the close. The callback should be defined like:
          `on_partition_close(partition_context, reason)`.
          Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
         :paramtype on_partition_close: Callable[[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.CloseReason]]
