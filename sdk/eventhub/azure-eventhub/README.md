@@ -347,14 +347,9 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 
 ## Next steps
 
-### Examples
+### More sample code
 
-There are [more samples](./samples) in our repo demonstrating the usage of the library.
-
-- [./samples/sync_samples/send.py](./samples/sync_samples/send.py) - use EventHubProducerClient to publish events
-- [./samples/sync_samples/recv.py](./samples/sync_samples/recv.py) - use EventHubConsumerClient to consume events
-- [./samples/async_samples/send_async.py](./samples/async_samples/send_async.py) - async/await support of a EventHubProducerClient
-- [./samples/async_samples/recv_async.py](./samples/async_samples/recv_async.py) - async/await support of a EventHubConsumerClient
+Please take a look at the [samples](./samples) directory for detailed examples of how to use this library to send and receive events to/from Event Hubs.
 
 ### Documentation
 

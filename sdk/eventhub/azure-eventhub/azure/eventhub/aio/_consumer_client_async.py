@@ -85,7 +85,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
             :start-after: [START create_eventhub_consumer_client_async]
             :end-before: [END create_eventhub_consumer_client_async]
             :language: python
@@ -175,7 +175,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         :param str conn_str: The connection string of an Event Hub.
         :param str consumer_group: Receive events from the Event Hub for this consumer group.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
@@ -201,7 +201,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
                 :start-after: [START create_eventhub_consumer_client_from_conn_str_async]
                 :end-before: [END create_eventhub_consumer_client_from_conn_str_async]
                 :language: python
@@ -301,7 +301,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_consumer_client_receive_async]
                 :end-before: [END eventhub_consumer_client_receive_async]
                 :language: python
@@ -420,7 +420,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_consumer_client_close_async]
                 :end-before: [END eventhub_consumer_client_close_async]
                 :language: python
