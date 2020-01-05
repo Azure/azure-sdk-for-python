@@ -68,9 +68,9 @@ class EventHubConsumerClient(ClientBaseAsync):
      Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
      by a while-loop calling internal receive method in each iteration. In the `receive` case,
      `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
-     If retry attempts exhaust, the `on_error` callback would be called if provided carrying the error information,
-     the failed internal partition consumer is to be closed (`on_partition_close` would be called if provided) and
-     new internal partition consumer be created (`on_partition_initialize` would be called if provided) to resume
+     If retry attempts are exhausted, the `on_error` callback will be called (if provided) with the error information.
+     The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
+     new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
     :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
      if there is no further activity. By default the value is None, meaning that the service determines when to
@@ -193,10 +193,10 @@ class EventHubConsumerClient(ClientBaseAsync):
          Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
          by a while-loop calling internal receive method in each iteration. In the `receive` case,
          `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
-         If retry attempts exhaust, the `on_error` callback would be called if provided carrying the error information,
-         the failed internal partition consumer is to be closed (`on_partition_close` would be called if provided) and
-         new internal partition consumer be created (`on_partition_initialize` would be called if provided) to resume
-         receiving.
+         If retry attempts are exhausted, the `on_error` callback will be called (if provided) with the error
+         information. The failed internal partition consumer will be closed (`on_partition_close` will be called
+         if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
+         provided) to resume receiving.
         :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
          if there is no further activity. By default the value is None, meaning that the service determines when to
          close an idle connection.
@@ -294,24 +294,24 @@ class EventHubConsumerClient(ClientBaseAsync):
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
         :paramtype starting_position_inclusive: bool or dict[str,bool]
-        :keyword on_error: The callback function which would be called when error is raised during receiving
-         after retry attempts exhaust and during the process of load balance.
+        :keyword on_error: The callback function that will be called when an error is raised during receiving
+         after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
          and `error` being the exception. `partition_context` could be None if the error is raised during
-         the process of load balance. The callback should be defined like: `on_error(partition_context, error)`.
+         the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
          The `on_error` callback will also be called if an unhandled exception is raised during
          the `on_event` callback.
         :paramtype on_error: Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
          partition finishes initialization. It would also be called when a new internal partition consumer is created
-         to take over the receiving for a failed and closed internal partition consumer.
+         to take over the receiving process for a failed and closed internal partition consumer.
          The callback takes a single parameter: `partition_context`
          which contains the partition information. The callback should be defined
          like: `on_partition_initialize(partition_context)`.
         :paramtype on_partition_initialize: Callable[[~azure.eventhub.aio.PartitionContext]]
         :keyword on_partition_close: The callback function that will be called after a consumer for a certain
-         partition is closed. It would be also called when error is raised during receiving after retry attempts
-         exhaust. The callback takes two parameters: `partition_context` which contains partition
+         partition is closed. It would be also called when error is raised during receiving after retry attempts are
+         exhausted. The callback takes two parameters: `partition_context` which contains partition
          information and `reason` for the close. The callback should be defined like:
          `on_partition_close(partition_context, reason)`.
          Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
