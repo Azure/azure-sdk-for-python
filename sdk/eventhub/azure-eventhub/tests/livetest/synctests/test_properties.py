@@ -5,6 +5,7 @@
 #--------------------------------------------------------------------------
 
 import pytest
+
 from azure.eventhub import EventHubSharedKeyCredential
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.exceptions import AuthenticationError, ConnectError
@@ -21,8 +22,7 @@ def test_get_properties(live_eventhub):
 @pytest.mark.liveTest
 def test_get_properties_with_auth_error_sync(live_eventhub):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
-                            EventHubSharedKeyCredential(live_eventhub['key_name'], "AaBbCcDdEeFf="),
-                            logging_enable=True)
+                            EventHubSharedKeyCredential(live_eventhub['key_name'], "AaBbCcDdEeFf="))
     with client:
         with pytest.raises(AuthenticationError) as e:
             client.get_eventhub_properties()

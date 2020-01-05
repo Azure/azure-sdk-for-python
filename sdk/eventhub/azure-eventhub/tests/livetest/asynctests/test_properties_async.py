@@ -5,6 +5,7 @@
 #--------------------------------------------------------------------------
 
 import pytest
+
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
 from azure.eventhub.exceptions import AuthenticationError, ConnectError
 

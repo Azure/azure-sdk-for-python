@@ -174,27 +174,27 @@ class ClientBaseAsync(ClientBase):
                     description_fields=MGMT_STATUS_DESC,
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[bytes]
+                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[Union[str, bytes]]
                 if description and isinstance(description, six.binary_type):
                     description = description.decode('utf-8')
                 if status_code < 400:
                     return response
                 if status_code in [401]:
                     raise errors.AuthenticationException(
-                        "Management authentication failed. Status code: {}, Description: {}".format(
+                        "Management authentication failed. Status code: {}, Description: {!r}".format(
                             status_code,
                             description
                         )
                     )
                 if status_code in [404]:
                     raise ConnectError(
-                        "Management connection failed. Status code: {}, Description: {}".format(
+                        "Management connection failed. Status code: {}, Description: {!r}".format(
                             status_code,
                             description
                         )
                     )
                 raise errors.AMQPConnectionError(
-                    "Management request error. Status code: {}, Description: {}".format(
+                    "Management request error. Status code: {}, Description: {!r}".format(
                         status_code,
                         description
                     )
