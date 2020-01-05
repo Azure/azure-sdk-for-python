@@ -10,6 +10,7 @@ import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
+import six
 from uamqp import (
     authentication,
     constants,
@@ -21,7 +22,7 @@ from uamqp import (
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp
-from ..exceptions import ClientClosedError, AuthenticationError, EventHubError, ConnectError
+from ..exceptions import ClientClosedError, ConnectError
 from .._constants import (
     JWT_TOKEN_SCOPE,
     MGMT_OPERATION,
@@ -172,29 +173,34 @@ class ClientBaseAsync(ClientBase):
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = response.application_properties[MGMT_STATUS_CODE]
+                status_code = int(response.application_properties[MGMT_STATUS_CODE])
+                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[bytes]
+                if description and isinstance(description, six.binary_type):
+                    description = description.decode('utf-8')
                 if status_code < 400:
                     return response
                 if status_code in [401]:
-                    raise AuthenticationError(
+                    raise errors.AuthenticationException(
                         "Management authentication failed. Status code: {}, Description: {}".format(
                             status_code,
-                            response.application_properties.get(MGMT_STATUS_DESC)
+                            description
                         )
                     )
                 if status_code in [404]:
                     raise ConnectError(
                         "Management connection failed. Status code: {}, Description: {}".format(
                             status_code,
-                            response.application_properties.get(MGMT_STATUS_DESC)
+                            description
                         )
                     )
-                raise EventHubError(
+                raise errors.AMQPConnectionError(
                     "Management request error. Status code: {}, Description: {}".format(
                         status_code,
-                        response.application_properties.get(MGMT_STATUS_DESC)
+                        description
                     )
                 )
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                raise
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await _handle_exception(exception, self)
                 await self._backoff_async(
@@ -403,6 +409,8 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                         **kwargs
                     )
                 return await operation()
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                raise
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
                 await self._client._backoff_async(

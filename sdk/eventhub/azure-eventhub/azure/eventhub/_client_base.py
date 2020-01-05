@@ -19,8 +19,9 @@ except ImportError:
     from urllib.parse import urlparse, quote_plus
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
+import six
 
-from .exceptions import _handle_exception, ClientClosedError, AuthenticationError, EventHubError, ConnectError
+from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp
 from ._connection_manager import get_connection_manager
@@ -233,27 +234,30 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = response.application_properties[MGMT_STATUS_CODE]
+                status_code = int(response.application_properties[MGMT_STATUS_CODE])
+                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[bytes]
+                if description and isinstance(description, six.binary_type):
+                    description = description.decode('utf-8')
                 if status_code < 400:
                     return response
                 if status_code in [401]:
-                    raise AuthenticationError(
+                    raise errors.AuthenticationException(
                         "Management authentication failed. Status code: {}, Description: {}".format(
                             status_code,
-                            response.application_properties.get(MGMT_STATUS_DESC)
+                            description
                         )
                     )
                 if status_code in [404]:
                     raise ConnectError(
                         "Management connection failed. Status code: {}, Description: {}".format(
                             status_code,
-                            response.application_properties.get(MGMT_STATUS_DESC)
+                            description
                         )
                     )
-                raise EventHubError(
+                raise errors.AMQPConnectionError(
                     "Management request error. Status code: {}, Description: {}".format(
                         status_code,
-                        response.application_properties.get(MGMT_STATUS_DESC)
+                        description
                     )
                 )
             except Exception as exception:  # pylint: disable=broad-except

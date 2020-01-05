@@ -326,6 +326,8 @@ class EventProcessor(
                         )
                         to_cancel_pids = set(self._tasks.keys())
                     await self._cancel_tasks_for_partitions(to_cancel_pids)
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    raise
                 except Exception as err:  # pylint:disable=broad-except
                     # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                     # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
