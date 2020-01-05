@@ -7,7 +7,7 @@
 import pytest
 
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
-from azure.eventhub.exceptions import AuthenticationError, ConnectError
+from azure.eventhub.exceptions import AuthenticationError, ConnectError, EventHubError
 
 
 @pytest.mark.liveTest
@@ -51,7 +51,7 @@ async def test_get_properties_with_connect_error(live_eventhub):
         EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     )
     async with client:
-        with pytest.raises(ConnectError) as e:
+        with pytest.raises(EventHubError) as e:  # This can be either ConnectError or ConnectionLostError
             await client.get_eventhub_properties()
 
 @pytest.mark.liveTest
