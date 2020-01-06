@@ -127,6 +127,8 @@ class TestDecorator(object):
         assert not parent.children[0].children
         assert parent.children[1].name == "MockClient.get_foo"
         assert not parent.children[1].children
+        assert parent.children[2].name == "MockClient.get_foo"
+        assert not parent.children[2].children
 
     def test_span_merge_span(self):
         with FakeSpan(name="parent") as parent:
