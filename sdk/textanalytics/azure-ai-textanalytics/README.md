@@ -51,7 +51,7 @@ az cognitiveservices account create \
 ```
 
 ### Authenticate the client
-Interaction with this service begins with an instance of a [client](#Client). 
+Interaction with this service begins with an instance of a [client](#client "ta-client"). 
 To create a client object, you will need the cognitive services or text analytics `endpoint` to 
 your resource and a `credential` that allows you access:
 
