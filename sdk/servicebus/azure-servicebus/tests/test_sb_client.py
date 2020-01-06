@@ -77,6 +77,39 @@ def test_sb_client_entity_conflict(live_servicebus_config, standard_queue):
         client.create_queue(standard_queue, lock_duration=300)
 
 @pytest.mark.liveTest
+def test_sb_client_queue_conflict_not_fail_on_exist(live_servicebus_config, standard_queue):
+
+    client = ServiceBusClient(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'],
+        debug=False)
+
+    client.create_queue(standard_queue, fail_on_exist=False)
+
+@pytest.mark.liveTest
+def test_sb_client_topic_conflict_not_fail_on_exist(live_servicebus_config, standard_topic):
+
+    client = ServiceBusClient(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'],
+        debug=False)
+
+    client.create_topic(standard_topic, fail_on_exist=False)
+
+@pytest.mark.liveTest
+def test_sb_client_subscription_conflict_not_fail_on_exist(live_servicebus_config, standard_subscription):
+
+    client = ServiceBusClient(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'],
+        debug=False)
+
+    client.create_subscription(standard_subscription, fail_on_exist=False)
+
+@pytest.mark.liveTest
 def test_sb_client_entity_delete(live_servicebus_config, standard_queue):
 
     client = ServiceBusClient(
