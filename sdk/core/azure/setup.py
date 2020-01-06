@@ -9,9 +9,25 @@
 from setuptools import setup
 
 
+message = """
+
+Starting v5.0.0, the 'azure' meta-package is deprecated and cannot be installed anymore.
+Please install the service specific packages prefixed by `azure` needed for your application.
+
+Here's a non-exhaustive list of common packages:
+
+-  azure-mgmt-compute (https://pypi.python.org/pypi/azure-mgmt-compute) : Management of Virtual Machines, etc.
+-  azure-mgmt-storage (https://pypi.python.org/pypi/azure-mgmt-storage) : Management of storage accounts.
+-  azure-mgmt-resource (https://pypi.python.org/pypi/azure-mgmt-resource) : Generic package about Azure Resource Management (ARM)
+-  azure-keyvault-secrets (https://pypi.python.org/pypi/azure-keyvault-secrets) : Access to secrets in Key Vault
+-  azure-storage-blob (https://pypi.python.org/pypi/azure-storage-blob) : Access to blobs in storage accounts
+"""
+
+raise RuntimeError(message)
+
 setup(
     name='azure',
-    version='4.0.0',
+    version='5.0.0',
     description='Microsoft Azure Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -31,21 +47,4 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    install_requires=[
-        'azure-mgmt~=4.0',
-        'azure-applicationinsights~=0.1.0',
-        'azure-batch~=4.1',
-        'azure-cosmosdb-table~=1.0',
-        'azure-datalake-store~=0.0.18',
-        'azure-eventgrid~=1.1',
-        'azure-graphrbac~=0.40.0',
-        'azure-keyvault~=1.0',
-        'azure-loganalytics~=0.1.0',
-        'azure-servicebus~=0.21.1',
-        'azure-servicefabric~=6.3.0.0',
-        'azure-servicemanagement-legacy~=0.20.6',
-        'azure-storage-blob~=1.3',
-        'azure-storage-queue~=1.3',
-        'azure-storage-file~=1.3',
-    ],
 )

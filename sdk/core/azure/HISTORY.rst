@@ -1,8 +1,9 @@
 Disclaimer
 ++++++++++
 
-Starting azure 3.0.0, we don't provide anymore a ChangeLog for the bundle package. Please refer to the ChangeLog
-of each individual package.
+Starting v5.0.0, this package cannot be installed anymore, please install individual packages.
+
+Starting azure 3.0.0, please refer to the ChangeLog of each individual packages.
 
 2017-05-16 azure 2.0.0
 ++++++++++++++++++++++
