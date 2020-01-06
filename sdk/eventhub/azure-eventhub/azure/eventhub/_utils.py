@@ -165,6 +165,7 @@ def trace_message(event, parent_span=None):
             )
             with current_span.span(name="Azure.EventHubs.message") as message_span:
                 message_span.kind = SpanKind.PRODUCER
+                message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 if not event.properties:
                     event.properties = dict()
                 event.properties.setdefault(
