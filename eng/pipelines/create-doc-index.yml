@@ -27,10 +27,18 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
+      - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
+        parameters:
+          TargetFolder: $(Build.SourcesDirectory)
+          RootFolder: $(Build.SourcesDirectory)
+          BuildSHA: $(Build.SourceVersion)
+          RepoId: 'Azure/azure-sdk-for-python'
+
       - pwsh: |
           pip install -r $(Build.SourcesDirectory)/doc/sphinx/requirements.txt
+          pip install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
           python $(Build.SourcesDirectory)/doc/sphinx/generate_versioned_index.py
-          mkdir $(Build.ArtifactStagingDirectory)
+          sphinx-build -b html -c $(Build.SourcesDirectory)/doc/sphinx $(Build.SourcesDirectory)/_docs $(Build.SourcesDirectory)/_docs/html
           Copy-Item -Path $(Build.SourcesDirectory)/_docs/html/* -Destination $(Build.ArtifactStagingDirectory) -Recurse -Force
         displayName: 'Generate Documentation Index'
 
