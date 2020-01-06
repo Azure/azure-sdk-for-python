@@ -118,7 +118,7 @@ hosted service to which the package is being uploaded. You can create a
 deployment package with the `Microsoft Azure PowerShell
 cmdlets <https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/>`__,
 or with the `cspack commandline
-tool <http://msdn.microsoft.com/en-us/library/gg432988.aspx>`__.
+tool <https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-model-and-package#servicepackagecspkg>`__.
 
 .. code:: python
 
