@@ -44,7 +44,7 @@ class ServiceBusMixin(object):
             default_message_time_to_live=None,
             dead_lettering_on_message_expiration=False,
             duplicate_detection_history_time_window=None,
-            max_delivery_count=None, enable_batched_operations=None):
+            max_delivery_count=None, enable_batched_operations=None, fail_on_exist=True):
         """Create a queue entity.
 
         :param queue_name: The name of the new queue.
@@ -75,6 +75,9 @@ class ServiceBusMixin(object):
         :type max_delivery_count: int
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
+        :param fail_on_exist: Whether to throw an exception if there is already a queue with same name
+         already existed.
+        :type: fail_on_exist: bool
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a queue of the same name already exists.
         """
@@ -87,7 +90,7 @@ class ServiceBusMixin(object):
             dead_lettering_on_message_expiration=dead_lettering_on_message_expiration,
             duplicate_detection_history_time_window=duplicate_detection_history_time_window,
             max_delivery_count=max_delivery_count,
-            enable_batched_operations=enable_batched_operations, fail_on_exist=True)
+            enable_batched_operations=enable_batched_operations)
         try:
             return self.mgmt_client.create_queue(queue_name, queue=queue_properties, fail_on_exist=fail_on_exist)
         except requests.exceptions.ConnectionError as e:
