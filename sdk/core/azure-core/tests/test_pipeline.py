@@ -50,13 +50,12 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
-    RetryPolicy
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
-    RequestsTransport
+    RequestsTransport,
 )
 
 from azure.core.exceptions import AzureError
@@ -121,13 +120,6 @@ class TestRequestsTransport(unittest.TestCase):
         with pytest.raises(AzureError):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
                 response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
-
-    def test_retry_code_class_variables(self):
-        retry_policy = RetryPolicy()
-        assert retry_policy._RETRY_CODES is not None
-        assert 408 in retry_policy._RETRY_CODES
-        assert 429 in retry_policy._RETRY_CODES
-        assert 501 not in retry_policy._RETRY_CODES
 
     def test_basic_requests_separate_session(self):
 

@@ -3,6 +3,22 @@
 Release History
 ===============
 
+2.1.0 (2019-12-31)
+++++++++++++++++++
+
+**Features**
+
+- Model VideoAnalyzerPreset has a new parameter experimental_options
+- Model JobOutputAsset has a new parameter start_time
+- Model JobOutputAsset has a new parameter end_time
+- Model Job has a new parameter start_time
+- Model Job has a new parameter end_time
+- Model AudioAnalyzerPreset has a new parameter experimental_options
+- Model ContentKeyPolicyFairPlayConfiguration has a new parameter offline_rental_configuration
+- Model FaceDetectorPreset has a new parameter experimental_options
+- Model JobOutput has a new parameter start_time
+- Model JobOutput has a new parameter end_time
+
 2.0.0 (2019-12-04)
 ++++++++++++++++++
 

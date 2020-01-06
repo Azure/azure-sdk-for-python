@@ -28,6 +28,7 @@ known_presence_issues:
   - ['sdk/keyvault/azure-keyvault-nspkg/HISTORY.rst','#4554']
   - ['sdk/template/azure-template/HISTORY.rst','#4554']
   - ['sdk/storage/azure-storage-nspkg/HISTORY.rst', '#4554']
+  - ['sdk/textanalytics/azure-ai-nspkg/HISTORY.rst', '#4554']
 
 known_content_issues:
   # data plane. common issue filed to azure-sdk-for-python
@@ -91,6 +92,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-file-share/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-queue/samples/README.md', 'nspkg and common']
   - ['sdk/textanalytics/azure-ai-nspkg/README.md', 'nspkg and common']
+  - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
 
 # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','#4554']

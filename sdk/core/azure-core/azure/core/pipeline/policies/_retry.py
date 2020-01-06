@@ -32,6 +32,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 import email
+from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
@@ -46,6 +47,9 @@ from ._base import HTTPPolicy, RequestHistory
 
 _LOGGER = logging.getLogger(__name__)
 
+class RetryMode(str, Enum):
+    Exponential = 'exponential'
+    Fixed = 'fixed'
 
 class RetryPolicy(HTTPPolicy):
     """A retry policy.
@@ -67,11 +71,14 @@ class RetryPolicy(HTTPPolicy):
 
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
-     Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+     In fixed mode, retry policy will alwasy sleep for {backoff factor}.
+     In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
 
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+
+    :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
 
     .. admonition:: Example:
 
@@ -95,6 +102,7 @@ class RetryPolicy(HTTPPolicy):
         self.status_retries = kwargs.pop('retry_status', 3)
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
+        self.retry_mode = kwargs.pop('retry_mode', RetryMode.Exponential)
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
@@ -139,17 +147,20 @@ class RetryPolicy(HTTPPolicy):
         if consecutive_errors_len <= 1:
             return 0
 
-        backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
+        if self.retry_mode == RetryMode.Fixed:
+            backoff_value = settings['backoff']
+        else:
+            backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
         return min(settings['max_backoff'], backoff_value)
 
     def parse_retry_after(self, retry_after):
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
-        :rtype: int
+        :rtype: float
         """
         try:
-            seconds = int(retry_after)
+            seconds = float(retry_after)
         except TypeError:
             retry_date_tuple = email.utils.parsedate(retry_after)
             if retry_date_tuple is None:
@@ -167,12 +178,16 @@ class RetryPolicy(HTTPPolicy):
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: Value of Retry-After in seconds.
-        :rtype: int
+        :rtype: float
         """
         retry_after = response.http_response.headers.get("Retry-After")
-        if retry_after is None:
-            return None
-        return self.parse_retry_after(retry_after)
+        if retry_after:
+            return self.parse_retry_after(retry_after)
+        retry_after = response.http_response.headers.get("retry-after-ms")
+        if retry_after:
+            parsed_retry_after = self.parse_retry_after(retry_after)
+            return parsed_retry_after / 1000.0
+        return None
 
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
