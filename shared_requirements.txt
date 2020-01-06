@@ -10,7 +10,7 @@ azure-common~=1.1
 azure-core<2.0.0,>=1.0.0
 azure-cosmosdb-table~=1.0
 azure-datalake-store~=0.0.18
-azure-eventhub<6.0.0,>=5.0.0b6
+azure-eventhub<6.0.0,>=5.0.0
 azure-eventgrid~=1.1
 azure-graphrbac~=0.40.0
 azure-keyvault==4.0.0b5
@@ -123,7 +123,7 @@ opencensus-ext-azure>=0.3.1
 #override azure-eventhub-checkpointstoreblob-aio azure-storage-blob<13.0.0,>=12.0.0
 #override azure-eventhub-checkpointstoreblob azure-storage-blob<13.0.0,>=12.0.0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
-#override azure-eventhub uamqp<2.0,>=1.2.4
+#override azure-eventhub uamqp<2.0,>=1.2.5
 #override azure-appconfiguration msrest>=0.6.10
 #override azure-storage-blob azure-core<2.0.0,>=1.1.0
 #override azure-storage-queue azure-core<2.0.0,>=1.1.0
