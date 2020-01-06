@@ -6,9 +6,7 @@ import sys
 _IS_PY2 = sys.version_info[0] == 2
 
 import platform
-_PLATFORM_STR = platform.system()
-_PLATFORM = 1 if _PLATFORM_STR == 'Windows' else 2 if _PLATFORM_STR == 'Linux' else 3
-_USE_SHELL = True if _PLATFORM == 1 else False
+_USE_SHELL = platform.system() == 'Windows'
 
 import json
 import time
