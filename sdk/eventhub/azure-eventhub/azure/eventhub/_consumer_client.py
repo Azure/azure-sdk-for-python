@@ -75,11 +75,11 @@ class EventHubConsumerClient(ClientBase):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
-     events. If not provided, `update_checkpoint` method `PartitionContext` object could still be called for in-memory
-     checkpoint, however, the `EventHubConsumerClient` instance will receive events without load-balancing,
-     The checkpoint store will be used in both cases of receiving from all partitions or a single
-     partition, however in the latter case load-balancing does not apply.
+    :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
+     when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
+     or a single partition. In the latter case load-balancing does not apply.
+     If a checkpoint store is not provided, the checkpoint will be maintained internally
+     in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
     :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
      between two load-balancing evaluations. Default is 10 seconds.
@@ -184,11 +184,11 @@ class EventHubConsumerClient(ClientBase):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
-         events. If not provided, `update_checkpoint` method `PartitionContext` object could still be called for
-         in-memory checkpoint, however, the `EventHubConsumerClient` instance will receive events without
-         load-balancing, The checkpoint store will be used in both cases of receiving from all partitions or a single
-         partition, however in the latter case load-balancing does not apply.
+        :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
+         when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
+         or a single partition. In the latter case load-balancing does not apply.
+         If a checkpoint store is not provided, the checkpoint will be maintained internally
+         in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
         :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
          between two load-balancing evaluations. Default is 10 seconds.
