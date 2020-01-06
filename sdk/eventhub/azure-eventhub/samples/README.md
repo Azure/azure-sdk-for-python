@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-eventhub
+  - azure-event-hubs
 urlFragment: eventhub-samples
 ---
 
