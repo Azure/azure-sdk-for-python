@@ -649,6 +649,7 @@ class PipelineClientBase(object):
         :param str url: URL for the request.
         :param dict params: URL query parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -709,6 +710,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -734,6 +736,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -758,6 +761,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -782,6 +786,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -806,6 +811,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -822,6 +828,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -838,6 +845,7 @@ class PipelineClientBase(object):
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
+        :param content: The body content
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -847,17 +855,20 @@ class PipelineClientBase(object):
         )
         return request
 
-    def options(self, url, params=None, headers=None, content=None, form_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+    def options(self, url, params=None, headers=None, **kwargs):
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any) -> HttpRequest
         """Create a OPTIONS request object.
 
         :param str url: The request URL.
         :param dict params: Request URL parameters.
         :param dict headers: Headers
-        :param dict form_content: Form content
+        :keyword content: The body content
+        :keyword dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
+        content = kwargs.get("content")
+        form_content = kwargs.get("form_content")
         request = self._request(
             "OPTIONS", url, params, headers, content, form_content, None
         )
