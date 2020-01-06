@@ -116,7 +116,7 @@ To make a new deployment to Azure you must store the package file in a
 Microsoft Azure Blob Storage account under the same subscription as the
 hosted service to which the package is being uploaded. You can create a
 deployment package with the `Microsoft Azure PowerShell
-cmdlets <https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/>`__,
+cmdlets <https://docs.microsoft.com/en-us/powershell/azure/?view=azps-3.2.0>`__,
 or with the `cspack commandline
 tool <https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-model-and-package#servicepackagecspkg>`__.
 
