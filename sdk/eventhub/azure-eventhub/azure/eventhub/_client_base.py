@@ -9,7 +9,7 @@ import uuid
 import time
 import functools
 import collections
-from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast
+from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
 
 try:
@@ -19,8 +19,9 @@ except ImportError:
     from urllib.parse import urlparse, quote_plus
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
+import six
 
-from .exceptions import _handle_exception, ClientClosedError
+from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
 from ._utils import utc_from_timestamp
 from ._connection_manager import get_connection_manager
@@ -29,6 +30,8 @@ from ._constants import (
     JWT_TOKEN_SCOPE,
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
+    MGMT_STATUS_CODE,
+    MGMT_STATUS_DESC
 )
 
 if TYPE_CHECKING:
@@ -216,7 +219,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
-            mgmt_client = AMQPClient(self._mgmt_target)
+            mgmt_client = AMQPClient(
+                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+            )
             try:
                 conn = self._conn_manager.get_connection(
                     self._address.hostname, mgmt_auth
@@ -226,14 +231,34 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     mgmt_msg,
                     constants.READ_OPERATION,
                     op_type=op_type,
-                    status_code_field=b"status-code",
-                    description_fields=b"status-description",
+                    status_code_field=MGMT_STATUS_CODE,
+                    description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = response.application_properties[b"status-code"]
+                status_code = int(response.application_properties[MGMT_STATUS_CODE])
+                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[Union[str, bytes]]
+                if description and isinstance(description, six.binary_type):
+                    description = description.decode('utf-8')
                 if status_code < 400:
                     return response
-                raise errors.AuthenticationException(
-                    "Management request error. Status code: {}".format(status_code)
+                if status_code in [401]:
+                    raise errors.AuthenticationException(
+                        "Management authentication failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
+                    )
+                if status_code in [404]:
+                    raise ConnectError(
+                        "Management connection failed. Status code: {}, Description: {!r}".format(
+                            status_code,
+                            description
+                        )
+                    )
+                raise errors.AMQPConnectionError(
+                    "Management request error. Status code: {}, Description: {!r}".format(
+                        status_code,
+                        description
+                    )
                 )
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = _handle_exception(exception, self)
