@@ -121,7 +121,7 @@ class ServiceBusMixin(object):
             default_message_time_to_live=None,
             max_size_in_megabytes=None, requires_duplicate_detection=None,
             duplicate_detection_history_time_window=None,
-            enable_batched_operations=None):
+            enable_batched_operations=None, fail_on_exist=True):
         """Create a topic entity.
 
         :param topic_name: The name of the new topic.
@@ -140,6 +140,9 @@ class ServiceBusMixin(object):
         :type duplicate_detection_history_time_window: ~datetime.timedelta
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
+        :param fail_on_exist: Whether to throw an exception if there is already a topic with same name
+         already existed.
+        :type: fail_on_exist: bool
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a topic of the same name already exists.
         """
@@ -150,7 +153,7 @@ class ServiceBusMixin(object):
             duplicate_detection_history_time_window=duplicate_detection_history_time_window,
             enable_batched_operations=enable_batched_operations)
         try:
-            return self.mgmt_client.create_topic(topic_name, topic=topic_properties, fail_on_exist=True)
+            return self.mgmt_client.create_topic(topic_name, topic=topic_properties, fail_on_exist=fail_on_exist)
         except requests.exceptions.ConnectionError as e:
             raise ServiceBusConnectionError("Namespace: {} not found".format(self.service_namespace), e)
 
@@ -180,7 +183,7 @@ class ServiceBusMixin(object):
             default_message_time_to_live=None,
             dead_lettering_on_message_expiration=None,
             dead_lettering_on_filter_evaluation_exceptions=None,
-            enable_batched_operations=None, max_delivery_count=None):
+            enable_batched_operations=None, max_delivery_count=None, fail_on_exist=True):
         """Create a subscription entity.
 
         :param topic_name: The name of the topic under which to create the subscription.
@@ -206,6 +209,9 @@ class ServiceBusMixin(object):
         :type max_delivery_count: int
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
+        :param fail_on_exist: Whether to throw an exception if there is already a subscription with same name
+         already existed.
+        :type: fail_on_exist: bool
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a queue of the same name already exists.
         """
@@ -220,7 +226,7 @@ class ServiceBusMixin(object):
         try:
             return self.mgmt_client.create_subscription(
                 topic_name, subscription_name,
-                subscription=sub_properties, fail_on_exist=True)
+                subscription=sub_properties, fail_on_exist=fail_on_exist)
         except requests.exceptions.ConnectionError as e:
             raise ServiceBusConnectionError("Namespace: {} not found".format(self.service_namespace), e)
 
