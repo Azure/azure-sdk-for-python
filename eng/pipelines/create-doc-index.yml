@@ -29,8 +29,8 @@ jobs:
 
       - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
         parameters:
-          TargetFolder: $(Build.SourcesDirectory)
-          RootFolder: $(Build.SourcesDirectory)
+          TargetFolder: '.'
+          RootFolder: '.'
           BuildSHA: $(Build.SourceVersion)
           RepoId: 'Azure/azure-sdk-for-python'
 
