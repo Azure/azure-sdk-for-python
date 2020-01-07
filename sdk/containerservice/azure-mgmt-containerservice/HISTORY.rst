@@ -3,6 +3,13 @@
 Release History
 ===============
 
+8.2.0 (2020-01-07)
+++++++++++++++++++
+
+**Features**
+
+- Model ManagedCluster has a new parameter disk_encryption_set_id
+
 8.1.0 (2019-12-16)
 ++++++++++++++++++
 
