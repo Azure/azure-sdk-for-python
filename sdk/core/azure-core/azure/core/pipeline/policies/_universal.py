@@ -181,6 +181,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         # type: (Optional[str], bool) -> None
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
+        application_id = kwargs.pop('user_agent', None)
 
         if base_user_agent is None:
             self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
@@ -190,6 +191,9 @@ class UserAgentPolicy(SansIOHTTPPolicy):
             )
         else:
             self._user_agent = base_user_agent
+
+        if application_id:
+            self._user_agent = "{} {}".format(application_id, self._user_agent)
 
     @property
     def user_agent(self):
@@ -222,7 +226,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
             if options_dict.pop('user_agent_overwrite', self.overwrite):
                 http_request.headers[self._USERAGENT] = user_agent
             else:
-                user_agent = "{} {}".format(self.user_agent, user_agent)
+                user_agent = "{} {}".format(user_agent, self.user_agent)
                 http_request.headers[self._USERAGENT] = user_agent
 
         elif self.overwrite or self._USERAGENT not in http_request.headers:
