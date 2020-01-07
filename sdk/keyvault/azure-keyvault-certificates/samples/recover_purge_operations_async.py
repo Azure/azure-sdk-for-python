@@ -64,7 +64,7 @@ async def run_sample():
 
         print(
             "Certificate with name '{0}' was deleted on date {1}.".format(
-                deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
+                deleted_bank_certificate.name, deleted_bank_certificate.deleted_on
             )
         )
 
@@ -78,7 +78,8 @@ async def run_sample():
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
         await client.delete_certificate(storage_cert_name)
 
-        # To ensure permanent deletion, we might need to purge the secret.
+        # Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_certificate` immediately
+        # purges.
         print("\n.. Purge Deleted Certificate")
         await client.purge_deleted_certificate(storage_cert_name)
         print("Certificate has been permanently deleted.")

@@ -332,7 +332,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
         data = requests.get(uri, stream=True)
         blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
-        resp = await blob.upload_blob(data=data.raw)
+        resp = await blob.upload_blob(data=data.raw, overwrite=True)
 
         self.assertIsNotNone(resp.get('etag'))
 
@@ -341,13 +341,13 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_aiohttp_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
+        blob = self.bsc.get_blob_client(self.container_name, "gutenberg_async")
         # Act
         uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
         async with aiohttp.ClientSession() as session:
             async with session.get(uri) as data:
                 async for text, _ in data.content.iter_chunks():
-                    resp = await blob.upload_blob(data=text)
+                    resp = await blob.upload_blob(data=text, overwrite=True)
                     self.assertIsNotNone(resp.get('etag'))
 
     @GlobalStorageAccountPreparer()

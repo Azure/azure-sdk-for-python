@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .account_filters_operations import AccountFiltersOperations
-from .operations import Operations
-from .mediaservices_operations import MediaservicesOperations
-from .locations_operations import LocationsOperations
-from .assets_operations import AssetsOperations
-from .asset_filters_operations import AssetFiltersOperations
-from .content_key_policies_operations import ContentKeyPoliciesOperations
-from .transforms_operations import TransformsOperations
-from .jobs_operations import JobsOperations
-from .streaming_policies_operations import StreamingPoliciesOperations
-from .streaming_locators_operations import StreamingLocatorsOperations
-from .live_events_operations import LiveEventsOperations
-from .live_outputs_operations import LiveOutputsOperations
-from .streaming_endpoints_operations import StreamingEndpointsOperations
+from ._account_filters_operations import AccountFiltersOperations
+from ._operations import Operations
+from ._mediaservices_operations import MediaservicesOperations
+from ._locations_operations import LocationsOperations
+from ._assets_operations import AssetsOperations
+from ._asset_filters_operations import AssetFiltersOperations
+from ._content_key_policies_operations import ContentKeyPoliciesOperations
+from ._transforms_operations import TransformsOperations
+from ._jobs_operations import JobsOperations
+from ._streaming_policies_operations import StreamingPoliciesOperations
+from ._streaming_locators_operations import StreamingLocatorsOperations
+from ._live_events_operations import LiveEventsOperations
+from ._live_outputs_operations import LiveOutputsOperations
+from ._streaming_endpoints_operations import StreamingEndpointsOperations
 
 __all__ = [
     'AccountFiltersOperations',

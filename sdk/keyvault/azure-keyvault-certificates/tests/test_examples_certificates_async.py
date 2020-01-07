@@ -5,9 +5,10 @@
 import hashlib
 import os
 
-from devtools_testutils import ResourceGroupPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from certificates_async_preparer import AsyncVaultClientPreparer
 from certificates_async_test_case import AsyncKeyVaultTestCase
+from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
 
 def print(*args):
@@ -31,39 +32,33 @@ def test_create_certificate():
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "kv-test-" + hashlib.md5(os.environ["RUN_IDENTIFIER"].encode()).hexdigest()[-3:]
-
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
-
         certificate_client = vault_client.certificates
 
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
         cert_name = "cert-name"
-        # create a certificate with optional arguments, returns an async poller
-        create_certificate_poller = certificate_client.create_certificate(
+
+        certificate = await certificate_client.create_certificate(
             certificate_name=cert_name, policy=cert_policy
         )
-
-        # awaiting the certificate poller gives us the result of the long running operation
-        certificate = await create_certificate_poller
 
         print(certificate.id)
         print(certificate.name)
@@ -102,32 +97,31 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_certificate.name)
 
         # if the vault has soft-delete enabled, the certificate's
-        # scheduled purge date, deleted_date, and recovery id are available
-        print(deleted_certificate.deleted_date)
+        # scheduled purge date, deleted_on, and recovery id are available
+        print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
 
         # [END delete_certificate]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         polling_interval = 0 if self.is_playback() else None
@@ -178,30 +172,28 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.name)
             print(certificate.scheduled_purge_date)
             print(certificate.recovery_id)
-            print(certificate.deleted_date)
+            print(certificate.deleted_on)
 
         # [END list_deleted_certificates]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
-        import asyncio
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -238,26 +230,24 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END restore_certificate]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
-        from azure.core.exceptions import HttpResponseError
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -289,15 +279,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END recover_deleted_certificate]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
-
         certificate_client = vault_client.certificates
 
-        # [START create_contacts]
+        # [START set_contacts]
+        from azure.keyvault.certificates import CertificateContact
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
@@ -305,13 +295,13 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
-        contacts = await certificate_client.create_contacts(contact_list)
+        contacts = await certificate_client.set_contacts(contact_list)
         for contact in contacts:
             print(contact.name)
             print(contact.email)
             print(contact.phone)
 
-        # [END create_contacts]
+        # [END set_contacts]
 
         # [START get_contacts]
 
@@ -336,34 +326,34 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END delete_contacts]
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
-
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
+        from azure.keyvault.certificates import AdministratorContact
 
         # First we specify the AdministratorContact for a issuer.
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         issuer = await certificate_client.create_issuer(
-            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
         )
 
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
         print(issuer.account_id)
 
-        for admin_detail in issuer.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for contact in issuer.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # [END create_issuer]
 
@@ -372,14 +362,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         issuer = await certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
         print(issuer.account_id)
 
-        for admin_detail in issuer.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for contact in issuer.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # [END get_issuer]
 
@@ -400,13 +390,13 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_issuer = await certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.properties.provider)
+        print(deleted_issuer.provider)
         print(deleted_issuer.account_id)
 
-        for admin_detail in deleted_issuer.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for contact in deleted_issuer.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # [END delete_issuer]

@@ -12,6 +12,7 @@ from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._blob_service_client_async import BlobServiceClient
 from ._lease_async import BlobLeaseClient
+from ._download_async import StorageStreamDownloader
 
 
 async def upload_blob_to_url(
@@ -131,5 +132,6 @@ __all__ = [
     'BlobClient',
     'BlobLeaseClient',
     'ExponentialRetry',
-    'LinearRetry'
+    'LinearRetry',
+    'StorageStreamDownloader'
 ]

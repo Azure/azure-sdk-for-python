@@ -1,4 +1,0 @@
--e ../../../tools/azure-sdk-tools
-../../core/azure-core
--e ../../storage/azure-storage-blob
-../azure-eventhubs

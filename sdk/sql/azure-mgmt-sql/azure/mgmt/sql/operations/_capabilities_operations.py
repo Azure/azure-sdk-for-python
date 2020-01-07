@@ -25,7 +25,7 @@ class CapabilitiesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2017-10-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2018-06-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class CapabilitiesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-10-01-preview"
+        self.api_version = "2018-06-01-preview"
 
         self.config = config
 
@@ -49,7 +49,8 @@ class CapabilitiesOperations(object):
         :type location_name: str
         :param include: If specified, restricts the response to only include
          the selected item. Possible values include: 'supportedEditions',
-         'supportedElasticPoolEditions', 'supportedManagedInstanceVersions'
+         'supportedElasticPoolEditions', 'supportedManagedInstanceVersions',
+         'supportedInstancePoolEditions', 'supportedManagedInstanceEditions'
         :type include: str or ~azure.mgmt.sql.models.CapabilityGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

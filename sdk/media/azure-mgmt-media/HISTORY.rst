@@ -3,6 +3,43 @@
 Release History
 ===============
 
+2.1.0 (2019-12-31)
+++++++++++++++++++
+
+**Features**
+
+- Model VideoAnalyzerPreset has a new parameter experimental_options
+- Model JobOutputAsset has a new parameter start_time
+- Model JobOutputAsset has a new parameter end_time
+- Model Job has a new parameter start_time
+- Model Job has a new parameter end_time
+- Model AudioAnalyzerPreset has a new parameter experimental_options
+- Model ContentKeyPolicyFairPlayConfiguration has a new parameter offline_rental_configuration
+- Model FaceDetectorPreset has a new parameter experimental_options
+- Model JobOutput has a new parameter start_time
+- Model JobOutput has a new parameter end_time
+
+2.0.0 (2019-12-04)
+++++++++++++++++++
+
+**Features**
+
+- Model JobInputClip has a new parameter start
+- Model JobInputClip has a new parameter end
+- Model JobInputAsset has a new parameter start
+- Model JobInputAsset has a new parameter end
+- Model JobInputHttp has a new parameter start
+- Model JobInputHttp has a new parameter end
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that might introduce breaking changes if from some import. In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+AzureMediaServices cannot be imported from azure.mgmt.media.azure_media_services anymore (import from azure.mgmt.media works like before)
+AzureMediaServicesConfiguration import has been moved from azure.mgmt.media.azure_media_services to azure.mgmt.media
+A model MyClass from a "models" sub-module cannot be imported anymore using azure.mgmt.media.models.my_class (import from azure.mgmt.media.models works like before)
+An operation class MyClassOperations from an operations sub-module cannot be imported anymore using azure.mgmt.media.operations.my_class_operations (import from azure.mgmt.media.operations works like before)
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 1.1.1 (2018-03-26)
 ++++++++++++++++++
 

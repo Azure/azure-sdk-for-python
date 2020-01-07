@@ -34,6 +34,7 @@ import platform
 import xml.etree.ElementTree as ET
 import types
 import re
+import uuid
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
 from six.moves import urllib
@@ -104,6 +105,9 @@ class HeadersPolicy(SansIOHTTPPolicy):
         if additional_headers:
             request.http_request.headers.update(additional_headers)
 
+class _Unset(object):
+    pass
+
 class RequestIdPolicy(SansIOHTTPPolicy):
     """A simple policy that sets the given request id in the header.
 
@@ -111,7 +115,8 @@ class RequestIdPolicy(SansIOHTTPPolicy):
     configured up front, where the request id will be applied to all outgoing
     operations, and additional request id can also be set dynamically per operation.
 
-    :param dict base_headers: Headers to send with the request.
+    :keyword str request_id: The request id to be added into header.
+    :keyword bool auto_request_id: Auto generates a unique request ID per call if true which is by default.
 
     .. admonition:: Example:
 
@@ -124,7 +129,8 @@ class RequestIdPolicy(SansIOHTTPPolicy):
     """
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
         # type: (dict) -> None
-        self._request_id = kwargs.pop('request_id', None)
+        self._request_id = kwargs.pop('request_id', _Unset)
+        self._auto_request_id = kwargs.pop('auto_request_id', True)
 
     def set_request_id(self, value):
         """Add the request id to the configuration to be applied to all requests.
@@ -140,9 +146,15 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request_id = request.context.options.pop('request_id', self._request_id)
-        if request_id:
-            header = {"x-ms-client-request-id":request_id}
+        request_id = unset = object()
+        if 'request_id' in request.context.options:
+            request_id = request.context.options.pop('request_id')
+        elif self._request_id is not _Unset:
+            request_id = self._request_id   # type: ignore
+        elif self._auto_request_id:
+            request_id = str(uuid.uuid1())  # type: ignore
+        if request_id is not unset:
+            header = {"x-ms-client-request-id": request_id}
             request.http_request.headers.update(header)
 
 class UserAgentPolicy(SansIOHTTPPolicy):

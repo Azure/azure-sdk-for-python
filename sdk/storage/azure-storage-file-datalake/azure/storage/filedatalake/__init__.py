@@ -33,6 +33,7 @@ from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import StorageErrorCode
 from ._version import VERSION
 
+__version__ = VERSION
 
 __all__ = [
     'DataLakeServiceClient',

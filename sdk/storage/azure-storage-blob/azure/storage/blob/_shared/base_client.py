@@ -38,7 +38,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
+from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
@@ -112,6 +112,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def __exit__(self, *args):
         self._client.__exit__(*args)
+
+    def close(self):
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        self._client.close()
 
     @property
     def url(self):
@@ -209,8 +215,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if kwargs.get("_pipeline"):
             return config, kwargs["_pipeline"]
         config.transport = kwargs.get("transport")  # type: ignore
-        if "connection_timeout" not in kwargs:
-            kwargs["connection_timeout"] = DEFAULT_SOCKET_TIMEOUT
+        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
+        kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
         policies = [
@@ -318,7 +324,7 @@ def format_shared_key_credential(account, credential):
 def parse_connection_str(conn_str, credential, service):
     conn_str = conn_str.rstrip(";")
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if  any(len(tup) != 2 for tup in conn_settings):
+    if any(len(tup) != 2 for tup in conn_settings):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict(conn_settings)
     endpoints = _SERVICE_PARAMS[service]

@@ -10,8 +10,11 @@ from opencensus.trace.tracer import Tracer
 from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
+from opencensus.trace import config_integration as _config_integration
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
+
+from ._version import VERSION
 
 try:
     from typing import TYPE_CHECKING
@@ -23,7 +26,11 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-__version__ = "1.0.0b4"
+
+__version__ = VERSION
+
+_config_integration.trace_integrations(['threading'])
+
 
 class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
@@ -72,17 +79,20 @@ class OpenCensusSpan(HttpSpanMixin, object):
             None
         )
 
+    _KIND_MAPPING = {
+        SpanKind.CLIENT: OpenCensusSpanKind.CLIENT,
+        SpanKind.PRODUCER: OpenCensusSpanKind.CLIENT,  # No producer in opencensus
+        SpanKind.SERVER: OpenCensusSpanKind.SERVER,
+        SpanKind.CONSUMER: OpenCensusSpanKind.CLIENT,  # No consumer in opencensus
+        SpanKind.INTERNAL: OpenCensusSpanKind.UNSPECIFIED,  # No internal in opencensus
+        SpanKind.UNSPECIFIED: OpenCensusSpanKind.UNSPECIFIED,
+    }
 
     @kind.setter
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
-        kind = (
-            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
-            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
-            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
-            None
-        )
+        kind = self._KIND_MAPPING.get(value)
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
         self.span_instance.span_kind = kind

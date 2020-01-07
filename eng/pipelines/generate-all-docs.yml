@@ -28,7 +28,7 @@ jobs:
           versionSpec: '$(PythonVersion)'
 
       - script: |
-          pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
+          pip install -r eng/ci_tools.txt
         displayName: 'Prep Environment'
 
       - task: PythonScript@0
@@ -41,5 +41,5 @@ jobs:
 
       - task: PublishPipelineArtifact@0
         inputs:
-          artifactName: 'docs' 
+          artifactName: 'documentation' 
           targetPath: '$(Build.SourcesDirectory)/_docs'

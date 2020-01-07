@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_search_api import ImageSearchAPI
-from .version import VERSION
+from ._configuration import ImageSearchClientConfiguration
+from ._image_search_client import ImageSearchClient
+__all__ = ['ImageSearchClient', 'ImageSearchClientConfiguration']
 
-__all__ = ['ImageSearchAPI']
+from .version import VERSION
 
 __version__ = VERSION
 

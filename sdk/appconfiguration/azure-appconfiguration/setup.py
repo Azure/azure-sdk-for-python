@@ -51,6 +51,7 @@ with open('HISTORY.md', encoding='utf-8') as f:
 
 exclude_packages = [
         'tests',
+        'tests.*',
         'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',

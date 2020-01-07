@@ -7,11 +7,45 @@ import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
+from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
-from helpers import urlsafeb64_decode, mock_response
+
+from helpers import async_validating_transport, build_aad_response, urlsafeb64_decode, mock_response, Request
+from test_certificate_credential import validate_jwt
+
 import pytest
 
+
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
+
+
+@pytest.mark.asyncio
+async def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    credential = CertificateCredential(
+        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=Mock(send=send)
+    )
+
+    await credential.get_token("scope")
+
+    assert policy.on_request.called
+
+
+@pytest.mark.asyncio
+async def test_user_agent():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, transport=transport)
+
+    await credential.get_token("scope")
 
 
 @pytest.mark.asyncio
@@ -39,21 +73,20 @@ async def test_request_url():
 async def test_request_body():
     access_token = "***"
     authority = "authority.com"
+    client_id = "client-id"
+    expected_scope = "scope"
     tenant_id = "tenant"
 
-    def validate_url(url):
-        scheme, netloc, path, _, _, _ = urlparse(url)
-        assert scheme == "https"
-        assert netloc == authority
-        assert path.startswith("/" + tenant_id)
-
     async def mock_send(request, **kwargs):
-        jwt = request.body["client_assertion"]
-        header, payload, signature = (urlsafeb64_decode(s) for s in jwt.split("."))
-        claims = json.loads(payload.decode("utf-8"))
-        validate_url(claims["aud"])
+        assert request.body["grant_type"] == "client_credentials"
+        assert request.body["scope"] == expected_scope
+
+        with open(CERT_PATH, "rb") as cert_file:
+            validate_jwt(request, client_id, cert_file.read())
+
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
-    cred = CertificateCredential(tenant_id, "client_id", CERT_PATH, transport=Mock(send=mock_send), authority=authority)
+    cred = CertificateCredential(tenant_id, client_id, CERT_PATH, transport=Mock(send=mock_send), authority=authority)
     token = await cred.get_token("scope")
+
     assert token.token == access_token

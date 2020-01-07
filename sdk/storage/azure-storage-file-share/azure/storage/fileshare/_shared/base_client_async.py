@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
+from .constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
@@ -58,6 +58,12 @@ class AsyncStorageAccountHostsMixin(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
+    async def close(self):
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        await self._client.close()
+
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
@@ -71,8 +77,8 @@ class AsyncStorageAccountHostsMixin(object):
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
         config.transport = kwargs.get('transport')  # type: ignore
-        if 'connection_timeout' not in kwargs:
-            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
+        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
+        kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport

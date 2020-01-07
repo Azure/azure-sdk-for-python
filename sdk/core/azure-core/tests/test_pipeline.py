@@ -49,13 +49,13 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
-    RedirectPolicy
+    RedirectPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
-    RequestsTransport
+    RequestsTransport,
 )
 
 from azure.core.exceptions import AzureError
@@ -119,7 +119,7 @@ class TestRequestsTransport(unittest.TestCase):
         # by the retry policy.
         with pytest.raises(AzureError):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-                response = pipeline.run(request, connection_timeout=0.000001)
+                response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
 
     def test_basic_requests_separate_session(self):
 
@@ -138,7 +138,6 @@ class TestRequestsTransport(unittest.TestCase):
         transport.close()
         assert transport.session
         transport.session.close()
-
 
 class TestClientPipelineURLFormatting(unittest.TestCase):
 

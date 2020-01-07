@@ -4,8 +4,10 @@
 # ------------------------------------
 import base64
 import json
-import six
 import time
+
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+import six
 
 try:
     from unittest import mock
@@ -56,8 +58,16 @@ def build_aad_response(  # simulate a response from AAD
 
 class Request:
     def __init__(
-        self, url=None, url_substring=None, method=None, required_headers={}, required_data={}, required_params={}
+        self,
+        url=None,
+        authority=None,
+        url_substring=None,
+        method=None,
+        required_headers={},
+        required_data={},
+        required_params={},
     ):
+        self.authority = authority
         self.method = method
         self.url = url
         self.url_substring = url_substring
@@ -66,8 +76,15 @@ class Request:
         self.required_params = required_params
 
     def assert_matches(self, request):
+        # TODO: rewrite this to report all mismatches, and use the parsed url
+        url = six.moves.urllib_parse.urlparse(request.url)
+
         if self.url:
             assert request.url.split("?")[0] == self.url
+        if self.authority:
+            assert url.netloc == self.authority, "Expected authority '{}', actual was '{}".format(
+                self.authority, url.netloc
+            )
         if self.url_substring:
             assert self.url_substring in request.url
         if self.method:
@@ -75,7 +92,14 @@ class Request:
         for param, expected_value in self.required_params.items():
             assert request.query.get(param) == expected_value
         for header, expected_value in self.required_headers.items():
-            assert request.headers.get(header) == expected_value
+            actual = request.headers.get(header)
+            if header.lower() == "user-agent":
+                # UserAgentPolicy appends the value of $AZURE_HTTP_USER_AGENT, which is set in pipelines.
+                assert expected_value in actual
+            else:
+                assert actual == expected_value, "expected header '{}: {}', actual value was '{}'".format(
+                    header, expected_value, actual
+                )
         for field, expected_value in self.required_data.items():
             assert request.body.get(field) == expected_value
 
@@ -87,6 +111,11 @@ def mock_response(status_code=200, headers={}, json_payload=None):
         response.headers["content-type"] = "application/json"
         response.content_type = "application/json"
     return response
+
+
+def get_discovery_response(endpoint="https://a/b"):
+    aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
+    return mock_response(json_payload={name: endpoint for name in aad_metadata_endpoint_names})
 
 
 def validating_transport(requests, responses):
