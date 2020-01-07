@@ -10,6 +10,7 @@ import webbrowser
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
+from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, PublicClientCredential, wrap_exceptions
 
@@ -38,7 +39,6 @@ class InteractiveBrowserCredential(PublicClientCredential):
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, the Azure CLI's ID will be used.
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-
     """
 
     def __init__(self, **kwargs):
@@ -60,7 +60,9 @@ class InteractiveBrowserCredential(PublicClientCredential):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: the credential is unable to start an HTTP server on
+          localhost, or is unable to open a browser
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed
         """
         return self._get_token_from_cache(scopes, **kwargs) or self._get_token_by_auth_code(scopes, **kwargs)
 
@@ -88,7 +90,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
                 continue  # keep looking for an open port
 
         if not redirect_uri:
-            raise ClientAuthenticationError(message="Couldn't start an HTTP server on localhost")
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server on localhost")
 
         # get the url the user must visit to authenticate
         scopes = list(scopes)  # type: ignore
@@ -100,7 +102,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
 
         # open browser to that url
         if not webbrowser.open(auth_url):
-            raise ClientAuthenticationError(message="Failed to open a browser")
+            raise CredentialUnavailableError(message="Failed to open a browser")
 
         # block until the server times out or receives the post-authentication redirect
         response = server.wait_for_redirect()
