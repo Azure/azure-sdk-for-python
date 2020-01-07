@@ -148,7 +148,7 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 
-event_data_batch = client.create_batch(max_size_in_bytes=10000)
+event_data_batch = client.create_batch()
 can_add = True
 while can_add:
     try:
@@ -200,7 +200,7 @@ consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
 async def create_batch(client):
-    event_data_batch = await client.create_batch(max_size_in_bytes=10000)
+    event_data_batch = await client.create_batch()
     can_add = True
     while can_add:
         try:
@@ -284,7 +284,7 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
-container_name = '<<STRING FOR THE BLOB NAME>>'
+container_name = '<<STRING FOR THE BLOB CONTAINER NAME>>'
 
 async def on_event(partition_context, event):
     # do something
