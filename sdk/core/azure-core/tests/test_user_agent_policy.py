@@ -11,7 +11,7 @@ def test_user_agent_policy():
     user_agent = UserAgentPolicy(base_user_agent='foo')
     assert user_agent._user_agent == 'foo'
 
-    user_agent = UserAgentPolicy(base_user_agent='foo', user_agent='bar')
+    user_agent = UserAgentPolicy(base_user_agent='foo', user_agent='bar', user_agent_use_env=False)
     assert user_agent._user_agent == 'bar foo'
 
     request = HttpRequest('GET', 'http://127.0.0.1/')
