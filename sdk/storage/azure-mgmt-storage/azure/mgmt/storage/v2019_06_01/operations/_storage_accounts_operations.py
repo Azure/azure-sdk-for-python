@@ -141,9 +141,7 @@ class StorageAccountsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -186,7 +184,8 @@ class StorageAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.storage.v2019_06_01.models.StorageAccount]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.storage.v2019_06_01.models.StorageAccount]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -298,7 +297,8 @@ class StorageAccountsOperations(object):
         :return: StorageAccount or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.StorageAccount or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_properties.metadata['url']
@@ -330,9 +330,7 @@ class StorageAccountsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -376,7 +374,8 @@ class StorageAccountsOperations(object):
         :return: StorageAccount or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.StorageAccount or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -410,9 +409,7 @@ class StorageAccountsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -661,7 +658,8 @@ class StorageAccountsOperations(object):
         :rtype:
          ~azure.mgmt.storage.v2019_06_01.models.StorageAccountListKeysResult or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         regenerate_key1 = models.StorageAccountRegenerateKeyParameters(key_name=key_name)
 
@@ -697,9 +695,7 @@ class StorageAccountsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

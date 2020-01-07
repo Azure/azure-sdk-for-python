@@ -61,7 +61,8 @@ class ManagementPoliciesOperations(object):
         :return: ManagementPolicy or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicy or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -92,9 +93,7 @@ class ManagementPoliciesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -131,7 +130,8 @@ class ManagementPoliciesOperations(object):
         :return: ManagementPolicy or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicy or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
         properties = models.ManagementPolicy(policy=policy)
 
@@ -168,9 +168,7 @@ class ManagementPoliciesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
