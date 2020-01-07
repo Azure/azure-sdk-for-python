@@ -85,6 +85,9 @@ consumer_client = EventHubConsumerClient(host, eventhub_name, consumer_group, cr
 [TokenCredential](../../core/azure-core/azure/core/credentials.py)
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
+- When using Azure Active Directory, your principal must be assigned a role which allows access to Event Hubs, such as the
+Azure Event Hubs Data Owner role. For more information about using Azure Active Directory authorization with Event Hubs,
+please refer to [the associated documentation](https://docs.microsoft.com/azure/event-hubs/authorize-access-azure-active-directory).
 
 ## Key concepts
 
