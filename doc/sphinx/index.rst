@@ -59,13 +59,6 @@ If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
 
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`search`
-
 .. toctree::
   :glob:
   :caption: User Documentation
