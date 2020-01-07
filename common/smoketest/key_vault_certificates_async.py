@@ -29,7 +29,7 @@ class KeyVaultCertificates:
     async def get_certificate(self):
         print("Getting a certificate...")
         certificate = await self.certificate_client.get_certificate(certificate_name=self.certificate_name)
-        print(f"\tdone, certificate: {certificate.name}.")
+        print("\tdone, certificate: {}.".format(certificate.name))
 
     async def delete_certificate(self):
         print("Deleting a certificate...")

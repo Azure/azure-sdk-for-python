@@ -22,16 +22,18 @@ class KeyVaultCertificates:
         self.certificate_name = "cert-name-" + uuid.uuid1().hex
 
     def create_certificate(self):
+        print("Creating certificate (name: {})".format(self.certificate_name))
         create_poller = self.certificate_client.begin_create_certificate(
             certificate_name=self.certificate_name,
             policy=CertificatePolicy.get_default())
-        create_poller.wait()
+        print("\twaiting...")
+        create_poller.result()
         print("\tdone")
 
     def get_certificate(self):
         print("Getting a certificate...")
         certificate = self.certificate_client.get_certificate(certificate_name=self.certificate_name)
-        print(f"\tdone, certificate: {certificate.name}.")
+        print("\tdone, certificate: {}.".format(certificate.name))
 
     def delete_certificate(self):
         print("Deleting a certificate...")

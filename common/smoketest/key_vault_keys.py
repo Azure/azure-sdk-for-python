@@ -29,7 +29,7 @@ class KeyVaultKeys:
     def get_key(self):
         print("Getting a key...")
         key = self.key_client.get_key(name=self.key_name)
-        print(f"\tdone, key: {key.name}.")
+        print("\tdone, key: {}.".format(key.name))
 
     def delete_key(self):
         print("Deleting a key...")

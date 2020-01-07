@@ -1,4 +1,5 @@
-azure-identity
+azure-core==1.1.1
+azure-identity==1.1.0
 azure-cosmos==4.0.0b6
 azure-eventhub==5.0.0b6
 azure-keyvault-certificates==4.0.0b7
