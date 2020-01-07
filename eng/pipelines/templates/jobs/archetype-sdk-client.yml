@@ -183,3 +183,21 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunRegression'
+    condition: and(succeededOrFailed(), eq(variables['Run.Regression'], 'true'))
+    displayName: 'Run Regression'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+    - template: ../steps/test_regression.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

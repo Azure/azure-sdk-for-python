@@ -1,0 +1,28 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+  BuildStagingDirectory: $(Build.ArtifactStagingDirectory)
+  
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7'
+    inputs:
+     versionSpec: '3.7'
+
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'artifacts' 
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - script: |
+      pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+
+  - task: PythonScript@0
+    displayName: 'Run Regression'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/test_regression.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        --service="${{ parameters.ServiceDirectory }}"
+        --whl-dir="${{ parameters.BuildStagingDirectory }}"

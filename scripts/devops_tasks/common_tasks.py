@@ -20,14 +20,16 @@ import textwrap
 import io
 import re
 import pdb
-
-# ssumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements
+from enum import Enum
+# Assumes the presence of setuptools
+from pkg_resources import parse_version, parse_requirements, Requirement
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
+DEV_REQ_FILE = "dev_requirements.txt"
+NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -46,6 +48,25 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
 NON_MANAGEMENT_CODE_5_ALLOWED = [
     "azure-keyvault"
 ]
+META_PACKAGES = [
+    "azure",
+    "azure-mgmt"
+]
+TRACK1_CLIENT_PACKAGES = [
+    "azure-keyvault",
+    "azure-common",
+    "azure-servicefabric",
+    "azure-cognitiveservices"
+]
+
+class OmmitType(int, Enum):
+    Default = 0,
+    Build = 1,
+    Docs = 2,
+    Test = 3,
+    Release = 4,
+    Regression = 5
+
 
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
@@ -125,7 +146,11 @@ def parse_setup(setup_path):
     version = kwargs['version']
     name = kwargs['name']
 
-    return name, version, python_requires
+    requires = []
+    if 'install_requires' in kwargs:
+        requires = kwargs['install_requires']
+
+    return name, version, python_requires, requires
 
 def parse_requirements_file(file_location):
     with open(file_location, 'r') as f:
@@ -134,7 +159,7 @@ def parse_requirements_file(file_location):
     return dict((req.name, req) for req in parse_requirements(reqs))
 
 def parse_setup_requires(setup_path):    
-    _, _, python_requires = parse_setup(setup_path)
+    _, _, python_requires, _ = parse_setup(setup_path)
 
     return python_requires
 
@@ -154,7 +179,7 @@ def filter_for_compatibility(package_set):
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
 # for handling targeting of release packages
-def process_glob_string(glob_string, target_root_dir, additional_contains_filter=""):
+def process_glob_string(glob_string, target_root_dir, additional_contains_filter="", ommit_type = OmmitType.Default):
     if glob_string:
         individual_globs = glob_string.split(",")
     else:
@@ -177,7 +202,7 @@ def process_glob_string(glob_string, target_root_dir, additional_contains_filter
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
-        allowed_package_set = remove_omitted_packages(collected_directories)
+        allowed_package_set = remove_omitted_packages(collected_directories, ommit_type)
         logging.info("Target packages after filtering by omission list: {}".format(allowed_package_set))
 
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
@@ -185,12 +210,26 @@ def process_glob_string(glob_string, target_root_dir, additional_contains_filter
 
         return sorted(pkg_set_ci_filtered)
 
-def remove_omitted_packages(collected_directories):
-    return [
+def remove_omitted_packages(collected_directories, ommit_type = OmmitType.Default):
+
+    packages = [
         package_dir
         for package_dir in collected_directories
         if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
     ]
+
+    ommit_regression = lambda x: "nspkg" not in x and "mgmt" not in x and os.path.basename(x) not in META_PACKAGES and os.path.basename(x) not in TRACK1_CLIENT_PACKAGES
+    ommit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES and os.path.basename(x) not in TRACK1_CLIENT_PACKAGES
+    ommit_build = lambda x: os.path.basename(x) not in META_PACKAGES
+
+    ommit_func = ommit_build
+    if ommit_type == OmmitType.Regression:
+        ommit_func = ommit_regression
+    elif ommit_type == OmmitType.Docs:
+        ommit_func = ommit_docs
+
+    packages = list(filter(ommit_func, packages))
+    return packages
 
 def run_check_call(
     command_array,
@@ -250,3 +289,50 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
         return True
     else:
         return False
+
+# This function parses requirement and return package name and specifier
+def parse_require(req):
+    req_object = Requirement.parse(req)
+    pkg_name = req_object.key
+    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
+    return [pkg_name, spec]
+
+
+# This method installs package from a pre-built whl
+def install_package_from_whl(package_name, whl_directory, working_dir):
+    if not os.path.exists(whl_directory):
+        logging.error("Whl directory is incorrect")
+        exit(1)
+
+    logging.info("Searching whl for package {}".format(package_name))
+    whl_name = "{}*.whl".format(package_name.replace("-", "_"))
+    paths = glob.glob(os.path.join(whl_directory, whl_name))
+    if not paths:
+        logging.error("whl is not found in whl directory {0} for package {1}".format(whl_directory, package_name))
+        exit(1)
+    
+    package_whl_path = paths[0]
+    commands = [sys.executable, "-m", "pip", "install", package_whl_path]
+    run_check_call(commands, working_dir)
+    logging.info("Installed package {}".format(package_name))
+
+
+def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
+    # This method returns list of requirements from dev_requirements by filtering out packages in given list
+    dev_req_path = os.path.join(pkg_root_path, DEV_REQ_FILE)
+    requirements = []
+    with open(dev_req_path, "r") as dev_req_file:
+        requirements = dev_req_file.readlines()
+
+    # filter any package given in excluded list
+    requirements = [req for req in requirements if os.path.basename(req.replace("\n", "")) not in packages_to_exclude]   
+
+    logging.info("Filtered dev requirements: {}".format(requirements))
+    # create new dev requirements file with different name for filtered requirements
+    new_dev_req_path = os.path.join(dest_dir, NEW_DEV_REQ_FILE)
+    with open(new_dev_req_path, "w") as dev_req_file:
+        dev_req_file.writelines(requirements)
+
+    return new_dev_req_path
+
+
