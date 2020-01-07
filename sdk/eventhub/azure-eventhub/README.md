@@ -284,7 +284,7 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
-container_name = '<<STRING FOR THE BLOB CONTAINER NAME>>'
+container_name = '<<NAME OF THE BLOB CONTAINER>>'
 
 async def on_event(partition_context, event):
     # do something

@@ -268,7 +268,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
         :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
-         default the value is determined by the Event Hubs service.
+         default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:
