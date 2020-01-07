@@ -9,6 +9,7 @@ import base64
 import os
 import unittest
 import asyncio
+import uuid
 
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
@@ -27,7 +28,7 @@ from filetestcase import (
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
+FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 
 
 # ------------------------------------------------------------------------------

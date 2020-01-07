@@ -227,6 +227,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--tenvparallel",
+        default=False,
+        help=("Run individual tox env for each package in parallel."),
+        action="store_true",
+    )
+
+    parser.add_argument(
         "--service",
         help=(
             "Name of service directory (under sdk/) to test."

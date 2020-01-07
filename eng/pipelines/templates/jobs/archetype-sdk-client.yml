@@ -117,6 +117,7 @@ jobs:
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: 'whl,sdist'
+        ToxEnvParallel: '--tenvparallel'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
