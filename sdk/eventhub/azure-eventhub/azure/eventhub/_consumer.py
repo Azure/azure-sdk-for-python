@@ -197,32 +197,15 @@ class EventHubConsumer(
     def receive(self):
         # type: () -> None
         retried_times = 0
-        last_exception = None
-        max_retries = (
-            self._client._config.max_retries  # pylint:disable=protected-access
-        )
 
-        while retried_times <= max_retries:
-            try:
-                if self._open():
-                    self._handler.do_work()  # type: ignore
-                return
-            except Exception as exception:  # pylint: disable=broad-except
-                if (
-                    isinstance(exception, uamqp.errors.LinkDetach)
-                    and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
-                ):
-                    raise self._handle_exception(exception)
-                if not self.running:  # exit by close
-                    return
-                if self._last_received_event:
-                    self._offset = self._last_received_event.offset
-                last_exception = self._handle_exception(exception)
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        self._name,
-                        last_exception,
-                    )
-                    raise last_exception
+        try:
+            if self._open():
+                self._handler.do_work()  # type: ignore
+            return
+        except Exception as exception:  # pylint: disable=broad-except
+            _LOGGER.info(
+                "%r receive() got an exception: %r.",
+                self._name,
+                exception,
+            )
+            raise self._handle_exception(exception)
