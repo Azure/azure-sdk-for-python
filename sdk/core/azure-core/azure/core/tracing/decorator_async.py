@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from typing import Callable, Dict, Optional, Any
 
 
-def distributed_trace_async(_func=None, name_of_span=None, tracing_attributes=None):
+def distributed_trace_async(_func=None, name_of_span=None, *, tracing_attributes=None):
     # type: (Callable, Optional[str], Optional[Dict[str, Any]]) -> Callable
     """Decorator to apply to async function to get traced automatically.
 

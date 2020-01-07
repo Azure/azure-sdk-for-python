@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from typing import Callable, Dict, Optional, Any, cast
 
 
-def distributed_trace(_func=None, name_of_span=None, tracing_attributes=None):
+def distributed_trace(_func=None, name_of_span=None, **kwargs):
     # type: (Callable, Optional[str], Optional[Dict[str, Any]]) -> Callable
     """Decorator to apply to function to get traced automatically.
 
@@ -48,6 +48,7 @@ def distributed_trace(_func=None, name_of_span=None, tracing_attributes=None):
     :param callable func: A function to decorate
     :param str name_of_span: The span name to replace func name if necessary
     """
+    tracing_attributes = kwargs.get('tracing_attributes')
     # https://github.com/python/mypy/issues/2608
     if _func is None:
         return functools.partial(
