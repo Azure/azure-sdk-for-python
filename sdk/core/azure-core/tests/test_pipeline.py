@@ -107,6 +107,19 @@ class TestRequestsTransport(unittest.TestCase):
         assert pipeline._transport.session is None
         assert response.http_response.status_code == 200
 
+    def test_basic_options_requests(self):
+
+        request = HttpRequest("OPTIONS", "https://httpbin.org")
+        policies = [
+            UserAgentPolicy("myusergant"),
+            RedirectPolicy()
+        ]
+        with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+            response = pipeline.run(request)
+
+        assert pipeline._transport.session is None
+        assert response.http_response.status_code == 200
+
     def test_requests_socket_timeout(self):
         conf = Configuration()
         request = HttpRequest("GET", "https://bing.com")
