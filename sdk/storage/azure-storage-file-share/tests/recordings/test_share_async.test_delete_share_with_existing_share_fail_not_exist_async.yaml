@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:36 GMT
+      - Tue, 07 Jan 2020 19:39:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -13,11 +13,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:0c6c61f7-101a-0054-36d9-c17f87000000\nTime:2020-01-03T01:59:36.3534583Z</Message></Error>"
+        specified share does not exist.\nRequestId:1c386e52-001a-0001-4b92-c569fa000000\nTime:2020-01-07T19:39:34.4509540Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Fri, 03 Jan 2020 01:59:35 GMT
+      date: Tue, 07 Jan 2020 19:39:34 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
       x-ms-version: '2019-02-02'
@@ -28,8 +28,43 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragejabiue52veq7.file.core.windows.net
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
         - /share933f1eed
         - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 07 Jan 2020 19:39:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type: application/xml
+      date: Tue, 07 Jan 2020 19:39:34 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - /
+        - include=snapshots&comp=list
         - ''
 version: 1

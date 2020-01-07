@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:42 GMT
+      - Tue, 07 Jan 2020 19:39:43 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -21,9 +21,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:59:41 GMT
-      etag: '"0x8D78FF09932E45C"'
-      last-modified: Fri, 03 Jan 2020 01:59:42 GMT
+      date: Tue, 07 Jan 2020 19:39:42 GMT
+      etag: '"0x8D793A95812F7FF"'
+      last-modified: Tue, 07 Jan 2020 19:39:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -33,7 +33,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragejabiue52veq7.file.core.windows.net
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
         - /shareba41919
         - restype=share
         - ''
@@ -45,7 +45,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:42 GMT
+      - Tue, 07 Jan 2020 19:39:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -53,45 +53,12 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share1e691d71</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:39 GMT</Last-Modified><Etag>\"0x8D78FF097D44F1B\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share20df1504</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF09500CFB6\"</Etag><Quota>1</Quota></Properties><Metadata
-        /></Share><Share><Name>share507a1060</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:33 GMT</Last-Modified><Etag>\"0x8D78FF094544439\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share60a5161b</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF094E1164F\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share><Share><Name>share635f1636</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF0972BA421\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share746821bb</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF094BBF801\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share78cd16a6</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF0955FF189\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share7bd421e4</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:39 GMT</Last-Modified><Etag>\"0x8D78FF0976C3735\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share851111bc</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:37 GMT</Last-Modified><Etag>\"0x8D78FF0965A69BE\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share852b11ba</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF097080B7B\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>share8ecc1b3e</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:40 GMT</Last-Modified><Etag>\"0x8D78FF098584187\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>sharea8741778</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:35 GMT</Last-Modified><Etag>\"0x8D78FF09520E9AC\"</Etag><Quota>5120</Quota></Properties><Metadata><test1>foo</test1><test2>bar</test2></Metadata></Share><Share><Name>shareba41919</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:42 GMT</Last-Modified><Etag>\"0x8D78FF09932E45C\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share><Share><Name>sharebaf812cc</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:37 GMT</Last-Modified><Etag>\"0x8D78FF096A3890C\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share><Share><Name>sharec6fa1c20</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:41 GMT</Last-Modified><Etag>\"0x8D78FF098B01759\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>sharee11d13a6</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF09472A4B2\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>shareeec718b6</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:38 GMT</Last-Modified><Etag>\"0x8D78FF096CFF79C\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share><Share><Name>sharef1514c2</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:41 GMT</Last-Modified><Etag>\"0x8D78FF098FD5F10\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>sharef70c142f</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:34 GMT</Last-Modified><Etag>\"0x8D78FF0948FDF5D\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share><Share><Name>sharef8391431</Name><Properties><Last-Modified>Fri,
-        03 Jan 2020 01:59:33 GMT</Last-Modified><Etag>\"0x8D78FF0941C81B3\"</Etag><Quota>5120</Quota></Properties><Metadata
-        /></Share></Shares><NextMarker /></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>shareba41919</Name><Properties><Last-Modified>Tue,
+        07 Jan 2020 19:39:43 GMT</Last-Modified><Etag>\"0x8D793A95812F7FF\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Fri, 03 Jan 2020 01:59:41 GMT
+      date: Tue, 07 Jan 2020 19:39:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -102,8 +69,76 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragejabiue52veq7.file.core.windows.net
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
         - /
         - include=metadata&comp=list
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 07 Jan 2020 19:39:43 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>shareba41919</Name><Properties><Last-Modified>Tue,
+        07 Jan 2020 19:39:43 GMT</Last-Modified><Etag>\"0x8D793A95812F7FF\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type: application/xml
+      date: Tue, 07 Jan 2020 19:39:42 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - /
+        - include=snapshots&comp=list
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 07 Jan 2020 19:39:43 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/shareba41919?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 07 Jan 2020 19:39:42 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - /shareba41919
+        - restype=share
         - ''
 version: 1

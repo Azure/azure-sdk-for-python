@@ -1233,7 +1233,6 @@ class StorageGetFileTest(FileTestCase):
         # Assert
         self.assertIsNone(file_content.properties.content_settings.content_md5)
 
-        self._setup(storage_account, storage_account_key)
         props = file_client.get_file_properties()
         props.content_settings.content_md5 = b'MDAwMDAwMDA='
         file_client.set_http_headers(props.content_settings)

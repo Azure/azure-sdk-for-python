@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:59:47 GMT
+      - Tue, 07 Jan 2020 19:39:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -13,11 +13,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:72ebb280-501a-0071-23d9-c1e734000000\nTime:2020-01-03T01:59:47.2676718Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:d3732409-f01a-005b-5e92-c56f7b000000\nTime:2020-01-07T19:39:52.2624480Z</Message></Error>"
     headers:
       content-length: '243'
       content-type: application/xml
-      date: Fri, 03 Jan 2020 01:59:46 GMT
+      date: Tue, 07 Jan 2020 19:39:51 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidResourceName
       x-ms-version: '2019-02-02'
@@ -28,8 +28,43 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragejabiue52veq7.file.core.windows.net
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
         - /%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
         - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 07 Jan 2020 19:39:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type: application/xml
+      date: Tue, 07 Jan 2020 19:39:51 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - /
+        - include=snapshots&comp=list
         - ''
 version: 1

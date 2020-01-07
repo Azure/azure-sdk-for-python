@@ -73,6 +73,12 @@ class StorageShareTest(AsyncStorageTestCase):
     #             pass
     #     return super(StorageShareTest, self).tearDown()
 
+    async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
+        async for l in self.fsc.list_shares(include_snapshots=True):
+            try:
+                await self.fsc.delete_share(l.name, delete_snapshots=True)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)
@@ -97,6 +103,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -113,6 +120,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(snapshot['snapshot'])
         self.assertIsNotNone(snapshot['etag'])
         self.assertIsNotNone(snapshot['last_modified'])
+        await self._delete_shares(share.share_name)
 
 
     @GlobalStorageAccountPreparer()
@@ -142,6 +150,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(snapshot['last_modified'])
         self.assertEqual(share_props.metadata, metadata)
         self.assertEqual(snapshot_props.metadata, metadata2)
+        await self._delete_shares(share.share_name)
 
 
     @GlobalStorageAccountPreparer()
@@ -158,6 +167,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         deleted = await share.delete_share(delete_snapshots=True)
         self.assertIsNone(deleted)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -180,6 +190,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         deleted = await snapshot_client.delete_share()
         self.assertIsNone(deleted)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -192,6 +203,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -206,6 +218,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -221,6 +234,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(created)
         props = await client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -235,6 +249,7 @@ class StorageShareTest(AsyncStorageTestCase):
         props = await client.get_share_properties()
         self.assertTrue(created)
         self.assertEqual(props.quota, 1)
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -247,6 +262,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(exists)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -259,6 +275,7 @@ class StorageShareTest(AsyncStorageTestCase):
             await share.get_share_properties()
 
         # Assert
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -273,6 +290,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(exists)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -287,6 +305,7 @@ class StorageShareTest(AsyncStorageTestCase):
             await snapshot_client.get_share_properties()
 
         # Assert
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -301,6 +320,7 @@ class StorageShareTest(AsyncStorageTestCase):
             await client.create_share()
 
             # Assert
+        await self._delete_shares(share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -317,6 +337,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertGreaterEqual(len(shares), 1)
         self.assertIsNotNone(shares[0])
         self.assertNamedItemInContainer(shares, share.share_name)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -339,6 +360,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(all_shares, share.share_name)
         self.assertNamedItemInContainer(all_shares, snapshot1['snapshot'])
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -357,6 +379,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(shares[0])
         self.assertEqual(shares[0].name, share.share_name)
         self.assertIsNone(shares[0].metadata)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -377,6 +400,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(shares[0])
         self.assertNamedItemInContainer(shares, share.share_name)
         self.assertDictEqual(shares[0].metadata, metadata)
+
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -426,6 +451,7 @@ class StorageShareTest(AsyncStorageTestCase):
         props = await share.get_share_properties()
         md = props.metadata
         self.assertDictEqual(md, metadata)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -441,6 +467,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(created)
         props = await client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -458,6 +485,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertTrue(created)
         props = await snapshot_client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -472,6 +500,7 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertEqual(props.quota, 1)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -485,6 +514,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertIsNone(deleted)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -498,6 +528,7 @@ class StorageShareTest(AsyncStorageTestCase):
                 await client.delete_share()
 
             log_as_str = log_captured.getvalue()
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -512,6 +543,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
             log_as_str = log_captured.getvalue()
             self.assertTrue('ERROR' not in log_as_str)
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -525,6 +557,7 @@ class StorageShareTest(AsyncStorageTestCase):
                 await client.delete_share()
 
             log_as_str = log_captured.getvalue()
+        await self._delete_shares(client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -538,6 +571,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertEqual(share_usage, 0)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -552,6 +586,7 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         acl = await share.get_share_access_policy()
         self.assertIsNotNone(acl)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -567,6 +602,7 @@ class StorageShareTest(AsyncStorageTestCase):
         acl = await share.get_share_access_policy()
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -590,6 +626,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl['signed_identifiers']), 1)
         self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -610,6 +647,7 @@ class StorageShareTest(AsyncStorageTestCase):
             str(e.exception),
             'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         )
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -636,6 +674,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'dir1')
         self.assertNamedItemInContainer(resp, 'dir2')
         self.assertNamedItemInContainer(resp, 'file1')
+        await self._delete_shares(share)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -665,6 +704,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp[0])
         self.assertNamedItemInContainer(resp, 'dir1')
         self.assertNamedItemInContainer(resp, 'dir2')
+        await self._delete_shares(share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -689,6 +729,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(len(results), 2)
         self.assertNamedItemInContainer(results, 'dir1')
         self.assertNamedItemInContainer(results, 'filea1')
+        await self._delete_shares(share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -723,6 +764,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(result2, 'filea3')
         self.assertNamedItemInContainer(result2, 'fileb1')
         self.assertEqual(generator2.continuation_token, None)
+        await self._delete_shares(share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -749,6 +791,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp[0])
         self.assertNamedItemInContainer(resp, 'pref_file2')
         self.assertNamedItemInContainer(resp, 'pref_dir3')
+        await self._delete_shares(share)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -786,6 +829,7 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
+        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -805,6 +849,7 @@ class StorageShareTest(AsyncStorageTestCase):
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
         self.assertEqual(permission_key, permission_key2)
+        await self._delete_shares(share_client.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -824,6 +869,7 @@ class StorageShareTest(AsyncStorageTestCase):
                 assert transport.session is not None
             await fsc.get_service_properties()
             assert transport.session is not None
+        await self._delete_shares(share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -847,4 +893,5 @@ class StorageShareTest(AsyncStorageTestCase):
         async for d in share.list_directories_and_files():
             resp.append(d)
         self.assertEqual(len(resp), 2)
+        await self._delete_shares(share.share_name)
 

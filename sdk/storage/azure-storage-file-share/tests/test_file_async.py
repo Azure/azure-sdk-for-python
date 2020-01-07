@@ -996,6 +996,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     async def test_abort_copy_file_async(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key, rmt.name, rmt_key)
         data = b'12345678' * 1024 * 1024
+        await self._setup_share(storage_account, storage_account_key)
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
         sas_token = generate_file_sas(
