@@ -4,11 +4,11 @@
 # ------------------------------------
 import os
 import uuid
-from azure.storage.blob import BlobClient
+from azure.storage.blob.aio import BlobClient
 from azure.core import exceptions
 
 
-class StorageBlob:
+class StorageBlobAsync:
     def __init__(self):
         id = uuid.uuid1()
 
@@ -19,26 +19,26 @@ class StorageBlob:
             blob_name="pyTestBlob-" + id.hex + ".txt",
         )
 
-    def upload_blob(self):
+    async def upload_blob(self):
         print("uploading blob...")
         self.data = "This is a sample data for Python Test"
-        self.blob.upload_blob(self.data)
+        await self.blob.upload_blob(self.data)
         print("\tdone")
 
-    def download_blob(self):
+    async def download_blob(self):
         print("downloading blob...")
         with open("./downloadedBlob.txt", "wb") as my_blob:
-            blob_data = self.blob.download_blob()
-            blob_data.readinto(my_blob)
+            blob_data = await self.blob.download_blob()
+            await blob_data.readinto(my_blob)
 
         print("\tdone")
 
-    def delete_blob(self):
+    async def delete_blob(self):
         print("Cleaning up the resource...")
-        self.blob.delete_blob()
+        await self.blob.delete_blob()
         print("\tdone")
 
-    def run(self):
+    async def run(self):
         print("")
         print("------------------------")
         print("Storage - Blob")
@@ -50,12 +50,12 @@ class StorageBlob:
 
         # Ensure that the blob does not exists before the tests
         try:
-            self.delete_blob()
+            await self.delete_blob()
         except exceptions.AzureError:
             pass
 
         try:
-            self.upload_blob()
-            self.download_blob()
+            await self.upload_blob()
+            await self.download_blob()
         finally:
-            self.delete_blob()
+            await self.delete_blob()

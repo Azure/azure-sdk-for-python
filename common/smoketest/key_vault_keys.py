@@ -23,17 +23,17 @@ class KeyVaultKeys:
 
     def create_rsa_key(self):
         print("Creating an RSA key...")
-        self.key_client.create_rsa_key(name=self.key_name, size=2048, hsm=False)
+        self.key_client.create_rsa_key(name=self.key_name, size=2048)
         print("\tdone")
 
     def get_key(self):
         print("Getting a key...")
         key = self.key_client.get_key(name=self.key_name)
-        print("\tdone, key: %s." % key.name)
+        print(f"\tdone, key: {key.name}.")
 
     def delete_key(self):
         print("Deleting a key...")
-        deleted_key = self.key_client.delete_key(name=self.key_name)
+        deleted_key = self.key_client.begin_delete_key(name=self.key_name).result()
         print("\tdone: " + deleted_key.name)
 
     def run(self):

@@ -23,7 +23,7 @@ class KeyVaultKeys:
 
     async def create_rsa_key(self):
         print("Creating an RSA key...")
-        await self.key_client.create_rsa_key(name=self.key_name, size=2048, hsm=False)
+        await self.key_client.create_rsa_key(name=self.key_name, size=2048)
         print("\tdone")
 
     async def get_key(self):
