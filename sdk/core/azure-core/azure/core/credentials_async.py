@@ -19,5 +19,5 @@ if TYPE_CHECKING:
         async def __aenter__(self):
             pass
 
-        async def __aexit__(self, *args) -> None:
+        async def __aexit__(self, exc_type, exc_value, traceback) -> None:
             pass

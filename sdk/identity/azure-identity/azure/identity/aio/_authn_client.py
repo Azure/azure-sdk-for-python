@@ -60,7 +60,6 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
 
     async def __aexit__(self, *args):
         await self.close()
-        return self
 
     async def close(self) -> None:
         await self._pipeline.__aexit__()
