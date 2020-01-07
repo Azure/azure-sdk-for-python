@@ -22,7 +22,7 @@ BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob co
 
 
 def on_event(partition_context, event):
-    # Put your code here. to do some operations on the event.
+    # Put your code here.
     # Avoid time-consuming operations.
     print("Received event from partition: {}.".format(partition_context.partition_id))
     partition_context.update_checkpoint(event)
