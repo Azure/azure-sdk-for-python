@@ -17,8 +17,20 @@ def test_receive_no_partition(connstr_senders):
 
     def on_event(partition_context, event):
         on_event.received += 1
+        partition_context.update_checkpoint(event)
+        on_event.namespace = partition_context.fully_qualified_namespace
+        on_event.eventhub_name = partition_context.eventhub_name
+        on_event.consumer_group = partition_context.consumer_group
+        on_event.offset = event.offset
+        on_event.sequence_number = event.sequence_number
 
     on_event.received = 0
+    on_event.namespace = None
+    on_event.eventhub_name = None
+    on_event.consumer_group = None
+    on_event.offset = None
+    on_event.sequence_number = None
+
     with client:
         worker = threading.Thread(target=client.receive,
                                   args=(on_event,),
@@ -26,6 +38,11 @@ def test_receive_no_partition(connstr_senders):
         worker.start()
         time.sleep(10)
         assert on_event.received == 2
+        checkpoints = list(client._event_processors.values())[0]._checkpoint_store.list_checkpoints(
+            on_event.namespace, on_event.eventhub_name, on_event.consumer_group
+        )
+        assert len([checkpoint for checkpoint in checkpoints if checkpoint["offset"] == on_event.offset]) > 0
+        assert len([checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number]) > 0
 
 
 @pytest.mark.liveTest
