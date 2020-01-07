@@ -71,8 +71,8 @@ class EventProcessor(
             "on_partition_close", None
         )  # type: Optional[Callable[[PartitionContext, CloseReason], None]]
         self._checkpoint_store = kwargs.get(
-            "checkpoint_store", InMemoryCheckpointStore()
-        )  # type: Optional[CheckpointStore]
+            "checkpoint_store"
+        ) or InMemoryCheckpointStore()  # type: Optional[CheckpointStore]
         self._initial_event_position = kwargs.get(
             "initial_event_position", "@latest"
         )  # type: Union[str, int, datetime, Dict[str, Any]]
