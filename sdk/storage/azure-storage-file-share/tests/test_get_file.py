@@ -8,6 +8,7 @@
 import base64
 import os
 import unittest
+import uuid
 
 import pytest
 from azure.core.exceptions import HttpResponseError
@@ -25,8 +26,7 @@ from filetestcase import (
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
-
+FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 
 # ------------------------------------------------------------------------------
 
