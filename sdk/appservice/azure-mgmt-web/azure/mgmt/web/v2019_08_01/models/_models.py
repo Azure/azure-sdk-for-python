@@ -5717,6 +5717,30 @@ class HostingEnvironmentProfile(Model):
         self.type = None
 
 
+class HostKeys(Model):
+    """Functions host level keys.
+
+    :param master_key: Secret key.
+    :type master_key: str
+    :param function_keys: Host level function keys.
+    :type function_keys: dict[str, str]
+    :param system_keys: System keys.
+    :type system_keys: dict[str, str]
+    """
+
+    _attribute_map = {
+        'master_key': {'key': 'masterKey', 'type': 'str'},
+        'function_keys': {'key': 'functionKeys', 'type': '{str}'},
+        'system_keys': {'key': 'systemKeys', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HostKeys, self).__init__(**kwargs)
+        self.master_key = kwargs.get('master_key', None)
+        self.function_keys = kwargs.get('function_keys', None)
+        self.system_keys = kwargs.get('system_keys', None)
+
+
 class HostName(Model):
     """Details of a hostname derived from a domain.
 
@@ -6180,6 +6204,26 @@ class IpSecurityRestriction(Model):
         self.priority = kwargs.get('priority', None)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
+
+
+class KeyInfo(Model):
+    """Function key info.
+
+    :param name: Key name
+    :type name: str
+    :param value: Key value
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
 
 
 class KeyVaultReferenceCollection(ProxyOnlyResource):
