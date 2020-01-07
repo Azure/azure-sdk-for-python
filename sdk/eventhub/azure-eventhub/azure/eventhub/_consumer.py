@@ -196,8 +196,6 @@ class EventHubConsumer(
 
     def receive(self):
         # type: () -> None
-        retried_times = 0
-
         try:
             if self._open():
                 self._handler.do_work()  # type: ignore
