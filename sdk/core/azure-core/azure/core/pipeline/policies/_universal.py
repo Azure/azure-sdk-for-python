@@ -164,6 +164,9 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     :keyword bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
     :keyword bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
+    :keyword bool user_agent: If specified, this will be added in front of the user agent string.
+    :keyword bool sdk_moniker: If specified, the user agent string will be
+        azsdk-python-sdk_moniker Python/[python_version] ([platform_version])
 
     .. admonition:: Example:
 
@@ -182,15 +185,22 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
         application_id = kwargs.pop('user_agent', None)
+        sdk_moniker = kwargs.pop('sdk_moniker', None)
 
-        if base_user_agent is None:
+        if base_user_agent:
+            self._user_agent = base_user_agent
+        elif sdk_moniker:
+            self._user_agent = "azsdk-python-{} Python/{} ({})".format(
+                sdk_moniker,
+                platform.python_version(),
+                platform.platform()
+            )
+        else:
             self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
                 azcore_version,
                 platform.python_version(),
                 platform.platform()
             )
-        else:
-            self._user_agent = base_user_agent
 
         if application_id:
             self._user_agent = "{} {}".format(application_id, self._user_agent)
