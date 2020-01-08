@@ -30,9 +30,9 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None):
         super(ServiceBusNamespacePreparer, self).__init__(name_prefix, 24,
-                                                     disable_recording=disable_recording,
-                                                     playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs)
+                                                          disable_recording=disable_recording,
+                                                          playback_fake_resource=playback_fake_resource,
+                                                          client_kwargs=client_kwargs)
         self.location = location
         self.sku = sku
         self.resource_group_parameter_name = resource_group_parameter_name
@@ -59,7 +59,7 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             self.primary_key = key.primary_key
         else:
             self.resource = FakeResource(name=name, id=name)
-            self.connection_string = 'https://microsoft.com'
+            self.connection_string = 'Endpoint=sb://test-azure-sdk-test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
             self.key_name = SERVICEBUS_DEFAULT_AUTH_RULE_NAME
             self.primary_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {
@@ -92,9 +92,9 @@ class _ServiceBusChildResourcePreparer(AzureMgmtPreparer):
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None):
         super(_ServiceBusChildResourcePreparer, self).__init__(name_prefix, 24,
-                                                     disable_recording=disable_recording,
-                                                     playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs)
+                                                               disable_recording=disable_recording,
+                                                               playback_fake_resource=playback_fake_resource,
+                                                               client_kwargs=client_kwargs)
         self.resource_group_parameter_name = resource_group_parameter_name
         self.servicebus_namespace_parameter_name = servicebus_namespace_parameter_name
 
@@ -136,13 +136,12 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
-            topic_async_operation = self.client.topics.create_or_update(
+            self.resource = self.client.topics.create_or_update(
                 group.name,
                 namespace.name,
                 name,
                 {}
             )
-            self.resource = topic_async_operation
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -181,14 +180,13 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             topic = self._get_topic(**kwargs)
-            subscription_async_operation = self.client.subscriptions.create_or_update(
+            self.resource = self.client.subscriptions.create_or_update(
                 group.name,
                 namespace.name,
                 topic.name,
                 name,
                 {}
             )
-            self.resource = subscription_async_operation
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -242,7 +240,7 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
-            queue_async_operation = self.client.queues.create_or_update(
+            self.resource = self.client.queues.create_or_update(
                 group.name,
                 namespace.name,
                 name,
@@ -252,8 +250,6 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                     dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration,
                     requires_session = self.requires_session)
             )
-
-            self.resource = queue_async_operation
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -290,14 +286,12 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
-            authorization_rule_async_operation = self.client.namespaces.create_or_update_authorization_rule(
+            self.resource = self.client.namespaces.create_or_update_authorization_rule(
                 group.name,
                 namespace.name,
                 name,
                 self.access_rights
             )
-
-            self.resource = authorization_rule_async_operation
 
             key = self.client.namespaces.list_keys(group.name, namespace.name, name)
             connection_string = key.primary_connection_string
@@ -342,15 +336,13 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             queue = self._get_queue(**kwargs)
-            authorization_rule_async_operation = self.client.queues.create_or_update_authorization_rule(
+            self.resource = self.client.queues.create_or_update_authorization_rule(
                 group.name,
                 namespace.name,
                 queue.name,
                 name,
                 self.access_rights
             )
-
-            self.resource = authorization_rule_async_operation
 
             key = self.client.queues.list_keys(group.name, namespace.name, queue.name, name)
             connection_string = key.primary_connection_string
