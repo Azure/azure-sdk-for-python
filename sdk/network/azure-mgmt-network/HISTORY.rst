@@ -3,6 +3,32 @@
 Release History
 ===============
 
+9.0.0 (2020-01-08)
+++++++++++++++++++
+
+**Features**
+
+- Model ConnectionMonitorResult has a new parameter test_groups
+- Model ConnectionMonitorResult has a new parameter test_configurations
+- Model ConnectionMonitorResult has a new parameter outputs
+- Model ConnectionMonitorResult has a new parameter notes
+- Model ConnectionMonitorResult has a new parameter endpoints
+- Model ConnectionMonitorResult has a new parameter connection_monitor_type
+- Model ConnectionMonitor has a new parameter test_groups
+- Model ConnectionMonitor has a new parameter test_configurations
+- Model ConnectionMonitor has a new parameter outputs
+- Model ConnectionMonitor has a new parameter notes
+- Model ConnectionMonitor has a new parameter endpoints
+- Model AzureFirewall has a new parameter management_ip_configuration
+- Model AzureFirewall has a new parameter ip_groups
+- Model AzureFirewallIPConfiguration has a new parameter type
+- Added operation P2sVpnGatewaysOperations.disconnect_p2s_vpn_connections
+- Added operation VirtualNetworkGatewaysOperations.disconnect_virtual_network_gateway_vpn_connections
+
+**Breaking changes**
+
+- Model ConnectionMonitorParameters has a new signature
+
 8.0.0 (2019-11-12)
 ++++++++++++++++++
 
