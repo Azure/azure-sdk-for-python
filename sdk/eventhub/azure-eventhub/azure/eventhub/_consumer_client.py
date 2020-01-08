@@ -38,7 +38,8 @@ class EventHubConsumerClient(ClientBase):
 
     When multiple `EventHubConsumerClient` operate within one or more processes or machines targeting the same
     checkpointing location, they will balance automatically.
-    To enable the load-balancing, checkpoint_store must be set when creating the `EventHubConsumerClient`.
+    To enable load-balancing and checkpoint, checkpoint_store must be set when creating the `EventHubConsumerClient`.
+    If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
     An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
     and specify the partition_id. Load-balancing won't work in single-partition receiving mode.

@@ -273,8 +273,7 @@ class EventDataBatch(object):
     at which point a `ValueError` will be raised.
     Use the `send_batch` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
-    for sending. The `create_batch` method accepts partition_key or partition_id as a parameter
-    for sending to a particular partition.
+    for sending.
 
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
