@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 class CheckpointStore(ABC):
     """CheckpointStore deals with the interaction with the chosen storage service.
 
-    It can list and claim partition ownerships; list and save checkpoints.
+    It can list and claim partition ownerships as well as list and save checkpoints.
     """
 
     @abstractmethod

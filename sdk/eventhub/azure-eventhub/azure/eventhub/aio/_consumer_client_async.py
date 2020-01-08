@@ -44,14 +44,15 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     When multiple `EventHubConsumerClient` operate within one or more processes or machines targeting the same
     checkpointing location, they will balance automatically.
-    To enable load-balancing and checkpoint, checkpoint_store must be set when creating the `EventHubConsumerClient`.
+    To enable load-balancing and persisted checkpoints, checkpoint_store must be set when creating the
+    `EventHubConsumerClient`.
     If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
     An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
     and specify the partition_id. Load-balancing won't work in single-partition receiving mode.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
-     The format is like `<yournamespace>.servicebus.windows.net`.
+     The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
     :param str consumer_group: Receive events from the event hub for this consumer group.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
