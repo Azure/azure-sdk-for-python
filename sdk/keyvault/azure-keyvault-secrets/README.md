@@ -15,7 +15,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## Getting started
 ### Install packages
 Install [azure-keyvault-secrets][pypi_package_secrets] and
-[azure-identity][azure_identity] with [pip][pip]:
+[azure-identity][azure_identity_pip] with [pip][pip]:
 ```Bash
 pip install azure-keyvault-secrets azure-identity
 ```
@@ -351,14 +351,15 @@ secret_client.get_secret("my-secret", logging_enable=True)
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository.
 These provide example code for additional Key Vault scenarios:
-* [test_samples_secrets.py][test_examples_secrets] and
-[test_samples_secrets_async.py][test_example_secrets_async] - code snippets
-from the library's documentation
 * [hello_world.py][hello_world_sample] and
-[hello_world_async.py][hello_world_async_sample] - create/get/update/delete
-secrets
+[hello_world_async.py][hello_world_async_sample] - create/get/update/delete secrets
 * [list_operations.py][list_operations_sample] and
-[list_operations_async.py][list_operations_async_sample] - list secrets
+[list_operations_async.py][list_operations_async_sample] - basic list operations for secrets
+* [backup_restore_operations.py][backup_operations_sample] and
+[backup_restore_operations_async.py][backup_operations_async_sample] - backup and
+restore secrets
+* [recover_purge_operations.py][recover_purge_sample] and
+[recover_purge_operations_async.py][recover_purge_async_sample] - recovering and purging secrets
 
 ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the
@@ -383,15 +384,19 @@ additional questions or comments.
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
-[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/hello_world.py
-[hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/hello_world_async.py
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/hello_world.py
+[hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/hello_world_async.py
+[backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/backup_restore_operations.py
+[backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/backup_restore_operations_async.py
+[list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations.py
+[list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations_async.py
+[recover_purge_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/recover_purge_operations.py
+[recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples/recover_purge_operations_async.py
 [keyvault_docs]: https://docs.microsoft.com/en-us/azure/key-vault/
-[list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations.py
-[list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations_async.py
-[pip]: https://pypi.org/project/pip/
 [pypi_package_secrets]: https://pypi.org/project/azure-keyvault-secrets/
 [reference_docs]: https://aka.ms/azsdk-python-keyvault-secrets-ref
 [secret_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/azure/keyvault/secrets
