@@ -75,8 +75,7 @@ class ServiceBusMixin(object):
         :type max_delivery_count: int
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
-        :param fail_on_exist: Whether to throw an exception if there is already a queue with same name
-         already existed.
+        :param fail_on_exist: Whether to throw an exception if a queue with the same name already exists.
         :type: fail_on_exist: bool
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a queue of the same name already exists.
@@ -140,8 +139,7 @@ class ServiceBusMixin(object):
         :type duplicate_detection_history_time_window: ~datetime.timedelta
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
-        :param fail_on_exist: Whether to throw an exception if there is already a topic with same name
-         already existed.
+        :param fail_on_exist: Whether to throw an exception if a topic with the same name already exists.
         :type: fail_on_exist: bool
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a topic of the same name already exists.
@@ -209,8 +207,8 @@ class ServiceBusMixin(object):
         :type max_delivery_count: int
         :param enable_batched_operations:
         :type: enable_batched_operations: bool
-        :param fail_on_exist: Whether to throw an exception if there is already a subscription with same name
-         already existed.
+        :param fail_on_exist: Whether to throw an exception if a subscription with the same name already
+         exists.
         :type: fail_on_exist: bool
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.common.AzureConflictHttpError if a queue of the same name already exists.
