@@ -24,16 +24,24 @@ def test_cli_credential():
 
 def test_cli_installation():
     cred = CliCredential()
-    try:
-        token = cred.get_token()
-    except ClientAuthenticationError:
-        pass
-    except Exception as e:
-        assert CliCredential._CLI_NOT_INSTALLED_ERR in repr(e)
+    
+    def mock_proc(command):
+        raise ClientAuthenticationError(cred._CLI_NOT_INSTALLED_ERR)
+    cred._get_proc_stdout = mock_proc
 
-def test_cli_login():
-    cred = CliCredential()
     try:
         token = cred.get_token()
     except ClientAuthenticationError as e:
-        assert 'az login' in repr(e)
+        assert 'Azure CLI not installed' in e.message
+
+def test_cli_login():
+    cred = CliCredential()
+
+    def mock_proc(command):
+        raise ClientAuthenticationError('Please run \'az login\' to setup account.')
+    cred._get_proc_stdout = mock_proc
+    
+    try:
+        token = cred.get_token()
+    except ClientAuthenticationError as e:
+        assert 'az login' in e.message
