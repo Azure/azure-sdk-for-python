@@ -49,7 +49,7 @@ class EventHubProducerClient(ClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_eventhub_producer_client_sync]
             :end-before: [END create_eventhub_producer_client_sync]
             :language: python
@@ -172,7 +172,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START create_eventhub_producer_client_from_conn_str_sync]
                 :end-before: [END create_eventhub_producer_client_from_conn_str_sync]
                 :language: python
@@ -200,7 +200,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_send_sync]
                 :end-before: [END eventhub_producer_client_send_sync]
                 :language: python
@@ -232,12 +232,13 @@ class EventHubProducerClient(ClientBase):
          will assign to all partitions using round-robin.
         :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
-        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
+        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
+         default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_create_batch_sync]
                 :end-before: [END eventhub_producer_client_create_batch_sync]
                 :language: python
@@ -322,7 +323,7 @@ class EventHubProducerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_close_sync]
                 :end-before: [END eventhub_producer_client_close_sync]
                 :language: python

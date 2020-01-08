@@ -27,7 +27,7 @@ checkpoint_time_interval = 15
 
 
 def on_event(partition_context, event):
-    # Put your code here. to do some operations on the event.
+    # Put your code here.
     # Avoid time-consuming operations.
     p_id = partition_context.partition_id
     print("Received event from partition: {}".format(p_id))

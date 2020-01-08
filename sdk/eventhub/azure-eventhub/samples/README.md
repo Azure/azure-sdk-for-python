@@ -25,7 +25,7 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Send event data batch to a specific partition by partition id
     - Send event data batch with customized properties
 
-- [send.py](./sync_samples/send_stream.py) ([async version](./async_samples/send_stream_async.py)) - Examples to do streaming sending:
+- [send_stream.py](./sync_samples/send_stream.py) ([async version](./async_samples/send_stream_async.py)) - Examples to do streaming sending:
     - Send in a stream
 
 - [recv.py](./sync_samples/recv.py) ([async version](./async_samples/recv_async.py)) - Examples to receive events:

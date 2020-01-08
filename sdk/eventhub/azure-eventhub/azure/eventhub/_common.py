@@ -48,7 +48,7 @@ class EventData(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python
