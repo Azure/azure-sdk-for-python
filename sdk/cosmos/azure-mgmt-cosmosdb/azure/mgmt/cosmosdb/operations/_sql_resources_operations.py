@@ -27,7 +27,7 @@ class SqlResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-08-01. Constant value: "2019-08-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-08-01. Constant value: "2019-12-12".
     """
 
     models = models
@@ -37,7 +37,7 @@ class SqlResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01"
+        self.api_version = "2019-12-12"
 
         self.config = config
 
@@ -1137,7 +1137,7 @@ class SqlResourcesOperations(object):
         deserialized = models.SqlStoredProcedureGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_sql_stored_procedures.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures/'}
+    list_sql_stored_procedures.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures'}
 
     def get_sql_stored_procedure(
             self, resource_group_name, account_name, database_name, container_name, stored_procedure_name, custom_headers=None, raw=False, **operation_config):
@@ -1493,7 +1493,7 @@ class SqlResourcesOperations(object):
         deserialized = models.SqlUserDefinedFunctionGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_sql_user_defined_functions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions/'}
+    list_sql_user_defined_functions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions'}
 
     def get_sql_user_defined_function(
             self, resource_group_name, account_name, database_name, container_name, user_defined_function_name, custom_headers=None, raw=False, **operation_config):
@@ -1850,7 +1850,7 @@ class SqlResourcesOperations(object):
         deserialized = models.SqlTriggerGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_sql_triggers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers/'}
+    list_sql_triggers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers'}
 
     def get_sql_trigger(
             self, resource_group_name, account_name, database_name, container_name, trigger_name, custom_headers=None, raw=False, **operation_config):

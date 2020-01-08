@@ -812,6 +812,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -841,6 +843,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
@@ -859,6 +862,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
+        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -939,6 +943,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -977,6 +983,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -999,6 +1006,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
+        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1157,6 +1165,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _attribute_map = {
@@ -1173,6 +1183,7 @@ class DatabaseAccountUpdateParameters(Model):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1190,6 +1201,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.enable_cassandra_connector = kwargs.get('enable_cassandra_connector', None)
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
+        self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
 
 
 class ErrorResponse(Model):
