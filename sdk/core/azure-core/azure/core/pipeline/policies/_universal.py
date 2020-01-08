@@ -164,7 +164,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     :keyword bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
     :keyword bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
-    :keyword bool user_agent: If specified, this will be added in front of the user agent string.
+    :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword str sdk_moniker: If specified, the user agent string will be
         azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])
 
