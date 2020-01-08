@@ -128,12 +128,11 @@ certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azu
 ```
 
 ## Key concepts
+### Certificate Client
 With a [CertificateClient][certificate_client_docs] you can get certificates from the vault, create new certificates and
 new versions of existing certificates, update certificate metadata, and delete certificates. You
 can also manage certificate issuers, contacts, and management policies of certificates. This is
 illustrated in the [examples](#examples) below.
-
-### Certificate Client:
 
 ## Examples
 This section contains code snippets covering common tasks:
@@ -351,12 +350,13 @@ certificate = certificate_client.get_certificate(certificate_name="cert-name", l
 
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for additional Key Vault scenarios:
-* [test_examples_certificates.py][test_example_certificates] and
-[test_examples_certificates_async.py][test_example_certificates_async] - code snippets from
-the library's documentation
 * [hello_world.py][hello_world_sample] and [hello_world_async.py][hello_world_async_sample] - create/get/update/delete certificates
 * [backup_restore_operations.py][backup_operations_sample] and [backup_restore_operations_async.py][backup_operations_async_sample] - backup and
 recover certificates
+* [list_operations.py][list_operations_sample] and [list_operations_async.py][list_operations_async_sample] - list certificates
+* [recover_purge_operations.py][recover_purge_operations_sample] and [recover_purge_operations_async.py][recover_purge_operations_async_sample] - recover and purge certificates
+* [issuers.py][issuers_sample] and [issuers_async.py][issuers_async_sample] - manage certificate issuers
+* [contacts.py][contacts_sample] and [contacts_async.py][contacts_async_sample] - manage certificate contacts
 
 ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].
@@ -390,6 +390,13 @@ additional questions or comments.
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/hello_world_async.py
 [keyvault_docs]: https://docs.microsoft.com/en-us/azure/key-vault/
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/list_operations.py
+[list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/list_operations_async.py
+[recover_purge_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/recover_purge_operations.py
+[recover_purge_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/recover_purge_operations_async.py
+[contacts_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/contacts.py
+[contacts_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/contacts_async.py
+[issuers_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/issuers.py
+[issuers_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/issuers_async.py
 [pip]: https://pypi.org/project/pip/
 [pypi_package_certificates]: https://pypi.org/project/azure-keyvault-certificates/
 [certificate_client_docs]: https://aka.ms/azsdk-python-keyvault-certificates-certificateclient-ref
