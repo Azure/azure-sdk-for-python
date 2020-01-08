@@ -12,113 +12,278 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import DataBoxEdgeManagementClientConfiguration
-from .operations import Operations
-from .operations import DevicesOperations
-from .operations import AlertsOperations
-from .operations import BandwidthSchedulesOperations
-from .operations import JobsOperations
-from .operations import NodesOperations
-from .operations import OperationsStatusOperations
-from .operations import OrdersOperations
-from .operations import RolesOperations
-from .operations import SharesOperations
-from .operations import StorageAccountCredentialsOperations
-from .operations import StorageAccountsOperations
-from .operations import ContainersOperations
-from .operations import TriggersOperations
-from .operations import UsersOperations
-from .operations import SkusOperations
-from . import models
 
 
-class DataBoxEdgeManagementClient(SDKClient):
+
+class DataBoxEdgeManagementClient(MultiApiClientMixin, SDKClient):
     """DataBoxEdgeManagementClient
+
+    This ready contains multiple API versions, to help you deal with all Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, uses latest API version available on public Azure.
+    For production, you should stick a particular api-version and/or profile.
+    The profile sets a mapping between the operation group and an API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
     :ivar config: Configuration for client.
     :vartype config: DataBoxEdgeManagementClientConfiguration
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.databoxedge.operations.Operations
-    :ivar devices: Devices operations
-    :vartype devices: azure.mgmt.databoxedge.operations.DevicesOperations
-    :ivar alerts: Alerts operations
-    :vartype alerts: azure.mgmt.databoxedge.operations.AlertsOperations
-    :ivar bandwidth_schedules: BandwidthSchedules operations
-    :vartype bandwidth_schedules: azure.mgmt.databoxedge.operations.BandwidthSchedulesOperations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.databoxedge.operations.JobsOperations
-    :ivar nodes: Nodes operations
-    :vartype nodes: azure.mgmt.databoxedge.operations.NodesOperations
-    :ivar operations_status: OperationsStatus operations
-    :vartype operations_status: azure.mgmt.databoxedge.operations.OperationsStatusOperations
-    :ivar orders: Orders operations
-    :vartype orders: azure.mgmt.databoxedge.operations.OrdersOperations
-    :ivar roles: Roles operations
-    :vartype roles: azure.mgmt.databoxedge.operations.RolesOperations
-    :ivar shares: Shares operations
-    :vartype shares: azure.mgmt.databoxedge.operations.SharesOperations
-    :ivar storage_account_credentials: StorageAccountCredentials operations
-    :vartype storage_account_credentials: azure.mgmt.databoxedge.operations.StorageAccountCredentialsOperations
-    :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.databoxedge.operations.StorageAccountsOperations
-    :ivar containers: Containers operations
-    :vartype containers: azure.mgmt.databoxedge.operations.ContainersOperations
-    :ivar triggers: Triggers operations
-    :vartype triggers: azure.mgmt.databoxedge.operations.TriggersOperations
-    :ivar users: Users operations
-    :vartype users: azure.mgmt.databoxedge.operations.UsersOperations
-    :ivar skus: Skus operations
-    :vartype skus: azure.mgmt.databoxedge.operations.SkusOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The subscription ID.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    DEFAULT_API_VERSION = '2019-07-01'
+    _PROFILE_TAG = "azure.mgmt.databoxedge.DataBoxEdgeManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = DataBoxEdgeManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(DataBoxEdgeManagementClient, self).__init__(self.config.credentials, self.config)
+        super(DataBoxEdgeManagementClient, self).__init__(
+            credentials,
+            self.config,
+            api_version=api_version,
+            profile=profile
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-08-01'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.devices = DevicesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.alerts = AlertsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.bandwidth_schedules = BandwidthSchedulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.nodes = NodesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations_status = OperationsStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.orders = OrdersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.roles = RolesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.shares = SharesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.storage_account_credentials = StorageAccountCredentialsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.storage_accounts = StorageAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.containers = ContainersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.triggers = TriggersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.users = UsersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
+
+           * 2019-03-01: :mod:`v2019_03_01.models<azure.mgmt.databoxedge.v2019_03_01.models>`
+           * 2019-07-01: :mod:`v2019_07_01.models<azure.mgmt.databoxedge.v2019_07_01.models>`
+        """
+        if api_version == '2019-03-01':
+            from .v2019_03_01 import models
+            return models
+        elif api_version == '2019-07-01':
+            from .v2019_07_01 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def alerts(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`AlertsOperations<azure.mgmt.databoxedge.v2019_03_01.operations.AlertsOperations>`
+           * 2019-07-01: :class:`AlertsOperations<azure.mgmt.databoxedge.v2019_07_01.operations.AlertsOperations>`
+        """
+        api_version = self._get_api_version('alerts')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import AlertsOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import AlertsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def bandwidth_schedules(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2019_03_01.operations.BandwidthSchedulesOperations>`
+           * 2019-07-01: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2019_07_01.operations.BandwidthSchedulesOperations>`
+        """
+        api_version = self._get_api_version('bandwidth_schedules')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import BandwidthSchedulesOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import BandwidthSchedulesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def devices(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`DevicesOperations<azure.mgmt.databoxedge.v2019_03_01.operations.DevicesOperations>`
+           * 2019-07-01: :class:`DevicesOperations<azure.mgmt.databoxedge.v2019_07_01.operations.DevicesOperations>`
+        """
+        api_version = self._get_api_version('devices')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import DevicesOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import DevicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def jobs(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`JobsOperations<azure.mgmt.databoxedge.v2019_03_01.operations.JobsOperations>`
+           * 2019-07-01: :class:`JobsOperations<azure.mgmt.databoxedge.v2019_07_01.operations.JobsOperations>`
+        """
+        api_version = self._get_api_version('jobs')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import JobsOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import JobsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nodes(self):
+        """Instance depends on the API version:
+
+           * 2019-07-01: :class:`NodesOperations<azure.mgmt.databoxedge.v2019_07_01.operations.NodesOperations>`
+        """
+        api_version = self._get_api_version('nodes')
+        if api_version == '2019-07-01':
+            from .v2019_07_01.operations import NodesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`Operations<azure.mgmt.databoxedge.v2019_03_01.operations.Operations>`
+           * 2019-07-01: :class:`Operations<azure.mgmt.databoxedge.v2019_07_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import Operations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations_status(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2019_03_01.operations.OperationsStatusOperations>`
+           * 2019-07-01: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2019_07_01.operations.OperationsStatusOperations>`
+        """
+        api_version = self._get_api_version('operations_status')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import OperationsStatusOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import OperationsStatusOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def orders(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`OrdersOperations<azure.mgmt.databoxedge.v2019_03_01.operations.OrdersOperations>`
+           * 2019-07-01: :class:`OrdersOperations<azure.mgmt.databoxedge.v2019_07_01.operations.OrdersOperations>`
+        """
+        api_version = self._get_api_version('orders')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import OrdersOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import OrdersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def roles(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`RolesOperations<azure.mgmt.databoxedge.v2019_03_01.operations.RolesOperations>`
+           * 2019-07-01: :class:`RolesOperations<azure.mgmt.databoxedge.v2019_07_01.operations.RolesOperations>`
+        """
+        api_version = self._get_api_version('roles')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import RolesOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import RolesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def shares(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`SharesOperations<azure.mgmt.databoxedge.v2019_03_01.operations.SharesOperations>`
+           * 2019-07-01: :class:`SharesOperations<azure.mgmt.databoxedge.v2019_07_01.operations.SharesOperations>`
+        """
+        api_version = self._get_api_version('shares')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import SharesOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import SharesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def storage_account_credentials(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2019_03_01.operations.StorageAccountCredentialsOperations>`
+           * 2019-07-01: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2019_07_01.operations.StorageAccountCredentialsOperations>`
+        """
+        api_version = self._get_api_version('storage_account_credentials')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import StorageAccountCredentialsOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import StorageAccountCredentialsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def triggers(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`TriggersOperations<azure.mgmt.databoxedge.v2019_03_01.operations.TriggersOperations>`
+           * 2019-07-01: :class:`TriggersOperations<azure.mgmt.databoxedge.v2019_07_01.operations.TriggersOperations>`
+        """
+        api_version = self._get_api_version('triggers')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import TriggersOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import TriggersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def users(self):
+        """Instance depends on the API version:
+
+           * 2019-03-01: :class:`UsersOperations<azure.mgmt.databoxedge.v2019_03_01.operations.UsersOperations>`
+           * 2019-07-01: :class:`UsersOperations<azure.mgmt.databoxedge.v2019_07_01.operations.UsersOperations>`
+        """
+        api_version = self._get_api_version('users')
+        if api_version == '2019-03-01':
+            from .v2019_03_01.operations import UsersOperations as OperationClass
+        elif api_version == '2019-07-01':
+            from .v2019_07_01.operations import UsersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
