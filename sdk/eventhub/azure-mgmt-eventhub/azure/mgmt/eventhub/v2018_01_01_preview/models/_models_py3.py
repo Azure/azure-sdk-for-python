@@ -264,6 +264,8 @@ class EHNamespace(TrackedResource):
     :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
     :vartype service_bus_endpoint: str
+    :param cluster_arm_id: Cluster ARM ID of the Namespace.
+    :type cluster_arm_id: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
     :param is_auto_inflate_enabled: Value that indicates whether AutoInflate
@@ -279,6 +281,11 @@ class EHNamespace(TrackedResource):
     :param zone_redundant: Enabling this property creates a Standard Event
      Hubs Namespace in regions supported availability zones.
     :type zone_redundant: bool
+    :param identity: Properties of BYOK Identity description
+    :type identity: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Identity
+    :param encryption: Properties of BYOK Encryption description
+    :type encryption:
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.Encryption
     """
 
     _validation = {
@@ -304,25 +311,31 @@ class EHNamespace(TrackedResource):
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
+        'cluster_arm_id': {'key': 'properties.clusterArmId', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
         'is_auto_inflate_enabled': {'key': 'properties.isAutoInflateEnabled', 'type': 'bool'},
         'maximum_throughput_units': {'key': 'properties.maximumThroughputUnits', 'type': 'int'},
         'kafka_enabled': {'key': 'properties.kafkaEnabled', 'type': 'bool'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
+        'identity': {'key': 'properties.identity', 'type': 'Identity'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, sku=None, is_auto_inflate_enabled: bool=None, maximum_throughput_units: int=None, kafka_enabled: bool=None, zone_redundant: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, sku=None, cluster_arm_id: str=None, is_auto_inflate_enabled: bool=None, maximum_throughput_units: int=None, kafka_enabled: bool=None, zone_redundant: bool=None, identity=None, encryption=None, **kwargs) -> None:
         super(EHNamespace, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
+        self.cluster_arm_id = cluster_arm_id
         self.metric_id = None
         self.is_auto_inflate_enabled = is_auto_inflate_enabled
         self.maximum_throughput_units = maximum_throughput_units
         self.kafka_enabled = kafka_enabled
         self.zone_redundant = zone_redundant
+        self.identity = identity
+        self.encryption = encryption
 
 
 class EHNamespaceIdContainer(Model):
@@ -358,6 +371,30 @@ class EHNamespaceIdListResult(Model):
         self.value = value
 
 
+class Encryption(Model):
+    """Properties to configure Encryption.
+
+    :param key_vault_properties: Properties of KeyVault
+    :type key_vault_properties:
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.KeyVaultProperties
+    :param key_source: Enumerates the possible value of keySource for
+     Encryption. Possible values include: 'Microsoft.KeyVault'. Default value:
+     "Microsoft.KeyVault" .
+    :type key_source: str or
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.KeySource
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'key_source': {'key': 'keySource', 'type': 'KeySource'},
+    }
+
+    def __init__(self, *, key_vault_properties=None, key_source="Microsoft.KeyVault", **kwargs) -> None:
+        super(Encryption, self).__init__(**kwargs)
+        self.key_vault_properties = key_vault_properties
+        self.key_source = key_source
+
+
 class ErrorResponse(Model):
     """Error response that indicates the service is not able to process the
     incoming request. The reason is provided in the error message.
@@ -389,6 +426,33 @@ class ErrorResponseException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class Identity(Model):
+    """Properties to configure Identity for Bring your Own Keys.
+
+    :param principal_id: ObjectId from the KeyVault
+    :type principal_id: str
+    :param tenant_id: TenantId from the KeyVault
+    :type tenant_id: str
+    :param type: Enumerates the possible value Identity type, which currently
+     supports only 'SystemAssigned'. Possible values include: 'SystemAssigned'.
+     Default value: "SystemAssigned" .
+    :type type: str or
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.IdentityType
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'IdentityType'},
+    }
+
+    def __init__(self, *, principal_id: str=None, tenant_id: str=None, type="SystemAssigned", **kwargs) -> None:
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = principal_id
+        self.tenant_id = tenant_id
+        self.type = type
 
 
 class IpFilterRule(Resource):
@@ -433,6 +497,26 @@ class IpFilterRule(Resource):
         self.ip_mask = ip_mask
         self.action = action
         self.filter_name = filter_name
+
+
+class KeyVaultProperties(Model):
+    """Properties to configure keyVault Properties.
+
+    :param key_name: Name of the Key from KeyVault
+    :type key_name: str
+    :param key_vault_uri: Uri of KeyVault
+    :type key_vault_uri: str
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_name: str=None, key_vault_uri: str=None, **kwargs) -> None:
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = key_name
+        self.key_vault_uri = key_vault_uri
 
 
 class NetworkRuleSet(Resource):

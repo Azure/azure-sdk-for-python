@@ -24,6 +24,16 @@ class SkuTier(str, Enum):
     standard = "Standard"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+
+
+class KeySource(str, Enum):
+
+    microsoft_key_vault = "Microsoft.KeyVault"
+
+
 class IPAction(str, Enum):
 
     accept = "Accept"
