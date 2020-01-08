@@ -2,14 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import sys
-_IS_PY2 = sys.version_info[0] == 2
 import json
 
 from azure.identity import CliCredential
 from azure.core.exceptions import ClientAuthenticationError
 
-from unittest.mock import Mock, patch
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 
 def test_cli_credential():
