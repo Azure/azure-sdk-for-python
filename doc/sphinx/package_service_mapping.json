@@ -873,7 +873,7 @@
   },
   "azure-ai-textanalytics": {
     "category": "Client",
-    "service_name": "TextAnalytics",
+    "service_name": "Text Analytics",
     "manually_generated": true
   },
   "azure-storage-blob": {
