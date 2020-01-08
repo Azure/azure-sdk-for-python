@@ -871,6 +871,11 @@
     "service_name": "Keyvault",
     "manually_generated": true
   },
+  "azure-ai-textanalytics": {
+    "category": "Client",
+    "service_name": "TextAnalytics",
+    "manually_generated": true
+  },
   "azure-storage-blob": {
     "category": "Client",
     "service_name": "Storage",
