@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:47 GMT
+      - Wed, 08 Jan 2020 00:54:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 07 Jan 2020 19:39:47 GMT
-      etag: '"0x8D793A95A860D0F"'
-      last-modified: Tue, 07 Jan 2020 19:39:47 GMT
+      date: Wed, 08 Jan 2020 00:54:03 GMT
+      etag: '"0x8D793D54233466D"'
+      last-modified: Wed, 08 Jan 2020 00:54:04 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /sharebc1812d8
         - restype=share
         - ''
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:47 GMT
+      - Wed, 08 Jan 2020 00:54:04 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -51,9 +51,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 07 Jan 2020 19:39:47 GMT
-      etag: '"0x8D793A95A92F06F"'
-      last-modified: Tue, 07 Jan 2020 19:39:47 GMT
+      date: Wed, 08 Jan 2020 00:54:03 GMT
+      etag: '"0x8D793D5424DDB81"'
+      last-modified: Wed, 08 Jan 2020 00:54:04 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -63,7 +63,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /sharebc1812d8
         - restype=share&comp=metadata
         - ''
@@ -73,7 +73,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:47 GMT
+      - Wed, 08 Jan 2020 00:54:05 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -83,9 +83,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 07 Jan 2020 19:39:47 GMT
-      etag: '"0x8D793A95A92F06F"'
-      last-modified: Tue, 07 Jan 2020 19:39:47 GMT
+      date: Wed, 08 Jan 2020 00:54:03 GMT
+      etag: '"0x8D793D5424DDB81"'
+      last-modified: Wed, 08 Jan 2020 00:54:04 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
@@ -100,7 +100,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /sharebc1812d8
         - restype=share
         - ''
@@ -112,7 +112,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:47 GMT
+      - Wed, 08 Jan 2020 00:54:05 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -120,12 +120,12 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>sharebc1812d8</Name><Properties><Last-Modified>Tue,
-        07 Jan 2020 19:39:47 GMT</Last-Modified><Etag>\"0x8D793A95A92F06F\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>sharebc1812d8</Name><Properties><Last-Modified>Wed,
+        08 Jan 2020 00:54:04 GMT</Last-Modified><Etag>\"0x8D793D5424DDB81\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Tue, 07 Jan 2020 19:39:47 GMT
+      date: Wed, 08 Jan 2020 00:54:03 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -136,7 +136,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /
         - include=snapshots&comp=list
         - ''
@@ -146,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:47 GMT
+      - Wed, 08 Jan 2020 00:54:05 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -158,7 +158,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 07 Jan 2020 19:39:47 GMT
+      date: Wed, 08 Jan 2020 00:54:04 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -168,8 +168,43 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /sharebc1812d8
         - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 08 Jan 2020 00:54:05 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type: application/xml
+      date: Wed, 08 Jan 2020 00:54:04 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
+        - /
+        - include=snapshots&comp=list
         - ''
 version: 1

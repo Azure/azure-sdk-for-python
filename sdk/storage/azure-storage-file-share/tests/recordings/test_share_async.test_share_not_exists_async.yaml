@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:49 GMT
+      - Wed, 08 Jan 2020 00:54:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -13,11 +13,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:b071af75-101a-0051-6d92-c576f2000000\nTime:2020-01-07T19:39:49.0309468Z</Message></Error>"
+        specified share does not exist.\nRequestId:d007ebb3-e01a-000b-72be-c5b0bf000000\nTime:2020-01-08T00:54:17.0939816Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Tue, 07 Jan 2020 19:39:48 GMT
+      date: Wed, 08 Jan 2020 00:54:16 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
       x-ms-version: '2019-02-02'
@@ -28,7 +28,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /share9874123c
         - restype=share
         - ''
@@ -40,7 +40,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 07 Jan 2020 19:39:49 GMT
+      - Wed, 08 Jan 2020 00:54:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -52,7 +52,7 @@ interactions:
         /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Tue, 07 Jan 2020 19:39:48 GMT
+      date: Wed, 08 Jan 2020 00:54:16 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -63,7 +63,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageemebfcdptkm2.file.core.windows.net
+        - pyacrstorageizsjv7wg4knd.file.core.windows.net
         - /
         - include=snapshots&comp=list
         - ''
