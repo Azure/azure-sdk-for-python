@@ -72,8 +72,7 @@ setup(
     zip_safe=False,
     packages=[
         'azure.common',
-        'azure.profiles',
-        'testutils',
+        'azure.profiles'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
