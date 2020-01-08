@@ -9,7 +9,12 @@
 - Support fixed retry   #6419
 - Support "retry-after-ms" in response header   #9240
 
-## 1.1.1 (2019-12-03) 
+### Bug fixes
+
+- Removed `__enter__` and `__exit__` from async context managers
+([#9313](https://github.com/Azure/azure-sdk-for-python/pull/9313))
+
+## 1.1.1 (2019-12-03)
 
 ### Bug fixes
 
