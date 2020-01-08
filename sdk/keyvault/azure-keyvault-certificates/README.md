@@ -13,7 +13,7 @@ and other secrets
 ## Getting started
 ### Install the package
 Install [azure-keyvault-certificates][pypi_package_certificates] and
-[azure-identity][azure_identity] with [pip][pip]:
+[azure-identity][azure_identity_pip] with [pip][pip]:
 ```Bash
 pip install azure-keyvault-certificates azure-identity
 ```
@@ -382,6 +382,7 @@ additional questions or comments.
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples/backup_restore_operations.py
