@@ -36,7 +36,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubConsumerClient(ClientBaseAsync):
-    """The EventHubProducerClient class defines a high level interface for
+    """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
     The main goal of `EventHubConsumerClient` is to receive events from all partitions of an EventHub with
@@ -44,16 +44,13 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     When multiple `EventHubConsumerClient` operate within one or more processes or machines targeting the same
     checkpointing location, they will balance automatically.
-    To enable the load-balancing and / or checkpointing, checkpoint_store must be set when creating the
-    `EventHubConsumerClient`.
+    To enable the load-balancing, checkpoint_store must be set when creating the `EventHubConsumerClient`.
 
     An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
-    and specify the partition_id.
-    Load-balancing won't work in single-partition mode. But users can still save checkpoints if the checkpoint_store
-    is set.
+    and specify the partition_id. Load-balancing won't work in single-partition receiving mode.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
-     This is likely to be similar to <yournamespace>.servicebus.windows.net
+     The format is like `<yournamespace>.servicebus.windows.net`.
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
     :param str consumer_group: Receive events from the event hub for this consumer group.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which

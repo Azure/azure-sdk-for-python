@@ -63,9 +63,6 @@ class PartitionContext(object):
         # type: (EventData) -> None
         """Updates the receive checkpoint to the given events offset.
 
-        This operation will only update a checkpoint if a `checkpoint_store` was provided during
-        creation of the `EventHubConsumerClient`. Otherwise a warning will be logged.
-
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
          sequence number information used for checkpoint.
         :rtype: None
