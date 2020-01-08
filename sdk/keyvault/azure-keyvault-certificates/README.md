@@ -380,7 +380,7 @@ additional questions or comments.
 [asyncio_package]: https://docs.python.org/3/library/asyncio.html
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [azure_cloud_shell]: https://shell.azure.com/bash
-[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
+[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
