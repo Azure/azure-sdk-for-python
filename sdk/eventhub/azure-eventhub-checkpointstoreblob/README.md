@@ -84,7 +84,7 @@ def main():
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
         consumer_group,
-        eventhub_name = eventhub_name,
+        eventhub_name=eventhub_name,
         checkpoint_store=checkpoint_store,
     )
 

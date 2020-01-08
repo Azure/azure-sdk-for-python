@@ -259,7 +259,6 @@ async def test_partition_processor():
     assert partition_initialize_handler.partition_context
 
 
-@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_events_error():
 
@@ -642,7 +641,6 @@ def test_balance_ownership(ownerships, partitions, expected_result):
     assert len(to_claim_ownership) == expected_result
 
 
-@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error():
 

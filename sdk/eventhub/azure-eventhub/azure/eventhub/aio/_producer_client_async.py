@@ -51,7 +51,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+        .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
             :start-after: [START create_eventhub_producer_client_async]
             :end-before: [END create_eventhub_producer_client_async]
             :language: python
@@ -189,7 +189,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START create_eventhub_producer_client_from_conn_str_async]
                 :end-before: [END create_eventhub_producer_client_from_conn_str_async]
                 :language: python
@@ -231,7 +231,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_producer_client_send_async]
                 :end-before: [END eventhub_producer_client_send_async]
                 :language: python
@@ -267,12 +267,13 @@ class EventHubProducerClient(ClientBaseAsync):
          will assign to all partitions using round-robin.
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
-        :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
+        :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
+         default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_producer_client_create_batch_async]
                 :end-before: [END eventhub_producer_client_create_batch_async]
                 :language: python
@@ -351,7 +352,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub_async.py
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
                 :start-after: [START eventhub_producer_client_close_async]
                 :end-before: [END eventhub_producer_client_close_async]
                 :language: python
