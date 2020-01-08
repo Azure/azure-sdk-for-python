@@ -6,6 +6,10 @@
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest, PipelineContext
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 def test_user_agent_policy():
     user_agent = UserAgentPolicy(base_user_agent='foo')
@@ -23,3 +27,14 @@ def test_user_agent_policy():
     pipeline_request.context.options['user_agent'] = 'xyz'
     user_agent.on_request(pipeline_request)
     assert request.headers['User-Agent'] == 'xyz bar foo'
+
+
+def test_user_agent_environ():
+
+    with mock.patch.dict('os.environ', {'AZURE_HTTP_USER_AGENT': "mytools"}):
+        policy = UserAgentPolicy(None)
+        assert policy.user_agent.endswith("mytools")
+
+        request = HttpRequest('GET', 'http://127.0.0.1/')
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        assert request.headers["user-agent"].endswith("mytools")
