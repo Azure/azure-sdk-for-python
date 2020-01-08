@@ -1,6 +1,8 @@
 Microsoft Azure SDK for Python
 ==============================
 
+.. note:: If you are looking for the new, preview version of Azure Text Analytics, please see `azure-ai-textanalytics <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics>`_.
+
 This is the Microsoft Azure Cognitive Services Text Analytics Client Library.
 
 This package has been tested with Python 2.7, 3.5, 3.6 and 3.7.
