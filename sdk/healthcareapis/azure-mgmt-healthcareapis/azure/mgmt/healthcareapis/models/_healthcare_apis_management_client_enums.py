@@ -32,6 +32,12 @@ class Kind(str, Enum):
     fhir_r4 = "fhir-R4"
 
 
+class ManagedServiceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    none = "None"
+
+
 class ServiceNameUnavailabilityReason(str, Enum):
 
     invalid = "Invalid"

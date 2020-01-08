@@ -240,9 +240,8 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir,
-     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
-     'fhir-R4'
+    :param kind: Required. The kind of the service. Possible values include:
+     'fhir', 'fhir-Stu3', 'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
@@ -251,6 +250,9 @@ class Resource(Model):
     :param etag: An etag associated with the resource, used for optimistic
      concurrency when editing it.
     :type etag: str
+    :param identity: Setting indicating whether the service has a managed
+     identity associated with it.
+    :type identity: ~azure.mgmt.healthcareapis.models.ResourceIdentity
     """
 
     _validation = {
@@ -269,6 +271,7 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -280,6 +283,26 @@ class Resource(Model):
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
         self.etag = kwargs.get('etag', None)
+        self.identity = kwargs.get('identity', None)
+
+
+class ResourceIdentity(Model):
+    """Setting indicating whether the service has a managed identity associated
+    with it.
+
+    :param type: Type of identity being specified, currently SystemAssigned
+     and None are allowed. Possible values include: 'SystemAssigned', 'None'
+    :type type: str or
+     ~azure.mgmt.healthcareapis.models.ManagedServiceIdentityType
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
 
 
 class ServiceAccessPolicyEntry(Model):
@@ -287,8 +310,8 @@ class ServiceAccessPolicyEntry(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_id: Required. An object ID that is allowed access to the
-     FHIR service.
+    :param object_id: Required. An Azure AD object ID (User or Apps) that is
+     allowed access to the FHIR service.
     :type object_id: str
     """
 
@@ -400,9 +423,8 @@ class ServicesDescription(Resource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir,
-     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
-     'fhir-R4'
+    :param kind: Required. The kind of the service. Possible values include:
+     'fhir', 'fhir-Stu3', 'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
@@ -411,6 +433,9 @@ class ServicesDescription(Resource):
     :param etag: An etag associated with the resource, used for optimistic
      concurrency when editing it.
     :type etag: str
+    :param identity: Setting indicating whether the service has a managed
+     identity associated with it.
+    :type identity: ~azure.mgmt.healthcareapis.models.ResourceIdentity
     :param properties: The common properties of a service.
     :type properties: ~azure.mgmt.healthcareapis.models.ServicesProperties
     """
@@ -431,6 +456,7 @@ class ServicesDescription(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'properties': {'key': 'properties', 'type': 'ServicesProperties'},
     }
 
