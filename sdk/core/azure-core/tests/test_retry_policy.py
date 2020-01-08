@@ -19,7 +19,7 @@ from azure.core.pipeline.transport import (
     HttpResponse,
     HttpTransport,
 )
-import uuid
+import tempfile
 import os
 
 def test_retry_code_class_variables():
@@ -143,19 +143,19 @@ def test_retry_seekable_file():
                     assert not position
                     return HttpResponse(request, None)
 
-    file_name = str(uuid.uuid4())
-    with open(file_name, "w+") as f:
-        f.write('Lots of dataaaa')
+    file = tempfile.NamedTemporaryFile(delete=False)
+    file.write(b'Lots of dataaaa')
+    file.close()
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
-    with open(file_name, 'rb') as f:
+    with open(file.name, 'rb') as f:
         form_data_content = {
             'fileContent': f,
-            'fileName': file_name,
+            'fileName': f.name,
         }
         http_request.set_formdata_body(form_data_content)
         http_retry = RetryPolicy(retry_total=1)
         pipeline = Pipeline(MockTransport(), [http_retry])
         pipeline.run(http_request)
-    os.remove(file_name)
+    os.unlink(f.name)
