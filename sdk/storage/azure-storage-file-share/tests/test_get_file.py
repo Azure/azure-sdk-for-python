@@ -67,21 +67,6 @@ class StorageGetFileTest(FileTestCase):
             )
             file_client.upload_file(self.byte_data)
 
-    # def tearDown(self):
-    #     if not self.is_playback():
-    #         try:
-    #             self.fsc.delete_share(self.share_name, delete_snapshots='include')
-    #         except:
-    #             pass
-
-    #     if os.path.isfile(FILE_PATH):
-    #         try:
-    #             os.remove(FILE_PATH)
-    #         except:
-    #             pass
-
-    #     return super(StorageGetFileTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self):

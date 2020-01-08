@@ -78,36 +78,6 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
             self.remote_share_name = None
 
-    # def tearDown(self):
-    #     if not self.is_playback():
-    #         loop = asyncio.get_event_loop()
-    #         try:
-    #             loop.run_until_complete(self.fsc.delete_share(self.share_name, delete_snapshots=True))
-    #         except:
-    #             pass
-
-    #         if self.remote_share_name:
-    #             try:
-    #                 loop.run_until_complete(self.fs2.delete_share(self.remote_share_name, delete_snapshots=True))
-    #             except:
-    #                 pass
-    #         loop.run_until_complete(self.fsc.__aexit__())
-    #         loop.run_until_complete(self.fsc2.__aexit__())
-
-    #     if os.path.isfile(INPUT_FILE_PATH):
-    #         try:
-    #             os.remove(INPUT_FILE_PATH)
-    #         except:
-    #             pass
-
-    #     if os.path.isfile(OUTPUT_FILE_PATH):
-    #         try:
-    #             os.remove(OUTPUT_FILE_PATH)
-    #         except:
-    #             pass
-
-    #     return super(StorageFileAsyncTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)

@@ -43,22 +43,6 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class StorageGetFileTest(AsyncStorageTestCase):
-    # def tearDown(self):
-    #     if not self.is_playback():
-    #         loop = asyncio.get_event_loop()
-    #         try:
-    #             loop.run_until_complete(self.fsc.delete_share(self.share_name, delete_snapshots='include'))
-    #         except:
-    #             pass
-
-    #     if os.path.isfile(FILE_PATH):
-    #         try:
-    #             os.remove(FILE_PATH)
-    #         except:
-    #             pass
-
-    #     return super(StorageGetFileTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self):

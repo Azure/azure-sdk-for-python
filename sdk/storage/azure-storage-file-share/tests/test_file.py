@@ -68,33 +68,6 @@ class StorageFileTest(FileTestCase):
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
             self.remote_share_name = None
 
-    # def tearDown(self):
-    #     if not self.is_playback():
-    #         try:
-    #             self.fsc.delete_share(self.share_name, delete_snapshots='include')
-    #         except:
-    #             pass
-
-    #         if self.remote_share_name:
-    #             try:
-    #                 self.fs2.delete_share(self.remote_share_name, delete_snapshots='include')
-    #             except:
-    #                 pass
-
-    #     if os.path.isfile(INPUT_FILE_PATH):
-    #         try:
-    #             os.remove(INPUT_FILE_PATH)
-    #         except:
-    #             pass
-
-    #     if os.path.isfile(OUTPUT_FILE_PATH):
-    #         try:
-    #             os.remove(OUTPUT_FILE_PATH)
-    #         except:
-    #             pass
-
-    #     return super(StorageFileTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
