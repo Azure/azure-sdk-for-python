@@ -38,23 +38,24 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 
 ### Authenticate the client
 
-Interaction with Event Hubs starts with an instance of the EventHubClient class. You need the host name, SAS/AAD credential and event hub name to instantiate the client object.
+Interaction with Event Hubs starts with an instance of EventHubConsumerClient or EventHubProducerClient class. You need either the host name, SAS/AAD credential and event hub name to instantiate the client object or a connection string that consists of them.
 
 **Create client from connection string:**
 
+For the Event Hubs client library to interact with an Event Hub, the easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace.
+If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
+
+
 ```python
-from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubConsumerClient, EventHubProducerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
+producer_client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 consumer_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
 
 ```
-
-- For the Event Hubs client library to interact with an Event Hub, it will need to understand how to connect and authorize with it.
-The easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace.
-If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
 
 - The `from_connection_string` method takes the connection string of the form
 `Endpoint=sb://<yournamespace>.servicebus.windows.net/;SharedAccessKeyName=<yoursharedaccesskeyname>;SharedAccessKey=<yoursharedaccesskey>` and
