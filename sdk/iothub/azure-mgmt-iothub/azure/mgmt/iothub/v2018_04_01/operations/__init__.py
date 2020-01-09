@@ -9,5 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.10.0"
+from ._operations import Operations
+from ._iot_hub_resource_operations import IotHubResourceOperations
+from ._resource_provider_common_operations import ResourceProviderCommonOperations
+from ._certificates_operations import CertificatesOperations
 
+__all__ = [
+    'Operations',
+    'IotHubResourceOperations',
+    'ResourceProviderCommonOperations',
+    'CertificatesOperations',
+]

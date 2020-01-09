@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.10.0"
+from ._iot_hub_resource_operations import IotHubResourceOperations
 
+__all__ = [
+    'IotHubResourceOperations',
+]
