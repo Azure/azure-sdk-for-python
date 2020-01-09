@@ -4,11 +4,12 @@
 # --------------------------------------------------------------------------------------------
 
 from asyncio import Lock
-from uamqp import TransportType, c_uamqp
-from uamqp.async_ops import ConnectionAsync
+from uamqp import TransportType, c_uamqp  # type: ignore
+from uamqp.async_ops import ConnectionAsync  # type: ignore
+from .._connection_manager import _ConnectionMode
 
 
-class _SharedConnectionManager(object):
+class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self._lock = Lock()
         self._conn = None
@@ -51,11 +52,11 @@ class _SharedConnectionManager(object):
 
     async def reset_connection_if_broken(self):
         async with self._lock:
-            if self._conn and self._conn._state in (
-                c_uamqp.ConnectionState.CLOSE_RCVD,
-                c_uamqp.ConnectionState.CLOSE_SENT,
-                c_uamqp.ConnectionState.DISCARDING,
-                c_uamqp.ConnectionState.END,
+            if self._conn and self._conn._state in (  # pylint:disable=protected-access
+                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             ):
                 self._conn = None
 
@@ -75,4 +76,7 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs):
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
+    if connection_mode == _ConnectionMode.ShareConnection:
+        return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

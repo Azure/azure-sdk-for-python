@@ -11,29 +11,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 6e9bdc2c-b575-11e9-a501-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pythonqueue736a114d
+    uri: https://storagename.queue.core.windows.net/pyqueuesync736a114d
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 02 Aug 2019 22:32:37 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:14 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 3e6b9667-e003-0022-6f82-490a36000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -51,29 +45,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 6ec84e90-b575-11e9-bf76-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pythonqueue736a114d
+    uri: https://storagename.queue.core.windows.net/pyqueuesync736a114d
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 02 Aug 2019 22:32:37 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:15 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 3e6b9671-e003-0022-7782-490a36000000
       x-ms-version:
       - '2018-03-28'
     status:

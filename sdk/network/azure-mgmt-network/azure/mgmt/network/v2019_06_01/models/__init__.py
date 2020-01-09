@@ -53,6 +53,7 @@ try:
     from ._models_py3 import ApplicationGatewayTrustedRootCertificate
     from ._models_py3 import ApplicationGatewayUrlPathMap
     from ._models_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
+    from ._models_py3 import ApplicationRuleCondition
     from ._models_py3 import ApplicationSecurityGroup
     from ._models_py3 import AutoApprovedPrivateLinkService
     from ._models_py3 import Availability
@@ -75,6 +76,7 @@ try:
     from ._models_py3 import AzureFirewallNatRuleCollection
     from ._models_py3 import AzureFirewallNetworkRule
     from ._models_py3 import AzureFirewallNetworkRuleCollection
+    from ._models_py3 import AzureFirewallPublicIPAddress
     from ._models_py3 import AzureFirewallRCAction
     from ._models_py3 import AzureReachabilityReport
     from ._models_py3 import AzureReachabilityReportItem
@@ -161,6 +163,15 @@ try:
     from ._models_py3 import ExpressRoutePortsLocationBandwidths
     from ._models_py3 import ExpressRouteServiceProvider
     from ._models_py3 import ExpressRouteServiceProviderBandwidthsOffered
+    from ._models_py3 import FirewallPolicy
+    from ._models_py3 import FirewallPolicyFilterRule
+    from ._models_py3 import FirewallPolicyFilterRuleAction
+    from ._models_py3 import FirewallPolicyNatRule
+    from ._models_py3 import FirewallPolicyNatRuleAction
+    from ._models_py3 import FirewallPolicyRule
+    from ._models_py3 import FirewallPolicyRuleCondition
+    from ._models_py3 import FirewallPolicyRuleConditionApplicationProtocol
+    from ._models_py3 import FirewallPolicyRuleGroup
     from ._models_py3 import FlowLogFormatParameters
     from ._models_py3 import FlowLogInformation
     from ._models_py3 import FlowLogStatusParameters
@@ -170,6 +181,7 @@ try:
     from ._models_py3 import GetVpnSitesConfigurationRequest
     from ._models_py3 import HTTPConfiguration
     from ._models_py3 import HTTPHeader
+    from ._models_py3 import HubIPAddresses
     from ._models_py3 import HubVirtualNetworkConnection
     from ._models_py3 import InboundNatPool
     from ._models_py3 import InboundNatRule
@@ -204,6 +216,7 @@ try:
     from ._models_py3 import NetworkInterfaceIPConfiguration
     from ._models_py3 import NetworkInterfaceTapConfiguration
     from ._models_py3 import NetworkProfile
+    from ._models_py3 import NetworkRuleCondition
     from ._models_py3 import NetworkSecurityGroup
     from ._models_py3 import NetworkSecurityGroupResult
     from ._models_py3 import NetworkSecurityRulesEvaluationResult
@@ -288,6 +301,7 @@ try:
     from ._models_py3 import TroubleshootingRecommendedActions
     from ._models_py3 import TroubleshootingResult
     from ._models_py3 import TunnelConnectionHealth
+    from ._models_py3 import UnprepareNetworkPoliciesRequest
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
     from ._models_py3 import VerificationIPFlowParameters
@@ -374,6 +388,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationGatewayTrustedRootCertificate
     from ._models import ApplicationGatewayUrlPathMap
     from ._models import ApplicationGatewayWebApplicationFirewallConfiguration
+    from ._models import ApplicationRuleCondition
     from ._models import ApplicationSecurityGroup
     from ._models import AutoApprovedPrivateLinkService
     from ._models import Availability
@@ -396,6 +411,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFirewallNatRuleCollection
     from ._models import AzureFirewallNetworkRule
     from ._models import AzureFirewallNetworkRuleCollection
+    from ._models import AzureFirewallPublicIPAddress
     from ._models import AzureFirewallRCAction
     from ._models import AzureReachabilityReport
     from ._models import AzureReachabilityReportItem
@@ -482,6 +498,15 @@ except (SyntaxError, ImportError):
     from ._models import ExpressRoutePortsLocationBandwidths
     from ._models import ExpressRouteServiceProvider
     from ._models import ExpressRouteServiceProviderBandwidthsOffered
+    from ._models import FirewallPolicy
+    from ._models import FirewallPolicyFilterRule
+    from ._models import FirewallPolicyFilterRuleAction
+    from ._models import FirewallPolicyNatRule
+    from ._models import FirewallPolicyNatRuleAction
+    from ._models import FirewallPolicyRule
+    from ._models import FirewallPolicyRuleCondition
+    from ._models import FirewallPolicyRuleConditionApplicationProtocol
+    from ._models import FirewallPolicyRuleGroup
     from ._models import FlowLogFormatParameters
     from ._models import FlowLogInformation
     from ._models import FlowLogStatusParameters
@@ -491,6 +516,7 @@ except (SyntaxError, ImportError):
     from ._models import GetVpnSitesConfigurationRequest
     from ._models import HTTPConfiguration
     from ._models import HTTPHeader
+    from ._models import HubIPAddresses
     from ._models import HubVirtualNetworkConnection
     from ._models import InboundNatPool
     from ._models import InboundNatRule
@@ -525,6 +551,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkInterfaceIPConfiguration
     from ._models import NetworkInterfaceTapConfiguration
     from ._models import NetworkProfile
+    from ._models import NetworkRuleCondition
     from ._models import NetworkSecurityGroup
     from ._models import NetworkSecurityGroupResult
     from ._models import NetworkSecurityRulesEvaluationResult
@@ -609,6 +636,7 @@ except (SyntaxError, ImportError):
     from ._models import TroubleshootingRecommendedActions
     from ._models import TroubleshootingResult
     from ._models import TunnelConnectionHealth
+    from ._models import UnprepareNetworkPoliciesRequest
     from ._models import Usage
     from ._models import UsageName
     from ._models import VerificationIPFlowParameters
@@ -675,6 +703,8 @@ from ._paged_models import ExpressRouteLinkPaged
 from ._paged_models import ExpressRoutePortPaged
 from ._paged_models import ExpressRoutePortsLocationPaged
 from ._paged_models import ExpressRouteServiceProviderPaged
+from ._paged_models import FirewallPolicyPaged
+from ._paged_models import FirewallPolicyRuleGroupPaged
 from ._paged_models import FrontendIPConfigurationPaged
 from ._paged_models import HubVirtualNetworkConnectionPaged
 from ._paged_models import InboundNatRulePaged
@@ -730,6 +760,7 @@ from ._network_management_client_enums import (
     SecurityRuleProtocol,
     SecurityRuleAccess,
     SecurityRuleDirection,
+    ProvisioningState,
     RouteNextHopType,
     PublicIPAddressSkuName,
     DdosSettingsProtectionCoverage,
@@ -748,7 +779,6 @@ from ._network_management_client_enums import (
     ApplicationGatewayOperationalState,
     ApplicationGatewayFirewallMode,
     ResourceIdentityType,
-    ProvisioningState,
     AzureFirewallRCActionType,
     AzureFirewallApplicationRuleProtocolType,
     AzureFirewallNatRCActionType,
@@ -768,6 +798,10 @@ from ._network_management_client_enums import (
     ExpressRouteLinkConnectorType,
     ExpressRouteLinkAdminState,
     ExpressRoutePortsEncapsulation,
+    FirewallPolicyNatRuleActionType,
+    FirewallPolicyFilterRuleActionType,
+    FirewallPolicyRuleConditionApplicationProtocolType,
+    FirewallPolicyRuleConditionNetworkProtocol,
     LoadBalancerSkuName,
     LoadDistribution,
     ProbeProtocol,
@@ -793,10 +827,10 @@ from ._network_management_client_enums import (
     Severity,
     IssueType,
     ConnectionStatus,
-    ConnectionMonitorSourceStatus,
+    VerbosityLevel,
     ConnectionState,
     EvaluationState,
-    VerbosityLevel,
+    ConnectionMonitorSourceStatus,
     PublicIPPrefixSkuName,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
@@ -875,6 +909,7 @@ __all__ = [
     'ApplicationGatewayTrustedRootCertificate',
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
+    'ApplicationRuleCondition',
     'ApplicationSecurityGroup',
     'AutoApprovedPrivateLinkService',
     'Availability',
@@ -897,6 +932,7 @@ __all__ = [
     'AzureFirewallNatRuleCollection',
     'AzureFirewallNetworkRule',
     'AzureFirewallNetworkRuleCollection',
+    'AzureFirewallPublicIPAddress',
     'AzureFirewallRCAction',
     'AzureReachabilityReport',
     'AzureReachabilityReportItem',
@@ -983,6 +1019,15 @@ __all__ = [
     'ExpressRoutePortsLocationBandwidths',
     'ExpressRouteServiceProvider',
     'ExpressRouteServiceProviderBandwidthsOffered',
+    'FirewallPolicy',
+    'FirewallPolicyFilterRule',
+    'FirewallPolicyFilterRuleAction',
+    'FirewallPolicyNatRule',
+    'FirewallPolicyNatRuleAction',
+    'FirewallPolicyRule',
+    'FirewallPolicyRuleCondition',
+    'FirewallPolicyRuleConditionApplicationProtocol',
+    'FirewallPolicyRuleGroup',
     'FlowLogFormatParameters',
     'FlowLogInformation',
     'FlowLogStatusParameters',
@@ -992,6 +1037,7 @@ __all__ = [
     'GetVpnSitesConfigurationRequest',
     'HTTPConfiguration',
     'HTTPHeader',
+    'HubIPAddresses',
     'HubVirtualNetworkConnection',
     'InboundNatPool',
     'InboundNatRule',
@@ -1026,6 +1072,7 @@ __all__ = [
     'NetworkInterfaceIPConfiguration',
     'NetworkInterfaceTapConfiguration',
     'NetworkProfile',
+    'NetworkRuleCondition',
     'NetworkSecurityGroup',
     'NetworkSecurityGroupResult',
     'NetworkSecurityRulesEvaluationResult',
@@ -1110,6 +1157,7 @@ __all__ = [
     'TroubleshootingRecommendedActions',
     'TroubleshootingResult',
     'TunnelConnectionHealth',
+    'UnprepareNetworkPoliciesRequest',
     'Usage',
     'UsageName',
     'VerificationIPFlowParameters',
@@ -1172,6 +1220,8 @@ __all__ = [
     'ExpressRoutePortsLocationPaged',
     'ExpressRoutePortPaged',
     'ExpressRouteLinkPaged',
+    'FirewallPolicyPaged',
+    'FirewallPolicyRuleGroupPaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',
@@ -1230,6 +1280,7 @@ __all__ = [
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
     'SecurityRuleDirection',
+    'ProvisioningState',
     'RouteNextHopType',
     'PublicIPAddressSkuName',
     'DdosSettingsProtectionCoverage',
@@ -1248,7 +1299,6 @@ __all__ = [
     'ApplicationGatewayOperationalState',
     'ApplicationGatewayFirewallMode',
     'ResourceIdentityType',
-    'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
     'AzureFirewallNatRCActionType',
@@ -1268,6 +1318,10 @@ __all__ = [
     'ExpressRouteLinkConnectorType',
     'ExpressRouteLinkAdminState',
     'ExpressRoutePortsEncapsulation',
+    'FirewallPolicyNatRuleActionType',
+    'FirewallPolicyFilterRuleActionType',
+    'FirewallPolicyRuleConditionApplicationProtocolType',
+    'FirewallPolicyRuleConditionNetworkProtocol',
     'LoadBalancerSkuName',
     'LoadDistribution',
     'ProbeProtocol',
@@ -1293,10 +1347,10 @@ __all__ = [
     'Severity',
     'IssueType',
     'ConnectionStatus',
-    'ConnectionMonitorSourceStatus',
+    'VerbosityLevel',
     'ConnectionState',
     'EvaluationState',
-    'VerbosityLevel',
+    'ConnectionMonitorSourceStatus',
     'PublicIPPrefixSkuName',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',

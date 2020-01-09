@@ -32,7 +32,7 @@ def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_n
 
     # wait to be sure it has gone - a workaround for the async nature of certain ARM processes
     co=0
-    while co<5:
+    while co<10:
         co += 1
         if live:
             time.sleep(20)

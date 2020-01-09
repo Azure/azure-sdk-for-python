@@ -25,14 +25,14 @@ import pytest
 
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import StatusCodes
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 from azure.cosmos import _retry_utility
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.globaldb]
 
 location_changed = False
 
@@ -152,10 +152,14 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         else:
             self.endpoint_discovery_retry_count += 1
             location_changed = True
-            raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Forbidden", {'x-ms-substatus' : 3})
+            raise exceptions.CosmosHttpResponseError(
+                status_code=StatusCodes.FORBIDDEN,
+                message="Forbidden",
+                response=test_config.FakeResponse({'x-ms-substatus' : 3}))
 
     def MockGetDatabaseAccountStub(self, endpoint):
-        raise errors.HTTPFailure(StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
+        raise exceptions.CosmosHttpResponseError(
+            status_code=StatusCodes.SERVICE_UNAVAILABLE, message="Service unavailable")
     
     def MockCreateDatabase(self, client, database):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
@@ -166,7 +170,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        write_location_client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        write_location_client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.write_location_host, Test_globaldb_mock_tests.masterKey, connection_policy)
         self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         
         self.MockCreateDatabase(write_location_client, { 'id': 'mock database' })
@@ -177,7 +181,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.host, Test_globaldb_mock_tests.masterKey, connection_policy)
 
         self.assertEqual(client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         self.assertEqual(client._global_endpoint_manager.ReadEndpoint, Test_globaldb_mock_tests.write_location_host)

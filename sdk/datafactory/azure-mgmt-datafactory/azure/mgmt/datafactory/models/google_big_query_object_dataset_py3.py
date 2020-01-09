@@ -43,9 +43,15 @@ class GoogleBigQueryObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The table name. Type: string (or Expression with
-     resultType string).
+    :param table_name: This property will be retired. Please consider using
+     database + table properties instead.
     :type table_name: object
+    :param table: The table name of the Google BigQuery. Type: string (or
+     Expression with resultType string).
+    :type table: object
+    :param dataset: The database name of the Google BigQuery. Type: string (or
+     Expression with resultType string).
+    :type dataset: object
     """
 
     _validation = {
@@ -64,9 +70,13 @@ class GoogleBigQueryObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
+        'dataset': {'key': 'typeProperties.dataset', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, dataset=None, **kwargs) -> None:
         super(GoogleBigQueryObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
+        self.table = table
+        self.dataset = dataset
         self.type = 'GoogleBigQueryObject'

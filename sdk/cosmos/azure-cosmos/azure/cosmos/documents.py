@@ -25,7 +25,7 @@
 from . import _retry_options
 
 
-class DatabaseAccount(object):
+class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
     """Database account. A DatabaseAccount is the container for databases.
 
     :ivar str DatabaseLink:
@@ -227,27 +227,6 @@ class ConnectionMode(object):
     Gateway = 0
 
 
-class MediaReadMode(object):
-    """Represents the mode for use with downloading attachment content
-    (aka media).
-
-    :ivar str Buffered:
-        Content is buffered at the client and not directly
-        streamed from the content store.
-
-        Use Buffered to reduce the time taken to read and write media files.
-    :ivar str Streamed:
-        Content is directly streamed from the content store
-        without any buffering at the client.
-
-        Use Streamed to reduce the client memory overhead of reading and
-        writing media files.
-    """
-
-    Buffered = "Buffered"
-    Streamed = "Streamed"
-
-
 class PermissionMode(object):
     """Enumeration specifying applicability of permission.
 
@@ -302,7 +281,7 @@ class TriggerOperation(object):
 class SSLConfiguration(object):
     """Configurations for SSL connections.
 
-    Please refer to http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification for more detail.
+    Please refer to https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification for more detail.
 
     :ivar str SSLKeyFIle:
         The path of the key file for ssl connection.
@@ -332,20 +311,15 @@ class ProxyConfiguration(object):
         self.Port = None
 
 
-class ConnectionPolicy(object):
+class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     """Represents the Connection policy assocated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
         for response from network peer).
-    :ivar int MediaRequestTimeout:
-        Gets or sets Time to wait for response
-        from network peer for attachment content (aka media) operations.
     :ivar documents.ConnectionMode ConnectionMode:
         Gets or sets the connection mode used in the client. Currently
         only Gateway is supported.
-    :ivar MediaReadMode.Buffered MediaReadMode:
-        Gets or sets the attachment content (aka media) download mode.
     :ivar documents.SSLConfiguration SSLConfiguration:
         Gets or sets the SSL configuration.
     :ivar documents.ProxyConfiguration ProxyConfiguration:
@@ -359,28 +333,30 @@ class ConnectionPolicy(object):
         Gets or sets the preferred locations for geo-replicated database accounts.
         When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
         the client will use this list to evaluate the final location, taking into consideration
-        the order specified in PreferredLocations list. The locations in this list are specified as the names of
-        the azure Cosmos locations like, 'West US', 'East US', 'Central India' and so on.
+        the order specified in PreferredLocations list. The locations in this list are specified
+        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
+        and so on.
     :ivar RetryOptions RetryOptions:
         Gets or sets the retry options to be applied to all requests when retrying.
     :ivar boolean DisableSSLVerification:
         Flag to disable SSL verification for the requests. SSL verification is enabled by default.
         Don't set this when targeting production endpoints.
-        This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
+        This is intended to be used only when targeting emulator endpoint to avoid failing your
+        requests with SSL related error.
     :ivar boolean UseMultipleWriteLocations:
-        Flag to enable writes on any locations (regions) for geo-replicated database accounts in the azure Cosmos service.
+        Flag to enable writes on any locations (regions) for geo-replicated database accounts
+        in the azure Cosmos service.
+    :ivar ConnectionRetryConfiguration:
+        Retry Configuration to be used for connection retries.
+    :vartype ConnectionRetryConfiguration:
+        int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
-    # defaultMediaRequestTimeout is based upon the blob client timeout and the
-    # retry policy.
-    __defaultMediaRequestTimeout = 300000  # milliseconds
 
     def __init__(self):
         self.RequestTimeout = self.__defaultRequestTimeout
-        self.MediaRequestTimeout = self.__defaultMediaRequestTimeout
         self.ConnectionMode = ConnectionMode.Gateway
-        self.MediaReadMode = MediaReadMode.Buffered
         self.SSLConfiguration = None
         self.ProxyConfiguration = None
         self.EnableEndpointDiscovery = True
@@ -388,12 +364,12 @@ class ConnectionPolicy(object):
         self.RetryOptions = _retry_options.RetryOptions()
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
+        self.ConnectionRetryConfiguration = None
 
 
 class _OperationType(object):
     """Represents the type of the operation
     """
-
     Create = "Create"
     Delete = "Delete"
     ExecuteJavaScript = "ExecuteJavaScript"
@@ -405,6 +381,7 @@ class _OperationType(object):
     Recreate = "Recreate"
     Replace = "Replace"
     SqlQuery = "SqlQuery"
+    QueryPlan = "QueryPlan"
     Update = "Update"
     Upsert = "Upsert"
 
@@ -417,9 +394,8 @@ class _OperationType(object):
             _OperationType.ExecuteJavaScript,
             _OperationType.Replace,
             _OperationType.Upsert,
-            _OperationType.Update
+            _OperationType.Update,
         )
-
 
     @staticmethod
     def IsReadOnlyOperation(operationType):
@@ -429,5 +405,34 @@ class _OperationType(object):
             _OperationType.Head,
             _OperationType.HeadFeed,
             _OperationType.Query,
-            _OperationType.SqlQuery
+            _OperationType.SqlQuery,
         )
+
+    @staticmethod
+    def IsFeedOperation(operationType):
+        return operationType in (
+            _OperationType.Create,
+            _OperationType.Upsert,
+            _OperationType.ReadFeed,
+            _OperationType.Query,
+            _OperationType.SqlQuery,
+            _OperationType.QueryPlan,
+            _OperationType.HeadFeed,
+        )
+
+class _QueryFeature(object):
+    NoneQuery = "NoneQuery"
+    Aggregate = "Aggregate"
+    CompositeAggregate = "CompositeAggregate"
+    Distinct = "Distinct"
+    GroupBy = "GroupBy"
+    MultipleAggregates = "MultipleAggregates"
+    MultipleOrderBy = "MultipleOrderBy"
+    OffsetAndLimit = "OffsetAndLimit"
+    OrderBy = "OrderBy"
+    Top = "Top"
+
+class _DistinctType(object):
+    NoneType = "None"
+    Ordered = "Ordered"
+    Unordered = "Unordered"

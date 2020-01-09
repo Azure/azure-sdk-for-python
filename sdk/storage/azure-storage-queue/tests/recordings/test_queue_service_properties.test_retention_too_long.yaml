@@ -15,11 +15,9 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 9bdff170-b575-11e9-bf3a-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:33:54 GMT
+      - Wed, 30 Oct 2019 19:51:58 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,21 +25,19 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:56f39019-b003-00b9-0782-49870e000000\nTime:2019-08-02T22:33:54.2651659Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        specified is not syntactically valid.\nRequestId:c8f25460-e003-0023-345b-8f65c1000000\nTime:2019-10-30T19:51:58.0075983Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
         days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '376'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 02 Aug 2019 22:33:53 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:57 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
-      x-ms-request-id:
-      - 56f39019-b003-00b9-0782-49870e000000
       x-ms-version:
       - '2018-03-28'
     status:

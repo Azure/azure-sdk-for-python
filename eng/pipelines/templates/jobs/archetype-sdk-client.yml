@@ -1,8 +1,9 @@
 parameters:
   ServiceDirectory: ''
-  BeforeBuildJobPublishBuildArtifacts: []
+  BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
+  TestTimeoutInMinutes: 0
 
 jobs:
   - job: 'Build'
@@ -13,39 +14,14 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - script: |
-          echo "##vso[build.addbuildtag]Scheduled"
-        displayName: 'Tag scheduled builds'
-        condition: and(eq(variables['Build.SourceBranchName'],'master'),eq(variables['Build.Reason'],'Schedule'))
-
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: $(PythonVersion)
-
-      - script: |
-          pip install wheel setuptools pathlib twine readme-renderer[md]
-        displayName: 'Prep Environment'
-
-      - task: PythonScript@0
-        displayName: 'Generate Packages'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
-
-      - script: |
-          twine check $(Build.ArtifactStagingDirectory)/*
-        displayName: 'Verify Readme'
-
-      - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
-
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Artifacts'
-        inputs:
-          artifactName: packages
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
     - template: ../variables/globals.yml
 
@@ -56,41 +32,19 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
+    - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - script: |
-          pip install setuptools wheel Jinja2
-          pip install doc-warden==0.3.0
-          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
-        displayName: 'Verify Readmes'
-
-      - task: PythonScript@0
-        displayName: 'Analyze dependencies'
-        inputs:
-          scriptPath: 'scripts/analyze_deps.py'
-          arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
-
-      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-        # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
-        # builds should be sufficient.
-        condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
-        displayName: 'Component Detection'
-
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Report Artifacts'
-        inputs:
-          artifactName: reports
-
-  - job: 'Generic_Tests'
+  - job: 'Test'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
 
     dependsOn:
-      - 'Build'
+       - 'Build'
 
     strategy:
       matrix:
@@ -98,70 +52,121 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
-        Linux_Python34:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.4'
+          CoverageArg: ''
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
+          CoverageArg: ''
         Linux_Python36:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
+          CoverageArg: ''
         Linux_Python37:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
+          CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '3.5'
+          CoverageArg: ''
         MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '2.7'
+          CoverageArg: ''
+        Linux_pypy3:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: 'pypy3'
+          CoverageArg: '--disablecov'
 
     pool:
       vmImage: '$(OSVmImage)'
 
     steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: $(OSName)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
 
-      - template: ../steps/publish-coverage.yml
-
-
-# Run PyPy tests without coverage
-  - job: 'Test_PyPy'
-
+  - job: 'Test_Linux_Python38'
+    condition: ne(variables['Skip.Test'], 'true')
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
-      - template: ../variables/globals.yml
-      - name: OSName
-        value: 'Linux'
-      - name: PythonVersion
-        value: 'pypy3'
-      - name: OSVmImage
-        value: ubuntu-16.04
+    - template: ../variables/globals.yml
+
+    dependsOn:
+       - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/build-test-python38.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: 'Linux'
+        CoverageArg: ''
+        PythonVersion: '3.8'
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: 'RunMyPy'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
+    displayName: 'Run MyPy'
+    variables:
+    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
 
     pool:
-      vmImage: $(OSVmImage)
+      vmImage: 'ubuntu-16.04'
 
     steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          AdditionalTestArgs: '--disablecov'
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    - template: ../steps/run_mypy.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunPyLint'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
+    displayName: 'Run Pylint'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_pylint.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}

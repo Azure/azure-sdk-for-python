@@ -22,10 +22,11 @@
 """Internal class for document producer implementation in the Azure Cosmos database service.
 """
 
-import six
-from six.moves import xrange
 import numbers
 from collections import deque
+
+import six
+
 from azure.cosmos import _base
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
@@ -121,13 +122,14 @@ class _PartitionKeyRangeDocumentProduerComparator(object):
     def __init__(self):
         pass
 
-    def compare(self, doc_producer1, doc_producer2):
+    def compare(self, doc_producer1, doc_producer2):  # pylint: disable=no-self-use
         return _compare_helper(
             doc_producer1.get_target_range()["minInclusive"], doc_producer2.get_target_range()["minInclusive"]
         )
 
 
-class _OrderByHelper:
+class _OrderByHelper(object):
+
     @staticmethod
     def getTypeOrd(orderby_item):
         """Returns the ordinal of the value of the item pair in the dictionary.
@@ -212,13 +214,17 @@ class _OrderByHelper:
         return _compare_helper(orderby_item1["item"], orderby_item2["item"])
 
 
+def _peek_order_by_items(peek_result):
+    return peek_result["orderByItems"]
+
+
 class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
     """
     Provides a Comparator for document producers which respects orderby sort order.
 
     """
 
-    def __init__(self, sort_order):
+    def __init__(self, sort_order):  # pylint: disable=super-init-not-called
         """Instantiates this class
 
         :param list sort_order:
@@ -229,9 +235,6 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
 
         """
         self._sort_order = sort_order
-
-    def _peek_order_by_items(self, peek_result):
-        return peek_result["orderByItems"]
 
     def compare(self, doc_producer1, doc_producer2):
         """Compares the given two instances of DocumentProducers.
@@ -256,13 +259,13 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         :rtype: int
         """
 
-        res1 = self._peek_order_by_items(doc_producer1.peek())
-        res2 = self._peek_order_by_items(doc_producer2.peek())
+        res1 = _peek_order_by_items(doc_producer1.peek())
+        res2 = _peek_order_by_items(doc_producer2.peek())
 
         self._validate_orderby_items(res1, res2)
 
-        for i in xrange(len(res1)):
-            res = _OrderByHelper.compare(res1[i], res2[i])
+        for i, (elt1, elt2) in enumerate(zip(res1, res2)):
+            res = _OrderByHelper.compare(elt1, elt2)
             if res != 0:
                 if self._sort_order[i] == "Ascending":
                     return res
@@ -280,8 +283,8 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
             # error
             raise ValueError("orderByItems cannot have a different size than sort orders.")
 
-        for i in xrange(len(res1)):
-            type1 = _OrderByHelper.getTypeStr(res1[i])
-            type2 = _OrderByHelper.getTypeStr(res2[i])
+        for elt1, elt2 in zip(res1, res2):
+            type1 = _OrderByHelper.getTypeStr(elt1)
+            type2 = _OrderByHelper.getTypeStr(elt2)
             if type1 != type2:
                 raise ValueError("Expected {}, but got {}.".format(type1, type2))

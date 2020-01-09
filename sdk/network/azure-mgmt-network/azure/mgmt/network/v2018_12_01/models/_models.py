@@ -2896,6 +2896,10 @@ class BackendAddressPool(SubResource):
     :ivar outbound_rule: Gets outbound rules that use this backend address
      pool.
     :vartype outbound_rule: ~azure.mgmt.network.v2018_12_01.models.SubResource
+    :ivar outbound_rules: Gets outbound rules that use this backend address
+     pool.
+    :vartype outbound_rules:
+     list[~azure.mgmt.network.v2018_12_01.models.SubResource]
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -2911,6 +2915,7 @@ class BackendAddressPool(SubResource):
         'backend_ip_configurations': {'readonly': True},
         'load_balancing_rules': {'readonly': True},
         'outbound_rule': {'readonly': True},
+        'outbound_rules': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2918,6 +2923,7 @@ class BackendAddressPool(SubResource):
         'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -2928,6 +2934,7 @@ class BackendAddressPool(SubResource):
         self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_rule = None
+        self.outbound_rules = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
@@ -8502,7 +8509,7 @@ class OperationPropertiesFormatServiceSpecification(Model):
 
 
 class OutboundRule(SubResource):
-    """Outbound pool of the load balancer.
+    """Outbound rule of the load balancer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9802,6 +9809,10 @@ class PublicIPPrefix(Resource):
     :param public_ip_addresses: The list of all referenced PublicIPAddresses
     :type public_ip_addresses:
      list[~azure.mgmt.network.v2018_12_01.models.ReferencedPublicIpAddress]
+    :ivar load_balancer_frontend_ip_configuration: The reference to load
+     balancer frontend IP configuration associated with the public IP prefix.
+    :vartype load_balancer_frontend_ip_configuration:
+     ~azure.mgmt.network.v2018_12_01.models.SubResource
     :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
@@ -9819,6 +9830,7 @@ class PublicIPPrefix(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'load_balancer_frontend_ip_configuration': {'readonly': True},
     }
 
     _attribute_map = {
@@ -9833,6 +9845,7 @@ class PublicIPPrefix(Resource):
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
+        'load_balancer_frontend_ip_configuration': {'key': 'properties.loadBalancerFrontendIpConfiguration', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -9847,6 +9860,7 @@ class PublicIPPrefix(Resource):
         self.prefix_length = kwargs.get('prefix_length', None)
         self.ip_prefix = kwargs.get('ip_prefix', None)
         self.public_ip_addresses = kwargs.get('public_ip_addresses', None)
+        self.load_balancer_frontend_ip_configuration = None
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = kwargs.get('etag', None)

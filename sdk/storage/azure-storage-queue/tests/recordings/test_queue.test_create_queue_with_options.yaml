@@ -11,13 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 6f55e2be-b575-11e9-bc95-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:32:39 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-meta:
       - '{''val1'': ''test'', ''val2'': ''blah''}'
       x-ms-meta-val1:
@@ -27,19 +23,17 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pythonqueue63ff1110
+    uri: https://storagename.queue.core.windows.net/pyqueuesync63ff1110
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:15 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 0e63a336-c003-0053-7082-49780f000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -55,39 +49,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 6f81432c-b575-11e9-94da-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:32:39 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://storagename.queue.core.windows.net/pythonqueue63ff1110?comp=metadata
+    uri: https://storagename.queue.core.windows.net/pyqueuesync63ff1110?comp=metadata
   response:
     body:
       string: ''
     headers:
-      Cache-Control:
+      cache-control:
       - no-cache
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:15 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-approximate-messages-count:
       - '0'
       x-ms-meta-val1:
       - test
       x-ms-meta-val2:
       - blah
-      x-ms-request-id:
-      - 0e63a37d-c003-0053-3382-49780f000000
       x-ms-version:
       - '2018-03-28'
     status:

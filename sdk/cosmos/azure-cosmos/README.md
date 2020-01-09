@@ -63,25 +63,23 @@ export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $A
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
 
 ```Python
-from azure.cosmos import HTTPFailure, CosmosClient, Container, Database, PartitionKey
+from azure.cosmos import CosmosClient, PartitionKey, exceptions
 
 import os
 url = os.environ['ACCOUNT_URI']
 key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, auth = {
-    'masterKey': key
-})
+client = CosmosClient(url, credential=key)
 ```
 
 ## Usage
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
 
-* [Database][ref_database]: A Cosmos DB account can contain multiple databases. When you create a database, you specify the API you'd like to use when interacting with its documents: SQL, MongoDB, Gremlin, Cassandra, or Azure Table. Use the [Database][ref_database] object to manage its containers.
+* [Database][ref_database]: A Cosmos DB account can contain multiple databases. When you create a database, you specify the API you'd like to use when interacting with its documents: SQL, MongoDB, Gremlin, Cassandra, or Azure Table. Use the [DatabaseProxy][ref_database] object to manage its containers.
 
-* [Container][ref_container]: A container is a collection of JSON documents. You create (insert), read, update, and delete items in a container by using methods on the [Container][ref_container] object.
+* [Container][ref_container]: A container is a collection of JSON documents. You create (insert), read, update, and delete items in a container by using methods on the [ContainerProxy][ref_container] object.
 
-* [Item][ref_item]: An Item is the dictionary-like representation of a JSON document stored in a container. Each Item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
+* Item: An Item is the dictionary-like representation of a JSON document stored in a container. Each Item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
 
 For more information about these resources, see [Working with Azure Cosmos databases, containers and items][cosmos_resources].
 
@@ -89,14 +87,14 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 The following sections provide several code snippets covering some of the most common Cosmos DB tasks, including:
 
-* [Create a database](#create-a-database)
-* [Create a container](#create-a-container)
-* [Get an existing container](#get-an-existing-container)
-* [Insert data](#insert-data)
-* [Delete data](#delete-data)
-* [Query the database](#query-the-database)
-* [Get database properties](#get-database-properties)
-* [Modify container properties](#modify-container-properties)
+* [Create a database](#create-a-database "Create a database")
+* [Create a container](#create-a-container "Create a container")
+* [Get an existing container](#get-an-existing-container "Get an existing container")
+* [Insert data](#insert-data "Insert data")
+* [Delete data](#delete-data "Delete data")
+* [Query the database](#query-the-database "Query the database")
+* [Get database properties](#get-database-properties "Get database properties")
+* [Modify container properties](#modify-container-properties "Modify container properties")
 
 ### Create a database
 
@@ -106,9 +104,7 @@ After authenticating your [CosmosClient][ref_cosmosclient], you can work with an
 database_name = 'testDatabase'
 try:
     database = client.create_database(database_name)
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
+except exceptions.CosmosResourceExistsError:
     database = client.get_database_client(database_name)
 ```
 
@@ -120,13 +116,13 @@ This example creates a container with default settings. If a container with the 
 container_name = 'products'
 try:
     container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
+except exceptions.CosmosResourceExistsError:
     container = database.get_container_client(container_name)
+except exceptions.CosmosHttpResponseError:
+    raise
 ```
 
-The preceding snippet also handles the [HTTPFailure][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting) section.
+The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
 
 ### Get an existing container
 
@@ -139,7 +135,7 @@ container = database.get_container_client(container_name)
 
 ### Insert data
 
-To insert items into a container, pass a dictionary containing your data to [Container.upsert_item][ref_container_upsert_item]. Each item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
+To insert items into a container, pass a dictionary containing your data to [ContainerProxy.upsert_item][ref_container_upsert_item]. Each item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
 
 This example inserts several items into the container, each with a unique `id`:
 
@@ -158,7 +154,7 @@ for i in range(1, 10):
 
 ### Delete data
 
-To delete items from a container, use [Container.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
+To delete items from a container, use [ContainerProxy.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
 
 ```Python
 for item in container.query_items(query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"',
@@ -168,7 +164,7 @@ for item in container.query_items(query='SELECT * FROM products p WHERE p.produc
 
 ### Query the database
 
-A Cosmos DB SQL API database supports querying the items in a container with [Container.query_items][ref_container_query_items] using SQL-like syntax.
+A Cosmos DB SQL API database supports querying the items in a container with [ContainerProxy.query_items][ref_container_query_items] using SQL-like syntax.
 
 This example queries a container for items with a specific `id`:
 
@@ -186,7 +182,7 @@ for item in container.query_items(
 
 > NOTE: Although you can specify any value for the container name in the `FROM` clause, we recommend you use the container name for consistency.
 
-Perform parameterized queries by passing a dictionary containing the parameters and their values to [Container.query_items][ref_container_query_items]:
+Perform parameterized queries by passing a dictionary containing the parameters and their values to [ContainerProxy.query_items][ref_container_query_items]:
 
 ```Python
 discontinued_items = container.query_items(
@@ -230,11 +226,45 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
+## Optional Configuration
+
+Optional keyword arguments that can be passed in at the client and per-operation level. 
+
+### Retry Policy configuration
+
+Use the following keyword arguments when instantiating a client to configure the retry policy:
+
+* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
+Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
+* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
+* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
+
+### Other client / per-operation configuration
+
+Other optional configuration keyword arguments that can be specified on the client or per-operation.
+
+**Client keyword arguments:**
+
+* __enable_endpoint_discovery__ (bool): Enable endpoint discovery for geo-replicated database accounts. Default is `True`.
+* __preferred_locations__ (list[str]): The preferred locations for geo-replicated database accounts.
+* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __transport__ (Any): User-provided transport to send the HTTP request.
+
+**Per-operation keyword arguments:**
+
+* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
+* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
+* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
+* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+* __timeout__ (int): An absolute timeout in seconds, for the combined HTTP request and response processing.
+
 ## Troubleshooting
 
 ### General
 
-When you interact with Cosmos DB using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
+When you interact with Cosmos DB using the Python SDK, exceptions returned by the service correspond to the same HTTP status codes returned for REST API requests:
 
 [HTTP Status Codes for Azure Cosmos DB][cosmos_http_status_codes]
 
@@ -243,13 +273,11 @@ For example, if you try to create a container using an ID (name) that's already 
 ```Python
 try:
     database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
-except HTTPFailure as e:
-    if e.status_code == 409:
-        print("""Error creating container.
+except exceptions.CosmosResourceExistsError:
+    print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
-    else:
-        raise
+
 ```
 
 ## More sample code
@@ -277,23 +305,21 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
 [python]: https://www.python.org/downloads/
-[ref_container_delete_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container.delete_item
-[ref_container_query_items]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container.query_items
-[ref_container_upsert_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container.upsert_item
-[ref_container]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container
-[ref_cosmos_sdk]: http://cosmosproto.westus.azurecontainer.io
-[ref_cosmosclient_create_database]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.CosmosClient.create_database
-[ref_cosmosclient]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.CosmosClient
-[ref_database]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Database
-[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.errors.httpfailure
-[ref_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Item
-[sample_database_mgmt]: https://github.com/binderjoe/cosmos-python-prototype/blob/master/examples/databasemanagementsample.py
-[sample_document_mgmt]: https://github.com/binderjoe/cosmos-python-prototype/blob/master/examples/documentmanagementsample.py
-[sample_examples_misc]: https://github.com/binderjoe/cosmos-python-prototype/blob/master/examples/examples.py
-[source_code]: https://github.com/binderjoe/cosmos-python-prototype
+[ref_container_delete_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
+[ref_container_query_items]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
+[ref_container_upsert_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
+[ref_container]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.ContainerProxy
+[ref_cosmos_sdk]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html
+[ref_cosmosclient_create_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.CosmosClient.create_database
+[ref_cosmosclient]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.CosmosClient
+[ref_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.DatabaseProxy
+[ref_httpfailure]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html#azure.cosmos.exceptions.CosmosHttpResponseError
+[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/database_management.py
+[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/document_management.py
+[sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/examples.py
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
-
 
 # Contributing
 

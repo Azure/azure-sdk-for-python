@@ -11,29 +11,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 6ef756b8-b575-11e9-9657-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pythonqueue9101903
+    uri: https://storagename.queue.core.windows.net/pyqueuesync9101903
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:15 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 9a04da0e-a003-0007-5982-499285000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -51,13 +45,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 6f243ede-b575-11e9-b692-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:32:39 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-meta:
       - '{''val'': ''value''}'
       x-ms-meta-val:
@@ -65,24 +55,22 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pythonqueue9101903
+    uri: https://storagename.queue.core.windows.net/pyqueuesync9101903
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueAlreadyExists</Code><Message>The
-        specified queue already exists.\nRequestId:9a04da22-a003-0007-6582-499285000000\nTime:2019-08-02T22:32:38.9658771Z</Message></Error>"
+        specified queue already exists.\nRequestId:edb962eb-9003-0068-2d5b-8f545b000000\nTime:2019-10-30T19:51:15.7457762Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '222'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 02 Aug 2019 22:32:38 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:15 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - QueueAlreadyExists
-      x-ms-request-id:
-      - 9a04da22-a003-0007-6582-499285000000
       x-ms-version:
       - '2018-03-28'
     status:

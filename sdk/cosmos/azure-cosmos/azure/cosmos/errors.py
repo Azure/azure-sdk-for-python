@@ -19,47 +19,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""PyCosmos Exceptions in the Azure Cosmos database service.
+"""PyCosmos Exceptions in the Azure Cosmos database service. (Deprecated module)
 """
-from . import http_constants
+import warnings
 
+from .exceptions import * # pylint: disable=wildcard-import, unused-wildcard-import
 
-class CosmosError(Exception):
-    """Base class for all Azure Cosmos errors.
-    """
-
-
-class HTTPFailure(CosmosError):
-    """Raised when a HTTP request to the Azure Cosmos has failed.
-    """
-
-    def __init__(self, status_code, message="", headers=None):
-        """
-        :param int status_code:
-        :param str message:
-
-        """
-        if headers is None:
-            headers = {}
-
-        self.status_code = status_code
-        self.headers = headers
-        self.sub_status = None
-        self._http_error_message = message
-        if http_constants.HttpHeaders.SubStatus in self.headers:
-            self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
-            CosmosError.__init__(
-                self, "Status code: %d Sub-status: %d\n%s" % (self.status_code, self.sub_status, message)
-            )
-        else:
-            CosmosError.__init__(self, "Status code: %d\n%s" % (self.status_code, message))
-
-
-class JSONParseFailure(CosmosError):
-    """Raised when fails to parse JSON message.
-    """
-
-
-class UnexpectedDataType(CosmosError):
-    """Raised when unexpected data type is provided as parameter.
-    """
+warnings.warn(
+    "azure.cosmos.errors module is deprecated, use azure.cosmos.exceptions instead",
+    DeprecationWarning
+)

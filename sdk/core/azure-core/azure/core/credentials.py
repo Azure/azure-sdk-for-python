@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from typing import NamedTuple
+    from typing import Any, NamedTuple
     from typing_extensions import Protocol
 
     AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
@@ -19,8 +19,8 @@ if TYPE_CHECKING:
         """
 
         # pylint:disable=too-few-public-methods
-        def get_token(self, *scopes):
-            # type: (*str) -> AccessToken
+        def get_token(self, *scopes, **kwargs):
+            # type: (*str, **Any) -> AccessToken
             pass
 
 

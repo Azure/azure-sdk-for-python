@@ -24,16 +24,15 @@
 #
 # --------------------------------------------------------------------------
 """Provide access to settings for globally used Azure configuration values.
-
-
 """
 
 from collections import namedtuple
 from enum import Enum
 import logging
 import os
-import six
 import sys
+import six
+from azure.core.tracing import AbstractSpan
 
 try:
     from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
@@ -43,15 +42,12 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Union
     try:
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+        # pylint:disable=unused-import
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
     except ImportError:
         pass
 
-
-from azure.core.tracing import AbstractSpan
-
-
-__all__ = ("settings",)
+__all__ = ("settings", "Settings")
 
 
 # https://www.python.org/dev/peps/pep-0484/#support-for-singleton-types-in-unions
@@ -129,9 +125,9 @@ def get_opencensus_span():
     # type: () -> Optional[Type[AbstractSpan]]
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
 
-        return OpenCensusSpan
+        return OpenCensusSpan  # type: ignore
     except ImportError:
         return None
 
@@ -143,7 +139,9 @@ def get_opencensus_span_if_opencensus_is_imported():
     return get_opencensus_span()
 
 
-_tracing_implementation_dict = {"opencensus": get_opencensus_span}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
+_tracing_implementation_dict = {
+    "opencensus": get_opencensus_span
+}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
 
 
 def convert_tracing_impl(value):
@@ -263,7 +261,7 @@ class PrioritizedSetting(object):
         self.set_value(value)
 
     def set_value(self, value):
-        # (Any) -> None
+        # type: (Any) -> None
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except
@@ -293,6 +291,13 @@ class PrioritizedSetting(object):
 class Settings(object):
     """Settings for globally used Azure configuration values.
 
+    You probably don't want to create an instance of this class, but call the singleton instance:
+
+    .. code-block:: python
+
+        from azure.common.settings import settings
+        settings.log_level = log_level = logging.DEBUG
+
     The following methods are searched in order for a setting:
 
     4. immediate values
@@ -318,7 +323,7 @@ class Settings(object):
 
     .. code-block:: python
 
-        settings.log_level(logging.DEBUG()
+        settings.log_level(logging.DEBUG())
 
     Immediate values are most often useful to provide from optional arguments
     to client functions. If the argument value is not None, it will be returned
@@ -342,14 +347,12 @@ class Settings(object):
         # return current settings with log level overridden
         settings.config(log_level=logging.DEBUG)
 
-    :Attributes:
-
-    :ivar defaults_only: whether to ignore environment and system settings and return only base default values
-    :type defaults_only: bool
     :cvar log_level: a log level to use across all Azure client SDKs (AZURE_LOG_LEVEL)
     :type log_level: PrioritizedSetting
-    :cvar tracing_enabled: Whether tracing shoudl be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
+    :cvar tracing_enabled: Whether tracing should be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
     :type tracing_enabled: PrioritizedSetting
+    :cvar tracing_implementation: The tracing implementation to use (AZURE_SDK_TRACING_IMPLEMENTATION)
+    :type tracing_implementation: PrioritizedSetting
 
     :Example:
 
@@ -369,6 +372,10 @@ class Settings(object):
 
     @property
     def defaults_only(self):
+        """Whether to ignore environment and system settings and return only base default values.
+
+        :rtype: bool
+        """
         return self._defaults_only
 
     @defaults_only.setter
@@ -377,14 +384,19 @@ class Settings(object):
 
     @property
     def defaults(self):
-        """ Return implicit default values for all settings, ignoring environment and system.
+        """Return implicit default values for all settings, ignoring environment and system.
 
+        :rtype: namedtuple
         """
         props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
     def current(self):
+        """Return the current values for all settings.
+
+        :rtype: namedtuple
+        """
         if self.defaults_only:
             return self.defaults
         return self.config()
@@ -396,8 +408,8 @@ class Settings(object):
 
         .. code-block:: python
 
-        # return current settings with log level overridden
-        settings.config(log_level=logging.DEBUG)
+           # return current settings with log level overridden
+           settings.config(log_level=logging.DEBUG)
 
         """
         props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
@@ -422,3 +434,7 @@ class Settings(object):
 
 
 settings = Settings()
+"""The settings unique instance.
+
+:type settings: Settings
+"""

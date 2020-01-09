@@ -24,17 +24,13 @@
 
 import platform
 import re
-from . import http_constants
+from ._version import VERSION
 
 
 def get_user_agent():
-    os_name = safe_user_agent_header(platform.system())
-    os_version = safe_user_agent_header(platform.release())
+    os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())
-
-    user_agent = "{}/{} Python/{} {}/{}".format(
-        os_name, os_version, python_version, http_constants.Versions.SDKName, http_constants.Versions.SDKVersion
-    )
+    user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(VERSION, python_version, os_name)
     return user_agent
 
 

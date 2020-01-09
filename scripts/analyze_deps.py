@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 import argparse
 import ast
 from datetime import datetime
@@ -51,12 +51,12 @@ def get_lib_deps(base_dir):
     dependencies = {}
     for lib_dir in locate_libs(base_dir):
         try:
-            lib_name = os.path.basename(lib_dir)
+            setup_path = os.path.join(lib_dir, 'setup.py')
+            lib_name, version, requires = parse_setup(setup_path)
+            
             if should_skip_lib(lib_name):
                 continue
-            setup_path = os.path.join(lib_dir, 'setup.py')
-            version, requires = parse_setup(setup_path)
-
+            
             packages[lib_name] = {
                 'version': version,
                 'source': lib_dir
@@ -127,13 +127,14 @@ def parse_setup(setup_filename):
     _, kwargs = global_vars['__setup_calls__'][0]
 
     version = kwargs['version']
+    name = kwargs['name']
     requires = []
     if 'install_requires' in kwargs:
         requires += kwargs['install_requires']
     if 'extras_require' in kwargs:
         for extra in kwargs['extras_require'].values():
             requires += extra
-    return version, requires
+    return name, version, requires
 
 def dict_compare(d1, d2):
     d1_keys = set(d1.keys())
@@ -183,21 +184,24 @@ if __name__ == '__main__':
         packages, dependencies = get_lib_deps(base_dir)
 
     if args.verbose:
-        print('Packages analyzed:')
+        print('Packages analyzed')
+        print('=================')
         for package in sorted(packages.keys()):
             info = packages[package]
             print("%s %s" % (package, info['version']))
             print("  from %s" % (info['source']))
 
-        print('\n\nRequirements discovered:')
+        print('\n\nRequirements discovered')
+        print('=======================')
         for requirement in sorted(dependencies.keys()):
             specs = dependencies[requirement]
             libs = []
-            print('\n%s' % (requirement))
+            print('%s' % (requirement))
             for spec in specs.keys():
                 print('%s' % (spec if spec else '(empty)'))
                 for lib in specs[spec]:
                     print('  * %s' % (lib))
+            print('')
 
     inconsistent = []
     for requirement in sorted(dependencies.keys()):
@@ -206,32 +210,27 @@ if __name__ == '__main__':
         if num_specs == 1:
             continue
 
+        if not inconsistent and args.verbose:
+            print('\nInconsistencies detected')
+            print('========================')
+
         inconsistent.append(requirement)
         if args.verbose:
-            print("\n\nRequirement '%s' has %s unique specifiers:" % (requirement, num_specs))
+            print("Requirement '%s' has %s unique specifiers:" % (requirement, num_specs))
             for spec in sorted(specs.keys()):
                 libs = specs[spec]
                 friendly_spec = '(none)' if spec == '' else spec
-                print("\n  '%s'" % (friendly_spec))
+                print("  '%s'" % (friendly_spec))
                 print('  ' + ('-' * (len(friendly_spec) + 2)))
                 for lib in sorted(libs):
                     print('    * %s' % (lib))
-
-    exitcode = 0
-    if inconsistent:
-        if not args.verbose:
-            print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
-        else:
-            print('\n')
-        exitcode = 1
-    else:
-        print('\n\nAll library dependencies verified, no incompatible versions detected')
+                print('')
 
     frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
     if args.freeze:
-        if exitcode != 0:
+        if inconsistent:
             print('Unable to freeze requirements due to incompatible dependency versions')
-            sys.exit(exitcode)
+            sys.exit(1)
         else:
             with io.open(frozen_filename, 'w', encoding='utf-8') as frozen_file:
                 for requirement in sorted(dependencies.keys()):
@@ -260,6 +259,7 @@ if __name__ == '__main__':
 
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
+    exitcode = 0
     if frozen:
         flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
         missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
@@ -302,6 +302,20 @@ if __name__ == '__main__':
                             print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
                             for lib in non_overridden_libs:
                                 print("  * %s" % (lib))
+        if exitcode == 0:
+            if args.verbose:
+                print('')
+            print('All library dependencies validated against frozen requirements')
+        elif not args.verbose:
+            print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
+    elif inconsistent:
+        exitcode = 1
+    
+    if exitcode == 1:
+        if not args.verbose:
+            print('\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
+    else:
+        print('\nAll library dependencies verified, no incompatible versions detected')
 
     if args.out:
         external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
@@ -328,10 +342,5 @@ if __name__ == '__main__':
             'packages': packages,
             'repo_name': 'azure-sdk-for-python'
         })
-
-    if exitcode == 0:
-        print('All library dependencies validated against frozen requirements')
-    elif not args.verbose:
-        print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
 
     sys.exit(exitcode)

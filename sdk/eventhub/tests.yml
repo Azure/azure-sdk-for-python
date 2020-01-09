@@ -1,12 +1,34 @@
 trigger: none
 
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventhub
+      Matrix:
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        MacOs_Python37:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.14'
+          PythonVersion: '3.7'
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'windows-2019'
+          PythonVersion: '2.7'
       EnvVars:
         AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
         AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
+        AZURE_STORAGE_CONN_STR: $(python-eh-livetest-event-hub-storage-conn-str)
+        EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
         EVENT_HUB_HOSTNAME: $(python-eh-livetest-event-hub-hostname)
         EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
         EVENT_HUB_SAS_POLICY: $(python-eh-livetest-event-hub-sas-policy)
@@ -14,6 +36,6 @@ jobs:
         EVENT_HUB_NAMESPACE: $(python-eh-livetest-event-hub-namespace)
         IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
         IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
-        AAD_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)
-        AAD_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
-        AAD_SECRET: $(python-eh-livetest-event-hub-aad-secret)
+        AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)
+        AZURE_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
+        AZURE_CLIENT_SECRET: $(python-eh-livetest-event-hub-aad-secret)

@@ -8,43 +8,32 @@
 import unittest
 
 from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.queue import (
     QueueServiceClient,
     QueueClient,
-    Logging,
+    QueueAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy,
 )
 
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    not_for_emulator,
-)
-
+from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
 
 # ------------------------------------------------------------------------------
 
 
-class QueueServicePropertiesTest(QueueTestCase):
-    def setUp(self):
-        super(QueueServicePropertiesTest, self).setUp()
-
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(url, credential=credential)
-
+class QueueServicePropertiesTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)
 
-        self._assert_logging_equal(prop.logging, Logging())
-        self._assert_metrics_equal(prop.hour_metrics, Metrics())
-        self._assert_metrics_equal(prop.minute_metrics, Metrics())
-        self._assert_cors_equal(prop.cors, list())
+        self._assert_logging_equal(prop['analytics_logging'], QueueAnalyticsLogging())
+        self._assert_metrics_equal(prop['hour_metrics'], Metrics())
+        self._assert_metrics_equal(prop['minute_metrics'], Metrics())
+        self._assert_cors_equal(prop['cors'], list())
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -114,64 +103,68 @@ class QueueServicePropertiesTest(QueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @record
-    def test_queue_service_properties(self):
+    @GlobalStorageAccountPreparer()
+    def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         # Act
-        resp = self.qsc.set_service_properties(
-            logging=Logging(),
+        resp = qsc.set_service_properties(
+            analytics_logging=QueueAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=list())
 
         # Assert
         self.assertIsNone(resp)
-        self._assert_properties_default(self.qsc.get_service_properties())
+        self._assert_properties_default(qsc.get_service_properties())
 
 
     # --Test cases per feature ---------------------------------------
 
-    @record
-    def test_set_logging(self):
+    @GlobalStorageAccountPreparer()
+    def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.qsc.set_service_properties(logging=logging)
+        qsc.set_service_properties(analytics_logging=logging)
 
         # Assert
-        received_props = self.qsc.get_service_properties()
-        self._assert_logging_equal(received_props.logging, logging)
+        received_props = qsc.get_service_properties()
+        self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @record
-    def test_set_hour_metrics(self):
+    @GlobalStorageAccountPreparer()
+    def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.qsc.set_service_properties(hour_metrics=hour_metrics)
+        qsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
-        received_props = self.qsc.get_service_properties()
-        self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
+        received_props = qsc.get_service_properties()
+        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @record
-    def test_set_minute_metrics(self):
+    @GlobalStorageAccountPreparer()
+    def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.qsc.set_service_properties(minute_metrics=minute_metrics)
+        qsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
-        received_props = self.qsc.get_service_properties()
-        self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
+        received_props = qsc.get_service_properties()
+        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @record
-    def test_set_cors(self):
+    @GlobalStorageAccountPreparer()
+    def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -189,40 +182,42 @@ class QueueServicePropertiesTest(QueueTestCase):
         cors = [cors_rule1, cors_rule2]
 
         # Act
-        self.qsc.set_service_properties(cors=cors)
+        qsc.set_service_properties(cors=cors)
 
         # Assert
-        received_props = self.qsc.get_service_properties()
-        self._assert_cors_equal(received_props.cors, cors)
+        received_props = qsc.get_service_properties()
+        self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @record
-    def test_retention_no_days(self):
+    @GlobalStorageAccountPreparer()
+    def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @record
-    def test_too_many_cors_rules(self):
+    @GlobalStorageAccountPreparer()
+    def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
         self.assertRaises(HttpResponseError,
-                          self.qsc.set_service_properties, None, None, None, cors)
+                          qsc.set_service_properties, None, None, None, cors)
 
-    @record
-    def test_retention_too_long(self):
+    @GlobalStorageAccountPreparer()
+    def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
         # Assert
         self.assertRaises(HttpResponseError,
-                          self.qsc.set_service_properties,
+                          qsc.set_service_properties,
                           None, None, minute_metrics)
 
 

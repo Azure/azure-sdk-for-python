@@ -41,9 +41,12 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
+from azure.core import MatchConditions
+from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
@@ -53,6 +56,10 @@ from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
 from azure.cosmos import _retry_utility
+import requests
+from urllib3.util.retry import Retry
+from requests.exceptions import ConnectionError
+
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -62,6 +69,26 @@ pytestmark = pytest.mark.cosmosEmulator
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+
+class TimeoutTransport(RequestsTransport):
+
+    def __init__(self, response):
+        self._response = response
+        super(TimeoutTransport, self).__init__()
+
+    def send(self, *args, **kwargs):
+        if kwargs.pop("passthrough", False):
+            return super(TimeoutTransport, self).send(*args, **kwargs)
+
+        time.sleep(5)
+        if isinstance(self._response, Exception):
+            raise self._response
+        output = requests.Response()
+        output.status_code = self._response
+        response = RequestsTransportResponse(None, output)
+        return response
+
 
 @pytest.mark.usefixtures("teardown")
 class CRUDTests(unittest.TestCase):
@@ -84,7 +111,7 @@ class CRUDTests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.HTTPFailure as inst:
+        except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod
@@ -95,22 +122,22 @@ class CRUDTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, {'masterKey':self.masterKey}, "Session",
-                                                 self.connectionPolicy)
+        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
+                                                 connection_policy=self.connectionPolicy)
     def test_database_crud(self):
         # read databases.
-        databases = list(self.client.read_all_databases())
+        databases = list(self.client.list_databases())
         # create a database.
         before_create_databases_count = len(databases)
         database_id = str(uuid.uuid4())
         created_db = self.client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
-        databases = list(self.client.read_all_databases())
+        databases = list(self.client.list_databases())
         self.assertEqual(len(databases),
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
@@ -121,8 +148,7 @@ class CRUDTests(unittest.TestCase):
                 {'name': '@id', 'value': database_id}
             ]
         }))
-        self.assert_(databases,
-                     'number of results for the query should be > 0')
+        self.assertTrue(databases, 'number of results for the query should be > 0')
 
         # read database.
         self.client.get_database_client(created_db.id)
@@ -133,6 +159,16 @@ class CRUDTests(unittest.TestCase):
         read_db = self.client.get_database_client(created_db.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
+
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
+        self.assertEqual(database_id, database_proxy.id)
+        self.assertEquals(10000, database_proxy.read_offer().offer_throughput)
+
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
+        self.assertEqual(database_id, database_proxy.id)
+        self.assertEquals(10000, database_proxy.read_offer().offer_throughput)
+
+        self.client.delete_database(database_id)
 
     @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
     def test_database_level_offer_throughput(self):
@@ -149,12 +185,12 @@ class CRUDTests(unittest.TestCase):
 
         # Verify offer throughput for database
         offer = created_db.read_offer()
-        self.assertEquals(offer.offer_throughput, offer_throughput)
+        self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
-        self.assertEquals(offer.offer_throughput, new_offer_throughput)
+        self.assertEqual(offer.offer_throughput, new_offer_throughput)
 
     def test_sql_query_crud(self):
         # create two databases.
@@ -185,7 +221,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_collection_crud(self):
         created_db = self.databaseForTest
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
         # create a collection
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
@@ -205,7 +241,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
 
         # read collections after creation
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
         self.assertEqual(len(collections),
                          before_create_collections_count + 1,
                          'create should increase the number of collections')
@@ -233,6 +269,16 @@ class CRUDTests(unittest.TestCase):
         created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
+
+        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id, partition_key=PartitionKey(path='/id', kind='Hash'))
+        self.assertEqual(created_collection.id, container_proxy.id)
+        self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
+
+        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id, partition_key=created_properties['partitionKey'])
+        self.assertEqual(created_container.id, container_proxy.id)
+        self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
+
+        created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection(self):
         created_db = self.databaseForTest
@@ -303,7 +349,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], '["WA"]')
+        self.assertEqual(self.last_headers[1], '["WA"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
@@ -320,7 +366,7 @@ class CRUDTests(unittest.TestCase):
         # Create document with partitionkey not present as a leaf level property but a dict
         created_document = created_collection1.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], [{}])
+        self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
@@ -336,7 +382,7 @@ class CRUDTests(unittest.TestCase):
         # Create document with partitionkey not present in the document
         created_document = created_collection2.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], [{}])
+        self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
@@ -362,7 +408,7 @@ class CRUDTests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], '["val1"]')
+        self.assertEqual(self.last_headers[1], '["val1"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -390,7 +436,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], '["val2"]')
+        self.assertEqual(self.last_headers[1], '["val2"]')
         del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)
@@ -540,7 +586,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens[urllib.quote(read_collection.id)] = (read_permission.properties['_token'])
 
         restricted_client = cosmos_client.CosmosClient(
-            CRUDTests.host, {'resourceTokens': resource_tokens}, "Session", CRUDTests.connectionPolicy)
+            CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
 
         document_definition = {'id': 'document1',
                                'key': 1
@@ -693,7 +739,7 @@ class CRUDTests(unittest.TestCase):
         )
 
         # Read conflict feed doesn't requires partitionKey to be specified as it's a cross partition thing
-        conflictlist = list(created_collection.read_all_conflicts())
+        conflictlist = list(created_collection.list_conflicts())
         self.assertEqual(0, len(conflictlist))
 
         # delete conflict here will return resource not found(404) since there is no conflict here
@@ -809,14 +855,43 @@ class CRUDTests(unittest.TestCase):
             created_collection.replace_item,
             replaced_document['id'],
             replaced_document,
-            None,
-            None,
-            {'type': 'IfMatch', 'condition': old_etag},
+            if_match=old_etag,
         )
+
+        # should fail if only etag specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                etag=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if only match condition specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfNotModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if invalid match condition specified
+        with self.assertRaises(TypeError):
+            created_collection.replace_item(
+                match_condition=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
 
         # should pass for most recent etag
         replaced_document_conditional = created_collection.replace_item(
-                access_condition={'type': 'IfMatch', 'condition': replaced_document['_etag']},
+                match_condition=MatchConditions.IfNotModified,
+                etag=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document
             )
@@ -1043,14 +1118,14 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # list users
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         before_create_count = len(users)
         # create user
         user_id = 'new user' + str(uuid.uuid4())
         user = db.create_user(body={'id': user_id})
         self.assertEqual(user.id, user_id, 'user id error')
         # list users after creation
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 1)
         # query users
         results = list(db.query_users(
@@ -1087,7 +1162,7 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
 
         # read users and check count
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         before_create_count = len(users)
 
         # create user using Upsert API
@@ -1098,7 +1173,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(user.id, user_id, 'user id error')
 
         # read users after creation and verify updated count
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 1)
 
         # Should replace the user since it already exists, there is no public property to change here
@@ -1111,7 +1186,7 @@ class CRUDTests(unittest.TestCase):
                          'user id should remain same')
 
         # read users after upsert and verify count doesn't increases again
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 1)
 
         user_properties = user.read()
@@ -1125,7 +1200,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(new_user.id, user.id, 'user id error')
 
         # read users after upsert and verify count increases
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 2)
 
         # delete users
@@ -1133,7 +1208,7 @@ class CRUDTests(unittest.TestCase):
         db.delete_user(new_user.id)
 
         # read users after delete and verify count remains the same
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count)
 
     def test_permission_crud(self):
@@ -1143,7 +1218,7 @@ class CRUDTests(unittest.TestCase):
         # create user
         user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
         # list permissions
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         before_create_count = len(permissions)
         permission = {
             'id': 'new permission',
@@ -1156,7 +1231,7 @@ class CRUDTests(unittest.TestCase):
                          'new permission',
                          'permission id error')
         # list permissions after creation
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 1)
         # query permissions
         results = list(user.query_permissions(
@@ -1165,7 +1240,7 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': permission.id}
                 ]
         ))
-        self.assert_(results)
+        self.assertTrue(results)
 
         # replace permission
         change_permission = permission.properties.copy()
@@ -1196,7 +1271,7 @@ class CRUDTests(unittest.TestCase):
         user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
 
         # read permissions and check count
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         before_create_count = len(permissions)
 
         permission_definition = {
@@ -1214,7 +1289,7 @@ class CRUDTests(unittest.TestCase):
                          'permission id error')
 
         # read permissions after creation and verify updated count
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 1)
 
         # update permission mode
@@ -1233,7 +1308,7 @@ class CRUDTests(unittest.TestCase):
                          'permissionMode should change')
 
         # read permissions and verify count doesn't increases again
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 1)
 
         # update permission id
@@ -1256,7 +1331,7 @@ class CRUDTests(unittest.TestCase):
                          'permission resource should be same')
 
         # read permissions and verify count increases
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 2)
 
         # delete permissions
@@ -1264,7 +1339,7 @@ class CRUDTests(unittest.TestCase):
         user.delete_permission(new_permission.id)
 
         # read permissions and verify count remains the same
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count)
 
     def test_authorization(self):
@@ -1350,15 +1425,15 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", CRUDTests.connectionPolicy)
+        client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
-                                           client.read_all_databases())
+                                           client.list_databases())
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
-                                            {'masterKey': CRUDTests.masterKey},
+                                            CRUDTests.masterKey,
                                             "Session",
-                                            CRUDTests.connectionPolicy)
+                                            connection_policy=CRUDTests.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
         resource_tokens = {}
@@ -1367,7 +1442,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens[entities['doc1']['id']]= (
             entities['permissionOnColl1'].properties['_token'])
         col1_client = cosmos_client.CosmosClient(
-            CRUDTests.host, {'resourceTokens': resource_tokens},"Session", CRUDTests.connectionPolicy)
+            CRUDTests.host, resource_tokens,"Session", connection_policy=CRUDTests.connectionPolicy)
         db = entities['db']
 
         old_client_connection = db.client_connection
@@ -1397,7 +1472,9 @@ class CRUDTests(unittest.TestCase):
             'Expected to read children using parent permissions')
         col2_client = cosmos_client.CosmosClient(
             CRUDTests.host,
-            {'permissionFeed': [entities['permissionOnColl2'].properties]}, "Session", CRUDTests.connectionPolicy)
+            [entities['permissionOnColl2'].properties],
+            "Session",
+            connection_policy=CRUDTests.connectionPolicy)
         doc = {
             'CustomProperty1': 'BBBBBB',
             'customProperty2': 1000,
@@ -1452,7 +1529,7 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': trigger_definition['id']}
                 ]
         ))
-        self.assert_(triggers)
+        self.assertTrue(triggers)
 
         # replace trigger
         change_trigger = trigger.copy()
@@ -1510,7 +1587,7 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': udf_definition['id']}
                 ]
         ))
-        self.assert_(results)
+        self.assertTrue(results)
         # replace udf
         change_udf = udf.copy()
         udf['body'] = 'function() {var x = 20;}'
@@ -1855,82 +1932,25 @@ class CRUDTests(unittest.TestCase):
         created_container = db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path='/id', kind='Hash'),
+            headers={"Foo":"bar"},
+            user_agent="blah",
+            user_agent_overwrite=True,
+            logging_enable=True
         )
         created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
-        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+
+        if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
+            self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+        else:
+            # All types are returned for spatial Indexes
+            indexing_policy['spatialIndexes'][0]['types'].append('MultiPolygon')
+            indexing_policy['spatialIndexes'][1]['types'].insert(0, 'Point')
+            self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
         db.delete_container(container=created_container)
-
-    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_self_link(self):
-        self._test_create_indexing_policy_with_composite_and_spatial_indexes(False)
-
-    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_name_based(self):
-        self._test_create_indexing_policy_with_composite_and_spatial_indexes(True)
-
-    def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
-        # create database
-        db = self.databaseForTest
-
-        indexing_policy = {
-            "spatialIndexes": [
-                {
-                    "path": "/path0/*",
-                    "types": [
-                        "Point",
-                        "LineString",
-                        "Polygon"
-                    ]
-                },
-                {
-                    "path": "/path1/*",
-                    "types": [
-                        "LineString",
-                        "Polygon",
-                        "MultiPolygon"
-                    ]
-                }
-            ],
-            "compositeIndexes": [
-                [
-                    {
-                        "path": "/path1",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/path2",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/path3",
-                        "order": "ascending"
-                    }
-                ],
-                [
-                    {
-                        "path": "/path4",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/path5",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/path6",
-                        "order": "ascending"
-                    }
-                ]
-            ]
-        }
-
-        container_id = 'composite_index_spatial_index' + str(uuid.uuid4())
-        container_definition = {'id': container_id, 'indexingPolicy': indexing_policy}
-        created_container = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based), container_definition)
-        read_indexing_policy = created_container['indexingPolicy']
-        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
-        self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
-        self.client.DeleteContainer(created_container['_self'])
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -1946,15 +1966,114 @@ class CRUDTests(unittest.TestCase):
 
         root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
                                           if included_path['path'] == '/*'])
-        self.assertFalse('indexes' in root_included_path)
+        self.assertFalse(root_included_path.get('indexes'))
 
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0
+        connection_policy.RequestTimeout =  0.000000000001
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, "Session", connection_policy)
+            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+
+    def test_client_request_timeout_when_connection_retry_configuration_specified(self):
+        connection_policy = documents.ConnectionPolicy()
+        # making timeout 0 ms to make sure it will throw
+        connection_policy.RequestTimeout =  0.000000000001
+        connection_policy.ConnectionRetryConfiguration = Retry(
+                                                            total=3,
+                                                            read=3,
+                                                            connect=3,
+                                                            backoff_factor=0.3,
+                                                            status_forcelist=(500, 502, 504)
+                                                        )
+        with self.assertRaises(AzureError):
+            # client does a getDatabaseAccount on initialization, which will time out
+            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+
+    def test_client_connection_retry_configuration(self):
+        total_time_for_two_retries = self.initialize_client_with_connection_urllib_retry_config(2)
+        total_time_for_three_retries = self.initialize_client_with_connection_urllib_retry_config(3)
+        self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
+
+        total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
+        total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
+        self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
+
+    def initialize_client_with_connection_urllib_retry_config(self, retries):
+        retry_policy = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 504)
+        )
+        start_time = time.time()
+        try:
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                connection_retry_policy=retry_policy)
+            self.fail()
+        except AzureError as e:
+            end_time = time.time()
+            return end_time - start_time
+
+    def initialize_client_with_connection_core_retry_config(self, retries):
+        start_time = time.time()
+        try:
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=retries,
+                retry_read=retries,
+                retry_connect=retries,
+                retry_status=retries)
+            self.fail()
+        except AzureError as e:
+            end_time = time.time()
+            return end_time - start_time
+
+    def test_absolute_client_timeout(self):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=3,
+                timeout=1)
+
+        error_response = ServiceResponseError("Read timeout")
+        timeout_transport = TimeoutTransport(error_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        status_response = 500  # Users connection level retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            list(databases)
+
+        status_response = 429  # Uses Cosmos custom retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            list(databases)
 
     def test_query_iterable_functionality(self):
         def __create_resources(client):
@@ -2013,18 +2132,15 @@ class CRUDTests(unittest.TestCase):
 
         # Get query results page by page.
         results = resources['coll'].read_all_items(max_item_count=2)
-        first_block = results.fetch_next_block()
-        self.assertEqual(2,
-                         len(first_block),
-                         'First block should have 2 entries.')
+
+        page_iter = results.by_page()
+        first_block = list(next(page_iter))
+        self.assertEqual(2, len(first_block), 'First block should have 2 entries.')
         self.assertEqual(resources['doc1']['id'], first_block[0]['id'])
         self.assertEqual(resources['doc2']['id'], first_block[1]['id'])
-        self.assertEqual(1,
-                         len(results.fetch_next_block()),
-                         'Second block should have 1 entry.')
-        self.assertEqual(0,
-                         len(results.fetch_next_block()),
-                         'Then its empty.')
+        self.assertEqual(1, len(list(next(page_iter))), 'Second block should have 1 entry.')
+        with self.assertRaises(StopIteration):
+            next(page_iter)
 
     def test_trigger_functionality(self):
         triggers_in_collection1 = [
@@ -2388,7 +2504,7 @@ class CRUDTests(unittest.TestCase):
         collection_id2 = 'SampleCollection ' + uuid_string
 
         # Verify that no collections exist
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
         number_of_existing_collections = len(collections)
 
         # create 2 collections with different casing of IDs
@@ -2404,7 +2520,7 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
 
         # verify if a total of 2 collections got created
         self.assertEqual(len(collections), number_of_existing_collections + 2)
@@ -2452,40 +2568,40 @@ class CRUDTests(unittest.TestCase):
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
-        self.assertEquals(read_db.id, created_db.id)
+        self.assertEqual(read_db.id, created_db.id)
 
         # read database with instance
         read_db = self.client.get_database_client(created_db)
-        self.assertEquals(read_db.id, created_db.id)
+        self.assertEqual(read_db.id, created_db.id)
 
         # read database with properties
         read_db = self.client.get_database_client(created_db.read())
-        self.assertEquals(read_db.id, created_db.id)
+        self.assertEqual(read_db.id, created_db.id)
 
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
-        self.assertEquals(read_container.id, created_container.id)
+        self.assertEqual(read_container.id, created_container.id)
 
         # read container with instance
         read_container = created_db.get_container_client(created_container)
-        self.assertEquals(read_container.id, created_container.id)
+        self.assertEqual(read_container.id, created_container.id)
 
         # read container with properties
         created_properties = created_container.read()
         read_container = created_db.get_container_client(created_properties)
-        self.assertEquals(read_container.id, created_container.id)
+        self.assertEqual(read_container.id, created_container.id)
 
         created_item = created_container.create_item({'id':'1' + str(uuid.uuid4())})
 
         # read item with id
         read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
-        self.assertEquals(read_item['id'], created_item['id'])
+        self.assertEqual(read_item['id'], created_item['id'])
 
         # read item with properties
         read_item = created_container.read_item(item=created_item, partition_key=created_item['id'])
-        self.assertEquals(read_item['id'], created_item['id'])
+        self.assertEqual(read_item['id'], created_item['id'])
 
         created_sproc = created_container.scripts.create_stored_procedure({
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -2494,11 +2610,11 @@ class CRUDTests(unittest.TestCase):
 
         # read sproc with id
         read_sproc = created_container.scripts.get_stored_procedure(created_sproc['id'])
-        self.assertEquals(read_sproc['id'], created_sproc['id'])
+        self.assertEqual(read_sproc['id'], created_sproc['id'])
 
         # read sproc with properties
         read_sproc = created_container.scripts.get_stored_procedure(created_sproc)
-        self.assertEquals(read_sproc['id'], created_sproc['id'])
+        self.assertEqual(read_sproc['id'], created_sproc['id'])
 
         created_trigger = created_container.scripts.create_trigger({
             'id': 'sample trigger' + str(uuid.uuid4()),
@@ -2509,11 +2625,11 @@ class CRUDTests(unittest.TestCase):
 
         # read trigger with id
         read_trigger = created_container.scripts.get_trigger(created_trigger['id'])
-        self.assertEquals(read_trigger['id'], created_trigger['id'])
+        self.assertEqual(read_trigger['id'], created_trigger['id'])
 
         # read trigger with properties
         read_trigger = created_container.scripts.get_trigger(created_trigger)
-        self.assertEquals(read_trigger['id'], created_trigger['id'])
+        self.assertEqual(read_trigger['id'], created_trigger['id'])
 
         created_udf = created_container.scripts.create_user_defined_function({
             'id': 'sample udf' + str(uuid.uuid4()),
@@ -2522,11 +2638,11 @@ class CRUDTests(unittest.TestCase):
 
         # read udf with id
         read_udf = created_container.scripts.get_user_defined_function(created_udf['id'])
-        self.assertEquals(created_udf['id'], read_udf['id'])
+        self.assertEqual(created_udf['id'], read_udf['id'])
 
         # read udf with properties
         read_udf = created_container.scripts.get_user_defined_function(created_udf)
-        self.assertEquals(created_udf['id'], read_udf['id'])
+        self.assertEqual(created_udf['id'], read_udf['id'])
 
         created_user = created_db.create_user({
             'id': 'user' + str(uuid.uuid4())
@@ -2534,16 +2650,16 @@ class CRUDTests(unittest.TestCase):
 
         # read user with id
         read_user = created_db.get_user_client(created_user.id)
-        self.assertEquals(read_user.id, created_user.id)
+        self.assertEqual(read_user.id, created_user.id)
 
         # read user with instance
         read_user = created_db.get_user_client(created_user)
-        self.assertEquals(read_user.id, created_user.id)
+        self.assertEqual(read_user.id, created_user.id)
 
         # read user with properties
         created_user_properties = created_user.read()
         read_user = created_db.get_user_client(created_user_properties)
-        self.assertEquals(read_user.id, created_user.id)
+        self.assertEqual(read_user.id, created_user.id)
 
         created_permission = created_user.create_permission({
             'id': 'all permission' + str(uuid.uuid4()),
@@ -2554,19 +2670,19 @@ class CRUDTests(unittest.TestCase):
 
         # read permission with id
         read_permission = created_user.get_permission(created_permission.id)
-        self.assertEquals(read_permission.id, created_permission.id)
+        self.assertEqual(read_permission.id, created_permission.id)
 
         # read permission with instance
         read_permission = created_user.get_permission(created_permission)
-        self.assertEquals(read_permission.id, created_permission.id)
+        self.assertEqual(read_permission.id, created_permission.id)
 
         # read permission with properties
         read_permission = created_user.get_permission(created_permission.properties)
-        self.assertEquals(read_permission.id, created_permission.id)
+        self.assertEqual(read_permission.id, created_permission.id)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        self.last_headers.append(args[5]['headers'][HttpHeaders.PartitionKey]
-                                    if HttpHeaders.PartitionKey in args[5]['headers'] else '')
+        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
+                                    if HttpHeaders.PartitionKey in args[4].headers else '')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 if __name__ == '__main__':

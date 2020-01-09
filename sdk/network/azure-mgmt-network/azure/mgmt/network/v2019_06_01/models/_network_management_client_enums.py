@@ -51,6 +51,14 @@ class SecurityRuleDirection(str, Enum):
     outbound = "Outbound"
 
 
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
 class RouteNextHopType(str, Enum):
 
     virtual_network_gateway = "VirtualNetworkGateway"
@@ -207,14 +215,6 @@ class ResourceIdentityType(str, Enum):
     none = "None"
 
 
-class ProvisioningState(str, Enum):
-
-    succeeded = "Succeeded"
-    updating = "Updating"
-    deleting = "Deleting"
-    failed = "Failed"
-
-
 class AzureFirewallRCActionType(str, Enum):
 
     allow = "Allow"
@@ -341,6 +341,33 @@ class ExpressRoutePortsEncapsulation(str, Enum):
 
     dot1_q = "Dot1Q"
     qin_q = "QinQ"
+
+
+class FirewallPolicyNatRuleActionType(str, Enum):
+
+    dnat = "DNAT"
+    snat = "SNAT"
+
+
+class FirewallPolicyFilterRuleActionType(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+    alert = "Alert "
+
+
+class FirewallPolicyRuleConditionApplicationProtocolType(str, Enum):
+
+    http = "Http"
+    https = "Https"
+
+
+class FirewallPolicyRuleConditionNetworkProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+    icmp = "ICMP"
 
 
 class LoadBalancerSkuName(str, Enum):
@@ -520,11 +547,11 @@ class ConnectionStatus(str, Enum):
     degraded = "Degraded"
 
 
-class ConnectionMonitorSourceStatus(str, Enum):
+class VerbosityLevel(str, Enum):
 
-    unknown = "Unknown"
-    active = "Active"
-    inactive = "Inactive"
+    normal = "Normal"
+    minimum = "Minimum"
+    full = "Full"
 
 
 class ConnectionState(str, Enum):
@@ -541,11 +568,11 @@ class EvaluationState(str, Enum):
     completed = "Completed"
 
 
-class VerbosityLevel(str, Enum):
+class ConnectionMonitorSourceStatus(str, Enum):
 
-    normal = "Normal"
-    minimum = "Minimum"
-    full = "Full"
+    unknown = "Unknown"
+    active = "Active"
+    inactive = "Inactive"
 
 
 class PublicIPPrefixSkuName(str, Enum):

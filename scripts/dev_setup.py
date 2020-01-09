@@ -30,6 +30,20 @@ def pip_command(command, additional_dir=".", error_ok=False):
         if not error_ok:
             sys.exit(1)
 
+def select_install_type(pkg, run_develop, exceptions):
+    # the default for disable_develop will be false, which means `run_develop` will be true
+    argument = ""
+    if run_develop:
+        argument = "-e"
+
+    if pkg in exceptions:
+        # opposite of whatever our decision was
+        if argument == "":
+            argument = "-e"
+        elif argument == "-e":
+            argument = ""
+
+    return argument
 
 # optional argument in a situation where we want to build a variable subset of packages
 parser = argparse.ArgumentParser(
@@ -42,14 +56,33 @@ parser.add_argument(
     default="",
     help="Comma separated list of targeted packages. Used to limit the number of packages that dependencies will be installed for.",
 )
+parser.add_argument(
+    "--disabledevelop",
+    dest="install_in_develop_mode",
+    default=True,
+    action="store_false",
+    help="Add this argument if you would prefer to install the package with a simple `pip install` versus `pip install -e`",
+)
+# this is a hack to support generating docs for the single package that doesn't support develop mode. It will be removed when we
+# migrate to generating docs on a per-package cadence.
+parser.add_argument(
+    "--exceptionlist",
+    "-e",
+    dest="exception_list",
+    default="",
+    help="Comma separated list of packages that we want to take the 'opposite' installation method for.",
+)
+
 args = parser.parse_args()
 
 packages = {
     tuple(os.path.dirname(f).rsplit(os.sep, 1))
-    for f in glob.glob("sdk/*/azure*/setup.py") + glob.glob("tools/azure*/setup.py")
+    for f in glob.glob("sdk/*/azure-*/setup.py") + glob.glob("tools/azure-*/setup.py")
 }
 # [(base_folder, package_name), ...] to {package_name: base_folder, ...}
 packages = {package_name: base_folder for (base_folder, package_name) in packages}
+
+exceptions = [p.strip() for p in args.exception_list.split(',')]
 
 # keep targeted packages separate. python2 needs the nspkgs to work properly.
 if not args.packageList:
@@ -64,7 +97,7 @@ nspkg_packages = [p for p in packages.keys() if "nspkg" in p]
 nspkg_packages.sort(key=lambda x: len([c for c in x if c == "-"]))
 
 # Manually push meta-packages at the end, in reverse dependency order
-meta_packages = ["azure-mgmt", "azure"]
+meta_packages = ["azure-keyvault", "azure-mgmt", "azure"]
 
 content_packages = sorted(
     [
@@ -109,6 +142,8 @@ if sys.version_info < (3,):
     for package_name in nspkg_packages:
         pip_command("install {}/{}/".format(packages[package_name], package_name))
 
+
+
 # install packages
 print("Packages to install: {}".format(content_packages))
 for package_name in content_packages:
@@ -122,8 +157,10 @@ for package_name in content_packages:
             "install -r dev_requirements.txt",
             os.path.join(packages[package_name], package_name),
         )
+
     pip_command(
-        "install --ignore-requires-python -e {}".format(
+        "install --ignore-requires-python {} {}".format(
+            select_install_type(package_name, args.install_in_develop_mode, exceptions),
             os.path.join(packages[package_name], package_name)
         )
     )

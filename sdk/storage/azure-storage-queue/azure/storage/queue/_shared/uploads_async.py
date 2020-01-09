@@ -50,7 +50,7 @@ async def upload_data_chunks(
         uploader_class=None,
         total_size=None,
         chunk_size=None,
-        max_connections=None,
+        max_concurrency=None,
         stream=None,
         encryption_options=None,
         **kwargs):
@@ -63,7 +63,7 @@ async def upload_data_chunks(
         kwargs['encryptor'] = encryptor
         kwargs['padder'] = padder
 
-    parallel = max_connections > 1
+    parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
         # Access conditions do not work with parallelism
         kwargs['modified_access_conditions'] = None
@@ -80,7 +80,7 @@ async def upload_data_chunks(
         upload_tasks = uploader.get_chunk_streams()
         running_futures = [
             asyncio.ensure_future(uploader.process_chunk(u))
-            for u in islice(upload_tasks, 0, max_connections)
+            for u in islice(upload_tasks, 0, max_concurrency)
         ]
         range_ids = await _parallel_uploads(uploader.process_chunk, upload_tasks, running_futures)
     else:
@@ -98,10 +98,10 @@ async def upload_substream_blocks(
         uploader_class=None,
         total_size=None,
         chunk_size=None,
-        max_connections=None,
+        max_concurrency=None,
         stream=None,
         **kwargs):
-    parallel = max_connections > 1
+    parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
         # Access conditions do not work with parallelism
         kwargs['modified_access_conditions'] = None
@@ -117,7 +117,7 @@ async def upload_substream_blocks(
         upload_tasks = uploader.get_substream_blocks()
         running_futures = [
             asyncio.ensure_future(uploader.process_substream_block(u))
-            for u in islice(upload_tasks, 0, max_connections)
+            for u in islice(upload_tasks, 0, max_concurrency)
         ]
         range_ids = await _parallel_uploads(uploader.process_substream_block, upload_tasks, running_futures)
     else:
@@ -338,7 +338,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         chunk_end = chunk_offset + len(chunk_data) - 1
-        await self.service.upload_range(
+        response = await self.service.upload_range(
             chunk_data,
             chunk_offset,
             chunk_end,
@@ -347,4 +347,4 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             **self.request_options
         )
         range_id = 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
-        return range_id
+        return range_id, response

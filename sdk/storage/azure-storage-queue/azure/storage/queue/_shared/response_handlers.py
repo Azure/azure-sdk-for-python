@@ -19,7 +19,8 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     DecodeError)
 
-from .models import StorageErrorCode
+from .parser import _to_utc_datetime
+from .models import StorageErrorCode, UserDelegationKey, get_enum_value
 
 
 if TYPE_CHECKING:
@@ -28,6 +29,19 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class PartialBatchErrorException(HttpResponseError):
+    """There is a partial failure in batch operations.
+
+    :param str message: The message of the exception.
+    :param response: Server response to be deserialized.
+    :param list parts: A list of the parts in multipart response.
+    """
+
+    def __init__(self, message, response, parts):
+        self.parts = parts
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
 def parse_length_from_content_range(content_range):
@@ -48,7 +62,7 @@ def normalize_headers(headers):
     for key, value in headers.items():
         if key.startswith('x-ms-'):
             key = key[5:]
-        normalized[key.lower().replace('-', '_')] = value
+        normalized[key.lower().replace('-', '_')] = get_enum_value(value)
     return normalized
 
 
@@ -131,3 +145,15 @@ def process_storage_error(storage_error):
     error.error_code = error_code
     error.additional_info = additional_data
     raise error
+
+
+def parse_to_internal_user_delegation_key(service_user_delegation_key):
+    internal_user_delegation_key = UserDelegationKey()
+    internal_user_delegation_key.signed_oid = service_user_delegation_key.signed_oid
+    internal_user_delegation_key.signed_tid = service_user_delegation_key.signed_tid
+    internal_user_delegation_key.signed_start = _to_utc_datetime(service_user_delegation_key.signed_start)
+    internal_user_delegation_key.signed_expiry = _to_utc_datetime(service_user_delegation_key.signed_expiry)
+    internal_user_delegation_key.signed_service = service_user_delegation_key.signed_service
+    internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
+    internal_user_delegation_key.value = service_user_delegation_key.value
+    return internal_user_delegation_key

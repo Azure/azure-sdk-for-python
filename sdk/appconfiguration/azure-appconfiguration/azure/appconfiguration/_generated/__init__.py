@@ -5,8 +5,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration_client import ConfigurationClient
-__all__ = ['ConfigurationClient']
+from ._azure_app_configuration import AzureAppConfiguration
+__all__ = ['AzureAppConfiguration']
 
 from .version import VERSION
 

@@ -11,13 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 917b1076-b575-11e9-bd8d-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:33:36 GMT
+      - Wed, 30 Oct 2019 19:51:50 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -26,14 +22,12 @@ interactions:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 02 Aug 2019 22:33:36 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:49 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 1158aa58-e003-00a1-3f82-49aa9b000000
       x-ms-version:
       - '2018-03-28'
     status:

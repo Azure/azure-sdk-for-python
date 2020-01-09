@@ -1,5 +1,12 @@
 trigger: none
 
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
 variables:
   - template: templates/variables/globals.yml
   - name: ReleaseTag
@@ -8,12 +15,12 @@ variables:
     value: 'not cosmosEmulator'
 
 jobs:
-  - template: templates/jobs/archetype-sdk-client.yml
+  - template: templates/jobs/archetype-sdk-nightly.yml
     parameters:
       ServiceDirectory: ''
       TestMarkArgument: $(TestMarkArgument)
       BuildTargetingString: $(BuildTargetingString)
-      BeforeBuildJobPublishBuildArtifacts:
+      BeforePublishSteps:
         - script: 'echo "##vso[build.addbuildtag]$(ReleaseTag)"'
           displayName: 'Tag The Build'
           condition: eq(variables['CandidateForRelease'], True)

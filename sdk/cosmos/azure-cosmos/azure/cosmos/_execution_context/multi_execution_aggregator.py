@@ -27,6 +27,8 @@ from azure.cosmos._execution_context.base_execution_context import _QueryExecuti
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 
+# pylint: disable=protected-access
+
 
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     """This class is capable of queries which requires rewriting based on

@@ -1,30 +1,22 @@
 trigger: none
 
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      Matrix:
-        Linux_Python35:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.5'
-        MacOs_Python37:
-          OSName: 'MacOS'
-          OSVmImage: 'macOS-10.14'
-          PythonVersion: '3.7'
-        Windows_Python27:
-          OSName: 'Windows'
-          OSVmImage: 'vs2017-win2016'
-          PythonVersion: '2.7'
-        Linux_Pypy3:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: 'pypy3'
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: storage
       EnvVars:
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
         STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
+        STORAGE_DATA_LAKE_ACCOUNT_NAME: $(python-storage-data-lake-account-name)
+        STORAGE_DATA_LAKE_ACCOUNT_KEY: $(python-storage-data-lake-account-key)
         BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
         BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
         REMOTE_STORAGE_ACCOUNT_NAME: $(python-storage-remote-storage-account-name)
@@ -40,3 +32,9 @@ jobs:
         BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
         PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
         TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

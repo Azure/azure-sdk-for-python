@@ -8,7 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from enum import Enum
 
@@ -53,10 +52,14 @@ class AccessTier(str, Enum):
     p4 = "P4"
     p6 = "P6"
     p10 = "P10"
+    p15 = "P15"
     p20 = "P20"
     p30 = "P30"
     p40 = "P40"
     p50 = "P50"
+    p60 = "P60"
+    p70 = "P70"
+    p80 = "P80"
     hot = "Hot"
     cool = "Cool"
     archive = "Archive"
@@ -182,6 +185,11 @@ class StorageErrorCode(str, Enum):
     blob_being_rehydrated = "BlobBeingRehydrated"
     blob_archived = "BlobArchived"
     blob_not_archived = "BlobNotArchived"
+    authorization_source_ip_mismatch = "AuthorizationSourceIPMismatch"
+    authorization_protocol_mismatch = "AuthorizationProtocolMismatch"
+    authorization_permission_mismatch = "AuthorizationPermissionMismatch"
+    authorization_service_mismatch = "AuthorizationServiceMismatch"
+    authorization_resource_type_mismatch = "AuthorizationResourceTypeMismatch"
 
 
 class GeoReplicationStatusType(str, Enum):
@@ -189,6 +197,63 @@ class GeoReplicationStatusType(str, Enum):
     live = "live"
     bootstrap = "bootstrap"
     unavailable = "unavailable"
+
+
+class AccessTierRequired(str, Enum):
+
+    p4 = "P4"
+    p6 = "P6"
+    p10 = "P10"
+    p15 = "P15"
+    p20 = "P20"
+    p30 = "P30"
+    p40 = "P40"
+    p50 = "P50"
+    p60 = "P60"
+    p70 = "P70"
+    p80 = "P80"
+    hot = "Hot"
+    cool = "Cool"
+    archive = "Archive"
+
+
+class AccessTierOptional(str, Enum):
+
+    p4 = "P4"
+    p6 = "P6"
+    p10 = "P10"
+    p15 = "P15"
+    p20 = "P20"
+    p30 = "P30"
+    p40 = "P40"
+    p50 = "P50"
+    p60 = "P60"
+    p70 = "P70"
+    p80 = "P80"
+    hot = "Hot"
+    cool = "Cool"
+    archive = "Archive"
+
+
+class PremiumPageBlobAccessTier(str, Enum):
+
+    p4 = "P4"
+    p6 = "P6"
+    p10 = "P10"
+    p15 = "P15"
+    p20 = "P20"
+    p30 = "P30"
+    p40 = "P40"
+    p50 = "P50"
+    p60 = "P60"
+    p70 = "P70"
+    p80 = "P80"
+
+
+class RehydratePriority(str, Enum):
+
+    high = "High"
+    standard = "Standard"
 
 
 class BlockListType(str, Enum):
@@ -204,18 +269,29 @@ class DeleteSnapshotsOptionType(str, Enum):
     only = "only"
 
 
+class EncryptionAlgorithmType(str, Enum):
+
+    aes256 = "AES256"
+
+
 class ListBlobsIncludeItem(str, Enum):
 
-    snapshots = "snapshots"
-    metadata = "metadata"
-    uncommittedblobs = "uncommittedblobs"
     copy = "copy"
     deleted = "deleted"
+    metadata = "metadata"
+    snapshots = "snapshots"
+    uncommittedblobs = "uncommittedblobs"
 
 
 class ListContainersIncludeType(str, Enum):
 
     metadata = "metadata"
+
+
+class PathRenameMode(str, Enum):
+
+    legacy = "legacy"
+    posix = "posix"
 
 
 class SequenceNumberActionType(str, Enum):
@@ -239,3 +315,8 @@ class AccountKind(str, Enum):
     storage = "Storage"
     blob_storage = "BlobStorage"
     storage_v2 = "StorageV2"
+
+
+class SyncCopyStatusType(str, Enum):
+
+    success = "success"

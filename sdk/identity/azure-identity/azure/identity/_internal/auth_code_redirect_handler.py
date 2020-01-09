@@ -23,7 +23,7 @@ except ImportError:
 
 class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
     """HTTP request handler to capture the authentication server's response.
-    Largely from the Azure CLI: https://github.com/Azure/azure-cli/blob/dev/src/azure-cli-core/azure/cli/core/_profile.py
+    Mostly from the Azure CLI: https://github.com/Azure/azure-cli/blob/dev/src/azure-cli-core/azure/cli/core/_profile.py
     """
 
     def do_GET(self):
@@ -52,7 +52,7 @@ class AuthCodeRedirectServer(HTTPServer):
 
     def __init__(self, port, timeout):
         # type: (int, int) -> None
-        super(AuthCodeRedirectServer, self).__init__(("localhost", port), AuthCodeRedirectHandler)
+        HTTPServer.__init__(self, ("localhost", port), AuthCodeRedirectHandler)
         self.timeout = timeout
 
     def wait_for_redirect(self):

@@ -15,30 +15,29 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/3.1.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-05-10
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-08-01
   response:
     body:
       string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
-        deployment failed with error: ''The resource with id: ''/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Compute/virtualMachines/MyUbuntuVM''
-        failed validation with message: ''The requested size for resource ''/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Compute/virtualMachines/MyUbuntuVM''
-        is currently not available in location ''westus'' zones '''' for subscription
-        ''00000000-0000-0000-0000-000000000000''. Please try another size or deploy
-        to a different location or zones. See https://aka.ms/azureskunotavailable
-        for details.''.''."}}'
+        deployment ''pytestlinkedafa117b7'' is not valid according to the validation
+        procedure. The tracking id is ''c1b89e3b-49eb-4cb3-b1b0-db7d106b3ad6''. See
+        inner errors for details.","details":[{"code":"InvalidDomainNameLabel","message":"The
+        domain name label GEN-UNIQUE is invalid. It must conform to the following
+        regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '808'
+      - '447'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 20 Jul 2019 13:01:45 GMT
+      - Tue, 05 Nov 2019 09:35:28 GMT
       expires:
       - '-1'
       pragma:
@@ -50,7 +49,7 @@ interactions:
       x-ms-failure-cause:
       - gateway
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1197'
     status:
       code: 400
       message: Bad Request

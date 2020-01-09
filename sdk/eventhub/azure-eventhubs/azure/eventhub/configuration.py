@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from uamqp.constants import TransportType
+from uamqp.constants import TransportType  # type: ignore
 
 
-class _Configuration(object):
+class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")
         self.retry_total = kwargs.get('retry_total', 3)

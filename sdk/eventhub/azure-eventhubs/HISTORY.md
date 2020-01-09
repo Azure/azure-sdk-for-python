@@ -1,5 +1,80 @@
 # Release History
 
+## 2019-11-04 5.0.0b5
+
+**Breaking changes**
+
+- `EventHubClient`, `EventHubConsumer` and `EventHubProducer` has been removed. Use `EventHubProducerClient` and `EventHubConsumerClient` instead.
+    - Construction of both objects is the same as it was for the previous client.
+- Introduced `EventHubProducerClient` as substitution for`EventHubProducer`.
+    - `EventHubProducerClient` supports sending events to different partitions.
+- Introduced `EventHubConsumerClient` as substitution for `EventHubConsumer`.
+    - `EventHubConsumerClient` supports receiving events from single/all partitions.
+    - There are no longer methods which directly return `EventData`, all receiving is done via callback method: `on_events`.
+- `EventHubConsumerClient` has taken on the responsibility of `EventProcessor`.
+    - `EventHubConsumerClient` now accepts `PartitionManager` to do load-balancing and checkpoint.
+- Replaced `PartitionProcessor`by four independent callback methods accepted by the `receive` method on `EventHubConsumerClient`.
+    - `on_events(partition_context, events)` called when events are received.
+    - `on_error(partition_context, exception` called when errors occur.
+    - `on_partition_initialize(partition_context)` called when a partition consumer is opened.
+    - `on_partition_close(partition_context, reason)` called when a partition consumer is closed.
+- Some modules and classes that were importable from several different places have been removed:
+    - `azure.eventhub.common` has been removed. Import from `azure.eventhub` instead.
+    - `azure.eventhub.client_abstract` has been removed. Use `azure.eventhub.EventHubProducerClient` or `azure.eventhub.EventHubConsumerClient` instead.
+    - `azure.eventhub.client` has been removed. Use `azure.eventhub.EventHubProducerClient` or `azure.eventhub.EventHubConsumerClient` instead.
+    - `azure.eventhub.producer` has been removed. Use `azure.eventhub.EventHubProducerClient` instead.
+    - `azure.eventhub.consumer` has been removed. Use `azure.eventhub.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.client_async` has been removed. Use `azure.eventhub.aio.EventHubProducerClient` or `azure.eventhub.aio.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.producer_async` has been removed. Use `azure.eventhub.aio.EventHubProducerClient` instead.
+    - `azure.eventhub.aio.consumer_async` has been removed. Use `azure.eventhub.aio.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.event_processor.event_processor` has been removed. Use `azure.eventhub.aio.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.event_processor.partition_processor` has been removed. Use callback methods instead.
+    - `azure.eventhub.aio.event_processor.partition_manager` has been removed. Import from `azure.eventhub.aio` instead.
+    - `azure.eventhub.aio.event_processor.partition_context` has been removed. Import from `azure.eventhub.aio` instead.
+    - `azure.eventhub.aio.event_processor.sample_partition_manager` has been removed.
+
+**Bug fixes**
+
+- Fixed bug in user-agent string not being parsed.
+
+## 5.0.0b4 (2019-10-08)
+
+**New features**
+
+- Added support for tracing (issue #7153).
+- Added the capability of tracking last enqueued event properties of the partition to `EventHubConsumer` .
+    - Added new boolean type parameter`track_last_enqueued_event_properties` in method `EventHubClient.create_consumer()`.
+    - Added new property `last_enqueued_event_properties` of `EventHubConsumer` which contains sequence_number, offset, enqueued_time and retrieval_time information.
+    - By default the capability is disabled as it will cost extra bandwidth for transferring more information if turned on.
+
+**Breaking changes**
+
+- Removed support for IoT Hub direct connection.
+    - [EventHubs compatible connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
+- Removed support for sending EventData to IoT Hub.
+- Removed parameter `exception` in method `close()` of `EventHubConsumer` and `EventHubProcuer`.
+- Updated uAMQP dependency to 1.2.3.
+
+## 5.0.0b3 (2019-09-10)
+
+**New features**
+
+- Added support for automatic load balancing among multiple `EventProcessor`.
+- Added `BlobPartitionManager` which implements `PartitionManager`.
+    - Azure Blob Storage is applied for storing data used by `EventProcessor`.
+    - Packaged separately as a plug-in to `EventProcessor`.
+    - For details, please refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio).
+- Added property `system_properties` on `EventData`.
+
+**Breaking changes**
+
+- Removed constructor method of `PartitionProcessor`. For initialization please implement the method `initialize`.
+- Replaced `CheckpointManager` by `PartitionContext`.
+    - `PartitionContext` has partition context information and method `update_checkpoint`.
+- Updated all methods of `PartitionProcessor` to include `PartitionContext` as part of the arguments.
+- Updated accessibility of class members in `EventHub/EventHubConsumer/EventHubProducer`to be private.
+- Moved `azure.eventhub.eventprocessor` under `aio` package, which now becomes `azure.eventhub.aio.eventprocessor`.
+
 ## 5.0.0b2 (2019-08-06)
 
 **New features**

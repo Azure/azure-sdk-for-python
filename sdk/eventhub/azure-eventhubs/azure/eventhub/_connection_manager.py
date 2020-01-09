@@ -3,13 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from threading import RLock
-from uamqp import Connection, TransportType, c_uamqp
+from threading import Lock
+from enum import Enum
+from uamqp import Connection, TransportType, c_uamqp  # type: ignore
 
 
-class _SharedConnectionManager(object):
+class _ConnectionMode(Enum):
+    ShareConnection = 1
+    SeparateConnection = 2
+
+
+class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
-        self._lock = RLock()
+        self._lock = Lock()
         self._conn = None  # type: Connection
 
         self._container_id = kwargs.get("container_id")
@@ -50,11 +56,11 @@ class _SharedConnectionManager(object):
 
     def reset_connection_if_broken(self):
         with self._lock:
-            if self._conn and self._conn._state in (
-                c_uamqp.ConnectionState.CLOSE_RCVD,
-                c_uamqp.ConnectionState.CLOSE_SENT,
-                c_uamqp.ConnectionState.DISCARDING,
-                c_uamqp.ConnectionState.END,
+            if self._conn and self._conn._state in (  # pylint:disable=protected-access
+                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             ):
                 self._conn = None
 
@@ -63,7 +69,7 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(self, host, auth):
+    def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
         return None
 
     def close_connection(self):
@@ -74,4 +80,7 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs):
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
+    if connection_mode == _ConnectionMode.ShareConnection:
+        return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

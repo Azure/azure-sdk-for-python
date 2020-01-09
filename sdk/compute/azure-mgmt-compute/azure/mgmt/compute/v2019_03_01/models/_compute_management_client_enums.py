@@ -291,11 +291,30 @@ class HyperVGenerationType(str, Enum):
     v2 = "V2"
 
 
+class VirtualMachinePriorityTypes(str, Enum):
+
+    regular = "Regular"
+    low = "Low"
+
+
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+
 class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
     rolling = "Rolling"
+
+
+class VirtualMachineScaleSetScaleInRules(str, Enum):
+
+    default = "Default"
+    oldest_vm = "OldestVM"
+    newest_vm = "NewestVM"
 
 
 class OperatingSystemStateTypes(str, Enum):
@@ -308,18 +327,6 @@ class IPVersion(str, Enum):
 
     ipv4 = "IPv4"
     ipv6 = "IPv6"
-
-
-class VirtualMachinePriorityTypes(str, Enum):
-
-    regular = "Regular"
-    low = "Low"
-
-
-class VirtualMachineEvictionPolicyTypes(str, Enum):
-
-    deallocate = "Deallocate"
-    delete = "Delete"
 
 
 class VirtualMachineScaleSetSkuScaleType(str, Enum):
@@ -392,6 +399,55 @@ class HostCaching(str, Enum):
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
+
+
+class DiskStorageAccountTypes(str, Enum):
+
+    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
+    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
+    standard_ssd_lrs = "StandardSSD_LRS"  #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise applications and dev/test.
+    ultra_ssd_lrs = "UltraSSD_LRS"  #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier databases (for example, SQL, Oracle), and other transaction-heavy workloads.
+
+
+class HyperVGeneration(str, Enum):
+
+    v1 = "V1"
+    v2 = "V2"
+
+
+class DiskCreateOption(str, Enum):
+
+    empty = "Empty"  #: Create an empty data disk of a size given by diskSizeGB.
+    attach = "Attach"  #: Disk will be attached to a VM.
+    from_image = "FromImage"  #: Create a new disk from a platform image specified by the given imageReference.
+    import_enum = "Import"  #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified by storageAccountId.
+    copy = "Copy"  #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given sourceResourceId.
+    restore = "Restore"  #: Create a new disk by copying from a backup recovery point.
+    upload = "Upload"  #: Create a new disk by obtaining a write token and using it to directly upload the contents of the disk.
+
+
+class DiskState(str, Enum):
+
+    unattached = "Unattached"  #: The disk is not being used and can be attached to a VM.
+    attached = "Attached"  #: The disk is currently mounted to a running VM.
+    reserved = "Reserved"  #: The disk is mounted to a stopped-deallocated VM
+    active_sas = "ActiveSAS"  #: The disk currently has an Active SAS Uri associated with it.
+    ready_to_upload = "ReadyToUpload"  #: A disk is ready to be created by upload by requesting a write token.
+    active_upload = "ActiveUpload"  #: A disk is created for upload and a write token has been issued for uploading to it.
+
+
+class SnapshotStorageAccountTypes(str, Enum):
+
+    standard_lrs = "Standard_LRS"  #: Standard HDD locally redundant storage
+    premium_lrs = "Premium_LRS"  #: Premium SSD locally redundant storage
+    standard_zrs = "Standard_ZRS"  #: Standard zone redundant storage
+
+
+class AccessLevel(str, Enum):
+
+    none = "None"
+    read = "Read"
+    write = "Write"
 
 
 class InstanceViewTypes(str, Enum):

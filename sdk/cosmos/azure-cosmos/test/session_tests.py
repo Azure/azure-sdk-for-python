@@ -7,7 +7,7 @@ from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos._synchronized_request as synchronized_request
 from azure.cosmos import _retry_utility
@@ -33,16 +33,16 @@ class SessionTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
 
-    def _MockRequest(self, global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body):
-        if HttpHeaders.SessionToken in request_options['headers']:
-            self.last_session_token_sent = request_options['headers'][HttpHeaders.SessionToken]
+    def _MockRequest(self, global_endpoint_manager, request_params, connection_policy, pipeline_client, request):
+        if HttpHeaders.SessionToken in request.headers:
+            self.last_session_token_sent = request.headers[HttpHeaders.SessionToken]
         else:
             self.last_session_token_sent = None
-        return self._OriginalRequest(global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body)
+        return self._OriginalRequest(global_endpoint_manager, request_params, connection_policy, pipeline_client, request)
 
     def test_session_token_not_sent_for_master_resource_ops (self):
         self._OriginalRequest = synchronized_request._Request
@@ -57,7 +57,11 @@ class SessionTests(unittest.TestCase):
         synchronized_request._Request = self._OriginalRequest
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        raise exceptions.CosmosHttpResponseError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Read Session not available",
+            response=response)
 
     def test_clear_session_token(self):
         created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
@@ -66,7 +70,7 @@ class SessionTests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         try:
             self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
-        except errors.HTTPFailure as e:
+        except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(self.client.client_connection.session.get_session_token(
                 'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
@@ -84,7 +88,7 @@ class SessionTests(unittest.TestCase):
         try:
             self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
             self.fail()
-        except errors.HTTPFailure as e:
-            self.assertEqual(e._http_error_message, "Could not parse the received session token: 2")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.http_error_message, "Could not parse the received session token: 2")
             self.assertEqual(e.status_code, StatusCodes.INTERNAL_SERVER_ERROR)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction

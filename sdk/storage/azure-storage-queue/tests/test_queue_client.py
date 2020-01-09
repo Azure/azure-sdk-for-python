@@ -6,16 +6,13 @@
 import unittest
 import pytest
 import platform
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.queue import (
     VERSION,
     QueueServiceClient,
     QueueClient,
 )
-from queuetestcase import (
-    QueueTestCase,
-    record,
-)
+from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -27,295 +24,343 @@ _CONNECTION_ENDPOINTS = {'queue': 'QueueEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
 
-class StorageQueueClientTest(QueueTestCase):
+class StorageQueueClientTest(StorageTestCase):
     def setUp(self):
         super(StorageQueueClientTest, self).setUp()
-        self.account_name = self.settings.STORAGE_ACCOUNT_NAME
-        self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
         self.token_credential = self.generate_oauth_token()
-        self.connection_string = self.settings.CONNECTION_STRING
 
     # --Helpers-----------------------------------------------------------------
-    def validate_standard_account_endpoints(self, service, url_type):
+    def validate_standard_account_endpoints(self, service, url_type, account_name, account_key):
         self.assertIsNotNone(service)
-        self.assertEqual(service.credential.account_name, self.account_name)
-        self.assertEqual(service.credential.account_key, self.account_key)
-        self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, url_type) in service.url)
-        self.assertTrue('{}-secondary.{}.core.windows.net'.format(self.account_name, url_type) in service.secondary_endpoint)
+        self.assertEqual(service.account_name, account_name)
+        self.assertEqual(service.credential.account_name, account_name)
+        self.assertEqual(service.credential.account_key, account_key)
+        self.assertTrue('{}.{}.core.windows.net'.format(account_name, url_type) in service.url)
+        self.assertTrue('{}-secondary.{}.core.windows.net'.format(account_name, url_type) in service.secondary_endpoint)
 
     # --Direct Parameters Test Cases --------------------------------------------
-    def test_create_service_with_key(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self._get_queue_url(), credential=self.account_key, queue='foo')
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, url)
+            self.validate_standard_account_endpoints(service, url, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_connection_string(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
 
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string, queue="test")
+                self.connection_string(storage_account, storage_account_key), queue_name="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_sas(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._get_queue_url(), credential=self.sas_token, queue='foo')
+                self.account_url(storage_account.name, "queue"), credential=self.sas_token, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertTrue(service.url.startswith('https://' + self.account_name + '.queue.core.windows.net'))
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    def test_create_service_with_token(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._get_queue_url(), credential=self.token_credential, queue='foo')
+                self.account_url(storage_account.name, "queue"), credential=self.token_credential, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertTrue(service.url.startswith('https://' + self.account_name + '.queue.core.windows.net'))
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertEqual(service.credential, self.token_credential)
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
 
-    def test_create_service_with_token_and_http(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_token_and_http(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
             with self.assertRaises(ValueError):
-                url = self._get_queue_url().replace('https', 'http')
-                service_type(url, credential=self.token_credential, queue='foo')
+                url = self.account_url(storage_account.name, "queue").replace('https', 'http')
+                service_type(url, credential=self.token_credential, queue_name='foo')
 
-    def test_create_service_china(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_china(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
-            url = self._get_queue_url().replace('core.windows.net', 'core.chinacloudapi.cn')
+            url = self.account_url(storage_account.name, "queue").replace('core.windows.net', 'core.chinacloudapi.cn')
             service = service_type[0](
-                url, credential=self.account_key, queue='foo')
+                url, credential=storage_account_key, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith(
-                'https://{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+                'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1])))
             self.assertTrue(service.secondary_endpoint.startswith(
-                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1])))
 
-    def test_create_service_protocol(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
-            url = self._get_queue_url().replace('https', 'http')
+            url = self.account_url(storage_account.name, "queue").replace('https', 'http')
             service = service_type[0](
-                url, credential=self.account_key, queue='foo')
+                url, credential=storage_account_key, queue_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'http')
 
-    def test_create_service_empty_key(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_empty_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         QUEUE_SERVICES = [QueueServiceClient, QueueClient]
 
         for service_type in QUEUE_SERVICES:
             # Act
             with self.assertRaises(ValueError) as e:
-                test_service = service_type('testaccount', credential='', queue='foo')
+                test_service = service_type('testaccount', credential='', queue_name='foo')
 
             self.assertEqual(
-                str(e.exception), "You need to provide either a SAS token or an account key to authenticate.")
+                str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
-    def test_create_service_missing_arguments(self):
-        # Arrange
-
-        for service_type in SERVICES:
-            # Act
-            with self.assertRaises(ValueError):
-                service = service_type(None)
-
-                # Assert
-
-    def test_create_service_with_socket_timeout(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self._get_queue_url(), credential=self.account_key, queue='foo')
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='foo')
             service = service_type[0](
-                self._get_queue_url(), credential=self.account_key,
-                queue='foo', connection_timeout=22)
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key,
+                queue_name='foo', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     # --Connection String Test Cases --------------------------------------------
-
-    def test_create_service_with_connection_string_key(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_connection_string_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(storage_account.name, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue='foo')
+            service = service_type[0].from_connection_string(conn_string, queue_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_connection_string_sas(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_connection_string_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.account_name, self.sas_token)
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(storage_account.name, self.sas_token)
 
         for service_type in SERVICES:
             # Act
-            service = service_type.from_connection_string(conn_string, queue='foo')
+            service = service_type.from_connection_string(conn_string, queue_name='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertTrue(service.url.startswith('https://' + self.account_name + '.queue.core.windows.net'))
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    def test_create_service_with_connection_string_endpoint_protocol(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.account_name, self.account_key)
+            storage_account.name, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(
                 service.primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn/'.format(self.account_name, service_type[1])))
+                    'http://{}.{}.core.chinacloudapi.cn/'.format(storage_account.name, service_type[1])))
             self.assertTrue(
                 service.secondary_endpoint.startswith(
-                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1])))
             self.assertEqual(service.scheme, 'http')
 
-    def test_create_service_with_connection_string_emulated(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_connection_string_emulated(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(self.account_name, self.account_key)
+            conn_string = 'UseDevelopmentStorage=true;'.format(storage_account.name, storage_account_key)
 
             # Act
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, queue="foo")
+                service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
-    def test_create_service_with_connection_string_custom_domain(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_connection_string_custom_domain(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com;'.format(
-                self.account_name, self.account_key)
+                storage_account.name, storage_account_key)
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.queue.core.windows.net'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.queue.core.windows.net'))
 
-    def test_create_service_with_connection_string_custom_domain_trailing_slash(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_conn_str_custom_domain_trailing_slash(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com/;'.format(
-                self.account_name, self.account_key)
+                storage_account.name, storage_account_key)
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.queue.core.windows.net'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.queue.core.windows.net'))
 
-
-    def test_create_service_with_connection_string_custom_domain_secondary_override(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_conn_str_custom_domain_sec_override(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com/;'.format(
-                self.account_name, self.account_key)
+                storage_account.name, storage_account_key)
 
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, secondary_hostname="www-sec.mydomain.com", queue="foo")
+                conn_string, secondary_hostname="www-sec.mydomain.com", queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
-
-    def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_conn_str_fails_if_sec_without_primary(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                self.account_name, self.account_key,
+                storage_account.name, storage_account_key,
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
 
             # Fails if primary excluded
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, queue="foo")
+                service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
-    def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                self.account_name,
-                self.account_key,
+                storage_account.name,
+                storage_account_key,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
-            service = service_type[0].from_connection_string(conn_string, queue="foo")
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
-    @record
-    def test_request_callback_signed_header(self):
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_custom_account_endpoint_path(self, resource_group, location, storage_account, storage_account_key):
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        for service_type in SERVICES.items():
+            conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};QueueEndpoint={};'.format(
+                storage_account.name, storage_account_key, custom_account_url)
+
+            # Act
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
+
+            # Assert
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
+            self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+
+        service = QueueServiceClient(account_url=custom_account_url)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
+
+        service = QueueClient(account_url=custom_account_url, queue_name="foo")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.queue_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+
+        service = QueueClient.from_queue_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.queue_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+
+    @GlobalStorageAccountPreparer()
+    def test_request_callback_signed_header(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=storage_account_key)
         name = self.get_resource_name('cont')
 
         # Act
@@ -329,10 +374,10 @@ class StorageQueueClientTest(QueueTestCase):
         finally:
             service.delete_queue(name)
 
-    @record
-    def test_response_callback(self):
+    @GlobalStorageAccountPreparer()
+    def test_response_callback(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=storage_account_key)
         name = self.get_resource_name('cont')
         queue = service.get_queue_client(name)
 
@@ -345,9 +390,9 @@ class StorageQueueClientTest(QueueTestCase):
         exists = queue.get_queue_properties(raw_response_hook=callback)
         self.assertTrue(exists)
 
-    @record
-    def test_user_agent_default(self):
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+    @GlobalStorageAccountPreparer()
+    def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -360,11 +405,11 @@ class StorageQueueClientTest(QueueTestCase):
 
         service.get_service_properties(raw_response_hook=callback)
 
-    @record
-    def test_user_agent_custom(self):
+    @GlobalStorageAccountPreparer()
+    def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
-            self._get_queue_url(), credential=self.account_key, user_agent=custom_app)
+            self.account_url(storage_account.name, "queue"), credential=storage_account_key, user_agent=custom_app)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -388,9 +433,9 @@ class StorageQueueClientTest(QueueTestCase):
 
         service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
-    @record
-    def test_user_agent_append(self):
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+    @GlobalStorageAccountPreparer()
+    def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -404,7 +449,15 @@ class StorageQueueClientTest(QueueTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    @GlobalStorageAccountPreparer()
+    def test_create_queue_client_with_complete_queue_url(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        queue_url = self.account_url(storage_account.name, "queue") + "/foo"
+        service = QueueClient(queue_url, queue_name='bar', credential=storage_account_key)
 
+            # Assert
+        self.assertEqual(service.scheme, 'https')
+        self.assertEqual(service.queue_name, 'bar')
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

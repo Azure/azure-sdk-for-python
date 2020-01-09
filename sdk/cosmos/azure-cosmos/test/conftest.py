@@ -24,7 +24,7 @@
 import pytest
 import test_config
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 
 database_ids_to_delete = []
@@ -39,7 +39,7 @@ def teardown(request):
         masterKey = config.masterKey
         connectionPolicy = config.connectionPolicy
         try:
-            client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
+            client = cosmos_client.CosmosClient(host, masterKey, "Session", connection_policy=connectionPolicy)
          # This is to soft-fail the teardown while cosmos tests are not running automatically
         except Exception:
             pass
@@ -48,9 +48,8 @@ def teardown(request):
             for database_id in database_ids_to_delete:
                 try:
                     client.delete_database(database_id)
-                except errors.HTTPFailure as e:
-                    if e.status_code != StatusCodes.NOT_FOUND:
-                        raise e
+                except exceptions.CosmosResourceNotFoundError:
+                    pass
             del database_ids_to_delete[:]
         print("Clean up completed!")
 

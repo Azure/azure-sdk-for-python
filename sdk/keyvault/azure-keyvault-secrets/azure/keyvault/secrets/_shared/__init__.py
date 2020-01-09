@@ -48,6 +48,7 @@ def parse_vault_id(url):
 
 
 try:
+    # pylint:disable=unused-import
     from .async_challenge_auth_policy import AsyncChallengeAuthPolicy
     from .async_client_base import AsyncKeyVaultClientBase
 

@@ -1,6 +1,6 @@
 import uuid
 import time
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 
 class Worker(object):
@@ -62,10 +62,10 @@ class Worker(object):
         while doc:
             try:
                 self.client.DeleteItem(doc['_self'], {'partitionKey': doc['id']})
-            except errors.CosmosError as e:
-                if e.status_code != StatusCodes.NOT_FOUND:
-                    print("Error occurred while deleting document from %s" % self.client.WriteEndpoint)
-                else:
-                    raise e
+            except exceptions.CosmosResourceNotFoundError:
+                raise
+            except exceptions.CosmosHttpResponseError as e:
+                print("Error occurred while deleting document from %s" % self.client.WriteEndpoint)
+
             doc = next(it, None)
         print("Deleted all documents from region %s" % self.client.WriteEndpoint)

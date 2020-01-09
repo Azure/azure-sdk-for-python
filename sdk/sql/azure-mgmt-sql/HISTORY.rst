@@ -3,6 +3,78 @@
 Release History
 ===============
 
+0.14.0 (2019-10-04)
++++++++++++++++++++
+
+**Features**
+
+- Added operation ServerBlobAuditingPoliciesOperations.list_by_server
+- Added operation ManagedDatabasesOperations.complete_restore
+- Added operation DatabaseBlobAuditingPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseRestoreDetailsOperations
+
+0.13.0 (2019-09-03)
++++++++++++++++++++
+
+**Features**
+
+- Model ManagedInstanceUpdate has a new parameter source_managed_instance_id
+- Model ManagedInstanceUpdate has a new parameter instance_pool_id
+- Model ManagedInstanceUpdate has a new parameter restore_point_in_time
+- Model ManagedInstanceUpdate has a new parameter managed_instance_create_mode
+- Model SensitivityLabel has a new parameter is_disabled
+- Model Database has a new parameter paused_date
+- Model Database has a new parameter read_replica_count
+- Model Database has a new parameter resumed_date
+- Model Database has a new parameter auto_pause_delay
+- Model Database has a new parameter min_capacity
+- Model ManagedInstance has a new parameter source_managed_instance_id
+- Model ManagedInstance has a new parameter instance_pool_id
+- Model ManagedInstance has a new parameter restore_point_in_time
+- Model ManagedInstance has a new parameter managed_instance_create_mode
+- Model DatabaseUpdate has a new parameter paused_date
+- Model DatabaseUpdate has a new parameter read_replica_count
+- Model DatabaseUpdate has a new parameter resumed_date
+- Model DatabaseUpdate has a new parameter auto_pause_delay
+- Model DatabaseUpdate has a new parameter min_capacity
+- Added operation ManagedInstanceEncryptionProtectorsOperations.revalidate
+- Added operation ManagedDatabaseSensitivityLabelsOperations.enable_recommendation
+- Added operation ManagedDatabaseSensitivityLabelsOperations.disable_recommendation
+- Added operation ElasticPoolsOperations.failover
+- Added operation ManagedInstancesOperations.list_by_instance_pool
+- Added operation DatabasesOperations.failover
+- Added operation LongTermRetentionBackupsOperations.get_by_resource_group
+- Added operation LongTermRetentionBackupsOperations.list_by_resource_group_server
+- Added operation LongTermRetentionBackupsOperations.delete_by_resource_group
+- Added operation LongTermRetentionBackupsOperations.list_by_resource_group_location
+- Added operation LongTermRetentionBackupsOperations.list_by_resource_group_database
+- Added operation SensitivityLabelsOperations.enable_recommendation
+- Added operation SensitivityLabelsOperations.disable_recommendation
+- Added operation EncryptionProtectorsOperations.revalidate
+- Added operation group InstancePoolsOperations
+- Added operation group ManagedInstanceAdministratorsOperations
+- Added operation group UsagesOperations
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group PrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+- Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+- Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+- Operation EncryptionProtectorsOperations.create_or_update has a new signature
+
+**General breaking changes**  
+
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- SqlManagementClient cannot be imported from `azure.mgmt.sql.sql_management_client` anymore (import from `azure.mgmt.sqlmanagement` works like before)
+- SqlManagementClientConfiguration import has been moved from `azure.mgmt.sqlmanagement.sql_management_client` to `azure.mgmt.sqlmanagement`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.sqlmanagement.models.my_class` (import from `azure.mgmt.sqlmanagement.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.sqlmanagement.operations.my_class_operations` (import from `azure.mgmt.sqlmanagement.operations` works like before)
+        
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 0.12.0 (2019-03-28)
 +++++++++++++++++++
 

@@ -2,10 +2,10 @@ omitted_paths:
   - tools/*
   - scripts/*
   - azure-mgmt-netapp/tests/*
-  - "azure-mgmt*/*"
-  - "sdk/azure-mgmt*/*"
   - "sdk/*/azure-mgmt*/*"
+  - "sdk/keyvault/azure-keyvault/*"
   - "doc/*"
+  - "sdk/keyvault/azure-keyvault-*/samples/*"
 language: python
 root_check_enabled: True
 required_readme_sections:
@@ -48,6 +48,10 @@ known_content_issues:
   - ['sdk/loganalytics/azure-loganalytics/README.rst', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.rst', '#4554']
   - ['sdk/core/azure-servicemanagement-legacy/README.rst', '#4554']
+  - ['sdk/storage/azure-storage-file-share/swagger/README.md', '#4554']
+  - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
+  - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
+  - ['sdk/storage/azure-storage-file-datalake/swagger/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
@@ -62,12 +66,19 @@ known_content_issues:
   - ['sdk/core/azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-core/README.md', 'nspkg and common']
+  - ['sdk/core/azure-core/samples/README.md', 'nspkg and common']
+  - ['sdk/storage/azure-storage-blob/samples/README.md', 'nspkg and common']
+  - ['sdk/storage/azure-storage-queue/samples/README.md', 'nspkg and common']
+  - ['sdk/storage/azure-storage-file-share/samples/README.md', 'nspkg and common']
+  - ['sdk/storage/azure-storage-file-datalake/samples/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
+  - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
+  - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']
 
   # root readme
   - ['README.md', 'root readme']
 
-  # dev tools 
+  # dev tools
   - ['doc/dev/mgmt/swagger/single_api/readme.md', 'dev readme']
   - ['doc/dev/mgmt/swagger/multi_api/readme.md', 'dev readme']
   - ['doc/dev/mgmt/README.md', 'dev readme']

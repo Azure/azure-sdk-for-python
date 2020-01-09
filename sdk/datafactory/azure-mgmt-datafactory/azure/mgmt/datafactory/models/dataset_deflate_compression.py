@@ -22,9 +22,8 @@ class DatasetDeflateCompression(DatasetCompression):
     :type additional_properties: dict[str, object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param level: The Deflate compression level. Possible values include:
-     'Optimal', 'Fastest'
-    :type level: str or ~azure.mgmt.datafactory.models.DatasetCompressionLevel
+    :param level: The Deflate compression level.
+    :type level: object
     """
 
     _validation = {
@@ -34,7 +33,7 @@ class DatasetDeflateCompression(DatasetCompression):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):

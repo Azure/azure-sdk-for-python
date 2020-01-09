@@ -506,7 +506,7 @@ class VirtualMachineScaleSetVMsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}'}
 
     def get(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a virtual machine from a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -515,6 +515,10 @@ class VirtualMachineScaleSetVMsOperations(object):
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
+        :param expand: The expand expression to apply on the operation.
+         Possible values include: 'instanceView'
+        :type expand: str or
+         ~azure.mgmt.compute.v2019_03_01.models.InstanceViewTypes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -538,6 +542,8 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'InstanceViewTypes')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -1021,7 +1027,8 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def redeploy(
             self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Redeploys a virtual machine in a VM scale set.
+        """Shuts down the virtual machine in the virtual machine scale set, moves
+        it to a new node, and powers it back on.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

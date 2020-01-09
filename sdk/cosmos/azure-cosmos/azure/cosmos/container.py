@@ -22,23 +22,32 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
+
 import six
+from azure.core.tracing.decorator import distributed_trace  # type: ignore
+
 from ._cosmos_client_connection import CosmosClientConnection
-from .errors import HTTPFailure
+from ._base import build_options
+from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
-from .scripts import Scripts
-from ._query_iterable import QueryIterable
+from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue
-from typing import Any, Callable, Dict, List, Optional, Union
 
-__all__ = ("Container",)
+__all__ = ("ContainerProxy",)
+
+# pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
-class Container:
-    """ An Azure Cosmos DB container.
+class ContainerProxy(object):
+    """
+    An interface to interact with a specific DB Container.
+    This class should not be instantiated directly, use :func:`DatabaseProxy.get_container_client` method.
 
-    A container in an Azure Cosmos DB SQL API database is a collection of documents, each of which represented as an Item.
+    A container in an Azure Cosmos DB SQL API database is a collection of documents,
+    each of which represented as an Item.
 
     :ivar str id: ID (name) of the container
     :ivar str session_token: The session token for the container.
@@ -49,35 +58,41 @@ class Container:
 
     """
 
-    def __init__(self, client_connection, database_link, id, properties=None):
+    def __init__(self, client_connection, database_link, id, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id
         self._properties = properties
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
-        self._scripts = None
+        self._scripts = None  # type: Optional[ScriptsProxy]
+
+    def __repr__(self):
+        # type () -> str
+        return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
-            self.read()
+            self._properties = self.read()
         return self._properties
 
     @property
     def is_system_key(self):
+        # type: () -> bool
         if self._is_system_key is None:
             properties = self._get_properties()
             self._is_system_key = (
                 properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
             )
-        return self._is_system_key
+        return cast('bool', self._is_system_key)
 
     @property
     def scripts(self):
+        # type: () -> ScriptsProxy
         if self._scripts is None:
-            self._scripts = Scripts(self.client_connection, self.container_link, self.is_system_key)
-        return self._scripts
+            self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
+        return cast('ScriptsProxy', self._scripts)
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
@@ -91,36 +106,36 @@ class Container:
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
+    def _set_partition_key(self, partition_key):
+        if partition_key == NonePartitionKeyValue:
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+        return partition_key
+
+    @distributed_trace
     def read(
         self,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        populate_partition_key_range_statistics=None,
-        populate_quota_info=None,
-        request_options=None,
-        response_hook=None,
+        populate_query_metrics=None,  # type: Optional[bool]
+        populate_partition_key_range_statistics=None,  # type: Optional[bool]
+        populate_quota_info=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (str, Dict[str, str], bool, bool, bool, Dict[str, Any], Optional[Callable]) -> Container
-        """ Read the container properties
+        # type: (...) -> Dict[str, Any]
+        """Read the container properties.
 
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
+        :param populate_partition_key_range_statistics: Enable returning partition key
+            range statistics in response headers.
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
-        :returns: :class:`Container` instance representing the retrieved container.
-
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
+            This includes if the container does not exist.
+        :returns: Dict representing the retrieved container.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if populate_partition_key_range_statistics is not None:
@@ -129,96 +144,86 @@ class Container:
             request_options["populateQuotaInfo"] = populate_quota_info
 
         collection_link = self.container_link
-        self._properties = self.client_connection.ReadContainer(collection_link, options=request_options)
+        self._properties = self.client_connection.ReadContainer(
+            collection_link, options=request_options, **kwargs
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return self._properties
+        return cast('Dict[str, Any]', self._properties)
 
+    @distributed_trace
     def read_item(
         self,
-        item,
-        partition_key,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[str, Dict[str, Any]]
+        partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
-        # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
-        """
-        Get the item identified by `id`.
+        # type: (...) -> Dict[str, str]
+        """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Dict representing the item to be retrieved.
-        :raise `HTTPFailure`: If the given item couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
+        :rtype: dict[str, Any]
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START update_item]
-            :end-before: [END update_item]
-            :language: python
-            :dedent: 0
-            :caption: Get an item from the database and update one of its properties:
-            :name: update_item
+        .. admonition:: Example:
 
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START update_item]
+                :end-before: [END update_item]
+                :language: python
+                :dedent: 0
+                :caption: Get an item from the database and update one of its properties:
+                :name: update_item
         """
         doc_link = self._get_document_link(item)
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.ReadItem(document_link=doc_link, options=request_options)
+        result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def read_all_items(
         self,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """ List all items in the container.
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """List all items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of items (dicts).
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -226,36 +231,36 @@ class Container:
             response_hook.clear()
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
+    @distributed_trace
     def query_items_change_feed(
         self,
-        partition_key_range_id=None,
-        is_start_from_beginning=False,
-        continuation=None,
-        max_item_count=None,
-        feed_options=None,
-        response_hook=None,
+        partition_key_range_id=None,  # type: Optional[str]
+        is_start_from_beginning=False,  # type: bool
+        continuation=None,  # type: Optional[str]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
     ):
-        """ Get a sorted list of items that were changed, in the order in which they were modified.
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
-        This is used to process the change feed in parallel across multiple consumers.
-        :param is_start_from_beginning: Get whether change feed should start from beginning (true) or from current (false).
-        By default it's start from current (false).
+            This is used to process the change feed in parallel across multiple consumers.
+        :param is_start_from_beginning: Get whether change feed should start from
+            beginning (true) or from current (false). By default it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of items (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if is_start_from_beginning is not None:
@@ -269,74 +274,71 @@ class Container:
             response_hook.clear()
 
         result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook
+            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def query_items(
         self,
-        query,
-        parameters=None,
-        partition_key=None,
-        enable_cross_partition_query=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        enable_scan_in_query=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[str]]
+        partition_key=None,  # type: Optional[Any]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        max_item_count=None,  # type: Optional[int]
+        enable_scan_in_query=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any, Optional[Callable]) -> QueryIterable
+        # type: (...) -> Iterable[Dict[str, Any]]
         """Return all results matching the given `query`.
-
-        :param query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute the query in the Azure Cosmos DB service.
-        More than one request is necessary if the query is not scoped to single partition key value.
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: An Iterable of items (dicts).
 
         You can use any value for the container name in the FROM clause, but typically the container name is used.
         In the examples below, the container name is "products," and is aliased as "p" for easier referencing
         in the WHERE clause.
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START query_items]
-            :end-before: [END query_items]
-            :language: python
-            :dedent: 0
-            :caption: Get all products that have not been discontinued:
-            :name: query_items
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param partition_key: Specifies the partition key value for the item.
+        :param enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START query_items_param]
-            :end-before: [END query_items_param]
-            :language: python
-            :dedent: 0
-            :caption: Parameterized query to get all products that have been discontinued:
-            :name: query_items_param
+        .. admonition:: Example:
 
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+                :name: query_items
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+                :name: query_items_param
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
         if partition_key is not None:
@@ -348,326 +350,312 @@ class Container:
             response_hook.clear()
 
         items = self.client_connection.QueryItems(
-            database_or_Container_link=self.container_link,
+            database_or_container_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
+            **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
+    @distributed_trace
     def replace_item(
         self,
-        item,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[str, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
-        """ Replaces the specified item if it exists in the container.
+        # type: (...) -> Dict[str, str]
+        """Replaces the specified item if it exists in the container.
 
         :param item: The ID (name) or dict representing item to be replaced.
         :param body: A dict-like object representing the item to replace.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the item after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the item with given id does not exist.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
+            given id does not exist.
+        :rtype: dict[str, Any]
         """
         item_link = self._get_document_link(item)
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         request_options["disableIdGeneration"] = True
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.ReplaceItem(document_link=item_link, new_document=body, options=request_options)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
-
-    def upsert_item(
-        self,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
-    ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
-        """ Insert or update the specified item.
-
-        :param body: A dict-like object representing the item to update or insert.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A dict representing the upserted item.
-        :raise `HTTPFailure`: If the given item could not be upserted.
-
-        If the item already exists in the container, it is replaced. If it does not, it is inserted.
-
-        """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        request_options["disableIdGeneration"] = True
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
-            request_options["postTriggerInclude"] = post_trigger_include
-
-        result = self.client_connection.UpsertItem(database_or_Container_link=self.container_link, document=body)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
-
-    def create_item(
-        self,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        indexing_directive=None,
-        request_options=None,
-        response_hook=None,
-    ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
-        """ Create an item in the container.
-
-        :param body: A dict-like object representing the item to create.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param indexing_directive: Indicate whether the document should be omitted from indexing.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A dict representing the new item.
-        :raises `HTTPFailure`: If item with the given ID already exists.
-
-        To update or replace an existing item, use the :func:`Container.upsert_item` method.
-
-        """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-
-        request_options["disableAutomaticIdGeneration"] = True
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
-        if populate_query_metrics:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
-            request_options["postTriggerInclude"] = post_trigger_include
-        if indexing_directive:
-            request_options["indexingDirective"] = indexing_directive
-
-        result = self.client_connection.CreateItem(
-            database_or_Container_link=self.container_link, document=body, options=request_options
+        result = self.client_connection.ReplaceItem(
+            document_link=item_link, new_document=body, options=request_options, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def delete_item(
+    @distributed_trace
+    def upsert_item(
         self,
-        item,
-        partition_key,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
-        # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> None
-        """ Delete the specified item from the container.
+        # type: (...) -> Dict[str, str]
+        """Insert or update the specified item.
 
-        :param item: The ID (name) or dict representing item to be deleted.
-        :param partition_key: Specifies the partition key value for the item.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
+        If the item already exists in the container, it is replaced. If it does not, it is inserted.
+
+        :param body: A dict-like object representing the item to update or insert.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not exist in the container, a `404` error is returned.
-
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the upserted item.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if partition_key:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        request_options["disableIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
+
+        result = self.client_connection.UpsertItem(
+            database_or_container_link=self.container_link, document=body, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace
+    def create_item(
+        self,
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        indexing_directive=None,  # type: Optional[Any]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Dict[str, str]
+        """Create an item in the container.
+
+        To update or replace an existing item, use the :func:`ContainerProxy.upsert_item` method.
+
+        :param body: A dict-like object representing the item to create.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param indexing_directive: Indicate whether the document should be omitted from indexing.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the new item.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
+        :rtype: dict[str, Any]
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+
+        request_options["disableAutomaticIdGeneration"] = True
+        if populate_query_metrics:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if pre_trigger_include is not None:
+            request_options["preTriggerInclude"] = pre_trigger_include
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
+        if indexing_directive is not None:
+            request_options["indexingDirective"] = indexing_directive
+
+        result = self.client_connection.CreateItem(
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+        )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace
+    def delete_item(
+        self,
+        item,  # type: Union[Dict[str, Any], str]
+        partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete the specified item from the container.
+
+        :param item: The ID (name) or dict representing item to be deleted.
+        :param partition_key: Specifies the partition key value for the item.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
+        :rtype: None
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if pre_trigger_include is not None:
+            request_options["preTriggerInclude"] = pre_trigger_include
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
-        result = self.client_connection.DeleteItem(document_link=document_link, options=request_options)
+        result = self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    def read_offer(self, response_hook=None):
-        # type: (Optional[Callable]) -> Offer
-        """ Read the Offer object for this container.
+    @distributed_trace
+    def read_offer(self, **kwargs):
+        # type: (Any) -> Offer
+        """Read the Offer object for this container.
 
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the container.
-        :raise HTTPFailure: If no offer exists for the container or if the offer could not be retrieved.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
+            the offer could not be retrieved.
+        :rtype: ~azure.cosmos.Offer
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
+        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not offers:
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for container " + self.container_link)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
 
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
-    def replace_throughput(self, throughput, response_hook=None):
-        # type: (in, Optional[Callable]) -> Offer
-        """ Replace the container's throughput
+    @distributed_trace
+    def replace_throughput(self, throughput, **kwargs):
+        # type: (int, Any) -> Offer
+        """Replace the container's throughput.
 
         :param throughput: The throughput to be set (an integer).
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the container, updated with new throughput.
-        :raise HTTPFailure: If no offer exists for the container or if the offer could not be updated.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
+            or the offer could not be updated.
+        :rtype: ~azure.cosmos.Offer
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
+        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not offers:
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for container " + self.container_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0])
+        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
         return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
-    def read_all_conflicts(self, max_item_count=None, feed_options=None, response_hook=None):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """ List all conflicts in the container.
+    @distributed_trace
+    def list_conflicts(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadConflicts(collection_link=self.container_link, feed_options=feed_options)
+        result = self.client_connection.ReadConflicts(
+            collection_link=self.container_link, feed_options=feed_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def query_conflicts(
         self,
-        query,
-        parameters=None,
-        enable_cross_partition_query=None,
-        partition_key=None,
-        max_item_count=None,
-        feed_options=None,
-        response_hook=None,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[str]]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        partition_key=None,  # type: Optional[Any]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
     ):
-        # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (...) -> Iterable[Dict[str, Any]]
         """Return all conflicts matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param enable_cross_partition_query: Allows sending of more than one request to execute
+            the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
         :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute the query in the Azure Cosmos DB service.
-        More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if enable_cross_partition_query is not None:
@@ -679,58 +667,55 @@ class Container:
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def get_conflict(self, conflict, partition_key, request_options=None, response_hook=None):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
-        """ Get the conflict identified by `id`.
+    @distributed_trace
+    def get_conflict(self, conflict, partition_key, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
+        """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :param partition_key: Partition key for the conflict to retrieve.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
-        :raise `HTTPFailure`: If the given conflict couldn't be retrieved.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if partition_key:
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.ReadConflict(
-            conflict_link=self._get_conflict_link(conflict), options=request_options
+            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def delete_conflict(self, conflict, partition_key, request_options=None, response_hook=None):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> None
-        """ Delete the specified conflict from the container.
+    @distributed_trace
+    def delete_conflict(self, conflict, partition_key, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> None
+        """Delete the specified conflict from the container.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict does not exist in the container, a `404` error is returned.
-
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
+        :rtype: None
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if partition_key:
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.DeleteConflict(
-            conflict_link=self._get_conflict_link(conflict), options=request_options
+            conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-
-    def _set_partition_key(self, partition_key):
-        if partition_key == NonePartitionKeyValue:
-            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
-        return partition_key

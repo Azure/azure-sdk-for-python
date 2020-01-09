@@ -34,12 +34,16 @@ class AzureDataLakeStoreSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
-    :param copy_behavior: The type of copy behavior for copy sink. Possible
-     values include: 'PreserveHierarchy', 'FlattenHierarchy', 'MergeFiles'
-    :type copy_behavior: str or
-     ~azure.mgmt.datafactory.models.CopyBehaviorType
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param enable_adls_single_file_parallel: Single File Parallel.
+    :type enable_adls_single_file_parallel: object
     """
 
     _validation = {
@@ -52,11 +56,14 @@ class AzureDataLakeStoreSink(CopySink):
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'copy_behavior': {'key': 'copyBehavior', 'type': 'str'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'enable_adls_single_file_parallel': {'key': 'enableAdlsSingleFileParallel', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AzureDataLakeStoreSink, self).__init__(**kwargs)
         self.copy_behavior = kwargs.get('copy_behavior', None)
+        self.enable_adls_single_file_parallel = kwargs.get('enable_adls_single_file_parallel', None)
         self.type = 'AzureDataLakeStoreSink'

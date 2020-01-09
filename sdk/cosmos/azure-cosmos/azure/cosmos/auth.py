@@ -22,10 +22,11 @@
 """Authorization helper functions in the Azure Cosmos database service.
 """
 
+import base64
 from hashlib import sha256
 import hmac
+
 import six
-import base64
 
 from . import http_constants
 
@@ -46,8 +47,9 @@ def GetAuthorizationHeader(
         The authorization headers.
     :rtype: dict
     """
-    # In the AuthorizationToken generation logic, lower casing of ResourceID is required as rest of the fields are lower cased
-    # Lower casing should not be done for named based "ID", which should be used as is
+    # In the AuthorizationToken generation logic, lower casing of ResourceID is required
+    # as rest of the fields are lower cased. Lower casing should not be done for named
+    # based "ID", which should be used as is
     if resource_id_or_fullname is not None and not is_name_based:
         resource_id_or_fullname = resource_id_or_fullname.lower()
 
@@ -59,6 +61,8 @@ def GetAuthorizationHeader(
         return __GetAuthorizationTokenUsingResourceTokens(
             cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
         )
+
+    return None
 
 
 def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resource_type, headers, master_key):
@@ -79,7 +83,8 @@ def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resourc
     # decodes the master key which is encoded in base64
     key = base64.b64decode(master_key)
 
-    # Skipping lower casing of resource_id_or_fullname since it may now contain "ID" of the resource as part of the fullname
+    # Skipping lower casing of resource_id_or_fullname since it may now contain "ID"
+    # of the resource as part of the fullname
     text = "{verb}\n{resource_type}\n{resource_id_or_fullname}\n{x_date}\n{http_date}\n".format(
         verb=(verb.lower() or ""),
         resource_type=(resource_type.lower() or ""),
@@ -115,9 +120,10 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
     :rtype: dict
 
     """
-    if resource_tokens and len(resource_tokens) > 0:
-        # For database account access(through GetDatabaseAccount API), path and resource_id_or_fullname are '',
-        # so in this case we return the first token to be used for creating the auth header as the service will accept any token in this case
+    if resource_tokens:
+        # For database account access(through GetDatabaseAccount API), path and
+        # resource_id_or_fullname are '', so in this case we return the first token to be
+        # used for creating the auth header as the service will accept any token in this case
         if not path and not resource_id_or_fullname:
             return next(six.itervalues(resource_tokens))
 
@@ -137,7 +143,6 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
             "users",
             "permissions",
             "attachments",
-            "media",
             "conflicts",
             "offers",
         ]
@@ -145,3 +150,5 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
         for one_part in reversed(path_parts):
             if not one_part in resource_types and one_part in resource_tokens:
                 return resource_tokens[one_part]
+
+    return None

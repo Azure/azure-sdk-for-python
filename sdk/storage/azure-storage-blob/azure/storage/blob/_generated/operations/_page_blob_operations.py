@@ -8,7 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from azure.core.exceptions import map_error
 
@@ -38,7 +37,7 @@ class PageBlobOperations(object):
         self._config = config
         self.x_ms_blob_type = "PageBlob"
 
-    def create(self, content_length, blob_content_length, timeout=None, metadata=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def create(self, content_length, blob_content_length, timeout=None, tier=None, metadata=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request.
@@ -52,6 +51,11 @@ class PageBlobOperations(object):
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
+        :param tier: Optional. Indicates the tier to be set on the page blob.
+         Possible values include: 'P4', 'P6', 'P10', 'P15', 'P20', 'P30',
+         'P40', 'P50', 'P60', 'P70', 'P80'
+        :type tier: str or
+         ~azure.storage.blob.models.PremiumPageBlobAccessTier
         :param metadata: Optional. Specifies a user-defined name-value pair
          associated with the blob. If no name-value pairs are specified, the
          operation will copy the metadata from the source blob or file to the
@@ -71,20 +75,23 @@ class PageBlobOperations(object):
          analytics logging is enabled.
         :type request_id: str
         :param blob_http_headers: Additional parameters for the operation
-        :type blob_http_headers: ~blob.models.BlobHTTPHeaders
+        :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         blob_content_type = None
@@ -108,6 +115,15 @@ class PageBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -136,6 +152,8 @@ class PageBlobOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        if tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("tier", tier, 'str')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-blob-content-length'] = self._serialize.header("blob_content_length", blob_content_length, 'long')
@@ -159,6 +177,12 @@ class PageBlobOperations(object):
             header_parameters['x-ms-blob-content-disposition'] = self._serialize.header("blob_content_disposition", blob_content_disposition, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -182,16 +206,18 @@ class PageBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{containerName}/{blob}'}
 
-    def upload_pages(self, body, content_length, transactional_content_md5=None, timeout=None, range=None, request_id=None, lease_access_conditions=None, sequence_number_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def upload_pages(self, body, content_length, transactional_content_md5=None, transactional_content_crc64=None, timeout=None, range=None, request_id=None, lease_access_conditions=None, cpk_info=None, sequence_number_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param body: Initial data
@@ -201,6 +227,9 @@ class PageBlobOperations(object):
         :param transactional_content_md5: Specify the transactional md5 for
          the body, to be validated by the service.
         :type transactional_content_md5: bytearray
+        :param transactional_content_crc64: Specify the transactional crc64
+         for the body, to be validated by the service.
+        :type transactional_content_crc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -215,26 +244,38 @@ class PageBlobOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param sequence_number_access_conditions: Additional parameters for
          the operation
         :type sequence_number_access_conditions:
-         ~blob.models.SequenceNumberAccessConditions
+         ~azure.storage.blob.models.SequenceNumberAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_sequence_number_less_than_or_equal_to = None
         if sequence_number_access_conditions is not None:
             if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
@@ -279,6 +320,8 @@ class PageBlobOperations(object):
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if transactional_content_md5 is not None:
             header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+        if transactional_content_crc64 is not None:
+            header_parameters['x-ms-content-crc64'] = self._serialize.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -287,6 +330,12 @@ class PageBlobOperations(object):
         header_parameters['x-ms-page-write'] = self._serialize.header("page_write", page_write, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_sequence_number_less_than_or_equal_to is not None:
             header_parameters['x-ms-if-sequence-number-le'] = self._serialize.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
         if if_sequence_number_less_than is not None:
@@ -318,17 +367,20 @@ class PageBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     upload_pages.metadata = {'url': '/{containerName}/{blob}'}
 
-    def clear_pages(self, content_length, timeout=None, range=None, request_id=None, lease_access_conditions=None, sequence_number_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def clear_pages(self, content_length, timeout=None, range=None, request_id=None, lease_access_conditions=None, cpk_info=None, sequence_number_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request.
@@ -347,26 +399,38 @@ class PageBlobOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param sequence_number_access_conditions: Additional parameters for
          the operation
         :type sequence_number_access_conditions:
-         ~blob.models.SequenceNumberAccessConditions
+         ~azure.storage.blob.models.SequenceNumberAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_sequence_number_less_than_or_equal_to = None
         if sequence_number_access_conditions is not None:
             if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
@@ -416,6 +480,12 @@ class PageBlobOperations(object):
         header_parameters['x-ms-page-write'] = self._serialize.header("page_write", page_write, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_sequence_number_less_than_or_equal_to is not None:
             header_parameters['x-ms-if-sequence-number-le'] = self._serialize.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
         if if_sequence_number_less_than is not None:
@@ -445,7 +515,9 @@ class PageBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -453,6 +525,195 @@ class PageBlobOperations(object):
             }
             return cls(response, None, response_headers)
     clear_pages.metadata = {'url': '/{containerName}/{blob}'}
+
+    def upload_pages_from_url(self, source_url, source_range, content_length, range, source_content_md5=None, source_contentcrc64=None, timeout=None, request_id=None, cpk_info=None, lease_access_conditions=None, sequence_number_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
+        """The Upload Pages operation writes a range of pages to a page blob where
+        the contents are read from a URL.
+
+        :param source_url: Specify a URL to the copy source.
+        :type source_url: str
+        :param source_range: Bytes of source data in the specified range. The
+         length of this range should match the ContentLength header and
+         x-ms-range/Range destination range header.
+        :type source_range: str
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param range: The range of bytes to which the source range would be
+         written. The range should be 512 aligned and range-end is required.
+        :type range: str
+        :param source_content_md5: Specify the md5 calculated for the range of
+         bytes that must be read from the copy source.
+        :type source_content_md5: bytearray
+        :param source_contentcrc64: Specify the crc64 calculated for the range
+         of bytes that must be read from the copy source.
+        :type source_contentcrc64: bytearray
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param sequence_number_access_conditions: Additional parameters for
+         the operation
+        :type sequence_number_access_conditions:
+         ~azure.storage.blob.models.SequenceNumberAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
+        :param source_modified_access_conditions: Additional parameters for
+         the operation
+        :type source_modified_access_conditions:
+         ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        if_sequence_number_less_than_or_equal_to = None
+        if sequence_number_access_conditions is not None:
+            if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
+        if_sequence_number_less_than = None
+        if sequence_number_access_conditions is not None:
+            if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
+        if_sequence_number_equal_to = None
+        if sequence_number_access_conditions is not None:
+            if_sequence_number_equal_to = sequence_number_access_conditions.if_sequence_number_equal_to
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+        source_if_modified_since = None
+        if source_modified_access_conditions is not None:
+            source_if_modified_since = source_modified_access_conditions.source_if_modified_since
+        source_if_unmodified_since = None
+        if source_modified_access_conditions is not None:
+            source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        source_if_match = None
+        if source_modified_access_conditions is not None:
+            source_if_match = source_modified_access_conditions.source_if_match
+        source_if_none_match = None
+        if source_modified_access_conditions is not None:
+            source_if_none_match = source_modified_access_conditions.source_if_none_match
+
+        comp = "page"
+        page_write = "update"
+
+        # Construct URL
+        url = self.upload_pages_from_url.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-copy-source'] = self._serialize.header("source_url", source_url, 'str')
+        header_parameters['x-ms-source-range'] = self._serialize.header("source_range", source_range, 'str')
+        if source_content_md5 is not None:
+            header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
+        if source_contentcrc64 is not None:
+            header_parameters['x-ms-source-content-crc64'] = self._serialize.header("source_contentcrc64", source_contentcrc64, 'bytearray')
+        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-page-write'] = self._serialize.header("page_write", page_write, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_sequence_number_less_than_or_equal_to is not None:
+            header_parameters['x-ms-if-sequence-number-le'] = self._serialize.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
+        if if_sequence_number_less_than is not None:
+            header_parameters['x-ms-if-sequence-number-lt'] = self._serialize.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
+        if if_sequence_number_equal_to is not None:
+            header_parameters['x-ms-if-sequence-number-eq'] = self._serialize.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if source_if_modified_since is not None:
+            header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
+        if source_if_unmodified_since is not None:
+            header_parameters['x-ms-source-if-unmodified-since'] = self._serialize.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
+        if source_if_match is not None:
+            header_parameters['x-ms-source-if-match'] = self._serialize.header("source_if_match", source_if_match, 'str')
+        if source_if_none_match is not None:
+            header_parameters['x-ms-source-if-none-match'] = self._serialize.header("source_if_none_match", source_if_none_match, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
+                'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    upload_pages_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
     def get_page_ranges(self, snapshot=None, timeout=None, range=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Get Page Ranges operation returns the list of valid page ranges for
@@ -478,17 +739,18 @@ class PageBlobOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: PageList or the result of cls(response)
-        :rtype: ~blob.models.PageList
+        :rtype: ~azure.storage.blob.models.PageList
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -560,6 +822,7 @@ class PageBlobOperations(object):
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'x-ms-blob-content-length': self._deserialize('long', response.headers.get('x-ms-blob-content-length')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -573,8 +836,8 @@ class PageBlobOperations(object):
     get_page_ranges.metadata = {'url': '/{containerName}/{blob}'}
 
     def get_page_ranges_diff(self, snapshot=None, timeout=None, prevsnapshot=None, range=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
-        """[Update] The Get Page Ranges Diff operation returns the list of valid
-        page ranges for a page blob that were changed between target blob and
+        """The Get Page Ranges Diff operation returns the list of valid page
+        ranges for a page blob that were changed between target blob and
         previous snapshot.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value
@@ -606,17 +869,18 @@ class PageBlobOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: PageList or the result of cls(response)
-        :rtype: ~blob.models.PageList
+        :rtype: ~azure.storage.blob.models.PageList
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -690,6 +954,7 @@ class PageBlobOperations(object):
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'x-ms-blob-content-length': self._deserialize('long', response.headers.get('x-ms-blob-content-length')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -702,7 +967,7 @@ class PageBlobOperations(object):
         return deserialized
     get_page_ranges_diff.metadata = {'url': '/{containerName}/{blob}'}
 
-    def resize(self, blob_content_length, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def resize(self, blob_content_length, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for
@@ -720,22 +985,34 @@ class PageBlobOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -772,6 +1049,12 @@ class PageBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -795,6 +1078,7 @@ class PageBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -812,7 +1096,7 @@ class PageBlobOperations(object):
          should modify the blob's sequence number. Possible values include:
          'max', 'update', 'increment'
         :type sequence_number_action: str or
-         ~blob.models.SequenceNumberActionType
+         ~azure.storage.blob.models.SequenceNumberActionType
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -828,17 +1112,18 @@ class PageBlobOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -905,6 +1190,7 @@ class PageBlobOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -939,13 +1225,13 @@ class PageBlobOperations(object):
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -1004,6 +1290,7 @@ class PageBlobOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),

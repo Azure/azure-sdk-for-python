@@ -8,12 +8,14 @@ import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos._location_cache import LocationCache
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos import _retry_utility
+import test_config
 import six
 
 pytestmark = pytest.mark.cosmosEmulator
+
 
 class RefreshThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None,
@@ -87,7 +89,7 @@ class LocationCacheTest(unittest.TestCase):
             else:
                 client.CreateItem("dbs/mydb/colls/mycoll/", {'id':'1'})
             self.fail()
-        except errors.HTTPFailure as e:
+        except exceptions.CosmosHttpResponseError as e:
             # not retried
             self.assertEqual(self.counter, 1)
             self.counter = 0
@@ -99,7 +101,11 @@ class LocationCacheTest(unittest.TestCase):
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
         self.counter += 1
-        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        raise exceptions.CosmosHttpResponseError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Read Session not available",
+            response=response)
 
     def test_validate_retry_on_session_not_availabe_with_endpoint_discovery_enabled(self):
         # sequence of chosen endpoints: 
@@ -128,7 +134,7 @@ class LocationCacheTest(unittest.TestCase):
 
         try:
             client.ReadItem("dbs/mydb/colls/mycoll/docs/1")
-        except errors.HTTPFailure as e:
+        except exceptions.CosmosHttpResponseError as e:
             # not retried
             self.assertEqual(self.counter, 4 if use_multiple_write_locations else 2)
             self.counter = 0
@@ -160,7 +166,11 @@ class LocationCacheTest(unittest.TestCase):
             self.assertTrue(request.should_clear_session_token_on_session_read_failure)
         self.assertEqual(expected_endpoint, request.location_endpoint_to_route)
         self.counter += 1
-        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        raise exceptions.CosmosHttpResponseError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Read Session not available",
+            response=response)
 
     def test_validate_location_cache(self):
         self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount

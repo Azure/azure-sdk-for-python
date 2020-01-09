@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.6.0 (2019-09-26)
+++++++++++++++++++
+
+**Features**
+
+- Model Snapshot has a new parameter created
+- Model ExportPolicyRule has a new parameter nfsv41
+- Added operation group AzureNetAppFilesManagementClientOperationsMixin
+
+**Breaking changes**
+
+- Model Snapshot no longer has parameter creation_date
+- Model ExportPolicyRule no longer has parameter nfsv4
+
 0.5.0 (2019-07-03)
 ++++++++++++++++++
 

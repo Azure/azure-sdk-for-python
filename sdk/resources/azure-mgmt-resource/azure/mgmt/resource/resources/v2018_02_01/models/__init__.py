@@ -24,6 +24,8 @@ try:
     from ._models_py3 import DeploymentProperties
     from ._models_py3 import DeploymentPropertiesExtended
     from ._models_py3 import DeploymentValidateResult
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
     from ._models_py3 import GenericResource
     from ._models_py3 import GenericResourceFilter
@@ -50,6 +52,7 @@ try:
     from ._models_py3 import TagDetails
     from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
+    from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
 except (SyntaxError, ImportError):
     from ._models import AliasPathType
@@ -66,6 +69,8 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentProperties
     from ._models import DeploymentPropertiesExtended
     from ._models import DeploymentValidateResult
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
     from ._models import GenericResource
     from ._models import GenericResourceFilter
@@ -92,6 +97,7 @@ except (SyntaxError, ImportError):
     from ._models import TagDetails
     from ._models import TagValue
     from ._models import TargetResource
+    from ._models import TemplateHashResult
     from ._models import TemplateLink
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
@@ -120,6 +126,8 @@ __all__ = [
     'DeploymentProperties',
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
+    'ErrorAdditionalInfo',
+    'ErrorResponse',
     'ExportTemplateRequest',
     'GenericResource',
     'GenericResourceFilter',
@@ -146,6 +154,7 @@ __all__ = [
     'TagDetails',
     'TagValue',
     'TargetResource',
+    'TemplateHashResult',
     'TemplateLink',
     'DeploymentExtendedPaged',
     'ProviderPaged',

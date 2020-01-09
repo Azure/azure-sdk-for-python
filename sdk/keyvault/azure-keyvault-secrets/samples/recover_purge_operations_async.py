@@ -1,26 +1,26 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import asyncio
 import os
 from azure.keyvault.secrets.aio import SecretClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-secrets/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault has to be soft-delete enabled to perform the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates deleting and purging a vault(secret) resource for Azure Key Vault.
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create a secret (set_secret)
 #
@@ -41,40 +41,37 @@ async def run_sample():
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.
-        print("\n1. Create Secret")
+        print("\n.. Create Secret")
         bank_secret = await client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
         storage_secret = await client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
         print("Secret with name '{0}' was created.".format(bank_secret.name))
         print("Secret with name '{0}' was created.".format(storage_secret.name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
-        print("\n2. Delete a Secret")
+        print("\n.. Delete a Secret")
         secret = await client.delete_secret(bank_secret.name)
-        await asyncio.sleep(20)
         print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
         # We accidentally deleted the bank account secret. Let's recover it.
         # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n3. Recover Deleted  Secret")
+        print("\n.. Recover Deleted Secret")
         recovered_secret = await client.recover_deleted_secret(bank_secret.name)
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
         # Let's delete storage account now.
-        # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
+        # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted secret needs to be purged.
+        print("\n.. Deleting secret...")
         await client.delete_secret(storage_secret.name)
 
-        # To ensure secret is deleted on the server side.
-        print("\nDeleting Storage Secret...")
-        await asyncio.sleep(20)
-
-        # To ensure permanent deletion, we might need to purge the secret.
-        print("\n4. Purge Deleted Secret")
+        # Secrets will still purge eventually on their scheduled purge date, but calling `purge_deleted_secret` immediately
+        # purges.
+        print("\n.. Purge Deleted Secret")
         await client.purge_deleted_secret(storage_secret.name)
         print("Secret has been permanently deleted.")
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:
-            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+            print("\n{0} Please enable soft-delete on Key Vault to perform this operation.".format(e.message))
         else:
             print("\nrun_sample has caught an error. {0}".format(e.message))
 

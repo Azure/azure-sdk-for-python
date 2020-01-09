@@ -23,7 +23,7 @@
 """
 
 
-class HttpMethods:
+class HttpMethods(object):
     """Constants of http methods.
     """
 
@@ -35,7 +35,7 @@ class HttpMethods:
     Options = "OPTIONS"
 
 
-class HttpHeaders:
+class HttpHeaders(object):
     """Constants of http headers.
     """
 
@@ -89,6 +89,9 @@ class HttpHeaders:
     # Query
     Query = "x-ms-documentdb-query"
     IsQuery = "x-ms-documentdb-isquery"
+    IsQueryPlanRequest = "x-ms-cosmos-is-query-plan-request"
+    SupportedQueryFeatures = "x-ms-cosmos-supported-query-features"
+    QueryVersion = "x-ms-cosmos-query-version"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -197,14 +200,14 @@ class HttpHeaders:
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"
 
 
-class HttpHeaderPreferenceTokens:
+class HttpHeaderPreferenceTokens(object):
     """Constants of http header preference tokens.
     """
 
     PreferUnfilteredQueryResponse = "PreferUnfilteredQueryResponse"
 
 
-class HttpStatusDescriptions:
+class HttpStatusDescriptions(object):
     """Constants of http status descriptions.
     """
 
@@ -234,7 +237,7 @@ class HttpStatusDescriptions:
     RetryWith = "Retry the request"
 
 
-class QueryStrings:
+class QueryStrings(object):
     """Constants of query strings.
     """
 
@@ -252,23 +255,22 @@ class QueryStrings:
     Generic = "generic"
 
 
-class CookieHeaders:
+class CookieHeaders(object):
     """Constants of cookie headers.
     """
 
     SessionToken = "x-ms-session-token"
 
 
-class Versions:
+class Versions(object):
     """Constants of versions.
     """
-
     CurrentVersion = "2018-12-31"
     SDKName = "azure-cosmos"
-    SDKVersion = "4.0.0a1"
+    QueryVersion = "1.0"
 
 
-class Delimiters:
+class Delimiters(object):
     """Constants of delimiters.
     """
 
@@ -276,7 +278,7 @@ class Delimiters:
     ClientContinuationFormat = "{0}!!{1}"
 
 
-class HttpListenerErrorCodes:
+class HttpListenerErrorCodes(object):
     """Constants of http listener error codes.
     """
 
@@ -284,14 +286,14 @@ class HttpListenerErrorCodes:
     ERROR_CONNECTION_INVALID = 1229
 
 
-class HttpContextProperties:
+class HttpContextProperties(object):
     """Constants of http context properties.
     """
 
     SubscriptionId = "SubscriptionId"
 
 
-class _ErrorCodes:
+class _ErrorCodes(object):
     """Windows Socket Error Codes
     """
 
@@ -316,7 +318,7 @@ class _ErrorCodes:
     LinuxConnectionReset = 131
 
 
-class StatusCodes:
+class StatusCodes(object):
     """HTTP status codes returned by the REST operations
     """
 
@@ -350,7 +352,7 @@ class StatusCodes:
     OPERATION_CANCELLED = 1201
 
 
-class SubStatusCodes:
+class SubStatusCodes(object):
     """Sub status codes returned by the REST operations specifying the details of the operation
     """
 
@@ -385,7 +387,7 @@ class SubStatusCodes:
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
 
-class ResourceType:
+class ResourceType(object):
     """Types of resources in Azure Cosmos
     """
 
@@ -404,7 +406,6 @@ class ResourceType:
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
-    Media = "media"
 
     @staticmethod
     def IsCollectionChild(resourceType):
@@ -415,5 +416,5 @@ class ResourceType:
             ResourceType.Schema,
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
-            ResourceType.StoredProcedure
+            ResourceType.StoredProcedure,
         )

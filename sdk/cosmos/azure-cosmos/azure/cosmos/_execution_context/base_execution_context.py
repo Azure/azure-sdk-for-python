@@ -25,7 +25,8 @@
 from collections import deque
 from .. import _retry_utility
 from .. import http_constants
-from .. import _base
+
+# pylint: disable=protected-access
 
 
 class _QueryExecutionContextBase(object):
@@ -68,7 +69,7 @@ class _QueryExecutionContextBase(object):
         if not self._has_more_pages():
             return []
 
-        if len(self._buffer):
+        if self._buffer:
             # if there is anything in the buffer returns that
             res = list(self._buffer)
             self._buffer.clear()
@@ -95,12 +96,12 @@ class _QueryExecutionContextBase(object):
         if self._has_finished:
             raise StopIteration
 
-        if not len(self._buffer):
+        if not self._buffer:
 
             results = self.fetch_next_block()
             self._buffer.extend(results)
 
-        if not len(self._buffer):
+        if not self._buffer:
             raise StopIteration
 
         return self._buffer.popleft()
@@ -129,7 +130,7 @@ class _QueryExecutionContextBase(object):
                 continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
-            if not self._is_change_feed or len(fetched_items) > 0:
+            if not self._is_change_feed or fetched_items:
                 self._continuation = response_headers.get(continuation_key)
             else:
                 self._continuation = None
@@ -167,101 +168,5 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         self._fetch_function = fetch_function
 
     def _fetch_next_block(self):
-        while super(_DefaultQueryExecutionContext, self)._has_more_pages() and len(self._buffer) == 0:
+        while super(_DefaultQueryExecutionContext, self)._has_more_pages() and not self._buffer:
             return self._fetch_items_helper_with_retries(self._fetch_function)
-
-
-class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
-    """
-    This class is used if it is client side partitioning
-    """
-
-    def __init__(self, client, options, database_link, query, partition_key):
-        """
-        Constructor
-        :param CosmosClient client:
-        :param dict options:
-            The request options for the request.
-        :param str database_link: database self link or ID based link
-        :param (str or dict) query:
-            Partition_key (str): partition key for the query
-
-        """
-        super(_MultiCollectionQueryExecutionContext, self).__init__(client, options)
-
-        self._current_collection_index = 0
-        self._collection_links = []
-        self._collection_links_length = 0
-
-        self._query = query
-        self._client = client
-
-        partition_resolver = client.GetPartitionResolver(database_link)
-
-        if partition_resolver is None:
-            raise ValueError(client.PartitionResolverErrorMessage)
-
-        self._collection_links = partition_resolver.ResolveForRead(partition_key)
-
-        self._collection_links_length = len(self._collection_links)
-
-        if self._collection_links is None:
-            raise ValueError("_collection_links is None.")
-
-        if self._collection_links_length <= 0:
-            raise ValueError("_collection_links_length is not greater than 0.")
-
-        # Creating the QueryFeed for the first collection
-        path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], "docs")
-        collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
-
-        self._current_collection_index += 1
-
-        def fetch_fn(options):
-            return client.QueryFeed(path, collection_id, query, options)
-
-        self._fetch_function = fetch_fn
-
-    def _has_more_pages(self):
-        return (
-            not self._has_started
-            or self._continuation
-            or (self._collection_links and self._current_collection_index < self._collection_links_length)
-        )
-
-    def _fetch_next_block(self):
-        """Fetches the next block of query results.
-
-        This iterates fetches the next block of results from the current collection link.
-        Once the current collection results were exhausted. It moves to the next collection link.
-
-        :return:
-            List of fetched items.
-        :rtype: list
-        """
-        # Fetch next block of results by executing the query against the current document collection
-        fetched_items = self._fetch_items_helper_with_retries(self._fetch_function)
-
-        # If there are multiple document collections to query for(in case of partitioning), keep looping through each one of them,
-        # creating separate feed queries for each collection and fetching the items
-        while not fetched_items:
-            if self._collection_links and self._current_collection_index < self._collection_links_length:
-                path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], "docs")
-                collection_id = _base.GetResourceIdOrFullNameFromLink(
-                    self._collection_links[self._current_collection_index]
-                )
-
-                self._continuation = None
-                self._has_started = False
-
-                def fetch_fn(options):
-                    return self._client.QueryFeed(path, collection_id, self._query, options)
-
-                self._fetch_function = fetch_fn
-
-                fetched_items = self._fetch_items_helper_with_retries(self._fetch_function)
-                self._current_collection_index += 1
-            else:
-                break
-
-        return fetched_items

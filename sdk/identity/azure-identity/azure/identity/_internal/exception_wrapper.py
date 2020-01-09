@@ -18,7 +18,7 @@ def wrap_exceptions(fn):
             return fn(*args, **kwargs)
         except ClientAuthenticationError:
             raise
-        except Exception as ex:
+        except Exception as ex:  # pylint:disable=broad-except
             auth_error = ClientAuthenticationError(message="Authentication failed: {}".format(ex))
             raise_from(auth_error, ex)
 

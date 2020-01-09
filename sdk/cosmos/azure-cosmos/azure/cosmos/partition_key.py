@@ -26,31 +26,37 @@ class NonePartitionKeyValue(object):
 
 
 class _Empty(object):
-    """Represents empty value for partitionKey when it's missing in an item belonging to a migrated container.
+    """Represents empty value for partitionKey when it's missing in an item belonging
+    to a migrated container.
     """
 
 
 class _Undefined(object):
-    """Represents undefined value for partitionKey when it's missing in an item belonging to a multi-partition container.
+    """Represents undefined value for partitionKey when it's missing in an item belonging
+    to a multi-partition container.
     """
 
 
 class PartitionKey(dict):
     """ Key used to partition a container into logical partitions.
 
-    See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey for more information
-    on how to choose partition keys.
+    See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
+    for more information on how to choose partition keys.
 
     :ivar path: The path of the partition key
     :ivar kind: What kind of partition key is being defined
     :ivar version: The version of the partition key
     """
 
-    def __init__(self, path, kind="Hash", version=2):
+    def __init__(self, path, kind="Hash", version=2):  # pylint: disable=super-init-not-called
         # (str, str) -> None
         self.path = path
         self.kind = kind
         self.version = version
+
+    def __repr__(self):
+        # type () -> str
+        return "<PartitionKey [{}]>".format(self.path)[:1024]
 
     @property
     def kind(self):

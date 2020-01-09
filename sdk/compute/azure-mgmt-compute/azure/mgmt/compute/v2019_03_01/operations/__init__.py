@@ -32,6 +32,8 @@ from ._gallery_images_operations import GalleryImagesOperations
 from ._gallery_image_versions_operations import GalleryImageVersionsOperations
 from ._gallery_applications_operations import GalleryApplicationsOperations
 from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations
+from ._disks_operations import DisksOperations
+from ._snapshots_operations import SnapshotsOperations
 
 __all__ = [
     'Operations',
@@ -57,4 +59,6 @@ __all__ = [
     'GalleryImageVersionsOperations',
     'GalleryApplicationsOperations',
     'GalleryApplicationVersionsOperations',
+    'DisksOperations',
+    'SnapshotsOperations',
 ]

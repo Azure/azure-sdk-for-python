@@ -62,7 +62,7 @@ class _SessionRetryPolicy(object):
     def ShouldRetry(self, _exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.HTTPFailure instance) exception:
+        :param (exceptions.CosmosHttpResponseError instance) exception:
 
         :rtype:
             boolean
@@ -89,11 +89,10 @@ class _SessionRetryPolicy(object):
 
             # set location-based routing directive based on request retry context
             self.request.route_to_location_with_preferred_location_flag(
-                self.session_token_retry_count - 1,
-                self.session_token_retry_count > self._max_retry_attempt_count,
+                self.session_token_retry_count - 1, self.session_token_retry_count > self._max_retry_attempt_count
             )
-            self.request.should_clear_session_token_on_session_read_failure = (
-                self.session_token_retry_count == len(endpoints)
+            self.request.should_clear_session_token_on_session_read_failure = self.session_token_retry_count == len(
+                endpoints
             )  # clear on last attempt
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
@@ -108,9 +107,7 @@ class _SessionRetryPolicy(object):
             return False
 
         # set location-based routing directive based on request retry context
-        self.request.route_to_location_with_preferred_location_flag(
-            self.session_token_retry_count - 1, False
-        )
+        self.request.route_to_location_with_preferred_location_flag(self.session_token_retry_count - 1, False)
         self.request.should_clear_session_token_on_session_read_failure = True
 
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint

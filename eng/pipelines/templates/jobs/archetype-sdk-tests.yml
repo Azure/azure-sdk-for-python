@@ -4,6 +4,9 @@ parameters:
   MaxParallel: 0
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
+  AdditionalTestArgs: ''
+  TestMarkArgument: ''
+  JobName: Test
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -15,13 +18,18 @@ parameters:
       PythonVersion: '3.7'
     Windows_Python27:
       OSName: 'Windows'
-      OSVmImage: 'vs2017-win2016'
+      OSVmImage: 'windows-2019'
       PythonVersion: '2.7'
+    Linux_PyPy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
 
 jobs:
-  - job: 'Test'
+  - job: ${{ parameters.JobName }}
     variables:
       skipComponentGovernanceDetection: true
+      CoverageArg: --disablecov
 
     timeoutInMinutes: 120
     strategy:
@@ -37,8 +45,43 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          AdditionalTestArgs: '--disablecov'
+          CoverageArg: $(CoverageArg)
           EnvVars: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
+          ToxTestEnv: "whl"
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: '${{ parameters.JobName }}_Linux_Python38'
+    variables:
+      skipComponentGovernanceDetection: true
+      CoverageArg: --disablecov
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.8'
+      OSName: 'Linux'
+
+    timeoutInMinutes: 120
+    continueOnError: false
+    condition: succeededOrFailed()
+
+    pool:
+      vmImage: $(OSVmImage)
+
+    dependsOn: ${{ parameters.JobName }}
+
+    steps:
+      - template: ../steps/build-test-python38.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          CoverageArg: $(CoverageArg)
+          EnvVars: ${{ parameters.EnvVars }}
+          BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+          PythonVersion: $(PythonVersion)
+          OSName: $(OSName)
+          ToxTestEnv: "whl"
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+

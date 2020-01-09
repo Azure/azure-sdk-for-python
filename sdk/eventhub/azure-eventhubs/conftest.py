@@ -15,11 +15,14 @@ from logging.handlers import RotatingFileHandler
 # Ignore async tests for Python < 3.5
 collect_ignore = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("tests/asynctests")
+    collect_ignore.append("tests/livetest/asynctests")
+    collect_ignore.append("tests/eventprocessor")
     collect_ignore.append("features")
+    collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
 
-from azure.eventhub import EventHubClient, EventHubConsumer, EventPosition
+from azure.eventhub.client import EventHubClient
+from azure.eventhub import EventPosition
 
 
 def pytest_addoption(parser):
@@ -81,7 +84,7 @@ def cleanup_eventhub(eventhub_config, hub_name, client=None):
     client.delete_event_hub(hub_name)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def live_eventhub_config():
     try:
         config = {}
@@ -152,25 +155,9 @@ def invalid_policy(live_eventhub_config):
 
 
 @pytest.fixture()
-def iot_connection_str():
-    try:
-        return os.environ['IOTHUB_CONNECTION_STR']
-    except KeyError:
-        pytest.skip("No IotHub connection string found.")
-
-
-@pytest.fixture()
-def device_id():
-    try:
-        return os.environ['IOTHUB_DEVICE']
-    except KeyError:
-        pytest.skip("No Iothub device ID found.")
-
-
-@pytest.fixture()
 def aad_credential():
     try:
-        return os.environ['AAD_CLIENT_ID'], os.environ['AAD_SECRET'], os.environ['AAD_TENANT_ID']
+        return os.environ['AZURE_CLIENT_ID'], os.environ['AZURE_CLIENT_SECRET'], os.environ['AZURE_TENANT_ID']
     except KeyError:
         pytest.skip('No Azure Active Directory credential found')
 
@@ -181,13 +168,14 @@ def connstr_receivers(connection_str):
     partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
-        receiver = client.create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"), prefetch=500)
+        receiver = client._create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"), prefetch=500)
         receiver._open()
         receivers.append(receiver)
     yield connection_str, receivers
 
     for r in receivers:
         r.close()
+    client.close()
 
 
 @pytest.fixture()
@@ -197,50 +185,9 @@ def connstr_senders(connection_str):
 
     senders = []
     for p in partitions:
-        sender = client.create_producer(partition_id=p)
+        sender = client._create_producer(partition_id=p)
         senders.append(sender)
     yield connection_str, senders
     for s in senders:
         s.close()
-
-
-@pytest.fixture()
-def storage_clm(eph):
-    try:
-        container = str(uuid.uuid4())
-        storage_clm = AzureStorageCheckpointLeaseManager(
-            os.environ['AZURE_STORAGE_ACCOUNT'],
-            os.environ['AZURE_STORAGE_ACCESS_KEY'],
-            container)
-    except KeyError:
-        pytest.skip("Live Storage configuration not found.")
-    try:
-        storage_clm.initialize(eph)
-        storage_clm.storage_client.create_container(container)
-        yield storage_clm
-    finally:
-        try:
-            storage_clm.storage_client.delete_container(container)
-        except:
-            warnings.warn(UserWarning("storage container teardown failed"))
-
-@pytest.fixture()
-def eh_partition_pump(eph):
-    lease = AzureBlobLease()
-    lease.with_partition_id("1")
-    partition_pump = EventHubPartitionPump(eph, lease)
-    return partition_pump
-
-
-@pytest.fixture()
-def partition_pump(eph):
-    lease = Lease()
-    lease.with_partition_id("1")
-    partition_pump = PartitionPump(eph, lease)
-    return partition_pump
-
-
-@pytest.fixture()
-def partition_manager(eph):
-    partition_manager = PartitionManager(eph)
-    return partition_manager
+    client.close()

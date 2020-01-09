@@ -1,5 +1,65 @@
 # Change Log azure-storage-queue
 
+## 12.1.0b1 Unreleased
+
+## 2019-10-31 12.0.0
+
+**Breaking changes**
+
+- `QueueClient` now accepts only `account_url` with mandatory a string param `queue_name`.
+To use a queue_url, the method `from_queue_url` must be used.
+- `set_queue_access_policy` has required parameter `signed_identifiers`.
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- `NoEncodePolicy` and `NoDecodePolicy` have been removed. Use `message_encode_policy=None` and `message_decode_policy=None`.
+- Removed types that were accidentally exposed from two modules. Only `QueueServiceClient` and `QueueClient`
+should be imported from azure.storage.queue.aio
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
+- `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
+to `inserted_on`, `next_visible_on`, `expires_on`, respectively.
+- `Logging` has been renamed to `QueueAnalyticsLogging`.
+- `enqueue_message` is now called `send_message`.
+- Client and model files have been made internal. Users should import from the top level modules `azure.storage.queue` and `azure.storage.queue.aio` only.
+- The `generate_shared_access_signature` methods on both `QueueServiceClient` and `QueueClient` have been replaced by module level functions `generate_account_sas` and `generate_queue_sas`.
+- `get_service_stats` now returns a dict
+- `get_service_properties` now returns a dict with keys consistent to `set_service_properties`
+
+ **New features**
+
+- `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
+
+**Fixes and improvements**
+
+- Fixed an issue where XML is being double encoded and double decoded.
+
+## Version 12.0.0b4:
+
+**Breaking changes**
+
+- Permission models.
+  - `AccountPermissions`, `QueuePermissions` have been renamed to
+  `AccountSasPermissions`, `QueueSasPermissions` respectively.
+  - enum-like list parameters have been removed from both of them.
+  - `__add__` and `__or__` methods are removed.
+- `max_connections` is now renamed to `max_concurrency`.
+
+**New features**
+
+- `AccountSasPermissions`, `QueueSasPermissions` now have method `from_string` which takes parameters as a string.
+
+## Version 12.0.0b3:
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-queue, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-queue==12.0.0b2`
+
 
 ## Version 12.0.0b2:
 

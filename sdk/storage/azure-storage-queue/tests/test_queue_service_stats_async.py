@@ -5,19 +5,20 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.queue.aio import QueueServiceClient
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
-)
+from _shared.asynctestcase import AsyncStorageTestCase
+from _shared.testcase import GlobalResourceGroupPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
+                                '></StorageServiceStats> '
+
+SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                                '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
                                 '></StorageServiceStats> '
 
 
@@ -33,50 +34,49 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 # --Test Class -----------------------------------------------------------------
-class QueueServiceStatsTestAsync(QueueTestCase):
+class QueueServiceStatsTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats.geo_replication)
+        self.assertIsNotNone(stats['geo_replication'])
 
-        self.assertEqual(stats.geo_replication.status, 'live')
-        self.assertIsNotNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats['geo_replication']['status'], 'live')
+        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
 
     def _assert_stats_unavailable(self, stats):
         self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats.geo_replication)
+        self.assertIsNotNone(stats['geo_replication'])
 
-        self.assertEqual(stats.geo_replication.status, 'unavailable')
-        self.assertIsNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
+        self.assertIsNone(stats['geo_replication']['last_sync_time'])
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
+    @staticmethod
+    def override_response_body_with_live_status(response):
+        response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
+
     # --Test cases per service ---------------------------------------
-
-    async def _test_queue_service_stats_f(self):
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
-
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Act
-        stats = await qsc.get_service_stats()
+        stats = await qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
 
         # Assert
         self._assert_stats_default(stats)
 
-    @record
-    def test_queue_service_stats_f(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_service_stats_f())
-
-    async def _test_queue_service_stats_when_unavailable(self):
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
 
         # Act
         stats = await qsc.get_service_stats(
@@ -85,10 +85,6 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         # Assert
         self._assert_stats_unavailable(stats)
 
-    @record
-    def test_queue_service_stats_when_unavailable(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_service_stats_when_unavailable())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

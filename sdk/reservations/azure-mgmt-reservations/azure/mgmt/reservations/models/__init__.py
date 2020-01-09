@@ -10,101 +10,135 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .sku_name_py3 import SkuName
-    from .sku_property_py3 import SkuProperty
-    from .sku_restriction_py3 import SkuRestriction
-    from .catalog_py3 import Catalog
-    from .extended_status_info_py3 import ExtendedStatusInfo
-    from .reservation_split_properties_py3 import ReservationSplitProperties
-    from .reservation_merge_properties_py3 import ReservationMergeProperties
-    from .reservation_properties_py3 import ReservationProperties
-    from .reservation_response_py3 import ReservationResponse
-    from .reservation_order_response_py3 import ReservationOrderResponse
-    from .calculate_price_response_properties_billing_currency_total_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
-    from .calculate_price_response_properties_pricing_currency_total_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
-    from .calculate_price_response_properties_py3 import CalculatePriceResponseProperties
-    from .calculate_price_response_py3 import CalculatePriceResponse
-    from .purchase_request_properties_reserved_resource_properties_py3 import PurchaseRequestPropertiesReservedResourceProperties
-    from .merge_request_py3 import MergeRequest
-    from .purchase_request_py3 import PurchaseRequest
-    from .patch_py3 import Patch
-    from .split_request_py3 import SplitRequest
-    from .extended_error_info_py3 import ExtendedErrorInfo
-    from .error_py3 import Error, ErrorException
-    from .applied_reservation_list_py3 import AppliedReservationList
-    from .applied_reservations_py3 import AppliedReservations
-    from .operation_display_py3 import OperationDisplay
-    from .operation_response_py3 import OperationResponse
+    from ._models_py3 import AppliedReservationList
+    from ._models_py3 import AppliedReservations
+    from ._models_py3 import CalculatePriceResponse
+    from ._models_py3 import CalculatePriceResponseProperties
+    from ._models_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
+    from ._models_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
+    from ._models_py3 import Catalog
+    from ._models_py3 import Error, ErrorException
+    from ._models_py3 import ExtendedErrorInfo
+    from ._models_py3 import ExtendedStatusInfo
+    from ._models_py3 import MergeRequest
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationResponse
+    from ._models_py3 import Patch
+    from ._models_py3 import PatchPropertiesRenewProperties
+    from ._models_py3 import PaymentDetail
+    from ._models_py3 import Price
+    from ._models_py3 import Properties
+    from ._models_py3 import PurchaseRequest
+    from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
+    from ._models_py3 import RenewPropertiesResponse
+    from ._models_py3 import RenewPropertiesResponseBillingCurrencyTotal
+    from ._models_py3 import RenewPropertiesResponsePricingCurrencyTotal
+    from ._models_py3 import ReservationMergeProperties
+    from ._models_py3 import ReservationOrderBillingPlanInformation
+    from ._models_py3 import ReservationOrderResponse
+    from ._models_py3 import ReservationProperties
+    from ._models_py3 import ReservationResponse
+    from ._models_py3 import ReservationSplitProperties
+    from ._models_py3 import ScopeProperties
+    from ._models_py3 import SkuName
+    from ._models_py3 import SkuProperty
+    from ._models_py3 import SkuRestriction
+    from ._models_py3 import SplitRequest
+    from ._models_py3 import SubscriptionScopeProperties
 except (SyntaxError, ImportError):
-    from .sku_name import SkuName
-    from .sku_property import SkuProperty
-    from .sku_restriction import SkuRestriction
-    from .catalog import Catalog
-    from .extended_status_info import ExtendedStatusInfo
-    from .reservation_split_properties import ReservationSplitProperties
-    from .reservation_merge_properties import ReservationMergeProperties
-    from .reservation_properties import ReservationProperties
-    from .reservation_response import ReservationResponse
-    from .reservation_order_response import ReservationOrderResponse
-    from .calculate_price_response_properties_billing_currency_total import CalculatePriceResponsePropertiesBillingCurrencyTotal
-    from .calculate_price_response_properties_pricing_currency_total import CalculatePriceResponsePropertiesPricingCurrencyTotal
-    from .calculate_price_response_properties import CalculatePriceResponseProperties
-    from .calculate_price_response import CalculatePriceResponse
-    from .purchase_request_properties_reserved_resource_properties import PurchaseRequestPropertiesReservedResourceProperties
-    from .merge_request import MergeRequest
-    from .purchase_request import PurchaseRequest
-    from .patch import Patch
-    from .split_request import SplitRequest
-    from .extended_error_info import ExtendedErrorInfo
-    from .error import Error, ErrorException
-    from .applied_reservation_list import AppliedReservationList
-    from .applied_reservations import AppliedReservations
-    from .operation_display import OperationDisplay
-    from .operation_response import OperationResponse
-from .reservation_order_response_paged import ReservationOrderResponsePaged
-from .reservation_response_paged import ReservationResponsePaged
-from .operation_response_paged import OperationResponsePaged
-from .azure_reservation_api_enums import (
+    from ._models import AppliedReservationList
+    from ._models import AppliedReservations
+    from ._models import CalculatePriceResponse
+    from ._models import CalculatePriceResponseProperties
+    from ._models import CalculatePriceResponsePropertiesBillingCurrencyTotal
+    from ._models import CalculatePriceResponsePropertiesPricingCurrencyTotal
+    from ._models import Catalog
+    from ._models import Error, ErrorException
+    from ._models import ExtendedErrorInfo
+    from ._models import ExtendedStatusInfo
+    from ._models import MergeRequest
+    from ._models import OperationDisplay
+    from ._models import OperationResponse
+    from ._models import Patch
+    from ._models import PatchPropertiesRenewProperties
+    from ._models import PaymentDetail
+    from ._models import Price
+    from ._models import Properties
+    from ._models import PurchaseRequest
+    from ._models import PurchaseRequestPropertiesReservedResourceProperties
+    from ._models import RenewPropertiesResponse
+    from ._models import RenewPropertiesResponseBillingCurrencyTotal
+    from ._models import RenewPropertiesResponsePricingCurrencyTotal
+    from ._models import ReservationMergeProperties
+    from ._models import ReservationOrderBillingPlanInformation
+    from ._models import ReservationOrderResponse
+    from ._models import ReservationProperties
+    from ._models import ReservationResponse
+    from ._models import ReservationSplitProperties
+    from ._models import ScopeProperties
+    from ._models import SkuName
+    from ._models import SkuProperty
+    from ._models import SkuRestriction
+    from ._models import SplitRequest
+    from ._models import SubscriptionScopeProperties
+from ._paged_models import OperationResponsePaged
+from ._paged_models import ReservationOrderResponsePaged
+from ._paged_models import ReservationResponsePaged
+from ._azure_reservation_api_enums import (
     ReservationStatusCode,
     ErrorResponseCode,
+    ReservationBillingPlan,
     ReservationTerm,
+    PaymentStatus,
     ReservedResourceType,
     InstanceFlexibility,
     AppliedScopeType,
 )
 
 __all__ = [
+    'AppliedReservationList',
+    'AppliedReservations',
+    'CalculatePriceResponse',
+    'CalculatePriceResponseProperties',
+    'CalculatePriceResponsePropertiesBillingCurrencyTotal',
+    'CalculatePriceResponsePropertiesPricingCurrencyTotal',
+    'Catalog',
+    'Error', 'ErrorException',
+    'ExtendedErrorInfo',
+    'ExtendedStatusInfo',
+    'MergeRequest',
+    'OperationDisplay',
+    'OperationResponse',
+    'Patch',
+    'PatchPropertiesRenewProperties',
+    'PaymentDetail',
+    'Price',
+    'Properties',
+    'PurchaseRequest',
+    'PurchaseRequestPropertiesReservedResourceProperties',
+    'RenewPropertiesResponse',
+    'RenewPropertiesResponseBillingCurrencyTotal',
+    'RenewPropertiesResponsePricingCurrencyTotal',
+    'ReservationMergeProperties',
+    'ReservationOrderBillingPlanInformation',
+    'ReservationOrderResponse',
+    'ReservationProperties',
+    'ReservationResponse',
+    'ReservationSplitProperties',
+    'ScopeProperties',
     'SkuName',
     'SkuProperty',
     'SkuRestriction',
-    'Catalog',
-    'ExtendedStatusInfo',
-    'ReservationSplitProperties',
-    'ReservationMergeProperties',
-    'ReservationProperties',
-    'ReservationResponse',
-    'ReservationOrderResponse',
-    'CalculatePriceResponsePropertiesBillingCurrencyTotal',
-    'CalculatePriceResponsePropertiesPricingCurrencyTotal',
-    'CalculatePriceResponseProperties',
-    'CalculatePriceResponse',
-    'PurchaseRequestPropertiesReservedResourceProperties',
-    'MergeRequest',
-    'PurchaseRequest',
-    'Patch',
     'SplitRequest',
-    'ExtendedErrorInfo',
-    'Error', 'ErrorException',
-    'AppliedReservationList',
-    'AppliedReservations',
-    'OperationDisplay',
-    'OperationResponse',
-    'ReservationOrderResponsePaged',
+    'SubscriptionScopeProperties',
     'ReservationResponsePaged',
+    'ReservationOrderResponsePaged',
     'OperationResponsePaged',
     'ReservationStatusCode',
     'ErrorResponseCode',
+    'ReservationBillingPlan',
     'ReservationTerm',
+    'PaymentStatus',
     'ReservedResourceType',
     'InstanceFlexibility',
     'AppliedScopeType',

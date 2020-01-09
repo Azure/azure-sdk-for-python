@@ -23,9 +23,9 @@ import os
 import time
 import uuid
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.database import Database
+from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos.partition_key import NonePartitionKeyValue
@@ -40,6 +40,7 @@ class _test_config(object):
     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
     masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
     host = os.getenv('ACCOUNT_HOST', 'https://localhost:443/')
+    connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
@@ -86,7 +87,7 @@ class _test_config(object):
         # type: (CosmosClient) -> None
         try:
             client.delete_database(cls.TEST_DATABASE_ID)
-        except errors.HTTPFailure as e:
+        except exceptions.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
 
@@ -161,5 +162,12 @@ class _test_config(object):
                     # sleep to ensure deletes are propagated for multimaster enabled accounts
                     time.sleep(2)
                 break
-            except errors.HTTPFailure as e:
+            except exceptions.CosmosHttpResponseError as e:
                 print("Error occurred while deleting documents:" + str(e) + " \nRetrying...")
+
+
+class FakeResponse:
+    def __init__(self, headers):
+        self.headers = headers
+        self.reason = "foo"
+        self.status_code = "bar"

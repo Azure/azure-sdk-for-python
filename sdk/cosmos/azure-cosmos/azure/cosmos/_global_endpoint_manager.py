@@ -22,11 +22,15 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos database service.
 """
 
-from six.moves.urllib.parse import urlparse
 import threading
+
+from six.moves.urllib.parse import urlparse
+
 from . import _constants as constants
-from . import errors
+from . import exceptions
 from ._location_cache import LocationCache
+
+# pylint: disable=protected-access
 
 
 class _GlobalEndpointManager(object):
@@ -52,7 +56,7 @@ class _GlobalEndpointManager(object):
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
 
-    def get_refresh_time_interval_in_ms_stub(self):
+    def get_refresh_time_interval_in_ms_stub(self):  # pylint: disable=no-self-use
         return constants._Constants.DefaultUnavailableLocationExpirationTime
 
     def get_write_endpoint(self):
@@ -83,17 +87,17 @@ class _GlobalEndpointManager(object):
         self.refresh_needed = True
         self.refresh_endpoint_list(database_account)
 
-    def refresh_endpoint_list(self, database_account):
+    def refresh_endpoint_list(self, database_account, **kwargs):
         with self.refresh_lock:
             # if refresh is not needed or refresh is already taking place, return
             if not self.refresh_needed:
                 return
             try:
-                self._refresh_endpoint_list_private(database_account)
+                self._refresh_endpoint_list_private(database_account, **kwargs)
             except Exception as e:
                 raise e
 
-    def _refresh_endpoint_list_private(self, database_account=None):
+    def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
@@ -103,43 +107,47 @@ class _GlobalEndpointManager(object):
             and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
         ):
             if not database_account:
-                database_account = self._GetDatabaseAccount()
+                database_account = self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
                 self.last_refresh_time = self.location_cache.current_time_millis()
                 self.refresh_needed = False
 
-    def _GetDatabaseAccount(self):
+    def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account first by using the default endpoint, and if that doesn't returns
            use the endpoints for the preferred locations in the order they are specified to get
            the database account.
         """
         try:
-            database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint)
+            database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             return database_account
-        # If for any reason(non-globaldb related), we are not able to get the database account from the above call to GetDatabaseAccount,
-        # we would try to get this information from any of the preferred locations that the user might have specified(by creating a locational endpoint)
-        # and keeping eating the exception until we get the database account and return None at the end, if we are not able to get that info from any endpoints
-        except errors.HTTPFailure:
+        # If for any reason(non-globaldb related), we are not able to get the database
+        # account from the above call to GetDatabaseAccount, we would try to get this
+        # information from any of the preferred locations that the user might have
+        # specified (by creating a locational endpoint) and keeping eating the exception
+        # until we get the database account and return None at the end, if we are not able
+        # to get that info from any endpoints
+        except exceptions.CosmosHttpResponseError:
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
-                    database_account = self._GetDatabaseAccountStub(locational_endpoint)
+                    database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     return database_account
-                except errors.HTTPFailure:
+                except exceptions.CosmosHttpResponseError:
                     pass
 
             return None
 
-    def _GetDatabaseAccountStub(self, endpoint):
+    def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client
            which can be used for mocking purposes as well.
         """
-        return self.Client.GetDatabaseAccount(endpoint)
+        return self.Client.GetDatabaseAccount(endpoint, **kwargs)
 
     @staticmethod
     def GetLocationalEndpoint(default_endpoint, location_name):
-        # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to generate URL format
-        # This default_endpoint should be global endpoint(and cannot be a locational endpoint) and we agreed to document that
+        # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to
+        # generate URL format. This default_endpoint should be global endpoint(and cannot
+        # be a locational endpoint) and we agreed to document that
         endpoint_url = urlparse(default_endpoint)
 
         # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
@@ -152,7 +160,8 @@ class _GlobalEndpointManager(object):
                 # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
                 locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
 
-                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint as https://contoso-EastUS.documents.azure.com:443/
+                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint
+                # as https://contoso-EastUS.documents.azure.com:443/
                 locational_endpoint = default_endpoint.lower().replace(
                     global_database_account_name, locational_database_account_name, 1
                 )

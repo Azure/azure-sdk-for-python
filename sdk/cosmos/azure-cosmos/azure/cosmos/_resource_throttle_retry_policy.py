@@ -36,7 +36,7 @@ class ResourceThrottleRetryPolicy(object):
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.HTTPFailure instance) exception:
+        :param (exceptions.CosmosHttpResponseError instance) exception:
 
         :rtype:
             boolean
@@ -44,12 +44,14 @@ class ResourceThrottleRetryPolicy(object):
         """
         if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
-            self.retry_after_in_milliseconds = 0
+            self.retry_after_in_milliseconds = 0  # pylint: disable=attribute-defined-outside-init
 
             if self._fixed_retry_interval_in_milliseconds:
-                self.retry_after_in_milliseconds = self._fixed_retry_interval_in_milliseconds
+                self.retry_after_in_milliseconds = (  # pylint: disable=attribute-defined-outside-init
+                    self._fixed_retry_interval_in_milliseconds
+                )
             elif http_constants.HttpHeaders.RetryAfterInMilliseconds in exception.headers:
-                self.retry_after_in_milliseconds = int(
+                self.retry_after_in_milliseconds = int(  # pylint: disable = attribute-defined-outside-init
                     exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds]
                 )
 

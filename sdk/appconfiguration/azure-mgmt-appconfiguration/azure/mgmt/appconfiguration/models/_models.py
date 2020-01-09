@@ -261,6 +261,99 @@ class ErrorException(HttpOperationError):
         super(ErrorException, self).__init__(deserialize, response, 'Error', *args)
 
 
+class KeyValue(Model):
+    """The result of a request to retrieve a key-value from the specified
+    configuration store.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar key: The primary identifier of a key-value.
+     The key is used in unison with the label to uniquely identify a key-value.
+    :vartype key: str
+    :ivar label: A value used to group key-values.
+     The label is used in unison with the key to uniquely identify a key-value.
+    :vartype label: str
+    :ivar value: The value of the key-value.
+    :vartype value: str
+    :ivar content_type: The content type of the key-value's value.
+     Providing a proper content-type can enable transformations of values when
+     they are retrieved by applications.
+    :vartype content_type: str
+    :ivar e_tag: An ETag indicating the state of a key-value within a
+     configuration store.
+    :vartype e_tag: str
+    :ivar last_modified: The last time a modifying operation was performed on
+     the given key-value.
+    :vartype last_modified: datetime
+    :ivar locked: A value indicating whether the key-value is locked.
+     A locked key-value may not be modified until it is unlocked.
+    :vartype locked: bool
+    :ivar tags: A dictionary of tags that can help identify what a key-value
+     may be applicable for.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'key': {'readonly': True},
+        'label': {'readonly': True},
+        'value': {'readonly': True},
+        'content_type': {'readonly': True},
+        'e_tag': {'readonly': True},
+        'last_modified': {'readonly': True},
+        'locked': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'content_type': {'key': 'contentType', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
+        'locked': {'key': 'locked', 'type': 'bool'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyValue, self).__init__(**kwargs)
+        self.key = None
+        self.label = None
+        self.value = None
+        self.content_type = None
+        self.e_tag = None
+        self.last_modified = None
+        self.locked = None
+        self.tags = None
+
+
+class ListKeyValueParameters(Model):
+    """The parameters used to list a configuration store key-value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. The key to retrieve.
+    :type key: str
+    :param label: The label of the key.
+    :type label: str
+    """
+
+    _validation = {
+        'key': {'required': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ListKeyValueParameters, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.label = kwargs.get('label', None)
+
+
 class NameAvailabilityStatus(Model):
     """The result of a request to check the availability of a resource name.
 

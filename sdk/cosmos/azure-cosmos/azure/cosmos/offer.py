@@ -21,15 +21,16 @@
 
 """Represents an offer in the Azure Cosmos DB SQL API service.
 """
+from typing import Dict, Any
 
 
-class Offer(dict):
+class Offer(object):
     """ Represents a offer in an Azure Cosmos DB SQL API container.
 
     To read and update offers use the associated methods on the :class:`Container`.
     """
 
-    def __init__(self, offer_throughput, properties=None):
+    def __init__(self, offer_throughput, properties=None):  # pylint: disable=super-init-not-called
         # type: (int, Dict[str, Any]) -> None
         self.offer_throughput = offer_throughput
         self.properties = properties

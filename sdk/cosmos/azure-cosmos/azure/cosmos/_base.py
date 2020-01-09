@@ -27,6 +27,12 @@ import datetime
 import json
 import uuid
 import binascii
+from typing import Dict, Any
+
+import six
+from six.moves.urllib.parse import quote as urllib_quote
+
+from azure.core import MatchConditions
 
 from . import auth
 from . import documents
@@ -34,12 +40,79 @@ from . import partition_key
 from . import http_constants
 from . import _runtime_constants
 
-import six
-from six.moves.urllib.parse import quote as urllib_quote
-from six.moves import xrange
+# pylint: disable=protected-access
+
+_COMMON_OPTIONS = {
+    'initial_headers': 'initialHeaders',
+    'pre_trigger_include': 'preTriggerInclude',
+    'post_trigger_include': 'postTriggerInclude',
+    'max_item_count': 'maxItemCount',
+    'access_condition': 'accessCondition',
+    'indexing_directive': 'indexingDirective',
+    'consistency_level': 'consistencyLevel',
+    'session_token': 'sessionToken',
+    'enable_scan_in_query': 'enableScanInQuery',
+    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
+    'offer_type': 'offerType',
+    'offer_throughput': 'offerThroughput',
+    'partition_key': 'partitionKey',
+    'enable_cross_partition_query': 'enableCrossPartitionQuery',
+    'populate_query_metrics': 'populateQueryMetrics',
+    'enable_script_logging': 'enableScriptLogging',
+    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
+    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
+    'change_feed': 'changeFeed',
+    'continuation': 'continuation',
+    'is_start_from_beginning': 'isStartFromBeginning',
+    'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
+    'populate_quota_info': 'populateQuotaInfo',
+    'content_type': 'contentType',
+    'is_query_plan_request': 'isQueryPlanRequest',
+    'supported_query_features': 'supportedQueryFeatures',
+    'query_version': 'queryVersion'
+}
+
+def _get_match_headers(kwargs):
+    # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
+    if_match = kwargs.pop('if_match', None)
+    if_none_match = kwargs.pop('if_none_match', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = kwargs.pop('etag', None)
+        if not if_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = '*'
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = kwargs.pop('etag', None)
+        if not if_none_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
+    elif match_condition is None:
+        if 'etag' in kwargs:
+            raise ValueError("'etag' specified without 'match_condition'.")
+    else:
+        raise TypeError("Invalid match condition: {}".format(match_condition))
+    return if_match, if_none_match
 
 
-def GetHeaders(
+def build_options(kwargs):
+    # type: (Dict[str, Any]) -> Dict[str, Any]
+    options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
+    for key, value in _COMMON_OPTIONS.items():
+        if key in kwargs:
+            options[value] = kwargs.pop(key)
+
+    if_match, if_none_match = _get_match_headers(kwargs)
+    if if_match:
+        options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
+    if if_none_match:
+        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
+    return options
+
+
+def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     cosmos_client_connection,
     default_headers,
     verb,
@@ -137,11 +210,23 @@ def GetHeaders(
     if options.get("offerThroughput"):
         headers[http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
 
+    if options.get("contentType"):
+        headers[http_constants.HttpHeaders.ContentType] = options['contentType']
+
+    if options.get("isQueryPlanRequest"):
+        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
+
+    if options.get("supportedQueryFeatures"):
+        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
+
+    if options.get("queryVersion"):
+        headers[http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
+
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
         if options.get("partitionKey") is partition_key._Undefined:
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
-        # If partitionKey value is Empty, serialize it as [], which is the equivalent to be sent for migrated collections
+        # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
         elif options.get("partitionKey") is partition_key._Empty:
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
@@ -167,7 +252,7 @@ def GetHeaders(
             authorization = urllib_quote(authorization, "-_.!~*'()")
         headers[http_constants.HttpHeaders.Authorization] = authorization
 
-    if verb in ('post', 'put'):
+    if verb in ("post", "put"):
         if not headers.get(http_constants.HttpHeaders.ContentType):
             headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 
@@ -251,33 +336,6 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     return None
 
 
-def GetAttachmentIdFromMediaId(media_id):
-    """Gets attachment id from media id.
-
-    :param str media_id:
-
-    :return:
-        The attachment id from the media id.
-    :rtype: str
-    """
-    altchars = "+-"
-    if not six.PY2:
-        altchars = altchars.encode("utf-8")
-    # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
-    buffer = base64.b64decode(str(media_id), altchars)
-    resoure_id_length = 20
-    attachment_id = ""
-    if len(buffer) > resoure_id_length:
-        # We are cutting off the storage index.
-        attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
-        if not six.PY2:
-            attachment_id = attachment_id.decode("utf-8")
-    else:
-        attachment_id = media_id
-
-    return attachment_id
-
-
 def GenerateGuidId():
     """Gets a random GUID.
 
@@ -304,8 +362,10 @@ def GetPathFromLink(resource_link, resource_type=""):
     resource_link = TrimBeginningAndEndingSlashes(resource_link)
 
     if IsNameBased(resource_link):
-        # Replace special characters in string using the %xx escape. For example, space(' ') would be replaced by %20
-        # This function is intended for quoting the path section of the URL and excludes '/' to be quoted as that's the default safe char
+        # Replace special characters in string using the %xx escape. For example,
+        # space(' ') would be replaced by %20 This function is intended for quoting
+        # the path section of the URL and excludes '/' to be quoted as that's the
+        # default safe char
         resource_link = urllib_quote(resource_link)
 
     # Padding leading and trailing slashes to the path returned both for name based and resource id based links
@@ -334,7 +394,7 @@ def IsNameBased(link):
     parts = link.split("/")
 
     # First part should be "dbs"
-    if len(parts) == 0 or not parts[0] or not parts[0].lower() == "dbs":
+    if not (parts and parts[0].lower() == "dbs"):
         return False
 
     # The second part is the database id(ResourceID or Name) and cannot be empty
@@ -360,7 +420,7 @@ def IsMasterResource(resourceType):
         http_constants.ResourceType.Topology,
         http_constants.ResourceType.DatabaseAccount,
         http_constants.ResourceType.PartitionKeyRange,
-        http_constants.ResourceType.Collection
+        http_constants.ResourceType.Collection,
     )
 
 
@@ -397,7 +457,7 @@ def IsDatabaseLink(link):
     return True
 
 
-def IsItemContainerLink(link):
+def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
     :param str link:
@@ -480,8 +540,8 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
                 self_link, alt_content_path, id_from_response
             )
         )
-    else:
-        raise ValueError("Unable to parse document collection link from " + self_link)
+
+    raise ValueError("Unable to parse document collection link from " + self_link)
 
 
 def GetItemContainerLink(link):
@@ -520,8 +580,8 @@ def IndexOfNth(s, value, n):
 
     """
     remaining = n
-    for i in xrange(0, len(s)):
-        if s[i] == value:
+    for i, elt in enumerate(s):
+        if elt == value:
             remaining -= 1
             if remaining == 0:
                 return i
@@ -538,15 +598,17 @@ def IsValidBase64String(string_to_validate):
         Whether given string is a valid base64 string or not.
     :rtype: str
     """
-    # '-' is not supported char for decoding in Python(same as C# and Java) which has similar logic while parsing ResourceID generated by backend
+    # '-' is not supported char for decoding in Python(same as C# and Java) which has
+    # similar logic while parsing ResourceID generated by backend
     try:
         buffer = base64.standard_b64decode(string_to_validate.replace("-", "/"))
         if len(buffer) != 4:
             return False
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         if six.PY2:
-            e = e.message
-        if type(e) == binascii.Error:
+            e = e.message  # pylint: disable=no-member
+            # (e.message does exist on py2)
+        if isinstance(e, binascii.Error):
             return False
         raise e
     return True
@@ -590,7 +652,8 @@ def ParsePaths(paths):
         if currentIndex == len(path):
             break
 
-        # " and ' are treated specially in the sense that they can have the / (segment separator) between them which is considered part of the token
+        # " and ' are treated specially in the sense that they can have the / (segment separator)
+        # between them which is considered part of the token
         if path[currentIndex] == '"' or path[currentIndex] == "'":
             quote = path[currentIndex]
             newIndex = currentIndex + 1

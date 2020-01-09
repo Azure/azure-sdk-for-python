@@ -22,23 +22,29 @@
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
+
 import six
+from azure.core.tracing.decorator import distributed_trace  # type: ignore
+
 from ._cosmos_client_connection import CosmosClientConnection
-from .container import Container
+from ._base import build_options
+from .container import ContainerProxy
 from .offer import Offer
 from .http_constants import StatusCodes
-from .errors import HTTPFailure
-from .user import User
-from ._query_iterable import QueryIterable
-from .partition_key import PartitionKey
+from .exceptions import CosmosResourceNotFoundError
+from .user import UserProxy
 
-from typing import Any, List, Dict, Mapping, Union, cast
+__all__ = ("DatabaseProxy",)
 
-__all__ = ("Database",)
+# pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
-class Database(object):
-    """ Represents an Azure Cosmos DB SQL API database.
+class DatabaseProxy(object):
+    """
+    An interface to interact with a specific database.
+    This class should not be instantiated directly, use :func:`CosmosClient.get_database_client` method.
 
     A database contains one or more containers, each of which can contain items,
     stored procedures, triggers, and user-defined functions.
@@ -59,7 +65,7 @@ class Database(object):
     * `_users`:	The addressable path of the users resource.
     """
 
-    def __init__(self, client_connection, id, properties=None):
+    def __init__(self, client_connection, id, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, Dict[str, Any]) -> None
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -70,27 +76,31 @@ class Database(object):
         self.database_link = u"dbs/{}".format(self.id)
         self._properties = properties
 
+    def __repr__(self):
+        # type () -> str
+        return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
+
     @staticmethod
     def _get_container_id(container_or_id):
-        # type: (Union[str, Container, Dict[str, Any]]) -> str
+        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
         if isinstance(container_or_id, six.string_types):
             return container_or_id
         try:
-            return cast("Container", container_or_id).id
+            return cast("ContainerProxy", container_or_id).id
         except AttributeError:
             pass
         return cast("Dict[str, str]", container_or_id)["id"]
 
     def _get_container_link(self, container_or_id):
-        # type: (Union[str, Container, Dict[str, Any]]) -> str
+        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
         return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id):
-        # type: (Union[User, str, Dict[str, Any]]) -> str
+        # type: (Union[UserProxy, str, Dict[str, Any]]) -> str
         if isinstance(user_or_id, six.string_types):
             return u"{}/users/{}".format(self.database_link, user_or_id)
         try:
-            return cast("User", user_or_id).user_link
+            return cast("UserProxy", user_or_id).user_link
         except AttributeError:
             pass
         return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
@@ -98,282 +108,302 @@ class Database(object):
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
-            self.read()
+            self._properties = self.read()
         return self._properties
 
-    def read(
-        self,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
-    ):
-        # type: (str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Dict[str, Any]
-        """
-        Read the database properties
+    @distributed_trace
+    def read(self, populate_query_metrics=None, **kwargs):
+        # type: (Optional[bool], Any) -> Dict[str, Any]
+        """Read the database properties.
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: Dict[Str, Any]
-        :raise `HTTPFailure`: If the given database couldn't be retrieved.
-
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :rtype: Dict[Str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
         # TODO this helper function should be extracted from CosmosClient
         from .cosmos_client import CosmosClient
 
         database_link = CosmosClient._get_database_link(self)
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        self._properties = self.client_connection.ReadDatabase(database_link, options=request_options)
+        self._properties = self.client_connection.ReadDatabase(
+            database_link, options=request_options, **kwargs
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return self._properties
+        return cast('Dict[str, Any]', self._properties)
 
+    @distributed_trace
     def create_container(
         self,
-        id,
-        partition_key,
-        indexing_policy=None,
-        default_ttl=None,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        offer_throughput=None,
-        unique_key_policy=None,
-        conflict_resolution_policy=None,
-        request_options=None,
-        response_hook=None,
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
     ):
-        # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Container
-        """
-        Create a new container with the given ID (name).
+        # type: (...) -> ContainerProxy
+        """Create a new container with the given ID (name).
 
-        If a container with the given ID already exists, an HTTPFailure with status_code 409 is raised.
+        If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
         :param id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`Container` instance representing the new container.
-        :raise HTTPFailure: The container creation failed.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `ContainerProxy` instance representing the new container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
+        :rtype: ~azure.cosmos.ContainerProxy
 
+        .. admonition:: Example:
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START create_container]
-            :end-before: [END create_container]
-            :language: python
-            :dedent: 0
-            :caption: Create a container with default settings:
-            :name: create_container
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_container]
+                :end-before: [END create_container]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with default settings:
+                :name: create_container
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START create_container_with_settings]
-            :end-before: [END create_container_with_settings]
-            :language: python
-            :dedent: 0
-            :caption: Create a container with specific settings; in this case, a custom partition key:
-            :name: create_container_with_settings
-
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_container_with_settings]
+                :end-before: [END create_container_with_settings]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with specific settings; in this case, a custom partition key:
+                :name: create_container_with_settings
         """
         definition = dict(id=id)  # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             definition["partitionKey"] = partition_key
-        if indexing_policy:
+        if indexing_policy is not None:
             definition["indexingPolicy"] = indexing_policy
-        if default_ttl:
+        if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
-        if unique_key_policy:
+        if unique_key_policy is not None:
             definition["uniqueKeyPolicy"] = unique_key_policy
-        if conflict_resolution_policy:
+        if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
 
         data = self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options
+            database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return Container(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
+    @distributed_trace
+    def create_container_if_not_exists(
+        self,
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ContainerProxy
+        """Create the container if it does not exist already.
+
+        If the container already exists, the existing settings are returned.
+        Note: it does not check or update the existing container settings or offer throughput
+        if they differ from what was passed into the method.
+
+        :param id: ID (name) of container to read or create.
+        :param partition_key: The partition key to use for the container.
+        :param indexing_policy: The indexing policy to apply to the container.
+        :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :param unique_key_policy: The unique key policy to apply to the container.
+        :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `ContainerProxy` instance representing the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
+        :rtype: ~azure.cosmos.ContainerProxy
+        """
+
+        try:
+            container_proxy = self.get_container_client(id)
+            container_proxy.read(
+                populate_query_metrics=populate_query_metrics,
+                **kwargs
+            )
+            return container_proxy
+        except CosmosResourceNotFoundError:
+            return self.create_container(
+                id=id,
+                partition_key=partition_key,
+                indexing_policy=indexing_policy,
+                default_ttl=default_ttl,
+                populate_query_metrics=populate_query_metrics,
+                offer_throughput=offer_throughput,
+                unique_key_policy=unique_key_policy,
+                conflict_resolution_policy=conflict_resolution_policy
+            )
+
+    @distributed_trace
     def delete_container(
         self,
-        container,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
+        container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
-        """ Delete the container
+        # type: (...) -> None
+        """Delete the container.
 
-        :param container: The ID (name) of the container to delete. You can either pass in the ID of the container to delete, a :class:`Container` instance or a dict representing the properties of the container.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
+        :param container: The ID (name) of the container to delete. You can either
+            pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
+            a dict representing the properties of the container.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raise HTTPFailure: If the container couldn't be deleted.
-
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
+        :rtype: None
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
-        result = self.client_connection.DeleteContainer(collection_link, options=request_options)
+        result = self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
     def get_container_client(self, container):
-        # type: (Union[str, Container, Dict[str, Any]]) -> Container
-        """ Get the specified `Container`, or a container with specified ID (name).
+        # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy
+        """Get the specified `ContainerProxy`, or a container with specified ID (name).
 
-        :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
+        :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
+            or a dict representing the properties of the container to be retrieved.
+        :rtype: ~azure.cosmos.ContainerProxy
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START get_container]
-            :end-before: [END get_container]
-            :language: python
-            :dedent: 0
-            :caption: Get an existing container, handling a failure if encountered:
-            :name: get_container
+        .. admonition:: Example:
 
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START get_container]
+                :end-before: [END get_container]
+                :language: python
+                :dedent: 0
+                :caption: Get an existing container, handling a failure if encountered:
+                :name: get_container
         """
-        if isinstance(container, Container):
+        if isinstance(container, ContainerProxy):
             id_value = container.id
         elif isinstance(container, Mapping):
             id_value = container["id"]
         else:
             id_value = container
 
-        return Container(self.client_connection, self.database_link, id_value)
+        return ContainerProxy(self.client_connection, self.database_link, id_value)
 
-    def read_all_containers(
-        self,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
-    ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """ List the containers in the database.
+    @distributed_trace
+    def list_containers(self, max_item_count=None, populate_query_metrics=None, **kwargs):
+        # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
+        """List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of container properties (dicts).
+        :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START list_containers]
-            :end-before: [END list_containers]
-            :language: python
-            :dedent: 0
-            :caption: List all containers in the database:
-            :name: list_containers
+        .. admonition:: Example:
 
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START list_containers]
+                :end-before: [END list_containers]
+                :language: python
+                :dedent: 0
+                :caption: List all containers in the database:
+                :name: list_containers
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = self.client_connection.ReadContainers(database_link=self.database_link, options=feed_options)
+        result = self.client_connection.ReadContainers(
+            database_link=self.database_link, options=feed_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def query_containers(
         self,
-        query=None,
-        parameters=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        query=None,  # type: Optional[str]
+        parameters=None,  # type: Optional[List[str]]
+        max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (str, List, int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """List properties for containers in the current database
+        # type: (...) -> Iterable[Dict[str, Any]]
+        """List properties for containers in the current database.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of container properties (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -381,61 +411,60 @@ class Database(object):
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def replace_container(
         self,
-        container,
-        partition_key,
-        indexing_policy=None,
-        default_ttl=None,
-        conflict_resolution_policy=None,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
+        container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (Union[str, Container, Dict[str, Any]], PartitionKey, Dict[str, Any], int, Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Container
-        """ Reset the properties of the container. Property changes are persisted immediately.
+        # type: (...) -> ContainerProxy
+        """Reset the properties of the container.
 
-        Any properties not specified will be reset to their default values.
+        Property changes are persisted immediately. Any properties not specified will be reset to
+        their default values.
 
-        :param container: The ID (name), dict representing the properties or :class:`Container` instance of the container to be replaced.
+        :param container: The ID (name), dict representing the properties or
+            :class:`ContainerProxy` instance of the container to be replaced.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
-        :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param default_ttl: Default time to live (TTL) for items in the container.
+            If unspecified, items do not expire.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param session_token: Token for use with Session consistency.
-        :param access_condition: Conditions Associated with the request.
-        :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes if the container with given id does not exist.
-        :returns: :class:`Container` instance representing the container after replace completed.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
+        :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :rtype: ~azure.cosmos.ContainerProxy
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START reset_container_properties]
-            :end-before: [END reset_container_properties]
-            :language: python
-            :dedent: 0
-            :caption: Reset the TTL property on a container, and display the updated properties:
-            :name: reset_container_properties
+        .. admonition:: Example:
 
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START reset_container_properties]
+                :end-before: [END reset_container_properties]
+                :language: python
+                :dedent: 0
+                :caption: Reset the TTL property on a container, and display the updated properties:
+                :name: reset_container_properties
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -454,50 +483,52 @@ class Database(object):
         }
 
         container_properties = self.client_connection.ReplaceContainer(
-            container_link, collection=parameters, options=request_options
+            container_link, collection=parameters, options=request_options, **kwargs
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, container_properties)
 
-        return Container(
+        return ContainerProxy(
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
         )
 
-    def read_all_users(self, max_item_count=None, feed_options=None, response_hook=None):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """ List all users in the container.
+    @distributed_trace
+    def list_users(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all users in the container.
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadUsers(database_link=self.database_link, options=feed_options)
+        result = self.client_connection.ReadUsers(
+            database_link=self.database_link, options=feed_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def query_users(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None):
-        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+    @distributed_trace
+    def query_users(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all users matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of users to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
-
+        :rtype: Iterable[str, Any]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -505,166 +536,194 @@ class Database(object):
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def get_user_client(self, user):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> User
-        """
-        Get the user identified by `id`.
+        # type: (Union[str, UserProxy, Dict[str, Any]]) -> UserProxy
+        """Get the user identified by `user`.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
-        :returns: A :class:`User` instance representing the retrieved user.
-        :raise `HTTPFailure`: If the given user couldn't be retrieved.
-
+        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+            instance of the user to be retrieved.
+        :returns: A `UserProxy` instance representing the retrieved user.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
+        :rtype: ~azure.cosmos.UserProxy
         """
-        if isinstance(user, User):
+        if isinstance(user, UserProxy):
             id_value = user.id
         elif isinstance(user, Mapping):
             id_value = user["id"]
         else:
             id_value = user
 
-        return User(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
+        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
-    def create_user(self, body, request_options=None, response_hook=None):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
-        """ Create a user in the container.
+    @distributed_trace
+    def create_user(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> UserProxy
+        """Create a user in the container.
+
+        To update or replace an existing user, use the :func:`ContainerProxy.upsert_user` method.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
-        The user ID must be unique within the database, and consist of no more than 255 characters.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the new user.
-        :raise `HTTPFailure`: If the given user couldn't be created.
+         The user ID must be unique within the database, and consist of no more than 255 characters.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `UserProxy` instance representing the new user.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
+        :rtype: ~azure.cosmos.UserProxy
 
-        To update or replace an existing user, use the :func:`Container.upsert_user` method.
+        .. admonition:: Example:
 
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START create_user]
-            :end-before: [END create_user]
-            :language: python
-            :dedent: 0
-            :caption: Create a database user:
-            :name: create_user
-
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_user]
+                :end-before: [END create_user]
+                :language: python
+                :dedent: 0
+                :caption: Create a database user:
+                :name: create_user
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        user = self.client_connection.CreateUser(database_link=self.database_link, user=body, options=request_options)
+        user = self.client_connection.CreateUser(
+            database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        return User(
+        return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def upsert_user(self, body, request_options=None, response_hook=None):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
-        """ Insert or update the specified user.
-
-        :param body: A dict-like object representing the user to update or insert.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the upserted user.
-        :raise `HTTPFailure`: If the given user could not be upserted.
+    @distributed_trace
+    def upsert_user(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> UserProxy
+        """Insert or update the specified user.
 
         If the user already exists in the container, it is replaced. If it does not, it is inserted.
 
+        :param body: A dict-like object representing the user to update or insert.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `UserProxy` instance representing the upserted user.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
+        :rtype: ~azure.cosmos.UserProxy
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        user = self.client_connection.UpsertUser(database_link=self.database_link, user=body, options=request_options)
+        user = self.client_connection.UpsertUser(
+            database_link=self.database_link, user=body, options=request_options, **kwargs
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        return User(
+        return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def replace_user(self, user, body, request_options=None, response_hook=None):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
-        """ Replaces the specified user if it exists in the container.
+    @distributed_trace
+    def replace_user(
+        self,
+        user,  # type: Union[str, UserProxy, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> UserProxy
+        """Replaces the specified user if it exists in the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be replaced.
+        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+            instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the user after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the user with given id does not exist.
-
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A `UserProxy` instance representing the user after replace went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user with given
+            id does not exist.
+        :rtype: ~azure.cosmos.UserProxy
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        user = self.client_connection.ReplaceUser(
-            user_link=self._get_user_link(user), user=body, options=request_options
-        )
+        replaced_user = self.client_connection.ReplaceUser(
+            user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
+        )  # type: Dict[str, str]
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
+            response_hook(self.client_connection.last_response_headers, replaced_user)
 
-        return User(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+        return UserProxy(
+            client_connection=self.client_connection,
+            id=replaced_user["id"],
+            database_link=self.database_link,
+            properties=replaced_user
         )
 
-    def delete_user(self, user, request_options=None, response_hook=None):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
-        """ Delete the specified user from the container.
+    @distributed_trace
+    def delete_user(self, user, **kwargs):
+        # type: (Union[str, UserProxy, Dict[str, Any]], Any) -> None
+        """Delete the specified user from the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be deleted.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not exist in the container, a `404` error is returned.
-
+        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+            instance of the user to be deleted.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
+        :rtype: None
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        result = self.client_connection.DeleteUser(user_link=self._get_user_link(user), options=request_options)
+        result = self.client_connection.DeleteUser(
+            user_link=self._get_user_link(user), options=request_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    def read_offer(self, response_hook=None):
-        # type: (Optional[Callable]) -> Offer
-        """ Read the Offer object for this database.
+    @distributed_trace
+    def read_offer(self, **kwargs):
+        # type: (Any) -> Offer
+        """Read the Offer object for this database.
 
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database.
-        :raise HTTPFailure: If no offer exists for the database or if the offer could not be retrieved.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If no offer exists for the database or if the
+         offer could not be retrieved.
+        :rtype: ~azure.cosmos.Offer
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
+        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not offers:
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for database " + self.database_link)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
 
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
-    def replace_throughput(self, throughput, response_hook=None):
-        # type: (int, Optional[Callable]) -> Offer
-        """ Replace the database level throughput.
+    @distributed_trace
+    def replace_throughput(self, throughput, **kwargs):
+        # type: (Optional[int], Any) -> Offer
+        """Replace the database level throughput.
 
         :param throughput: The throughput to be set (an integer).
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database, updated with new throughput.
-        :raise HTTPFailure: If no offer exists for the database or if the offer could not be updated.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If no offer exists for the database or if the
+         offer could not be updated.
+        :rtype: ~azure.cosmos.Offer
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -672,11 +731,13 @@ class Database(object):
             "parameters": [{"name": "@link", "value": link}],
         }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.database_link)
+        if not offers:
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for collection " + self.database_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0])
+        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
         return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)

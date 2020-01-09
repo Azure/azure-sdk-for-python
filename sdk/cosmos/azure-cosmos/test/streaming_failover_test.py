@@ -2,7 +2,8 @@ import unittest
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import pytest
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
+import test_config
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos import _retry_utility
 from azure.cosmos import _endpoint_discovery_retry_policy
@@ -83,7 +84,11 @@ class TestStreamingFailover(unittest.TestCase):
             return ({}, {})
         else:
             self.endpoint_sequence.append(args[1].location_endpoint_to_route)
-            raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Request is not permitted in this region", {HttpHeaders.SubStatus: SubStatusCodes.WRITE_FORBIDDEN})
+            response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.WRITE_FORBIDDEN})
+            raise exceptions.CosmosHttpResponseError(
+                status_code=StatusCodes.FORBIDDEN,
+                message="Request is not permitted in this region",
+                response=response)
 
     def test_retry_policy_does_not_mark_null_locations_unavailable(self):
         self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
@@ -107,7 +112,8 @@ class TestStreamingFailover(unittest.TestCase):
         self._write_counter = 0
         request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Read)
         endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
-        endpointDiscovery_retry_policy.ShouldRetry(errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN))
+        endpointDiscovery_retry_policy.ShouldRetry(exceptions.CosmosHttpResponseError(
+            status_code=http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
 
@@ -115,7 +121,8 @@ class TestStreamingFailover(unittest.TestCase):
         self._write_counter = 0
         request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Create)
         endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
-        endpointDiscovery_retry_policy.ShouldRetry(errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN))
+        endpointDiscovery_retry_policy.ShouldRetry(exceptions.CosmosHttpResponseError(
+            status_code=http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
 

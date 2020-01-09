@@ -60,7 +60,7 @@ class EnvTest(unittest.TestCase):
 
         os.environ["COSMOS_ENDPOINT"] = cls.host
         os.environ["COSMOS_KEY"] = cls.masterKey
-        cls.client = cosmos_client.CosmosClient(url=cls.host, auth={'masterKey': cls.masterKey }, connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(url=cls.host, credential=cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
 

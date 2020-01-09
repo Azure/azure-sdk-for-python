@@ -38,7 +38,5 @@ class CreateTasksErrorException(Exception):
                 result = failure_tasks[0]
                 self.message = \
                     "Task with id `%s` failed due to client error - %s::%s" % \
-                    result.task_id,\
-                    result.error.code,\
-                    result.error.message
+                    (result.task_id, result.error.code, result.error.message)
         super(CreateTasksErrorException, self).__init__(self.message)

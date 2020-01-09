@@ -1,24 +1,44 @@
 interactions:
 - request:
-    body: !!binary |
-      FeUwxanQlvXsrKgA1Ep//qHAvpazw5lR4yl1uCej7CFJwfbVg8A0TDXg9uj2tprcrPEgCjFHUwvI
-      hbWK8FikbUlA98igMxNv6rfvtB8LZioGhdJqnpMAo45L9buMqMoUbthZKueW8nOd15afaPMmmaop
-      tN/EgRjzDI87qUKs1K955pAXUXA/J+2OhDatpBJNlyBiquWv0O0M229ExMhRkRYdp+oXvJb0PAkH
-      +9/UV2SI6KPF088lVL6zZ0YZ7D00EWGlMkwHDxSwx10oZla+8iYiKkxSefe5LkFmdDJo8UIq5peB
-      MPRKE2Jmkg9V2xTSOM0D4BWU5RkB3RYcRhm+wZk7kXoKv8Gj3NhVQnoM/PNYIS/x+0AGt9zaj58p
-      Lk28B04Usr4rbPLWWqcfXQ61JDe+SY9vtKq/nITAbHTzNJK9t1amRE0tBT+ApwlpuMT1lDddPYvA
-      CGneIOrtQ4k8fVE0WcLJJYgfsYaHDZEDZkVvlct8Z6COmaleH79q54zVm1eh6tS2NSPJlg/8OXLF
-      0yYYcO126p7hXYqyoVw8YpMkyj7Y2w+daYZKHIiG73vZpojDtL6wBjA1XPEfbyIXjgCrKdiu4046
-      +sMOY4BhlQDDWIzyZnWv7Eb100zZXhDv5g5zprPHa5geHxjYau9vlj76yF/rFGO2j/RHcfF+Cwde
-      InO8SaegRguqeVxSi/intl+MpKrMwNgN7mWDeR+W3NGTkdV4OujDaVrCeg+gMGzjtaepG6ShQE5Y
-      isp0c+Ww21gJu0UJDPewT5xBi/Jy9+CjwS0Rzu6fdUlngAGvkdZUV4sZmphrEO/W7Hgidz9D3p2u
-      tK9Vv2UNLbJZ4fzdulim1qmRHjqSpKASj5t29DFSvqk/3NPssFSVD0ebYIFydRFSL6iZsEjXL3hA
-      jQGQSYeSLFj7nGgAIxRK8qdrdbjDJt1wmf5+mca9v4pOK1nJIha1pvqRsBMnIk44EqCLrlCDRCtE
-      ok0gkwtPOPi1lMSRG0As24wJGp/I5lSIweZlD25JHFlv7JvU4+nQ6Ph7/spnwbWqBVAIEfw+Ddh6
-      TQ+44N7SJwlUWdtZpe5FeWWgYyFFXjBg9CTUhXqyaubrBV/HCP0rrYWutZ1vGxzXedJvR28k2hj4
-      mhB8NMGAhAwFm2DBsL/2vXGoI2QagVqIxYqF7eEU0OpABTcS0t8nlARbMM9qXSXHFKICc7dx8otk
-      meR8fselDQ6C3GvCL+rkyOX7+ffSWA2j2vWA0no3lLrZsH2bRwgkyc79YgNNT4wZj5cB5MM5NNYb
-      V2SxFRJDkSUuxU6K1h4TSBsq18Q/unYXfjq2Za5qVpJnFPdnywIUTLeH4MxtqYuQcB0ijT/JRg==
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerf6091415?timeout=5&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:13:14 GMT
+      etag:
+      - '"0x8D75977010FEF3C"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
       Accept:
       - '*/*'
@@ -30,40 +50,40 @@ interactions:
       - '1024'
       Content-Type:
       - application/octet-stream
+      If-None-Match:
+      - '*'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - 3424c308-8ecb-11e9-9b76-f45c89a7d159
       x-ms-date:
-      - Fri, 14 Jun 2019 17:38:21 GMT
+      - Fri, 25 Oct 2019 18:13:15 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerf6091415/blobf6091415
+    uri: https://storagename.blob.core.windows.net/utcontainerf6091415/blobf6091415
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
-      - Y/qRxt5TjkziBNNnlynz/w==
-      Date:
-      - Fri, 14 Jun 2019 17:38:21 GMT
-      ETag:
-      - '"0x8D6F0EF18EA3842"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:38:22 GMT
-      Server:
+      content-md5:
+      - yaNM/IXZgmmMasifdgcavQ==
+      date:
+      - Fri, 25 Oct 2019 18:13:14 GMT
+      etag:
+      - '"0x8D75977011857DB"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 37a7cef5-e01e-00cc-62d7-2200b5000000
+      x-ms-content-crc64:
+      - ov8U1LLnyKc=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -77,221 +97,49 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 34453d4a-8ecb-11e9-9f73-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:38:21 GMT
+      - Fri, 25 Oct 2019 18:13:15 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerf6091415/blobf6091415
-  response:
-    body:
-      string: !!binary |
-        FeUwxanQlvXsrKgA1Ep//qHAvpazw5lR4yl1uCej7CFJwfbVg8A0TDXg9uj2tprcrPEgCjFHUwvI
-        hbWK8FikbUlA98igMxNv6rfvtB8LZioGhdJqnpMAo45L9buMqMoUbthZKueW8nOd15afaPMmmaop
-        tN/EgRjzDI87qUKs1K955pAXUXA/J+2OhDatpBJNlyBiquWv0O0M229ExMhRkRYdp+oXvJb0PAkH
-        +9/UV2SI6KPF088lVL6zZ0YZ7D00EWGlMkwHDxSwx10oZla+8iYiKkxSefe5LkFmdDJo8UIq5peB
-        MPRKE2Jmkg9V2xTSOM0D4BWU5RkB3RYcRhm+wZk7kXoKv8Gj3NhVQnoM/PNYIS/x+0AGt9zaj58p
-        Lk28B04Usr4rbPLWWqcfXQ61JDe+SY9vtKq/nITAbHTzNJK9t1amRE0tBT+ApwlpuMT1lDddPYvA
-        CGneIOrtQ4k8fVE0WcLJJYgfsYaHDZEDZkVvlct8Z6COmaleH79q54zVm1eh6tS2NSPJlg/8OXLF
-        0yYYcO126p7hXYqyoVw8YpMkyj7Y2w+daYZKHIiG73vZpojDtL6wBjA1XPEfbyIXjgCrKdiu4046
-        +sMOY4BhlQDDWIzyZnWv7Eb100zZXhDv5g5zprPHa5geHxjYau9vlj76yF/rFGO2j/RHcfF+Cwde
-        InO8SaegRguqeVxSi/intl+MpKrMwNgN7mWDeR+W3NGTkdV4OujDaVrCeg+gMGzjtaepG6ShQE5Y
-        isp0c+Ww21gJu0UJDPewT5xBi/Jy9+CjwS0Rzu6fdUlngAGvkdZUV4sZmphrEO/W7Hgidz9D3p2u
-        tK9Vv2UNLbJZ4fzdulim1qmRHjqSpKASj5t29DFSvqk/3NPssFSVD0ebYIFydRFSL6iZsEjXL3hA
-        jQGQSYeSLFj7nGgAIxRK8qdrdbjDJt1wmf5+mca9v4pOK1nJIha1pvqRsBMnIk44EqCLrlCDRCtE
-        ok0gkwtPOPi1lMSRG0As24wJGp/I5lSIweZlD25JHFlv7JvU4+nQ6Ph7/spnwbWqBVAIEfw+Ddh6
-        TQ+44N7SJwlUWdtZpe5FeWWgYyFFXjBg9CTUhXqyaubrBV/HCP0rrYWutZ1vGxzXedJvR28k2hj4
-        mhB8NMGAhAwFm2DBsL/2vXGoI2QagVqIxYqF7eEU0OpABTcS0t8nlARbMM9qXSXHFKICc7dx8otk
-        meR8fselDQ6C3GvCL+rkyOX7+ffSWA2j2vWA0no3lLrZsH2bRwgkyc79YgNNT4wZj5cB5MM5NNYb
-        V2SxFRJDkSUuxU6K1h4TSBsq18Q/unYXfjq2Za5qVpJnFPdnywIUTLeH4MxtqYuQcB0ijT/JRg==
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '1024'
-      Content-Range:
-      - bytes 0-1023/1024
-      Content-Type:
-      - application/octet-stream
-      Date:
-      - Fri, 14 Jun 2019 17:38:21 GMT
-      ETag:
-      - '"0x8D6F0EF18EA3842"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:38:22 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-blob-content-md5:
-      - Y/qRxt5TjkziBNNnlynz/w==
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 17:38:22 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 37a7cf0f-e01e-00cc-7ad7-2200b5000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 206
-      message: Partial Content
-- request:
-    body: !!binary |
-      FeUwxanQlvXsrKgA1Ep//qHAvpazw5lR4yl1uCej7CFJwfbVg8A0TDXg9uj2tprcrPEgCjFHUwvI
-      hbWK8FikbUlA98igMxNv6rfvtB8LZioGhdJqnpMAo45L9buMqMoUbthZKueW8nOd15afaPMmmaop
-      tN/EgRjzDI87qUKs1K955pAXUXA/J+2OhDatpBJNlyBiquWv0O0M229ExMhRkRYdp+oXvJb0PAkH
-      +9/UV2SI6KPF088lVL6zZ0YZ7D00EWGlMkwHDxSwx10oZla+8iYiKkxSefe5LkFmdDJo8UIq5peB
-      MPRKE2Jmkg9V2xTSOM0D4BWU5RkB3RYcRhm+wZk7kXoKv8Gj3NhVQnoM/PNYIS/x+0AGt9zaj58p
-      Lk28B04Usr4rbPLWWqcfXQ61JDe+SY9vtKq/nITAbHTzNJK9t1amRE0tBT+ApwlpuMT1lDddPYvA
-      CGneIOrtQ4k8fVE0WcLJJYgfsYaHDZEDZkVvlct8Z6COmaleH79q54zVm1eh6tS2NSPJlg/8OXLF
-      0yYYcO126p7hXYqyoVw8YpMkyj7Y2w+daYZKHIiG73vZpojDtL6wBjA1XPEfbyIXjgCrKdiu4046
-      +sMOY4BhlQDDWIzyZnWv7Eb100zZXhDv5g5zprPHa5geHxjYau9vlj76yF/rFGO2j/RHcfF+Cwde
-      InO8SaegRguqeVxSi/intl+MpKrMwNgN7mWDeR+W3NGTkdV4OujDaVrCeg+gMGzjtaepG6ShQE5Y
-      isp0c+Ww21gJu0UJDPewT5xBi/Jy9+CjwS0Rzu6fdUlngAGvkdZUV4sZmphrEO/W7Hgidz9D3p2u
-      tK9Vv2UNLbJZ4fzdulim1qmRHjqSpKASj5t29DFSvqk/3NPssFSVD0ebYIFydRFSL6iZsEjXL3hA
-      jQGQSYeSLFj7nGgAIxRK8qdrdbjDJt1wmf5+mca9v4pOK1nJIha1pvqRsBMnIk44EqCLrlCDRCtE
-      ok0gkwtPOPi1lMSRG0As24wJGp/I5lSIweZlD25JHFlv7JvU4+nQ6Ph7/spnwbWqBVAIEfw+Ddh6
-      TQ+44N7SJwlUWdtZpe5FeWWgYyFFXjBg9CTUhXqyaubrBV/HCP0rrYWutZ1vGxzXedJvR28k2hj4
-      mhB8NMGAhAwFm2DBsL/2vXGoI2QagVqIxYqF7eEU0OpABTcS0t8nlARbMM9qXSXHFKICc7dx8otk
-      meR8fselDQ6C3GvCL+rkyOX7+ffSWA2j2vWA0no3lLrZsH2bRwgkyc79YgNNT4wZj5cB5MM5NNYb
-      V2SxFRJDkSUuxU6K1h4TSBsq18Q/unYXfjq2Za5qVpJnFPdnywIUTLeH4MxtqYuQcB0ijT/JRg==
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1024'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-client-request-id:
-      - 86fcd292-8ed4-11e9-a9c4-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:45:06 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerf6091415/blobf6091415
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - Y/qRxt5TjkziBNNnlynz/w==
-      Date:
-      - Fri, 14 Jun 2019 18:45:06 GMT
-      ETag:
-      - '"0x8D6F0F86B4B9F81"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:45:06 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 9a37f9e2-501e-00de-6be1-2234a9000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 871beccc-8ed4-11e9-bc33-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:45:06 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainerf6091415/blobf6091415
   response:
     body:
-      string: !!binary |
-        FeUwxanQlvXsrKgA1Ep//qHAvpazw5lR4yl1uCej7CFJwfbVg8A0TDXg9uj2tprcrPEgCjFHUwvI
-        hbWK8FikbUlA98igMxNv6rfvtB8LZioGhdJqnpMAo45L9buMqMoUbthZKueW8nOd15afaPMmmaop
-        tN/EgRjzDI87qUKs1K955pAXUXA/J+2OhDatpBJNlyBiquWv0O0M229ExMhRkRYdp+oXvJb0PAkH
-        +9/UV2SI6KPF088lVL6zZ0YZ7D00EWGlMkwHDxSwx10oZla+8iYiKkxSefe5LkFmdDJo8UIq5peB
-        MPRKE2Jmkg9V2xTSOM0D4BWU5RkB3RYcRhm+wZk7kXoKv8Gj3NhVQnoM/PNYIS/x+0AGt9zaj58p
-        Lk28B04Usr4rbPLWWqcfXQ61JDe+SY9vtKq/nITAbHTzNJK9t1amRE0tBT+ApwlpuMT1lDddPYvA
-        CGneIOrtQ4k8fVE0WcLJJYgfsYaHDZEDZkVvlct8Z6COmaleH79q54zVm1eh6tS2NSPJlg/8OXLF
-        0yYYcO126p7hXYqyoVw8YpMkyj7Y2w+daYZKHIiG73vZpojDtL6wBjA1XPEfbyIXjgCrKdiu4046
-        +sMOY4BhlQDDWIzyZnWv7Eb100zZXhDv5g5zprPHa5geHxjYau9vlj76yF/rFGO2j/RHcfF+Cwde
-        InO8SaegRguqeVxSi/intl+MpKrMwNgN7mWDeR+W3NGTkdV4OujDaVrCeg+gMGzjtaepG6ShQE5Y
-        isp0c+Ww21gJu0UJDPewT5xBi/Jy9+CjwS0Rzu6fdUlngAGvkdZUV4sZmphrEO/W7Hgidz9D3p2u
-        tK9Vv2UNLbJZ4fzdulim1qmRHjqSpKASj5t29DFSvqk/3NPssFSVD0ebYIFydRFSL6iZsEjXL3hA
-        jQGQSYeSLFj7nGgAIxRK8qdrdbjDJt1wmf5+mca9v4pOK1nJIha1pvqRsBMnIk44EqCLrlCDRCtE
-        ok0gkwtPOPi1lMSRG0As24wJGp/I5lSIweZlD25JHFlv7JvU4+nQ6Ph7/spnwbWqBVAIEfw+Ddh6
-        TQ+44N7SJwlUWdtZpe5FeWWgYyFFXjBg9CTUhXqyaubrBV/HCP0rrYWutZ1vGxzXedJvR28k2hj4
-        mhB8NMGAhAwFm2DBsL/2vXGoI2QagVqIxYqF7eEU0OpABTcS0t8nlARbMM9qXSXHFKICc7dx8otk
-        meR8fselDQ6C3GvCL+rkyOX7+ffSWA2j2vWA0no3lLrZsH2bRwgkyc79YgNNT4wZj5cB5MM5NNYb
-        V2SxFRJDkSUuxU6K1h4TSBsq18Q/unYXfjq2Za5qVpJnFPdnywIUTLeH4MxtqYuQcB0ijT/JRg==
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
-      Accept-Ranges:
+      accept-ranges:
       - bytes
-      Content-Length:
+      content-length:
       - '1024'
-      Content-Range:
+      content-range:
       - bytes 0-1023/1024
-      Content-Type:
+      content-type:
       - application/octet-stream
-      Date:
-      - Fri, 14 Jun 2019 18:45:06 GMT
-      ETag:
-      - '"0x8D6F0F86B4B9F81"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:45:06 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:13:14 GMT
+      etag:
+      - '"0x8D75977011857DB"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-blob-content-md5:
-      - Y/qRxt5TjkziBNNnlynz/w==
+      - yaNM/IXZgmmMasifdgcavQ==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 14 Jun 2019 18:45:06 GMT
+      - Fri, 25 Oct 2019 18:13:15 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
-      x-ms-request-id:
-      - 9a37f9ff-501e-00de-04e1-2234a9000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content

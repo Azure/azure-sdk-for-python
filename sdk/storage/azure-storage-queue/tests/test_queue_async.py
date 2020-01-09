@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import unittest
 import pytest
 import asyncio
@@ -15,35 +14,35 @@ from datetime import (
     timedelta,
     date,
 )
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from multidict import CIMultiDict, CIMultiDictProxy
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
+    ResourceExistsError,
+    ClientAuthenticationError)
 
 from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-
-from azure.storage.queue.aio import QueueServiceClient, QueueClient
 from azure.storage.queue import (
-    QueuePermissions,
+    QueueSasPermissions,
     AccessPolicy,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
+    generate_account_sas,
+    generate_queue_sas
 )
+from azure.storage.queue.aio import QueueServiceClient, QueueClient
 
-from queuetestcase import (
-    QueueTestCase,
-    TestMode,
-    record,
-    LogCaptured,
-)
+
+from _shared.asynctestcase import AsyncStorageTestCase
+from _shared.testcase import GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
-TEST_QUEUE_PREFIX = 'pythonqueue'
-
+TEST_QUEUE_PREFIX = 'pyqueueasync'
 
 # ------------------------------------------------------------------------------
+
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -55,54 +54,39 @@ class AiohttpTestTransport(AioHttpTransport):
             response.content_type = response.headers.get("content-type")
         return response
 
-class StorageQueueTestAsync(QueueTestCase):
-    def setUp(self):
-        super(StorageQueueTestAsync, self).setUp()
 
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials, transport=AiohttpTestTransport())
-        self.test_queues = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            for queue in self.test_queues:
-                try:
-                    loop.run_until_complete(queue.delete_queue())
-                except:
-                    pass
-        return super(StorageQueueTestAsync, self).tearDown()
-
+class StorageQueueTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
-    def _get_queue_reference(self, prefix=TEST_QUEUE_PREFIX):
+    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
-        queue = self.qsc.get_queue_client(queue_name)
-        self.test_queues.append(queue)
+        queue = qsc.get_queue_client(queue_name)
         return queue
 
-    async def _create_queue(self, prefix=TEST_QUEUE_PREFIX):
-        queue = self._get_queue_reference(prefix)
+    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list = None):
+        queue = self._get_queue_reference(qsc, prefix)
         created = await queue.create_queue()
+        if queue_list:
+            queue_list.append(created)
         return queue
 
     # --Test cases for queues ----------------------------------------------
-    async def _test_create_queue(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
         created = await queue_client.create_queue()
 
         # Asserts
         self.assertTrue(created)
 
-    @record
-    def test_create_queue(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_queue())
-
-    async def _test_create_queue_fail_on_exist(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_queue_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
         created = await queue_client.create_queue()
         with self.assertRaises(ResourceExistsError):
             await queue_client.create_queue()
@@ -110,14 +94,12 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @record
-    def test_create_queue_fail_on_exist(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_queue_fail_on_exist())
-
-    async def _test_create_queue_fail_on_exist_different_metadata(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_queue_fail_on_exist_different_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
         created = await queue_client.create_queue()
         with self.assertRaises(ResourceExistsError):
             await queue_client.create_queue(metadata={"val": "value"})
@@ -125,14 +107,12 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @record
-    def test_create_queue_fail_on_exist_different_metadata(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_queue_fail_on_exist_different_metadata())
-
-    async def _test_create_queue_with_options(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_queue_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
         await queue_client.create_queue(
             metadata={'val1': 'test', 'val2': 'blah'})
         props = await queue_client.get_queue_properties()
@@ -143,27 +123,23 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual('test', props.metadata['val1'])
         self.assertEqual('blah', props.metadata['val2'])
 
-    @record
-    def test_create_queue_with_options(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_queue_with_options())
-
-    async def _test_delete_non_existing_queue(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
 
         # Asserts
         with self.assertRaises(ResourceNotFoundError):
             await queue_client.delete_queue()
 
-    @record
-    def test_delete_non_existing_queue(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_non_existing_queue())
-
-    async def _test_delete_existing_queue_fail_not_exist(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_existing_queue_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
 
         created = await queue_client.create_queue()
         deleted = await queue_client.delete_queue()
@@ -171,41 +147,40 @@ class StorageQueueTestAsync(QueueTestCase):
         # Asserts
         self.assertIsNone(deleted)
 
-    @record
-    def test_delete_existing_queue_fail_not_exist(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_existing_queue_fail_not_exist())
-
-    async def _test_list_queues(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_queues(self, resource_group, location, storage_account, storage_account_key):
         # Action
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
         queues = []
-        async for q in self.qsc.list_queues():
+        async for q in qsc.list_queues():
             queues.append(q)
 
         # Asserts
         self.assertIsNotNone(queues)
-        self.assertTrue(len(self.test_queues) <= len(queues))
+        assert len(queues) >= 1
 
-    @record
-    def test_list_queues(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_queues())
-
-    async def _test_list_queues_with_options(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_list = []
         prefix = 'listqueue'
         for i in range(0, 4):
-            await self._create_queue(prefix + str(i))
+            await self._create_queue(qsc, prefix + str(i), queue_list)
 
         # Action
-        generator1 =  self.qsc.list_queues(
+        generator1 =  qsc.list_queues(
             name_starts_with=prefix,
             results_per_page=3).by_page()
         queues1 = []
         async for el in await generator1.__anext__():
             queues1.append(el)
 
-        generator2 = self.qsc.list_queues(
+        generator2 = qsc.list_queues(
             name_starts_with=prefix,
             include_metadata=True).by_page(generator1.continuation_token)
         queues2 = []
@@ -220,22 +195,20 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', queues1[0].name)
         # Asserts
         self.assertIsNotNone(queues2)
-        self.assertTrue(len(self.test_queues) - 3 <= len(queues2))
+        self.assertTrue(len(queue_list) - 3 <= len(queues2))
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
-    @record
-    def test_list_queues_with_options_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_queues_with_options())
-
-    async def _test_list_queues_with_metadata(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_queues_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue = await self._create_queue()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue = await self._create_queue(qsc)
         await queue.set_queue_metadata(metadata={'val1': 'test', 'val2': 'blah'})
 
         listed_queue = []
-        async for q in self.qsc.list_queues(
+        async for q in qsc.list_queues(
             name_starts_with=queue.queue_name,
             results_per_page=1,
             include_metadata=True):
@@ -249,15 +222,13 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
 
-    @record
-    def test_list_queues_with_metadata(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_queues_with_metadata())
-
-    async def _test_set_queue_metadata(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         metadata = {'hello': 'world', 'number': '43'}
-        queue = await self._create_queue()
+        queue = await self._create_queue(qsc)
 
         # Act
         await queue.set_queue_metadata(metadata)
@@ -266,29 +237,25 @@ class StorageQueueTestAsync(QueueTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_set_queue_metadata(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_metadata())
-
-    async def _test_get_queue_metadata_message_count(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_queue_metadata_message_count(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
         props = await queue_client.get_queue_properties()
 
         # Asserts
         self.assertTrue(props.approximate_message_count >= 1)
         self.assertEqual(0, len(props.metadata))
 
-    @record
-    def test_get_queue_metadata_message_count(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_queue_metadata_message_count())
-
-    async def _test_queue_exists(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_queue_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue = await self._create_queue()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue = await self._create_queue(qsc)
 
         # Act
         exists = await queue.get_queue_properties()
@@ -296,88 +263,78 @@ class StorageQueueTestAsync(QueueTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @record
-    def test_queue_exists(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_exists())
-
-    async def _test_queue_not_exists(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_queue_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue = self.qsc.get_queue_client(self.get_resource_name('missing'))
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue = qsc.get_queue_client(self.get_resource_name('missing'))
         # Act
         with self.assertRaises(ResourceNotFoundError):
             await queue.get_queue_properties()
 
         # Assert
 
-    @record
-    def test_queue_not_exists(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_not_exists())
-
-    async def _test_put_message(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_message(self, resource_group, location, storage_account, storage_account_key):
         # Action.  No exception means pass. No asserts needed.
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        message = await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        message = await queue_client.send_message(u'message4')
 
         # Asserts
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.id)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(u'message4', message.content)
 
-    @record
-    def test_put_message(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_message())
-
-    async def _test_put_message_large_time_to_live(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_message_large_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_client = await self._create_queue()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
         # There should be no upper bound on a queue message's time to live
-        await queue_client.enqueue_message(u'message1', time_to_live=1024*1024*1024)
+        await queue_client.send_message(u'message1', time_to_live=1024*1024*1024)
 
         # Act
         messages = await queue_client.peek_messages()
 
         # Assert
         self.assertGreaterEqual(
-            messages[0].expiration_time,
-            messages[0].insertion_time + timedelta(seconds=1024 * 1024 * 1024 - 3600))
+            messages[0].expires_on,
+            messages[0].inserted_on + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
-    @record
-    def test_put_message_large_time_to_live(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_message_large_time_to_live())
-
-    async def _test_put_message_infinite_time_to_live(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_message_infinite_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1', time_to_live=-1)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1', time_to_live=-1)
 
         # Act
         messages = await queue_client.peek_messages()
 
         # Assert
-        self.assertEqual(messages[0].expiration_time.year, date.max.year)
+        self.assertEqual(messages[0].expires_on.year, date.max.year)
 
-    @record
-    def test_put_message_infinite_time_to_live(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_message_infinite_time_to_live())
-
-    async def _test_get_messages(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -392,22 +349,20 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(1, message.dequeue_count)
 
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
-    @record
-    def test_get_messages(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_messages())
-
-    async def _test_get_messages_with_options(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         pager = queue_client.receive_messages(messages_per_page=4, visibility_timeout=20)
         result = []
         async for el in pager:
@@ -423,22 +378,20 @@ class StorageQueueTestAsync(QueueTestCase):
             self.assertNotEqual('', message.content)
             self.assertNotEqual('', message.pop_receipt)
             self.assertEqual(1, message.dequeue_count)
-            self.assertNotEqual('', message.insertion_time)
-            self.assertNotEqual('', message.expiration_time)
-            self.assertNotEqual('', message.time_next_visible)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
 
-    @record
-    def test_get_messages_with_options(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_messages_with_options())
-
-    async def _test_peek_messages(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_peek_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         result = await queue_client.peek_messages()
 
         # Asserts
@@ -450,22 +403,20 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.content)
         self.assertIsNone(message.pop_receipt)
         self.assertEqual(0, message.dequeue_count)
-        self.assertNotEqual('', message.insertion_time)
-        self.assertNotEqual('', message.expiration_time)
-        self.assertIsNone(message.time_next_visible)
+        self.assertNotEqual('', message.inserted_on)
+        self.assertNotEqual('', message.expires_on)
+        self.assertIsNone(message.next_visible_on)
 
-    @record
-    def test_peek_messages(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_peek_messages())
-
-    async def _test_peek_messages_with_options(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_peek_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         result = await queue_client.peek_messages(max_messages=4)
 
         # Asserts
@@ -477,22 +428,20 @@ class StorageQueueTestAsync(QueueTestCase):
             self.assertNotEqual('', message.content)
             self.assertIsNone(message.pop_receipt)
             self.assertEqual(0, message.dequeue_count)
-            self.assertNotEqual('', message.insertion_time)
-            self.assertNotEqual('', message.expiration_time)
-            self.assertIsNone(message.time_next_visible)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertIsNone(message.next_visible_on)
 
-    @record
-    def test_peek_messages_with_options(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_peek_messages_with_options())
-
-    async def _test_clear_messages(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_clear_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         await queue_client.clear_messages()
         result = await queue_client.peek_messages()
 
@@ -500,18 +449,16 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(0, len(result))
 
-    @record
-    def test_clear_messages(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_clear_messages())
-
-    async def _test_delete_message(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        await queue_client.enqueue_message(u'message2')
-        await queue_client.enqueue_message(u'message3')
-        await queue_client.enqueue_message(u'message4')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -522,15 +469,13 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(messages)
         self.assertEqual(3, len(messages)-1)
 
-    @record
-    def test_delete_message(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_message())
-
-    async def _test_update_message(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_update_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -548,8 +493,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Update response
         self.assertIsNotNone(message)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.time_next_visible)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsNotNone(message.next_visible_on)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
         # Get response
         self.assertIsNotNone(list_result2)
@@ -559,19 +504,17 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(u'message1', message.content)
         self.assertEqual(2, message.dequeue_count)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.insertion_time)
-        self.assertIsNotNone(message.expiration_time)
-        self.assertIsNotNone(message.time_next_visible)
+        self.assertIsNotNone(message.inserted_on)
+        self.assertIsNotNone(message.expires_on)
+        self.assertIsNotNone(message.next_visible_on)
 
-    @record
-    def test_update_message(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_update_message())
-
-    async def _test_update_message_content(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_update_message_content(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
 
         messages = []
         async for m in queue_client.receive_messages():
@@ -591,8 +534,8 @@ class StorageQueueTestAsync(QueueTestCase):
         # Update response
         self.assertIsNotNone(message)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.time_next_visible)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsNotNone(message.next_visible_on)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
         # Get response
         self.assertIsNotNone(list_result2)
@@ -602,33 +545,32 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(u'new text', message.content)
         self.assertEqual(2, message.dequeue_count)
         self.assertIsNotNone(message.pop_receipt)
-        self.assertIsNotNone(message.insertion_time)
-        self.assertIsNotNone(message.expiration_time)
-        self.assertIsNotNone(message.time_next_visible)
+        self.assertIsNotNone(message.inserted_on)
+        self.assertIsNotNone(message.expires_on)
+        self.assertIsNotNone(message.next_visible_on)
 
-    @record
-    def test_update_message_content(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_update_message_content())
-
-    async def _test_account_sas(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
 
         # Arrange
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        token = self.qsc.generate_shared_access_signature(
-            ResourceTypes.OBJECT,
-            AccountPermissions.READ,
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        token = generate_account_sas(
+            qsc.account_name,
+            qsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
 
         # Act
         service = QueueServiceClient(
-            account_url=self.qsc.url,
+            account_url=qsc.url,
             credential=token,
         )
         new_queue_client = service.get_queue_client(queue_client.queue_name)
@@ -642,55 +584,50 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @record
-    def test_account_sas(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_account_sas())
-
-    async def _test_token_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = QueueServiceClient(self._get_oauth_queue_url(), credential=token_credential)
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=token_credential)
         queues = await service.get_service_properties()
         self.assertIsNotNone(queues)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = QueueServiceClient(self._get_oauth_queue_url(), credential=fake_credential)
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
-            queue_li = await service.list_queues()
-            list(queue_li)
+            await service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = QueueServiceClient(self._get_oauth_queue_url(), credential=token_credential)
-        queue_li = await service.list_queues()
-        queues = list(queue_li)
+        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=token_credential)
+        queues = await service.get_service_properties()  # Not raise means success
         self.assertIsNotNone(queues)
 
-    @record
-    def test_token_credential(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_token_credential())
-
-    async def _test_sas_read(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
         # Arrange
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
-            QueuePermissions.READ,
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
+            QueueSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
             datetime.utcnow() - timedelta(minutes=5)
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -704,29 +641,29 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @record
-    def test_sas_read(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_sas_read())
-
-    async def _test_sas_add(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
         # Arrange
-        queue_client = await self._create_queue()
-        token = queue_client.generate_shared_access_signature(
-            QueuePermissions.ADD,
+        queue_client = await self._create_queue(qsc)
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
+            QueueSasPermissions(add=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
-        result = await service.enqueue_message(u'addedmessage')
+        result = await service.send_message(u'addedmessage')
 
         # Assert
         messages = []
@@ -735,21 +672,21 @@ class StorageQueueTestAsync(QueueTestCase):
         result = messages[0]
         self.assertEqual(u'addedmessage', result.content)
 
-    @record
-    def test_sas_add(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_sas_add())
-
-    async def _test_sas_update(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
         # Arrange
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
-            QueuePermissions.UPDATE,
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
+            QueueSasPermissions(update=True),
             datetime.utcnow() + timedelta(hours=1),
         )
         messages = []
@@ -758,7 +695,7 @@ class StorageQueueTestAsync(QueueTestCase):
         result = messages[0]
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -776,26 +713,26 @@ class StorageQueueTestAsync(QueueTestCase):
         result = messages[0]
         self.assertEqual(u'updatedmessage1', result.content)
 
-    @record
-    def test_sas_update(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_sas_update())
-
-    async def _test_sas_process(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
         # Arrange
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
-        token = queue_client.generate_shared_access_signature(
-            QueuePermissions.PROCESS,
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
+            QueueSasPermissions(process=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -809,35 +746,35 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @record
-    def test_sas_process(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_sas_process())
-
-    async def _test_sas_signed_identifier(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
         # Arrange
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = QueuePermissions.READ
+        access_policy.permission = QueueSasPermissions(read=True)
 
         identifiers = {'testid': access_policy}
 
-        queue_client = await self._create_queue()
+        queue_client = await self._create_queue(qsc)
         resp = await queue_client.set_queue_access_policy(identifiers)
 
-        await queue_client.enqueue_message(u'message1')
+        await queue_client.send_message(u'message1')
 
-        token = queue_client.generate_shared_access_signature(
+        token = generate_queue_sas(
+            queue_client.account_name,
+            queue_client.queue_name,
+            queue_client.credential.account_key,
             policy_id='testid'
         )
 
         # Act
-        service = QueueClient(
+        service = QueueClient.from_queue_url(
             queue_url=queue_client.url,
             credential=token,
         )
@@ -851,14 +788,12 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @record
-    def test_sas_signed_identifier(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_sas_signed_identifier())
-
-    async def _test_get_queue_acl(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_queue_acl(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue_client = await self._create_queue()
+        queue_client = await self._create_queue(qsc)
 
         # Act
         acl = await queue_client.get_queue_access_policy()
@@ -867,14 +802,12 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @record
-    def test_get_queue_acl(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_queue_acl())
-
-    async def _test_get_queue_acl_iter(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_queue_acl_iter(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue_client = await self._create_queue()
+        queue_client = await self._create_queue(qsc)
 
         # Act
         acl = await queue_client.get_queue_access_policy()
@@ -885,14 +818,12 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @record
-    def test_get_queue_acl_iter(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_queue_acl_iter())
-
-    async def _test_get_queue_acl_with_non_existing_queue(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue_client = self._get_queue_reference()
+        queue_client = self._get_queue_reference(qsc)
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -900,31 +831,27 @@ class StorageQueueTestAsync(QueueTestCase):
 
             # Assert
 
-    @record
-    def test_get_queue_acl_with_non_existing_queue(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_queue_acl_with_non_existing_queue())
-
-    async def _test_set_queue_acl(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_acl(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue_client = await self._create_queue()
+        queue_client = await self._create_queue(qsc)
 
         # Act
-        resp = await queue_client.set_queue_access_policy()
+        resp = await queue_client.set_queue_access_policy(signed_identifiers=dict())
 
         # Assert
         self.assertIsNone(resp)
         acl = await queue_client.get_queue_access_policy()
         self.assertIsNotNone(acl)
 
-    @record
-    def test_set_queue_acl(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_acl())
-
-    async def _test_set_queue_acl_with_empty_signed_identifiers(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue_client = await self._create_queue()
+        queue_client = await self._create_queue(qsc)
 
         # Act
         await queue_client.set_queue_access_policy(signed_identifiers={})
@@ -934,17 +861,15 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @record
-    def test_set_queue_acl_with_empty_signed_identifiers(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_acl_with_empty_signed_identifiers())
-
-    async def _test_set_queue_acl_with_empty_signed_identifier(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_acl_with_empty_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue_client = await self._create_queue()
+        queue_client = await self._create_queue(qsc)
 
         # Act
-        await queue_client.set_queue_access_policy(signed_identifiers={'empty': AccessPolicy()})
+        await queue_client.set_queue_access_policy(signed_identifiers={'empty': None})
 
         # Assert
         acl = await queue_client.get_queue_access_policy()
@@ -955,17 +880,15 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertIsNone(acl['empty'].expiry)
         self.assertIsNone(acl['empty'].start)
 
-    @record
-    def test_set_queue_acl_with_empty_signed_identifier(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_acl_with_empty_signed_identifier())
-
-    async def _test_set_queue_acl_with_signed_identifiers(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_client = await self._create_queue()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
 
         # Act
-        access_policy = AccessPolicy(permission=QueuePermissions.READ,
+        access_policy = AccessPolicy(permission=QueueSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=5))
         identifiers = {'testid': access_policy}
@@ -979,14 +902,12 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(len(acl), 1)
         self.assertTrue('testid' in acl)
 
-    @record
-    def test_set_queue_acl_with_signed_identifiers(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_acl_with_signed_identifiers())
-
-    async def _test_set_queue_acl_too_many_ids(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_client = await self._create_queue()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
 
         # Act
         identifiers = dict()
@@ -997,44 +918,38 @@ class StorageQueueTestAsync(QueueTestCase):
         with self.assertRaises(ValueError):
             await queue_client.set_queue_access_policy(identifiers)
 
-    @record
-    def test_set_queue_acl_too_many_ids(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_acl_too_many_ids())
-
-    async def _test_set_queue_acl_with_non_existing_queue(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_client = self._get_queue_reference()
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
-            await queue_client.set_queue_access_policy()
+            await queue_client.set_queue_access_policy(signed_identifiers=dict())
 
-    @record
-    def test_set_queue_acl_with_non_existing_queue(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_queue_acl_with_non_existing_queue())
-
-    async def _test_unicode_create_queue_unicode_name(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_unicode_create_queue_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Action
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         queue_name = u'啊齄丂狛狜'
 
         with self.assertRaises(HttpResponseError):
             # not supported - queue name must be alphanumeric, lowercase
-            client = self.qsc.get_queue_client(queue_name)
+            client = qsc.get_queue_client(queue_name)
             await client.create_queue()
 
             # Asserts
 
-    @record
-    def test_unicode_create_queue_unicode_name(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_unicode_create_queue_unicode_name())
-
-    async def _test_unicode_get_messages_unicode_data(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_unicode_get_messages_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1㚈')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1㚈')
         message = None
         async for m in queue_client.receive_messages():
             message = m
@@ -1044,19 +959,17 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(u'message1㚈', message.content)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(1, message.dequeue_count)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
-    @record
-    def test_unicode_get_messages_unicode_data(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_unicode_get_messages_unicode_data())
-
-    async def _test_unicode_update_message_unicode_data(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_unicode_update_message_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        queue_client = await self._create_queue()
-        await queue_client.enqueue_message(u'message1')
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        await queue_client.send_message(u'message1')
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
@@ -1074,15 +987,24 @@ class StorageQueueTestAsync(QueueTestCase):
         self.assertEqual(u'啊齄丂狛狜', message.content)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(2, message.dequeue_count)
-        self.assertIsInstance(message.insertion_time, datetime)
-        self.assertIsInstance(message.expiration_time, datetime)
-        self.assertIsInstance(message.time_next_visible, datetime)
+        self.assertIsInstance(message.inserted_on, datetime)
+        self.assertIsInstance(message.expires_on, datetime)
+        self.assertIsInstance(message.next_visible_on, datetime)
 
-    @record
-    def test_unicode_update_message_unicode_data(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_unicode_update_message_unicode_data())
-
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
+        transport = AioHttpTransport()
+        prefix = TEST_QUEUE_PREFIX
+        queue_name = self.get_resource_name(prefix)
+        async with QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=storage_account_key, transport=transport) as qsc:
+            await qsc.get_service_properties()
+            assert transport.session is not None
+            async with qsc.get_queue_client(queue_name) as qc:
+                assert transport.session is not None
+            await qsc.get_service_properties()
+            assert transport.session is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

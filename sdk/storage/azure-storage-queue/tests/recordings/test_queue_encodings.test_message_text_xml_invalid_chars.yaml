@@ -13,11 +13,9 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 8b26d686-b575-11e9-8bd2-2816a845e8c6
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 22:33:26 GMT
+      - Wed, 30 Oct 2019 19:51:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
@@ -25,21 +23,19 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:280abd73-2003-00d1-2b82-49d95f000000\nTime:2019-08-02T22:33:27.3078166Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
+        specified is not syntactically valid.\nRequestId:03d4a04b-b003-0056-065b-8fe27a000000\nTime:2019-10-30T19:51:45.0728542Z</Message><LineNumber>2</LineNumber><LinePosition>28</LinePosition><Reason>Error
         parsing Xml content</Reason></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '327'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 02 Aug 2019 22:33:26 GMT
-      Server:
+      date:
+      - Wed, 30 Oct 2019 19:51:44 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
-      x-ms-request-id:
-      - 280abd73-2003-00d1-2b82-49d95f000000
       x-ms-version:
       - '2018-03-28'
     status:

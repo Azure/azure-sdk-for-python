@@ -37,19 +37,11 @@ with open('HISTORY.md') as f:
 
 exclude_packages = [
         'tests',
-        "tests.asynctests",
-        'examples',
+        'stress',
+        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]
-
-if sys.version_info < (3, 5, 3):
-    exclude_packages.extend([
-        '*.aio',
-        '*.aio.*',
-        '*.eventprocessor',
-        '*.eventprocessor.*'
-    ])
 
 setup(
     name=PACKAGE_NAME,
@@ -70,15 +62,18 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'uamqp~=1.2.0',
+        "azure-core<2.0.0,>=1.0.0",
+        "uamqp<2.0,>=1.2.3",
         'azure-common~=1.1',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.5'": ["typing"],
     }
 )

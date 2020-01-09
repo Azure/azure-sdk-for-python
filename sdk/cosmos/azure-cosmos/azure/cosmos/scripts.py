@@ -22,61 +22,69 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, List, Dict, Union, Iterable, Optional
+
 import six
+
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+from ._base import build_options
 from .partition_key import NonePartitionKeyValue
-from ._query_iterable import QueryIterable
-from typing import Any, List, Dict, Union
+
+# pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
-class ScriptType:
+class ScriptType(object):
     StoredProcedure = "sprocs"
     Trigger = "triggers"
     UserDefinedFunction = "udfs"
 
 
-class Scripts:
+class ScriptsProxy(object):
+    """
+    An interface to interact with stored procedures.
+    This class should not be instantiated directly, use :func:`ContainerProxy.scripts` attribute.
+    """
+
     def __init__(self, client_connection, container_link, is_system_key):
         # type: (CosmosClientConnection, str, bool) -> None
         self.client_connection = client_connection
         self.container_link = container_link
         self.is_system_key = is_system_key
 
-    def _get_resource_link(self, script_or_id, type):
+    def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
         if isinstance(script_or_id, six.string_types):
-            return u"{}/{}/{}".format(self.container_link, type, script_or_id)
+            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
-    def list_stored_procedures(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> QueryIterable
-        """ List all stored procedures in the container.
+    def list_stored_procedures(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all stored procedures in the container.
 
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An Iterable of stored procedures (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadStoredProcedures(collection_link=self.container_link, options=feed_options)
+        return self.client_connection.ReadStoredProcedures(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    def query_stored_procedures(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+    def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all stored procedures matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
         :returns: An Iterable of stored procedures (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -84,97 +92,98 @@ class Scripts:
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
-    def get_stored_procedure(self, sproc, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
-        """
-        Get the stored procedure identified by `id`.
+    def get_stored_procedure(self, sproc, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
+        """Get the stored procedure identified by `id`.
 
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved stored procedure.
-        :raise `HTTPFailure`: If the given stored procedure couldn't be retrieved.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReadStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
-    def create_stored_procedure(self, body, request_options=None):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
-        """ Create a stored procedure in the container.
-
-        :param body: A dict-like object representing the sproc to create.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :returns: A dict representing the new stored procedure.
-        :raise `HTTPFailure`: If the given stored procedure couldn't be created.
+    def create_stored_procedure(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Dict[str, Any]
+        """Create a stored procedure in the container.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
+        :param body: A dict-like object representing the sproc to create.
+        :returns: A dict representing the new stored procedure.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.CreateStoredProcedure(
-            collection_link=self.container_link, sproc=body, options=request_options
+            collection_link=self.container_link, sproc=body, options=request_options, **kwargs
         )
 
-    def replace_stored_procedure(self, sproc, body, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
-        """ Replaces the specified stored procedure if it exists in the container.
+    def replace_stored_procedure(self, sproc, body, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
+        """Replaces the specified stored procedure if it exists in the container.
 
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
         :param body: A dict-like object representing the sproc to replace.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the stored procedure after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the stored procedure with given id does not exist.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the stored
+            procedure with given id does not exist.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReplaceStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), sproc=body, options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc=body,
+            options=request_options,
+            **kwargs
         )
 
-    def delete_stored_procedure(self, sproc, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
-        """ Delete the specified stored procedure from the container.
+    def delete_stored_procedure(self, sproc, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> None
+        """Delete the specified stored procedure from the container.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not exist in the container, a `404` error is returned.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The sproc wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The sproc does not exist in the container.
+        :rtype: None
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         self.client_connection.DeleteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
     def execute_stored_procedure(
-        self, sproc, partition_key=None, params=None, enable_script_logging=None, request_options=None
+        self,
+        sproc,  # type: Union[str, Dict[str, Any]]
+        partition_key=None,  # type: Optional[str]
+        params=None,  # type: Optional[List[Any]]
+        enable_script_logging=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (Union[str, Dict[str, Any]], str, List[Any], bool, Dict[str, Any]) -> Any
-        """ execute the specified stored procedure.
+        # type: (...) -> Any
+        """Execute the specified stored procedure.
 
         :param sproc: The ID (name) or dict representing stored procedure to be executed.
-        :param params: List of parameters to be passed to the stored procedure to be executed.
-        :param enable_script_logging: Enables or disables script logging for the current request.
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :returns: result of the executed stored procedure for the given parameters.
-        :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with given id does not exists in the container.
-
+        :param params: List of parameters to be passed to the stored procedure to be executed.
+        :param bool enable_script_logging: Enables or disables script logging for the current request.
+        :returns: Result of the executed stored procedure for the given parameters.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
+            or if the stored procedure with given id does not exists in the container.
+        :rtype: dict[str, Any]
         """
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
                 CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
@@ -188,37 +197,36 @@ class Scripts:
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             params=params,
             options=request_options,
+            **kwargs
         )
 
-    def list_triggers(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> QueryIterable
-        """ List all triggers in the container.
+    def list_triggers(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all triggers in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
         :returns: An Iterable of triggers (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadTriggers(collection_link=self.container_link, options=feed_options)
+        return self.client_connection.ReadTriggers(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    def query_triggers(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+    def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all triggers matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
         :returns: An Iterable of triggers (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -226,110 +234,103 @@ class Scripts:
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
-    def get_trigger(self, trigger, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
-        """
-        Get the trigger identified by `id`.
+    def get_trigger(self, trigger, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
+        """Get the trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved trigger.
-        :raise `HTTPFailure`: If the given trigger couldn't be retrieved.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReadTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def create_trigger(self, body, request_options=None):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
-        """ Create a trigger in the container.
+    def create_trigger(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Dict[str, Any]
+        """Create a trigger in the container.
+
+        To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
 
         :param body: A dict-like object representing the trigger to create.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new trigger.
-        :raise `HTTPFailure`: If the given trigger couldn't be created.
-
-        To replace an existing trigger, use the :func:`Container.scripts.replace_trigger` method.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be created.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.CreateTrigger(
-            collection_link=self.container_link, trigger=body, options=request_options
+            collection_link=self.container_link, trigger=body, options=request_options, **kwargs
         )
 
-    def replace_trigger(self, trigger, body, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
-        """ Replaces the specified tigger if it exists in the container.
+    def replace_trigger(self, trigger, body, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
+        """Replaces the specified tigger if it exists in the container.
 
         :param trigger: The ID (name) or dict representing trigger to be replaced.
         :param body: A dict-like object representing the trigger to replace.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the trigger after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the trigger with given id does not exist.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the trigger with given
+            id does not exist.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReplaceTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), trigger=body, options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
+            trigger=body,
+            options=request_options,
+            **kwargs
         )
 
-    def delete_trigger(self, trigger, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
-        """ Delete the specified trigger from the container.
+    def delete_trigger(self, trigger, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> None
+        """Delete the specified trigger from the container.
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not exist in the container, a `404` error is returned.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The trigger wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The trigger does not exist in the container.
+        :rtype: None
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         self.client_connection.DeleteTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def list_user_defined_functions(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> QueryIterable
-        """ List all user defined functions in the container.
+    def list_user_defined_functions(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """List all user defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
         :returns: An Iterable of user defined functions (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         return self.client_connection.ReadUserDefinedFunctions(
-            collection_link=self.container_link, options=feed_options
+            collection_link=self.container_link, options=feed_options, **kwargs
         )
 
-    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all user defined functions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
         :returns: An Iterable of user defined functions (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -337,75 +338,72 @@ class Scripts:
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
-    def get_user_defined_function(self, udf, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
-        """
-        Get the stored procedure identified by `id`.
+    def get_user_defined_function(self, udf, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
+        """Get the stored procedure identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved user defined function.
-        :raise `HTTPFailure`: If the given user defined function couldn't be retrieved.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be retrieved.
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReadUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
 
-    def create_user_defined_function(self, body, request_options=None):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
-        """ Create a user defined function in the container.
+    def create_user_defined_function(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Dict[str, Any]
+        """Create a user defined function in the container.
+
+        To replace an existing udf, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
 
         :param body: A dict-like object representing the udf to create.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new user defined function.
-        :raise `HTTPFailure`: If the given user defined function couldn't be created.
-
-        To replace an existing udf, use the :func:`Container.scripts.replace_user_defined_function` method.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be created.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.CreateUserDefinedFunction(
-            collection_link=self.container_link, udf=body, options=request_options
+            collection_link=self.container_link, udf=body, options=request_options, **kwargs
         )
 
-    def replace_user_defined_function(self, udf, body, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
-        """ Replaces the specified user defined function if it exists in the container.
+    def replace_user_defined_function(self, udf, body, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
+        """Replaces the specified user defined function if it exists in the container.
 
         :param udf: The ID (name) or dict representing udf to be replaced.
         :param body: A dict-like object representing the udf to replace.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the user defined function after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the user defined function with given id does not exist.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user defined function
+            with the given id does not exist.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReplaceUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), udf=body, options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
+            udf=body,
+            options=request_options,
+            **kwargs
         )
 
-    def delete_user_defined_function(self, udf, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
-        """ Delete the specified user defined function from the container.
+    def delete_user_defined_function(self, udf, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> None
+        """Delete the specified user defined function from the container.
 
         :param udf: The ID (name) or dict representing udf to be deleted.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not exist in the container, a `404` error is returned.
-
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The udf wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The UDF does not exist in the container.
+        :rtype: None
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         self.client_connection.DeleteUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )

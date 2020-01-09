@@ -65,6 +65,15 @@ class TriggerRuntimeState(str, Enum):
     disabled = "Disabled"
 
 
+class EventSubscriptionStatus(str, Enum):
+
+    enabled = "Enabled"
+    provisioning = "Provisioning"
+    deprovisioning = "Deprovisioning"
+    disabled = "Disabled"
+    unknown = "Unknown"
+
+
 class RunQueryFilterOperand(str, Enum):
 
     pipeline_name = "PipelineName"
@@ -77,6 +86,8 @@ class RunQueryFilterOperand(str, Enum):
     activity_type = "ActivityType"
     trigger_name = "TriggerName"
     trigger_run_timestamp = "TriggerRunTimestamp"
+    run_group_id = "RunGroupId"
+    latest_only = "LatestOnly"
 
 
 class RunQueryFilterOperator(str, Enum):
@@ -156,6 +167,12 @@ class RecurrenceFrequency(str, Enum):
     week = "Week"
     month = "Month"
     year = "Year"
+
+
+class GoogleAdWordsAuthenticationType(str, Enum):
+
+    service_authentication = "ServiceAuthentication"
+    user_authentication = "UserAuthentication"
 
 
 class SparkServerType(str, Enum):
@@ -267,6 +284,14 @@ class HttpAuthenticationType(str, Enum):
     client_certificate = "ClientCertificate"
 
 
+class RestServiceAuthenticationType(str, Enum):
+
+    anonymous = "Anonymous"
+    basic = "Basic"
+    aad_service_principal = "AadServicePrincipal"
+    managed_service_identity = "ManagedServiceIdentity"
+
+
 class MongoDbAuthenticationType(str, Enum):
 
     basic = "Basic"
@@ -277,6 +302,15 @@ class ODataAuthenticationType(str, Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
+    windows = "Windows"
+    aad_service_principal = "AadServicePrincipal"
+    managed_service_identity = "ManagedServiceIdentity"
+
+
+class ODataAadServicePrincipalCredentialType(str, Enum):
+
+    service_principal_key = "ServicePrincipalKey"
+    service_principal_cert = "ServicePrincipalCert"
 
 
 class TeradataAuthenticationType(str, Enum):
@@ -296,16 +330,25 @@ class SybaseAuthenticationType(str, Enum):
     windows = "Windows"
 
 
-class DatasetCompressionLevel(str, Enum):
+class DynamicsDeploymentType(str, Enum):
 
-    optimal = "Optimal"
-    fastest = "Fastest"
+    online = "Online"
+    on_premises_with_ifd = "OnPremisesWithIfd"
 
 
-class JsonFormatFilePattern(str, Enum):
+class DynamicsAuthenticationType(str, Enum):
 
-    set_of_objects = "setOfObjects"
-    array_of_objects = "arrayOfObjects"
+    office365 = "Office365"
+    ifd = "Ifd"
+
+
+class AvroCompressionCodec(str, Enum):
+
+    none = "none"
+    deflate = "deflate"
+    snappy = "snappy"
+    xz = "xz"
+    bzip2 = "bzip2"
 
 
 class AzureFunctionActivityMethod(str, Enum):
@@ -327,6 +370,13 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
+class NetezzaPartitionOption(str, Enum):
+
+    none = "None"
+    data_slice = "DataSlice"
+    dynamic_range = "DynamicRange"
+
+
 class CassandraSourceReadConsistencyLevels(str, Enum):
 
     all = "ALL"
@@ -341,20 +391,51 @@ class CassandraSourceReadConsistencyLevels(str, Enum):
     local_serial = "LOCAL_SERIAL"
 
 
+class TeradataPartitionOption(str, Enum):
+
+    none = "None"
+    hash = "Hash"
+    dynamic_range = "DynamicRange"
+
+
+class OraclePartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
     int_enum = "Int"
+    int64 = "Int64"
     decimal_enum = "Decimal"
     guid = "Guid"
     boolean = "Boolean"
     date_enum = "Date"
 
 
+class SapTablePartitionOption(str, Enum):
+
+    none = "None"
+    partition_on_int = "PartitionOnInt"
+    partition_on_calendar_year = "PartitionOnCalendarYear"
+    partition_on_calendar_month = "PartitionOnCalendarMonth"
+    partition_on_calendar_date = "PartitionOnCalendarDate"
+    partition_on_time = "PartitionOnTime"
+
+
 class SalesforceSourceReadBehavior(str, Enum):
 
     query = "Query"
     query_all = "QueryAll"
+
+
+class SsisPackageLocationType(str, Enum):
+
+    ssisdb = "SSISDB"
+    file = "File"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):
@@ -376,23 +457,27 @@ class AzureSearchIndexWriteBehaviorType(str, Enum):
     upload = "Upload"
 
 
-class CopyBehaviorType(str, Enum):
-
-    preserve_hierarchy = "PreserveHierarchy"
-    flatten_hierarchy = "FlattenHierarchy"
-    merge_files = "MergeFiles"
-
-
 class PolybaseSettingsRejectType(str, Enum):
 
     value = "value"
     percentage = "percentage"
 
 
+class JsonWriteFilePattern(str, Enum):
+
+    set_of_objects = "setOfObjects"
+    array_of_objects = "arrayOfObjects"
+
+
 class SapCloudForCustomerSinkWriteBehavior(str, Enum):
 
     insert = "Insert"
     update = "Update"
+
+
+class WebHookActivityMethod(str, Enum):
+
+    post = "POST"
 
 
 class IntegrationRuntimeType(str, Enum):
@@ -432,6 +517,12 @@ class ManagedIntegrationRuntimeNodeStatus(str, Enum):
     available = "Available"
     recycling = "Recycling"
     unavailable = "Unavailable"
+
+
+class IntegrationRuntimeEntityReferenceType(str, Enum):
+
+    integration_runtime_reference = "IntegrationRuntimeReference"
+    linked_service_reference = "LinkedServiceReference"
 
 
 class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):

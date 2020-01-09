@@ -30,6 +30,10 @@ class IntegrationRuntimeSsisProperties(Model):
      a managed dedicated integration runtime.
     :type custom_setup_script_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeCustomSetupScriptProperties
+    :param data_proxy_properties: Data proxy properties for a managed
+     dedicated integration runtime.
+    :type data_proxy_properties:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDataProxyProperties
     :param edition: The edition for the SSIS Integration Runtime. Possible
      values include: 'Standard', 'Enterprise'
     :type edition: str or
@@ -41,6 +45,7 @@ class IntegrationRuntimeSsisProperties(Model):
         'catalog_info': {'key': 'catalogInfo', 'type': 'IntegrationRuntimeSsisCatalogInfo'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
+        'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
         'edition': {'key': 'edition', 'type': 'str'},
     }
 
@@ -50,4 +55,5 @@ class IntegrationRuntimeSsisProperties(Model):
         self.catalog_info = kwargs.get('catalog_info', None)
         self.license_type = kwargs.get('license_type', None)
         self.custom_setup_script_properties = kwargs.get('custom_setup_script_properties', None)
+        self.data_proxy_properties = kwargs.get('data_proxy_properties', None)
         self.edition = kwargs.get('edition', None)

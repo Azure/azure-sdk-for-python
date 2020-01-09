@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
    azure.eventhub.aio
-   azure.eventhub.eventprocessor
 
 Submodules
 ----------
@@ -32,14 +31,6 @@ azure.eventhub.common module
 ----------------------------
 
 .. automodule:: azure.eventhub.common
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.eventhub.configuration module
------------------------------------
-
-.. automodule:: azure.eventhub.configuration
    :members:
    :undoc-members:
    :show-inheritance:

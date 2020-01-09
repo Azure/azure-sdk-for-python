@@ -25,19 +25,22 @@
 # --------------------------------------------------------------------------
 
 import abc
-from typing import (TypeVar, Any, Dict, Optional)
+from typing import TypeVar, Generic
 
 try:
     ABC = abc.ABC
-except AttributeError: # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # type: ignore
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 try:
-    from contextlib import AbstractContextManager  # type: ignore #pylint: disable=unused-import
-except ImportError: # Python <= 3.5
+    from contextlib import (  # pylint: disable=unused-import
+        AbstractContextManager,
+    )  # type: ignore
+except ImportError:  # Python <= 3.5
+
     class AbstractContextManager(object):  # type: ignore
         def __enter__(self):
             """Return `self` upon entering the runtime context."""
@@ -60,19 +63,20 @@ class PipelineContext(dict):
     :param transport: The HTTP transport type.
     :param kwargs: Developer-defined keyword arguments.
     """
-    def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
+
+    def __init__(self, transport, **kwargs):  # pylint: disable=super-init-not-called
         self.transport = transport
         self.options = kwargs
-        self._protected = ['transport', 'options']
+        self._protected = ["transport", "options"]
 
     def __setitem__(self, key, item):
         if key in self._protected:
-            raise ValueError('Context value {} cannot be overwritten.'.format(key))
+            raise ValueError("Context value {} cannot be overwritten.".format(key))
         return super(PipelineContext, self).__setitem__(key, item)
 
     def __delitem__(self, key):
         if key in self._protected:
-            raise ValueError('Context value {} cannot be deleted.'.format(key))
+            raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
     def clear(self):
@@ -93,11 +97,11 @@ class PipelineContext(dict):
         """Removes specified key and returns the value.
         """
         if args and args[0] in self._protected:
-            raise ValueError('Context value {} cannot be popped.'.format(args[0]))
+            raise ValueError("Context value {} cannot be popped.".format(args[0]))
         return super(PipelineContext, self).pop(*args)
 
 
-class PipelineRequest(object):
+class PipelineRequest(Generic[HTTPRequestType]):
     """A pipeline request object.
 
     Container for moving the HttpRequest through the pipeline.
@@ -108,13 +112,14 @@ class PipelineRequest(object):
     :param context: Contains the context - data persisted between pipeline requests.
     :type context: ~azure.core.pipeline.PipelineContext
     """
+
     def __init__(self, http_request, context):
         # type: (HTTPRequestType, PipelineContext) -> None
         self.http_request = http_request
         self.context = context
 
 
-class PipelineResponse(object):
+class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     """A pipeline response object.
 
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
@@ -131,24 +136,21 @@ class PipelineResponse(object):
     :param context: Contains the context - data persisted between pipeline requests.
     :type context: ~azure.core.pipeline.PipelineContext
     """
+
     def __init__(self, http_request, http_response, context):
-        # type: (HTTPRequestType, HTTPResponseType, Optional[Dict[str, Any]]) -> None
+        # type: (HTTPRequestType, HTTPResponseType, PipelineContext) -> None
         self.http_request = http_request
         self.http_response = http_response
         self.context = context
 
 
-from .base import Pipeline #pylint: disable=wrong-import-position
+from ._base import Pipeline  # pylint: disable=wrong-import-position
 
-__all__ = [
-    'Pipeline',
-    'PipelineRequest',
-    'PipelineResponse',
-    'PipelineContext'
-]
+__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext"]
 
 try:
-    from .base_async import AsyncPipeline #pylint: disable=unused-import
-    __all__.append('AsyncPipeline')
+    from ._base_async import AsyncPipeline  # pylint: disable=unused-import
+
+    __all__.append("AsyncPipeline")
 except (SyntaxError, ImportError):
     pass  # Asynchronous pipelines not supported.

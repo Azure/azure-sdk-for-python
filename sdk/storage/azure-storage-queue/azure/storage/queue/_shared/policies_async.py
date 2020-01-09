@@ -54,7 +54,6 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
 
         response = await self.next.send(request)
         await response.http_response.load_body()
-        response.http_response.internal_response.body = response.http_response.body()
 
         will_retry = is_retry(response, request.context.options.get('mode'))
         if not will_retry and download_stream_current is not None:
@@ -127,15 +126,6 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
             response.context['history'] = retry_settings['history']
         response.http_response.location_mode = retry_settings['mode']
         return response
-
-
-class NoRetry(AsyncStorageRetryPolicy):
-
-    def __init__(self):
-        super(NoRetry, self).__init__(retry_total=0)
-
-    def increment(self, *args, **kwargs):  # pylint: disable=unused-argument,arguments-differ
-        return False
 
 
 class ExponentialRetry(AsyncStorageRetryPolicy):
