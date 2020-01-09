@@ -756,6 +756,11 @@ class EncryptionService(Model):
      enabled. There might be some unencrypted blobs which were written after
      this time, as it is just a rough estimate.
     :vartype last_enabled_time: datetime
+    :param key_type: Encryption key type to be used for the encryption
+     service. 'Account' key type implies that an account-scoped encryption key
+     will be used. 'Service' key type implies that a default service key is
+     used. Possible values include: 'Service', 'Account'
+    :type key_type: str or ~azure.mgmt.storage.v2019_06_01.models.KeyType
     """
 
     _validation = {
@@ -765,34 +770,28 @@ class EncryptionService(Model):
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
+        'key_type': {'key': 'keyType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(EncryptionService, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.last_enabled_time = None
+        self.key_type = kwargs.get('key_type', None)
 
 
 class EncryptionServices(Model):
     """A list of services that support encryption.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param blob: The encryption function of the blob storage service.
     :type blob: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
     :param file: The encryption function of the file storage service.
     :type file: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
-    :ivar table: The encryption function of the table storage service.
-    :vartype table: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
-    :ivar queue: The encryption function of the queue storage service.
-    :vartype queue: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
+    :param table: The encryption function of the table storage service.
+    :type table: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
+    :param queue: The encryption function of the queue storage service.
+    :type queue: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
     """
-
-    _validation = {
-        'table': {'readonly': True},
-        'queue': {'readonly': True},
-    }
 
     _attribute_map = {
         'blob': {'key': 'blob', 'type': 'EncryptionService'},
@@ -805,8 +804,8 @@ class EncryptionServices(Model):
         super(EncryptionServices, self).__init__(**kwargs)
         self.blob = kwargs.get('blob', None)
         self.file = kwargs.get('file', None)
-        self.table = None
-        self.queue = None
+        self.table = kwargs.get('table', None)
+        self.queue = kwargs.get('queue', None)
 
 
 class Endpoints(Model):
