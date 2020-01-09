@@ -3,6 +3,13 @@
 Release History
 ===============
 
+7.1.0 (2020-01-09)
+++++++++++++++++++
+
+**Features**
+
+- Model EncryptionService has a new parameter key_type
+
 7.0.0 (2019-12-04)
 ++++++++++++++++++
 
