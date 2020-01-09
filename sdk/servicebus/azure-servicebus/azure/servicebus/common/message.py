@@ -55,7 +55,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
         subject = kwargs.pop('subject', None)
-        # Ideally we would thread through **kwargs but this causes problems as MessageProperties won't absorb spurious args.
+        # Although we might normally thread through **kwargs this causes problems as MessageProperties won't absorb spurious args.
         self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
         self.received_timestamp = None
