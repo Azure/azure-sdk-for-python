@@ -116,6 +116,7 @@ def test_distributed_tracing_policy_badurl(caplog):
 
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
         time.sleep(0.001)
+
         policy.on_request(pipeline_request)
         try:
             raise ValueError("Transport trouble")
