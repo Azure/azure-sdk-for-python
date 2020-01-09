@@ -24,7 +24,6 @@ from setup_parser import get_install_requires
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 PKGS_TXT_FILE = "packages.txt"
-EXCLUDED_PKGS = ['azure-common',]
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # This method identifies latest/ minimal version of dependent packages and installs them from pyPI
@@ -74,8 +73,6 @@ def process_requirement(req, dependency_type):
 
     # find package name and requirement specifier from requires
     pkg_name, spec = parse_req(req)
-    if pkg_name in EXCLUDED_PKGS:
-        return ""
 
     # get available versions on PyPI
     client = PyPIClient()
