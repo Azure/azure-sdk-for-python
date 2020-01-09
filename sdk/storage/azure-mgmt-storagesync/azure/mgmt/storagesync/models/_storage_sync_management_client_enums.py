@@ -9,5 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from enum import Enum
 
+
+class Reason(str, Enum):
+
+    registered = "Registered"
+    unregistered = "Unregistered"
+    warned = "Warned"
+    suspended = "Suspended"
+    deleted = "Deleted"
+
+
+class ChangeDetectionMode(str, Enum):
+
+    default = "Default"
+    recursive = "Recursive"
+
+
+class NameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
