@@ -42,7 +42,7 @@ Interaction with Event Hubs starts with an instance of EventHubConsumerClient or
 
 **Create client from connection string:**
 
-For the Event Hubs client library to interact with an Event Hub, the easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace.
+For the Event Hubs client library to interact with an Event Hub, the easiest means is to use a connection string, which is created automatically when creating an Event Hubs namespace.
 If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
 
 
