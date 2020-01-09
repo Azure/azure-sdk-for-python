@@ -16,6 +16,9 @@ from azure.servicebus.common.message import Message, PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
 
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusSubscriptionPreparer
+
 
 def get_logger(level):
     azure_logger = logging.getLogger("azure")
@@ -33,64 +36,83 @@ def get_logger(level):
 
 _logger = get_logger(logging.DEBUG)
 
-@pytest.mark.liveTest
-def test_subscription_by_subscription_client_conn_str_receive_basic(live_servicebus_config, standard_subscription):
-    topic_name, subscription_name = standard_subscription
-    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=topic_name, debug=False)
-    with topic_client.get_sender() as sender:
-        message = Message(b"Sample topic message")
-        sender.send(message)
+class ServiceBusSubscriptionTests(AzureMgmtTestCase):
+    @pytest.mark.liveTest
+    @ResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    def test_subscription_by_subscription_client_conn_str_receive_basic(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
 
-    sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=False)
-    with sub_client.get_receiver(idle_timeout=5) as receiver:
-        count = 0
-        for message in receiver:
-            count += 1
-            message.complete()
-    assert count == 1
+        topic_client = TopicClient.from_connection_string(servicebus_namespace_connection_string, name=servicebus_topic.name, debug=False)
+        with topic_client.get_sender() as sender:
+            message = Message(b"Sample topic message")
+            sender.send(message)
 
-@pytest.mark.liveTest
-def test_subscription_by_servicebus_client_conn_str_send_basic(live_servicebus_config, standard_subscription):
-    topic_name, subscription_name = standard_subscription
-    client = ServiceBusClient(
-        service_namespace=live_servicebus_config['hostname'],
-        shared_access_key_name=live_servicebus_config['key_name'],
-        shared_access_key_value=live_servicebus_config['access_key'],
-        debug=False)
+        sub_client = SubscriptionClient.from_connection_string(servicebus_namespace_connection_string, servicebus_subscription.name, topic=servicebus_topic.name, debug=False)
+        with sub_client.get_receiver(idle_timeout=5) as receiver:
+            count = 0
+            for message in receiver:
+                count += 1
+                message.complete()
+        assert count == 1
 
-    topic_client = client.get_topic(topic_name)
-    sub_client = client.get_subscription(topic_name, subscription_name)
 
-    with topic_client.get_sender() as sender:
-        message = Message(b"Sample topic message")
-        sender.send(message)
+    @pytest.mark.liveTest
+    @ResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    def test_subscription_by_servicebus_client_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, servicebus_subscription, **kwargs):
 
-    with sub_client.get_receiver(idle_timeout=5) as receiver:
-        count = 0
-        for message in receiver:
-            count += 1
-            message.complete()
-    assert count == 1
+        client = ServiceBusClient(
+            service_namespace=servicebus_namespace.name,
+            shared_access_key_name=servicebus_namespace_key_name,
+            shared_access_key_value=servicebus_namespace_primary_key,
+            debug=False)
 
-@pytest.mark.liveTest
-def test_subscription_by_servicebus_client_list_subscriptions(live_servicebus_config, standard_subscription):
-    topic_name, subscription_name = standard_subscription
-    client = ServiceBusClient(
-        service_namespace=live_servicebus_config['hostname'],
-        shared_access_key_name=live_servicebus_config['key_name'],
-        shared_access_key_value=live_servicebus_config['access_key'],
-        debug=False)
+        topic_client = client.get_topic(servicebus_topic.name)
+        sub_client = client.get_subscription(servicebus_topic.name, servicebus_subscription.name)
 
-    subs = client.list_subscriptions(topic_name)
-    assert len(subs) >= 1
-    assert all(isinstance(s, SubscriptionClient) for s in subs)
-    assert subs[0].name == subscription_name
-    assert subs[0].topic_name == topic_name
+        with topic_client.get_sender() as sender:
+            message = Message(b"Sample topic message")
+            sender.send(message)
 
-@pytest.mark.liveTest
-def test_subscription_by_subscription_client_conn_str_send_fail(live_servicebus_config, standard_subscription):
-    topic_name, subscription_name = standard_subscription
+        with sub_client.get_receiver(idle_timeout=5) as receiver:
+            count = 0
+            for message in receiver:
+                count += 1
+                message.complete()
+        assert count == 1
 
-    sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=False)
-    with pytest.raises(AttributeError):
-        sub_client.get_sender()
+
+    @pytest.mark.liveTest
+    @ResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    def test_subscription_by_servicebus_client_list_subscriptions(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, servicebus_subscription, **kwargs):
+
+        client = ServiceBusClient(
+            service_namespace=servicebus_namespace.name,
+            shared_access_key_name=servicebus_namespace_key_name,
+            shared_access_key_value=servicebus_namespace_primary_key,
+            debug=False)
+
+        subs = client.list_subscriptions(servicebus_topic.name)
+        assert len(subs) >= 1
+        assert all(isinstance(s, SubscriptionClient) for s in subs)
+        assert subs[0].name == servicebus_subscription.name
+        assert subs[0].topic_name == servicebus_topic.name
+
+
+    @pytest.mark.liveTest
+    @ResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    def test_subscription_by_subscription_client_conn_str_send_fail(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
+
+        sub_client = SubscriptionClient.from_connection_string(servicebus_namespace_connection_string, servicebus_subscription.name, topic=servicebus_topic.name, debug=False)
+        with pytest.raises(AttributeError):
+            sub_client.get_sender()
