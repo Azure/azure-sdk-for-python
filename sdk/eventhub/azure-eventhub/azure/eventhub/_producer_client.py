@@ -153,7 +153,7 @@ class EventHubProducerClient(ClientBase):
 
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
@@ -232,7 +232,8 @@ class EventHubProducerClient(ClientBase):
          will assign to all partitions using round-robin.
         :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
-        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
+        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
+         default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:

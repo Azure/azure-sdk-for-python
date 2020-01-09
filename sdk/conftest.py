@@ -23,12 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import pytest
 
 def pytest_configure(config):
     # register an additional marker
     config.addinivalue_line(
         "markers", "live_test_only: mark test to be a live test only"
+    )
+    config.addinivalue_line(
+        "markers", "playback_test_only: mark test to be a playback test only"
     )
 
 def pytest_runtest_setup(item):
@@ -37,3 +41,9 @@ def pytest_runtest_setup(item):
         from devtools_testutils import is_live
         if not is_live():
             pytest.skip("live test only")
+
+    is_playback_test_marked = bool([mark for mark in item.iter_markers(name="playback_test_only")])
+    if is_playback_test_marked:
+        from devtools_testutils import is_live
+        if is_live() and os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
+            pytest.skip("playback test only")

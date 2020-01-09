@@ -4,11 +4,23 @@
 # license information.
 #--------------------------------------------------------------------------
 
+"""
+Examples to show basic use case of python azure-eventhub SDK, including:
+    - Create EventHubProducerClient
+    - Create EventHubConsumerClient
+    - Create EventData
+    - Create EventDataBatch
+    - Send EventDataBatch
+    - Receive EventData
+    - Close EventHubProducerClient
+    - Close EventHubConsumerClient
+"""
+
 import time
 import logging
 
 
-def create_eventhub_producer_client():
+def example_create_eventhub_producer_client():
     # [START create_eventhub_producer_client_from_conn_str_sync]
     import os
     from azure.eventhub import EventHubProducerClient
@@ -16,7 +28,7 @@ def create_eventhub_producer_client():
     eventhub_name = os.environ['EVENT_HUB_NAME']
     producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        eventhub_name=eventhub_name
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
     # [END create_eventhub_producer_client_from_conn_str_sync]
 
@@ -32,14 +44,14 @@ def create_eventhub_producer_client():
     credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
     producer = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
-        eventhub_name=eventhub_name,
+        eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
         credential=credential
     )
     # [END create_eventhub_producer_client_sync]
     return producer
 
 
-def create_eventhub_consumer_client():
+def example_create_eventhub_consumer_client():
     # [START create_eventhub_consumer_client_from_conn_str_sync]
     import os
     from azure.eventhub import EventHubConsumerClient
@@ -48,7 +60,7 @@ def create_eventhub_consumer_client():
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         consumer_group='$Default',
-        eventhub_name=eventhub_name
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
     # [END create_eventhub_consumer_client_from_conn_str_sync]
 
@@ -65,14 +77,15 @@ def create_eventhub_consumer_client():
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
+        consumer_group='$Default',
         credential=credential)
     # [END create_eventhub_consumer_client_sync]
     return consumer
 
 
 def example_eventhub_sync_send_and_receive():
-    producer = create_eventhub_producer_client()
-    consumer = create_eventhub_consumer_client()
+    producer = example_create_eventhub_producer_client()
+    consumer = example_create_eventhub_consumer_client()
     try:
         logger = logging.getLogger("azure.eventhub")
 
@@ -85,7 +98,7 @@ def example_eventhub_sync_send_and_receive():
         # [END create_event_data]
 
         # [START eventhub_producer_client_create_batch_sync]
-        event_data_batch = producer.create_batch(max_size_in_bytes=10000)
+        event_data_batch = producer.create_batch()
         while True:
             try:
                 event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -97,7 +110,7 @@ def example_eventhub_sync_send_and_receive():
 
         # [START eventhub_producer_client_send_sync]
         with producer:
-            event_data_batch = producer.create_batch(max_size_in_bytes=10000)
+            event_data_batch = producer.create_batch()
 
             while True:
                 try:
@@ -125,7 +138,7 @@ def example_eventhub_sync_send_and_receive():
         pass
 
 
-def example_eventhub_producer_ops():
+def example_eventhub_producer_send_and_close():
     # [START eventhub_producer_client_close_sync]
     import os
     from azure.eventhub import EventHubProducerClient, EventData
@@ -135,10 +148,10 @@ def example_eventhub_producer_ops():
 
     producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        eventhub_name=eventhub_name
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
     try:
-        event_data_batch = producer.create_batch(max_size_in_bytes=10000)
+        event_data_batch = producer.create_batch()
 
         while True:
             try:
@@ -155,7 +168,7 @@ def example_eventhub_producer_ops():
     # [END eventhub_producer_client_close_sync]
 
 
-def example_eventhub_consumer_ops():
+def example_eventhub_consumer_receive_and_close():
     # [START eventhub_consumer_client_close_sync]
     import os
     import threading
@@ -167,7 +180,7 @@ def example_eventhub_consumer_ops():
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         consumer_group="$Default",
-        eventhub_name=eventhub_name
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
 
     logger = logging.getLogger("azure.eventhub")
@@ -191,6 +204,6 @@ def example_eventhub_consumer_ops():
 
 
 if __name__ == '__main__':
-    example_eventhub_producer_ops()
-    example_eventhub_consumer_ops()
-    # example_eventhub_sync_send_and_receive()
+    example_eventhub_sync_send_and_receive()
+    # example_eventhub_producer_send_and_close()
+    # example_eventhub_consumer_receive_and_close()

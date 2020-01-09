@@ -43,22 +43,25 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
         if not all(isinstance(x, (dict, TextDocumentInput, DetectLanguageInput)) for x in documents):
             raise TypeError("Mixing string and dictionary/object input unsupported.")
 
-    string_batch = []
+    request_batch = []
     for idx, doc in enumerate(documents):
         if isinstance(doc, six.string_types):
             document = {"id": str(idx), hint: whole_batch_hint, "text": doc}
-            string_batch.append(document)
+            request_batch.append(document)
         if isinstance(doc, dict):
             item_hint = doc.get(hint, None)
             if item_hint is None:
-                doc[hint] = whole_batch_hint
+                doc = {"id": doc.get("id", None), hint: whole_batch_hint, "text": doc.get("text", None)}
+            request_batch.append(doc)
         if isinstance(doc, TextDocumentInput):
             item_hint = doc.language
             if item_hint is None:
-                doc.language = whole_batch_hint
+                doc = TextDocumentInput(id=doc.id, language=whole_batch_hint, text=doc.text)
+            request_batch.append(doc)
         if isinstance(doc, DetectLanguageInput):
             item_hint = doc.country_hint
             if item_hint is None:
-                doc.country_hint = whole_batch_hint
+                doc = DetectLanguageInput(id=doc.id, country_hint=whole_batch_hint, text=doc.text)
+            request_batch.append(doc)
 
-    return string_batch if string_batch else documents
+    return request_batch

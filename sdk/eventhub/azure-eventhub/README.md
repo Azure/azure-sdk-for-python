@@ -13,7 +13,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.0.0b6) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/)
+[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.0.0) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/)
 
 ## Getting started
 
@@ -22,7 +22,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 Install the Azure Event Hubs client library for Python with pip:
 
 ```
-$ pip install --pre azure-eventhub
+$ pip install azure-eventhub
 ```
 
 **Prerequisites**
@@ -38,26 +38,21 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 
 ### Authenticate the client
 
-Interaction with Event Hubs starts with an instance of the EventHubClient class. You need the host name, SAS/AAD credential and event hub name to instantiate the client object.
-
-#### Obtain a connection string
-
-For the Event Hubs client library to interact with an Event Hub, it will need to understand how to connect and authorize with it.
-The easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace.
-If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
-
-#### Create client
-
-There are several ways to instantiate the EventHubClient object and the following code snippets demonstrate two ways:
+Interaction with Event Hubs starts with an instance of EventHubConsumerClient or EventHubProducerClient class. You need either the host name, SAS/AAD credential and event hub name or a connection string to instantiate the client object.
 
 **Create client from connection string:**
 
+For the Event Hubs client library to interact with an Event Hub, the easiest means is to use a connection string, which is created automatically when creating an Event Hubs namespace.
+If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
+
+
 ```python
-from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubConsumerClient, EventHubProducerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
+producer_client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 consumer_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
 
 ```
@@ -85,6 +80,9 @@ consumer_client = EventHubConsumerClient(host, eventhub_name, consumer_group, cr
 [TokenCredential](../../core/azure-core/azure/core/credentials.py)
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
+- When using Azure Active Directory, your principal must be assigned a role which allows access to Event Hubs, such as the
+Azure Event Hubs Data Owner role. For more information about using Azure Active Directory authorization with Event Hubs,
+please refer to [the associated documentation](https://docs.microsoft.com/azure/event-hubs/authorize-access-azure-active-directory).
 
 ## Key concepts
 
@@ -148,7 +146,7 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 
-event_data_batch = client.create_batch(max_size_in_bytes=10000)
+event_data_batch = client.create_batch()
 can_add = True
 while can_add:
     try:
@@ -200,7 +198,7 @@ consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
 async def create_batch(client):
-    event_data_batch = await client.create_batch(max_size_in_bytes=10000)
+    event_data_batch = await client.create_batch()
     can_add = True
     while can_add:
         try:
@@ -284,7 +282,7 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
-container_name = '<<STRING FOR THE BLOB NAME>>'
+container_name = '<<NAME OF THE BLOB CONTAINER>>'
 
 async def on_event(partition_context, event):
     # do something
@@ -347,18 +345,13 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 
 ## Next steps
 
-### Examples
+### More sample code
 
-There are [more samples](./samples) in our repo demonstrating the usage of the library.
-
-- [./samples/sync_samples/send.py](./samples/sync_samples/send.py) - use EventHubProducerClient to publish events
-- [./samples/sync_samples/recv.py](./samples/sync_samples/recv.py) - use EventHubConsumerClient to consume events
-- [./samples/async_samples/send_async.py](./samples/async_samples/send_async.py) - async/await support of a EventHubProducerClient
-- [./samples/async_samples/recv_async.py](./samples/async_samples/recv_async.py) - async/await support of a EventHubConsumerClient
+Please take a look at the [samples](./samples) directory for detailed examples of how to use this library to send and receive events to/from Event Hubs.
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html).
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html).
 
 ### Logging
 

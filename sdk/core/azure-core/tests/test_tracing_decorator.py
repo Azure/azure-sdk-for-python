@@ -75,6 +75,10 @@ class MockClient:
     def check_name_is_different(self):
         time.sleep(0.001)
 
+    @distributed_trace(tracing_attributes={'foo': 'bar'})
+    def tracing_attr(self):
+        time.sleep(0.001)
+
     @distributed_trace
     def raising_exception(self):
         raise ValueError("Something went horribly wrong here")
@@ -92,6 +96,17 @@ def test_get_function_and_class_name():
 
 @pytest.mark.usefixtures("fake_span")
 class TestDecorator(object):
+
+    def test_decorator_tracing_attr(self):
+        with FakeSpan(name="parent") as parent:
+            client = MockClient()
+            client.tracing_attr()
+
+        assert len(parent.children) == 2
+        assert parent.children[0].name == "MockClient.__init__"
+        assert parent.children[1].name == "MockClient.tracing_attr"
+        assert parent.children[1].attributes == {'foo': 'bar'}
+
     def test_decorator_has_different_name(self):
         with FakeSpan(name="parent") as parent:
             client = MockClient()
@@ -112,6 +127,8 @@ class TestDecorator(object):
         assert not parent.children[0].children
         assert parent.children[1].name == "MockClient.get_foo"
         assert not parent.children[1].children
+        assert parent.children[2].name == "MockClient.get_foo"
+        assert not parent.children[2].children
 
     def test_span_merge_span(self):
         with FakeSpan(name="parent") as parent:

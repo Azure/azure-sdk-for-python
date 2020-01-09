@@ -6,9 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending individual events to an Event Hub partition.
-Although this works, sending events in batches will get better performance.
-See 'send_event_data_batch.py' for an example of batching.
+Examples to show sending events with different options to an Event Hub partition.
 """
 
 # pylint: disable=C0111
@@ -17,31 +15,70 @@ import time
 import os
 from azure.eventhub import EventHubProducerClient, EventData
 
-EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+
+CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, eventhub_name=EVENTHUB_NAME)
 
-start_time = time.time()
-with producer:
+def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
-    # The events will be distributed to available partitions via round-robin.
-    event_data_batch = producer.create_batch(max_size_in_bytes=10000)
+    # the events will be distributed to available partitions via round-robin.
+    event_data_batch = producer.create_batch()
+    event_data_batch.add(EventData('Single message'))
+    producer.send_batch(event_data_batch)
 
-    # Specifying partition_id
-    # event_data_batch = producer.create_batch(partition_id='0')
 
-    # Specifying partition_key
-    # event_data_batch = producer.create_batch(partition_key='pkey')
+def send_event_data_batch_with_limited_size(producer):
+    # Without specifying partition_id or partition_key
+    # the events will be distributed to available partitions via round-robin.
+    event_data_batch_with_limited_size = producer.create_batch(max_size_in_bytes=1000)
 
     while True:
         try:
-            event_data_batch.add(EventData('Message inside EventBatchData'))
+            event_data_batch_with_limited_size.add(EventData('Message inside EventBatchData'))
         except ValueError:
             # EventDataBatch object reaches max_size.
-            # New EventDataBatch object can be created here to send more data
+            # New EventDataBatch object can be created here to send more data.
             break
 
+    producer.send_batch(event_data_batch_with_limited_size)
+
+
+def send_event_data_batch_with_partition_key(producer):
+    # Specifying partition_key.
+    event_data_batch_with_partition_key = producer.create_batch(partition_key='pkey')
+    event_data_batch_with_partition_key.add(EventData('Message will be sent to a partition determined by the partition key'))
+
+    producer.send_batch(event_data_batch_with_partition_key)
+
+
+def send_event_data_batch_with_partition_id(producer):
+    # Specifying partition_id.
+    event_data_batch_with_partition_id = producer.create_batch(partition_id='0')
+    event_data_batch_with_partition_id.add(EventData('Message will be sent to target-id partition'))
+
+    producer.send_batch(event_data_batch_with_partition_id)
+
+
+def send_event_data_batch_with_properties(producer):
+    event_data_batch = producer.create_batch()
+    event_data = EventData('Message with properties')
+    event_data.properties = {'prop_key': 'prop_value'}
+    event_data_batch.add(event_data)
     producer.send_batch(event_data_batch)
 
-print("Send messages in {} seconds".format(time.time() - start_time))
+
+producer = EventHubProducerClient.from_connection_string(
+    conn_str=CONNECTION_STR,
+    eventhub_name=EVENTHUB_NAME
+)
+
+start_time = time.time()
+with producer:
+    send_event_data_batch(producer)
+    send_event_data_batch_with_limited_size(producer)
+    send_event_data_batch_with_partition_key(producer)
+    send_event_data_batch_with_partition_id(producer)
+    send_event_data_batch_with_properties(producer)
+
+print("Send messages in {} seconds.".format(time.time() - start_time))

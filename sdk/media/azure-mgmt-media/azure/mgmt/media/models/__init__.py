@@ -36,6 +36,7 @@ try:
     from ._models_py3 import ContentKeyPolicyClearKeyConfiguration
     from ._models_py3 import ContentKeyPolicyConfiguration
     from ._models_py3 import ContentKeyPolicyFairPlayConfiguration
+    from ._models_py3 import ContentKeyPolicyFairPlayOfflineRentalConfiguration
     from ._models_py3 import ContentKeyPolicyOpenRestriction
     from ._models_py3 import ContentKeyPolicyOption
     from ._models_py3 import ContentKeyPolicyPlayReadyConfiguration
@@ -181,6 +182,7 @@ except (SyntaxError, ImportError):
     from ._models import ContentKeyPolicyClearKeyConfiguration
     from ._models import ContentKeyPolicyConfiguration
     from ._models import ContentKeyPolicyFairPlayConfiguration
+    from ._models import ContentKeyPolicyFairPlayOfflineRentalConfiguration
     from ._models import ContentKeyPolicyOpenRestriction
     from ._models import ContentKeyPolicyOption
     from ._models import ContentKeyPolicyPlayReadyConfiguration
@@ -383,6 +385,7 @@ __all__ = [
     'ContentKeyPolicyClearKeyConfiguration',
     'ContentKeyPolicyConfiguration',
     'ContentKeyPolicyFairPlayConfiguration',
+    'ContentKeyPolicyFairPlayOfflineRentalConfiguration',
     'ContentKeyPolicyOpenRestriction',
     'ContentKeyPolicyOption',
     'ContentKeyPolicyPlayReadyConfiguration',
