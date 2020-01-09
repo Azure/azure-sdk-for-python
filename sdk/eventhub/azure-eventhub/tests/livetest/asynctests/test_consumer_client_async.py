@@ -44,7 +44,7 @@ async def test_receive_no_partition_async(connstr_senders):
         assert len(
             [checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number]) > 0
 
-    task.cancel()
+    await task
 
 
 @pytest.mark.liveTest
@@ -67,7 +67,7 @@ async def test_receive_partition_async(connstr_senders):
             client.receive(on_event, partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
         assert on_event.received == 1
-    task.cancel()
+    await task
 
 
 @pytest.mark.liveTest
