@@ -9,5 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.10.0"
+from ._configuration import IotHubClientConfiguration
+from ._iot_hub_client import IotHubClient
+__all__ = ['IotHubClient', 'IotHubClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
 
