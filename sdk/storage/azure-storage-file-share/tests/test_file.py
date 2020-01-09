@@ -497,6 +497,8 @@ class StorageFileTest(FileTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_file_metadata_with_upper_case(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            pytest.skip("")
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         file_client = self._create_file()

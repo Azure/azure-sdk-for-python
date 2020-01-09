@@ -46,10 +46,8 @@ class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
-    def __init__(self, token):
-        self.token = token
-
-    def get_token(self, *args):
+    def __init__(self):
+        self.token = AccessToken("YOU SHALL NOT PASS", 0)
         return self.token
 
 
