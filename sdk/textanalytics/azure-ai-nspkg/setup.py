@@ -27,6 +27,8 @@ PACKAGES = []
 # Do an empty package on Python 3 and not python_requires, since not everybody is ready
 # https://github.com/Azure/azure-sdk-for-python/issues/3447
 # https://github.com/Azure/azure-sdk-for-python/issues/3481
+if sys.version_info[0] < 3:
+    PACKAGES = ['azure.ai']
 
 setup(
     name='azure-ai-nspkg',
@@ -50,7 +52,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=['azure.ai'],
+    packages=PACKAGES,
     install_requires=[
         'azure-nspkg>=3.0.0',
     ]
