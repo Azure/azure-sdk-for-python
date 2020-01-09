@@ -86,6 +86,42 @@ def test_lease_with_path_prefix(storage_clm_with_prefix):
     
     path_parts = storage_clm_with_prefix._get_lease_blob_path("0").split('/')
     assert "testprefix" in path_parts[0]
+    assert "$default" not in path_parts[0]
+    assert len(path_parts) == 1
+    assert path_parts[-1][-1] == "0"
+
+
+@pytest.mark.liveTest
+def test_lease_with_path_prefix_and_consumer_dir(storage_clm_with_prefix_and_consumer_dir):
+    """
+    Test creating a lease with a blob prefix
+    """
+    loop = asyncio.get_event_loop()
+    local_checkpoint = loop.run_until_complete(storage_clm_with_prefix_and_consumer_dir.create_checkpoint_if_not_exists_async("1"))
+    assert local_checkpoint.partition_id == "1"
+    assert local_checkpoint.offset == "-1"
+    lease = loop.run_until_complete(storage_clm_with_prefix_and_consumer_dir.get_lease_async("1"))
+    
+    path_parts = storage_clm_with_prefix_and_consumer_dir._get_lease_blob_path("0").split('/')
+    assert "testprefix" in path_parts[0]
+    assert "$default" in path_parts[0]
+    assert len(path_parts) == 2
+    assert path_parts[-1] == "0"
+
+
+@pytest.mark.liveTest
+def test_lease_with_consumer_dir(storage_clm_with_consumer_dir):
+    """
+    Test creating a lease with a blob prefix
+    """
+    loop = asyncio.get_event_loop()
+    local_checkpoint = loop.run_until_complete(storage_clm_with_consumer_dir.create_checkpoint_if_not_exists_async("1"))
+    assert local_checkpoint.partition_id == "1"
+    assert local_checkpoint.offset == "-1"
+    lease = loop.run_until_complete(storage_clm_with_consumer_dir.get_lease_async("1"))
+    
+    path_parts = storage_clm_with_consumer_dir._get_lease_blob_path("0").split('/')
+    assert "testprefix" not in path_parts[0]
     assert "$default" in path_parts[0]
     assert len(path_parts) == 2
     assert path_parts[-1] == "0"

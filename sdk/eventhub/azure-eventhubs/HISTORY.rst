@@ -3,8 +3,20 @@
 Release History
 ===============
 
+1.3.4 (TBD)
+-----------
+
+**Features**
+
+- Add new parameter to AzureStorageCheckpointLeaseManager, use_consumer_group_as_directory, to control consumer_group pathing in concert with storage_blob_prefix.
+
+**BugFixes**
+
+- Ensures storage_blob_prefix within AzureStorageCheckpointLeaseManager is actually applied.
+
+
 1.3.3 (2019-12-4)
-------------------
+-----------------
 
 **Features**
 

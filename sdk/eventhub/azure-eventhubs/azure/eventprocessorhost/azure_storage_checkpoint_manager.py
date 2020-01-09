@@ -37,6 +37,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
      will be used.
     :param str lease_container_name: The name of the container that will be used to store
      leases. If it does not already exist it will be created. Default value is 'eph-leases'.
+    :param str storage_blob_prefix: A string to prefix the lease storage path, default empty.
     :param int lease_renew_interval: The interval in seconds at which EPH will attempt to
      renew the lease of a particular partition. Default value is 10.
     :param int lease_duration: The duration in seconds of a lease on a partition.
@@ -49,11 +50,14 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     :param str connection_string: If specified, this will override all other endpoint parameters.
      See http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
      for the connection string format.
+    :param bool use_consumer_group_as_directory: If true, uses the consumer group when constructing
+     the lease storage path, as such:  <consumer_group>/<partition_id>. Default False.
     """
 
     def __init__(self, storage_account_name=None, storage_account_key=None, lease_container_name="eph-leases",
                  storage_blob_prefix=None, lease_renew_interval=10, lease_duration=30,
-                 sas_token=None, endpoint_suffix="core.windows.net", connection_string=None):
+                 sas_token=None, endpoint_suffix="core.windows.net", connection_string=None,
+                 use_consumer_group_as_directory=False):
         AbstractCheckpointManager.__init__(self)
         AbstractLeaseManager.__init__(self, lease_renew_interval, lease_duration)
         self.storage_account_name = storage_account_name
@@ -63,6 +67,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         self.connection_string = connection_string
         self.lease_container_name = lease_container_name
         self.storage_blob_prefix = storage_blob_prefix
+        self.use_consumer_group_as_directory = use_consumer_group_as_directory
         self.storage_client = None
         self.consumer_group_directory = None
         self.host = None
@@ -97,7 +102,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
                                                endpoint_suffix=self.endpoint_suffix,
                                                connection_string=self.connection_string,
                                                request_session=self.request_session)
-        self.consumer_group_directory = self.storage_blob_prefix + self.host.eh_config.consumer_group
+        self.consumer_group_directory = self.host.eh_config.consumer_group if self.use_consumer_group_as_directory else ""
 
     # Checkpoint Managment Methods
 
@@ -494,6 +499,9 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         # that behavior, so we will fix it in all cases in the Track2 library
         # and simply enable the proper full path here if the optional parameter
         # is present.
+        path = partition_id
+        if self.consumer_group_directory:
+            path = str.format("{}/{}", self.consumer_group_directory, partition_id)
         if self.storage_blob_prefix:
-            return str.format("{}/{}", self.consumer_group_directory, partition_id)
-        return partition_id
+            path = "{}{}".format(self.storage_blob_prefix, path)
+        return path

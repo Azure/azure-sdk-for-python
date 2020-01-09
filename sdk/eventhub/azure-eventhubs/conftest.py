@@ -218,35 +218,55 @@ def connstr_senders(connection_str):
     client.stop()
 
 
-@pytest.fixture()
-def storage_clm_with_prefix(eph):
+def _storage_clm(eph, use_storage_blob_prefix=False, use_consumer_group_as_directory=False):
     try:
         container = str(uuid.uuid4())
         storage_clm = AzureStorageCheckpointLeaseManager(
             os.environ['AZURE_STORAGE_ACCOUNT'],
             os.environ['AZURE_STORAGE_ACCESS_KEY'],
             container,
-            storage_blob_prefix="testprefix" + str(uuid.uuid4()))
+            storage_blob_prefix="testprefix" + str(uuid.uuid4()) if use_storage_blob_prefix else None,
+            use_consumer_group_as_directory=use_consumer_group_as_directory)
     except KeyError:
         pytest.skip("Live Storage configuration not found.")
+    return (storage_clm, container)
+
+
+@pytest.fixture()
+def storage_clm_with_prefix(eph):
+    storage_clm, container = _storage_clm(eph, True)
     try:
         storage_clm.initialize(eph)
         storage_clm.storage_client.create_container(container)
         yield storage_clm
     finally:
-        storage_clm.storage_client.delete_container(container)
+        storage_clm.storage_client.delete_container(container) 
+
+@pytest.fixture()
+def storage_clm_with_prefix_and_consumer_dir(eph):
+    storage_clm, container = _storage_clm(eph, True, True)
+    try:
+        storage_clm.initialize(eph)
+        storage_clm.storage_client.create_container(container)
+        yield storage_clm
+    finally:
+        storage_clm.storage_client.delete_container(container)    
+
+
+@pytest.fixture()
+def storage_clm_with_consumer_dir(eph):
+    storage_clm, container = _storage_clm(eph, False, True)
+    try:
+        storage_clm.initialize(eph)
+        storage_clm.storage_client.create_container(container)
+        yield storage_clm
+    finally:
+        storage_clm.storage_client.delete_container(container)  
 
 
 @pytest.fixture()
 def storage_clm(eph):
-    try:
-        container = str(uuid.uuid4())
-        storage_clm = AzureStorageCheckpointLeaseManager(
-            os.environ['AZURE_STORAGE_ACCOUNT'],
-            os.environ['AZURE_STORAGE_ACCESS_KEY'],
-            container)
-    except KeyError:
-        pytest.skip("Live Storage configuration not found.")
+    storage_clm, container = _storage_clm(eph)
     try:
         storage_clm.initialize(eph)
         storage_clm.storage_client.create_container(container)
