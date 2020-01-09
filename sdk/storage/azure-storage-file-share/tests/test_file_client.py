@@ -39,7 +39,6 @@ class StorageFileClientTest(FileTestCase):
         self.account_name = storage_account.name
         self.account_key = storage_account_key
         self.sas_token = self.generate_sas_token()
-        self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, service_type, protocol='https'):
@@ -89,8 +88,9 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES:
             # Act
             # token credential is not available for FileService
+            token_credential = self.generate_oauth_token()
             with self.assertRaises(ValueError):
-                service_type(self.get_file_url(storage_account.name), credential=self.token_credential,
+                service_type(self.get_file_url(storage_account.name), credential=token_credential,
                              share_name='foo', directory_path='bar', file_path='baz')
 
     @GlobalStorageAccountPreparer()
