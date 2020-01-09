@@ -16,7 +16,7 @@ from typing import (
 )  # pylint: disable=unused-import
 
 from ._common import EventData
-from ._client_base import ClientBase
+from ._client_base import ClientBase, _parse_conn_str, _generate_sas_token, EventHubSharedKeyCredential
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
@@ -208,6 +208,21 @@ class EventHubConsumerClient(ClientBase):
             conn_str, consumer_group=consumer_group, **kwargs
         )
         return cls(**constructor_args)
+
+    @classmethod
+    def from_iothub_connection_string(cls, iothub_connection_string, consumer_group, **kwargs):
+        host, policy, key, entity = _parse_conn_str(iothub_connection_string, kwargs)
+        iothub_name = host.split('.')[0]
+        username = "{}@sas.root.{}".format(policy, iothub_name)
+        password = _generate_sas_token(host, policy, key)
+        credential = EventHubSharedKeyCredential(username, password)
+        return cls(
+            fully_qualified_namespace=host,
+            eventhub_name="message/events",
+            consumer_group=consumer_group,
+            credential=credential,
+            **kwargs
+        )
 
     def receive(self, on_event, **kwargs):
         #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
