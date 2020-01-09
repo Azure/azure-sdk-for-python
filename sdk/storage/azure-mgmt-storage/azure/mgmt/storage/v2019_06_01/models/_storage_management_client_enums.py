@@ -51,6 +51,12 @@ class Reason(str, Enum):
     already_exists = "AlreadyExists"
 
 
+class KeyType(str, Enum):
+
+    service = "Service"
+    account = "Account"
+
+
 class KeySource(str, Enum):
 
     microsoft_storage = "Microsoft.Storage"
