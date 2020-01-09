@@ -38,7 +38,7 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 
 ### Authenticate the client
 
-Interaction with Event Hubs starts with an instance of EventHubConsumerClient or EventHubProducerClient class. You need either the host name, SAS/AAD credential and event hub name to instantiate the client object or a connection string that consists of them.
+Interaction with Event Hubs starts with an instance of EventHubConsumerClient or EventHubProducerClient class. You need either the host name, SAS/AAD credential and event hub name or a connection string to instantiate the client object.
 
 **Create client from connection string:**
 
