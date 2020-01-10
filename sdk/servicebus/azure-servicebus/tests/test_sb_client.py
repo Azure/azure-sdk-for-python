@@ -88,8 +88,8 @@ def test_sb_client_queue_conflict_not_fail_on_exist(live_servicebus_config, stan
     with pytest.raises(AzureConflictHttpError):
         client.create_queue(standard_queue, fail_on_exist=True)
 
-    resuslt = client.create_queue(standard_queue, fail_on_exist=False)
-    assert resuslt is False
+    result = client.create_queue(standard_queue, fail_on_exist=False)
+    assert result is False
 
 @pytest.mark.liveTest
 def test_sb_client_topic_conflict_not_fail_on_exist(live_servicebus_config, standard_topic):
@@ -115,10 +115,11 @@ def test_sb_client_subscription_conflict_not_fail_on_exist(live_servicebus_confi
         shared_access_key_value=live_servicebus_config['access_key'],
         debug=False)
 
+    topic_name, subscription_name = standard_subscription
     with pytest.raises(AzureConflictHttpError):
-        client.create_subscription(standard_subscription, fail_on_exist=True)
+        client.create_subscription(topic_name, subscription_name, fail_on_exist=True)
 
-    result = client.create_subscription(standard_subscription, fail_on_exist=False)
+    result = client.create_subscription(topic_name, subscription_name, fail_on_exist=False)
     assert result is False
 
 @pytest.mark.liveTest
