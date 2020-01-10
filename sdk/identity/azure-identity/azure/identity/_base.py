@@ -23,7 +23,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Mapping
+    from typing import Any, Optional, Union
 
 
 class ClientSecretCredentialBase(object):
@@ -46,20 +46,23 @@ class ClientSecretCredentialBase(object):
 class CertificateCredentialBase(ABC):
     """Sans I/O base for certificate credentials"""
 
-    def __init__(self, tenant_id, client_id, certificate_path, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, str, str, **Any) -> None
+    def __init__(self, tenant_id, client_id, certificate_path, password=None, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, str, str, Optional[Union[str, bytes]], **Any) -> None
         if not certificate_path:
             raise ValueError(
-                "certificate_path must be the path to a PEM file containing an "
-                "x509 certificate and its private key, not protected with a password"
+                "'certificate_path' must be the path to a PEM file containing an"
+                "x509 certificate and its private key"
             )
 
         super(CertificateCredentialBase, self).__init__()
 
+        if isinstance(password, six.text_type):
+            password = password.encode(encoding="utf-8")
+
         with open(certificate_path, "rb") as f:
             pem_bytes = f.read()
 
-        private_key = serialization.load_pem_private_key(pem_bytes, password=None, backend=default_backend())
+        private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())
 
