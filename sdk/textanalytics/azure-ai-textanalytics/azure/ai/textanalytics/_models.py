@@ -385,14 +385,16 @@ class BatchDocumentErrorException(HttpResponseError):
     :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`,
     to print only successful results you can do the following:
 
-    .. code-block:: python
+    .. admonition:: Example:
 
-        response = client.detect_languages(documents)
-        for result in response:
-            try:
-                print(result.primary_language.name)
-            except BatchDocumentErrorException:
-                pass
+        .. code-block:: python
+
+            response = client.detect_languages(documents)
+            for result in response:
+                try:
+                    print(result.primary_language.name)
+                except BatchDocumentErrorException:
+                    pass
 
     :param str error_message: The error message including the document id and error code found
         on the DocumentError.
