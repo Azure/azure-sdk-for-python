@@ -378,12 +378,12 @@ class TextDocumentStatistics(DictMixin):
 
 class BatchDocumentErrorException(HttpResponseError):
     """Raised if a property not found on a :class:`DocumentError` is accessed.
-    When iterating over the batched results, used to indicate that a document error
-    was encountered.
+    Used to indicate that a DocumentError was encountered where a result object
+    was expected in the batched response.
 
     For example, if you have the response from
-    :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`, for
-    only printing successful results you can do the following:
+    :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`,
+    to print only successful results you can do the following:
 
     .. code-block:: python
 
@@ -394,7 +394,8 @@ class BatchDocumentErrorException(HttpResponseError):
             except BatchDocumentErrorException:
                 pass
 
-    :param str error_message: The error message including the document id and error code.
+    :param str error_message: The error message including the document id and error code found
+        on the DocumentError.
     """
     def __init__(self, error_message):
         super(BatchDocumentErrorException, self).__init__(message=error_message)
