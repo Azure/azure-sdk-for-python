@@ -12,6 +12,7 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     DetectLanguageInput,
     TextDocumentInput,
+    BatchDocumentErrorException
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -729,3 +730,18 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, response_hook=callback)
         response = await text_analytics.analyze_sentiment(docs, language="en", response_hook=callback_2)
         response = await text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_batch_document_error_exception_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": ""},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        async with text_analytics:
+            response = await text_analytics.analyze_sentiment(docs)
+        with self.assertRaises(BatchDocumentErrorException):
+            for doc in response:
+                sentiment = doc.sentiment

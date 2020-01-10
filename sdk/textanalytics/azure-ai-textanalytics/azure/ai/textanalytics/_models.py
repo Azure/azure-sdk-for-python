@@ -382,8 +382,8 @@ class BatchDocumentErrorException(HttpResponseError):
     was encountered.
 
     For example, if you have the response from
-    :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`,
-    to only print successful results you can do the following:
+    :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`, for
+    only printing successful results you can do the following:
 
     .. code-block:: python
 
@@ -418,11 +418,12 @@ class DocumentError(DictMixin):
 
     def __getattr__(self, attr):
         if attr not in ["id", "error", "is_error"]:
-            raise BatchDocumentErrorException("The batched result has a DocumentError with the following details:\n"
-                                              "Id: {}\nError: {} - {}\nResolve the error or filter for only successful "
-                                              "results using the is_error property.".
-                                              format(self.id, self.error["inner_error"]["code"],
-                                                     self.error["inner_error"]["message"]))
+            raise BatchDocumentErrorException(
+                "The batched result has a DocumentError with the following details. "
+                "Resolve the error or filter for only successful results using the is_error property.\n"
+                "Id: {}\nError: {} - {}\n".
+                format(self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
+            )
 
     @classmethod
     def _from_generated(cls, doc_err):

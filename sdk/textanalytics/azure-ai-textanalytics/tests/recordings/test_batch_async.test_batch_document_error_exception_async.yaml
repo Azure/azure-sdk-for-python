@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "", "language": "en"}, {"id": "3", "text": "The restaurant
+      had really good food.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '202'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.0124609963968396},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.0124609963968396},"offset":0,"length":22}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"offset":0,"length":36}]}],"errors":[{"id":"2","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 74370799-ddd4-4d02-8cfe-1970c2bcd95d
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
+      date: Fri, 10 Jan 2020 22:34:57 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: ab5782f8-2f49-4b9c-ab67-c20f476273e1
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '72'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+version: 1

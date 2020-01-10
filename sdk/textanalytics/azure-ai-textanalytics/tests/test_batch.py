@@ -9,7 +9,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    BatchDocumentErrorException
 )
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 
@@ -713,3 +714,16 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
         response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback_2)
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_batch_document_error_exception(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": ""},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.analyze_sentiment(docs)
+        with self.assertRaises(BatchDocumentErrorException):
+            for doc in response:
+                sentiment = doc.sentiment
