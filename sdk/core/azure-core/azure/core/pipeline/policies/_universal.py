@@ -181,7 +181,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
     def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Optional[str], Dict) -> None
+        # type: (Optional[str], **Any) -> None
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
         application_id = kwargs.pop('user_agent', None)
