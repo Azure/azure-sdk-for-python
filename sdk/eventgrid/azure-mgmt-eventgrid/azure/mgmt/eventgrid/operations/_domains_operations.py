@@ -27,7 +27,7 @@ class DomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-01-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-04-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class DomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-01-01-preview"
+        self.api_version = "2020-04-01-preview"
 
         self.config = config
 
@@ -50,7 +50,7 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -165,9 +165,9 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_info: Domain information
+        :param domain_info: Domain information.
         :type domain_info: ~azure.mgmt.eventgrid.models.Domain
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -256,7 +256,7 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -352,7 +352,7 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
         :param tags: Tags of the domains resource
         :type tags: dict[str, str]
@@ -581,7 +581,7 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -645,9 +645,9 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param key_name: Key name to regenerate key1 or key2
+        :param key_name: Key name to regenerate key1 or key2.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
