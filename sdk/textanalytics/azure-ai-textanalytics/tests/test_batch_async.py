@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import pytest
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -729,3 +729,23 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs, response_hook=callback)
         response = await text_analytics.analyze_sentiment(docs, language="en", response_hook=callback_2)
         response = await text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_rotate_subscription_key_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = await text_analytics.analyze_sentiment(docs)
+        self.assertIsNotNone(response)
+
+        text_analytics.credential.set_subscription_key("xxx")  # Make authentication fail
+        with self.assertRaises(ClientAuthenticationError):
+            response = await text_analytics.analyze_sentiment(docs)
+
+        text_analytics.credential.set_subscription_key(text_analytics_account_key)  # Authenticate successfully again
+        response = await text_analytics.analyze_sentiment(docs)
+        self.assertIsNotNone(response)

@@ -85,6 +85,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
+        self.credential = self.credential_policy
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
 

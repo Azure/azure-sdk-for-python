@@ -29,15 +29,15 @@ class TextAnalyticsClientBase(object):
         self._pipeline = self._create_pipeline(credential, **kwargs)
 
     def _create_pipeline(self, credential, **kwargs):
-        credential_policy = None
+        self.credential_policy = None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if hasattr(credential, "get_token"):
-            credential_policy = BearerTokenCredentialPolicy(
+            self.credential_policy = BearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
         elif isinstance(credential, six.string_types):
-            credential_policy = CognitiveServicesCredentialPolicy(credential)
+            self.credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -56,7 +56,7 @@ class TextAnalyticsClientBase(object):
             config.proxy_policy,
             config.redirect_policy,
             config.retry_policy,
-            credential_policy,
+            self.credential_policy,
             config.logging_policy,
             TextAnalyticsResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),

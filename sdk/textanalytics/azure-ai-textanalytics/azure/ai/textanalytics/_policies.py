@@ -14,6 +14,9 @@ class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
         self.cognitiveservices_key = cognitiveservices_key
         super(CognitiveServicesCredentialPolicy, self).__init__()
 
+    def set_subscription_key(self, key):
+        self.cognitiveservices_key = key
+
     def on_request(self, request):
         request.http_request.headers[
             "Ocp-Apim-Subscription-Key"
