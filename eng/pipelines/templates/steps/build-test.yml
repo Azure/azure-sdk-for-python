@@ -61,6 +61,8 @@ steps:
       if ($targetDir) {$targetDir = "${{ parameters.ServiceDirectory }}"} else {$targetDir = "$(Build.SourcesDirectory)/sdk"}
 
       $logs = Get-ChildItem -Recurse -Path $targetDir | Where-Object { $_.FullName -like $whl_filter -or $_.FullName -like $sdist_filter }
+
+      Write-Host $logs
       $logs | % {
         $source = $_.FullName
         $target = $source
