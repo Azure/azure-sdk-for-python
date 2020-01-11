@@ -50,7 +50,27 @@ steps:
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
-  
+
+  - pwsh: |
+      $targetDir = "${{ parameters.ServiceDirectory }}"
+      $whl_filter = "*[/\].tox[/\]whl[/\]log[/\]*"
+      $sdist_filter = "*[/\].tox[/\]sdist[/\]log[/\]*"
+      $destination = "$(Build.SourcesDirectory)/_logs"
+      New-Item -ItemType Directory -Force -Path $destination
+      
+      if ($targetDir) {$targetDir = "${{ parameters.ServiceDirectory }}"} else {$targetDir = "$(Build.SourcesDirectory)/sdk"}
+
+      Get-ChildItem -Path $targetDir | Where-Object { $_.Name -match $whl_filter or $_Name -match $sdist_filter } | Copy-Item -Destination $destination
+    displayName: 'Collect Tox Logs'
+    condition: always()
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    displayName: 'Publish Tox Log Artifacts'
+    inputs:
+      artifactName: 'logs'
+      pathtoPublish: '$(Build.SourcesDirectory)/_logs'
+
   - template: publish-coverage.yml
     parameters: 
       RunCoverage: ${{ parameters.RunCoverage }}

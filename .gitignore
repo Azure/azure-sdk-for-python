@@ -36,6 +36,7 @@ pylint-*.out.txt
 coverage-*.xml
 stderr.txt
 stdout.txt
+_logs/
 
 # tox environment folders
 .tox/
