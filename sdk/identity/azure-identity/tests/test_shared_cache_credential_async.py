@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -48,6 +48,22 @@ async def test_context_manager():
 
     assert transport.__aenter__.call_count == 1
     assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager_no_cache():
+    """the credential shouldn't open/close sessions when instantiated in an environment with no cache"""
+
+    transport = AsyncMockTransport()
+    with patch.dict("azure.identity._internal.shared_token_cache.os.environ", {}, clear=True):
+        # clearing the environment ensures the credential won't try to load a cache
+        credential = SharedTokenCacheCredential(transport=transport)
+
+    async with credential:
+        assert transport.__aenter__.call_count == 0
+
+    assert transport.__aenter__.call_count == 0
+    assert transport.__aexit__.call_count == 0
 
 
 @pytest.mark.asyncio

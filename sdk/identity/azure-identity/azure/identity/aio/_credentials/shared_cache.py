@@ -26,13 +26,15 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
     """
 
     async def __aenter__(self):
-        await self._client.__aenter__()
+        if self._client:
+            await self._client.__aenter__()
         return self
 
     async def close(self):
         """Close the credential's transport session."""
 
-        await self._client.__aexit__()
+        if self._client:
+            await self._client.__aexit__()
 
     @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
