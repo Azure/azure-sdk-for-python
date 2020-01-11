@@ -7,6 +7,7 @@
 import pytest
 import asyncio
 import time
+import uuid
 
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient
@@ -18,7 +19,6 @@ from azure.eventhub._client_base import _Address
 
 
 TEST_NAMESPACE = "test_namespace"
-TEST_EVENTHUB = "test_eventhub"
 TEST_CONSUMER_GROUP = "test_consumer_group"
 TEST_OWNER = "test_owner_id"
 
@@ -31,7 +31,7 @@ async def event_handler(partition_context, event):
 async def test_loadbalancer_balance():
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -114,7 +114,7 @@ async def test_loadbalancer_balance():
 @pytest.mark.asyncio
 async def test_loadbalancer_list_ownership_error():
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -178,7 +178,7 @@ async def test_loadbalancer_list_ownership_error():
 async def test_partition_processor():
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -263,7 +263,7 @@ async def test_partition_processor():
 async def test_partition_processor_process_events_error():
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -334,7 +334,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
         partition_close_handler.reason = reason
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -396,7 +396,7 @@ async def test_partition_processor_process_error_close_error():
         raise RuntimeError("close error")
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -452,7 +452,7 @@ async def test_partition_processor_process_error_close_error():
 @pytest.mark.asyncio
 async def test_ownership_manager_release_partition():
     class MockEventHubClient(object):
-        eventhub_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -552,7 +552,7 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         }
     }
     class MockEventHubClient(object):
-        eventhub_name = TEST_EVENTHUB
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
@@ -625,7 +625,7 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         }
     }
     class MockEventHubClient(object):
-        eventhub_name = TEST_EVENTHUB
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
@@ -645,7 +645,7 @@ def test_balance_ownership(ownerships, partitions, expected_result):
 async def test_partition_processor_process_update_checkpoint_error():
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name"
+        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)

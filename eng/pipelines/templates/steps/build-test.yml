@@ -59,7 +59,7 @@ steps:
       New-Item -ItemType Directory -Force -Path $destination
       
       Write-Host $targetDir
-      if (!$targetDir) {$targetDir = "$(Build.SourcesDirectory)/sdk" }
+      if ($targetDir) {$targetDir = "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"} else {$targetDir = "$(Build.SourcesDirectory)/sdk"}
       Write-Host $targetDir
 
       $logs = Get-ChildItem -Recurse -Path $targetDir | Where-Object { $_.FullName -like $whl_filter -or $_.FullName -like $sdist_filter }
@@ -86,8 +86,6 @@ steps:
         $fullDestinationName = Join-Path -Path $($destination) -ChildPath $($array -join '_')
         Write-Host $fullDestinationName
         Copy-Item -Force -Path $source -Destination $fullDestinationName
-      }
-
     displayName: 'Collect Tox Logs'
     condition: always()
 

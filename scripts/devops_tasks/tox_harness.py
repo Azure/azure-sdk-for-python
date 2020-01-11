@@ -59,7 +59,7 @@ class Worker(Thread):
 
 
 def in_ci():
-    return True #os.getenv("TF_BUILD", False)
+    return os.getenv("TF_BUILD", False)
 
 
 class ThreadPool:
@@ -132,20 +132,6 @@ def collect_tox_coverage_files(targeted_packages):
         dest = os.path.join(root_dir, ".coverage")
 
         shutil.move(source, dest)
-
-# def collect_tox_logs(targeted_packages):
-#     root_log_dir = os.path.join(root_dir, "_logs/")
-
-#     # generate coverage files
-#     for package_dir in [package for package in targeted_packages]:
-#         logdirs = [os.path.join(package_dir, ".tox", env) for env in CI_LOGGING_COLLECTION_ENVS]
-#         collection_dir = os.path.join(root_log_dir, package_dir)
-
-#         for logdir in logdirs:
-#             logging.info("Moving logdir {} to collection dir {}".format(logdir, collection_dir))
-#             if os.path.exists(logdir):
-#                 shutil.copytree(logdir, collection_dir)
-
 
 def individual_workload(tox_command_tuple, workload_results):
     pkg = os.path.basename(tox_command_tuple[1])
@@ -314,7 +300,3 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
-
-    # if in_ci():
-    #     collect_tox_logs(targeted_packages)
-
