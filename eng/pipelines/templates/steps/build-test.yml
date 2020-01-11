@@ -60,7 +60,29 @@ steps:
       
       if ($targetDir) {$targetDir = "${{ parameters.ServiceDirectory }}"} else {$targetDir = "$(Build.SourcesDirectory)/sdk"}
 
-      Get-ChildItem -Path $targetDir | Where-Object { $_.Name -match $whl_filter or $_Name -match $sdist_filter } | Copy-Item -Destination $destination
+      $logs = Get-ChildItem -Recurse -Path $targetDir | Where-Object { $_.FullName -like $whl_filter -or $_.FullName -like $sdist_filter }
+      $logs | % {
+        $source = $_.FullName
+        $target = $source
+        $array = @()
+
+        # build up from the leaf to 5 paths up. Given the predictable structure of the .tox directories
+        # this is a fairly safe assumption
+        for ($i=0; $i -le 4; $i++) {
+            # get the value
+            $array += Split-Path -Leaf -Path $target
+
+            # split it so we can get another
+            $target = Split-Path -Path $target
+        }
+
+        # reverse the array
+        [array]::Reverse($array)
+
+        $fullDestinationName = Join-Path -Path $($destination) -ChildPath $($array -join '_')
+        Copy-Item -Force -Path $source -Destination $fullDestinationName
+      }
+
     displayName: 'Collect Tox Logs'
     condition: always()
 
