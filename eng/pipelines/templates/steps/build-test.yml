@@ -86,6 +86,7 @@ steps:
         $fullDestinationName = Join-Path -Path $($destination) -ChildPath $($array -join '_')
         Write-Host $fullDestinationName
         Copy-Item -Force -Path $source -Destination $fullDestinationName
+      }
     displayName: 'Collect Tox Logs'
     condition: always()
 
