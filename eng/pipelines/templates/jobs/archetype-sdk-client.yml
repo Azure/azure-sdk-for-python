@@ -124,11 +124,6 @@ jobs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
 
-          - template: ../steps/set-dev-build.yml
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
   - job: 'RunMyPy'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
     displayName: 'Run MyPy'

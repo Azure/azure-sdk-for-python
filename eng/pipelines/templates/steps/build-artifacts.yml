@@ -40,11 +40,6 @@ steps:
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
-  - template: ../steps/set-dev-build.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
@@ -63,6 +58,18 @@ steps:
         "${{ parameters.BuildTargetingString }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
+
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+  - task: PythonScript@0
+    displayName: 'Generate Dev Build Packages'
+    condition: Succeeded()
+    inputs:
+      scriptPath: 'scripts/devops_tasks/build_packages.py'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
   - ${{ parameters.BeforePublishSteps }}
 
