@@ -36,14 +36,17 @@ class EventHubConsumerClient(ClientBase):
     The main goal of `EventHubConsumerClient` is to receive events from all partitions of an EventHub with
     load-balancing and checkpointing.
 
-    When multiple `EventHubConsumerClient` operate within one or more processes or machines targeting the same
-    checkpointing location, they will balance automatically.
+    When multiple `EventHubConsumerClient` of the same event hub and same consumer group operate within one or more
+    processes or machines targeting the same checkpointing location, they will balance the number of partitions each
+    `EventHubConsumerClient` processes.
     To enable load-balancing and persisted checkpoints, checkpoint_store must be set when creating the
     `EventHubConsumerClient`.
     If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
     An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
-    and specify the partition_id. Load-balancing won't work in single-partition receiving mode.
+    and specify the partition_id.
+    Load-balancing won't work in single-partition mode. But users can still save checkpoints if the checkpoint_store
+    is set.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -65,9 +68,9 @@ class EventHubConsumerClient(ClientBase):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
-    :keyword float idle_timeout: Timeout in seconds, after which the underlying connection will close
-     if there is no further activity. By default the value is None, meaning that the service determines when to
-     close an idle connection.
+    :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
+     if there is no further activity. By default the value is None, meaning that this client doesn't close but the service
+     determines when to close an idle connection.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -177,9 +180,9 @@ class EventHubConsumerClient(ClientBase):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
-        :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
-         if there is no further activity. By default the value is None, meaning that the service determines when to
-         close an idle connection.
+        :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
+         if there is no furthur activity. By default the value is None, meaning that this client doesn't close but the service
+         determines when to close an idle connection.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
@@ -235,8 +238,9 @@ class EventHubConsumerClient(ClientBase):
         :keyword starting_position: Start receiving from this event position
          if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
          a dict with partition ID as the key and position as the value for individual partitions, or a single
-         value for all partitions. The value type can be str, int, datetime.datetime. Also supported are the
+         value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
+         Default value is "@latest".
         :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
