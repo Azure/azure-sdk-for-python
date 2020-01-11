@@ -334,7 +334,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
         partition_close_handler.reason = reason
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
+        eventhub_name = "test_eh_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -396,7 +396,7 @@ async def test_partition_processor_process_error_close_error():
         raise RuntimeError("close error")
 
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
+        eventhub_name = "test_eh_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -452,7 +452,7 @@ async def test_partition_processor_process_error_close_error():
 @pytest.mark.asyncio
 async def test_ownership_manager_release_partition():
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
+        eventhub_name = "test_eh_name_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
@@ -552,7 +552,7 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         }
     }
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
+        eventhub_name = "test_eventhub_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
@@ -625,7 +625,7 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         }
     }
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_name_{}".format(str(uuid.uuid4()))
+        eventhub_name = "test_eventhub_{}".format(str(uuid.uuid4()))
 
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
