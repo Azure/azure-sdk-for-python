@@ -23,16 +23,10 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import collections
 import logging
 import os
 import sys
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 # module under test
 import azure.core.settings as m
@@ -172,41 +166,6 @@ class TestConverters(object):
     def test_convert_logging_bad(self):
         with pytest.raises(ValueError):
             m.convert_logging("junk")
-
-    def test_convert_implementation(self):
-        # Mostly it's here to be sure if a new plugin is added, someone check the tests
-        assert len(m._tracing_implementation_dict) == 2
-
-        with mock.patch.dict('azure.core.settings._tracing_implementation_dict', opencensus=lambda: None):
-            assert m.convert_tracing_impl(None) is None
-            assert m.convert_tracing_impl("opencensus") is None
-
-        opencensus_span = mock.Mock()
-        with mock.patch.dict('azure.core.settings._tracing_implementation_dict', opencensus=lambda: opencensus_span):
-            assert m.convert_tracing_impl(None) is opencensus_span
-            assert m.convert_tracing_impl("opencensus") is opencensus_span
-
-        opentelemetry_span = mock.Mock()
-        with mock.patch.dict('azure.core.settings._tracing_implementation_dict', opentelemetry= lambda: opentelemetry_span):
-            assert m.convert_tracing_impl("opentelemetry") is opentelemetry_span
-            # Take this opportunity to test case insensitive
-            assert m.convert_tracing_impl("OPENTELEMETRY") is opentelemetry_span
-            # 2.7 and unicode string should work
-            assert m.convert_tracing_impl(u"opentelemetry") is opentelemetry_span
-
-        with pytest.raises(ValueError):
-            assert m.convert_tracing_impl("does not exist!!")
-
-    def test_tracing_impl_loader(self):
-        mod = collections.namedtuple('mod', ['OpenCensusSpan'])
-        opencensus_span = mock.Mock()
-        with mock.patch.dict('sys.modules', {'azure.core.tracing.ext.opencensus_span': mod(opencensus_span)}):
-            assert m._get_opencensus_span() is opencensus_span
-
-        mod = collections.namedtuple('mod', ['OpenTelemetrySpan'])
-        opentelemetry_span = mock.Mock()
-        with mock.patch.dict('sys.modules', {'azure.core.tracing.ext.opentelemetry_span': mod(opentelemetry_span)}):
-            assert m._get_opentelemetry_span() is opentelemetry_span
 
 
 _standard_settings = ["log_level", "tracing_enabled"]
