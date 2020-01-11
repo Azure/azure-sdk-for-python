@@ -30,7 +30,6 @@ from collections import namedtuple
 from enum import Enum
 import logging
 import os
-import sys
 import six
 from azure.core.tracing import AbstractSpan
 
@@ -121,26 +120,27 @@ def convert_logging(value):
     return level
 
 
-def get_opencensus_span():
+def _get_opencensus_span():
     # type: () -> Optional[Type[AbstractSpan]]
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
-
         return OpenCensusSpan  # type: ignore
     except ImportError:
         return None
 
-
-def get_opencensus_span_if_opencensus_is_imported():
+def _get_opentelemetry_span():
     # type: () -> Optional[Type[AbstractSpan]]
-    if "opencensus" not in sys.modules:
+    """Returns the OpenTelemetrySpan if opentelemetry is installed else returns None"""
+    try:
+        from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan  # pylint:disable=redefined-outer-name
+        return OpenTelemetrySpan  # type: ignore
+    except ImportError:
         return None
-    return get_opencensus_span()
-
 
 _tracing_implementation_dict = {
-    "opencensus": get_opencensus_span
+    "opencensus": _get_opencensus_span,
+    "opentelemetry": _get_opentelemetry_span,
 }  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
 
 
@@ -152,6 +152,7 @@ def convert_tracing_impl(value):
     understands the following strings, ignoring case:
 
     * "opencensus"
+    * "opentelemetry"
 
     :param value: the value to convert
     :type value: string
@@ -160,7 +161,7 @@ def convert_tracing_impl(value):
 
     """
     if value is None:
-        return get_opencensus_span_if_opencensus_is_imported()
+        value = 'opencensus'
 
     if not isinstance(value, six.string_types):
         return value
