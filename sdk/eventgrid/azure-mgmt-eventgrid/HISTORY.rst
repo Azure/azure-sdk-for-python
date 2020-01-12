@@ -3,6 +3,17 @@
 Release History
 ===============
 
+3.0.0rc3 (2020-01-12)
++++++++++++++++++++++
+
+**Features**
+
+- Model Domain has a new parameter allow_traffic_from_all_ips
+- Model Domain has a new parameter inbound_ip_rules
+- Model Topic has a new parameter allow_traffic_from_all_ips
+- Model Topic has a new parameter inbound_ip_rules
+- Model TopicTypeInfo has a new parameter source_resource_format
+
 3.0.0rc2 (2019-11-11)
 +++++++++++++++++++++
 
