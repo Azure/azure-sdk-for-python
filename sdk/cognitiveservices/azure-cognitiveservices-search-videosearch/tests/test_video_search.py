@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.cognitiveservices.search.videosearch import VideoSearchAPI
+from azure.cognitiveservices.search.videosearch import VideoSearchClient
 from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
@@ -45,6 +45,6 @@ class VideoSearchTest(ReplayableTest):
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
-        video_search_api = VideoSearchAPI(credentials)
+        video_search_api = VideoSearchClient(credentials)
 
         # FIXME

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.cognitiveservices.search.entitysearch import EntitySearchAPI
+from azure.cognitiveservices.search.entitysearch import EntitySearchClient
 from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
@@ -48,7 +48,7 @@ class EntitySearchTest(ReplayableTest):
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
-        entity_search_api = EntitySearchAPI(credentials)
+        entity_search_api = EntitySearchClient(credentials)
         response = entity_search_api.entities.search(query=query, market=market)
 
         assert response is not None
