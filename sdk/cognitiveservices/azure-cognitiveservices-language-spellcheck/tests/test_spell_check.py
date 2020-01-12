@@ -45,7 +45,7 @@ class SpellCheckTest(ReplayableTest):
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
-        text_analytics = SpellCheckClient(credentials=credentials)
+        text_analytics = SpellCheckClient(credentials=credentials, endpoint=None)
         response = text_analytics.spell_checker(
             "cognituve services"
         )
