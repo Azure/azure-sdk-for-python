@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import unittest
+
 from azure.cognitiveservices.search.videosearch import VideoSearchClient
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -42,6 +44,7 @@ class VideoSearchTest(ReplayableTest):
             return fake_settings, None
 
     def test_search(self):
+        raise unittest.SkipTest("Skipping test_search")
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )

@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import unittest
+
 from azure.cognitiveservices.search.entitysearch import EntitySearchClient
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -42,6 +44,7 @@ class EntitySearchTest(ReplayableTest):
             return fake_settings, None
 
     def test_search(self):
+        raise unittest.SkipTest("Skipping test_search")
         query = 'seahawks'
         market = 'en-us'
 
