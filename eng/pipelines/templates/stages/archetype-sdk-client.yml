@@ -1,6 +1,7 @@
 parameters:
   Artifacts: []
   ServiceDirectory: not-specified
+  ToxEnvParallel: '--tenvparallel'
   
 stages:
   - stage: Build
@@ -17,3 +18,4 @@ stages:
         Artifacts: ${{parameters.Artifacts}}
         ArtifactName: packages
         DocArtifact: documentation
+        ToxEnvParallel: ${{parameters.ToxEnvParallel}}
