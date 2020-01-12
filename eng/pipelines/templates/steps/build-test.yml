@@ -53,8 +53,6 @@ steps:
 
   - pwsh: |
       $targetDir = "${{ parameters.ServiceDirectory }}"
-      $whl_filter = "*[/\].tox[/\]whl[/\]log[/\]*"
-      $sdist_filter = "*[/\].tox[/\]sdist[/\]log[/\]*"
       $destination = "$(Build.SourcesDirectory)/_logs"
       New-Item -ItemType Directory -Force -Path $destination
       
@@ -62,7 +60,7 @@ steps:
       if ($targetDir) {$targetDir = "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"} else {$targetDir = "$(Build.SourcesDirectory)/sdk"}
       Write-Host $targetDir
 
-      $logs = Get-ChildItem -Recurse -Path $targetDir | Where-Object { $_.FullName -like $whl_filter -or $_.FullName -like $sdist_filter }
+      $logs = Get-ChildItem -Recurse -Include "*.log" -Path $targetDir 
 
       Write-Host $logs
       $logs | % {
