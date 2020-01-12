@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .video_search_api import VideoSearchAPI
-from .version import VERSION
+from ._configuration import VideoSearchClientConfiguration
+from ._video_search_client import VideoSearchClient
+__all__ = ['VideoSearchClient', 'VideoSearchClientConfiguration']
 
-__all__ = ['VideoSearchAPI']
+from .version import VERSION
 
 __version__ = VERSION
 
