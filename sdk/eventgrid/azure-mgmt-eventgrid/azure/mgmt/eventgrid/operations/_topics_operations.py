@@ -27,7 +27,7 @@ class TopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-01-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-04-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class TopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-01-01-preview"
+        self.api_version = "2020-04-01-preview"
 
         self.config = config
 
@@ -50,7 +50,7 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         :type topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -164,9 +164,9 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         :type topic_name: str
-        :param topic_info: Topic information
+        :param topic_info: Topic information.
         :type topic_info: ~azure.mgmt.eventgrid.models.Topic
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -255,7 +255,7 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         :type topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -351,9 +351,9 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         :type topic_name: str
-        :param tags: Tags of the resource
+        :param tags: Tags of the resource.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -580,7 +580,7 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         :type topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -644,7 +644,7 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         :type topic_name: str
         :param key_name: Key name to regenerate key1 or key2
         :type key_name: str
@@ -716,11 +716,11 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param provider_namespace: Namespace of the provider of the topic
+        :param provider_namespace: Namespace of the provider of the topic.
         :type provider_namespace: str
-        :param resource_type_name: Name of the topic type
+        :param resource_type_name: Name of the topic type.
         :type resource_type_name: str
-        :param resource_name: Name of the topic
+        :param resource_name: Name of the topic.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

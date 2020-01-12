@@ -205,7 +205,7 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
@@ -240,15 +240,15 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
-    :param location: Required. Location of the resource
+    :param location: Required. Location of the resource.
     :type location: str
-    :param tags: Tags of the resource
+    :param tags: Tags of the resource.
     :type tags: dict[str, str]
     """
 
@@ -281,15 +281,15 @@ class Domain(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
-    :param location: Required. Location of the resource
+    :param location: Required. Location of the resource.
     :type location: str
-    :param tags: Tags of the resource
+    :param tags: Tags of the resource.
     :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the domain. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
@@ -307,8 +307,15 @@ class Domain(TrackedResource):
      which specified the info about mapping event payload.
     :type input_schema_mapping:
      ~azure.mgmt.eventgrid.models.InputSchemaMapping
-    :ivar metric_resource_id: Metric resource id for the domain.
-    :vartype metric_resource_id: str
+    :param metric_resource_id: Metric resource id for the domain.
+    :type metric_resource_id: str
+    :param allow_traffic_from_all_ips: This determines if IP filtering rules
+     ought to be evaluated or not. By default it will not evaluate and will
+     allow traffic from all IPs.
+    :type allow_traffic_from_all_ips: bool
+    :param inbound_ip_rules: This determines the IP filtering rules that ought
+     be applied when events are received on this domain.
+    :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     """
 
     _validation = {
@@ -318,7 +325,6 @@ class Domain(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
-        'metric_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -332,6 +338,8 @@ class Domain(TrackedResource):
         'input_schema': {'key': 'properties.inputSchema', 'type': 'str'},
         'input_schema_mapping': {'key': 'properties.inputSchemaMapping', 'type': 'InputSchemaMapping'},
         'metric_resource_id': {'key': 'properties.metricResourceId', 'type': 'str'},
+        'allow_traffic_from_all_ips': {'key': 'properties.allowTrafficFromAllIPs', 'type': 'bool'},
+        'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
     }
 
     def __init__(self, **kwargs):
@@ -340,7 +348,9 @@ class Domain(TrackedResource):
         self.endpoint = None
         self.input_schema = kwargs.get('input_schema', "EventGridSchema")
         self.input_schema_mapping = kwargs.get('input_schema_mapping', None)
-        self.metric_resource_id = None
+        self.metric_resource_id = kwargs.get('metric_resource_id', None)
+        self.allow_traffic_from_all_ips = kwargs.get('allow_traffic_from_all_ips', None)
+        self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
 
 
 class DomainRegenerateKeyRequest(Model):
@@ -348,7 +358,7 @@ class DomainRegenerateKeyRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. Key name to regenerate key1 or key2
+    :param key_name: Required. Key name to regenerate key1 or key2.
     :type key_name: str
     """
 
@@ -391,7 +401,7 @@ class DomainTopic(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
@@ -471,7 +481,7 @@ class EventSubscription(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
@@ -658,7 +668,7 @@ class EventType(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
@@ -724,6 +734,27 @@ class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination)
         super(HybridConnectionEventSubscriptionDestination, self).__init__(**kwargs)
         self.resource_id = kwargs.get('resource_id', None)
         self.endpoint_type = 'HybridConnection'
+
+
+class InboundIpRule(Model):
+    """InboundIpRule.
+
+    :param ip_mask: IP Address in CIDR notation e.g., 10.0.0.0/8.
+    :type ip_mask: str
+    :param action: Action to perform based on the match or no match of the
+     IpMask. Possible values include: 'Allow'
+    :type action: str or ~azure.mgmt.eventgrid.models.IpActionType
+    """
+
+    _attribute_map = {
+        'ip_mask': {'key': 'ipMask', 'type': 'str'},
+        'action': {'key': 'action', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(InboundIpRule, self).__init__(**kwargs)
+        self.ip_mask = kwargs.get('ip_mask', None)
+        self.action = kwargs.get('action', None)
 
 
 class InputSchemaMapping(Model):
@@ -1397,15 +1428,15 @@ class Topic(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
-    :param location: Required. Location of the resource
+    :param location: Required. Location of the resource.
     :type location: str
-    :param tags: Tags of the resource
+    :param tags: Tags of the resource.
     :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the topic. Possible values
      include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Canceled',
@@ -1425,8 +1456,15 @@ class Topic(TrackedResource):
      schema.
     :type input_schema_mapping:
      ~azure.mgmt.eventgrid.models.InputSchemaMapping
-    :ivar metric_resource_id: Metric resource id for the topic.
-    :vartype metric_resource_id: str
+    :param metric_resource_id: Metric resource id for the topic.
+    :type metric_resource_id: str
+    :param allow_traffic_from_all_ips: This determines if IP filtering rules
+     ought to be evaluated or not. By default it will not evaluate and will
+     allow traffic from all IPs.
+    :type allow_traffic_from_all_ips: bool
+    :param inbound_ip_rules: This determines the IP filtering rules that ought
+     to be applied when events are received on this topic.
+    :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     """
 
     _validation = {
@@ -1436,7 +1474,6 @@ class Topic(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
-        'metric_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1450,6 +1487,8 @@ class Topic(TrackedResource):
         'input_schema': {'key': 'properties.inputSchema', 'type': 'str'},
         'input_schema_mapping': {'key': 'properties.inputSchemaMapping', 'type': 'InputSchemaMapping'},
         'metric_resource_id': {'key': 'properties.metricResourceId', 'type': 'str'},
+        'allow_traffic_from_all_ips': {'key': 'properties.allowTrafficFromAllIPs', 'type': 'bool'},
+        'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
     }
 
     def __init__(self, **kwargs):
@@ -1458,7 +1497,9 @@ class Topic(TrackedResource):
         self.endpoint = None
         self.input_schema = kwargs.get('input_schema', "EventGridSchema")
         self.input_schema_mapping = kwargs.get('input_schema_mapping', None)
-        self.metric_resource_id = None
+        self.metric_resource_id = kwargs.get('metric_resource_id', None)
+        self.allow_traffic_from_all_ips = kwargs.get('allow_traffic_from_all_ips', None)
+        self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
 
 
 class TopicRegenerateKeyRequest(Model):
@@ -1509,7 +1550,7 @@ class TopicTypeInfo(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
@@ -1533,6 +1574,8 @@ class TopicTypeInfo(Resource):
     :param supported_locations: List of locations supported by this topic
      type.
     :type supported_locations: list[str]
+    :param source_resource_format: Source resource format.
+    :type source_resource_format: str
     """
 
     _validation = {
@@ -1551,6 +1594,7 @@ class TopicTypeInfo(Resource):
         'resource_region_type': {'key': 'properties.resourceRegionType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'supported_locations': {'key': 'properties.supportedLocations', 'type': '[str]'},
+        'source_resource_format': {'key': 'properties.sourceResourceFormat', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1561,12 +1605,13 @@ class TopicTypeInfo(Resource):
         self.resource_region_type = kwargs.get('resource_region_type', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.supported_locations = kwargs.get('supported_locations', None)
+        self.source_resource_format = kwargs.get('source_resource_format', None)
 
 
 class TopicUpdateParameters(Model):
     """Properties of the Topic update.
 
-    :param tags: Tags of the resource
+    :param tags: Tags of the resource.
     :type tags: dict[str, str]
     """
 
