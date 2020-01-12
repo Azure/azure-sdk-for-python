@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import unittest
+
 from azure.cognitiveservices.language.spellcheck import SpellCheckClient
 from msrest.authentication import CognitiveServicesCredentials
 
