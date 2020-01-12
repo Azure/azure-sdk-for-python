@@ -75,8 +75,8 @@ class EventHubConsumerClient(ClientBaseAsync):
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
-     if there is no further activity. By default the value is None, meaning that this client doesn't close but the service
-     determines when to close an idle connection.
+     if there is no further activity. By default the value is None, meaning that this client doesn't close but the
+     service determines when to close an idle connection.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -200,8 +200,8 @@ class EventHubConsumerClient(ClientBaseAsync):
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
-         if there is no further activity. By default the value is None, meaning that this client doesn't close but the service
-         determines when to close an idle connection.
+         if there is no further activity. By default the value is None, meaning that this client doesn't close but the
+         service determines when to close an idle connection.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
