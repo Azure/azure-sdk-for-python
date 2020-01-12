@@ -59,8 +59,10 @@ steps:
       Write-Host $targetDir
 
       $logs = Get-ChildItem -Recurse -Include "*.log" -Path $targetDir 
-
       Write-Host $logs
+
+      Get-ChildItem -Recurse -Path "$(Build.SourcesDirectory)/sdk/eventhub/azure-eventhub/.tox/"
+
       $logs | % {
         $source = $_.FullName
         $target = $source
