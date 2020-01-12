@@ -509,11 +509,13 @@ async def test_ownership_manager_release_partition():
     ]
 )
 def test_balance_ownership_on_init(ownerships, partitions, expected_result):
+    e_name = "test_eventhub_{}".format(str(uuid.uuid4()))
+
     ownership_ref = {
         'ownership_active0': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "0",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_0",
             "last_modified_time": time.time()
@@ -521,7 +523,7 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         'ownership_active1': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
             "last_modified_time": time.time()
@@ -529,7 +531,7 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         'ownership_self_owned': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": TEST_OWNER,
             "last_modified_time": time.time()
@@ -537,7 +539,7 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         'ownership_expired': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "2",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
             "last_modified_time": time.time() - 100000
@@ -545,14 +547,14 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         'ownership_released': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "3",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "",
             "last_modified_time": time.time()
         }
     }
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_{}".format(str(uuid.uuid4()))
+        eventhub_name = e_name
 
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
@@ -582,11 +584,12 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
     ]
 )
 def test_balance_ownership(ownerships, partitions, expected_result):
+    e_name = "test_eventhub_{}".format(str(uuid.uuid4()))
     ownership_ref = {
         'ownership_active0': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "0",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_0",
             "last_modified_time": time.time()
@@ -594,7 +597,7 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         'ownership_active1': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
             "last_modified_time": time.time()
@@ -602,7 +605,7 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         'ownership_self_owned': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": TEST_OWNER,
             "last_modified_time": time.time()
@@ -610,7 +613,7 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         'ownership_expired': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "2",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
             "last_modified_time": time.time() - 100000
@@ -618,14 +621,14 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         'ownership_released': {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "3",
-            "eventhub_name": TEST_EVENTHUB,
+            "eventhub_name": e_name,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "",
             "last_modified_time": time.time()
         }
     }
     class MockEventHubClient(object):
-        eventhub_name = "test_eventhub_{}".format(str(uuid.uuid4()))
+        eventhub_name = e_name
 
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
