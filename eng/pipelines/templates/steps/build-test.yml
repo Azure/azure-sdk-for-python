@@ -52,12 +52,10 @@ steps:
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
 
   - pwsh: |
-      $targetDir = "${{ parameters.ServiceDirectory }}"
+      $targetDir = "$(Build.SourcesDirectory)/sdk/"
       $destination = "$(Build.SourcesDirectory)/_logs"
       New-Item -ItemType Directory -Force -Path $destination
-      
-      Write-Host $targetDir
-      if ($targetDir) {$targetDir = "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"} else {$targetDir = "$(Build.SourcesDirectory)/sdk"}
+            
       Write-Host $targetDir
 
       $logs = Get-ChildItem -Recurse -Include "*.log" -Path $targetDir 
@@ -92,7 +90,7 @@ steps:
     condition: always()
     displayName: 'Publish Tox Log Artifacts'
     inputs:
-      artifactName: 'logs'
+      artifactName: 'TestLogs_$(OSName)_$(PythonVersion)'
       pathtoPublish: '$(Build.SourcesDirectory)/_logs'
 
   - template: publish-coverage.yml
