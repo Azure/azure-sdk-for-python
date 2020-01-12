@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._news_operations import NewsOperations
+from ._spell_check_client_operations import SpellCheckClientOperationsMixin
 
 __all__ = [
-    'NewsOperations',
+    'SpellCheckClientOperationsMixin',
 ]
