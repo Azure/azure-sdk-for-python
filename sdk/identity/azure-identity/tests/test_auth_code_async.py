@@ -13,7 +13,7 @@ from azure.identity.aio import AuthorizationCodeCredential
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport, wrap_in_future
+from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
 
 
 @pytest.mark.asyncio
@@ -30,6 +30,32 @@ async def test_policies_configurable():
     await credential.get_token("scope")
 
     assert policy.on_request.called
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+    )
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+    )
+
+    async with credential:
+        assert transport.__aenter__.call_count == 1
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio
