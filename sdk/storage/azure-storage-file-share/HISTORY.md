@@ -4,8 +4,8 @@
 
 **New features**
 - Added support for the 2019-07-07 service version.
-- Added support for file leases. Including adding both sync and async `ShareFileLeaseClient`, accepting leaseIds for operations that support leases.
-- Added `failed_handles_count` to `close_handle` and `close_all_handles` returned dict to allow users to access number of failed handles.
+- `ShareFileLeaseClient` was introduced to both sync and async versions of the SDK, which allows users to perform operations on file leases.
+- `failed_handles_count` info was included in `close_handle` and `close_all_handles` result.
 - Added support for obtaining premium file properties in `list_shares` and `get_share_properties`.
 - Added support for additional `start_copy_from_url` parameters - `file_permission_copy_mode`, `file_permission`, `file_permission_key`, `copy_file_smb_info`.
 
