@@ -41,7 +41,7 @@ stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: eventhub
-    ToxEnvParallel: 'explode'
+    ToxEnvParallel: '--'
     Artifacts:
     - name: azure_eventhub
       safeName: azureeventhub
