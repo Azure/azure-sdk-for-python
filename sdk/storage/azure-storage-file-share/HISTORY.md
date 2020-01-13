@@ -1,6 +1,16 @@
 # Release History
 
-## 12.0.1 (Unreleased)
+## 12.1.0
+
+**New features**
+- Added support for the 2019-07-07 service version.
+- `ShareFileLeaseClient` was introduced to both sync and async versions of the SDK, which allows users to perform operations on file leases.
+- `failed_handles_count` info was included in `close_handle` and `close_all_handles` result.
+- Added support for obtaining premium file properties in `list_shares` and `get_share_properties`.
+- Added support for additional `start_copy_from_url` parameters - `file_permission_copy_mode`, `file_permission`, `file_permission_key`, `copy_file_smb_info`.
+
+**Fixes and improvements**
+- Fixed a bug: `clear_range` API was not working.
 
 ## 12.0.0
 
