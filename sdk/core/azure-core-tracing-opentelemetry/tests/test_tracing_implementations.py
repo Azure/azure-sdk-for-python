@@ -55,8 +55,11 @@ class TestOpentelemetryWrapper:
     def test_start_finish(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
             wrapped_class = OpenTelemetrySpan()
+            assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is None
             wrapped_class.start()
+            assert wrapped_class.span_instance.start_time is not None
+            assert wrapped_class.span_instance.end_time is None
             wrapped_class.finish()
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is not None
