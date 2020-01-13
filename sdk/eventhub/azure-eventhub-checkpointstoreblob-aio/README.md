@@ -74,7 +74,7 @@ storage_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
 container_name = '<< STORAGE CONTAINER NAME>>'
 
 async def on_event(partition_context, event):
-    # do something
+    # Put your code here.
     await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def main():
@@ -89,10 +89,8 @@ async def main():
         checkpoint_store=checkpoint_store,
     )
 
-    try:
+    async with client:
         await client.receive(on_event)
-    except KeyboardInterrupt:
-        await client.close()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
