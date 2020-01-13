@@ -6,6 +6,8 @@
 ([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
 - Async credentials are async context managers and have an async `close` method
 ([#9090](https://github.com/Azure/azure-sdk-for-python/pull/9090))
+- `CertificateCredential` supports password-protected private keys
+([#9434](https://github.com/Azure/azure-sdk-for-python/pull/9434))
 
 
 ## 1.1.0 (2019-11-27)
