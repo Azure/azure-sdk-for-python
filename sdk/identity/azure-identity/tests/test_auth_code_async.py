@@ -12,7 +12,8 @@ from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import AuthorizationCodeCredential
 import pytest
 
-from helpers import async_validating_transport, build_aad_response, mock_response, Request
+from helpers import build_aad_response, mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 
 
 @pytest.mark.asyncio
@@ -55,7 +56,7 @@ async def test_auth_code_credential():
 
     mock_client = Mock(spec=object)
     obtain_by_auth_code = Mock(return_value=expected_token)
-    mock_client.obtain_token_by_authorization_code = asyncio.coroutine(obtain_by_auth_code)
+    mock_client.obtain_token_by_authorization_code = wrap_in_future(obtain_by_auth_code)
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
@@ -81,7 +82,7 @@ async def test_auth_code_credential():
     # no auth code, no cached token -> credential should use refresh token
     mock_client.get_cached_access_token = lambda *_: None
     mock_client.get_cached_refresh_tokens = lambda *_: ["this is a refresh token"]
-    mock_client.obtain_token_by_refresh_token = asyncio.coroutine(lambda *_, **__: expected_token)
+    mock_client.obtain_token_by_refresh_token = wrap_in_future(lambda *_, **__: expected_token)
     token = await credential.get_token("scope")
     assert token is expected_token
 

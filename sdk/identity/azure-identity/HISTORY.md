@@ -4,6 +4,8 @@
 
 - All credential pipelines include `ProxyPolicy`
 ([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
+- Async credentials are async context managers and have an async `close` method
+([#9090](https://github.com/Azure/azure-sdk-for-python/pull/9090))
 
 
 ## 1.1.0 (2019-11-27)

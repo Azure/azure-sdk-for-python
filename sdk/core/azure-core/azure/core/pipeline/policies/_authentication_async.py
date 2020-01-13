@@ -4,10 +4,16 @@
 # license information.
 # -------------------------------------------------------------------------
 import threading
+from typing import TYPE_CHECKING
 
-from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline import PipelineRequest
 
 
 class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPolicy):
@@ -15,15 +21,16 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential, *scopes, **kwargs):
-        super().__init__(credential, *scopes, **kwargs)
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
+        self._credential = credential
         self._lock = threading.Lock()
+        super().__init__(*scopes, **kwargs)
 
-    async def on_request(self, request: PipelineRequest):
+    async def on_request(self, request: "PipelineRequest"):
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.
