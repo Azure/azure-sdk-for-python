@@ -7,14 +7,14 @@ import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
-from azure.core.credentials import AccessToken
 from azure.identity import KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
 from azure.identity.aio._credentials.managed_identity import ImdsCredential, MsiCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import async_validating_transport, mock_response, Request
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport, wrap_in_future
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 
@@ -61,7 +61,7 @@ async def test_default_credential_authority():
 
         # managed identity credential should ignore authority
         with patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: "https://some.url"}):
-            transport = Mock(send=asyncio.coroutine(lambda *_, **__: response))
+            transport = Mock(send=wrap_in_future(lambda *_, **__: response))
             if authority_kwarg:
                 credential = DefaultAzureCredential(authority=authority_kwarg, transport=transport)
             else:
