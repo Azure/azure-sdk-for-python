@@ -38,8 +38,8 @@ class EventHubProducerClient(ClientBase):
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
-     if there is no activity. By default the value is None, meaning that this client doesn't close but the service
-     determines when to close an idle connection.
+     if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
+     unless initiated by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -163,8 +163,8 @@ class EventHubProducerClient(ClientBase):
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
-         if there is no activity. By default the value is None, meaning that this client doesn't close but the service
-         determines when to close an idle connection.
+         if there is no activity. By default the value is None, meaning that the client will not shutdown due to
+         inactivity unless initiated by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
