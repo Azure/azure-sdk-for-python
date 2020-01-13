@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
@@ -40,7 +39,8 @@ class TextAnalyticsClientBase(object):
         elif isinstance(credential, SharedKeyCredential):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError("Unsupported credential: {}. Use an instance of SharedKeyCredential or a token credential "
+                            "from azure.identity".format(type(credential)))
 
         config = self._create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore

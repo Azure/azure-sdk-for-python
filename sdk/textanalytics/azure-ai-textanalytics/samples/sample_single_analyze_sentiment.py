@@ -55,14 +55,14 @@ class SingleAnalyzeSentimentSample(object):
 
     def analyze_sentiment(self):
         # [START single_analyze_sentiment]
-        from azure.ai.textanalytics import single_analyze_sentiment
+        from azure.ai.textanalytics import single_analyze_sentiment, SharedKeyCredential
 
         text = "I visited the restaurant last week. The portions were very generous. However, I did not like what " \
                "I ordered."
 
         result = single_analyze_sentiment(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=SharedKeyCredential(self.key),
             input_text=text,
             language="en"
         )

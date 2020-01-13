@@ -37,7 +37,8 @@ class ExtractKeyPhrasesSampleAsync(object):
     async def extract_key_phrases_async(self):
         # [START batch_extract_key_phrases_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
+        from azure.ai.textanalytics import SharedKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=SharedKeyCredential(self.key))
         documents = [
             "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
             "I need to take my cat to the veterinarian.",
@@ -63,7 +64,8 @@ class ExtractKeyPhrasesSampleAsync(object):
         with the text.
         """
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
+        from azure.ai.textanalytics import SharedKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=SharedKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en",
