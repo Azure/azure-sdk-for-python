@@ -6,7 +6,7 @@
 ### Bugfix
 
 - Fix context passing for multi-threading
-- Don't fail on unknown span type, but maps to PRODUCER ro UNSPECIFIED
+- Don't fail on unknown span type, but maps to PRODUCER or UNSPECIFIED
 
 ### Features
 
