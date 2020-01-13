@@ -54,9 +54,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of SharedKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the empty string "".
     :keyword str default_language: Sets the default language to use for all operations.
@@ -85,7 +86,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
-        self.credential = self.credential_policy
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
 

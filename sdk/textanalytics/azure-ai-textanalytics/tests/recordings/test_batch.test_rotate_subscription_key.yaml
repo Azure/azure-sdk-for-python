@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      - azsdk-python-core/1.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
@@ -26,23 +26,23 @@ interactions:
       string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.012460995465517},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.012460995465517},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0186765696853399,"neutral":0.41426131129264832,"negative":0.56706219911575317},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0186765696853399,"neutral":0.41426131129264832,"negative":0.56706219911575317},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 2ef988fb-6d83-4479-80e4-9ab06db1d5ef
+      - f40378cc-e8ca-4036-9be5-7b13ea1a6d4c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 10 Jan 2020 19:42:00 GMT
+      - Mon, 13 Jan 2020 19:01:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 55b9c89f-228a-4686-867a-3f3fa9bd68a5
+      - 7ba8a1aa-22b1-406f-8baf-f3d96e91407e
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5082'
+      - '78'
     status:
       code: 200
       message: OK
@@ -63,7 +63,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      - azsdk-python-core/1.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
@@ -77,7 +77,7 @@ interactions:
       content-length:
       - '224'
       date:
-      - Fri, 10 Jan 2020 19:42:00 GMT
+      - Mon, 13 Jan 2020 19:01:25 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -98,7 +98,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      - azsdk-python-core/1.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
@@ -108,23 +108,23 @@ interactions:
       string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.012460995465517},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.088280625641346,"neutral":0.8992583155632019,"negative":0.012460995465517},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0186765696853399,"neutral":0.41426131129264832,"negative":0.56706219911575317},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0186765696853399,"neutral":0.41426131129264832,"negative":0.56706219911575317},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99868422746658325,"neutral":0.0004790813545696,"negative":0.0008366378606297},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - c79973e7-45ae-40e9-821f-799a6a0209a1
+      - 10550691-22d3-4296-a4c8-7fdea229f017
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 10 Jan 2020 19:42:00 GMT
+      - Mon, 13 Jan 2020 19:01:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 317a2653-b15a-4068-8149-7d2b59c0d17e
+      - d603e173-1287-42b3-a443-979f03f2f4ed
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '68'
+      - '93'
     status:
       code: 200
       message: OK

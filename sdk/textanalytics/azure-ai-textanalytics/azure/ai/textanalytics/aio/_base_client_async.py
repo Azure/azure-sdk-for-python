@@ -19,6 +19,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     DistributedTracingPolicy
 )
+from .._credential import SharedKeyCredential
 from .._policies import CognitiveServicesCredentialPolicy
 from ._policies_async import AsyncTextAnalyticsResponseHook
 from .._version import VERSION
@@ -30,15 +31,15 @@ class AsyncTextAnalyticsClientBase(object):
         self._pipeline = self._create_pipeline(credential, **kwargs)
 
     def _create_pipeline(self, credential, **kwargs):
-        self.credential_policy = None
+        credential_policy = None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if hasattr(credential, "get_token"):
-            self.credential_policy = AsyncBearerTokenCredentialPolicy(
+            credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credential, six.string_types):
-            self.credential_policy = CognitiveServicesCredentialPolicy(credential)
+        elif isinstance(credential, SharedKeyCredential):
+            credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -61,7 +62,7 @@ class AsyncTextAnalyticsClientBase(object):
             config.proxy_policy,
             AsyncRedirectPolicy(**kwargs),
             AsyncRetryPolicy(**kwargs),
-            self.credential_policy,
+            credential_policy,
             config.logging_policy,
             AsyncTextAnalyticsResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),

@@ -12,6 +12,7 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     DetectLanguageInput,
     TextDocumentInput,
+    SharedKeyCredential
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -733,7 +734,8 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_rotate_subscription_key_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        credential = SharedKeyCredential(text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
@@ -742,10 +744,10 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         response = await text_analytics.analyze_sentiment(docs)
         self.assertIsNotNone(response)
 
-        text_analytics.credential.set_subscription_key("xxx")  # Make authentication fail
+        credential.set_subscription_key("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
             response = await text_analytics.analyze_sentiment(docs)
 
-        text_analytics.credential.set_subscription_key(text_analytics_account_key)  # Authenticate successfully again
+        credential.set_subscription_key(text_analytics_account_key)  # Authenticate successfully again
         response = await text_analytics.analyze_sentiment(docs)
         self.assertIsNotNone(response)

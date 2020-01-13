@@ -21,6 +21,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
+from ._credential import SharedKeyCredential
 from ._version import VERSION
 
 
@@ -29,15 +30,15 @@ class TextAnalyticsClientBase(object):
         self._pipeline = self._create_pipeline(credential, **kwargs)
 
     def _create_pipeline(self, credential, **kwargs):
-        self.credential_policy = None
+        credential_policy = None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if hasattr(credential, "get_token"):
-            self.credential_policy = BearerTokenCredentialPolicy(
+            credential_policy = BearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credential, six.string_types):
-            self.credential_policy = CognitiveServicesCredentialPolicy(credential)
+        elif isinstance(credential, SharedKeyCredential):
+            credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -56,7 +57,7 @@ class TextAnalyticsClientBase(object):
             config.proxy_policy,
             config.redirect_policy,
             config.retry_policy,
-            self.credential_policy,
+            credential_policy,
             config.logging_policy,
             TextAnalyticsResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),

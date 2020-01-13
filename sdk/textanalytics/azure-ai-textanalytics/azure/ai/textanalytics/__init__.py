@@ -30,6 +30,7 @@ from ._models import (
     SentenceSentiment,
     SentimentConfidenceScorePerLabel
 )
+from ._credential import SharedKeyCredential
 
 __all__ = [
     'TextAnalyticsClient',
@@ -57,7 +58,8 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScorePerLabel'
+    'SentimentConfidenceScorePerLabel',
+    'SharedKeyCredential'
 ]
 
 __version__ = VERSION
