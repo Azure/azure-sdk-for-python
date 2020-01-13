@@ -20,6 +20,7 @@ PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
+REDIRECT_SYMBOL = b"amqp:link:redirect"
 
 MAX_USER_AGENT_LENGTH = 512
 ALL_PARTITIONS = "all-partitions"

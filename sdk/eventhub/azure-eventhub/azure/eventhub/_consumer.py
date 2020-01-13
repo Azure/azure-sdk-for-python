@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 
 import uuid
+import time
 import logging
 from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
 
@@ -20,6 +21,7 @@ from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
+    REDIRECT_SYMBOL
 )
 
 if TYPE_CHECKING:
@@ -77,6 +79,7 @@ class EventHubConsumer(
             "track_last_enqueued_event_properties", False
         )
         idle_timeout = kwargs.get("idle_timeout", None)
+        is_iothub = kwargs.get("is_iothub", False)
 
         self.running = False
         self.closed = False
@@ -120,6 +123,11 @@ class EventHubConsumer(
             track_last_enqueued_event_properties
         )
         self._last_received_event = None  # type: Optional[EventData]
+        if is_iothub:
+            symbol_array = [types.AMQPSymbol(REDIRECT_SYMBOL)]
+            self._connection_desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+        else:
+            self._connection_desired_capabilities = None
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -128,6 +136,7 @@ class EventHubConsumer(
             source.set_filter(
                 event_position_selector(self._offset, self._offset_inclusive)
             )
+
         desired_capabilities = None
         if self._track_last_enqueued_event_properties:
             symbol_array = [types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
@@ -151,6 +160,7 @@ class EventHubConsumer(
             auto_complete=False,
             properties=properties,
             desired_capabilities=desired_capabilities,
+            connection_desired_capabilities=self._connection_desired_capabilities
         )
 
         self._handler._streaming_receive = True  # pylint:disable=protected-access
@@ -169,6 +179,31 @@ class EventHubConsumer(
         trace_link_message(event_data)
         self._last_received_event = event_data
         self._on_event_received(event_data)
+
+    def _blocking_open(self):
+        # type: () -> bool
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        """
+        # pylint: disable=protected-access
+        if not self.running:
+            if self._handler:
+                self._handler.close()
+            auth = self._client._create_auth()
+            self._create_handler(auth)
+            self._handler.open(
+                connection=self._client._conn_manager.get_connection(
+                    self._client._address.hostname, auth
+                )  # pylint: disable=protected-access
+            )
+            self.handler_ready = False
+            self.running = True
+        try:
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+        except Exception as e:
+            print(e)
+        return True
 
     def _open(self):
         # type: () -> bool

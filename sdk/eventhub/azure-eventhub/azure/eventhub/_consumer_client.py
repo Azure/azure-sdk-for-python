@@ -14,9 +14,10 @@ from typing import (
     List,
     Optional,
 )  # pylint: disable=unused-import
+from base64 import b64encode
 
 from ._common import EventData
-from ._client_base import ClientBase, _parse_conn_str, _generate_sas_token, EventHubSharedKeyCredential
+from ._client_base import ClientBase, _parse_conn_str, EventHubSharedKeyCredential, _IoTHubSharedKeyCredential
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
@@ -152,6 +153,7 @@ class EventHubConsumerClient(ClientBase):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            is_iothub=kwargs.get("is_iothub", False)
         )
         return handler
 
@@ -212,17 +214,15 @@ class EventHubConsumerClient(ClientBase):
     @classmethod
     def from_iothub_connection_string(cls, iothub_connection_string, consumer_group, **kwargs):
         host, policy, key, entity = _parse_conn_str(iothub_connection_string, kwargs)
-        iothub_name = host.split('.')[0]
-        username = "{}@sas.root.{}".format(policy, iothub_name)
-        password = _generate_sas_token(host, policy, key)
-        credential = EventHubSharedKeyCredential(username, password)
-        return cls(
+        credential = _IoTHubSharedKeyCredential(policy, key)
+        client = cls(
             fully_qualified_namespace=host,
-            eventhub_name="message/events",
+            eventhub_name="messages/events",
             consumer_group=consumer_group,
             credential=credential,
             **kwargs
         )
+        return client
 
     def receive(self, on_event, **kwargs):
         #  type: (Callable[[PartitionContext, EventData], None], Any) -> None

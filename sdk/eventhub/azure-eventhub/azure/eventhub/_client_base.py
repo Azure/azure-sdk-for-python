@@ -11,6 +11,14 @@ import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 from datetime import timedelta
+from base64 import b64encode, b64decode
+from hashlib import sha256
+from hmac import HMAC
+try:
+    from urlparse import urlparse
+    from urllib import unquote_plus, urlencode, quote_plus
+except ImportError:
+    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 try:
     from urlparse import urlparse
@@ -18,7 +26,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse, quote_plus
 
-from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
+from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils, types
 import six
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
@@ -31,7 +39,8 @@ from ._constants import (
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC
+    MGMT_STATUS_DESC,
+    REDIRECT_SYMBOL
 )
 
 if TYPE_CHECKING:
@@ -73,6 +82,22 @@ def _parse_conn_str(conn_str, kwargs):
     else:
         host = str(endpoint)
     return host, str(shared_access_key_name), str(shared_access_key), entity
+
+
+def _generate_iothub_password(uri, policy, key, expiry=None):
+    if not expiry:
+        expiry = time.time() + 3600  # Default to 1 hour.
+    encoded_uri = quote_plus(uri)
+    ttl = int(expiry)
+    sign_key = '%s\n%d' % (encoded_uri, ttl)
+    signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
+    result = {
+        'sr': uri,
+        'sig': signature,
+        'se': str(ttl)}
+    if policy:
+        result['skn'] = policy
+    return 'SharedAccessSignature ' + urlencode(result)
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -124,12 +149,30 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
+class _IoTHubSharedKeyCredential(EventHubSharedKeyCredential):
+    def get_token(self, *scopes, **kwargs):
+        auth_uri = scopes[0]
+        expiry = time.time() + 3600  # Default to 1 hour.
+        encoded_uri = quote_plus(auth_uri)
+        ttl = int(expiry)
+        sign_key = '%s\n%d' % (encoded_uri, ttl)
+        signature = b64encode(HMAC(b64decode(self.key), sign_key.encode('utf-8'), sha256).digest())
+        result = {
+            'sr': auth_uri,
+            'sig': signature,
+            'se': str(ttl)}
+        if self.policy:
+            result['skn'] = self.policy
+        token = 'SharedAccessSignature ' + urlencode(result)
+        return _AccessToken(token=token, expires_on=expiry)
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
         # type: (str, str, TokenCredential, Any) -> None
         self.eventhub_name = eventhub_name
-        if not eventhub_name:
-            raise ValueError("The eventhub name can not be None or empty.")
+        # if not eventhub_name:
+        #     raise ValueError("The eventhub name can not be None or empty.")
         path = "/" + eventhub_name if eventhub_name else ""
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
@@ -144,6 +187,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
+        self._is_iothub = False
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
@@ -160,6 +204,15 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
         """
+        # if self._is_iothub:
+        #     return authentication.SASLPlain(
+        #         self._address.hostname,
+        #         self._username,
+        #         self._password,
+        #         http_proxy=self._config.http_proxy,
+        #         transport_type=self._config.transport_type
+        #     )
+
         try:
             token_type = self._credential.token_type
         except AttributeError:
@@ -217,22 +270,29 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         # type: (Message, bytes) -> Any
         retried_times = 0
         last_exception = None
+
+        symbol_array = [types.AMQPSymbol(REDIRECT_SYMBOL)]
+        connection_desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClient(
-                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing,
+                connection_desired_capabilities=connection_desired_capabilities
             )
             try:
                 conn = self._conn_manager.get_connection(
                     self._address.hostname, mgmt_auth
                 )  # pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)
+                node = None
+                #node = b"messages/events/$management"# if self._is_iothub else b"$management"
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     constants.READ_OPERATION,
                     op_type=op_type,
                     status_code_field=MGMT_STATUS_CODE,
-                    description_fields=MGMT_STATUS_DESC,
+                    description_fields=MGMT_STATUS_DESC
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
                 description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[Union[str, bytes]]
