@@ -58,7 +58,7 @@ steps:
             
       Write-Host $targetDir
 
-      gci -r "$(Build.SourcesDirectory)/sdk/eventhub/"
+      gci -r -Force "$(Build.SourcesDirectory)/sdk/eventhub/"
 
       $logs = Get-ChildItem -Recurse -Include "*.log" -Path $targetDir 
       Write-Host $logs
