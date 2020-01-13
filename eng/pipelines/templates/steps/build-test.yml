@@ -60,7 +60,7 @@ steps:
 
       gci -r -Force "$(Build.SourcesDirectory)/sdk/eventhub/"
 
-      $logs = Get-ChildItem -Recurse -Include "*.log" -Path $targetDir 
+      $logs = Get-ChildItem -Force -Recurse -Include "*.log" -Path $targetDir 
       Write-Host $logs
 
       Get-ChildItem -Recurse -Path "$(Build.SourcesDirectory)/sdk/eventhub/azure-eventhub/.tox/"
