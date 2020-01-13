@@ -44,19 +44,16 @@ def _set_headers_from_http_request_headers(headers: "Mapping[str, Any]", key: st
 
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
-    """Wraps a given OpenTelemetry Span so that it implements azure.core.tracing.AbstractSpan"""
+    """OpenTelemetry plugin for Azure client libraries.
+
+    :param span: The OpenTelemetry span to wrap, or nothing to create a new one.
+    :type span: ~OpenTelemetry.trace.Span
+    :param name: The name of the OpenTelemetry span to create if a new span is needed
+    :type name: str
+    """
 
     def __init__(self, span=None, name="span"):
         # type: (Optional[Span], Optional[str]) -> None
-        """
-        If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
-        configure the azure exporter else will just create a new tracer.
-
-        :param span: The OpenTelemetry span to wrap
-        :type span: :class: OpenTelemetry.trace.Span
-        :param name: The name of the OpenTelemetry span to create if a new span is needed
-        :type name: str
-        """
         current_tracer = self.get_current_tracer()
         self._span_instance = span or current_tracer.start_span(name=name)
         self._current_ctxt_manager = None
@@ -120,9 +117,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
-        if not self._current_ctxt_manager:
-            raise ValueError("Trying to manually exit a ctxt manager that didn't start")
-        self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
+        if self._current_ctxt_manager:
+            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
+            self._current_ctxt_manager = None
 
     def start(self):
         # type: () -> None

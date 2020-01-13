@@ -10,12 +10,19 @@ Install the opentelemetry python for Python with [pip](https://pypi.org/project/
 pip install azure-core-tracing-opentelemetry --pre
 ```
 
-Now you can use opentelemetry for Python as usual with any SDKs that is compatible
+Now you can use opentelemetry for Python as usual with any SDKs that are compatible
 with azure-core tracing. This includes (not exhaustive list), azure-storage-blob, azure-keyvault-secrets, azure-eventhub, etc.
 
 ## Key concepts
 
 * You don't need to pass any context, SDK will get it for you
+* Those lines are the only ones you need to enable tracing
+
+  ``` python
+    from azure.core.settings import settings
+    from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+    settings.tracing_implementation = OpenTelemetrySpan
+  ```
 
 ## Examples
 
@@ -24,22 +31,23 @@ call any SDK code that is compatible with azure-core tracing. This is an example
 using Azure Monitor exporter, but you can use any exporter (Zipkin, etc.).
 
 ```python
-from opentelemetry.ext.azure_monitor import AzureMonitorSpanExporter
 
-from opentelemetry import trace
-from opentelemetry.sdk.trace import Tracer
-
+# Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
-from azure.storage.blob import BlobServiceClient
-
-# Declare that you want to trace Azure SDK with OpenTelemetry
 settings.tracing_implementation = OpenTelemetrySpan
 
+# Example of Azure Monitor exporter, but you can use anything OpenTelemetry supports
+from opentelemetry.ext.azure_monitor import AzureMonitorSpanExporter
 exporter = AzureMonitorSpanExporter(
     instrumentation_key="uuid of the instrumentation key (see your Azure Monitor account)"
 )
+
+# Regular open telemetry usage from here, see https://github.com/open-telemetry/opentelemetry-python
+# for details
+from opentelemetry import trace
+from opentelemetry.sdk.trace import Tracer
 
 trace.set_preferred_tracer_implementation(lambda T: Tracer())
 tracer = trace.tracer()
@@ -47,9 +55,13 @@ tracer.add_span_processor(
     SimpleExportSpanProcessor(exporter)
 )
 
+# Example with Storage SDKs
+
+from azure.storage.blob import BlobServiceClient
+
 with tracer.start_as_current_span(name="MyApplication"):
     client = BlobServiceClient.from_connection_string('connectionstring')
-    client.delete_container('mycontainer')  # Call will be traced
+    client.create_container('mycontainer')  # Call will be traced
 ```
 
 Azure Exporter can be found in the package `opentelemetry-azure-monitor-exporter`
