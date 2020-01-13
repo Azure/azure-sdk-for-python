@@ -113,10 +113,13 @@ async def example_eventhub_async_send_and_receive():
 
         async def on_event(partition_context, event):
             logger.info("Received event from partition: {}".format(partition_context.partition_id))
-            # Do asnchronous ops on received events
+            # Do some asynchronous ops on received event
 
         async with consumer:
-            await consumer.receive(on_event=on_event)
+            await consumer.receive(
+                on_event=on_event,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
         # [END eventhub_consumer_client_receive_async]
     finally:
         pass
@@ -169,7 +172,7 @@ async def example_eventhub_async_consumer_receive_and_close():
 
     async def on_event(partition_context, event):
         logger.info("Received event from partition: {}".format(partition_context.partition_id))
-        # Do asynchronous ops on the received event
+        # Do some asynchronous ops on the received event
 
     # The receive method is a coroutine which will be blocking when awaited.
     # It can be executed in an async task for non-blocking behavior, and combined with the 'close' method.

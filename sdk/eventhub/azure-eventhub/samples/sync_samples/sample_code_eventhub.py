@@ -129,7 +129,7 @@ def example_eventhub_sync_send_and_receive():
 
         def on_event(partition_context, event):
             logger.info("Received event from partition: {}".format(partition_context.partition_id))
-            # Do ops on received events
+            # Do ops on the received event
 
         with consumer:
             consumer.receive(on_event=on_event)
@@ -187,14 +187,17 @@ def example_eventhub_consumer_receive_and_close():
 
     def on_event(partition_context, event):
         logger.info("Received event from partition: {}".format(partition_context.partition_id))
-        # Do ops on the received event
+        # Do some ops on the received event
 
     # The 'receive' method is a blocking call, it can be executed in a thread for
     # non-blocking behavior, and combined with the 'close' method.
 
     worker = threading.Thread(
         target=consumer.receive,
-        kwargs={"on_event": on_event}
+        kwargs={
+            "on_event": on_event,
+            "starting_position": "-1",  # "-1" is from the beginning of the partition.
+        }
     )
     worker.start()
     time.sleep(10)  # Keep receiving for 10s then close.
