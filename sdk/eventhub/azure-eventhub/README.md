@@ -69,10 +69,10 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 
-host = '<< HOSTNAME OF THE EVENT HUB >>'
+fully_qualified_namespace = '<< HOSTNAME OF THE EVENT HUB >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 consumer_group = '<< CONSUMER GROUP >>'
-consumer_client = EventHubConsumerClient(host, eventhub_name, consumer_group, credential)
+consumer_client = EventHubConsumerClient(fully_qualified_namespace, eventhub_name, consumer_group, credential)
 
 ```
 
@@ -297,13 +297,10 @@ async def on_event(partition_context, event):
     await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def receive(client):
-    try:
-        await client.receive(
-            on_event=on_event,
-            starting_position="-1",  # "-1" is from the beginning of the partition.
-        )
-    except KeyboardInterrupt:
-        await client.close()
+    await client.receive(
+        on_event=on_event,
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
 
 async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, container_name)
