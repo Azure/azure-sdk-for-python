@@ -28,6 +28,7 @@ class CliCredential(object):
     _WINDOWS_CMD_NOT_FOUND = 'is not recognized as'
     _DEFAULT_PREFIX = "/.default"
     _CLI_NOT_INSTALLED_ERR = "Azure CLI not installed"
+    _CLI_LOGIN_ERR = "ERROR: Please run 'az login' to setup account.\r\n"
 
     def get_token(self, *scopes, **kwargs): # pylint:disable=unused-argument
         command = ['az', 'account', 'get-access-token']
@@ -55,11 +56,11 @@ class CliCredential(object):
             _stdout = check_output(command, shell=_USE_SHELL, stderr=STDOUT)
         except CalledProcessError as e:
             _stderr = six.ensure_str(e.output)
-            if self._WINDOWS_CMD_NOT_FOUND in _stderr or self._LINUX_CMD_NOT_FOUND in _stderr:
+            if any(msg in _stderr for msg in (self._LINUX_CMD_NOT_FOUND, self._WINDOWS_CMD_NOT_FOUND)):
                 raise ClientAuthenticationError(self._CLI_NOT_INSTALLED_ERR)
             else:
-                raise ClientAuthenticationError(_stderr)
-        except:
+                raise ClientAuthenticationError(self._CLI_LOGIN_ERR)
+        except FileNotFoundError as e:
             raise ClientAuthenticationError(self._CLI_NOT_INSTALLED_ERR) # azure cli not installed in mac os
         else:
             return _stdout
