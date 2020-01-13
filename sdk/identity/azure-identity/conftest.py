@@ -63,13 +63,11 @@ def live_service_principal():  # pylint:disable=inconsistent-return-statements
 
 @pytest.fixture()
 def live_certificate(live_service_principal):  # pylint:disable=inconsistent-return-statements,redefined-outer-name
-    """Fixture for live tests needing a certificate.
-    Skips them when environment configuration is incomplete.
-    """
+    """Provides a path to a PEM-encoded certificate with no password"""
 
     pem_content = os.environ.get("PEM_CONTENT")
     if not pem_content:
-        pytest.skip("Environment has no value for 'PEM_CONTENT'")
+        pytest.skip("Expected PEM content in environment variable 'PEM_CONTENT'")
         return
 
     pem_path = os.path.join(os.path.dirname(__file__), "certificate.pem")
@@ -77,6 +75,28 @@ def live_certificate(live_service_principal):  # pylint:disable=inconsistent-ret
         with open(pem_path, "w") as pem_file:
             pem_file.write(pem_content)
         return dict(live_service_principal, cert_path=pem_path)
+    except IOError as ex:
+        pytest.skip("Failed to write file '{}': {}".format(pem_path, ex))
+
+
+@pytest.fixture()
+def live_certificate_with_password(live_service_principal):
+    """Provides a path to a PEM-encoded, password-protected certificate, and its password"""
+
+    pem_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
+    password = os.environ.get("CERTIFICATE_PASSWORD")
+    if not (pem_content and password):
+        pytest.skip(
+            "Expected password-protected PEM content in environment variable 'PEM_CONTENT_PASSWORD_PROTECTED'"
+            + " and the password in 'CERTIFICATE_PASSWORD'"
+        )
+        return
+
+    pem_path = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
+    try:
+        with open(pem_path, "w") as pem_file:
+            pem_file.write(pem_content)
+        return dict(live_service_principal, cert_path=pem_path, password=password)
     except IOError as ex:
         pytest.skip("Failed to write file '{}': {}".format(pem_path, ex))
 
