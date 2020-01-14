@@ -65,9 +65,9 @@ if __name__ == '__main__':
                 "on_partition_close": on_partition_close,
                 "on_error": on_error,
                 "starting_position": "-1",  # "-1" is from the beginning of the partition.
-            },
-            daemon=True
+            }
         )
+        thread.daemon = True
         thread.start()
         time.sleep(RECEIVE_DURATION)
         consumer_client.close()
