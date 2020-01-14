@@ -488,8 +488,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
-    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, use_cache=True)
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest', use_cache=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_not_found(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_queue, **kwargs):
         client = ServiceBusClient(
             service_namespace=servicebus_namespace.name,
