@@ -14,6 +14,7 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import HttpRequest
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
@@ -21,6 +22,18 @@ import pytest
 
 from keys_helpers import async_validating_transport, mock_response, Request
 from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test, get_random_url
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+async def test_enforces_tls():
+    url = "http://not.secure"
+    HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, "Bearer authorization=_, resource=_"))
+
+    credential = Mock()
+    pipeline = AsyncPipeline(transport=Mock(), policies=[AsyncChallengeAuthPolicy(credential)])
+    with pytest.raises(ServiceRequestError):
+        await pipeline.run(HttpRequest("GET", url))
 
 
 @pytest.mark.asyncio
@@ -81,6 +94,7 @@ async def test_scope():
 
     await test_with_challenge(challenge_with_resource, scope)
     await test_with_challenge(challenge_with_scope, scope)
+
 
 @pytest.mark.asyncio
 @empty_challenge_cache

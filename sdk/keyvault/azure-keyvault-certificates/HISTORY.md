@@ -1,5 +1,9 @@
 # Release History
 
+## 4.0.1b1 (Unreleased)
+- Challenge authentication policy requires TLS
+([#9457](https://github.com/Azure/azure-sdk-for-python/pull/9457))
+
 ## 4.0.0 (2020-01-08)
 - First GA release
 
