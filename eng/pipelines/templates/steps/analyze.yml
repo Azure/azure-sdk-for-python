@@ -10,8 +10,15 @@ steps:
 
   - script: |
      pip install -r eng/ci_tools.txt
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
-    displayName: 'Verify Readmes'
+     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml -t all
+    displayName: 'Verify Readmes and changelogs'
+    condition: ne(variables['Build.Reason'],'Manual')
+  
+  - script: |
+     pip install -r eng/ci_tools.txt
+     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml -t all -s release
+    displayName: 'Verify Readmes, changelogs and latest release notes'
+    condition: eq(variables['Build.Reason'],'Manual')
 
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
