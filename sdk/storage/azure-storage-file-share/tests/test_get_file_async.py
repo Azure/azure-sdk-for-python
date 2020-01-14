@@ -41,7 +41,7 @@ class AiohttpTestTransport(AioHttpTransport):
             response.content_type = response.headers.get("content-type")
         return response
 
-
+@pytest.mark.live_test_only
 class StorageGetFileTest(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
