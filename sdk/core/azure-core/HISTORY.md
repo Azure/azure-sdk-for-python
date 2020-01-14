@@ -5,6 +5,7 @@
 
 ### Features
 
+- Add user_agent & sdk_moniker kwargs in UserAgentPolicy init   #9355
 - Support OPTIONS HTTP verb     #9322
 - Add tracing_attributes to tracing decorator   #9297
 - Support auto_request_id in RequestIdPolicy   #9163
