@@ -3,14 +3,6 @@
 Release History
 ===============
 
-0.5.0 (2020-01-14)
-++++++++++++++++++
-
-**Features**
-
-- Model TargetRestoreInfo has a new parameter target_directory_for_file_restore
-- Model AzureIaaSVMProtectionPolicy has a new parameter instant_rp_details
-
 0.4.0 (2019-04-05)
 ++++++++++++++++++
 
