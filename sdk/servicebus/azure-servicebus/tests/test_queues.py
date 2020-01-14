@@ -73,12 +73,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, debug=False)
         queue = sb_client.get_queue(servicebus_queue.name)
 
-    with queue.get_sender() as sender:
-        for i in range(5):
-            sender.send(Message("Message {}".format(i)))
-    messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
-    batch = messages.fetch_next()
-    count = len(batch)
+        with queue.get_sender() as sender:
+            for i in range(5):
+                sender.send(Message("Message {}".format(i)))
+        messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
+        batch = messages.fetch_next()
+        count = len(batch)
 
         messages.reconnect()
         for message in messages:
@@ -95,17 +95,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, debug=False)
         queue = sb_client.get_queue(servicebus_queue.name)
 
-    for i in range(3):
-        queue.send(Message("Message {}".format(i)))
+        for i in range(3):
+            queue.send(Message("Message {}".format(i)))
 
-        messages = queue.get_receiver(idle_timeout=60)
-        for message in messages:
-            _logger.debug(message)
-            _logger.debug(message.sequence_number)
-            _logger.debug(message.enqueued_time)
-            _logger.debug(message.expired)
-            message.complete()
-            time.sleep(40)
+            messages = queue.get_receiver(idle_timeout=60)
+            for message in messages:
+                _logger.debug(message)
+                _logger.debug(message.sequence_number)
+                _logger.debug(message.enqueued_time)
+                _logger.debug(message.expired)
+                message.complete()
+                time.sleep(40)
 
     @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
