@@ -48,6 +48,11 @@ exporter = AzureMonitorSpanExporter(
 # for details
 from opentelemetry import trace
 from opentelemetry.sdk.trace import Tracer
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
+
+# Simple console exporter
+exporter = ConsoleSpanExporter()
 
 trace.set_preferred_tracer_implementation(lambda T: Tracer())
 tracer = trace.tracer()
