@@ -65,10 +65,10 @@ def print_message(message):
 class ServiceBusQueueTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
-    @ResourceGroupPreparer(name_prefix='cachetest')
+    @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest', use_cache=True)
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_cachetest_github_issue_7079(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_github_issue_7079(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False)
@@ -91,7 +91,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, use_cache=True)
-    def test_cachetest_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False)
         queue = sb_client.get_queue(servicebus_queue.name)

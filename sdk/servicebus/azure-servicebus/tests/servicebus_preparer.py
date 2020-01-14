@@ -290,7 +290,7 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
                                                      client_kwargs=client_kwargs)
         self.parameter_name = parameter_name
         self.access_rights = access_rights
-        self.set_cache(use_cache, access_rights) #TODO: Validate this
+        self.set_cache(use_cache, access_rights)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -341,7 +341,7 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
         self.parameter_name = parameter_name
         self.access_rights = access_rights
         self.servicebus_queue_parameter_name = servicebus_queue_parameter_name
-        self.set_cache(use_cache, access_rights) #TODO: Validate this
+        self.set_cache(use_cache, access_rights)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
