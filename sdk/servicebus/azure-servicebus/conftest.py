@@ -311,3 +311,9 @@ def standard_subscription(live_servicebus_config, standard_topic):  # pylint: di
         yield (topic, subscription)
     finally:
         cleanup_subscription(live_servicebus_config, topic, subscription, client=client)
+
+from azure_devtools.scenario_tests import AbstractPreparer
+@pytest.fixture(scope='session', autouse=True)
+def clean_cached_resources():
+    yield
+    AbstractPreparer._perform_pending_deletes()
