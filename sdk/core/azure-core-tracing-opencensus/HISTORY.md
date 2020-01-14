@@ -1,7 +1,12 @@
 
 # Release History
 
-## 1.0.0 (2019-XX-XX)
+## 1.0.0b5 (2019-01-14)
+
+### Bugfix
+
+- Fix context passing for multi-threading
+- Don't fail on unknown span type, but maps to PRODUCER or UNSPECIFIED
 
 ### Features
 

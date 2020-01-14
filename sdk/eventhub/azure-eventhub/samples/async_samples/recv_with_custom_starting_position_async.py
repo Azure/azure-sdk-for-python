@@ -44,6 +44,7 @@ async def on_error(partition_context, error):
 async def on_event(partition_context, event):
     # Put your code here.
     print("Received event: {} from partition: {}.".format(event.body_as_str(), partition_context.partition_id))
+    await partition_context.update_checkpoint(event)
 
 
 async def main():

@@ -1,14 +1,14 @@
 # Change Log azure-ai-textanalytics
 
-## 1.0.0b1 (2020-01-06)
+## 1.0.0b1 (2020-01-09)
 
 Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Text Analytics. For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://azure.github.io/azure-sdk/releases/latest/python.html.
 
 **Breaking changes: New API design**
 
-- New namespace:
-  - The namespace for Azure Text Analytics client library has changed from `azure.cognitiveservices.language.textanalytics` to `azure.ai.textanalytics`
+- New namespace/package name:
+  - The namespace/package name for Azure Text Analytics client library has changed from `azure.cognitiveservices.language.textanalytics` to `azure.ai.textanalytics`
 
 - New operations and naming:
   - `detect_language` is renamed to `detect_languages`
@@ -43,12 +43,13 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - `detect_languages` now takes a parameter `country_hint` which allows you to specify the country hint for the entire batch. Any per-item country hints will take precedence over a whole batch hint.
   - `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment` now take a parameter `language` which allows you to specify the language for the entire batch.
   Any per-item specified language will take precedence over a whole batch hint.
+  - A `default_country_hint` or `default_language` keyword argument can be passed at client instantiation to set the default values for all operations.
   - A `response_hook` keyword argument can be passed with a callback to use the raw response from the service. Additionally, values returned for `TextDocumentBatchStatistics` and `model_version` used must be retrieved using a response hook.
   - `show_stats` and `model_version` parameters move to keyword only arguments.
 
 - New return types
   - The return types for the batching methods (`detect_languages`, `recognize_entities`, `recognize_pii_entities`, `recognize_linked_entities`, `extract_key_phrases`, `analyze_sentiment`) now return a heterogeneous list of 
-  result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean on each object called `is_error` can be used to determine whether the returned response object at 
+  result objects and document errors in the order passed in with the request. To iterate over the list and filter for result or error, a boolean property on each object called `is_error` can be used to determine whether the returned response object at 
   that index is a result or an error:
   - `detect_languages` now returns a List[Union[`DetectLanguageResult`, `DocumentError`]]
   - `recognize_entities` now returns a List[Union[`RecognizeEntitiesResult`, `DocumentError`]]
@@ -65,7 +66,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
   - `single_analyze_sentiment` returns a `AnalyzeSentimentResult`
 
 - New underlying REST pipeline implementation, based on the new `azure-core` library.
-- Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
+- Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See README for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
   [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)

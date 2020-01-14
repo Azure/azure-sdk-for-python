@@ -48,7 +48,7 @@ class EventData(object):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python
@@ -273,7 +273,7 @@ class EventDataBatch(object):
     at which point a `ValueError` will be raised.
     Use the `send_batch` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
-    for sending. The `create_batch` method accepts partition_key as a parameter for sending a particular partition.
+    for sending.
 
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**

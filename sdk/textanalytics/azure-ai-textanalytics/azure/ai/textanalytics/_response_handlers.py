@@ -34,7 +34,7 @@ def process_single_error(error):
     """
     try:
         error_message = error.error["inner_error"]["message"]
-        error_code = error.error["code"]
+        error_code = error.error["inner_error"]["code"]
         error_message += "\nErrorCode:{}".format(error_code)
     except KeyError:
         raise HttpResponseError(message="There was an unknown error with the request.")

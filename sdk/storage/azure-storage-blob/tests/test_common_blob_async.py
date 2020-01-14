@@ -13,6 +13,7 @@ import requests
 import time
 import unittest
 import os
+import uuid
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import (
@@ -1803,7 +1804,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        FILE_PATH = '_to_file_with_sas.async.dat'
+        FILE_PATH = '_to_file_with_sas.async.{}.dat'.format(str(uuid.uuid4()))
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
@@ -1826,7 +1827,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'to_file_with_credential.async.dat'
+        FILE_PATH = 'to_file_with_credential.async.{}.dat'.format(str(uuid.uuid4()))
         # Act
         await download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1850,7 +1851,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'to_stream_with_credential.async.dat'
+        FILE_PATH = 'to_stream_with_credential.async.{}.dat'.format(str(uuid.uuid4()))
         # Act
         with open(FILE_PATH, 'wb') as stream:
             await download_blob_from_url(
@@ -1875,7 +1876,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'with_existing_file.async.dat'
+        FILE_PATH = 'with_existing_file.async.{}.dat'.format(str(uuid.uuid4()))
         # Act
         await download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -1901,7 +1902,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         await self._setup_remote(rmt.name, rmt_key)
         await self._create_remote_container()
         source_blob = await self._create_remote_block_blob(blob_data=data)
-        FILE_PATH = 'existing_file_overwrite.async.dat'
+        FILE_PATH = 'existing_file_overwrite.async.{}.dat'.format(str(uuid.uuid4()))
         # Act
         await download_blob_from_url(
             source_blob.url, FILE_PATH,
@@ -2048,7 +2049,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
-        FILE_PATH = 'url_file_with_credential.async.dat'
+        FILE_PATH = 'url_file_with_credential.async.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_name = self._get_blob_reference()

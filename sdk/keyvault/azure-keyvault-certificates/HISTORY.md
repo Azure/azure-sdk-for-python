@@ -1,6 +1,9 @@
 # Release History
 
-## 4.0.0b7 (Unreleased)
+## 4.0.0 (2020-01-08)
+- First GA release
+
+## 4.0.0b7 (2019-12-17)
 - Challenge authentication policy preserves request options
 ([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
 - Added `vault_url` property to `CertificateOperation`

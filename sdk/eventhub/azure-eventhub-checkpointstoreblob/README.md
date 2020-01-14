@@ -72,8 +72,8 @@ storage_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
 container_name = '<< STORAGE CONTAINER NAME>>'
 
 
-def process_events(partition_context, event):
-    # do something
+def on_event(partition_context, event):
+    # Put your code here.
     partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 def main():
@@ -84,14 +84,12 @@ def main():
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
         consumer_group,
-        eventhub_name = eventhub_name,
+        eventhub_name=eventhub_name,
         checkpoint_store=checkpoint_store,
     )
 
-    try:
-        client.receive(process_events)
-    except KeyboardInterrupt:
-        client.close()
+    with client:
+        client.receive(on_event)
 
 if __name__ == '__main__':
     main()

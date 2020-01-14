@@ -38,26 +38,21 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 
 ### Authenticate the client
 
-Interaction with Event Hubs starts with an instance of the EventHubClient class. You need the host name, SAS/AAD credential and event hub name to instantiate the client object.
-
-#### Obtain a connection string
-
-For the Event Hubs client library to interact with an Event Hub, it will need to understand how to connect and authorize with it.
-The easiest means for doing so is to use a connection string, which is created automatically when creating an Event Hubs namespace.
-If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
-
-#### Create client
-
-There are several ways to instantiate the EventHubClient object and the following code snippets demonstrate two ways:
+Interaction with Event Hubs starts with an instance of EventHubConsumerClient or EventHubProducerClient class. You need either the host name, SAS/AAD credential and event hub name or a connection string to instantiate the client object.
 
 **Create client from connection string:**
 
+For the Event Hubs client library to interact with an Event Hub, the easiest means is to use a connection string, which is created automatically when creating an Event Hubs namespace.
+If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
+
+
 ```python
-from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubConsumerClient, EventHubProducerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
+producer_client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 consumer_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
 
 ```
@@ -74,10 +69,10 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 
-host = '<< HOSTNAME OF THE EVENT HUB >>'
+fully_qualified_namespace = '<< HOSTNAME OF THE EVENT HUB >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 consumer_group = '<< CONSUMER GROUP >>'
-consumer_client = EventHubConsumerClient(host, eventhub_name, consumer_group, credential)
+consumer_client = EventHubConsumerClient(fully_qualified_namespace, eventhub_name, consumer_group, credential)
 
 ```
 
@@ -151,7 +146,7 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 
-event_data_batch = client.create_batch(max_size_in_bytes=10000)
+event_data_batch = client.create_batch()
 can_add = True
 while can_add:
     try:
@@ -181,9 +176,13 @@ logging.basicConfig(level=logging.INFO)
 
 def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
+    partition_context.update_checkpoint(event)
 
 with client:
-    client.receive(on_event=on_event)
+    client.receive(
+        on_event=on_event, 
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
     # receive events from specified partition:
     # client.receive(on_event=on_event, partition_id='0')
 ```
@@ -203,7 +202,7 @@ consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
 async def create_batch(client):
-    event_data_batch = await client.create_batch(max_size_in_bytes=10000)
+    event_data_batch = await client.create_batch()
     can_add = True
     while can_add:
         try:
@@ -241,11 +240,15 @@ logging.basicConfig(level=logging.INFO)
 
 async def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
+    await partition_context.update_checkpoint(event)
 
 async def receive():
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
     async with client:
-        await client.receive(on_event=on_event)
+        await client.receive(
+            on_event=on_event,
+            starting_position="-1",  # "-1" is from the beginning of the partition.
+        )
         # receive events from specified partition:
         # await client.receive(on_event=on_event, partition_id='0')
 
@@ -287,17 +290,17 @@ connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
-container_name = '<<STRING FOR THE BLOB NAME>>'
+container_name = '<<NAME OF THE BLOB CONTAINER>>'
 
 async def on_event(partition_context, event):
     # do something
     await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def receive(client):
-    try:
-        await client.receive(on_event=on_event)
-    except KeyboardInterrupt:
-        await client.close()
+    await client.receive(
+        on_event=on_event,
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
 
 async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, container_name)

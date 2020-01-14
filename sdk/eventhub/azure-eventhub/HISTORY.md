@@ -1,11 +1,11 @@
 # Release History
 
-## 5.0.0 (2020-01-06)
+## 5.0.0 (2020-01-13)
 
 **Breaking changes**
 
 - `EventData`
-    - Removed deprecated property `application_properties` and deprecated method `encode_message()`
+    - Removed deprecated property `application_properties` and deprecated method `encode_message()`.
 - `EventHubConsumerClient`
     - `on_error` would be called when `EventHubConsumerClient` failed to claim ownership of partitions.
     - `on_partition_close` and `on_partition_initialize` would be called in the case of exceptions raised by `on_event` callback.
@@ -54,7 +54,7 @@
 - `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
 
 
-** New features **
+**New features**
 
 - Added new parameter `idle_timeout` in construct and `from_connection_string` to `EventHubConsumerClient` and `EventHubProducerClient`
 after which the underlying connection will close if there is no further activity.

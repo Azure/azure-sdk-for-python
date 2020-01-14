@@ -1,15 +1,21 @@
 
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.2.0 (2020-01-14)
 
 ### Features
 
+- Support OPTIONS HTTP verb     #9322
+- Add tracing_attributes to tracing decorator   #9297
 - Support auto_request_id in RequestIdPolicy   #9163
 - Support fixed retry   #6419
 - Support "retry-after-ms" in response header   #9240
 
-## 1.1.1 (2019-12-03) 
+### Bug fixes
+
+- Removed `__enter__` and `__exit__` from async context managers    #9313
+
+## 1.1.1 (2019-12-03)
 
 ### Bug fixes
 

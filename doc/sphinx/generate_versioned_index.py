@@ -155,7 +155,7 @@ def write_toc_tree(categorized_menu_items):
 
 
 def get_categorized_menu_items(package_names):
-    categorized_menu_items = {}
+    categorized_menu_items = {"Other": {"Client":[], "Management":[], "Other": []}}
 
     for pkg in package_names:
         # add to the categorized menu items

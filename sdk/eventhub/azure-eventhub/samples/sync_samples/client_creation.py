@@ -30,12 +30,12 @@ def create_producer_client():
 
     # Create producer client from connection string.
 
-    producer_client = EventHubProducerClient.from_CONNECTION_STRING(
+    producer_client = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STRING  # connection string contains EventHub name.
     )
 
     # Illustration of commonly used parameters.
-    producer_client = EventHubProducerClient.from_CONNECTION_STRING(
+    producer_client = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STRING,
         eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.
         logging_enable=False,  # To enable network tracing log, set logging_enable to True.
@@ -65,13 +65,13 @@ def create_consumer_client():
 
     # Create consumer client from connection string.
 
-    consumer_client = EventHubConsumerClient.from_CONNECTION_STRING(
+    consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STRING,  # connection string contains EventHub name.
         consumer_group=CONSUMER_GROUP
     )
 
     # Illustration of commonly used parameters.
-    consumer_client = EventHubConsumerClient.from_CONNECTION_STRING(
+    consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STRING,
         consumer_group=CONSUMER_GROUP,
         eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.

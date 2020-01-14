@@ -195,7 +195,8 @@ documents = [
     "The food was yummy. :)"
 ]
 
-result = text_analytics_client.analyze_sentiment(documents, language="en")
+response = text_analytics_client.analyze_sentiment(documents, language="en")
+result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     print("Overall sentiment: {}".format(doc.sentiment))
@@ -222,7 +223,8 @@ documents = [
     "Jeff bought three dozen eggs because there was a 50% discount."
 ]
 
-result = text_analytics_client.recognize_entities(documents, language="en")
+response = text_analytics_client.recognize_entities(documents, language="en")
+result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
@@ -246,7 +248,8 @@ documents = [
     "The employee's phone number is 555-55-5555."
 ]
 
-result = text_analytics_client.recognize_pii_entities(documents, language="en")
+response = text_analytics_client.recognize_pii_entities(documents, language="en")
+result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
@@ -269,7 +272,8 @@ documents = [
     "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia."
 ]
 
-result = text_analytics_client.recognize_linked_entities(documents, language="en")
+response = text_analytics_client.recognize_linked_entities(documents, language="en")
+result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
@@ -299,7 +303,8 @@ documents = [
     "I will travel to South America in the summer."
 ]
 
-result = text_analytics_client.extract_key_phrases(documents, language="en")
+response = text_analytics_client.extract_key_phrases(documents, language="en")
+result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     print(doc.key_phrases)
@@ -321,7 +326,8 @@ documents = [
     "Dies ist in englischer Sprache verfasst."
 ]
 
-result = text_analytics_client.detect_languages(documents)
+response = text_analytics_client.detect_languages(documents)
+result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     print("Language detected: {}".format(doc.primary_language.name))

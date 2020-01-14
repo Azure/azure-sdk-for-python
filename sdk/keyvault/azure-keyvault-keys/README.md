@@ -15,7 +15,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## Getting started
 ### Install packages
 Install [azure-keyvault-keys][pypi_package_keys] and
-[azure-identity][azure_identity] with [pip][pip]:
+[azure-identity][azure_identity_pypi] with [pip][pip]:
 ```Bash
 pip install azure-keyvault-keys azure-identity
 ```
@@ -373,14 +373,15 @@ client.get_key("my-key", logging_enable=True)
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository.
 These provide example code for additional Key Vault scenarios:
-* [test_samples_keys.py][test_examples_keys] and
-[test_samples_keys_async.py][test_example_keys_async] - code snippets from
-the library's documentation
 * [hello_world.py][hello_world_sample] and
 [hello_world_async.py][hello_world_async_sample] - create/get/update/delete keys
+* [list_operations.py][list_operations_sample] and
+[list_operations_async.py][list_operations_async_sample] - basic list operations for keys
 * [backup_restore_operations.py][backup_operations_sample] and
 [backup_restore_operations_async.py][backup_operations_async_sample] - backup and
-restore keys
+recover keys
+* [recover_purge_operations.py][recover_purge_sample] and
+[recover_purge_operations_async.py][recover_purge_async_sample] - recovering and purging keys
 
 ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the
@@ -403,17 +404,21 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 [azure_cloud_shell]: https://shell.azure.com/bash
-[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
+[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_identity_pypi]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world.py
-[hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world_async.py
-[JWK]: https://tools.ietf.org/html/rfc7517
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world.py
+[hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world_async.py
+[backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations.py
+[backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations_async.py
+[list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/list_operations.py
+[list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/list_operations_async.py
+[recover_purge_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations.py
+[recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py
 [keyvault_docs]: https://docs.microsoft.com/en-us/azure/key-vault/
-[backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations.py
-[backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations_async.py
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
 [reference_docs]: https://aka.ms/azsdk-python-keyvault-keys-docs

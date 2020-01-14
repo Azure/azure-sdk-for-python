@@ -30,16 +30,18 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubConsumerClient(ClientBase):
-    """The EventHubProducerClient class defines a high level interface for
+    """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
     The main goal of `EventHubConsumerClient` is to receive events from all partitions of an EventHub with
     load-balancing and checkpointing.
 
-    When multiple `EventHubConsumerClient` operate within one or more processes or machines targeting the same
-    checkpointing location, they will balance automatically.
-    To enable the load-balancing and / or checkpointing, checkpoint_store must be set when creating the
+    When multiple `EventHubConsumerClient`s are running against the same event hub, consumer group and checkpointing
+    location, the partitions will be evenly distributed among them.
+
+    To enable load-balancing and persisted checkpoints, checkpoint_store must be set when creating the
     `EventHubConsumerClient`.
+    If a checkpoint store is not provided, the checkpoint will be maintained internally in memory.
 
     An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
     and specify the partition_id.
@@ -47,7 +49,7 @@ class EventHubConsumerClient(ClientBase):
     is set.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
-     This is likely to be similar to <yournamespace>.servicebus.windows.net
+     The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
     :param str consumer_group: Receive events from the event hub for this consumer group.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
@@ -66,9 +68,9 @@ class EventHubConsumerClient(ClientBase):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
-    :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
-     if there is no further activity. By default the value is None, meaning that the service determines when to
-     close an idle connection.
+    :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
+     if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
+     inactivity unless initiated by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -86,7 +88,7 @@ class EventHubConsumerClient(ClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_eventhub_consumer_client_sync]
             :end-before: [END create_eventhub_consumer_client_sync]
             :language: python
@@ -178,9 +180,9 @@ class EventHubConsumerClient(ClientBase):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
-        :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
-         if there is no further activity. By default the value is None, meaning that the service determines when to
-         close an idle connection.
+        :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
+         if there is no furthur activity. By default the value is None, meaning that the client will not shutdown due
+         to inactivity unless initiated by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
@@ -196,7 +198,7 @@ class EventHubConsumerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START create_eventhub_consumer_client_from_conn_str_sync]
                 :end-before: [END create_eventhub_consumer_client_from_conn_str_sync]
                 :language: python
@@ -236,8 +238,9 @@ class EventHubConsumerClient(ClientBase):
         :keyword starting_position: Start receiving from this event position
          if there is no checkpoint data for a partition. Checkpoint data will be used if available. This can be a
          a dict with partition ID as the key and position as the value for individual partitions, or a single
-         value for all partitions. The value type can be str, int, datetime.datetime. Also supported are the
+         value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
+         Default value is "@latest".
         :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
@@ -270,7 +273,7 @@ class EventHubConsumerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_consumer_client_receive_sync]
                 :end-before: [END eventhub_consumer_client_receive_sync]
                 :language: python
@@ -389,7 +392,7 @@ class EventHubConsumerClient(ClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/docstring_samples/sample_code_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_consumer_client_close_sync]
                 :end-before: [END eventhub_consumer_client_close_sync]
                 :language: python
