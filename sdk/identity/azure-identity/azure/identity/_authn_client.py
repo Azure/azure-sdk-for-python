@@ -110,7 +110,7 @@ class AuthnClientBase(ABC):
         try:
             expires_on = int(expires_on)
         except ValueError:
-            # probably an App Service MSI response, convert it to epoch seconds
+            # probably an App Service MSI 2017-09-01 response, convert it to epoch seconds
             try:
                 t = self._parse_app_service_expires_on(expires_on)  # type: ignore
                 expires_on = calendar.timegm(t)
@@ -128,14 +128,24 @@ class AuthnClientBase(ABC):
     @staticmethod
     def _parse_app_service_expires_on(expires_on):
         # type: (str) -> struct_time
-        """Parse expires_on from an App Service MSI response (e.g. "06/19/2019 23:42:01 +00:00") to struct_time.
-        Expects the time is given in UTC (i.e. has offset +00:00).
+        """Parse an App Service MSI version 2017-09-01 expires_on value to struct_time.
+
+        This version of the API returns expires_on as a UTC datetime string rather than epoch seconds. The string's
+        format depends on the OS. Responses on Windows include AM/PM, for example "1/16/2020 5:24:12 AM +00:00".
+        Responses on Linux do not, for example "06/20/2019 02:57:58 +00:00".
+
+        :raises ValueError: ``expires_on`` didn't match an expected format
         """
-        if not expires_on.endswith(" +00:00"):
-            raise ValueError("'{}' doesn't match expected format".format(expires_on))
 
         # parse the string minus the timezone offset
-        return time.strptime(expires_on[: -len(" +00:00")], "%m/%d/%Y %H:%M:%S")
+        date_string = expires_on[: -len(" +00:00")]
+        for format_string in ("%m/%d/%Y %H:%M:%S", "%m/%d/%Y %I:%M:%S %p"):  # (Linux, Windows)
+            try:
+                return time.strptime(date_string, format_string)
+            except ValueError:
+                pass
+
+        raise ValueError("'{}' doesn't match the expected format".format(expires_on))
 
     # TODO: public, factor out of request_token
     def _prepare_request(
