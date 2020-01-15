@@ -1,6 +1,13 @@
 
 # Release History
 
+## 1.2.1 (2020-01-14)
+
+### Bug fixes
+
+- Revert _BearerTokenCredentialPolicyBase refactoring #9465
+
+
 ## 1.2.0 (2020-01-14)
 
 ### Features
