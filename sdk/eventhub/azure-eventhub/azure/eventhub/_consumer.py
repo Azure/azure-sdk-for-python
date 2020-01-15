@@ -121,7 +121,6 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._bufferred_events = deque()  # type: Deque[EventData]
         self._last_received_event = None  # type: Optional[EventData]
 
     def _create_handler(self, auth):
