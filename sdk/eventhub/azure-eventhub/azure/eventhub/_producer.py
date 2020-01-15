@@ -8,7 +8,16 @@ import uuid
 import logging
 import time
 import threading
-from typing import Iterable, Union, Type, Optional, Any, AnyStr, List, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import (
+    Iterable,
+    Union,
+    Type,
+    Optional,
+    Any,
+    AnyStr,
+    List,
+    TYPE_CHECKING,
+)  # pylint: disable=unused-import
 
 from uamqp import types, constants, errors
 from uamqp import SendClient
@@ -19,7 +28,13 @@ from azure.core.settings import settings
 from .exceptions import _error_handler, OperationTimeoutError
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
-from ._utils import create_properties, set_message_partition_key, trace_message
+from ._utils import (
+    create_properties,
+    set_message_partition_key,
+    trace_message,
+    send_context_manager,
+    add_link_to_send,
+)
 from ._constants import TIMEOUT_SYMBOL
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,10 +55,13 @@ def _set_trace_message(event_datas, parent_span=None):
     # type: (Iterable[EventData], Optional[AbstractSpan]) -> Iterable[EventData]
     for ed in iter(event_datas):
         trace_message(ed, parent_span)
+        add_link_to_send(ed, parent_span)
         yield ed
 
 
-class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
+class EventHubProducer(
+    ConsumerProducerMixin
+):  # pylint:disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
     grouped together in batches. Depending on the options specified at creation, the producer may
@@ -86,7 +104,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint: disable=protected-access
+        self._retry_policy = errors.ErrorPolicy(
+            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint: disable=protected-access
+        )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = []  # type: List[Any]
@@ -97,7 +117,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._outcome = None  # type: Optional[constants.MessageSendResult]
         self._condition = None  # type: Optional[Exception]
         self._lock = threading.Lock()
-        self._link_properties = {types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))}
+        self._link_properties = {
+            types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
+        }
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -111,7 +133,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,
-            properties=create_properties(self._client._config.user_agent))  # pylint: disable=protected-access
+            properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+        )
 
     def _open_with_retry(self):
         # type: () -> None
@@ -163,36 +186,45 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._condition = condition
 
     def _wrap_eventdata(
-            self,
-            event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
-            span,  # type: Optional[AbstractSpan]
-            partition_key  # type: Optional[AnyStr]
-        ):
+        self,
+        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        span,  # type: Optional[AbstractSpan]
+        partition_key,  # type: Optional[AnyStr]
+    ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
             if partition_key:
                 set_message_partition_key(event_data.message, partition_key)
             wrapper_event_data = event_data
             trace_message(wrapper_event_data, span)
+            add_link_to_send(wrapper_event_data, span)
         else:
-            if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
-                if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
-                    raise ValueError('The partition_key does not match the one of the EventDataBatch')
+            if isinstance(
+                event_data, EventDataBatch
+            ):  # The partition_key in the param will be omitted.
+                if (
+                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
+                ):
+                    raise ValueError(
+                        "The partition_key does not match the one of the EventDataBatch"
+                    )
+                for message in event_data.message._body_gen:  # pylint: disable=protected-access
+                    add_link_to_send(message, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
-                event_data = _set_trace_message(event_data)
+                event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return wrapper_event_data
 
     def send(
-            self,
-            event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
-            partition_key=None,  # type: Optional[AnyStr]
-            timeout=None  # type: Optional[float]
-        ):
+        self,
+        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        partition_key=None,  # type: Optional[AnyStr]
+        timeout=None,  # type: Optional[float]
+    ):
         # type:(...) -> None
         """
         Sends an event data and blocks until acknowledgement is
@@ -219,20 +251,16 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         """
         # Tracing code
         with self._lock:
-            span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-            child = None
-            if span_impl_type is not None:
-                child = span_impl_type(name="Azure.EventHubs.send")
-                child.kind = SpanKind.CLIENT  # Should be PRODUCER
-            self._check_closed()
-            wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-            self._unsent_events = [wrapper_event_data.message]
+            with send_context_manager() as child:
+                self._check_closed()
+                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                self._unsent_events = [wrapper_event_data.message]
 
-            if span_impl_type is not None and child is not None:
-                with child:
-                    self._client._add_span_request_attributes(child)  # pylint: disable=protected-access
-                    self._send_event_data_with_retry(timeout=timeout)
-            else:
+                if child:
+                    self._client._add_span_request_attributes(  # pylint: disable=protected-access
+                        child
+                    )
+
                 self._send_event_data_with_retry(timeout=timeout)
 
     def close(self):

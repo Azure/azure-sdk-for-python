@@ -21,7 +21,9 @@ from azure.mgmt.keyvault.models import (
     VaultCreateOrUpdateParameters,
 )
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError, NameInUseError
+from azure_devtools.scenario_tests.exceptions import(
+    AzureTestError, NameInUseError, ReservedResourceNameError
+)
 
 from . import AzureMgmtPreparer, ResourceGroupPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
@@ -105,7 +107,9 @@ class KeyVaultPreparer(AzureMgmtPreparer):
                     break
                 except Exception as ex:
                     if "VaultAlreadyExists" in str(ex):
-                        raise NameInUseError("A vault with name {} already exists".format(name))
+                        raise NameInUseError(name)
+                    if "ReservedResourceName" in str(ex):
+                        raise ReservedResourceNameError(name)
                     if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
                         raise
                     time.sleep(3)

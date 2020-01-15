@@ -1,12 +1,28 @@
 # Release History
 
-## Version 5.0.0b7 Unreleased
+## 5.0.0 (2020-01-13)
 
 **Breaking changes**
 
-- Removed deprecated property EventData.application_properties and deprecated method EventData.encode_message()
+- `EventData`
+    - Removed deprecated property `application_properties` and deprecated method `encode_message()`.
+- `EventHubConsumerClient`
+    - `on_error` would be called when `EventHubConsumerClient` failed to claim ownership of partitions.
+    - `on_partition_close` and `on_partition_initialize` would be called in the case of exceptions raised by `on_event` callback.
+        -  `EventHubConsumerClient` would close and re-open the internal partition receiver in this case.
+    - Default starting position from where `EventHubConsumerClient` should resume receiving after recovering from an error has been re-prioritized.
+        - If there is checkpoint, it will resume from the checkpoint.
+        - If there is no checkpoint but `starting_position` is provided, it will resume from `starting_posititon`.
+        - If there is no checkpoint or `starting_position`, it will resume from the latest position.
+- `PartitionContext`
+    - `update_checkpoint` would do in-memory checkpoint instead of doing nothing when checkpoint store is not explicitly provided.
+        - The in-memory checkpoints would be used for `EventHubConsumerClient` receiving recovering.
+- `get_partition_ids`, `get_partition_properties`, `get_eventhub_properties` would raise error in the case of service returning an error status code.
+    - `AuthenticationError` would be raised when service returning error code 401.
+    - `ConnectError` would be raised when service returning error code 404.
+    - `EventHubError` would be raised when service returning other error codes.
 
-## 2019-12-03 5.0.0b6
+## 5.0.0b6 (2019-12-03)
 
 **Breaking changes**
 
@@ -38,12 +54,12 @@
 - `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
 
 
-** New features **
+**New features**
 
 - Added new parameter `idle_timeout` in construct and `from_connection_string` to `EventHubConsumerClient` and `EventHubProducerClient`
 after which the underlying connection will close if there is no further activity.
 
-## 2019-11-04 5.0.0b5
+## 5.0.0b5 (2019-11-04)
 
 **Breaking changes**
 

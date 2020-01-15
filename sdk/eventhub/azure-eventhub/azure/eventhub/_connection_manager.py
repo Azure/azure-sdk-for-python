@@ -11,6 +11,7 @@ from uamqp import Connection, TransportType, c_uamqp
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAuth
+
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -33,7 +34,7 @@ class _ConnectionMode(Enum):
     SeparateConnection = 2
 
 
-class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attributes
+class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self._lock = Lock()
         self._conn = None  # type: Connection
@@ -43,12 +44,14 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
         self._error_policy = kwargs.get("error_policy")
         self._properties = kwargs.get("properties")
         self._encoding = kwargs.get("encoding") or "UTF-8"
-        self._transport_type = kwargs.get('transport_type') or TransportType.Amqp
-        self._http_proxy = kwargs.get('http_proxy')
+        self._transport_type = kwargs.get("transport_type") or TransportType.Amqp
+        self._http_proxy = kwargs.get("http_proxy")
         self._max_frame_size = kwargs.get("max_frame_size")
         self._channel_max = kwargs.get("channel_max")
         self._idle_timeout = kwargs.get("idle_timeout")
-        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
+        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get(
+            "remote_idle_timeout_empty_frame_send_ratio"
+        )
 
     def get_connection(self, host, auth):
         # type: (str, JWTTokenAuth) -> Connection
@@ -65,7 +68,8 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
                     remote_idle_timeout_empty_frame_send_ratio=self._remote_idle_timeout_empty_frame_send_ratio,
                     error_policy=self._error_policy,
                     debug=self._debug,
-                    encoding=self._encoding)
+                    encoding=self._encoding,
+                )
             return self._conn
 
     def close_connection(self):

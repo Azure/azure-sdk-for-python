@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "I should take my cat to the veterinarian."},
+      {"id": "1", "text": "Este es un document escrito en Espa\u00f1ol."}, {"id":
+      "2", "text": "\u732b\u306f\u5e78\u305b"}, {"id": "3", "text": "Fahrt nach Stuttgart
+      und dann zum Hotel zu Fu."}, {"id": "4", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '295'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"latest"}'
+    headers:
+      apim-request-id: 858224ec-75fa-41a5-89f6-c07253ab3e40
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
+      date: Thu, 14 Nov 2019 21:44:55 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 2b8750af-9f0a-4583-9543-41cf6fa1d72d
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '8'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - showStats=false
+        - ''
+version: 1

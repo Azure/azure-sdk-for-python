@@ -12,6 +12,7 @@ from os import (
     remove,
 )
 import unittest
+import uuid
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
@@ -926,7 +927,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_path_chunked_upload.temp.dat'
+        FILE_PATH = 'from_path_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -949,7 +950,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'progress_chunked_upload.temp.dat'
+        FILE_PATH = 'progress_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -984,7 +985,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload.temp.dat'
+        FILE_PATH = 'stream_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1006,7 +1007,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_known_size.temp.dat'
+        FILE_PATH = 'upload_known_size.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_size = len(data) - 66
@@ -1027,7 +1028,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_unk_size.temp.dat'
+        FILE_PATH = 'upload_unk_size.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1047,7 +1048,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'multiple_appends.temp.dat'
+        FILE_PATH = 'multiple_appends.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream1:
             stream1.write(data)
         with open(FILE_PATH, 'wb') as stream2:
@@ -1071,7 +1072,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_with_count.temp.dat'
+        FILE_PATH = 'upload_with_count.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1093,7 +1094,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_with_count_parallel.temp.dat'
+        FILE_PATH = 'upload_with_count_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 

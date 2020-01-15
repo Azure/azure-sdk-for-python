@@ -287,6 +287,19 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def task_runs(self):
+        """Instance depends on the API version:
+
+           * 2019-06-01-preview: :class:`TaskRunsOperations<azure.mgmt.containerregistry.v2019_06_01_preview.operations.TaskRunsOperations>`
+        """
+        api_version = self._get_api_version('task_runs')
+        if api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview.operations import TaskRunsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def tasks(self):
         """Instance depends on the API version:
 

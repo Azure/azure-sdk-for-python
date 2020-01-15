@@ -1,6 +1,7 @@
 from collections import namedtuple
+import os
 
-from azure_devtools.scenario_tests import AzureTestError
+from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.common.exceptions import CloudError
 from azure.mgmt.resource import ResourceManagementClient
@@ -33,23 +34,34 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         self.location = location
         self.parameter_name = parameter_name
         self.parameter_name_for_location = parameter_name_for_location
+        env_value = os.environ.get("AZURE_RESOURCEGROUP_NAME", None)
+        self._need_creation = True
+        if env_value:
+            self.resource_random_name = env_value
+            self._need_creation = False
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
 
     def create_resource(self, name, **kwargs):
-        if self.is_live:
+        if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
-            self.resource = self.client.resource_groups.create_or_update(
-                name, {'location': self.location}
-            )
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.moniker
-            )
+            try:
+                self.resource = self.client.resource_groups.create_or_update(
+                    name, {'location': self.location}
+                )
+            except Exception as ex:
+                if "ReservedResourceName" in str(ex):
+                    raise ReservedResourceNameError(name)
+                raise
         else:
             self.resource = self.resource or FakeResource(
                 name=name,
                 id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/"+name
+            )
+        if name != self.moniker:
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.moniker
             )
         return {
             self.parameter_name: self.resource,
@@ -57,7 +69,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         }
 
     def remove_resource(self, name, **kwargs):
-        if self.is_live:
+        if self.is_live and self._need_creation:
             try:
                 if 'wait_timeout' in kwargs:
                     azure_poller = self.client.resource_groups.delete(name)

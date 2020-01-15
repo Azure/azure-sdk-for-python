@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-timeseriesinsights"
+package_pprint_name = "TimeSeriesInsights Management"
+package_doc_id = "timeseriesinsights"
+is_stable = false

@@ -16,7 +16,7 @@ from logging.handlers import RotatingFileHandler
 collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("tests/livetest/asynctests")
-    collect_ignore.append("tests/eventprocessor")
+    collect_ignore.append("tests/unittest/asynctests")
     collect_ignore.append("features")
     collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
@@ -184,7 +184,7 @@ def connstr_receivers(connection_str, live_eventhub_config):
             live_eventhub_config['event_hub'],
             live_eventhub_config['consumer_group'],
             p)
-        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
+        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
         receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers

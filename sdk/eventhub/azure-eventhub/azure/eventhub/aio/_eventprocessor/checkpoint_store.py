@@ -10,27 +10,24 @@ from abc import ABC, abstractmethod
 class CheckpointStore(ABC):
     """CheckpointStore deals with the interaction with the chosen storage service.
 
-    It can list and claim partition ownerships; and list and save checkpoints.
+    It can list and claim partition ownerships as well as list and save checkpoints.
     """
 
     @abstractmethod
     async def list_ownership(
-          self,
-          fully_qualified_namespace: str,
-          eventhub_name: str,
-          consumer_group: str
-        ) -> Iterable[Dict[str, Any]]:
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
+    ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the chosen storage service.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
-         The format is like "<namespace>.servicebus.windows.net"
+         The format is like "<namespace>.servicebus.windows.net".
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
          relative to the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the ownerships are associated with.
         :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net"
+                  The format is like "<namespace>.servicebus.windows.net".
                 - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
                   relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
@@ -42,14 +39,16 @@ class CheckpointStore(ABC):
         """
 
     @abstractmethod
-    async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    async def claim_ownership(
+        self, ownership_list: Iterable[Dict[str, Any]]
+    ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net"
+                  The format is like "<namespace>.servicebus.windows.net".
                 - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
                   relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
@@ -61,7 +60,9 @@ class CheckpointStore(ABC):
         """
 
     @abstractmethod
-    async def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]]) -> None:
+    async def update_checkpoint(
+        self, checkpoint: Dict[str, Optional[Union[str, int]]]
+    ) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the chosen storage service.
 
@@ -71,7 +72,7 @@ class CheckpointStore(ABC):
         :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net"
+                  The format is like "<namespace>.servicebus.windows.net".
                 - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
                   relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the checkpoint is associated with.
@@ -86,22 +87,19 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def list_checkpoints(
-          self,
-          fully_qualified_namespace: str,
-          eventhub_name: str,
-          consumer_group: str
-        ) -> Iterable[Dict[str, Any]]:
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str
+    ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the store.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
-         The format is like "<namespace>.servicebus.windows.net"
+         The format is like "<namespace>.servicebus.windows.net".
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
          the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the checkpoints are associated with.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
-                  The format is like "<namespace>.servicebus.windows.net"
+                  The format is like "<namespace>.servicebus.windows.net".
                 - `eventhub_name` (str): The name of the specific Event Hub the checkpoints are associated with,
                   relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the checkpoints are associated with.

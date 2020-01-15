@@ -15,7 +15,6 @@ trigger:
   branches:
     include:
     - master
-    - feature/*
     - hotfix/*
     - release/*
     - restapi*
@@ -46,3 +45,7 @@ stages:
       safeName: azurecore
     - name: azure_core_tracing_opencensus
       safeName: azurecorecoretracingopencensus
+    - name: azure_core_tracing_opentelemetry
+      safeName: azurecorecoretracingtelemetry
+    - name: azure_common
+      safeName: azurecommon

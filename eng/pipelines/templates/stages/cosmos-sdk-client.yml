@@ -14,7 +14,6 @@ stages:
           TestMarkArgument: not cosmosEmulator
 
       - job: Emulator
-        condition: ne(variables['Build.Reason'], 'PullRequest')
         strategy:
           matrix:
             Windows_Python35:

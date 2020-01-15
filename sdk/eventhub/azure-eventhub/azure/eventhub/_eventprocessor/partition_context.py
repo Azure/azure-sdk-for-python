@@ -22,8 +22,15 @@ class PartitionContext(object):
     when calling `EventHubConsumerClient.receive()`.
     Users can call `update_checkpoint()` of this class to persist checkpoint data.
     """
-    def __init__(self, fully_qualified_namespace, eventhub_name, consumer_group,
-                 partition_id, checkpoint_store=None):
+
+    def __init__(
+        self,
+        fully_qualified_namespace,
+        eventhub_name,
+        consumer_group,
+        partition_id,
+        checkpoint_store=None,
+    ):
         # type: (str, str, str, str, Optional[CheckpointStore]) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
@@ -56,25 +63,26 @@ class PartitionContext(object):
         # type: (EventData) -> None
         """Updates the receive checkpoint to the given events offset.
 
-        This operation will only update a checkpoint if a `checkpoint_store` was provided during
-        creation of the `EventHubConsumerClient`. Otherwise a warning will be logged.
-
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
          sequence number information used for checkpoint.
         :rtype: None
         """
         if self._checkpoint_store:
             checkpoint = {
-                'fully_qualified_namespace': self.fully_qualified_namespace,
-                'eventhub_name': self.eventhub_name,
-                'consumer_group': self.consumer_group,
-                'partition_id': self.partition_id,
-                'offset': event.offset,
-                'sequence_number': event.sequence_number
+                "fully_qualified_namespace": self.fully_qualified_namespace,
+                "eventhub_name": self.eventhub_name,
+                "consumer_group": self.consumer_group,
+                "partition_id": self.partition_id,
+                "offset": event.offset,
+                "sequence_number": event.sequence_number,
             }
             self._checkpoint_store.update_checkpoint(checkpoint)
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
                 "update_checkpoint is called without checkpoint store. No checkpoint is updated.",
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group, self.partition_id)
+                self.fully_qualified_namespace,
+                self.eventhub_name,
+                self.consumer_group,
+                self.partition_id,
+            )
