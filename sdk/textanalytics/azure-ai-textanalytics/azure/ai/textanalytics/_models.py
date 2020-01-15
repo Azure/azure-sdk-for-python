@@ -377,7 +377,7 @@ class TextDocumentStatistics(DictMixin):
 
 
 class BatchDocumentErrorException(HttpResponseError):
-    """Raised if a property not found on a :class:`DocumentError` is accessed.
+    """Raised if a attribute not found on a :class:`DocumentError` is accessed.
     Used to indicate that a DocumentError was encountered where a result object
     was expected in the batched response.
 
@@ -421,10 +421,10 @@ class DocumentError(DictMixin):
 
     def __getattr__(self, attr):
         if attr not in ["id", "error", "is_error"]:
-            raise BatchDocumentErrorException(
+            raise AttributeError(
                 "The batched result has a DocumentError with the following details. "
                 "Resolve the error or filter for only successful results using the is_error property.\n"
-                "Id: {}\nError: {} - {}\n".
+                "Document Id: {}\nError: {} - {}\n".
                 format(self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
             )
 
