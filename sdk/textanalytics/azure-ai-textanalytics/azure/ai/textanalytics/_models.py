@@ -421,7 +421,7 @@ class DocumentError(DictMixin):
 
     def __getattr__(self, attr):
         if attr not in ["id", "error", "is_error"]:
-            raise AttributeError(
+            raise BatchDocumentErrorException(
                 "The batched result has a DocumentError with the following details. "
                 "Resolve the error or filter for only successful results using the is_error property.\n"
                 "Document Id: {}\nError: {} - {}\n".
