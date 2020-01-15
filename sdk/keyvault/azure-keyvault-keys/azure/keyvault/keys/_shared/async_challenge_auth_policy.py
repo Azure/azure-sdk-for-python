@@ -15,16 +15,17 @@ protocol again.
 """
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport import HttpResponse
 
-from . import HttpChallenge, HttpChallengeCache
+from . import HttpChallengeCache
 from .challenge_auth_policy import _enforce_tls, _get_challenge_request, _update_challenge, ChallengeAuthPolicyBase
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline import PipelineRequest
+    from azure.core.pipeline.transport import HttpResponse
+    from . import HttpChallenge
 
 
 class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
@@ -34,7 +35,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
         self._credential = credential
         super(AsyncChallengeAuthPolicy, self).__init__(**kwargs)
 
-    async def send(self, request: PipelineRequest) -> HttpResponse:
+    async def send(self, request: "PipelineRequest") -> "HttpResponse":
         _enforce_tls(request)
 
         challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
@@ -66,7 +67,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
 
         return response
 
-    async def _handle_challenge(self, request: PipelineRequest, challenge: HttpChallenge) -> None:
+    async def _handle_challenge(self, request: "PipelineRequest", challenge: "HttpChallenge") -> None:
         """authenticate according to challenge, add Authorization header to request"""
 
         if self._need_new_token:
