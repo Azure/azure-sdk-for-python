@@ -36,59 +36,49 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpResponse
 
 
+def _enforce_tls(request):
+    # type: (PipelineRequest) -> None
+    if not request.http_request.url.lower().startswith("https"):
+        raise ServiceRequestError(
+            "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+        )
+
+
+def _get_challenge_request(request):
+    # type: (PipelineRequest) -> PipelineRequest
+
+    # The challenge request is intended to provoke an authentication challenge from Key Vault, to learn how the
+    # service request should be authenticated. It should be identical to the service request but with no body.
+    challenge_request = HttpRequest(
+        request.http_request.method, request.http_request.url, headers=request.http_request.headers
+    )
+    challenge_request.headers["Content-Length"] = "0"
+
+    options = copy.deepcopy(request.context.options)
+    context = PipelineContext(request.context.transport, **options)
+
+    return PipelineRequest(http_request=challenge_request, context=context)
+
+
+def _update_challenge(request, challenger):
+    # type: (HttpRequest, HttpResponse) -> HttpChallenge
+    """parse challenge from challenger, cache it, return it"""
+
+    challenge = HttpChallenge(
+        request.http_request.url,
+        challenger.http_response.headers.get("WWW-Authenticate"),
+        response_headers=challenger.http_response.headers,
+    )
+    ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+    return challenge
+
+
 class ChallengeAuthPolicyBase(object):
     """Sans I/O base for challenge authentication policies"""
 
     def __init__(self, **kwargs):
         self._token = None  # type: Optional[AccessToken]
         super(ChallengeAuthPolicyBase, self).__init__(**kwargs)
-
-    @staticmethod
-    def _update_challenge(request, challenger):
-        # type: (HttpRequest, HttpResponse) -> HttpChallenge
-        """parse challenge from challenger, cache it, return it"""
-
-        challenge = HttpChallenge(
-            request.http_request.url,
-            challenger.http_response.headers.get("WWW-Authenticate"),
-            response_headers=challenger.http_response.headers,
-        )
-        ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
-        return challenge
-
-    @staticmethod
-    def _get_challenge_request(request):
-        # type: (PipelineRequest) -> PipelineRequest
-
-        # The challenge request is intended to provoke an authentication challenge from Key Vault, to learn how the
-        # service request should be authenticated. It should be identical to the service request but with no body.
-        challenge_request = HttpRequest(
-            request.http_request.method, request.http_request.url, headers=request.http_request.headers
-        )
-        challenge_request.headers["Content-Length"] = "0"
-
-        options = copy.deepcopy(request.context.options)
-        context = PipelineContext(request.context.transport, **options)
-
-        return PipelineRequest(http_request=challenge_request, context=context)
-
-    @staticmethod
-    def _enforce_tls(request):
-        # type: (PipelineRequest) -> None
-        if not request.http_request.url.lower().startswith("https"):
-            raise ServiceRequestError(
-                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-            )
-
-    @staticmethod
-    def _update_headers(headers, token):
-        # type: (Dict[str, str], str) -> None
-        """Updates the Authorization header with the bearer token.
-
-        :param dict headers: The HTTP Request headers
-        :param str token: The OAuth token.
-        """
-        headers["Authorization"] = "Bearer {}".format(token)
 
     @property
     def _need_new_token(self):
@@ -106,14 +96,14 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
-        self._enforce_tls(request)
+        _enforce_tls(request)
 
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
-            challenge_request = self._get_challenge_request(request)
+            challenge_request = _get_challenge_request(request)
             challenger = self.next.send(challenge_request)
             try:
-                challenge = self._update_challenge(request, challenger)
+                challenge = _update_challenge(request, challenger)
             except ValueError:
                 # didn't receive the expected challenge -> nothing more this policy can do
                 return challenger
@@ -127,7 +117,7 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
 
             # cached challenge could be outdated; maybe this response has a new one?
             try:
-                challenge = self._update_challenge(request, response)
+                challenge = _update_challenge(request, response)
             except ValueError:
                 # 401 with no legible challenge -> nothing more this policy can do
                 return response
@@ -147,4 +137,4 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
             self._token = self._credential.get_token(scope)
 
         # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
-        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
