@@ -15,10 +15,11 @@ protocol again.
 """
 
 import copy
+import time
 
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineContext, PipelineRequest
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 from azure.core.pipeline.transport import HttpRequest
 
 from .http_challenge import HttpChallenge
@@ -30,16 +31,17 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    from typing import Any, Dict, Optional
+    from azure.core.credentials import AccessToken, TokenCredential
     from azure.core.pipeline.transport import HttpResponse
 
 
-class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
+class ChallengeAuthPolicyBase(object):
     """Sans I/O base for challenge authentication policies"""
 
-    # pylint:disable=useless-super-delegation
-    def __init__(self, credential, **kwargs):
-        super(ChallengeAuthPolicyBase, self).__init__(credential, **kwargs)
+    def __init__(self, **kwargs):
+        self._token = None  # type: Optional[AccessToken]
+        super(ChallengeAuthPolicyBase, self).__init__(**kwargs)
 
     @staticmethod
     def _update_challenge(request, challenger):
@@ -70,9 +72,37 @@ class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
 
         return PipelineRequest(http_request=challenge_request, context=context)
 
+    @staticmethod
+    def _enforce_tls(request):
+        # type: (PipelineRequest) -> None
+        if not request.http_request.url.lower().startswith("https"):
+            raise ServiceRequestError(
+                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+            )
+
+    @staticmethod
+    def _update_headers(headers, token):
+        # type: (Dict[str, str], str) -> None
+        """Updates the Authorization header with the bearer token.
+
+        :param dict headers: The HTTP Request headers
+        :param str token: The OAuth token.
+        """
+        headers["Authorization"] = "Bearer {}".format(token)
+
+    @property
+    def _need_new_token(self):
+        # type: () -> bool
+        return not self._token or self._token.expires_on - time.time() < 300
+
 
 class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
     """policy for handling HTTP authentication challenges"""
+
+    def __init__(self, credential, **kwargs):
+        # type: (TokenCredential, **Any) -> None
+        self._credential = credential
+        super(ChallengeAuthPolicy, self).__init__(**kwargs)
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
