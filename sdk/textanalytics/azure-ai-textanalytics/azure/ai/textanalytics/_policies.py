@@ -15,7 +15,7 @@ class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
         super(CognitiveServicesCredentialPolicy, self).__init__()
 
     def on_request(self, request):
-        subscription_key = self.credential.subscription_key
+        subscription_key = self.credential._subscription_key  # pylint: disable=protected-access
         request.http_request.headers[
             "Ocp-Apim-Subscription-Key"
         ] = subscription_key
