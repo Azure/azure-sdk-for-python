@@ -29,10 +29,11 @@ class _BearerTokenCredentialPolicyBase(object):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> None
+    def __init__(self, credential, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (TokenCredential, *str, Mapping[str, Any]) -> None
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
+        self._credential = credential
         self._token = None  # type: Optional[AccessToken]
 
     @staticmethod
@@ -67,11 +68,6 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
     :param str scopes: Lets you specify the type of access needed.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
-
-    def __init__(self, credential, *scopes, **kwargs):
-        # type: (TokenCredential, *str, **Any) -> None
-        self._credential = credential
-        super(BearerTokenCredentialPolicy, self).__init__(*scopes, **kwargs)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
