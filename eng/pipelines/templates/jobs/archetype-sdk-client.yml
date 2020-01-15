@@ -111,7 +111,9 @@ jobs:
     - pwsh: |
         $toxenvvar = "whl,sdist"
         if (('$(Build.Reason)' -ne 'Schedule') -and ('$(System.TeamProject)' -ne 'internal')) {
-          $toxenvvar = "whl,sdist,depends"
+          if ('$(Skip.ImportTest)' -ne 'true') {
+            $toxenvvar = "whl,sdist,depends"
+          }
         }
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
