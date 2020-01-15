@@ -6,7 +6,8 @@ from __future__ import unicode_literals
 
 import uuid
 import logging
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
+from collections import deque
 
 import uamqp
 from uamqp import types, errors, utils
@@ -85,7 +86,8 @@ class EventHubConsumer(
 
         self._on_event_received = kwargs[
             "on_event_received"
-        ]  # type: Callable[[EventData], None]
+        ]
+        self._batch = kwargs.get("batch", False)
         self._client = client
         self._source = source
         self._offset = event_position
@@ -119,6 +121,7 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
+        self._bufferred_events = deque()  # type: Deque[EventData]
         self._last_received_event = None  # type: Optional[EventData]
 
     def _create_handler(self, auth):
@@ -153,22 +156,18 @@ class EventHubConsumer(
             desired_capabilities=desired_capabilities,
         )
 
-        self._handler._streaming_receive = True  # pylint:disable=protected-access
-        self._handler._message_received_callback = (  # pylint:disable=protected-access
-            self._message_received
-        )
-
     def _open_with_retry(self):
         # type: () -> None
         self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _message_received(self, message):
-        # type: (uamqp.Message) -> None
+    def _next_message_in_handler(self):
         # pylint:disable=protected-access
+        message = self._handler._received_messages.get()
+        self._handler._received_messages.task_done()
         event_data = EventData._from_message(message)
         trace_link_message(event_data)
         self._last_received_event = event_data
-        self._on_event_received(event_data)
+        return event_data
 
     def _open(self):
         # type: () -> bool
@@ -206,6 +205,17 @@ class EventHubConsumer(
             try:
                 if self._open():
                     self._handler.do_work()  # type: ignore
+                    if self._batch:
+                        events = []
+                        while not self._handler._received_messages.empty():  # type: ignore
+                            event_data = self._next_message_in_handler()
+                            events.append(event_data)
+                        if len(events) > 0:
+                            self._on_event_received(events)
+                    else:
+                        while not self._handler._received_messages.empty():  # type: ignore
+                            event_data = self._next_message_in_handler()
+                            self._on_event_received(event_data)
                 return
             except Exception as exception:  # pylint: disable=broad-except
                 if (

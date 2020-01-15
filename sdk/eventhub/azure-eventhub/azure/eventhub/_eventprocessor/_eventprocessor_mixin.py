@@ -79,6 +79,7 @@ class EventProcessorMixin(object):
         initial_event_position,  # type: Union[str, int, datetime]
         initial_event_position_inclusive,  # type: bool
         on_event_received,  # type: Callable[[EventData], None]
+        batch=False,
         **kwargs  # type: Any
     ):
         # type: (...) -> Union[EventHubConsumer, EventHubConsumerAsync]
@@ -87,6 +88,7 @@ class EventProcessorMixin(object):
             partition_id,
             initial_event_position,
             on_event_received,  # type: ignore
+            batch=batch,
             event_position_inclusive=initial_event_position_inclusive,
             owner_level=self._owner_level,
             track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,

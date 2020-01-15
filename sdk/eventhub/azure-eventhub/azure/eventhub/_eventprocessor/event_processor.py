@@ -49,6 +49,7 @@ class EventProcessor(
         eventhub_client,  # type: EventHubConsumerClient
         consumer_group,  # type: str
         on_event,  # type: Callable[[PartitionContext, EventData], None]
+        batch=False,
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -60,6 +61,7 @@ class EventProcessor(
         )
         self._eventhub_name = eventhub_client.eventhub_name
         self._event_handler = on_event
+        self._batch = batch
         self._partition_id = kwargs.get("partition_id", None)  # type: Optional[str]
         self._error_handler = kwargs.get(
             "on_error", None
@@ -182,6 +184,7 @@ class EventProcessor(
                             initial_event_position,
                             event_postition_inclusive,
                             event_received_callback,
+                            batch=self._batch
                         ),
                     )
                     if self._partition_initialize_handler:

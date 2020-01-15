@@ -131,6 +131,7 @@ class EventHubConsumerClient(ClientBase):
         partition_id,  # type: str
         event_position,  # type: Union[str, int, datetime.datetime]
         on_event_received,  # type: Callable[[PartitionContext, EventData], None]
+        batch=False,
         **kwargs  # type: Any
     ):
         # type: (...) -> EventHubConsumer
@@ -151,6 +152,7 @@ class EventHubConsumerClient(ClientBase):
             event_position_inclusive=event_position_inclusive,
             owner_level=owner_level,
             on_event_received=on_event_received,
+            batch=batch,
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
@@ -211,8 +213,15 @@ class EventHubConsumerClient(ClientBase):
         )
         return cls(**constructor_args)
 
+    def receive_batch(self, on_events, **kwargs):
+        #  type: (Callable[[PartitionContext, List[EventData]], None], Any) -> None
+        """Docstring is almost the same as receive except for the on_events.
+        TODO: add docstring
+        """
+        self._receive(on_events, True, **kwargs)
+
     def receive(self, on_event, **kwargs):
-        #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
+        # type: (Callable[[PartitionContext, EventData], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -280,6 +289,10 @@ class EventHubConsumerClient(ClientBase):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
+        self._receive(on_event, False, **kwargs)
+
+    def _receive(self, on_event, batch=False, **kwargs):
+        # type: (Callable[[PartitionContext, Union[EventData, List[EventData]]], None], bool, Any) -> None
         partition_id = kwargs.get("partition_id")
         with self._lock:
             error = None  # type: Optional[str]
@@ -316,6 +329,7 @@ class EventHubConsumerClient(ClientBase):
                 self,
                 self._consumer_group,
                 on_event,
+                batch=batch,
                 checkpoint_store=self._checkpoint_store,
                 load_balancing_interval=self._load_balancing_interval,
                 initial_event_position=initial_event_position,
