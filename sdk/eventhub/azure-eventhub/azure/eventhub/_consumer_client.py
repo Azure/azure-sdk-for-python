@@ -14,12 +14,13 @@ from typing import (
     List,
     Optional,
 )  # pylint: disable=unused-import
-from base64 import b64encode
 
+from uamqp.errors import LinkRedirect
 from ._common import EventData
-from ._client_base import ClientBase, _parse_conn_str, EventHubSharedKeyCredential, _IoTHubSharedKeyCredential
+from .exceptions import _handle_exception
+from ._client_base import ClientBase, _IoTHubSharedKeyCredential
 from ._consumer import EventHubConsumer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, IOTHUB_ENTITY_PATH
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.partition_context import PartitionContext
 
@@ -117,6 +118,10 @@ class EventHubConsumerClient(ClientBase):
         )
         self._lock = threading.Lock()
         self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
+        self._on_error = None
+
+        self._is_iothub = kwargs.get("is_iothub")
+        self._redirected = False
 
     def __enter__(self):
         return self
@@ -152,10 +157,32 @@ class EventHubConsumerClient(ClientBase):
             on_event_received=on_event_received,
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
-            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            is_iothub=kwargs.get("is_iothub", False)
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties
         )
         return handler
+
+    def _redirect(self, partition_id=None):
+        redirect_consumer = self._create_consumer(
+            consumer_group="$Default",
+            partition_id="0" or partition_id,
+            event_position="-1",
+            on_event_received=None,
+            is_iothub=True
+        )
+        try:
+            while not redirect_consumer.handler_ready:
+                redirect_consumer._open()
+        except LinkRedirect as redirect:
+            self._update_connection_info_after_redirect(redirect)
+        except Exception as err:
+            _LOGGER.error(
+                "EventHubConsumerClient {} failed to redirect because of error: {}".format(self._container_id, err)
+            )
+            redirect_consumer.close()
+            exception = _handle_exception(err, self)
+            if self._on_error:
+                self._on_error(None, exception)
+            raise exception
 
     @classmethod
     def from_connection_string(cls, conn_str, consumer_group, **kwargs):
@@ -206,23 +233,18 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
+        is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
         constructor_args = cls._from_connection_string(
             conn_str, consumer_group=consumer_group, **kwargs
         )
+        if is_iot_conn_str:
+            constructor_args["eventhub_name"] = IOTHUB_ENTITY_PATH
+            constructor_args["credential"] = _IoTHubSharedKeyCredential(
+                constructor_args["credential"].policy,
+                constructor_args["credential"].key
+            )
+            constructor_args["is_iothub"] = True
         return cls(**constructor_args)
-
-    @classmethod
-    def from_iothub_connection_string(cls, iothub_connection_string, consumer_group, **kwargs):
-        host, policy, key, entity = _parse_conn_str(iothub_connection_string, kwargs)
-        credential = _IoTHubSharedKeyCredential(policy, key)
-        client = cls(
-            fully_qualified_namespace=host,
-            eventhub_name="messages/events",
-            consumer_group=consumer_group,
-            credential=credential,
-            **kwargs
-        )
-        return client
 
     def receive(self, on_event, **kwargs):
         #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
@@ -293,7 +315,13 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Receive events from the EventHub.
         """
         partition_id = kwargs.get("partition_id")
+        self._on_error = kwargs.get("on_error")
         with self._lock:
+            if self._is_iothub and not self._redirected:
+                try:
+                    self._redirect(partition_id)
+                except Exception:
+                    return
             error = None  # type: Optional[str]
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
                 error = (

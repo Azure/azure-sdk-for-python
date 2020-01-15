@@ -39,8 +39,7 @@ from ._constants import (
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC,
-    REDIRECT_SYMBOL
+    MGMT_STATUS_DESC
 )
 
 if TYPE_CHECKING:
@@ -129,6 +128,17 @@ def _build_uri(address, entity):
     return address
 
 
+def parse_redirect_info(connection_info):
+    redirect_uri = connection_info.address.decode('utf-8')
+    auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
+    address = urlparse(auth_uri)
+    fully_qualified_namespace = address.hostname
+    # auth_uri = "sb://{}{}".format(fully_qualified_namespace, address.path)
+    eventhub_name = address.path.lstrip('/')
+    # mgmt_target = redirect_uri
+    return fully_qualified_namespace, eventhub_name
+
+
 class EventHubSharedKeyCredential(object):
     """The shared access key credential used for authentication.
 
@@ -171,8 +181,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
         # type: (str, str, TokenCredential, Any) -> None
         self.eventhub_name = eventhub_name
-        # if not eventhub_name:
-        #     raise ValueError("The eventhub name can not be None or empty.")
+        if not eventhub_name:
+            raise ValueError("The eventhub name can not be None or empty.")
         path = "/" + eventhub_name if eventhub_name else ""
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
@@ -187,7 +197,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
-        self._is_iothub = False
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
@@ -198,20 +207,25 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
+    def _update_connection_info_after_redirect(
+        self,
+        connection_info,
+    ):
+        self.fully_qualified_namespace, self.eventhub_name = parse_redirect_info(connection_info)
+        self._address = _Address(hostname=self.fully_qualified_namespace, path="/" + self.eventhub_name)
+        # Reconstruct from _IoTHubSharedKeyCredential to EventHubSharedKeyCredential using the same policy and key
+        self._credential = EventHubSharedKeyCredential(self._credential.policy, self._credential.key)
+        self._mgmt_target = "amqps://{}/{}".format(
+            self._address.hostname, self.eventhub_name
+        )
+        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+
     def _create_auth(self):
         # type: () -> authentication.JWTTokenAuth
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
         """
-        # if self._is_iothub:
-        #     return authentication.SASLPlain(
-        #         self._address.hostname,
-        #         self._username,
-        #         self._password,
-        #         http_proxy=self._config.http_proxy,
-        #         transport_type=self._config.transport_type
-        #     )
 
         try:
             token_type = self._credential.token_type
@@ -271,21 +285,16 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         last_exception = None
 
-        symbol_array = [types.AMQPSymbol(REDIRECT_SYMBOL)]
-        connection_desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClient(
-                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing,
-                connection_desired_capabilities=connection_desired_capabilities
+                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
             )
             try:
                 conn = self._conn_manager.get_connection(
                     self._address.hostname, mgmt_auth
                 )  # pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)
-                node = None
                 #node = b"messages/events/$management"# if self._is_iothub else b"$management"
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,

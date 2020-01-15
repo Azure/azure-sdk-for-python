@@ -79,7 +79,6 @@ class EventHubConsumer(
             "track_last_enqueued_event_properties", False
         )
         idle_timeout = kwargs.get("idle_timeout", None)
-        is_iothub = kwargs.get("is_iothub", False)
 
         self.running = False
         self.closed = False
@@ -123,11 +122,6 @@ class EventHubConsumer(
             track_last_enqueued_event_properties
         )
         self._last_received_event = None  # type: Optional[EventData]
-        if is_iothub:
-            symbol_array = [types.AMQPSymbol(REDIRECT_SYMBOL)]
-            self._connection_desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-        else:
-            self._connection_desired_capabilities = None
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -159,8 +153,7 @@ class EventHubConsumer(
             receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
             auto_complete=False,
             properties=properties,
-            desired_capabilities=desired_capabilities,
-            connection_desired_capabilities=self._connection_desired_capabilities
+            desired_capabilities=desired_capabilities
         )
 
         self._handler._streaming_receive = True  # pylint:disable=protected-access

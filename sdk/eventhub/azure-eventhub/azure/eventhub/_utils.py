@@ -11,7 +11,10 @@ import datetime
 import calendar
 import logging
 from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any
-
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 import six
 
 from uamqp import types

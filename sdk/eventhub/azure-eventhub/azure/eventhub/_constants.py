@@ -39,3 +39,5 @@ NO_RETRY_ERRORS = (
     b"com.microsoft:precondition-failed",
     b"com.microsoft:argument-error",
 )
+
+IOTHUB_ENTITY_PATH = "messages/events"
