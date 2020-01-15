@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.6.0 (2020-01-15)
+++++++++++++++++++
+
+**Features**
+
+- Added operation SubscriptionFactoryOperations.create_csp_subscription
+
+**Breaking changes**                                                                                                                                                                                        
+
+- Operation SubscriptionFactoryOperations.create_subscription has a new signature
+
 0.5.0 (2019-08-21)
 ++++++++++++++++++
 
