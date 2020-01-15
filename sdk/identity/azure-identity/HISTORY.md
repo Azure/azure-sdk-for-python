@@ -1,5 +1,10 @@
 # Release History
 
+## 1.2.1b1 (Unreleased)
+
+- Correctly parse token expiration time on Windows App Service
+([#9393](https://github.com/Azure/azure-sdk-for-python/issues/9393))
+
 ## 1.2.0 (2020-01-14)
 
 - All credential pipelines include `ProxyPolicy`
