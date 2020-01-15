@@ -1,6 +1,14 @@
 
 # Release History
 
+## 1.2.1 (2020-01-14)
+
+### Bug fixes
+
+- Fixed a regression in 1.2.0 that was incompatible with azure-keyvault-* 4.0.0
+[#9462](https://github.com/Azure/azure-sdk-for-python/issues/9462)
+
+
 ## 1.2.0 (2020-01-14)
 
 ### Features
