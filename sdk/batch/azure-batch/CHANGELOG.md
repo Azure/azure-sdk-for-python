@@ -1,10 +1,6 @@
-.. :changelog:
+# Release History
 
-Release History
-===============
-
-8.0.0 (2019-8-5)
-++++++++++++++++++
+## 8.0.0 (2019-8-5)
 
 - Using REST API version 2019-08-01.10.0.
     * Added ability to specify a collection of public IPs on `NetworkConfiguration` via the new `public_ips` property. This guarantees nodes in the Pool will have an IP from the list user provided IPs.
@@ -13,21 +9,18 @@ Release History
     * **Breaking** When not specified, the default value for `wait_for_success` on `StartTask` is now `True` (was `False`).
     * **Breaking** When not specified, the default value for `scope` on `AutoUserSpecification` is now always `Pool` (was `Task` on Windows nodes, `Pool` on Linux nodes).
 
-7.0.0 (2019-6-11)
-++++++++++++++++++
+## 7.0.0 (2019-6-11)
 
 - Using REST API version 2019-06-01.9.0.
     * **Breaking** Replaced `AccountOperations.list_node_agent_skus` with `AccountOperations.list_supported_images`. `list_supported_images` contains all of the same information originally available in `list_node_agent_skus` but in a clearer format. New non-verified images are also now returned. Additional information about `capabilities` and `batch_support_end_of_life` is accessible on the `ImageInformation` object returned by `list_supported_images`.
     * Now support network security rules blocking network access to a `CloudPool` based on the source port of the traffic. This is done via the `source_port_ranges` property on `network_security_group_rules`.
     * When running a container, Batch now supports executing the task in the container working directory or in the Batch task working directory. This is controlled by the `working_directory` property on `TaskContainerSettings`.
 
-6.0.1 (2019-2-26)
-++++++++++++++++++
+## 6.0.1 (2019-2-26)
 
 - Fix bug in TaskOperations.add_collection methods exception handling
 
-6.0.0 (2018-12-14)
-++++++++++++++++++
+## 6.0.0 (2018-12-14)
 
 - Using REST API version 2018-12-01.8.0.
     * **Breaking** Removed support for the `upgrade_os` API on `CloudServiceConfiguration` pools.
@@ -50,8 +43,7 @@ Release History
     * The default task retention time for all tasks is now 7 days, previously it was infinite.
 - **Breaking** Renamed the `base_url` parameter to `batch_url` on `BatchServiceClient` class, and it is required now.
 
-5.1.1 (2018-10-16)
-++++++++++++++++++
+## 5.1.1 (2018-10-16)
 
 **Bugfixes**
 
@@ -61,8 +53,7 @@ Release History
 
 - azure-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 
-5.1.0 (2018-08-28)
-++++++++++++++++++
+## 5.1.0 (2018-08-28)
 
 - Update operation TaskOperations.add_collection with the following added functionality:
     + Retry server side errors.
@@ -70,8 +61,7 @@ Release History
     + If tasks are too large to be submitted in chunks of 100, reduces number of tasks per request.
     + Add a parameter to specify number of threads to use when submitting tasks.
 
-5.0.0 (2018-08-24)
-++++++++++++++++++
+## 5.0.0 (2018-08-24)
 
 - Using REST API version 2018-08-01.7.0.
     + Added `node_agent_info` in ComputeNode to return the node agent information
@@ -88,35 +78,30 @@ Release History
    + Operation JobOperations.terminate
 - Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
 
-4.1.3 (2018-04-24)
-++++++++++++++++++
+## 4.1.3 (2018-04-24)
 
 - Update some APIs' comments
 - New property `leaving_pool` in `node_counts` type.
 
-4.1.2 (2018-04-23)
-++++++++++++++++++
+## 4.1.2 (2018-04-23)
 
 **Bugfixes**
 
 - Compatibility of the sdist with wheel 0.31.0
 - Compatibility with msrestazure 0.4.28
 
-4.1.1 (2018-03-26)
-++++++++++++++++++
+## 4.1.1 (2018-03-26)
 
 - Fix regression on method `enable_auto_scale`.
 
-4.1.0 (2018-03-07)
-++++++++++++++++++
+## 4.1.0 (2018-03-07)
 
 - Using REST API version 2018-03-01.6.1.
 - Added the ability to query pool node counts by state, via the new `list_pool_node_counts` method.
 - Added the ability to upload Azure Batch node agent logs from a particular node, via the `upload_batch_service_logs` method.
    + This is intended for use in debugging by Microsoft support when there are problems on a node.
 
-4.0.0 (2017-09-25)
-++++++++++++++++++
+## 4.0.0 (2017-09-25)
 
 - Using REST API version 2017-09-01.6.0.
 - Added the ability to get a discount on Windows VM pricing if you have on-premises licenses for the OS SKUs you are deploying, via `license_type` on `VirtualMachineConfiguration`.
@@ -127,16 +112,14 @@ Release History
 - **Breaking** Multi-instance tasks (created using `MultiInstanceSettings`) must now specify a `coordination_commandLine`, and `number_of_instances` is now optional and defaults to 1.
 - Added support for tasks run using Docker containers. To run a task using a Docker container you must specify a `container_configuration` on the `VirtualMachineConfiguration` for a pool, and then add `container_settings` on the Task.
 
-3.1.0 (2017-07-24)
-++++++++++++++++++
+## 3.1.0 (2017-07-24)
 
 - Added a new operation `job.get_task_counts` to retrieve the number of tasks in each state.
 - Added suuport for inbound endpoint configuration on a pool - there is a new `pool_endpoint_configuration` attribute on `NetworkConfiguration`.
   This property is only supported on pools that use `virtual_machine_configuration`.
 - A `ComputeNode` now also has an `endpoint_configuration` attribute with the details of the applied endpoint configuration for that node.
 
-3.0.0 (2017-05-10)
-++++++++++++++++++
+## 3.0.0 (2017-05-10)
 
 - Added support for the new low-priority node type; `AddPoolParameter` and `PoolSpecification` now have an additional property `target_low_priority_nodes`.
 - `target_dedicated` and `current_dedicated` on `CloudPool`, `AddPoolParameter` and `PoolSpecification` have been renamed to `target_dedicated_nodes` and `current_dedicated_nodes`.
@@ -159,13 +142,11 @@ Release History
 - Removed `unmapped` enum state from `AddTaskStatus`, `CertificateFormat`, `CertificateVisibility`, `CertStoreLocation`, `ComputeNodeFillType`, `OSType`, and `PoolLifetimeOption` as they were not ever used.
 - Improved and clarified documentation.
 
-2.0.1 (2017-04-19)
-++++++++++++++++++
+## 2.0.1 (2017-04-19)
 
 - This wheel package is now built with the azure wheel extension
 
-2.0.0 (2017-02-23)
-++++++++++++++++++
+## 2.0.0 (2017-02-23)
 
 - AAD token authentication now supported.
 - Some operation names have changed (along with their associated parameter model classes):
@@ -181,20 +162,17 @@ Release History
 - Support for creating pools with a list of user accounts.
 - Support for creating pools using a custom VM image (only supported on accounts created with a "User Subscription" pool allocation mode).
 
-1.1.0 (2016-09-15)
-++++++++++++++++++
+## 1.1.0 (2016-09-15)
 
 - Added support for task reactivation
 
-1.0.0 (2016-08-09)
-++++++++++++++++++
+## 1.0.0 (2016-08-09)
 
 - Added support for joining a CloudPool to a virtual network on using the network_configuration property.
 - Added support for application package references on CloudTask and JobManagerTask.
 - Added support for automatically terminating jobs when all tasks complete or when a task fails, via the on_all_tasks_complete property and
   the CloudTask exit_conditions property.
 
-0.30.0rc5
-+++++++++
+## 0.30.0rc5
 
 - Initial Release
