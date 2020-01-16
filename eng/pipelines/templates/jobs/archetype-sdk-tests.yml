@@ -29,6 +29,9 @@ parameters:
       OSVmImage: 'ubuntu-16.04'
       PythonVersion: '3.8'
 
+variables:
+  AZURE_RUN_MODE: 'Live' #Record, Playback
+
 jobs:
   - job: ${{ parameters.JobName }}
     variables:
