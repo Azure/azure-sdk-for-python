@@ -846,6 +846,11 @@
     "service_name": "Core",
     "manually_generated": true
   },
+  "azure-core-tracing-opentelemetry": {
+    "category": "Client",
+    "service_name": "Core",
+    "manually_generated": true
+  },
   "azure-identity": {
     "category": "Client",
     "service_name": "Identity",

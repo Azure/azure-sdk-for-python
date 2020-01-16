@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -19,8 +19,51 @@ from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 
-from helpers import async_validating_transport, build_aad_response, build_id_token, mock_response, Request
+from helpers import build_aad_response, build_id_token, mock_response, Request
+from helpers_async import async_validating_transport, AsyncMockTransport
 from test_shared_cache_credential import get_account_event, populated_cache
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+    )
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+    )
+
+    async with credential:
+        assert transport.__aenter__.call_count == 1
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager_no_cache():
+    """the credential shouldn't open/close sessions when instantiated in an environment with no cache"""
+
+    transport = AsyncMockTransport()
+    with patch.dict("azure.identity._internal.shared_token_cache.os.environ", {}, clear=True):
+        # clearing the environment ensures the credential won't try to load a cache
+        credential = SharedTokenCacheCredential(transport=transport)
+
+    async with credential:
+        assert transport.__aenter__.call_count == 0
+
+    assert transport.__aenter__.call_count == 0
+    assert transport.__aexit__.call_count == 0
 
 
 @pytest.mark.asyncio

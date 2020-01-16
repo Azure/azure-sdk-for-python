@@ -76,6 +76,7 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
+        self._enforce_tls(request)
 
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:

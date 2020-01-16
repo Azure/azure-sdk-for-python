@@ -10,7 +10,7 @@ resources:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: azure-storage-*
+      BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: storage
       EnvVars:
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)

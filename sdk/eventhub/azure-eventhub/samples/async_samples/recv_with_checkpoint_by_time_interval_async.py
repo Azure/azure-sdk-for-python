@@ -46,9 +46,12 @@ async def receive(client):
     a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
     which also try to receive events from all partitions and use the same storage resource.
     """
-    await client.receive(on_event=on_event)
+    await client.receive(
+        on_event=on_event,
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
     # With specified partition_id, load-balance will be disabled, for example:
-    # await client.receive(on_event=on_event, partition_id = '0'))
+    # await client.receive(on_event=on_event, partition_id='0'))
 
 
 async def main():

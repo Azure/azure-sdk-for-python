@@ -25,6 +25,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
     async def send(self, request: PipelineRequest) -> HttpResponse:
+        self._enforce_tls(request)
+
         challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
             challenge_request = self._get_challenge_request(request)

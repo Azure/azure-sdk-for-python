@@ -29,6 +29,11 @@ class InputSchema(str, Enum):
     cloud_event_schema_v1_0 = "CloudEventSchemaV1_0"
 
 
+class IpActionType(str, Enum):
+
+    allow = "Allow"
+
+
 class DomainTopicProvisioningState(str, Enum):
 
     creating = "Creating"
