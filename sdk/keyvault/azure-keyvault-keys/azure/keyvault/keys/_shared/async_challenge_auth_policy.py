@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest
-    from azure.core.pipeline.transport import HttpResponse
+    from azure.core.pipeline.transport import AsyncHttpResponse
     from . import HttpChallenge
 
 
@@ -35,7 +35,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
         self._credential = credential
         super(AsyncChallengeAuthPolicy, self).__init__(**kwargs)
 
-    async def send(self, request: "PipelineRequest") -> "HttpResponse":
+    async def send(self, request: "PipelineRequest") -> "AsyncHttpResponse":
         _enforce_tls(request)
 
         challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
