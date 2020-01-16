@@ -19,6 +19,12 @@ class SharedKeyCredential(object):
             raise TypeError("Please provide the subscription key as a string.")
         self._subscription_key = subscription_key
 
+    @property
+    def subscription_key(self):
+        """Returns the current value of subscription key.
+        """
+        return self._subscription_key
+
     def set_subscription_key(self, key):
         """Update the subscription key.
 
