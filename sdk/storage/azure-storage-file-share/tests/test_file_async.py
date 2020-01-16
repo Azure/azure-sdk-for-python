@@ -485,12 +485,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             snapshot=snapshot,
             credential=storage_account_key)
         snapshot_props = await snapshot_client.get_file_properties()
-
         # Assert
         self.assertIsNotNone(file_props)
         self.assertIsNotNone(snapshot_props)
         self.assertEqual(snapshot_props.snapshot, snapshot_client.snapshot)
-        self.assertEqual(file_props.size, snapshot_props.size)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
     @GlobalStorageAccountPreparer()
