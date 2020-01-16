@@ -110,7 +110,7 @@ jobs:
     steps:    
     - pwsh: |
         $toxenvvar = "whl,sdist"
-        if (('$(Build.Reason)' -ne 'Schedule') -and ('$(System.TeamProject)' -ne 'internal')) {
+        if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
           if ('$(Skip.ImportTest)' -ne 'true') {
             $toxenvvar = "whl,sdist,depends"
           }
