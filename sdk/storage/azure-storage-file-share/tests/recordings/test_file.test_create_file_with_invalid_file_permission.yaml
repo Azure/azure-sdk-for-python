@@ -11,51 +11,32 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - e629ea38-d9a6-11e9-8535-001a7dda7113
-      x-ms-content-length:
-      - '1024'
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:57:26 GMT
-      x-ms-file-attributes:
-      - none
-      x-ms-file-creation-time:
-      - now
-      x-ms-file-last-write-time:
-      - now
-      x-ms-file-permission:
-      - abcde
-      x-ms-type:
-      - file
+      - Wed, 15 Jan 2020 23:47:23 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utshare725b1688/file725b1688
+    uri: https://storagename.file.core.windows.net/utshare725b1688?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:c7f4e84f-501a-0005-41b3-6d812f000000\nTime:2019-09-17T23:57:26.1178680Z</Message></Error>"
+      string: ''
     headers:
-      Content-Length:
-      - '233'
-      Content-Type:
-      - application/xml
-      Date:
-      - Tue, 17 Sep 2019 23:57:25 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Wed, 15 Jan 2020 23:47:23 GMT
+      etag:
+      - '"0x8D79A154520E77B"'
+      last-modified:
+      - Wed, 15 Jan 2020 23:47:24 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - FileInvalidPermission
-      x-ms-request-id:
-      - c7f4e84f-501a-0005-41b3-6d812f000000
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 400
-      message: The specified file permission is not valid.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -68,13 +49,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 899bc11e-1d1a-11ea-a74a-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 12 Dec 2019 20:04:00 GMT
+      - Wed, 15 Jan 2020 23:47:24 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -92,20 +71,18 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:05730778-801a-0098-0427-b1ea3f000000\nTime:2019-12-12T20:04:04.2690265Z</Message></Error>"
+        specified file permission is not valid.\nRequestId:72584c17-c01a-000e-17fe-cb0e9e000000\nTime:2020-01-15T23:47:24.2310496Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '233'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Thu, 12 Dec 2019 20:04:03 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:47:23 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - FileInvalidPermission
-      x-ms-request-id:
-      - 05730778-801a-0098-0427-b1ea3f000000
       x-ms-version:
       - '2019-02-02'
     status:
