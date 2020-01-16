@@ -113,7 +113,7 @@ class RecognizeEntitiesResult(DictMixin):
 
     def __repr__(self):
         return "RecognizeEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, self.entities, self.statistics, self.is_error)[:1024]
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
 
 
 class RecognizePiiEntitiesResult(DictMixin):
@@ -140,7 +140,7 @@ class RecognizePiiEntitiesResult(DictMixin):
 
     def __repr__(self):
         return "RecognizePiiEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, self.entities, self.statistics, self.is_error)[:1024]
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
 
 
 class DetectLanguageResult(DictMixin):
@@ -170,7 +170,8 @@ class DetectLanguageResult(DictMixin):
 
     def __repr__(self):
         return "DetectLanguageResult(id={}, detected_languages={}, primary_language={}, statistics={}, is_error={})" \
-            .format(self.id, self.detected_languages, self.primary_language, self.statistics, self.is_error)[:1024]
+            .format(self.id, repr(self.detected_languages), repr(self.primary_language), repr(self.statistics),
+                    self.is_error)[:1024]
 
 
 class NamedEntity(DictMixin):
@@ -254,7 +255,7 @@ class TextAnalyticsError(DictMixin):
 
     def __repr__(self):
         return "TextAnalyticsError(code={}, message={}, target={}, inner_error={}, details={})" \
-            .format(self.code, self.message, self.target, self.inner_error, self.details)[:1024]
+            .format(self.code, self.message, self.target, repr(self.inner_error), repr(self.details))[:1024]
 
 
 class InnerError(DictMixin):
@@ -294,7 +295,7 @@ class InnerError(DictMixin):
 
     def __repr__(self):
         return "InnerError(code={}, message={}, details={}, target={}, inner_error={})" \
-            .format(self.code, self.message, self.details, self.target, self.inner_error)[:1024]
+            .format(self.code, self.message, self.details, self.target, repr(self.inner_error))[:1024]
 
 
 class ExtractKeyPhrasesResult(DictMixin):
@@ -322,7 +323,7 @@ class ExtractKeyPhrasesResult(DictMixin):
 
     def __repr__(self):
         return "ExtractKeyPhrasesResult(id={}, key_phrases={}, statistics={}, is_error={})" \
-            .format(self.id, self.key_phrases, self.statistics, self.is_error)[:1024]
+            .format(self.id, self.key_phrases, repr(self.statistics), self.is_error)[:1024]
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
@@ -349,7 +350,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
 
     def __repr__(self):
         return "RecognizeLinkedEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, self.entities, self.statistics, self.is_error)[:1024]
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -386,8 +387,8 @@ class AnalyzeSentimentResult(DictMixin):
 
     def __repr__(self):
         return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, document_scores={}, sentences={}, " \
-               "is_error={})".format(self.id, self.sentiment, self.statistics, self.document_scores, self.sentences,
-                                     self.is_error)[:1024]
+               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.document_scores),
+                                     repr(self.sentences), self.is_error)[:1024]
 
 
 class TextDocumentStatistics(DictMixin):
@@ -446,7 +447,7 @@ class DocumentError(DictMixin):
 
     def __repr__(self):
         return "DocumentError(id={}, error={}, is_error={})" \
-            .format(self.id, self.error, self.is_error)[:1024]
+            .format(self.id, repr(self.error), self.is_error)[:1024]
 
 
 class DetectLanguageInput(LanguageInput):
@@ -493,8 +494,6 @@ class LinkedEntity(DictMixin):
     :param data_source: Data source used to extract entity linking,
      such as Wiki/Bing etc.
     :type data_source: str
-    :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a LinkedEntity.
     """
 
     def __init__(self, **kwargs):
@@ -504,7 +503,6 @@ class LinkedEntity(DictMixin):
         self.id = kwargs.get("id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
-        self.is_error = False
 
     @classmethod
     def _from_generated(cls, entity):
@@ -518,8 +516,8 @@ class LinkedEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, data_source={}, is_error={})" \
-            .format(self.name, self.matches, self.language, self.id, self.url, self.data_source, self.is_error)[:1024]
+        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, data_source={})" \
+            .format(self.name, repr(self.matches), self.language, self.id, self.url, self.data_source)[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
@@ -658,7 +656,7 @@ class SentenceSentiment(DictMixin):
 
     def __repr__(self):
         return "SentenceSentiment(sentiment={}, sentence_scores={}, offset={}, length={}, warnings={})" \
-            .format(self.sentiment, self.sentence_scores, self.offset, self.length, self.warnings)[:1024]
+            .format(self.sentiment, repr(self.sentence_scores), self.offset, self.length, self.warnings)[:1024]
 
 
 class SentimentConfidenceScorePerLabel(DictMixin):
