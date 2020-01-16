@@ -36,6 +36,15 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         self.assertEqual(response.primary_language.score, 1.0)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_single_language_detection_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = single_detect_language(
+                endpoint=text_analytics_account,
+                credential=SharedKeyCredential(""),
+                input_text="This is written in English.",
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_single_language_detection_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = single_detect_language(
@@ -201,6 +210,15 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
             self.assertIsNotNone(entity.score)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_single_recognize_entities_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = single_recognize_entities(
+                endpoint=text_analytics_account,
+                credential=SharedKeyCredential(""),
+                input_text="Microsoft was founded by Bill Gates.",
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_single_recognize_entities_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_entities(
@@ -319,6 +337,15 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_single_recognize_pii_entities_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = single_recognize_pii_entities(
+                endpoint=text_analytics_account,
+                credential=SharedKeyCredential(""),
+                input_text="My SSN is 555-55-5555",
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_single_recognize_pii_entities_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -443,6 +470,15 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
             self.assertIsNotNone(entity.data_source)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_single_recognize_linked_entities_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = single_recognize_linked_entities(
+                endpoint=text_analytics_account,
+                credential=SharedKeyCredential(""),
+                input_text="Microsoft was founded by Bill Gates.",
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_single_recognize_linked_entities_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_linked_entities(
@@ -557,6 +593,15 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         self.assertIn("Microsoft", response.key_phrases)
         self.assertIn("Bill Gates", response.key_phrases)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_single_extract_key_phrases_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = single_extract_key_phrases(
+                endpoint=text_analytics_account,
+                credential=SharedKeyCredential(""),
+                input_text="Microsoft was founded by Bill Gates.",
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_single_extract_key_phrases_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -675,6 +720,15 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         self.assertEqual(response.sentiment, "negative")
         self.assertIsNotNone(response.document_scores)
         self.assertIsNotNone(response.sentences)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_single_analyze_sentiment_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = single_analyze_sentiment(
+                endpoint=text_analytics_account,
+                credential=SharedKeyCredential(""),
+                input_text="I was unhappy with the food at the restaurant.",
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_single_analyze_sentiment_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):

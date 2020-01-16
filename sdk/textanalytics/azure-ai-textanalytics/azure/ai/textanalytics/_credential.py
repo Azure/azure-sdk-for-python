@@ -20,7 +20,7 @@ class SharedKeyCredential(object):
         self._subscription_key = subscription_key
 
     def set_subscription_key(self, key):
-        """Used to update the subscription key.
+        """Update the subscription key.
 
         This is intended to be used when you've regenerated your service subscription key
         and want to update long-lived clients.
