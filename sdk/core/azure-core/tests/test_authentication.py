@@ -84,7 +84,7 @@ def test_bearer_policy_enforces_tls():
 
 @pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
 def test_key_vault_regression():
-    """Test behavior azure-keyvault-* 4.0.0 requires from azure-core 1.x. This test must pass until azure-core 2.0."""
+    """Test for regression affecting azure-keyvault-* 4.0.0. This test must pass, unmodified, for all 1.x versions."""
 
     from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 
