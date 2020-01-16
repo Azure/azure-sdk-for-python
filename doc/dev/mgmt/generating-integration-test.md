@@ -123,6 +123,8 @@ now you can run live integration test:
 
     pytest -s sdk/attestation/azure-mgmt-attestation
 
+>NOTE: To create service principal, follow instructions here: https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal
+
 ## Fixing Test
 
 It's obvious that when running test for the first time someting is not going to work.
