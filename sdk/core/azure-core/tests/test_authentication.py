@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 
+import azure.core
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
@@ -79,3 +80,24 @@ def test_bearer_policy_enforces_tls():
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
     with pytest.raises(ServiceRequestError):
         pipeline.run(HttpRequest("GET", "http://not.secure"))
+
+
+@pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
+def test_key_vault_regression():
+    """Test behavior azure-keyvault-* 4.0.0 requires from azure-core 1.x. This test must pass until azure-core 2.0."""
+
+    from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
+
+    credential = Mock()
+    policy = _BearerTokenCredentialPolicyBase(credential)
+    assert policy._credential is credential
+
+    headers = {}
+    token = "alphanums"
+    policy._update_headers(headers, token)
+    assert headers["Authorization"] == "Bearer " + token
+
+    assert policy._need_new_token
+    policy._token = AccessToken(token, time.time() + 3600)
+    assert not policy._need_new_token
+    assert policy._token.token == token
