@@ -7,7 +7,7 @@
 import asyncio
 import random
 import logging
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.exceptions import AzureError

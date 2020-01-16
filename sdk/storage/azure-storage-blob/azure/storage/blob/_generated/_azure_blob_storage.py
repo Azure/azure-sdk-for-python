@@ -13,7 +13,6 @@ from azure.core import PipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AzureBlobStorageConfiguration
-from azure.core.exceptions import map_error
 from .operations import ServiceOperations
 from .operations import ContainerOperations
 from .operations import DirectoryOperations
