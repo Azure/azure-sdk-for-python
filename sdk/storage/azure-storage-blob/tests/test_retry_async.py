@@ -136,7 +136,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
     async def test_retry_on_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
-        retry = LinearRetry(backoff=1)
+        retry = LinearRetry()
 
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         import aiohttp
