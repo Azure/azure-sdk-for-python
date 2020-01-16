@@ -1,11 +1,9 @@
-Disclaimer
-++++++++++
+# Disclaimer
 
 Starting azure 3.0.0, we don't provide anymore a ChangeLog for the bundle package. Please refer to the ChangeLog
 of each individual package.
 
-2017-05-16 azure 2.0.0
-++++++++++++++++++++++
+## 2017-05-16 azure 2.0.0
 
 **Disclaimer**
 
@@ -182,8 +180,7 @@ listed before.
 - azure-mgmt-web 0.30.0rc6
 
 
-2016-08-01 azure-servicemanagement-legacy 0.20.4
-++++++++++++++++++++++++++++++++++++++++++++++++
+## 2016-08-01 azure-servicemanagement-legacy 0.20.4
 
 **Bugfix**
 
@@ -195,15 +192,13 @@ listed before.
 
 Thank you to brandondahler, schaefi for their contributions.
 
-2016-06-28 Service Bus 0.20.2
-+++++++++++++++++++++++++++++
+## 2016-06-28 Service Bus 0.20.2
 
 **Bugfix**
 
 * New header in Rest API which breaks the SDK #658 #657
 
-2016-06-23 Version 2.0.0rc5 / 0.30.0rc5
-+++++++++++++++++++++++++++++++++++++++
+## 2016-06-23 Version 2.0.0rc5 / 0.30.0rc5
 
 **Disclaimer**
 
@@ -224,8 +219,7 @@ Thank you to brandondahler, schaefi for their contributions.
 * New PowerBI Embeddeded preview client
 * New Cognitive Services preview client
 
-2016-05-24 Version 2.0.0rc4 / 0.30.0rc4
-+++++++++++++++++++++++++++++++++++++++
+## 2016-05-24 Version 2.0.0rc4 / 0.30.0rc4
 
 **Disclaimer**
 
@@ -307,8 +301,7 @@ Thank you to brandondahler, schaefi for their contributions.
   * `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
 
 
-2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
-+++++++++++++++++++++++++++++++++++++++
+## 2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
 
 **Disclaimer**
 There is no known breaking changes between 2.0.0RC2 and 2.0.0RC3.
@@ -340,14 +333,12 @@ You can remove the involved parameter safely, as it should not have been there i
 
   * `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
 
-2016-03-31 azure-servicemanagement-legacy 0.20.3
-++++++++++++++++++++++++++++++++++++++++++++++++
+## 2016-03-31 azure-servicemanagement-legacy 0.20.3
 
 New:
 * #519 Add support for the OSImage /details endpoint
 
-2016-03-29 Version 2.0.0rc2 / 0.30.0rc2
-+++++++++++++++++++++++++++++++++++++++
+## 2016-03-29 Version 2.0.0rc2 / 0.30.0rc2
 
 **New**
 
@@ -373,8 +364,7 @@ New:
 
 * The AzureResourceViewer example in the 'example' folder has been updated to SDK 2.0.0rc2
 
-2016-03-04 Version 2.0.0rc1 / 0.30.0rc1
-+++++++++++++++++++++++++++++++++++++++
+## 2016-03-04 Version 2.0.0rc1 / 0.30.0rc1
 
 **New**
 
@@ -398,8 +388,7 @@ New:
 
 * msrest/msrestazure must be >= 0.1.0 (see their ChangeLog for details)
 
-2016-02-18 Version 2.0.0a1
-++++++++++++++++++++++++++
+## 2016-02-18 Version 2.0.0a1
 
 **DISCLAIMER**
 
@@ -446,8 +435,7 @@ We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 `h
 azure-storage 0.30.0
   * Major version. `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
 
-2016-01-20 Version 1.0.3
-++++++++++++++++++++++++
+## 2016-01-20 Version 1.0.3
 
 **Bugfixes**
 
@@ -468,8 +456,7 @@ azure-servicemanagement-legacy 0.20.2
 Thank you to bear454, ekesken, kingliantop, mamoo, schaefi for their contributions.
 
 
-2015-10-02 Version 1.0.2
-++++++++++++++++++++++++
+## 2015-10-02 Version 1.0.2
 
 azure-mgmt-network 0.20.1
   * Fix retry timeout default value for long running operations
@@ -485,8 +472,7 @@ azure-storage 0.20.2
 Thank you to aarsan, trondhindenes for their contributions.
 
 
-2015-09-14 Version 1.0.1
-++++++++++++++++++++++++
+## 2015-09-14 Version 1.0.1
 
 * Use requests library by default in all libraries
   * Exception is azure-servicemanagement-legacy which can use requests or winhttp
@@ -494,8 +480,7 @@ Thank you to aarsan, trondhindenes for their contributions.
 * Fix dependencies for azure-storage by using separate 2.x and 3.x wheels
 
 
-2015-08-31 Version 1.0.0
-++++++++++++++++++++++++
+## 2015-08-31 Version 1.0.0
 
 **UPGRADE**
 
@@ -600,8 +585,7 @@ The following have moved from 'azure.storage' to 'azure.storage.table'::
 Thank you to Sabbasth, schaefi, feoff3, JamieCressey for their contributions.
 
 
-2015-06-16 Version 0.11.1
-+++++++++++++++++++++++++
+## 2015-06-16 Version 0.11.1
 
  * Azure storage connection string support
  * Add a request_session parameter to storage and service bus classes
@@ -613,8 +597,7 @@ Thank you to Sabbasth, schaefi, feoff3, JamieCressey for their contributions.
 
 Thank you to rchamorro, drdarshan, hosungs, h_yamaki for their contributions.
 
-2015-05-13 Version 0.11.0
-+++++++++++++++++++++++++
+## 2015-05-13 Version 0.11.0
 
 **IMPORTANT CHANGE THAT AFFECTS STORAGE**
 
@@ -649,15 +632,13 @@ easy production AND consumption of SAS for blob, queue and table storage.
 Thank you to lmazuel, antonydenyer, zlike-msft, melor and amegianeg for their
 contributions.
 
-2015-04-28 Version 0.10.2
-+++++++++++++++++++++++++
+## 2015-04-28 Version 0.10.2
 
 **Bugfixes**
 
    #338 Version 0.10.0 fails with 'SocketReader' object has no attribute 'tell'
 
-2015-03-13 Version 0.10.0
-+++++++++++++++++++++++++
+## 2015-03-13 Version 0.10.0
 
 **IMPORTANT CHANGE THAT AFFECTS STORAGE USERS (BLOB, QUEUE, TABLE)**
 
@@ -714,8 +695,7 @@ The other changes in this release are:
 Thank you to lmazuel, rhaps0dy, timfpark, gaellbn, moutai, edevil, rjschwei and
 okaram for their contributions.
 
-2014-11-21 Version 0.9.0
-++++++++++++++++++++++++
+## 2014-11-21 Version 0.9.0
 
 **IMPORTANT CHANGE IN BEHAVIOR THAT AFFECTS TABLE STORAGE USERS**
 
@@ -786,8 +766,7 @@ The other changes in this release are:
 
 Thank you to Costeijn, lmazuel, pneumee, nicbon, bndw, troyanov for their contributions.
 
-2014-09-19 Version 0.8.4
-++++++++++++++++++++++++
+## 2014-09-19 Version 0.8.4
 
 * Add ability to get website publish data as an object (thanks lmazuel)
 
@@ -796,13 +775,11 @@ Thank you to Costeijn, lmazuel, pneumee, nicbon, bndw, troyanov for their contri
 * #216 Daylight saving problem in ServiceBusSASAuthentication
 * #218 Content type incorrect on blob
 
-2014-09-09 Version 0.8.3
-++++++++++++++++++++++++
+## 2014-09-09 Version 0.8.3
 
 * Add Shared Access Signature support to Service Bus
 
-2014-08-26 Version 0.8.2
-++++++++++++++++++++++++
+## 2014-08-26 Version 0.8.2
 
  * Add functionality to Service Bus Management API
 
@@ -825,8 +802,7 @@ Thank you to Costeijn, lmazuel, pneumee, nicbon, bndw, troyanov for their contri
 Thank you to lmazuel for the contributions to SQL Database, Service Bus and
 Website management.
 
-2014-06-26 Version 0.8.1
-++++++++++++++++++++++++
+## 2014-06-26 Version 0.8.1
 
 **Bugfixes**
 
@@ -835,8 +811,7 @@ Website management.
 
 Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129).
 
-2014-03-31 Version 0.8.0
-++++++++++++++++++++++++
+## 2014-03-31 Version 0.8.0
 
  * Existing service management API now targets x-ms-version 2013-06-01
 
@@ -851,8 +826,7 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
 * #140 Table Service deletes empty strings
 * #40  Edm.Binary and null support in table storage entities
 
-2014-02-10 Version 0.8.0pr1
-+++++++++++++++++++++++++++
+## 2014-02-10 Version 0.8.0pr1
 
  * Migrate to using httplib on Windows. This is now the default, unless a
    Windows Certificate Store management certificate is used. Make sure to use
@@ -868,8 +842,7 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
    #125 Label for VM Deployment should not be b64 encoded (thanks to jeffmendoza).
    #121 In blob storage, put_page, x-ms-if-sequence-number-lte header should be x-ms-if-sequence-number-le
 
-2013-11-06 Version 0.7.1
-++++++++++++++++++++++++
+## 2013-11-06 Version 0.7.1
 
 **Bugfixes**
 
@@ -879,8 +852,7 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
 * #106 Why isn't setup.py in the root of the project?
 * #96  Change default connection protocol to https
 
-2013-07-08 Version 0.7.0
-++++++++++++++++++++++++
+## 2013-07-08 Version 0.7.0
 
  * Added service bus management API
  * Added support for list blobs delimiter (for easier hierarchical listings)
@@ -899,16 +871,14 @@ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129
 
 Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard for their bug reports and fixes.
 
-2013-03-20 Version 0.6.2
-++++++++++++++++++++++++
+## 2013-03-20 Version 0.6.2
 
 **Bugfixes**
 
 * #75  crash on python 2.7 x64 windows
 * #73  _convert_query_string return a wrong query string parameter
 
-2012-12-17 Version 0.6.1
-++++++++++++++++++++++++
+## 2012-12-17 Version 0.6.1
 
 **Bugfixes**
 
@@ -917,14 +887,12 @@ Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard fo
 * #66  Need to change the default timeout for httprequest on windows
 * Improved support for unicode data
 
-2012-10-16 Version 0.6.0
-++++++++++++++++++++++++
+## 2012-10-16 Version 0.6.0
 
  * Added service management API
  * Added ability to specify custom hosts
  * Added proxy server support (HTTP CONNECT tunneling)
 
-2012-06-06 Version 0.5.0
-++++++++++++++++++++++++
+## 2012-06-06 Version 0.5.0
 
  * Initial Release

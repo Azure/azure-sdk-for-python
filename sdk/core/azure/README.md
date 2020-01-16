@@ -1,5 +1,4 @@
-Microsoft Azure SDK for Python
-==============================
+# Microsoft Azure SDK for Python
 
 This is the Microsoft Azure bundle.
 
@@ -12,14 +11,12 @@ This package uses PEP440 syntax, and thus requires pip >= 6.0 and/or setuptools 
 to be installed.
 
 
-Documentation
-=============
+# Documentation
 
 All documentation related to these packages can be found at http://docs.microsoft.com/python/azure/
 
 
-Features
-========
+# Features
 
 This version of the Azure package bundle consists of the following
 packages. Follow the links for more information on each package.
@@ -45,40 +42,37 @@ Note that versions are fixed at the minor version number level
 Note that if you don't need all of these packages, you can install/uninstall them individually.
 
 
-Installation
-============
+# Installation
 
 To install the Azure package bundle, type:
 
-.. code:: shell
+```shell
+pip install azure
+```
 
-    pip install azure
 
-
-Upgrade
-=======
+# Upgrade
 
 This package is not compatible with `azure-storage`.
 If you installed `azure-storage`, or if you installed `azure` 1.x/2.x and didn't
 uninstall `azure-storage`, you must uninstall `azure-storage` first:
 
-.. code:: shell
-
-    pip uninstall azure-storage
+```shell
+pip uninstall azure-storage
+```
 
 
 Upgrading from azure<1.0 is not supported. You must uninstall the old version first.
 
-.. code:: shell
-
+```shell
     pip uninstall azure
     pip install azure
+```
 
 
-Compatibility
-=============
+# Compatibility
 
 For details on the breaking changes, see the PyPI page of each individual package.
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure%2FREADME.png
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure%2FREADME.png)
