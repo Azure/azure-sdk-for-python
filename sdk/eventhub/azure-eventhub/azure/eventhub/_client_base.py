@@ -219,6 +219,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._address.hostname, self.eventhub_name
         )
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+        self._redirected = True
 
     def _create_auth(self):
         # type: () -> authentication.JWTTokenAuth

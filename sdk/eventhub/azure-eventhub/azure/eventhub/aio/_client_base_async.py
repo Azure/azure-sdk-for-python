@@ -9,6 +9,14 @@ import asyncio
 import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
+from base64 import b64encode, b64decode
+from hashlib import sha256
+from hmac import HMAC
+try:
+    from urlparse import urlparse
+    from urllib import unquote_plus, urlencode, quote_plus
+except ImportError:
+    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 import six
 from uamqp import (
@@ -20,7 +28,14 @@ from uamqp import (
     AMQPClientAsync,
 )
 
-from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
+from .._client_base import (
+    ClientBase,
+    parse_redirect_info,
+    _generate_sas_token,
+    _parse_conn_str,
+    _AccessToken,
+    _Address
+)
 from .._utils import utc_from_timestamp
 from ..exceptions import ClientClosedError, ConnectError
 from .._constants import (
@@ -62,6 +77,24 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
+class _IoTHubSharedKeyCredential(EventHubSharedKeyCredential):
+    async def get_token(self, *scopes, **kwargs):
+        auth_uri = scopes[0]
+        expiry = time.time() + 3600  # Default to 1 hour.
+        encoded_uri = quote_plus(auth_uri)
+        ttl = int(expiry)
+        sign_key = '%s\n%d' % (encoded_uri, ttl)
+        signature = b64encode(HMAC(b64decode(self.key), sign_key.encode('utf-8'), sha256).digest())
+        result = {
+            'sr': auth_uri,
+            'sig': signature,
+            'se': str(ttl)}
+        if self.policy:
+            result['skn'] = self.policy
+        token = 'SharedAccessSignature ' + urlencode(result)
+        return _AccessToken(token=token, expires_on=expiry)
+
+
 class ClientBaseAsync(ClientBase):
     def __init__(
         self,
@@ -83,6 +116,20 @@ class ClientBaseAsync(ClientBase):
         raise TypeError(
             "Asynchronous client must be opened with async context manager."
         )
+
+    def _update_connection_info_after_redirect(
+        self,
+        connection_info,
+    ):
+        self.fully_qualified_namespace, self.eventhub_name = parse_redirect_info(connection_info)
+        self._address = _Address(hostname=self.fully_qualified_namespace, path="/" + self.eventhub_name)
+        # Reconstruct from _IoTHubSharedKeyCredential to EventHubSharedKeyCredential using the same policy and key
+        self._credential = EventHubSharedKeyCredential(self._credential.policy, self._credential.key)
+        self._mgmt_target = "amqps://{}/{}".format(
+            self._address.hostname, self.eventhub_name
+        )
+        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+        self._redirected = True
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:

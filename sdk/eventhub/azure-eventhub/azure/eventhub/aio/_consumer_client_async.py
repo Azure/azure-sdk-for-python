@@ -18,10 +18,13 @@ from typing import (
     Awaitable,
 )
 
+from uamqp.errors import LinkRedirect
+from ._error_async import _handle_exception
+from ..exceptions import ConnectError
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
-from ._client_base_async import ClientBaseAsync
-from .._constants import ALL_PARTITIONS
+from ._client_base_async import ClientBaseAsync, _IoTHubSharedKeyCredential
+from .._constants import ALL_PARTITIONS, IOTHUB_ENTITY_PATH
 
 
 if TYPE_CHECKING:
@@ -122,6 +125,10 @@ class EventHubConsumerClient(ClientBaseAsync):
         self._lock = asyncio.Lock(loop=self._loop)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
 
+        self._on_error = None
+        self._is_iothub = kwargs.get("is_iothub")
+        self._redirected = False
+
     async def __aenter__(self):
         return self
 
@@ -159,6 +166,29 @@ class EventHubConsumerClient(ClientBaseAsync):
             loop=self._loop,
         )
         return handler
+
+    async def _redirect(self, partition_id=None):
+        redirect_consumer = self._create_consumer(
+            consumer_group="$Default",
+            partition_id="0" or partition_id,
+            event_position="-1",
+            on_event_received=None,
+            is_iothub=True
+        )
+        try:
+            await redirect_consumer._open()
+        except LinkRedirect as redirect:
+            self._update_connection_info_after_redirect(redirect)
+            await redirect_consumer._close_connection_async()
+        except Exception as err:
+            _LOGGER.error(
+                "EventHubConsumerClient {} failed to redirect because of error: {}".format(self._container_id, err)
+            )
+            await redirect_consumer._close_connection_async()
+            exception = await _handle_exception(err, self)
+            if self._on_error:
+                await self._on_error(None, exception)
+            raise exception
 
     @classmethod
     def from_connection_string(
@@ -223,6 +253,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
+        is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
         constructor_args = cls._from_connection_string(
             conn_str,
             consumer_group=consumer_group,
@@ -237,6 +268,13 @@ class EventHubConsumerClient(ClientBaseAsync):
             load_balancing_interval=load_balancing_interval,
             **kwargs
         )
+        if is_iot_conn_str:
+            constructor_args["eventhub_name"] = IOTHUB_ENTITY_PATH
+            constructor_args["credential"] = _IoTHubSharedKeyCredential(
+                constructor_args["credential"].policy,
+                constructor_args["credential"].key
+            )
+            constructor_args["is_iothub"] = True
         return cls(**constructor_args)
 
     async def receive(
@@ -327,7 +365,10 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
+        self._on_error = on_error
         async with self._lock:
+            if self._is_iothub and not self._redirected:
+                await self._redirect(partition_id)
             error = None
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
                 error = (
@@ -398,6 +439,12 @@ class EventHubConsumerClient(ClientBaseAsync):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
+        if self._is_iothub and not self._redirected:
+            try:
+                await self._redirect(partition_id="0")
+            except Exception as err:
+                raise ConnectError("Error happened during redirecting process: {}".format(err))
+
         return await super(
             EventHubConsumerClient, self
         )._get_eventhub_properties_async()
@@ -408,6 +455,12 @@ class EventHubConsumerClient(ClientBaseAsync):
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
+        if self._is_iothub and not self._redirected:
+            try:
+                await self._redirect(partition_id="0")
+            except Exception as err:
+                raise ConnectError("Error happened during redirecting process: {}".format(err))
+
         return await super(EventHubConsumerClient, self)._get_partition_ids_async()
 
     async def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
@@ -428,6 +481,12 @@ class EventHubConsumerClient(ClientBaseAsync):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
+        if self._is_iothub and not self._redirected:
+            try:
+                await self._redirect(partition_id="0")
+            except Exception as err:
+                raise ConnectError("Error happened during redirecting process: {}".format(err))
+
         return await super(
             EventHubConsumerClient, self
         )._get_partition_properties_async(partition_id)
