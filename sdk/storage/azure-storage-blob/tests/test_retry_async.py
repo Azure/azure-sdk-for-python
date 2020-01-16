@@ -135,6 +135,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_retry_on_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        pytest.skip("temporary")
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
 
