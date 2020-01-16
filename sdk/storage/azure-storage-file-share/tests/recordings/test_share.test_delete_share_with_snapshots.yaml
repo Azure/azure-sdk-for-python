@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:21 GMT
+      - Wed, 15 Jan 2020 23:54:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:21 GMT
+      - Wed, 15 Jan 2020 23:54:25 GMT
       etag:
-      - '"0x8D78E390F7CAEA0"'
+      - '"0x8D79A1640C10ABE"'
       last-modified:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -63,15 +63,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:25 GMT
       etag:
-      - '"0x8D78E390F7CAEA0"'
+      - '"0x8D79A1640C10ABE"'
       last-modified:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-12-31T21:33:22.0000000Z'
+      - '2020-01-15T23:54:26.0000000Z'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -91,7 +91,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -99,14 +99,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareHasSnapshots</Code><Message>The
-        share has snapshots and the operation requires no snapshots.\nRequestId:8ce95795-801a-001f-0d21-c02abf000000\nTime:2019-12-31T21:33:22.2235361Z</Message></Error>"
+        share has snapshots and the operation requires no snapshots.\nRequestId:c3f9babf-b01a-006c-5cff-cb4946000000\nTime:2020-01-15T23:54:26.5837769Z</Message></Error>"
     headers:
       content-length:
       - '250'
       content-type:
       - application/xml
       date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -130,7 +130,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -144,7 +144,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -164,7 +164,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -178,11 +178,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 31 Dec 2019 21:33:22 GMT
+      - Wed, 15 Jan 2020 23:54:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
       x-ms-version:
       - '2019-02-02'
     status:

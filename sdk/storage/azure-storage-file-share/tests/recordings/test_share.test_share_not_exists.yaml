@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:38 GMT
+      - Wed, 15 Jan 2020 23:54:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -19,16 +19,18 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:707e2aee-901a-0066-6421-c043f5000000\nTime:2019-12-31T21:33:38.7855986Z</Message></Error>"
+        specified share does not exist.\nRequestId:4b9964c3-d01a-0055-30ff-cb09e2000000\nTime:2020-01-15T23:54:50.9823720Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-error-code:
       - ShareNotFound
       x-ms-version:
@@ -48,7 +50,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:38 GMT
+      - Wed, 15 Jan 2020 23:54:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -62,11 +64,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
       x-ms-version:
       - '2019-02-02'
     status:

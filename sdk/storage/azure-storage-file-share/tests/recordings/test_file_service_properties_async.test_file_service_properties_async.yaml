@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:14:14 GMT
+      - Wed, 15 Jan 2020 23:51:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -22,7 +22,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 01:14:14 GMT
+      date: Wed, 15 Jan 2020 23:51:19 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -32,7 +32,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragetp6pk2m35o46.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /
         - restype=service&comp=properties
         - ''
@@ -44,7 +44,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:14:15 GMT
+      - Wed, 15 Jan 2020 23:51:20 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -55,7 +55,7 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Fri, 03 Jan 2020 01:14:14 GMT
+      date: Wed, 15 Jan 2020 23:51:20 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -66,7 +66,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragetp6pk2m35o46.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /
         - restype=service&comp=properties
         - ''

@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 00:26:51 GMT
+      - Wed, 15 Jan 2020 23:50:40 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 03 Jan 2020 00:26:50 GMT
-      etag: '"0x8D78FE3A0A17F6C"'
-      last-modified: Fri, 03 Jan 2020 00:26:51 GMT
+      date: Wed, 15 Jan 2020 23:50:39 GMT
+      etag: '"0x8D79A15BA3DC0AF"'
+      last-modified: Wed, 15 Jan 2020 23:50:40 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemayc3xagvnec.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare3f51905
         - restype=share
         - ''
@@ -39,7 +39,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 03 Jan 2020 00:26:51 GMT
+      - Wed, 15 Jan 2020 23:50:40 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -57,11 +57,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:af8be18e-101a-00bf-17cc-c1bcbd000000\nTime:2020-01-03T00:26:52.0558564Z</Message></Error>"
+        specified file permission is not valid.\nRequestId:bf9fc93d-701a-0071-02fe-cb90ac000000\nTime:2020-01-15T23:50:40.7554105Z</Message></Error>"
     headers:
       content-length: '233'
       content-type: application/xml
-      date: Fri, 03 Jan 2020 00:26:51 GMT
+      date: Wed, 15 Jan 2020 23:50:40 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: FileInvalidPermission
       x-ms-version: '2019-02-02'
@@ -72,7 +72,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemayc3xagvnec.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare3f51905/file3f51905
         - ''
         - ''

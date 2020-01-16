@@ -33,6 +33,13 @@ class StorageDirectoryTest(FileTestCase):
 
         if not self.is_playback():
             self.fsc.create_share(self.share_name)
+
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
 
     # --Test cases for directories ----------------------------------------------

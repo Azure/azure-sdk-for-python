@@ -53,6 +53,12 @@ class StorageFileClientTest(AsyncStorageTestCase):
         self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, service_type, protocol='https'):
         self.assertIsNotNone(service)

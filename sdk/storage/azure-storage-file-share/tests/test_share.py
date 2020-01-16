@@ -46,6 +46,12 @@ class StorageShareTest(FileTestCase):
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)

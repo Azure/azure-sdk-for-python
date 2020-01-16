@@ -83,6 +83,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             except:
                 pass
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
+
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
             self.wrapped_file = wrapped_file
@@ -326,6 +333,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -353,6 +361,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -393,6 +402,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -429,6 +439,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -468,6 +479,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -507,6 +519,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -558,6 +571,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -605,6 +619,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -656,6 +671,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -686,6 +702,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[start:end_range + 1], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -716,6 +733,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             actual = stream.read()
             self.assertEqual(1, len(actual))
             self.assertEqual(self.byte_data[0], actual[0])
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -789,6 +807,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -813,6 +832,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -837,6 +857,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -870,6 +891,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[1:file_size], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -901,6 +923,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[start:file_size], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1124,6 +1147,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1151,6 +1175,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 await data.readinto(non_seekable_stream)
 
                 # Assert
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1187,6 +1212,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1223,6 +1249,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             with self.assertRaises(ValueError):
                 data = await snapshot_client.download_file(max_concurrency=2)
                 await data.readinto(non_seekable_stream)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:14 GMT
+      - Wed, 15 Jan 2020 23:53:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 13 Jan 2020 21:28:14 GMT
-      etag: '"0x8D7986F7FD63F68"'
-      last-modified: Mon, 13 Jan 2020 21:28:14 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A16142B05F4"'
+      last-modified: Wed, 15 Jan 2020 23:53:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a
         - restype=share
         - ''
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:15 GMT
+      - Wed, 15 Jan 2020 23:53:11 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -55,17 +55,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 13 Jan 2020 21:28:14 GMT
-      etag: '"0x8D7986F7FE48E28"'
-      last-modified: Mon, 13 Jan 2020 21:28:15 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A161432A813"'
+      last-modified: Wed, 15 Jan 2020 23:53:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2020-01-13T21:28:15.0691368Z'
-      x-ms-file-creation-time: '2020-01-13T21:28:15.0691368Z'
+      x-ms-file-change-time: '2020-01-15T23:53:11.5036691Z'
+      x-ms-file-creation-time: '2020-01-15T23:53:11.5036691Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2020-01-13T21:28:15.0691368Z'
+      x-ms-file-last-write-time: '2020-01-15T23:53:11.5036691Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 1361174050233244855*8807064524449008446
+      x-ms-file-permission-key: 10306785916763839378*16704459309046467611
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -75,7 +75,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a/utdir759e168a
         - restype=directory
         - ''
@@ -87,7 +87,7 @@ interactions:
       x-ms-content-length:
       - '65541'
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:15 GMT
+      - Wed, 15 Jan 2020 23:53:11 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -107,17 +107,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 13 Jan 2020 21:28:15 GMT
-      etag: '"0x8D7986F801CBF4B"'
-      last-modified: Mon, 13 Jan 2020 21:28:15 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A1614502037"'
+      last-modified: Wed, 15 Jan 2020 23:53:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-01-13T21:28:15.4373963Z'
-      x-ms-file-creation-time: '2020-01-13T21:28:15.4373963Z'
+      x-ms-file-change-time: '2020-01-15T23:53:11.6967991Z'
+      x-ms-file-creation-time: '2020-01-15T23:53:11.6967991Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2020-01-13T21:28:15.4373963Z'
+      x-ms-file-last-write-time: '2020-01-15T23:53:11.6967991Z'
       x-ms-file-parent-id: '13835128424026341376'
-      x-ms-file-permission-key: 15174899579085104048*8807064524449008446
+      x-ms-file-permission-key: 5724850820508509333*16704459309046467611
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -127,7 +127,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a/utdir759e168a/bytefile759e168a
         - ''
         - ''
@@ -141,7 +141,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:15 GMT
+      - Wed, 15 Jan 2020 23:53:11 GMT
       x-ms-range:
       - bytes=0-65540
       x-ms-version:
@@ -156,9 +156,9 @@ interactions:
     headers:
       content-length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
-      date: Mon, 13 Jan 2020 21:28:15 GMT
-      etag: '"0x8D7986F80310E42"'
-      last-modified: Mon, 13 Jan 2020 21:28:15 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A161463AB94"'
+      last-modified: Wed, 15 Jan 2020 23:53:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
@@ -169,7 +169,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a/utdir759e168a/bytefile759e168a
         - comp=range
         - ''
@@ -181,7 +181,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:15 GMT
+      - Wed, 15 Jan 2020 23:53:11 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -201,17 +201,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 13 Jan 2020 21:28:15 GMT
-      etag: '"0x8D7986F80567758"'
-      last-modified: Mon, 13 Jan 2020 21:28:15 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A1614801216"'
+      last-modified: Wed, 15 Jan 2020 23:53:12 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-01-13T21:28:15.8156632Z'
-      x-ms-file-creation-time: '2020-01-13T21:28:15.8156632Z'
+      x-ms-file-change-time: '2020-01-15T23:53:12.0110102Z'
+      x-ms-file-creation-time: '2020-01-15T23:53:12.0110102Z'
       x-ms-file-id: '13835163608398430208'
-      x-ms-file-last-write-time: '2020-01-13T21:28:15.8156632Z'
+      x-ms-file-last-write-time: '2020-01-15T23:53:12.0110102Z'
       x-ms-file-parent-id: '13835128424026341376'
-      x-ms-file-permission-key: 15174899579085104048*8807064524449008446
+      x-ms-file-permission-key: 5724850820508509333*16704459309046467611
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -221,7 +221,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a/utdir759e168a/file759e168a
         - ''
         - ''
@@ -235,7 +235,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:15 GMT
+      - Wed, 15 Jan 2020 23:53:12 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -250,9 +250,9 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Mon, 13 Jan 2020 21:28:16 GMT
-      etag: '"0x8D7986F8094C40C"'
-      last-modified: Mon, 13 Jan 2020 21:28:16 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A1614898997"'
+      last-modified: Wed, 15 Jan 2020 23:53:12 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
@@ -263,7 +263,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a/utdir759e168a/file759e168a
         - comp=range
         - ''
@@ -275,7 +275,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 13 Jan 2020 21:28:16 GMT
+      - Wed, 15 Jan 2020 23:53:12 GMT
       x-ms-range:
       - bytes=0-32767
       x-ms-version:
@@ -290,17 +290,18 @@ interactions:
       content-length: '1024'
       content-range: bytes 0-1023/1024
       content-type: application/octet-stream
-      date: Mon, 13 Jan 2020 21:28:16 GMT
-      etag: '"0x8D7986F8094C40C"'
-      last-modified: Mon, 13 Jan 2020 21:28:16 GMT
+      date: Wed, 15 Jan 2020 23:53:11 GMT
+      etag: '"0x8D79A1614898997"'
+      last-modified: Wed, 15 Jan 2020 23:53:12 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-01-13T21:28:15.8156632Z'
-      x-ms-file-creation-time: '2020-01-13T21:28:15.8156632Z'
+      x-ms-file-change-time: '2020-01-15T23:53:12.0110102Z'
+      x-ms-file-creation-time: '2020-01-15T23:53:12.0110102Z'
       x-ms-file-id: '13835163608398430208'
-      x-ms-file-last-write-time: '2020-01-13T21:28:15.8156632Z'
+      x-ms-file-last-write-time: '2020-01-15T23:53:12.0110102Z'
       x-ms-file-parent-id: '13835128424026341376'
-      x-ms-file-permission-key: 15174899579085104048*8807064524449008446
+      x-ms-file-permission-key: 5724850820508509333*16704459309046467611
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
@@ -313,7 +314,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragemvzxysjpjn3r.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshare759e168a/utdir759e168a/file759e168a
         - ''
         - ''

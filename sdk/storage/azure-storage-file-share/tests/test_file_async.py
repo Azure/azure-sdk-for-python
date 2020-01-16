@@ -78,6 +78,13 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
             self.remote_share_name = None
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
+
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
@@ -1221,6 +1228,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         await self.assertFileEqual(file_client, data)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1262,6 +1270,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             len(data),
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1293,6 +1302,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1322,6 +1332,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1361,6 +1372,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             len(data),
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1389,6 +1401,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1429,6 +1442,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             file_size,
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1471,6 +1485,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         await self.assertFileEqual(file_client, data)
+        self._teardown(file_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1496,6 +1511,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         await self.assertFileEqual(file_client, encoded_data)
+        self._teardown(file_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1513,7 +1529,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         await file_client.upload_file(data, validate_content=True)
-
+        self._teardown(file_name)
         # Assert
 
     @GlobalStorageAccountPreparer()
@@ -1536,7 +1552,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         await file_client.upload_file(data, validate_content=True, max_concurrency=2)
-
+        self._teardown(file_name)
         # Assert
 
     # --Test cases for sas & acl ------------------------------------------------

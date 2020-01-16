@@ -62,16 +62,12 @@ class StorageShareTest(AsyncStorageTestCase):
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
         self.test_shares = []
 
-    # def tearDown(self):
-    #     if not self.is_playback():
-    #         loop = asyncio.get_event_loop()
-    #         try:
-    #             for s in self.test_shares:
-    #                 loop.run_until_complete(self.fsc.delete_share(s.share_name, delete_snapshots=True))
-    #             loop.run_until_complete(self.fsc.__aexit__())
-    #         except:
-    #             pass
-    #     return super(StorageShareTest, self).tearDown()
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
 
     async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         async for l in self.fsc.list_shares(include_snapshots=True):

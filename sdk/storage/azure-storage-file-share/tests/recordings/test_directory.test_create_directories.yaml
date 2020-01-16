@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:17:33 GMT
+      - Wed, 15 Jan 2020 23:43:38 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:17:32 GMT
+      - Wed, 15 Jan 2020 23:43:39 GMT
       etag:
-      - '"0x8D78E36DA1D77BC"'
+      - '"0x8D79A14BF8DC35A"'
       last-modified:
-      - Tue, 31 Dec 2019 21:17:33 GMT
+      - Wed, 15 Jan 2020 23:43:39 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:17:33 GMT
+      - Wed, 15 Jan 2020 23:43:40 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -71,27 +71,27 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:17:33 GMT
+      - Wed, 15 Jan 2020 23:43:39 GMT
       etag:
-      - '"0x8D78E36DA2B7195"'
+      - '"0x8D79A14BFBB45F1"'
       last-modified:
-      - Tue, 31 Dec 2019 21:17:33 GMT
+      - Wed, 15 Jan 2020 23:43:40 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2019-12-31T21:17:33.5872917Z'
+      - '2020-01-15T23:43:40.2959345Z'
       x-ms-file-creation-time:
-      - '2019-12-31T21:17:33.5872917Z'
+      - '2020-01-15T23:43:40.2959345Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-12-31T21:17:33.5872917Z'
+      - '2020-01-15T23:43:40.2959345Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 7171191556614012562*819117102506551579
+      - 10306785916763839378*16704459309046467611
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:

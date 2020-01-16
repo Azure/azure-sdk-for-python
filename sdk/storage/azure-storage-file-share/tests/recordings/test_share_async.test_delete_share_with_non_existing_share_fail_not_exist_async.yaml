@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jan 2020 00:53:42 GMT
+      - Wed, 15 Jan 2020 23:55:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -13,11 +13,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:5781b079-501a-005d-13be-c558cf000000\nTime:2020-01-08T00:53:42.7942660Z</Message></Error>"
+        specified share does not exist.\nRequestId:c1620590-b01a-0028-39ff-cb952a000000\nTime:2020-01-15T23:55:01.7932904Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Wed, 08 Jan 2020 00:53:42 GMT
+      date: Wed, 15 Jan 2020 23:55:01 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
       x-ms-version: '2019-02-02'
@@ -28,7 +28,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageizsjv7wg4knd.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /share133c2097
         - restype=share
         - ''
@@ -40,7 +40,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 08 Jan 2020 00:53:43 GMT
+      - Wed, 15 Jan 2020 23:55:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -52,9 +52,10 @@ interactions:
         /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Wed, 08 Jan 2020 00:53:42 GMT
+      date: Wed, 15 Jan 2020 23:55:01 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
+      vary: Origin
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -63,7 +64,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageizsjv7wg4knd.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /
         - include=snapshots&comp=list
         - ''

@@ -68,6 +68,12 @@ class StorageFileTest(FileTestCase):
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
             self.remote_share_name = None
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
@@ -1114,6 +1120,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         self.assertFileEqual(file_client, data)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
@@ -1153,6 +1160,7 @@ class StorageFileTest(FileTestCase):
             len(data),
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_stream(self, resource_group, location, storage_account, storage_account_key):
@@ -1182,6 +1190,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
@@ -1209,6 +1218,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
@@ -1246,6 +1256,7 @@ class StorageFileTest(FileTestCase):
             len(data),
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
@@ -1272,6 +1283,7 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
@@ -1310,6 +1322,7 @@ class StorageFileTest(FileTestCase):
             file_size,
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
+        self._teardown(INPUT_FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_create_file_from_text(self, resource_group, location, storage_account, storage_account_key):

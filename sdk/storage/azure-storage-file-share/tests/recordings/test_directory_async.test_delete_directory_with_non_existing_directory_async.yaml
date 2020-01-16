@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 23:02:59 GMT
+      - Wed, 15 Jan 2020 23:44:15 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 02 Jan 2020 23:02:59 GMT
-      etag: '"0x8D78FD7E9C1D470"'
-      last-modified: Thu, 02 Jan 2020 23:02:59 GMT
+      date: Wed, 15 Jan 2020 23:44:14 GMT
+      etag: '"0x8D79A14D4960B51"'
+      last-modified: Wed, 15 Jan 2020 23:44:15 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage3zie4sluzqpi.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utsharebe8e1fa6
         - restype=share
         - ''
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 23:02:59 GMT
+      - Wed, 15 Jan 2020 23:44:15 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -45,11 +45,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:069b4681-401a-008b-0cc0-c12ed3000000\nTime:2020-01-02T23:02:59.9459795Z</Message></Error>"
+        specified resource does not exist.\nRequestId:d41d03d4-301a-0010-44fd-cbd473000000\nTime:2020-01-15T23:44:15.3441455Z</Message></Error>"
     headers:
       content-length: '223'
       content-type: application/xml
-      date: Thu, 02 Jan 2020 23:02:59 GMT
+      date: Wed, 15 Jan 2020 23:44:14 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
       x-ms-version: '2019-02-02'
@@ -60,7 +60,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage3zie4sluzqpi.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utsharebe8e1fa6/dir1
         - restype=directory
         - ''

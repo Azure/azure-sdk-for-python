@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 18:36:09 GMT
+      - Wed, 15 Jan 2020 23:47:29 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jan 2020 18:36:06 GMT
+      - Wed, 15 Jan 2020 23:47:29 GMT
       etag:
-      - '"0x8D78FB2A18886D3"'
+      - '"0x8D79A154881FABE"'
       last-modified:
-      - Thu, 02 Jan 2020 18:36:07 GMT
+      - Wed, 15 Jan 2020 23:47:29 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 18:36:09 GMT
+      - Wed, 15 Jan 2020 23:47:29 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -59,14 +59,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:c39356a8-f01a-005a-3f9b-c10c8b000000\nTime:2020-01-02T18:36:07.6210583Z</Message></Error>"
+        specified resource does not exist.\nRequestId:f0feb884-001a-0031-57fe-cbb942000000\nTime:2020-01-15T23:47:30.1770234Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       date:
-      - Thu, 02 Jan 2020 18:36:07 GMT
+      - Wed, 15 Jan 2020 23:47:29 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

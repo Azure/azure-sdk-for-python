@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 03 Jan 2020 01:11:54 GMT
+      - Wed, 15 Jan 2020 23:51:13 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -18,7 +18,7 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Fri, 03 Jan 2020 01:11:53 GMT
+      date: Wed, 15 Jan 2020 23:51:14 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -29,7 +29,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageo5qvholcyxkb.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /
         - restype=service&comp=properties
         - ''

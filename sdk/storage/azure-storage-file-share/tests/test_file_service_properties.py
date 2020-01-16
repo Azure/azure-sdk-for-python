@@ -33,6 +33,12 @@ class FileServicePropertiesTest(FileTestCase):
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential)
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:

@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 18:36:03 GMT
+      - Wed, 15 Jan 2020 23:47:22 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jan 2020 18:36:01 GMT
+      - Wed, 15 Jan 2020 23:47:21 GMT
       etag:
-      - '"0x8D78FB29E3D40BD"'
+      - '"0x8D79A154450DE36"'
       last-modified:
-      - Thu, 02 Jan 2020 18:36:01 GMT
+      - Wed, 15 Jan 2020 23:47:22 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

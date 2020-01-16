@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:48 GMT
       etag:
-      - '"0x8D78E3918C07DB8"'
+      - '"0x8D79A164E7FC863"'
       last-modified:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       x-ms-share-quota:
       - '1'
       x-ms-version:
@@ -65,11 +65,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:48 GMT
       etag:
-      - '"0x8D78E3918CB7A61"'
+      - '"0x8D79A164E8CF764"'
       last-modified:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -89,7 +89,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -101,13 +101,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:48 GMT
       etag:
-      - '"0x8D78E3918CB7A61"'
+      - '"0x8D79A164E8CF764"'
       last-modified:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-has-immutability-policy:
       - 'false'
       x-ms-has-legal-hold:
@@ -131,7 +133,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -139,18 +141,20 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share12220eea</Name><Properties><Last-Modified>Tue,
-        31 Dec 2019 21:33:37 GMT</Last-Modified><Etag>\"0x8D78E3918CB7A61\"</Etag><Quota>1</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share12220eea</Name><Properties><Last-Modified>Wed,
+        15 Jan 2020 23:54:49 GMT</Last-Modified><Etag>\"0x8D79A164E8CF764\"</Etag><Quota>1</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:48 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
       x-ms-version:
       - '2019-02-02'
     status:
@@ -170,7 +174,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -184,7 +188,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Dec 2019 21:33:37 GMT
+      - Wed, 15 Jan 2020 23:54:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

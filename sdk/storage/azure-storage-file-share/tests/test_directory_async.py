@@ -48,6 +48,13 @@ class StorageDirectoryTest(AsyncStorageTestCase):
             except:
                 pass
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
+
     # --Test cases for directories ----------------------------------------------
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

@@ -67,6 +67,12 @@ class StorageGetFileTest(FileTestCase):
             )
             file_client.upload_file(self.byte_data)
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self):
@@ -288,6 +294,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream(self, resource_group, location, storage_account, storage_account_key):
@@ -313,6 +320,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
@@ -350,6 +358,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_non_parallel(self, resource_group, location, storage_account, storage_account_key):
@@ -383,6 +392,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_small(self, resource_group, location, storage_account, storage_account_key):
@@ -419,6 +429,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -455,6 +466,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_with_progress_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -503,6 +515,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_non_parallel_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -547,6 +560,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_stream_small_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -595,6 +609,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path(self, resource_group, location, storage_account, storage_account_key):
@@ -621,6 +636,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:end_range + 1], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_with_single_byte(self, resource_group, location, storage_account, storage_account_key):
@@ -648,6 +664,7 @@ class StorageGetFileTest(FileTestCase):
             actual = stream.read()
             self.assertEqual(1, len(actual))
             self.assertEqual(self.byte_data[0], actual[0])
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_bytes_with_zero_byte(self, resource_group, location, storage_account, storage_account_key):
@@ -714,6 +731,7 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_CHUNK_GET_SIZE,
             self.MAX_SINGLE_GET_SIZE,
             progress)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_small(self, resource_group, location, storage_account, storage_account_key):
@@ -735,6 +753,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
@@ -756,6 +775,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_invalid_range_parallel(self, resource_group, location, storage_account, storage_account_key):
@@ -788,6 +808,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[start:file_size], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_ranged_get_file_to_path_invalid_range_non_parallel(self, resource_group, location, storage_account, storage_account_key):
@@ -817,6 +838,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data[start:file_size], actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_to_text(self, resource_group, location, storage_account, storage_account_key):
@@ -1019,6 +1041,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_non_seekable_parallel(self, resource_group, location, storage_account, storage_account_key):
@@ -1043,6 +1066,7 @@ class StorageGetFileTest(FileTestCase):
                 file_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
 
                 # Assert
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_non_seekable_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -1076,6 +1100,7 @@ class StorageGetFileTest(FileTestCase):
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_non_seekable_parallel_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -1109,6 +1134,7 @@ class StorageGetFileTest(FileTestCase):
 
             with self.assertRaises(ValueError):
                 snapshot_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
+        self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_exact_get_size(self, resource_group, location, storage_account, storage_account_key):

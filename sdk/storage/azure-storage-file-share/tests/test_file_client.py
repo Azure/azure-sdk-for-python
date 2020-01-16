@@ -40,6 +40,12 @@ class StorageFileClientTest(FileTestCase):
         self.account_key = storage_account_key
         self.sas_token = self.generate_sas_token()
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, service_type, protocol='https'):
         self.assertIsNotNone(service)

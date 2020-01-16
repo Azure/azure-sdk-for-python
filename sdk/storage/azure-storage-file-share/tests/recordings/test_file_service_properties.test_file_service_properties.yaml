@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 18:57:12 GMT
+      - Wed, 15 Jan 2020 23:51:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -30,7 +30,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jan 2020 18:57:13 GMT
+      - Wed, 15 Jan 2020 23:51:14 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -50,7 +50,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 18:57:15 GMT
+      - Wed, 15 Jan 2020 23:51:15 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -63,7 +63,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 02 Jan 2020 18:57:13 GMT
+      - Wed, 15 Jan 2020 23:51:14 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

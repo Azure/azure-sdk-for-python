@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 23:03:01 GMT
+      - Wed, 15 Jan 2020 23:44:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 02 Jan 2020 23:03:01 GMT
-      etag: '"0x8D78FD7EB02242E"'
-      last-modified: Thu, 02 Jan 2020 23:03:01 GMT
+      date: Wed, 15 Jan 2020 23:44:18 GMT
+      etag: '"0x8D79A14D699BFC1"'
+      last-modified: Wed, 15 Jan 2020 23:44:18 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -27,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage3zie4sluzqpi.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utsharee15b18a9
         - restype=share
         - ''
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 02 Jan 2020 23:03:02 GMT
+      - Wed, 15 Jan 2020 23:44:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -45,11 +45,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
-        specified parent path does not exist.\nRequestId:6b480ba9-c01a-003b-80c0-c1d753000000\nTime:2020-01-02T23:03:02.0081470Z</Message></Error>"
+        specified parent path does not exist.\nRequestId:28a47214-001a-0018-22fd-cbcf00000000\nTime:2020-01-15T23:44:18.7148629Z</Message></Error>"
     headers:
       content-length: '224'
       content-type: application/xml
-      date: Thu, 02 Jan 2020 23:03:01 GMT
+      date: Wed, 15 Jan 2020 23:44:18 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ParentNotFound
       x-ms-version: '2019-02-02'
@@ -60,7 +60,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage3zie4sluzqpi.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utsharee15b18a9/missing1%2Fmissing2
         - restype=directory
         - ''
