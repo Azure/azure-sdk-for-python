@@ -11,7 +11,6 @@ import threading
 from typing import (
     Iterable,
     Union,
-    Type,
     Optional,
     Any,
     AnyStr,
@@ -22,8 +21,7 @@ from typing import (
 from uamqp import types, constants, errors
 from uamqp import SendClient
 
-from azure.core.tracing import SpanKind, AbstractSpan
-from azure.core.settings import settings
+from azure.core.tracing import AbstractSpan
 
 from .exceptions import _error_handler, OperationTimeoutError
 from ._common import EventData, EventDataBatch
