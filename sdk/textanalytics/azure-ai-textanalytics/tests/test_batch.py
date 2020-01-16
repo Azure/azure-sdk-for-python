@@ -10,7 +10,6 @@ from azure.ai.textanalytics import (
     TextAnalyticsClient,
     DetectLanguageInput,
     TextDocumentInput,
-    BatchDocumentErrorException
 )
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 
@@ -724,6 +723,6 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.analyze_sentiment(docs)
-        with self.assertRaises(BatchDocumentErrorException):
+        with self.assertRaises(AttributeError):
             for doc in response:
                 sentiment = doc.sentiment

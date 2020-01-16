@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 from ._generated.models._models import LanguageInput
 from ._generated.models._models import MultiLanguageInput
 
@@ -376,33 +375,6 @@ class TextDocumentStatistics(DictMixin):
         )
 
 
-class BatchDocumentErrorException(HttpResponseError):
-    """Raised if a attribute not found on a :class:`DocumentError` is accessed.
-    Used to indicate that a DocumentError was encountered where a result object
-    was expected in the batched response.
-
-    For example, if you have the response from
-    :func:`~azure.ai.textanalytics.TextAnalyticsClient.detect_languages()`,
-    to print only successful results you can do the following:
-
-    .. admonition:: Example:
-
-        .. code-block:: python
-
-            response = client.detect_languages(documents)
-            for result in response:
-                try:
-                    print(result.primary_language.name)
-                except BatchDocumentErrorException:
-                    pass
-
-    :param str error_message: The error message including the document id and error code found
-        on the DocumentError.
-    """
-    def __init__(self, error_message):
-        super(BatchDocumentErrorException, self).__init__(message=error_message)
-
-
 class DocumentError(DictMixin):
     """DocumentError.
 
@@ -421,7 +393,7 @@ class DocumentError(DictMixin):
 
     def __getattr__(self, attr):
         if attr not in ["id", "error", "is_error"]:
-            raise BatchDocumentErrorException(
+            raise AttributeError(
                 "The batched result has a DocumentError with the following details. "
                 "Resolve the error or filter for only successful results using the is_error property.\n"
                 "Document Id: {}\nError: {} - {}\n".
