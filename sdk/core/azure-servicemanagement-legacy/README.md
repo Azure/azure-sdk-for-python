@@ -4,9 +4,9 @@ This is the Microsoft Azure Service Management Legacy Client Library.
 
 All packages in this bundle have been tested with Python 2.7, 3.3, 3.4 and 3.5.
 
-For the newer Azure Resource Management (ARM) libraries, see `azure-mgmt <https://pypi.python.org/pypi/azure-mgmt>`__.
+For the newer Azure Resource Management (ARM) libraries, see [azure-mgmt](https://pypi.python.org/pypi/azure-mgmt).
 
-For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
+For a more complete set of Azure libraries, see the [azure](https://pypi.python.org/pypi/azure) bundle package.
 
 
 # Compatibility
@@ -75,7 +75,7 @@ You can download your Azure publish settings file and use the certificate that
 is embedded in that file to create the client certificate. The server
 certificate already exists, so you won't need to upload one.
 
-To do this, download your `publish settings <http://go.microsoft.com/fwlink/?LinkID=301775>`__
+To do this, download your [publish settings](http://go.microsoft.com/fwlink/?LinkID=301775)
 then use this code to create the .pem file.
 
 ```python
@@ -93,7 +93,7 @@ subscription in the publish settings, the first one will be used.
 
 ### Creating and uploading new certificate with OpenSSL
 
-To create the .pem file using `OpenSSL <http://www.openssl.org>`__, execute this:
+To create the .pem file using [OpenSSL](http://www.openssl.org), execute this:
 
 ```shell
 openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
@@ -106,7 +106,7 @@ openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
 
 After you have created the certificate, you will need to upload the .cer
 file to Microsoft Azure via the "Upload" action of the "Settings" tab of
-the `management portal <http://manage.windowsazure.com>`__.
+the [management portal](http://manage.windowsazure.com).
 
 
 ## ServiceManagementService
@@ -211,27 +211,27 @@ sms.wait_for_operation_status(result.request_id, timeout=600)
 
 # Need Help?
 
-Be sure to check out the Microsoft Azure `Developer Forums on Stack
-Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
+Be sure to check out the Microsoft Azure [Developer Forums on Stack
+Overflow](http://go.microsoft.com/fwlink/?LinkId=234489) if you have
 trouble with the provided code.
 
 
 # Contribute Code or Provide Feedback
 
 If you would like to become an active contributor to this project please
-follow the instructions provided in `Microsoft Azure Projects
+follow the instructions provided in [Microsoft Azure Projects
 Contribution
-Guidelines <http://azure.github.io/guidelines.html>`__.
+Guidelines](http://azure.github.io/guidelines.html).
 
 If you encounter any bugs with the library please file an issue in the
-`Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
+[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project.
 
 
 # Learn More
 
-`Microsoft Azure Python Developer
-Center <http://azure.microsoft.com/en-us/develop/python/>`__
+[Microsoft Azure Python Developer
+Center](http://azure.microsoft.com/en-us/develop/python/)
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-servicemanagement-legacy%2FREADME.png)

@@ -1,10 +1,6 @@
-.. :changelog:
+# Release History
 
-Release History
-===============
-
-0.50.2 (2019-12-9)
-------------------
+## 0.50.2 (2019-12-9)
 
 **Features**
 
@@ -15,23 +11,20 @@ Release History
 * Fixed bug where Message would pass through invalid kwargs on init when attempting to thread through subject.
 * Increments UAMQP dependency min version to 1.2.5, to include a set of fixes, including handling of large messages and mitigation of segfaults.
 
-
-0.50.1 (2019-06-24)
--------------------
+## 0.50.1 (2019-06-24)
 
 **BugFixes**
 
 * Fixed bug where enqueued_time and scheduled_enqueue_time of message being parsed as local timestamp rather than UTC.
 
 
-0.50.0 (2019-01-17)
--------------------
+## 0.50.0 (2019-01-17)
 
 **Breaking changes**
 
 * Introduces new AMQP-based API.
 * Original HTTP-based API still available under new namespace: azure.servicebus.control_client
-* For full API changes, please see updated `reference documentation <https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python>`__.
+* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python).
 
 Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
 so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.
@@ -44,13 +37,11 @@ so for those intending to only use HTTP operations - there is no additional bene
 * Now supports scheduled message cancellation.
 
 
-0.21.1 (2017-04-27)
--------------------
+## 0.21.1 (2017-04-27)
 
 This wheel package is now built with the azure wheel extension
 
-0.21.0 (2017-01-13)
--------------------
+## 0.21.0 (2017-01-13)
 
 **Features**
 
@@ -63,8 +54,7 @@ This wheel package is now built with the azure wheel extension
 
 * #820 the code is now more robust to unexpected changes on the SB RestAPI
 
-0.20.3 (2016-08-11)
--------------------
+## 0.20.3 (2016-08-11)
 
 **News**
 
@@ -75,22 +65,19 @@ This wheel package is now built with the azure wheel extension
 
 * #628 Fix custom properties with double quotes
 
-0.20.2 (2016-06-28)
--------------------
+## 0.20.2 (2016-06-28)
 
 **Bugfixes**
 
 * New header in Rest API which breaks the SDK #658 #657
 
-0.20.1 (2015-09-14)
--------------------
+## 0.20.1 (2015-09-14)
 
 **News**
 
 * Create a requests.Session() if the user doesn't pass one in.
 
-0.20.0 (2015-08-31)
--------------------
+## 0.20.0 (2015-08-31)
 
 Initial release of this package, from the split of the `azure` package.
 See the `azure` package release note for 1.0.0 for details and previous

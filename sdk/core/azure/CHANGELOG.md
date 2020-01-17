@@ -18,7 +18,7 @@ Update from 2.0.0rc6 *might* work, but we strongly suggest creating a fresh virt
 
 ***CLI configuration***
 
-You can now execute your SDK script using the configuration of the `AzureCLI <https://github.com/Azure/azure-cli>`__
+You can now execute your SDK script using the configuration of the [AzureCLI](https://github.com/Azure/azure-cli)
 
 Example::
 
@@ -29,9 +29,9 @@ Example::
 
 Configuration from the CLI is:
 
-- `az login <https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli>`__: access to credentials
-- `az account set --subscriptions <https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli>`__: access to subscription_id
-- `az cloud set --name <https://docs.microsoft.com/en-us/cli/azure/cloud#set>`__: access to base_url (sovereign cloud, Government, Germany, etc.)
+- [az login](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli): access to credentials
+- [az account set --subscriptions](https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli): access to subscription_id
+- [az cloud set --name](https://docs.microsoft.com/en-us/cli/azure/cloud#set): access to base_url (sovereign cloud, Government, Germany, etc.)
 
 Note: CLI and SDK are versioned separately. We do recommend using two different virtual environments. Information will be shared
 automatically since the CLI saves it in the $HOME folder. You do need the `azure-cli-core` package in your SDK environment to use this feature.
@@ -41,10 +41,10 @@ automatically since the CLI saves it in the $HOME folder. You do need the `azure
 To help support of sovereign cloud (i.e. AzureStack, Azure Government, Azure Germany, Microsoft Azure operated by 21Vianet - China), the following packages
 now officially support several API versions in the same package:
 
--  `azure-mgmt-resource v1.1.x <https://pypi.python.org/pypi/azure-mgmt-resource/1.1.0>`__
--  `azure-mgmt-compute v1.0.x <https://pypi.python.org/pypi/azure-mgmt-compute/1.0.0>`__
--  `azure-mgmt-network v1.0.x <https://pypi.python.org/pypi/azure-mgmt-network/1.0.0>`__
--  `azure-mgmt-storage v1.0.x <https://pypi.python.org/pypi/azure-mgmt-storage/1.0.0>`__
+-  [azure-mgmt-resource v1.1.x](https://pypi.python.org/pypi/azure-mgmt-resource/1.1.0)
+-  [azure-mgmt-compute v1.0.x](https://pypi.python.org/pypi/azure-mgmt-compute/1.0.0)
+-  [azure-mgmt-network v1.0.x](https://pypi.python.org/pypi/azure-mgmt-network/1.0.0)
+-  [azure-mgmt-storage v1.0.x](https://pypi.python.org/pypi/azure-mgmt-storage/1.0.0)
 
 Please refer to the PyPI page of these packages for supported ApiVersion.
 
@@ -54,44 +54,43 @@ The Azure SDK for Python now has too many services to provide an unique ChangeLo
 
 The complete list of packages installed is:
 
--  `azure-batch v3.0.0 <https://pypi.python.org/pypi/azure-batch/3.0.0>`__
--  `azure-datalake-store v0.0.x <https://pypi.python.org/pypi/azure-datalake-store/0.0.9>`__
--  `azure-graphrbac v0.30.x <https://pypi.python.org/pypi/azure-graphrbac/0.30.0>`__
--  `azure-keyvault v0.3.x <https://pypi.python.org/pypi/azure-keyvault/0.3.3>`__
--  `azure-servicebus v0.21.x <https://pypi.python.org/pypi/azure-servicebus/0.21.1>`__
--  `azure-servicefabric v5.6.130 <https://pypi.python.org/pypi/azure-servicefabric/5.6.130>`__
--  `azure-servicemanagement-legacy v0.20.x <https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.6>`__
--  `azure-storage v0.34.x <https://pypi.python.org/pypi/azure-storage/0.34.2>`__
--  `azure-mgmt-authorization v0.30.x <https://pypi.python.org/pypi/azure-mgmt-authorization/0.30.0>`__
--  `azure-mgmt-batch v4.0.x <https://pypi.python.org/pypi/azure-mgmt-batch/4.0.0>`__
--  `azure-mgmt-cdn v0.30.x <https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.3>`__
--  `azure-mgmt-cognitiveservices v1.0.x <https://pypi.python.org/pypi/azure-mgmt-cognitiveservices/1.0.0>`__
--  `azure-mgmt-compute v1.0.x <https://pypi.python.org/pypi/azure-mgmt-compute/1.0.0>`__
--  `azure-mgmt-containerregistry v0.2.x <https://pypi.python.org/pypi/azure-mgmt-containerregistry/0.2.1>`__
--  `azure-mgmt-datalake-analytics v0.1.x <https://pypi.python.org/pypi/azure-mgmt-datalake-analytics/0.1.4>`__
--  `azure-mgmt-datalake-store v0.1.x <https://pypi.python.org/pypi/azure-mgmt-datalake-store/0.1.4>`__
--  `azure-mgmt-devtestlabs v2.0.x <https://pypi.python.org/pypi/azure-mgmt-devtestlabs/2.0.0>`__
--  `azure-mgmt-dns v1.0.x <https://pypi.python.org/pypi/azure-mgmt-dns/1.0.1>`__
--  `azure-mgmt-documentdb v0.1.x <https://pypi.python.org/pypi/azure-mgmt-documentdb/0.1.3>`__
--  `azure-mgmt-iothub v0.2.x <https://pypi.python.org/pypi/azure-mgmt-iothub/0.2.2>`__
--  `azure-mgmt-keyvault v0.31.x <https://pypi.python.org/pypi/azure-mgmt-keyvault/0.31.0>`__
--  `azure-mgmt-logic v2.1.x <https://pypi.python.org/pypi/azure-mgmt-logic/2.1.0>`__
--  `azure-mgmt-network v1.0.x <https://pypi.python.org/pypi/azure-mgmt-network/1.0.0>`__
--  `azure-mgmt-rdbms v0.1.x <https://pypi.python.org/pypi/azure-mgmt-rdbms/0.1.0>`__
--  `azure-mgmt-redis v4.1.x <https://pypi.python.org/pypi/azure-mgmt-redis/4.1.0>`__
--  `azure-mgmt-resource v1.1.x <https://pypi.python.org/pypi/azure-mgmt-resource/1.1.0>`__
--  `azure-mgmt-scheduler v1.1.x <https://pypi.python.org/pypi/azure-mgmt-scheduler/1.1.2>`__
--  `azure-mgmt-sql v0.5.x <https://pypi.python.org/pypi/azure-mgmt-sql/0.5.1>`__
--  `azure-mgmt-storage v1.0.x <https://pypi.python.org/pypi/azure-mgmt-storage/1.0.0>`__
--  `azure-mgmt-trafficmanager v0.30.x <https://pypi.python.org/pypi/azure-mgmt-trafficmanager/0.30.0>`__
--  `azure-mgmt-web v0.32.x <https://pypi.python.org/pypi/azure-mgmt-web/0.32.0>`__
+-  [azure-batch v3.0.0](https://pypi.python.org/pypi/azure-batch/3.0.0)
+-  [azure-datalake-store v0.0.x](https://pypi.python.org/pypi/azure-datalake-store/0.0.9)
+-  [azure-graphrbac v0.30.x](https://pypi.python.org/pypi/azure-graphrbac/0.30.0)
+-  [azure-keyvault v0.3.x](https://pypi.python.org/pypi/azure-keyvault/0.3.3)
+-  [azure-servicebus v0.21.x](https://pypi.python.org/pypi/azure-servicebus/0.21.1)
+-  [azure-servicefabric v5.6.130](https://pypi.python.org/pypi/azure-servicefabric/5.6.130)
+-  [azure-servicemanagement-legacy v0.20.x](https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.6)
+-  [azure-storage v0.34.x](https://pypi.python.org/pypi/azure-storage/0.34.2)
+-  [azure-mgmt-authorization v0.30.x](https://pypi.python.org/pypi/azure-mgmt-authorization/0.30.0)
+-  [azure-mgmt-batch v4.0.x](https://pypi.python.org/pypi/azure-mgmt-batch/4.0.0)
+-  [azure-mgmt-cdn v0.30.x](https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.3)
+-  [azure-mgmt-cognitiveservices v1.0.x](https://pypi.python.org/pypi/azure-mgmt-cognitiveservices/1.0.0)
+-  [azure-mgmt-compute v1.0.x](https://pypi.python.org/pypi/azure-mgmt-compute/1.0.0)
+-  [azure-mgmt-containerregistry v0.2.x](https://pypi.python.org/pypi/azure-mgmt-containerregistry/0.2.1)
+-  [azure-mgmt-datalake-analytics v0.1.x](https://pypi.python.org/pypi/azure-mgmt-datalake-analytics/0.1.4)
+-  [azure-mgmt-datalake-store v0.1.x](https://pypi.python.org/pypi/azure-mgmt-datalake-store/0.1.4)
+-  [azure-mgmt-devtestlabs v2.0.x](https://pypi.python.org/pypi/azure-mgmt-devtestlabs/2.0.0)
+-  [azure-mgmt-dns v1.0.x](https://pypi.python.org/pypi/azure-mgmt-dns/1.0.1)
+-  [azure-mgmt-documentdb v0.1.x](https://pypi.python.org/pypi/azure-mgmt-documentdb/0.1.3)
+-  [azure-mgmt-iothub v0.2.x](https://pypi.python.org/pypi/azure-mgmt-iothub/0.2.2)
+-  [azure-mgmt-keyvault v0.31.x](https://pypi.python.org/pypi/azure-mgmt-keyvault/0.31.0)
+-  [azure-mgmt-logic v2.1.x](https://pypi.python.org/pypi/azure-mgmt-logic/2.1.0)
+-  [azure-mgmt-network v1.0.x](https://pypi.python.org/pypi/azure-mgmt-network/1.0.0)
+-  [azure-mgmt-rdbms v0.1.x](https://pypi.python.org/pypi/azure-mgmt-rdbms/0.1.0)
+-  [azure-mgmt-redis v4.1.x](https://pypi.python.org/pypi/azure-mgmt-redis/4.1.0)
+-  [azure-mgmt-resource v1.1.x](https://pypi.python.org/pypi/azure-mgmt-resource/1.1.0)
+-  [azure-mgmt-scheduler v1.1.x](https://pypi.python.org/pypi/azure-mgmt-scheduler/1.1.2)
+-  [azure-mgmt-sql v0.5.x](https://pypi.python.org/pypi/azure-mgmt-sql/0.5.1)
+-  [azure-mgmt-storage v1.0.x](https://pypi.python.org/pypi/azure-mgmt-storage/1.0.0)
+-  [azure-mgmt-trafficmanager v0.30.x](https://pypi.python.org/pypi/azure-mgmt-trafficmanager/0.30.0)
+-  [azure-mgmt-web v0.32.x](https://pypi.python.org/pypi/azure-mgmt-web/0.32.0)
 
 More packages are available, but they are in preview with not enough tests currently and are not included in this bundle. More details here:
 http://azure-sdk-for-python.readthedocs.io/en/latest/installation.html
 
 
-2016-08-30 Version 2.0.0rc6 / 0.30.0rc6
-+++++++++++++++++++++++++++++++++++++++
+## 2016-08-30 Version 2.0.0rc6 / 0.30.0rc6
 
 **Disclaimer**
 
@@ -298,7 +297,7 @@ Thank you to brandondahler, schaefi for their contributions.
 * azure-common[autorest] == 1.1.4, provides automatic autorest right dependencies
 * azure-storage 0.32.0
 
-  * `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
+  * [Check the ChangeLog on storage github account for details](https://github.com/Azure/azure-storage-python/releases).
 
 
 ## 2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
@@ -331,7 +330,7 @@ You can remove the involved parameter safely, as it should not have been there i
 * azure-common[autorest] == 1.1.3, provides automatic autorest right dependencies
 * azure-storage 0.31.0
 
-  * `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
+  * [Check the ChangeLog on storage github account for details](https://github.com/Azure/azure-storage-python/releases).
 
 ## 2016-03-31 azure-servicemanagement-legacy 0.20.3
 
@@ -398,7 +397,7 @@ Our goal is to release a stable version by the end of March 2016.  Please send u
 
 **WHAT'S NEW**
 
-* New ARM generated code based on `Swagger specification of the Azure REST APIs <https://github.com/Azure/azure-rest-api-specs>`__
+* New ARM generated code based on [Swagger specification of the Azure REST APIs](https://github.com/Azure/azure-rest-api-specs)
 * New libraries
 
   * Azure Active Directory Graph API
@@ -428,12 +427,12 @@ Our goal is to release a stable version by the end of March 2016.  Please send u
 
 **BREAKING CHANGES**
 
-We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 `here <https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0>`__.
+We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 [here](https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0).
 
 **Dependencies**
 
 azure-storage 0.30.0
-  * Major version. `Check the ChangeLog on storage github account for details <https://github.com/Azure/azure-storage-python/releases>`__.
+  * Major version. [Check the ChangeLog on storage github account for details](https://github.com/Azure/azure-storage-python/releases).
 
 ## 2016-01-20 Version 1.0.3
 
