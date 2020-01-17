@@ -6,7 +6,6 @@ aiohttp>=3.0; python_version >= '3.5'
 aiodns>=2.0; python_version >= '3.5'
 azure-mgmt-authorization
 azure-mgmt-appconfiguration
-azure-appconfiguration
 msrestazure
 msrest>=0.6.10
 pytest
