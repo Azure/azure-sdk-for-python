@@ -141,6 +141,7 @@ class StorageRetryTest(StorageTestCase):
             with self.assertRaises(AzureError) as error:
                 service.create_container(container_name)
             # Assert
+            # 3 retries + 1 original == 4
             assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue('read timeout' in str(error.exception), 'Expected socket timeout but got different exception.')

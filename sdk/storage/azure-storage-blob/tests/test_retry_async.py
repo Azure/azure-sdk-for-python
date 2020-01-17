@@ -164,6 +164,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
             
 
             # Assert
+            # 3 retries + 1 original == 4
             assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue(
