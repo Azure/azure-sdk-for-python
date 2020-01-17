@@ -1,20 +1,14 @@
-.. :changelog:
+# Release History
 
-Release History
-===============
-
-0.20.7 (Unreleased)
-+++++++++++++++++++
+## 0.20.7 (Unreleased)
 
 - Python 3.7 compatibility
 
-0.20.6 (2017-04-27)
-+++++++++++++++++++
+## 0.20.6 (2017-04-27)
 
 This wheel package is now built with the azure wheel extension
 
-0.20.5 (2016-09-22)
-+++++++++++++++++++
+## 0.20.5 (2016-09-22)
 
 **Bugfix**
 
@@ -23,8 +17,7 @@ This wheel package is now built with the azure wheel extension
 
 Thank you to colemickens for his contribution
 
-0.20.4 (2016-08-01)
-+++++++++++++++++++
+## 0.20.4 (2016-08-01)
 
 **Bugfix**
 
@@ -36,8 +29,7 @@ Thank you to colemickens for his contribution
 
 Thank you to brandondahler, schaefi for their contributions.
 
-0.20.3 (2016-03-31)
-+++++++++++++++++++
+## 0.20.3 (2016-03-31)
 
 **New**
 
@@ -45,8 +37,7 @@ Thank you to brandondahler, schaefi for their contributions.
 
 Thank you to bear454 for his contribution.
 
-0.20.2 (2016-01-20)
-+++++++++++++++++++
+## 0.20.2 (2016-01-20)
 
 **New**
 
@@ -56,15 +47,13 @@ Thank you to bear454 for his contribution.
 
 Thank you to bear454, ekesken, schaefi for their contributions.
 
-0.20.1 (2015-09-14)
-+++++++++++++++++++
+## 0.20.1 (2015-09-14)
 
 **News**
 
 * Create a requests.Session() if the user doesn't pass one in.
 
-0.20.0 (2015-08-31)
-+++++++++++++++++++
+## 0.20.0 (2015-08-31)
 
 Initial release of this package, from the split of the `azure` package.
 See the `azure` package release note for 1.0.0 for details and previous

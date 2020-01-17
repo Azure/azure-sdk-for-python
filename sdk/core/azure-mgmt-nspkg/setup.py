@@ -34,7 +34,7 @@ setup(
     name='azure-mgmt-nspkg',
     version='3.0.2',
     description='Microsoft Azure Resource Management Namespace Package [Internal]',
-    long_description=open('README.rst', 'r').read(),
+    long_description=open('README.md', 'r').read(),
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
