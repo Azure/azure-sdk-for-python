@@ -3,6 +3,21 @@
 Release History
 ===============
 
+3.0.0rc4 (2020-01-17)
++++++++++++++++++++++
+
+**Features**
+
+- Model DomainUpdateParameters has a new parameter allow_traffic_from_all_ips
+- Model DomainUpdateParameters has a new parameter inbound_ip_rules
+- Model TopicUpdateParameters has a new parameter allow_traffic_from_all_ips
+- Model TopicUpdateParameters has a new parameter inbound_ip_rules
+
+**Breaking changes**
+
+- Operation DomainsOperations.update has a new signature
+- Operation TopicsOperations.update has a new signature
+
 3.0.0rc3 (2020-01-12)
 +++++++++++++++++++++
 
