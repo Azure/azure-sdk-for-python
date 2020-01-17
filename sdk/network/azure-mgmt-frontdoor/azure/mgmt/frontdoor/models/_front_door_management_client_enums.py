@@ -189,6 +189,60 @@ class SessionAffinityEnabledState(str, Enum):
     disabled = "Disabled"
 
 
+class HeaderActionType(str, Enum):
+
+    append = "Append"
+    delete = "Delete"
+    overwrite = "Overwrite"
+
+
+class RulesEngineMatchVariable(str, Enum):
+
+    is_mobile = "IsMobile"
+    remote_addr = "RemoteAddr"
+    request_method = "RequestMethod"
+    query_string = "QueryString"
+    post_args = "PostArgs"
+    request_uri = "RequestUri"
+    request_path = "RequestPath"
+    request_filename = "RequestFilename"
+    request_filename_extension = "RequestFilenameExtension"
+    request_header = "RequestHeader"
+    request_body = "RequestBody"
+    request_scheme = "RequestScheme"
+
+
+class RulesEngineOperator(str, Enum):
+
+    any = "Any"
+    ip_match = "IPMatch"
+    geo_match = "GeoMatch"
+    equal = "Equal"
+    contains = "Contains"
+    less_than = "LessThan"
+    greater_than = "GreaterThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+
+
+class Transform(str, Enum):
+
+    lowercase = "Lowercase"
+    uppercase = "Uppercase"
+    trim = "Trim"
+    url_decode = "UrlDecode"
+    url_encode = "UrlEncode"
+    remove_nulls = "RemoveNulls"
+
+
+class MatchProcessingBehavior(str, Enum):
+
+    continue_enum = "Continue"
+    stop = "Stop"
+
+
 class ResourceType(str, Enum):
 
     microsoft_networkfront_doors = "Microsoft.Network/frontDoors"

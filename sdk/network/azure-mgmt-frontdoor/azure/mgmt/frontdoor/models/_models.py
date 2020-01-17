@@ -47,6 +47,13 @@ class Backend(Model):
 
     :param address: Location of the backend (IP address or FQDN)
     :type address: str
+    :param private_link_id: If this backend is private, provide the private
+     link resource Id. Populating this optional field indicates that this
+     backend is 'Private'
+    :type private_link_id: str
+    :param location: Region of the backend if it is in Azure. Mandatory field
+     if backend is 'Private'
+    :type location: str
     :param http_port: The HTTP TCP port number. Must be between 1 and 65535.
     :type http_port: int
     :param https_port: The HTTPS TCP port number. Must be between 1 and 65535.
@@ -76,6 +83,8 @@ class Backend(Model):
 
     _attribute_map = {
         'address': {'key': 'address', 'type': 'str'},
+        'private_link_id': {'key': 'privateLinkId', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'http_port': {'key': 'httpPort', 'type': 'int'},
         'https_port': {'key': 'httpsPort', 'type': 'int'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
@@ -87,6 +96,8 @@ class Backend(Model):
     def __init__(self, **kwargs):
         super(Backend, self).__init__(**kwargs)
         self.address = kwargs.get('address', None)
+        self.private_link_id = kwargs.get('private_link_id', None)
+        self.location = kwargs.get('location', None)
         self.http_port = kwargs.get('http_port', None)
         self.https_port = kwargs.get('https_port', None)
         self.enabled_state = kwargs.get('enabled_state', None)
@@ -862,6 +873,11 @@ class FrontDoor(Resource):
     :vartype provisioning_state: str
     :ivar cname: The host that each frontendEndpoint must CNAME to.
     :vartype cname: str
+    :ivar frontdoor_id: The Id of the frontdoor.
+    :vartype frontdoor_id: str
+    :ivar rules_engines: Rules Engine Configurations available to routing
+     rules.
+    :vartype rules_engines: list[~azure.mgmt.frontdoor.models.RulesEngine]
     """
 
     _validation = {
@@ -870,6 +886,8 @@ class FrontDoor(Resource):
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'cname': {'readonly': True},
+        'frontdoor_id': {'readonly': True},
+        'rules_engines': {'readonly': True},
     }
 
     _attribute_map = {
@@ -889,6 +907,8 @@ class FrontDoor(Resource):
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cname': {'key': 'properties.cname', 'type': 'str'},
+        'frontdoor_id': {'key': 'properties.frontdoorId', 'type': 'str'},
+        'rules_engines': {'key': 'properties.rulesEngines', 'type': '[RulesEngine]'},
     }
 
     def __init__(self, **kwargs):
@@ -904,6 +924,8 @@ class FrontDoor(Resource):
         self.resource_state = kwargs.get('resource_state', None)
         self.provisioning_state = None
         self.cname = None
+        self.frontdoor_id = None
+        self.rules_engines = None
 
 
 class FrontDoorUpdateParameters(Model):
@@ -1112,6 +1134,41 @@ class FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(Model):
     def __init__(self, **kwargs):
         super(FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+
+
+class HeaderAction(Model):
+    """An action that can manipulate an http header.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param header_action_type: Required. Which type of manipulation to apply
+     to the header. Possible values include: 'Append', 'Delete', 'Overwrite'
+    :type header_action_type: str or
+     ~azure.mgmt.frontdoor.models.HeaderActionType
+    :param header_name: Required. The name of the header this action will
+     apply to.
+    :type header_name: str
+    :param value: The value to update the given header name with. This value
+     is not used if the actionType is Delete.
+    :type value: str
+    """
+
+    _validation = {
+        'header_action_type': {'required': True},
+        'header_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'header_action_type': {'key': 'headerActionType', 'type': 'str'},
+        'header_name': {'key': 'headerName', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HeaderAction, self).__init__(**kwargs)
+        self.header_action_type = kwargs.get('header_action_type', None)
+        self.header_name = kwargs.get('header_name', None)
+        self.value = kwargs.get('value', None)
 
 
 class HealthProbeSettingsListResult(Model):
@@ -2155,6 +2212,9 @@ class RoutingRule(SubResource):
      ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :param route_configuration: A reference to the routing configuration.
     :type route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
+    :param rules_engine: A reference to a specific Rules Engine Configuration
+     to apply to this route.
+    :type rules_engine: ~azure.mgmt.frontdoor.models.SubResource
     :param resource_state: Resource status. Possible values include:
      'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
     :type resource_state: str or
@@ -2176,6 +2236,7 @@ class RoutingRule(SubResource):
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
         'route_configuration': {'key': 'properties.routeConfiguration', 'type': 'RouteConfiguration'},
+        'rules_engine': {'key': 'properties.rulesEngine', 'type': 'SubResource'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -2188,6 +2249,7 @@ class RoutingRule(SubResource):
         self.patterns_to_match = kwargs.get('patterns_to_match', None)
         self.enabled_state = kwargs.get('enabled_state', None)
         self.route_configuration = kwargs.get('route_configuration', None)
+        self.rules_engine = kwargs.get('rules_engine', None)
         self.resource_state = kwargs.get('resource_state', None)
         self.name = kwargs.get('name', None)
         self.type = None
@@ -2239,6 +2301,9 @@ class RoutingRuleUpdateParameters(Model):
      ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :param route_configuration: A reference to the routing configuration.
     :type route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
+    :param rules_engine: A reference to a specific Rules Engine Configuration
+     to apply to this route.
+    :type rules_engine: ~azure.mgmt.frontdoor.models.SubResource
     """
 
     _attribute_map = {
@@ -2247,6 +2312,7 @@ class RoutingRuleUpdateParameters(Model):
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
         'route_configuration': {'key': 'routeConfiguration', 'type': 'RouteConfiguration'},
+        'rules_engine': {'key': 'rulesEngine', 'type': 'SubResource'},
     }
 
     def __init__(self, **kwargs):
@@ -2256,6 +2322,206 @@ class RoutingRuleUpdateParameters(Model):
         self.patterns_to_match = kwargs.get('patterns_to_match', None)
         self.enabled_state = kwargs.get('enabled_state', None)
         self.route_configuration = kwargs.get('route_configuration', None)
+        self.rules_engine = kwargs.get('rules_engine', None)
+
+
+class RulesEngine(Model):
+    """A rules engine configuration containing a list of rules that will run to
+    modify the runtime behavior of the request and response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param rules: A list of rules that define a particular Rules Engine
+     Configuration.
+    :type rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
+    :param resource_state: Resource status. Possible values include:
+     'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
+    :type resource_state: str or
+     ~azure.mgmt.frontdoor.models.FrontDoorResourceState
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar id: Resource ID.
+    :vartype id: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rules': {'key': 'properties.rules', 'type': '[RulesEngineRule]'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RulesEngine, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
+        self.resource_state = kwargs.get('resource_state', None)
+        self.name = None
+        self.type = None
+        self.id = None
+
+
+class RulesEngineAction(Model):
+    """One or more actions that will execute, modifying the request and/or
+    response.
+
+    :param request_header_actions: A list of header actions to apply from the
+     request from AFD to the origin.
+    :type request_header_actions:
+     list[~azure.mgmt.frontdoor.models.HeaderAction]
+    :param response_header_actions: A list of header actions to apply from the
+     response from AFD to the client.
+    :type response_header_actions:
+     list[~azure.mgmt.frontdoor.models.HeaderAction]
+    :param route_configuration_override: Override the route configuration.
+    :type route_configuration_override:
+     ~azure.mgmt.frontdoor.models.RouteConfiguration
+    """
+
+    _attribute_map = {
+        'request_header_actions': {'key': 'requestHeaderActions', 'type': '[HeaderAction]'},
+        'response_header_actions': {'key': 'responseHeaderActions', 'type': '[HeaderAction]'},
+        'route_configuration_override': {'key': 'routeConfigurationOverride', 'type': 'RouteConfiguration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RulesEngineAction, self).__init__(**kwargs)
+        self.request_header_actions = kwargs.get('request_header_actions', None)
+        self.response_header_actions = kwargs.get('response_header_actions', None)
+        self.route_configuration_override = kwargs.get('route_configuration_override', None)
+
+
+class RulesEngineMatchCondition(Model):
+    """Define a match condition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rules_engine_match_variable: Required. Match Variable. Possible
+     values include: 'IsMobile', 'RemoteAddr', 'RequestMethod', 'QueryString',
+     'PostArgs', 'RequestUri', 'RequestPath', 'RequestFilename',
+     'RequestFilenameExtension', 'RequestHeader', 'RequestBody',
+     'RequestScheme'
+    :type rules_engine_match_variable: str or
+     ~azure.mgmt.frontdoor.models.RulesEngineMatchVariable
+    :param selector: Name of selector in RequestHeader or RequestBody to be
+     matched
+    :type selector: str
+    :param rules_engine_operator: Required. Describes operator to apply to the
+     match condition. Possible values include: 'Any', 'IPMatch', 'GeoMatch',
+     'Equal', 'Contains', 'LessThan', 'GreaterThan', 'LessThanOrEqual',
+     'GreaterThanOrEqual', 'BeginsWith', 'EndsWith'
+    :type rules_engine_operator: str or
+     ~azure.mgmt.frontdoor.models.RulesEngineOperator
+    :param negate_condition: Describes if this is negate condition or not
+    :type negate_condition: bool
+    :param rules_engine_match_value: Required. Match values to match against.
+     The operator will apply to each value in here with OR semantics. If any of
+     them match the variable with the given operator this match condition is
+     considered a match.
+    :type rules_engine_match_value: list[str]
+    :param transforms: List of transforms
+    :type transforms: list[str or ~azure.mgmt.frontdoor.models.Transform]
+    """
+
+    _validation = {
+        'rules_engine_match_variable': {'required': True},
+        'rules_engine_operator': {'required': True},
+        'rules_engine_match_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'rules_engine_match_variable': {'key': 'rulesEngineMatchVariable', 'type': 'str'},
+        'selector': {'key': 'selector', 'type': 'str'},
+        'rules_engine_operator': {'key': 'rulesEngineOperator', 'type': 'str'},
+        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
+        'rules_engine_match_value': {'key': 'rulesEngineMatchValue', 'type': '[str]'},
+        'transforms': {'key': 'transforms', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RulesEngineMatchCondition, self).__init__(**kwargs)
+        self.rules_engine_match_variable = kwargs.get('rules_engine_match_variable', None)
+        self.selector = kwargs.get('selector', None)
+        self.rules_engine_operator = kwargs.get('rules_engine_operator', None)
+        self.negate_condition = kwargs.get('negate_condition', None)
+        self.rules_engine_match_value = kwargs.get('rules_engine_match_value', None)
+        self.transforms = kwargs.get('transforms', None)
+
+
+class RulesEngineRule(Model):
+    """Contains a list of match conditions, and an action on how to modify the
+    request/response. If multiple rules match, the actions from one rule that
+    conflict with a previous rule overwrite for a singular action, or append in
+    the case of headers manipulation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. A name to refer to this specific rule.
+    :type name: str
+    :param priority: Required. A priority assigned to this rule.
+    :type priority: int
+    :param action: Required. Actions to perform on the request and response if
+     all of the match conditions are met.
+    :type action: ~azure.mgmt.frontdoor.models.RulesEngineAction
+    :param match_conditions: A list of match conditions that must meet in
+     order for the actions of this rule to run. Having no match conditions
+     means the actions will always run.
+    :type match_conditions:
+     list[~azure.mgmt.frontdoor.models.RulesEngineMatchCondition]
+    :param match_processing_behavior: If this rule is a match should the rules
+     engine continue running the remaining rules or stop. If not present,
+     defaults to Continue. Possible values include: 'Continue', 'Stop'
+    :type match_processing_behavior: str or
+     ~azure.mgmt.frontdoor.models.MatchProcessingBehavior
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'priority': {'required': True},
+        'action': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'priority': {'key': 'priority', 'type': 'int'},
+        'action': {'key': 'action', 'type': 'RulesEngineAction'},
+        'match_conditions': {'key': 'matchConditions', 'type': '[RulesEngineMatchCondition]'},
+        'match_processing_behavior': {'key': 'matchProcessingBehavior', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RulesEngineRule, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.priority = kwargs.get('priority', None)
+        self.action = kwargs.get('action', None)
+        self.match_conditions = kwargs.get('match_conditions', None)
+        self.match_processing_behavior = kwargs.get('match_processing_behavior', None)
+
+
+class RulesEngineUpdateParameters(Model):
+    """Rules Engine Configuration to apply to a Routing Rule.
+
+    :param rules: A list of rules that define a particular Rules Engine
+     Configuration.
+    :type rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
+    """
+
+    _attribute_map = {
+        'rules': {'key': 'rules', 'type': '[RulesEngineRule]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RulesEngineUpdateParameters, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
 
 
 class TagsObject(Model):

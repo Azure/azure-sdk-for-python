@@ -35,6 +35,7 @@ try:
     from ._models_py3 import FrontendEndpointLink
     from ._models_py3 import FrontendEndpointUpdateParameters
     from ._models_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
+    from ._models_py3 import HeaderAction
     from ._models_py3 import HealthProbeSettingsListResult
     from ._models_py3 import HealthProbeSettingsModel
     from ._models_py3 import HealthProbeSettingsUpdateParameters
@@ -64,6 +65,11 @@ try:
     from ._models_py3 import RoutingRule
     from ._models_py3 import RoutingRuleListResult
     from ._models_py3 import RoutingRuleUpdateParameters
+    from ._models_py3 import RulesEngine
+    from ._models_py3 import RulesEngineAction
+    from ._models_py3 import RulesEngineMatchCondition
+    from ._models_py3 import RulesEngineRule
+    from ._models_py3 import RulesEngineUpdateParameters
     from ._models_py3 import SubResource
     from ._models_py3 import TagsObject
     from ._models_py3 import Timeseries
@@ -97,6 +103,7 @@ except (SyntaxError, ImportError):
     from ._models import FrontendEndpointLink
     from ._models import FrontendEndpointUpdateParameters
     from ._models import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
+    from ._models import HeaderAction
     from ._models import HealthProbeSettingsListResult
     from ._models import HealthProbeSettingsModel
     from ._models import HealthProbeSettingsUpdateParameters
@@ -126,6 +133,11 @@ except (SyntaxError, ImportError):
     from ._models import RoutingRule
     from ._models import RoutingRuleListResult
     from ._models import RoutingRuleUpdateParameters
+    from ._models import RulesEngine
+    from ._models import RulesEngineAction
+    from ._models import RulesEngineMatchCondition
+    from ._models import RulesEngineRule
+    from ._models import RulesEngineUpdateParameters
     from ._models import SubResource
     from ._models import TagsObject
     from ._models import Timeseries
@@ -139,6 +151,7 @@ from ._paged_models import FrontendEndpointPaged
 from ._paged_models import ManagedRuleSetDefinitionPaged
 from ._paged_models import PreconfiguredEndpointPaged
 from ._paged_models import ProfilePaged
+from ._paged_models import RulesEnginePaged
 from ._paged_models import WebApplicationFirewallPolicyPaged
 from ._front_door_management_client_enums import (
     NetworkOperationStatus,
@@ -166,6 +179,11 @@ from ._front_door_management_client_enums import (
     FrontDoorHealthProbeMethod,
     HealthProbeEnabled,
     SessionAffinityEnabledState,
+    HeaderActionType,
+    RulesEngineMatchVariable,
+    RulesEngineOperator,
+    Transform,
+    MatchProcessingBehavior,
     ResourceType,
     Availability,
     PolicyEnabledState,
@@ -210,6 +228,7 @@ __all__ = [
     'FrontendEndpointLink',
     'FrontendEndpointUpdateParameters',
     'FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink',
+    'HeaderAction',
     'HealthProbeSettingsListResult',
     'HealthProbeSettingsModel',
     'HealthProbeSettingsUpdateParameters',
@@ -239,6 +258,11 @@ __all__ = [
     'RoutingRule',
     'RoutingRuleListResult',
     'RoutingRuleUpdateParameters',
+    'RulesEngine',
+    'RulesEngineAction',
+    'RulesEngineMatchCondition',
+    'RulesEngineRule',
+    'RulesEngineUpdateParameters',
     'SubResource',
     'TagsObject',
     'Timeseries',
@@ -251,6 +275,7 @@ __all__ = [
     'ExperimentPaged',
     'FrontDoorPaged',
     'FrontendEndpointPaged',
+    'RulesEnginePaged',
     'WebApplicationFirewallPolicyPaged',
     'ManagedRuleSetDefinitionPaged',
     'NetworkOperationStatus',
@@ -278,6 +303,11 @@ __all__ = [
     'FrontDoorHealthProbeMethod',
     'HealthProbeEnabled',
     'SessionAffinityEnabledState',
+    'HeaderActionType',
+    'RulesEngineMatchVariable',
+    'RulesEngineOperator',
+    'Transform',
+    'MatchProcessingBehavior',
     'ResourceType',
     'Availability',
     'PolicyEnabledState',
