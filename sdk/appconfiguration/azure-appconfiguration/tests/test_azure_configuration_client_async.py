@@ -35,7 +35,10 @@ import hashlib
 from app_configuration_client_async_preparer import AppConfigurationClientPreparer
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
-    name_prefix = "appconfig-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+    try:
+        name_prefix = "appconfig-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+    except KeyError:
+        name_prefix = "appconfig"
 
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
