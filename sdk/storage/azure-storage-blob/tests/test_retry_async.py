@@ -11,6 +11,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ServiceResponseError,
+    ServiceRequestError,
     ClientAuthenticationError
 )
 from azure.core.pipeline.transport import (
@@ -148,7 +149,11 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         # Act
         try:
             with self.assertRaises(ServiceResponseError) as error:
-                await service.create_container(container_name)
+                try:
+                    await service.create_container(container_name)
+                except ServiceRequestError:
+                    service._client._client._pipeline._transport.connection_config.read_timeout = 11
+                    await service.create_container(container_name)
             # Assert
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue(
