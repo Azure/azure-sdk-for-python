@@ -36,11 +36,11 @@ class RetryRequestTransport(RequestsTransport):
     """Transport to test retry"""
     def __init__(self, *args, **kwargs):
         self.count = 0
-        super().__init__(*args, **kwargs)
+        super(RequestsTransport, self).__init__(*args, **kwargs)
     
     def send(self, request, **kwargs):
         self.count += 1
-        response = super().send(request, **kwargs)
+        response = super(RequestsTransport, self).send(request, **kwargs)
         return response
 
 # --Test Class -----------------------------------------------------------------
