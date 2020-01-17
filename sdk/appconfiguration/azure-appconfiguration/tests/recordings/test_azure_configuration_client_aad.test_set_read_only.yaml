@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://xyappconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
       string: '{"items":[]}'
@@ -20,26 +20,26 @@ interactions:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
@@ -67,48 +67,48 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"SlRISRZMsS9rG970Ffp0UgXn9NY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"Fr7TRo9K0TrBR1HYsB8kf2S5Tl0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-01-17T20:21:31+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"SlRISRZMsS9rG970Ffp0UgXn9NY"'
+      - '"Fr7TRo9K0TrBR1HYsB8kf2S5Tl0"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTQ=;sn=726854
+      - zAJw6V16=MzotMSMxMDc1Nzk0;sn=1075794
       transfer-encoding:
       - chunked
     status:
@@ -124,46 +124,46 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTQ=
+      - zAJw6V16=MzotMSMxMDc1Nzk0
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://xyappconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"SlRISRZMsS9rG970Ffp0UgXn9NY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}]}'
+      string: '{"items":[{"etag":"Fr7TRo9K0TrBR1HYsB8kf2S5Tl0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-01-17T20:21:31+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTQ=;sn=726854
+      - zAJw6V16=MzotMSMxMDc1Nzk0;sn=1075794
       transfer-encoding:
       - chunked
     status:
@@ -181,11 +181,11 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTQ=
+      - zAJw6V16=MzotMSMxMDc1Nzk0
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
       string: ''
@@ -194,26 +194,26 @@ interactions:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
@@ -239,50 +239,50 @@ interactions:
       If-None-Match:
       - '*'
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTQ=
+      - zAJw6V16=MzotMSMxMDc1Nzk0
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"1ne1N6tumqTdcpAjwksNA5J14A6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"VvQY7qrREBntpNM4GTTaS5e76tt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-01-17T20:21:31+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"1ne1N6tumqTdcpAjwksNA5J14A6"'
+      - '"VvQY7qrREBntpNM4GTTaS5e76tt"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTU=;sn=726855
+      - zAJw6V16=MzotMSMxMDc1Nzk1;sn=1075795
       transfer-encoding:
       - chunked
     status:
@@ -300,50 +300,50 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTU=
+      - zAJw6V16=MzotMSMxMDc1Nzk1
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://xyappconfig.azconfig.io/locks/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/locks/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"S8qZYMQtjSh6bIszVoKx2k4nfCn","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":true,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"TIdDmdaUzfCv9ZP9O7q7SpneDUV","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":true,"last_modified":"2020-01-17T20:21:31+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"S8qZYMQtjSh6bIszVoKx2k4nfCn"'
+      - '"TIdDmdaUzfCv9ZP9O7q7SpneDUV"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTY=;sn=726856
+      - zAJw6V16=MzotMSMxMDc1Nzk2;sn=1075796
       transfer-encoding:
       - chunked
     status:
@@ -365,11 +365,11 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTY=
+      - zAJw6V16=MzotMSMxMDc1Nzk2
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
       string: '{"type":"https://azconfig.io/errors/key-locked","title":"Modifing key
@@ -380,26 +380,26 @@ interactions:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
@@ -421,50 +421,50 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTY=
+      - zAJw6V16=MzotMSMxMDc1Nzk2
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://xyappconfig.azconfig.io/locks/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/locks/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"UsI8Av3lbx0sJ4F5B4Eu4R3yxE0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"tG73WgLxtV9u962jrXSUCojiQRa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-01-17T20:21:32+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"UsI8Av3lbx0sJ4F5B4Eu4R3yxE0"'
+      - '"tG73WgLxtV9u962jrXSUCojiQRa"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:32 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTc=;sn=726857
+      - zAJw6V16=MzotMSMxMDc1Nzk3;sn=1075797
       transfer-encoding:
       - chunked
     status:
@@ -486,50 +486,50 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTc=
+      - zAJw6V16=MzotMSMxMDc1Nzk3
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"YTYYvx0AMvOIPJA013D9931cdRz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"jptbhQel5HxsKwpq26g6rR39gIR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2020-01-17T20:21:32+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"YTYYvx0AMvOIPJA013D9931cdRz"'
+      - '"jptbhQel5HxsKwpq26g6rR39gIR"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:32 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTg=;sn=726858
+      - zAJw6V16=MzotMSMxMDc1Nzk4;sn=1075798
       transfer-encoding:
       - chunked
     status:
@@ -547,50 +547,50 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTg=
+      - zAJw6V16=MzotMSMxMDc1Nzk4
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"YTYYvx0AMvOIPJA013D9931cdRz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"jptbhQel5HxsKwpq26g6rR39gIR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2020-01-17T20:21:32+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"YTYYvx0AMvOIPJA013D9931cdRz"'
+      - '"jptbhQel5HxsKwpq26g6rR39gIR"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:32 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NTk=;sn=726859
+      - zAJw6V16=MzotMSMxMDc1Nzk5;sn=1075799
       transfer-encoding:
       - chunked
     status:
@@ -608,50 +608,50 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=MDotMSM3MjY4NTk=
+      - zAJw6V16=MzotMSMxMDc1Nzk5
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b6 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0 Python/3.7.2 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://xyappconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
+    uri: https://appconfig67121636.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"1ne1N6tumqTdcpAjwksNA5J14A6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-12-06T00:09:17+00:00"}'
+      string: '{"etag":"VvQY7qrREBntpNM4GTTaS5e76tt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-01-17T20:21:31+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       access-control-allow-methods:
       - GET, PUT, POST, DELETE, PATCH, OPTIONS
       access-control-allow-origin:
       - '*'
       access-control-expose-headers:
       - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-command-name,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       etag:
-      - '"1ne1N6tumqTdcpAjwksNA5J14A6"'
+      - '"VvQY7qrREBntpNM4GTTaS5e76tt"'
       last-modified:
-      - Fri, 06 Dec 2019 00:09:17 GMT
+      - Fri, 17 Jan 2020 20:21:31 GMT
       server:
       - openresty/1.15.8.1
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MDotMSM3MjY4NjA=;sn=726860
+      - zAJw6V16=MzotMSMxMDc1ODAw;sn=1075800
       transfer-encoding:
       - chunked
     status:
