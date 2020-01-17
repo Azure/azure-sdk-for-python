@@ -27,7 +27,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-09-01".
+    :ivar api_version: Client API version. Constant value: "2019-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -144,7 +144,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :return: ExpressRouteCircuitAuthorization or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization
+         ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitAuthorization
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -259,7 +259,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param authorization_parameters: Parameters supplied to the create or
          update express route circuit authorization operation.
         :type authorization_parameters:
-         ~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization
+         ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitAuthorization
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -269,9 +269,9 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          ExpressRouteCircuitAuthorization or
          ClientRawResponse<ExpressRouteCircuitAuthorization> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitAuthorization]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitAuthorization]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -317,7 +317,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ExpressRouteCircuitAuthorization
         :rtype:
-         ~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorizationPaged[~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization]
+         ~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitAuthorizationPaged[~azure.mgmt.network.v2019_11_01.models.ExpressRouteCircuitAuthorization]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class AzureFirewallsOperations(object):
-    """AzureFirewallsOperations operations.
+class VpnServerConfigurationsOperations(object):
+    """VpnServerConfigurationsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -27,7 +27,7 @@ class AzureFirewallsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-09-01".
+    :ivar api_version: Client API version. Constant value: "2019-11-01".
     """
 
     models = models
@@ -37,19 +37,260 @@ class AzureFirewallsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
+    def get(
+            self, resource_group_name, vpn_server_configuration_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the details of a VpnServerConfiguration.
+
+        :param resource_group_name: The resource group name of the
+         VpnServerConfiguration.
+        :type resource_group_name: str
+        :param vpn_server_configuration_name: The name of the
+         VpnServerConfiguration being retrieved.
+        :type vpn_server_configuration_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: VpnServerConfiguration or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnServerConfigurationName': self._serialize.url("vpn_server_configuration_name", vpn_server_configuration_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('VpnServerConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations/{vpnServerConfigurationName}'}
+
+
+    def _create_or_update_initial(
+            self, resource_group_name, vpn_server_configuration_name, vpn_server_configuration_parameters, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnServerConfigurationName': self._serialize.url("vpn_server_configuration_name", vpn_server_configuration_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(vpn_server_configuration_parameters, 'VpnServerConfiguration')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VpnServerConfiguration', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('VpnServerConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, vpn_server_configuration_name, vpn_server_configuration_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a VpnServerConfiguration resource if it doesn't exist else
+        updates the existing VpnServerConfiguration.
+
+        :param resource_group_name: The resource group name of the
+         VpnServerConfiguration.
+        :type resource_group_name: str
+        :param vpn_server_configuration_name: The name of the
+         VpnServerConfiguration being created or updated.
+        :type vpn_server_configuration_name: str
+        :param vpn_server_configuration_parameters: Parameters supplied to
+         create or update VpnServerConfiguration.
+        :type vpn_server_configuration_parameters:
+         ~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns VpnServerConfiguration
+         or ClientRawResponse<VpnServerConfiguration> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            vpn_server_configuration_name=vpn_server_configuration_name,
+            vpn_server_configuration_parameters=vpn_server_configuration_parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('VpnServerConfiguration', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations/{vpnServerConfigurationName}'}
+
+    def update_tags(
+            self, resource_group_name, vpn_server_configuration_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates VpnServerConfiguration tags.
+
+        :param resource_group_name: The resource group name of the
+         VpnServerConfiguration.
+        :type resource_group_name: str
+        :param vpn_server_configuration_name: The name of the
+         VpnServerConfiguration being updated.
+        :type vpn_server_configuration_name: str
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: VpnServerConfiguration or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        vpn_server_configuration_parameters = models.TagsObject(tags=tags)
+
+        # Construct URL
+        url = self.update_tags.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnServerConfigurationName': self._serialize.url("vpn_server_configuration_name", vpn_server_configuration_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(vpn_server_configuration_parameters, 'TagsObject')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('VpnServerConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations/{vpnServerConfigurationName}'}
+
 
     def _delete_initial(
-            self, resource_group_name, azure_firewall_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vpn_server_configuration_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'azureFirewallName': self._serialize.url("azure_firewall_name", azure_firewall_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'vpnServerConfigurationName': self._serialize.url("vpn_server_configuration_name", vpn_server_configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -80,13 +321,15 @@ class AzureFirewallsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, azure_firewall_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the specified Azure Firewall.
+            self, resource_group_name, vpn_server_configuration_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a VpnServerConfiguration.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The resource group name of the
+         VpnServerConfiguration.
         :type resource_group_name: str
-        :param azure_firewall_name: The name of the Azure Firewall.
-        :type azure_firewall_name: str
+        :param vpn_server_configuration_name: The name of the
+         VpnServerConfiguration being deleted.
+        :type vpn_server_configuration_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -100,7 +343,7 @@ class AzureFirewallsOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            azure_firewall_name=azure_firewall_name,
+            vpn_server_configuration_name=vpn_server_configuration_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -118,288 +361,90 @@ class AzureFirewallsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations/{vpnServerConfigurationName}'}
 
-    def get(
-            self, resource_group_name, azure_firewall_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified Azure Firewall.
+    def list_by_resource_group(
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all the vpnServerConfigurations in a resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The resource group name of the
+         VpnServerConfiguration.
         :type resource_group_name: str
-        :param azure_firewall_name: The name of the Azure Firewall.
-        :type azure_firewall_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AzureFirewall or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_09_01.models.AzureFirewall or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'azureFirewallName': self._serialize.url("azure_firewall_name", azure_firewall_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AzureFirewall', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
-
-
-    def _create_or_update_initial(
-            self, resource_group_name, azure_firewall_name, parameters, custom_headers=None, raw=False, **operation_config):
-        # Construct URL
-        url = self.create_or_update.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'azureFirewallName': self._serialize.url("azure_firewall_name", azure_firewall_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'AzureFirewall')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AzureFirewall', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('AzureFirewall', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update(
-            self, resource_group_name, azure_firewall_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates the specified Azure Firewall.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param azure_firewall_name: The name of the Azure Firewall.
-        :type azure_firewall_name: str
-        :param parameters: Parameters supplied to the create or update Azure
-         Firewall operation.
-        :type parameters: ~azure.mgmt.network.v2019_09_01.models.AzureFirewall
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns AzureFirewall or
-         ClientRawResponse<AzureFirewall> if raw==True
+        :return: An iterator like instance of VpnServerConfiguration
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]]
+         ~azure.mgmt.network.v2019_11_01.models.VpnServerConfigurationPaged[~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            azure_firewall_name=azure_firewall_name,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        def get_long_running_output(response):
-            deserialized = self._deserialize('AzureFirewall', response)
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
+            else:
+                url = next_link
+                query_parameters = {}
 
-            return deserialized
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
-    def _update_tags_initial(
-            self, resource_group_name, azure_firewall_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.TagsObject(tags=tags)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        # Construct URL
-        url = self.update_tags.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'azureFirewallName': self._serialize.url("azure_firewall_name", azure_firewall_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            return response
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'TagsObject')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AzureFirewall', response)
-
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.VpnServerConfigurationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-
-    def update_tags(
-            self, resource_group_name, azure_firewall_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates tags of an Azure Firewall resource.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param azure_firewall_name: The name of the Azure Firewall.
-        :type azure_firewall_name: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns AzureFirewall or
-         ClientRawResponse<AzureFirewall> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
-            azure_firewall_name=azure_firewall_name,
-            tags=tags,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('AzureFirewall', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations'}
 
     def list(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all Azure Firewalls in a resource group.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all the VpnServerConfigurations in a subscription.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AzureFirewall
+        :return: An iterator like instance of VpnServerConfiguration
         :rtype:
-         ~azure.mgmt.network.v2019_09_01.models.AzureFirewallPaged[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]
+         ~azure.mgmt.network.v2019_11_01.models.VpnServerConfigurationPaged[~azure.mgmt.network.v2019_11_01.models.VpnServerConfiguration]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -407,7 +452,6 @@ class AzureFirewallsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -450,73 +494,7 @@ class AzureFirewallsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.AzureFirewallPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.VpnServerConfigurationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls'}
-
-    def list_all(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets all the Azure Firewalls in a subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AzureFirewall
-        :rtype:
-         ~azure.mgmt.network.v2019_09_01.models.AzureFirewallPaged[~azure.mgmt.network.v2019_09_01.models.AzureFirewall]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_all.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.AzureFirewallPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/azureFirewalls'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/vpnServerConfigurations'}
