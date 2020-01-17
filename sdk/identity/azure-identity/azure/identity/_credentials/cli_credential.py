@@ -40,7 +40,7 @@ class CliCredential(object):
 
             command.extend(['--resource', resource])
 
-        get_access_token_stdout = self._get_proc_stdout(command)
+        get_access_token_stdout = self._get_cli_access_token(command)
         get_access_token_object = json.loads(get_access_token_stdout)
         access_token = get_access_token_object['accessToken']
         expires_on = int((
@@ -51,7 +51,7 @@ class CliCredential(object):
 
         return AccessToken(access_token, expires_on)
 
-    def _get_proc_stdout(self, command):
+    def _get_cli_access_token(self, command):
         try:
             _stdout = check_output(command, shell=_USE_SHELL, stderr=STDOUT)
         except CalledProcessError as e:
