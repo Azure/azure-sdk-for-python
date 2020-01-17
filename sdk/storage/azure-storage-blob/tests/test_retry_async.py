@@ -149,14 +149,13 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
-        retry_transport = AiohttpRetryTestTransport(connection_timeout=5, read_timeout=0.0000001)
+        retry_transport = AiohttpRetryTestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
-        import aiohttp
         service = self._create_storage_service(
             BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=retry_transport)
 
-        assert service._client._client._pipeline._transport.connection_config.timeout == 5
-        assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.0000001
+        assert service._client._client._pipeline._transport.connection_config.timeout == 11
+        assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
 
         # Act
         try:
