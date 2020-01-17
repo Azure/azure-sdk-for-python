@@ -33,8 +33,8 @@ def process_single_error(error):
     """Configure and raise a DocumentError for single text operation errors.
     """
     try:
-        error_message = error.error["inner_error"]["message"]
-        error_code = error.error["inner_error"]["code"]
+        error_message = error.error["message"]
+        error_code = error.error["code"]
         error_message += "\nErrorCode:{}".format(error_code)
     except KeyError:
         raise HttpResponseError(message="There was an unknown error with the request.")

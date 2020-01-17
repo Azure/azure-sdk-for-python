@@ -223,79 +223,32 @@ class TextAnalyticsError(DictMixin):
 
     :param code: Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
-     'serviceUnavailable'
-    :type code: str
-    :param message: Error message.
-    :type message: str
-    :param target: Error target.
-    :type target: str
-    :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.InnerError
-    :param details: Details about specific errors that led to this reported
-     error.
-    :type details: list[~azure.ai.textanalytics.TextAnalyticsError]
-    """
-
-    def __init__(self, **kwargs):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.inner_error = kwargs.get('inner_error', None)
-        self.details = kwargs.get('details', None)
-
-    @classmethod
-    def _from_generated(cls, err):
-        return cls(
-            code=err.code.value,
-            message=err.message,
-            target=err.target,
-            inner_error=InnerError._from_generated(err.inner_error),  # pylint: disable=protected-access
-            details=err.details,
-        )
-
-    def __repr__(self):
-        return "TextAnalyticsError(code={}, message={}, target={}, inner_error={}, details={})" \
-            .format(self.code, self.message, self.target, repr(self.inner_error), repr(self.details))[:1024]
-
-
-class InnerError(DictMixin):
-    """InnerError.
-
-    :param code: Error code. Possible values include:
-     'invalidParameterValue', 'invalidRequestBodyFormat', 'emptyRequest',
-     'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
+     'serviceUnavailable', 'invalidParameterValue', 'invalidRequestBodyFormat',
+     'emptyRequest', 'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
      'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
     :type code: str
     :param message: Error message.
     :type message: str
-    :param details: Error details.
-    :type details: dict[str, str]
     :param target: Error target.
     :type target: str
-    :param inner_error: Inner error contains more specific information.
-    :type inner_error: ~azure.ai.textanalytics.InnerError
     """
 
     def __init__(self, **kwargs):
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
-        self.details = kwargs.get('details', None)
         self.target = kwargs.get('target', None)
-        self.inner_error = kwargs.get('inner_error', None)
 
     @classmethod
-    def _from_generated(cls, inner_err):
+    def _from_generated(cls, err):
         return cls(
-            code=inner_err.code.value,
-            message=inner_err.message,
-            details=inner_err.details,
-            target=inner_err.target,
-            inner_error=inner_err.inner_error
+            code=err.inner_error.code.value or err.code.value,
+            message=err.inner_error.message or err.message,
+            target=err.inner_error.target or err.target,
         )
 
     def __repr__(self):
-        return "InnerError(code={}, message={}, details={}, target={}, inner_error={})" \
-            .format(self.code, self.message, self.details, self.target, repr(self.inner_error))[:1024]
+        return "TextAnalyticsError(code={}, message={}, target={})" \
+            .format(self.code, self.message, self.target)[:1024]
 
 
 class ExtractKeyPhrasesResult(DictMixin):
