@@ -293,9 +293,7 @@ class DomainsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, domain_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        domain_update_parameters = models.DomainUpdateParameters(tags=tags)
-
+            self, resource_group_name, domain_name, domain_update_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -344,7 +342,7 @@ class DomainsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, domain_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, domain_name, domain_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update a domain.
 
         Asynchronously updates a domain with the specified parameters.
@@ -354,8 +352,9 @@ class DomainsOperations(object):
         :type resource_group_name: str
         :param domain_name: Name of the domain.
         :type domain_name: str
-        :param tags: Tags of the domains resource
-        :type tags: dict[str, str]
+        :param domain_update_parameters: Domain update information.
+        :type domain_update_parameters:
+         ~azure.mgmt.eventgrid.models.DomainUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -372,7 +371,7 @@ class DomainsOperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
-            tags=tags,
+            domain_update_parameters=domain_update_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
