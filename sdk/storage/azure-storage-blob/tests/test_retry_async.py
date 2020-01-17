@@ -152,9 +152,8 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
                 try:
                     await service.create_container(container_name)
                 except ServiceRequestError:
+                    # now that we know ServiceResponseError is raised, increase read timeout befor it fails on it in retry.
                     service._client._client._pipeline._transport.connection_config.read_timeout = 11
-                    await service.create_container(container_name)
-            # Assert
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue(
                 'Timeout on reading data from socket' in str(error.exception),
