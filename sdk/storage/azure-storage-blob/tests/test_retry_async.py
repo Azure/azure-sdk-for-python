@@ -10,8 +10,7 @@ import asyncio
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
-    ServiceResponseError,
-    ServiceRequestError,
+    AzureError,
     ClientAuthenticationError
 )
 from azure.core.pipeline.transport import (
@@ -46,6 +45,18 @@ class AiohttpTestTransport(AioHttpTransport):
         if not isinstance(response.headers, CIMultiDictProxy):
             response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
             response.content_type = response.headers.get("content-type")
+        return response
+
+class AiohttpRetryTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
+    def __init__(self, *args, **kwargs):
+        super(AiohttpRetryTestTransport, self).__init__(*args, **kwargs)
+        self.count = 0
+
+    async def send(self, request, **config):
+        self.count += 1
+        response = await super(AiohttpRetryTestTransport, self).send(request, **config)
         return response
 
 
@@ -138,22 +149,23 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
-
+        retry_transport = AiohttpRetryTestTransport(connection_timeout=5, read_timeout=0.0000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
+        import aiohttp
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport(connection_timeout=11, read_timeout=0.000000000001))
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=retry_transport)
 
-        assert service._client._client._pipeline._transport.connection_config.timeout == 11
-        assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
+        assert service._client._client._pipeline._transport.connection_config.timeout == 5
+        assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.0000001
 
         # Act
         try:
-            with self.assertRaises(ServiceResponseError) as error:
-                try:
-                    await service.create_container(container_name)
-                except ServiceRequestError:
-                    # now that we know ServiceResponseError is raised, increase read timeout befor it fails on it in retry.
-                    service._client._client._pipeline._transport.connection_config.read_timeout = 11
+            with self.assertRaises(AzureError) as error:
+                await service.create_container(container_name)
+            
+
+            # Assert
+            assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue(
                 'Timeout on reading data from socket' in str(error.exception),
@@ -163,7 +175,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         finally:
             # we must make the timeout normal again to let the delete operation succeed
             try:
-                await service.delete_container(container_name, connection_timeout=11, read_timeout=11)
+                await service.delete_container(container_name, connection_timeout=11)
             except:
                 pass
 
