@@ -1,5 +1,4 @@
-Microsoft Azure SDK for Python
-==============================
+# Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Support Management Client Library.
 
@@ -14,16 +13,14 @@ For the older Azure Service Management (ASM) libraries, see
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
 
-Usage
-=====
+# Usage
 
 For code examples, see `Support Management
 <https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
 
 
-Provide Feedback
-================
+# Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
