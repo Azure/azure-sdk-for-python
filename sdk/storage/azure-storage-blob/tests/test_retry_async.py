@@ -48,7 +48,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 class AiohttpRetryTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """Mock transport for testing retry
     """
     def __init__(self, *args, **kwargs):
         super(AiohttpRetryTestTransport, self).__init__(*args, **kwargs)
