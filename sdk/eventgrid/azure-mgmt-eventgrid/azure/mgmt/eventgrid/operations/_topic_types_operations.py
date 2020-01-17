@@ -168,7 +168,7 @@ class TopicTypesOperations(object):
 
         List event types for a topic type.
 
-        :param topic_type_name: Name of the topic type
+        :param topic_type_name: Name of the topic type.
         :type topic_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
