@@ -12,7 +12,7 @@ setup(
     name='azure-mgmt',
     version='5.0.0a1',
     description='Microsoft Azure Resource Management Client Libraries for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=open('README.md', 'r').read(),
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',

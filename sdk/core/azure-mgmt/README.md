@@ -1,5 +1,4 @@
-Microsoft Azure SDK for Python
-==============================
+# Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Resource Management bundle.
 
@@ -17,14 +16,12 @@ to be installed.
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
 
-Documentation
-=============
+# Documentation
 
 All documentation related to these packages can be found at http://docs.microsoft.com/python/azure/
 
 
-Features
-========
+# Features
 
 This version of the Azure Management package bundle consists of the
 following packages. Follow the links for more information on each package.
@@ -95,20 +92,17 @@ Note that versions are fixed at the minor version number level
 Note that if you don't need all of these packages, you can install/uninstall them individually.
 
 
-Installation
-============
+# Installation
 
 To install the Azure Resource Management bundle, type:
 
-.. code:: shell
+```shell
+pip install azure-mgmt
+```
 
-    pip install azure-mgmt
-
-
-Compatibility
-=============
+# Compatibility
 
 For details on the breaking changes, see the PyPI page of each individual package.
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt%2FREADME.png
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt%2FREADME.png)
