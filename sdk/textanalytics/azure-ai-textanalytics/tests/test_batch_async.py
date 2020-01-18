@@ -738,10 +738,10 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
 
         def callback(resp):
-            self.assertEqual(resp.http_request.headers["User-Agent"],
-                             "azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
-                             VERSION, platform.python_version(), platform.platform()
-            ))
+            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+                VERSION, platform.python_version(), platform.platform()),
+                resp.http_request.headers["User-Agent"]
+            )
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
