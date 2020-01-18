@@ -80,30 +80,6 @@ class AppConfigurationPreparer(AzureMgmtPreparer):
                     raise
                 time.sleep(3)
         result = self.mgmt_client.configuration_stores.get(group, name)
-        subscription_id = self.test_class_instance.get_settings_value("SUBSCRIPTION_ID")
-        client_id = self.test_class_instance.get_settings_value("CLIENT_ID")
-        client_oid = self.test_class_instance.get_settings_value("CLIENT_OID")
-        secret = self.test_class_instance.get_settings_value("CLIENT_SECRET")
-        tenant=self.test_class_instance.get_settings_value("TENANT_ID")
-        credentials = ServicePrincipalCredentials(client_id=client_id,secret=secret,tenant=tenant)
-        authorization_client = AuthorizationManagementClient(credentials, subscription_id)
-        role_name = 'App Configuration Data Owner'
-        roles = list(authorization_client.role_definitions.list(result.id, filter="roleName eq '{}'".format(role_name)))
-        assert len(roles) == 1
-        data_reader_role = roles[0]
-        try:
-            role_assignment = authorization_client.role_assignments.create(
-                result.id,
-                uuid.uuid4(),
-                {
-                    'role_definition_id': data_reader_role.id,
-                    'principal_id': client_oid
-                }
-            )
-        except CloudError as ex:
-            if 'already exists' in ex.message:
-                pass
-
         if self.aad_mode:
             base_url = result.endpoint
             return {"base_url": base_url}
