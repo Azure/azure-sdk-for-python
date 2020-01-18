@@ -21,6 +21,8 @@ from .operations import CustomDomainsOperations
 from .operations import ResourceUsageOperations
 from .operations import Operations
 from .operations import EdgeNodesOperations
+from .operations import PoliciesOperations
+from .operations import ManagedRuleSetsOperations
 from . import models
 
 
@@ -44,23 +46,32 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
     :vartype operations: azure.mgmt.cdn.operations.Operations
     :ivar edge_nodes: EdgeNodes operations
     :vartype edge_nodes: azure.mgmt.cdn.operations.EdgeNodesOperations
+    :ivar policies: Policies operations
+    :vartype policies: azure.mgmt.cdn.operations.PoliciesOperations
+    :ivar managed_rule_sets: ManagedRuleSets operations
+    :vartype managed_rule_sets: azure.mgmt.cdn.operations.ManagedRuleSetsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param subscription_id1: Azure Subscription ID.
+    :type subscription_id1: str
+    :param api_version1: Version of the API to be used with the client
+     request. Current version is 2017-04-02.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
 
-        self.config = CdnManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CdnManagementClientConfiguration(credentials, subscription_id, subscription_id1, api_version1, base_url)
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-15'
+        self.api_version = '2019-06-15-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -77,4 +88,8 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.edge_nodes = EdgeNodesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policies = PoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_rule_sets = ManagedRuleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)

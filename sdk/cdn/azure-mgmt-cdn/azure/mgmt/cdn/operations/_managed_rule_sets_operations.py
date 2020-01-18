@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ManagedRuleSetsOperations(object):
+    """ManagedRuleSetsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,16 +40,16 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available CDN REST API operations.
+        """Lists all available managed rule sets.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of ManagedRuleSetDefinition
         :rtype:
-         ~azure.mgmt.cdn.models.OperationPaged[~azure.mgmt.cdn.models.Operation]
+         ~azure.mgmt.cdn.models.ManagedRuleSetDefinitionPaged[~azure.mgmt.cdn.models.ManagedRuleSetDefinition]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -57,6 +57,10 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -94,7 +98,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ManagedRuleSetDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Cdn/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/CdnWebApplicationFirewallManagedRuleSets'}
