@@ -88,6 +88,8 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
+        self.assertEqual(1,0)
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
