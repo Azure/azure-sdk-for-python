@@ -9,7 +9,6 @@ import os
 from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
-from azure.appconfiguration import AzureAppConfigurationClient
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.authorization import AuthorizationManagementClient
 from msrestazure.azure_exceptions import CloudError
