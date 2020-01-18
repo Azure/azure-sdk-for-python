@@ -8,7 +8,7 @@ resources:
       endpoint: azure
 
 variables:
-  EnvVars:
+  EnvVars: /
     STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
     STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
     STORAGE_DATA_LAKE_ACCOUNT_NAME: $(python-storage-data-lake-account-name)
