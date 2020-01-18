@@ -75,7 +75,7 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       MaxParallel: 1
-      BuildTargetingString: azure-storage-file-datalake
+      BuildTargetingString: azure-storage-file-data-lake
       JobName: Test_Datalake
       ServiceDirectory: storage
       EnvVars:
