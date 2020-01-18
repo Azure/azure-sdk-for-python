@@ -229,11 +229,13 @@ def execute_tox_serial(tox_command_tuples):
                 os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
             )
         )
+
         result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
 
-        if result != 0:
+        logging.info(result)
+
+        if result is not None and result != 0:
             return_code = result
-            logging.error(e)
 
         if in_ci():
             shutil.rmtree(tox_dir)
