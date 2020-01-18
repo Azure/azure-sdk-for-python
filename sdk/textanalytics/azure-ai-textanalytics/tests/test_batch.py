@@ -5,8 +5,10 @@
 # ------------------------------------
 
 import pytest
+import platform
 from azure.core.exceptions import HttpResponseError
 from azure.ai.textanalytics import (
+    VERSION,
     TextAnalyticsClient,
     DetectLanguageInput,
     TextDocumentInput
@@ -712,4 +714,20 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
         response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback_2)
+        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_user_agent(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+
+        def callback(resp):
+            self.assertEqual(resp.http_request.headers["User-Agent"],
+                             "azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+                             VERSION, platform.python_version(), platform.platform()
+            ))
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
