@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, AppConfigurationPreparer
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -31,6 +31,7 @@ import os
 import logging
 import re
 import hashlib
+from app_configuration_preparer import AppConfigurationPreparer
 from app_configuration_client_preparer import AppConfigurationClientPreparer
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
