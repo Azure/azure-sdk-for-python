@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 
-from azure.identity import CliCredential
+from azure.identity import AzureCliCredential
 from azure.core.exceptions import ClientAuthenticationError
 
 from subprocess import CalledProcessError
@@ -20,7 +20,7 @@ def test_cli_credential():
     mock_token = json.dumps({"accessToken" : access_token, "expiresOn" : expires_on})
 
     with patch('azure.identity._credentials.cli_credential.check_output', return_value=mock_token):
-        cred = CliCredential()
+        cred = AzureCliCredential()
         token = cred.get_token()
         assert token.token == access_token
 
@@ -32,15 +32,15 @@ def test_cli_installation():
             CalledProcessError(1, cmd, "command not found")]):
 
         creds = (
-            CliCredential(), # cred on windows
-            CliCredential(), # cred on mac
-            CliCredential()  # cred on linux
+            AzureCliCredential(), # cred on windows
+            AzureCliCredential(), # cred on mac
+            AzureCliCredential()  # cred on linux
         )
         for cred in creds:
             try:
                 token = cred.get_token()
             except ClientAuthenticationError as e:
-                assert CliCredential._CLI_NOT_INSTALLED_ERR in e.message
+                assert AzureCliCredential._CLI_NOT_INSTALLED_ERR in e.message
 
 def test_cli_login():
     cmd = ['az', 'account', 'get-access-token']
@@ -50,12 +50,12 @@ def test_cli_login():
             CalledProcessError(1, cmd, "Please run 'az login'")]):
 
         creds = (
-            CliCredential(), # cred on windows
-            CliCredential(), # cred on mac
-            CliCredential()  # cred on linux
+            AzureCliCredential(), # cred on windows
+            AzureCliCredential(), # cred on mac
+            AzureCliCredential()  # cred on linux
         )
         for cred in creds:
             try:
                 token = cred.get_token()
             except ClientAuthenticationError as e:
-                assert CliCredential._CLI_LOGIN_ERR in e.message
+                assert AzureCliCredential._CLI_LOGIN_ERR in e.message
