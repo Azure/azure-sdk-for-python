@@ -26,6 +26,13 @@ jobs:
         ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
         ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
         ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        CONNECTION_STRING: $(python-storage-blob-connection-string)
+        BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
+        PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
