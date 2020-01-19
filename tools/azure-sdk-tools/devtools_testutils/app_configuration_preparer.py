@@ -56,7 +56,16 @@ class AppConfigurationPreparer(AzureMgmtPreparer):
         )
         try:
             result = self.mgmt_client.configuration_stores.get(group, name)
-            return
+            if self.aad_mode:
+                base_url = result.endpoint
+                return {"base_url": base_url}
+            else:
+                result = list(self.mgmt_client.configuration_stores.list_keys(group, name))
+                if len(result) > 0:
+                    connection_string = result[0].connection_string
+                    return {"connection_str": connection_string}
+                else:
+                    raise
         except:
             pass
 
