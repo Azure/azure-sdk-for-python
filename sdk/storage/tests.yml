@@ -24,3 +24,4 @@ jobs:
         OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
         OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
         ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
+        TEST_MODE: 'RunLiveNoRecord'
