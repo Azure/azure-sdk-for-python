@@ -22,7 +22,7 @@ def _microseconds_parsed(timestamp):
     return '.'.join([timestamp[:_index]] + ['{:06d}'.format(int(_microseconds))])
 
 
-class CliCredential(object):
+class AzureCliCredential(object):
 
     _LINUX_CMD_NOT_FOUND = 'command not found'
     _WINDOWS_CMD_NOT_FOUND = 'is not recognized as'
