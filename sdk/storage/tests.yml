@@ -27,3 +27,5 @@ jobs:
         ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
         ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
