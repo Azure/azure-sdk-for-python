@@ -237,7 +237,7 @@ def execute_tox_serial(tox_command_tuples):
         if in_ci():
             shutil.rmtree(tox_dir)
 
-    return returncode
+    return return_code
 
 
 def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
