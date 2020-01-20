@@ -715,14 +715,33 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
-    def test_batch_document_error_exception(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    def test_document_attribute_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": ""},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
+        docs = [{"id": "1", "text": ""}]
         response = text_analytics.analyze_sentiment(docs)
-        with self.assertRaises(AttributeError):
-            for doc in response:
-                sentiment = doc.sentiment
+
+        # Attributes on DocumentError
+        self.assertTrue(response[0].is_error)
+        self.assertEqual(response[0].id, "1")
+        self.assertIsNotNone(response[0].error)
+
+        # Result attribute not on DocumentError, custom error message
+        try:
+            sentiment = response[0].sentiment
+        except AttributeError as custom_error:
+            self.assertEqual(
+                custom_error.args[0],
+                'The batched result has a DocumentError with the following details. Resolve the error or '
+                'filter for only successful results using the is_error property.\nDocument Id: 1\nError: '
+                'invalidDocument - Document text is empty.\n'
+            )
+
+        # Attribute not found on DocumentError or result obj, default behavior/message
+        try:
+            sentiment = response[0].attribute_not_on_result_or_error
+        except AttributeError as default_behavior:
+            self.assertEqual(
+                default_behavior.args[0],
+                '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            )

@@ -392,13 +392,21 @@ class DocumentError(DictMixin):
         self.is_error = True
 
     def __getattr__(self, attr):
-        if attr not in ["id", "error", "is_error"]:
+        result_set = set()
+        result_set.update(
+            [*RecognizeEntitiesResult().keys(), *RecognizePiiEntitiesResult().keys(),
+             *DetectLanguageResult().keys(), *RecognizeLinkedEntitiesResult().keys(),
+             *AnalyzeSentimentResult().keys(), *ExtractKeyPhrasesResult().keys()]
+        )
+        result_attrs = result_set.difference(DocumentError().keys())
+        if attr in result_attrs:
             raise AttributeError(
                 "The batched result has a DocumentError with the following details. "
                 "Resolve the error or filter for only successful results using the is_error property.\n"
                 "Document Id: {}\nError: {} - {}\n".
                 format(self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
             )
+        return self.__getattribute__(attr)
 
     @classmethod
     def _from_generated(cls, doc_err):
