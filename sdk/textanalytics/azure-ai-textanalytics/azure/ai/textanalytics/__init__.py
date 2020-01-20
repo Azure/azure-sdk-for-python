@@ -57,7 +57,7 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScorePerLabel',
+    'SentimentConfidenceScorePerLabel'
 ]
 
 __version__ = VERSION
