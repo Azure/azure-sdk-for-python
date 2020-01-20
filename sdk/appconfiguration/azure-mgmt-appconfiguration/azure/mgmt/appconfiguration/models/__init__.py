@@ -14,12 +14,18 @@ try:
     from ._models_py3 import CheckNameAvailabilityParameters
     from ._models_py3 import ConfigurationStore
     from ._models_py3 import ConfigurationStoreUpdateParameters
+    from ._models_py3 import EncryptionProperties
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import KeyValue
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import ListKeyValueParameters
     from ._models_py3 import NameAvailabilityStatus
     from ._models_py3 import OperationDefinition
     from ._models_py3 import OperationDefinitionDisplay
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import RegenerateKeyParameters
     from ._models_py3 import Resource
     from ._models_py3 import ResourceIdentity
@@ -30,12 +36,18 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityParameters
     from ._models import ConfigurationStore
     from ._models import ConfigurationStoreUpdateParameters
+    from ._models import EncryptionProperties
     from ._models import Error, ErrorException
     from ._models import KeyValue
+    from ._models import KeyVaultProperties
     from ._models import ListKeyValueParameters
     from ._models import NameAvailabilityStatus
     from ._models import OperationDefinition
     from ._models import OperationDefinitionDisplay
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import RegenerateKeyParameters
     from ._models import Resource
     from ._models import ResourceIdentity
@@ -44,9 +56,13 @@ except (SyntaxError, ImportError):
 from ._paged_models import ApiKeyPaged
 from ._paged_models import ConfigurationStorePaged
 from ._paged_models import OperationDefinitionPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._app_configuration_management_client_enums import (
     IdentityType,
     ProvisioningState,
+    ConnectionStatus,
+    ActionsRequired,
 )
 
 __all__ = [
@@ -54,12 +70,18 @@ __all__ = [
     'CheckNameAvailabilityParameters',
     'ConfigurationStore',
     'ConfigurationStoreUpdateParameters',
+    'EncryptionProperties',
     'Error', 'ErrorException',
     'KeyValue',
+    'KeyVaultProperties',
     'ListKeyValueParameters',
     'NameAvailabilityStatus',
     'OperationDefinition',
     'OperationDefinitionDisplay',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkServiceConnectionState',
     'RegenerateKeyParameters',
     'Resource',
     'ResourceIdentity',
@@ -68,6 +90,10 @@ __all__ = [
     'ConfigurationStorePaged',
     'ApiKeyPaged',
     'OperationDefinitionPaged',
+    'PrivateEndpointConnectionPaged',
+    'PrivateLinkResourcePaged',
     'IdentityType',
     'ProvisioningState',
+    'ConnectionStatus',
+    'ActionsRequired',
 ]

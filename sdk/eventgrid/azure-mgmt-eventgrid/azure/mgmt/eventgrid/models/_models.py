@@ -307,8 +307,8 @@ class Domain(TrackedResource):
      which specified the info about mapping event payload.
     :type input_schema_mapping:
      ~azure.mgmt.eventgrid.models.InputSchemaMapping
-    :param metric_resource_id: Metric resource id for the domain.
-    :type metric_resource_id: str
+    :ivar metric_resource_id: Metric resource id for the domain.
+    :vartype metric_resource_id: str
     :param allow_traffic_from_all_ips: This determines if IP filtering rules
      ought to be evaluated or not. By default it will not evaluate and will
      allow traffic from all IPs.
@@ -325,6 +325,7 @@ class Domain(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
+        'metric_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -348,7 +349,7 @@ class Domain(TrackedResource):
         self.endpoint = None
         self.input_schema = kwargs.get('input_schema', "EventGridSchema")
         self.input_schema_mapping = kwargs.get('input_schema_mapping', None)
-        self.metric_resource_id = kwargs.get('metric_resource_id', None)
+        self.metric_resource_id = None
         self.allow_traffic_from_all_ips = kwargs.get('allow_traffic_from_all_ips', None)
         self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
 
@@ -437,15 +438,26 @@ class DomainUpdateParameters(Model):
 
     :param tags: Tags of the domains resource
     :type tags: dict[str, str]
+    :param allow_traffic_from_all_ips: This determines if IP filtering rules
+     ought to be evaluated or not. By default it will not evaluate and will
+     allow traffic from all IPs.
+    :type allow_traffic_from_all_ips: bool
+    :param inbound_ip_rules: This determines the IP filtering rules that ought
+     be applied when events are received on this domain.
+    :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'allow_traffic_from_all_ips': {'key': 'allowTrafficFromAllIPs', 'type': 'bool'},
+        'inbound_ip_rules': {'key': 'inboundIpRules', 'type': '[InboundIpRule]'},
     }
 
     def __init__(self, **kwargs):
         super(DomainUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.allow_traffic_from_all_ips = kwargs.get('allow_traffic_from_all_ips', None)
+        self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
 
 
 class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
@@ -1456,8 +1468,8 @@ class Topic(TrackedResource):
      schema.
     :type input_schema_mapping:
      ~azure.mgmt.eventgrid.models.InputSchemaMapping
-    :param metric_resource_id: Metric resource id for the topic.
-    :type metric_resource_id: str
+    :ivar metric_resource_id: Metric resource id for the topic.
+    :vartype metric_resource_id: str
     :param allow_traffic_from_all_ips: This determines if IP filtering rules
      ought to be evaluated or not. By default it will not evaluate and will
      allow traffic from all IPs.
@@ -1474,6 +1486,7 @@ class Topic(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'endpoint': {'readonly': True},
+        'metric_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1497,7 +1510,7 @@ class Topic(TrackedResource):
         self.endpoint = None
         self.input_schema = kwargs.get('input_schema', "EventGridSchema")
         self.input_schema_mapping = kwargs.get('input_schema_mapping', None)
-        self.metric_resource_id = kwargs.get('metric_resource_id', None)
+        self.metric_resource_id = None
         self.allow_traffic_from_all_ips = kwargs.get('allow_traffic_from_all_ips', None)
         self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
 
@@ -1613,15 +1626,26 @@ class TopicUpdateParameters(Model):
 
     :param tags: Tags of the resource.
     :type tags: dict[str, str]
+    :param allow_traffic_from_all_ips: This determines if IP filtering rules
+     ought to be evaluated or not. By default it will not evaluate and will
+     allow traffic from all IPs.
+    :type allow_traffic_from_all_ips: bool
+    :param inbound_ip_rules: This determines the IP filtering rules that ought
+     be applied when events are received on this domain.
+    :type inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'allow_traffic_from_all_ips': {'key': 'allowTrafficFromAllIPs', 'type': 'bool'},
+        'inbound_ip_rules': {'key': 'inboundIpRules', 'type': '[InboundIpRule]'},
     }
 
     def __init__(self, **kwargs):
         super(TopicUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.allow_traffic_from_all_ips = kwargs.get('allow_traffic_from_all_ips', None)
+        self.inbound_ip_rules = kwargs.get('inbound_ip_rules', None)
 
 
 class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
