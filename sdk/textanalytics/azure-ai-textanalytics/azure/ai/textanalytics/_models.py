@@ -394,9 +394,9 @@ class DocumentError(DictMixin):
     def __getattr__(self, attr):
         result_set = set()
         result_set.update(
-            [*RecognizeEntitiesResult().keys(), *RecognizePiiEntitiesResult().keys(),
-             *DetectLanguageResult().keys(), *RecognizeLinkedEntitiesResult().keys(),
-             *AnalyzeSentimentResult().keys(), *ExtractKeyPhrasesResult().keys()]
+            RecognizeEntitiesResult().keys() + RecognizePiiEntitiesResult().keys()
+            + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
+            + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
