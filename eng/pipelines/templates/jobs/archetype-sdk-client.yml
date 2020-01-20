@@ -115,7 +115,7 @@ jobs:
         }
 
         if ('$(Run.ImportTest)' -eq 'true') {
-          $toxenvvar = "whl,sdist"
+          $toxenvvar = "whl,sdist,depends"
         }
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
