@@ -50,7 +50,9 @@ jobs:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CoverageArg: $(CoverageArg)
-          EnvVars: ${{ parameters.EnvVars }}
+          EnvVars:
+            AZURE_RUN_MODE: 'Live' #Record, Playback
+            ${{ insert }}: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
