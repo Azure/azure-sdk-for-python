@@ -196,7 +196,7 @@ def execute_tox_parallel(tox_command_tuples):
             failed_run = True
 
     if failed_run:
-        exit(1)
+        return 1
 
 
 def replace_dev_reqs(file):
@@ -240,7 +240,7 @@ def execute_tox_serial(tox_command_tuples):
         if in_ci():
             shutil.rmtree(tox_dir)
 
-        sys.exit(return_code)
+    return returncode
 
 
 def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
@@ -305,9 +305,11 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         tox_command_tuples.append((tox_execution_array, package_dir))
 
     if parsed_args.tparallel:
-        execute_tox_parallel(tox_command_tuples)
+        return_code = execute_tox_parallel(tox_command_tuples)
     else:
-        execute_tox_serial(tox_command_tuples)
+        return_code = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
+
+    sys.exit(return_code)
