@@ -177,7 +177,7 @@ def individual_workload(tox_command_tuple, workload_results):
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     workload_results = {}
-    failed_run = False
+    run_result = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         pool.add_task(individual_workload, cmd_tuple, workload_results)
@@ -193,10 +193,9 @@ def execute_tox_parallel(tox_command_tuples):
                     os.path.basename(key), workload_results[key][0]
                 )
             )
-            failed_run = True
+            run_result = 1
 
-    if failed_run:
-        return 1
+    return failed_run
 
 
 def replace_dev_reqs(file):
