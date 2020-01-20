@@ -57,4 +57,5 @@ jobs:
           ToxTestEnv: "whl"
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          InjectedPackages: "$(InjectedPackages)"
   

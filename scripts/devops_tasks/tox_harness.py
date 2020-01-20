@@ -2,6 +2,7 @@ import sys
 import os
 import errno
 import shutil
+import re
 import multiprocessing
 
 if sys.version_info < (3, 0):
@@ -199,8 +200,10 @@ def execute_tox_parallel(tox_command_tuples):
         exit(1)
 
 
-def replace_dev_reqs(file):
+def replace_dev_reqs(file, injected_packages):
     adjusted_req_lines = []
+
+    injected_packages = [p for p in re.split('[\s,]', injected_packages) if p]
 
     with open(file, "r") as f:
         for line in f:
@@ -211,6 +214,8 @@ def replace_dev_reqs(file):
             ]
             amended_line = " ".join(args)
             adjusted_req_lines.append(amended_line)
+
+    adjusted_req_lines = injected_packages.extend(adjusted_req_lines)
 
     with open(file, "w") as f:
         # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
@@ -280,8 +285,9 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             with open(destination_dev_req, "w+") as file:
                 file.write("\n")
 
+        replace_dev_reqs_if_necessary(destination_dev_req, parsed_args.injected_packages)
+
         if in_ci():
-            replace_dev_reqs(destination_dev_req)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         if parsed_args.tox_env:

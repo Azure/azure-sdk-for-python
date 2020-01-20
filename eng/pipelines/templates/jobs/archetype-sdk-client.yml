@@ -129,6 +129,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: "$(InjectedPackages)"
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
