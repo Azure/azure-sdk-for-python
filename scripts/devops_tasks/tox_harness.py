@@ -215,13 +215,13 @@ def replace_dev_reqs(file, injected_packages):
             amended_line = " ".join(args)
             adjusted_req_lines.append(amended_line)
 
-    adjusted_req_lines = injected_packages.extend(adjusted_req_lines)
+    all_adjustments = injected_packages + adjusted_req_lines
 
     with open(file, "w") as f:
         # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
         # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
         # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
-        f.write("\n".join(adjusted_req_lines))
+        f.write("\n".join(all_adjustments))
 
 
 def execute_tox_serial(tox_command_tuples):
@@ -285,7 +285,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             with open(destination_dev_req, "w+") as file:
                 file.write("\n")
 
-        replace_dev_reqs_if_necessary(destination_dev_req, parsed_args.injected_packages)
+        replace_dev_reqs(destination_dev_req, parsed_args.injected_packages)
 
         if in_ci():
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
