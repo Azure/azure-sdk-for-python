@@ -6,6 +6,7 @@
 
 from ._constants import KnownAuthorities
 from ._credentials import (
+    AuthFileCredential,
     AuthorizationCodeCredential,
     CertificateCredential,
     ChainedTokenCredential,
@@ -21,6 +22,7 @@ from ._credentials import (
 
 
 __all__ = [
+    "AuthFileCredential",
     "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",

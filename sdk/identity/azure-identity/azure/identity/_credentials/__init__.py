@@ -11,9 +11,11 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .user import DeviceCodeCredential, UsernamePasswordCredential
+from .auth_file import AuthFileCredential
 
 
 __all__ = [
+    "AuthFileCredential",
     "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
