@@ -219,9 +219,10 @@ def replace_dev_reqs(file):
 
 
 def execute_tox_serial(tox_command_tuples):
+    return_code = 0
+
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.join(cmd_tuple[1], "./.tox/")
-        return_code = 0
 
         logging.info(
             "Running tox for {}. {} of {}.".format(
