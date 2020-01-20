@@ -914,9 +914,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key, rmt.name, rmt_key)
-        self.remote_share_name = self.get_resource_name('testcopyfileasyncprivatefile')
-        remote_share = self.fsc2.get_share_client(self.remote_share_name)
-        await remote_share.create_share()
+        await self._setup_share(storage_account, storage_account_key)
+        await self._create_remote_share()
         source_file = await self._create_remote_file()
 
         # Act
