@@ -114,7 +114,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
         async with queue.get_sender() as sender:
             for i in range(5):
-                await sender.send(Message(f"Message {i}"))
+                await sender.send(Message("Message {}".format(i)))
         messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
         batch = await messages.fetch_next()
         count = len(batch)
@@ -136,7 +136,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         queue = sb_client.get_queue(servicebus_queue.name)
     
         for i in range(3):
-            await queue.send(Message(f"Message {i}"))
+            await queue.send(Message("Message {}".format(i)))
     
         messages = queue.get_receiver(idle_timeout=60)
         async for message in messages:

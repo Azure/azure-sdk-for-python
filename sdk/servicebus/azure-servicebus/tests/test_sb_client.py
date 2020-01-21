@@ -82,6 +82,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with pytest.raises(ServiceBusResourceNotFound):
             client.get_topic("invalid")
 
+    @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
