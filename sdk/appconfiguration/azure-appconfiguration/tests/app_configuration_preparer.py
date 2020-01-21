@@ -36,8 +36,8 @@ class AppConfigurationPreparer(AzureMgmtPreparer):
             return kwargs[self.resource_group_parameter_name]
         except KeyError:
             template = (
-                "To create a key vault a resource group is required. Please add "
-                "decorator @{} in front of this storage account preparer."
+                "To create an app configuration store a resource group is required. Please add "
+                "decorator @{} in front of this preparer."
             )
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 

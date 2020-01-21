@@ -30,16 +30,10 @@ import datetime
 import os
 import logging
 import re
-import hashlib
 from app_configuration_preparer import AppConfigurationPreparer
 from app_configuration_client_preparer import AppConfigurationClientPreparer
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
-    try:
-        name_prefix = "appconfig-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-    except KeyError:
-        name_prefix = "appconfig"
-
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
@@ -92,7 +86,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
                 % (key, label)
             )
     
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     # method: add_configuration_setting
@@ -120,7 +114,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_add_existing_configuration_setting(self, app_config_client):
@@ -135,7 +129,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         self.cleanup_kv(app_config_client)
 
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     # method: set_configuration_setting
@@ -155,7 +149,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_set_existing_configuration_setting_label_wrong_etag(self, app_config_client):
@@ -168,7 +162,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             app_config_client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_set_configuration_setting_etag(self, app_config_client):
@@ -185,7 +179,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             app_config_client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_set_configuration_setting_no_etag(self, app_config_client):
@@ -209,7 +203,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     # method: get_configuration_setting
@@ -226,7 +220,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert fetched_kv.label is None
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_get_configuration_setting_label(self, app_config_client):
@@ -244,7 +238,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert fetched_kv.label is not None
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_get_non_existing_configuration_setting(self, app_config_client):
@@ -256,7 +250,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     # method: delete_configuration_setting
@@ -269,7 +263,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             app_config_client.get_configuration_setting(to_delete_kv.key)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_delete_with_key_label(self, app_config_client):
@@ -285,7 +279,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_delete_non_existing(self, app_config_client):
@@ -296,7 +290,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert deleted_kv is None
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_delete_correct_etag(self, app_config_client):
@@ -311,7 +305,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             app_config_client.get_configuration_setting(to_delete_kv.key)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_delete_wrong_etag(self, app_config_client):
@@ -323,7 +317,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     # method: list_configuration_settings
@@ -336,7 +330,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.label == LABEL and x.label == LABEL for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_only_label(self, app_config_client):
@@ -346,7 +340,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.label == LABEL for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_only_key(self, app_config_client):
@@ -357,7 +351,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         self.cleanup_kv(app_config_client)
 
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_fields(self, app_config_client):
@@ -369,7 +363,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key and not x.label and x.content_type for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_reserved_chars(self, app_config_client):
@@ -389,7 +383,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_contains(self, app_config_client):
@@ -401,7 +395,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.label == LABEL for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_correct_etag(self, app_config_client):
@@ -415,7 +409,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_multi_pages(self, app_config_client):
@@ -447,7 +441,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         except AzureError:
             pass
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_null_label(self, app_config_client):
@@ -456,7 +450,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert len(list(items)) > 0
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_configuration_settings_only_accepttime(self, app_config_client):
@@ -468,7 +462,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert len(list(all_inclusive)) > len(list(exclude_today))
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     # method: list_revisions
@@ -482,7 +476,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_revisions_only_label(self, app_config_client):
@@ -492,7 +486,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.label == LABEL for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_revisions_key_no_label(self, app_config_client):
@@ -502,7 +496,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == KEY for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_revisions_fields(self, app_config_client):
@@ -513,7 +507,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_list_revisions_correct_etag(self, app_config_client):
@@ -527,7 +521,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_read_only(self, app_config_client):
@@ -539,7 +533,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert not readable_kv.read_only
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_delete_read_only(self, app_config_client):
@@ -555,7 +549,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             app_config_client.get_configuration_setting(to_delete_kv.key)
         self.cleanup_kv(app_config_client)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @AppConfigurationPreparer(aad_mode=True)
     @AppConfigurationClientPreparer(aad_mode=True)
     def test_set_read_only(self, app_config_client):
