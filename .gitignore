@@ -26,6 +26,7 @@ _docs
 RECORD.txt
 build/
 *.egg-info/
+.tox_pip_cache/
 
 # Test results
 TestResults/
