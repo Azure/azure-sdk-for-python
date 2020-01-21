@@ -18,6 +18,7 @@ request_id_init_values = ("foo", None, "_unset")
 request_id_set_values = ("bar", None, "_unset")
 request_id_req_values = ("baz", None, "_unset")
 full_combination = list(product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values))
+test_combination = (True, 'foo', 'bar', None)
 
 @pytest.mark.parametrize("auto_request_id, request_id_init, request_id_set, request_id_req", full_combination)
 def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req):
@@ -37,12 +38,19 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     with mock.patch('uuid.uuid1', return_value="VALUE"):
         request_id_policy.on_request(pipeline_request)
 
-    if request_id_req != "_unset":
+    assert all(v is not None for v in request.headers.values())
+    if request_id_req != "_unset" and request_id_req:
         assert request.headers["x-ms-client-request-id"] == request_id_req
-    elif request_id_set != "_unset":
+    elif not request_id_req:
+        assert not "x-ms-client-request-id" in request.headers
+    elif request_id_set != "_unset" and request_id_set:
         assert request.headers["x-ms-client-request-id"] == request_id_set
-    elif request_id_init != "_unset":
+    elif not request_id_set:
+        assert not "x-ms-client-request-id" in request.headers
+    elif request_id_init != "_unset" and request_id_init:
         assert request.headers["x-ms-client-request-id"] == request_id_init
+    elif not request_id_init:
+        assert not "x-ms-client-request-id" in request.headers
     elif auto_request_id or auto_request_id is None:
         assert request.headers["x-ms-client-request-id"] == "VALUE"
     else:
