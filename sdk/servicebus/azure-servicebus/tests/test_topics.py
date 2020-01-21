@@ -17,7 +17,7 @@ from azure.servicebus import ServiceBusClient, TopicClient
 from azure.servicebus.common.message import Message, PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, AreLiveTestsEnabled
 
 def get_logger(level):
     azure_logger = logging.getLogger("azure")
@@ -38,6 +38,7 @@ _logger = get_logger(logging.DEBUG)
 
 class ServiceBusTopicsTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
@@ -51,6 +52,7 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         topic_client.send(message)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
@@ -70,6 +72,7 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         topic_client.send(message)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
@@ -86,6 +89,7 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         assert all(isinstance(t, TopicClient) for t in topics)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')

@@ -17,7 +17,7 @@ from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusSubscriptionPreparer
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusSubscriptionPreparer, AreLiveTestsEnabled
 
 
 def get_logger(level):
@@ -38,6 +38,7 @@ _logger = get_logger(logging.DEBUG)
 
 class ServiceBusSubscriptionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
@@ -59,6 +60,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
@@ -87,6 +89,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
@@ -107,6 +110,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')

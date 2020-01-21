@@ -28,12 +28,14 @@ from servicebus_preparer import (
     ServiceBusTopicPreparer, 
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
-    ServiceBusQueueAuthorizationRulePreparer
+    ServiceBusQueueAuthorizationRulePreparer,
+    AreLiveTestsEnabled
 )
 
 class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -48,6 +50,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.get_queue(servicebus_queue.name)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_sb_client_bad_namespace(self, **kwargs):
@@ -62,6 +65,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.get_queue("testq")
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_sb_client_bad_entity(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, **kwargs):
@@ -78,7 +82,6 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with pytest.raises(ServiceBusResourceNotFound):
             client.get_topic("invalid")
 
-    @pytest.mark.liveTest
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -97,6 +100,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.create_queue(servicebus_queue.name, lock_duration=300)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -115,6 +119,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client.delete_queue(servicebus_queue.name)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -132,6 +137,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             client.send(Message("test"))
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
@@ -158,6 +164,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
