@@ -18,7 +18,6 @@ request_id_init_values = ("foo", None, "_unset")
 request_id_set_values = ("bar", None, "_unset")
 request_id_req_values = ("baz", None, "_unset")
 full_combination = list(product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values))
-test_combination = (True, 'foo', 'bar', None)
 
 @pytest.mark.parametrize("auto_request_id, request_id_init, request_id_set, request_id_req", full_combination)
 def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req):
