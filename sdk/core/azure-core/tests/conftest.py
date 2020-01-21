@@ -29,3 +29,13 @@ import sys
 collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("azure_core_asynctests")
+
+
+# If opencensus is loadable while doing these tests, register an empty tracer to avoid this:
+# https://github.com/census-instrumentation/opencensus-python/issues/442
+try:
+    from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+    from opencensus.trace.tracer import Tracer
+    Tracer()
+except ImportError:
+    pass

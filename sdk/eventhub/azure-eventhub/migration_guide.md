@@ -77,6 +77,7 @@ Becomes this in V5:
 logger = logging.getLogger("azure.eventhub")
 async def on_event(partition_context, event):
     logger.info("Message received:{}".format(event.body_as_str()))
+    await partition_context.update_checkpoint(event)
 
 client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR, consumer_group="$Default", eventhub_name=EVENTHUB_NAME
@@ -215,8 +216,7 @@ async def on_event(partition_context, event):
     partition_id = partition_context.partition_id
     events_processed[partition_id] += 1
     logger.info("Partition id {}, Events processed {}".format(partition_id, events_processed[partition_id]))
-    if events_processed[partition_id] % 10 == 0:
-        await partition_context.update_checkpoint(event)
+    await partition_context.update_checkpoint(event)
 
 async def on_partition_initialize(context):
     logger.info("Partition {} initialized".format(context.partition_id))
@@ -243,6 +243,7 @@ async def main():
             on_error=on_error,  # optional
             on_partition_initialize=on_partition_initialize,  # optional
             on_partition_close=on_partition_close,  # optional
+            starting_position="-1",  # "-1" is from the beginning of the partition.
         )
 
 if __name__ == '__main__':

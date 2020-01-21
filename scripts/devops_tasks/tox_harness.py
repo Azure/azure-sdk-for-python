@@ -282,6 +282,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
 
         if in_ci():
             replace_dev_reqs(destination_dev_req)
+            os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         if parsed_args.tox_env:
             tox_execution_array.extend(["-e", parsed_args.tox_env])

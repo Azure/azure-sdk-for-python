@@ -6,6 +6,7 @@ import asyncio
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
+from .base import AsyncCredentialBase
 from .._internal import AadClient
 
 if TYPE_CHECKING:
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AuthorizationCodeCredential(object):
+class AuthorizationCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
 
     See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
@@ -31,13 +32,19 @@ class AuthorizationCodeCredential(object):
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     """
 
+    async def __aenter__(self):
+        if self._client:
+            await self._client.__aenter__()
+        return self
+
+    async def close(self):
+        """Close the credential's transport session."""
+
+        if self._client:
+            await self._client.__aexit__()
+
     def __init__(
-        self,
-        tenant_id: str,
-        client_id: str,
-        authorization_code: str,
-        redirect_uri: str,
-        **kwargs: "Any"
+        self, tenant_id: str, client_id: str, authorization_code: str, redirect_uri: str, **kwargs: "Any"
     ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id

@@ -69,10 +69,10 @@ from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 
-host = '<< HOSTNAME OF THE EVENT HUB >>'
+fully_qualified_namespace = '<< HOSTNAME OF THE EVENT HUB >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 consumer_group = '<< CONSUMER GROUP >>'
-consumer_client = EventHubConsumerClient(host, eventhub_name, consumer_group, credential)
+consumer_client = EventHubConsumerClient(fully_qualified_namespace, eventhub_name, consumer_group, credential)
 
 ```
 
@@ -176,9 +176,13 @@ logging.basicConfig(level=logging.INFO)
 
 def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
+    partition_context.update_checkpoint(event)
 
 with client:
-    client.receive(on_event=on_event)
+    client.receive(
+        on_event=on_event, 
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
     # receive events from specified partition:
     # client.receive(on_event=on_event, partition_id='0')
 ```
@@ -236,11 +240,15 @@ logging.basicConfig(level=logging.INFO)
 
 async def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
+    await partition_context.update_checkpoint(event)
 
 async def receive():
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
     async with client:
-        await client.receive(on_event=on_event)
+        await client.receive(
+            on_event=on_event,
+            starting_position="-1",  # "-1" is from the beginning of the partition.
+        )
         # receive events from specified partition:
         # await client.receive(on_event=on_event, partition_id='0')
 
@@ -289,10 +297,10 @@ async def on_event(partition_context, event):
     await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def receive(client):
-    try:
-        await client.receive(on_event=on_event)
-    except KeyboardInterrupt:
-        await client.close()
+    await client.receive(
+        on_event=on_event,
+        starting_position="-1",  # "-1" is from the beginning of the partition.
+    )
 
 async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, container_name)
