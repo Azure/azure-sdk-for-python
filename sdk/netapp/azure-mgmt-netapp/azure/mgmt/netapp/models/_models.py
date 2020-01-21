@@ -60,6 +60,22 @@ class ActiveDirectory(Model):
         self.organizational_unit = kwargs.get('organizational_unit', None)
 
 
+class AuthorizeRequest(Model):
+    """Authorize request.
+
+    :param remote_volume_resource_id: Resource id
+    :type remote_volume_resource_id: str
+    """
+
+    _attribute_map = {
+        'remote_volume_resource_id': {'key': 'remoteVolumeResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AuthorizeRequest, self).__init__(**kwargs)
+        self.remote_volume_resource_id = kwargs.get('remote_volume_resource_id', None)
+
+
 class CapacityPool(Model):
     """Capacity pool resource.
 
@@ -563,20 +579,25 @@ class ReplicationObject(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param replication_id: replicationId. Id
+    :param replication_id: Id
     :type replication_id: str
-    :param endpoint_type: Required. endpointType. Indicates whether the local
-     volume is the source or destination for the Volume Replication
-    :type endpoint_type: str
-    :param replication_schedule: Required. replicationSchedule. Schedule
-    :type replication_schedule: str
-    :param remote_volume_resource_id: Required. remoteVolumeResourceId. The
-     resource ID of the remote volume.
+    :param endpoint_type: Indicates whether the local volume is the source or
+     destination for the Volume Replication. Possible values include: 'src',
+     'dst'
+    :type endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
+    :param replication_schedule: Required. Schedule. Possible values include:
+     '_10minutely', 'hourly', 'daily', 'weekly', 'monthly'
+    :type replication_schedule: str or
+     ~azure.mgmt.netapp.models.ReplicationSchedule
+    :param remote_volume_resource_id: Required. The resource ID of the remote
+     volume.
     :type remote_volume_resource_id: str
+    :param remote_volume_region: The remote region for the other end of the
+     Volume Replication.
+    :type remote_volume_region: str
     """
 
     _validation = {
-        'endpoint_type': {'required': True},
         'replication_schedule': {'required': True},
         'remote_volume_resource_id': {'required': True},
     }
@@ -586,6 +607,7 @@ class ReplicationObject(Model):
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'replication_schedule': {'key': 'replicationSchedule', 'type': 'str'},
         'remote_volume_resource_id': {'key': 'remoteVolumeResourceId', 'type': 'str'},
+        'remote_volume_region': {'key': 'remoteVolumeRegion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -594,6 +616,43 @@ class ReplicationObject(Model):
         self.endpoint_type = kwargs.get('endpoint_type', None)
         self.replication_schedule = kwargs.get('replication_schedule', None)
         self.remote_volume_resource_id = kwargs.get('remote_volume_resource_id', None)
+        self.remote_volume_region = kwargs.get('remote_volume_region', None)
+
+
+class ReplicationStatus(Model):
+    """Replication status.
+
+    :param healthy: Replication health check
+    :type healthy: bool
+    :param relationship_status: Status of the mirror relationship. Possible
+     values include: 'Idle', 'Transferring'
+    :type relationship_status: str or
+     ~azure.mgmt.netapp.models.RelationshipStatus
+    :param mirror_state: The status of the replication. Possible values
+     include: 'Uninitialized', 'Mirrored', 'Broken'
+    :type mirror_state: str or ~azure.mgmt.netapp.models.MirrorState
+    :param total_progress: The progress of the replication
+    :type total_progress: str
+    :param error_message: Displays error message if the replication is in an
+     error state
+    :type error_message: str
+    """
+
+    _attribute_map = {
+        'healthy': {'key': 'healthy', 'type': 'bool'},
+        'relationship_status': {'key': 'relationshipStatus', 'type': 'str'},
+        'mirror_state': {'key': 'mirrorState', 'type': 'str'},
+        'total_progress': {'key': 'totalProgress', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReplicationStatus, self).__init__(**kwargs)
+        self.healthy = kwargs.get('healthy', None)
+        self.relationship_status = kwargs.get('relationship_status', None)
+        self.mirror_state = kwargs.get('mirror_state', None)
+        self.total_progress = kwargs.get('total_progress', None)
+        self.error_message = kwargs.get('error_message', None)
 
 
 class ResourceNameAvailability(Model):
@@ -815,10 +874,12 @@ class Volume(Model):
     :type mount_targets: object
     :param volume_type: What type of volume is this
     :type volume_type: str
-    :param data_protection: DataProtection. DataProtection volume, can have a
-     replication object
+    :param data_protection: DataProtection. DataProtection type volumes
+     include an object containing details of the replication
     :type data_protection:
      ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+    :param is_restoring: Restoring
+    :type is_restoring: bool
     """
 
     _validation = {
@@ -854,6 +915,7 @@ class Volume(Model):
         'mount_targets': {'key': 'properties.mountTargets', 'type': 'object'},
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
+        'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -876,6 +938,7 @@ class Volume(Model):
         self.mount_targets = kwargs.get('mount_targets', None)
         self.volume_type = kwargs.get('volume_type', None)
         self.data_protection = kwargs.get('data_protection', None)
+        self.is_restoring = kwargs.get('is_restoring', None)
 
 
 class VolumePatch(Model):
@@ -959,7 +1022,8 @@ class VolumePatchPropertiesExportPolicy(Model):
 class VolumePropertiesDataProtection(Model):
     """DataProtection.
 
-    DataProtection volume, can have a replication object.
+    DataProtection type volumes include an object containing details of the
+    replication.
 
     :param replication: Replication. Replication properties
     :type replication: ~azure.mgmt.netapp.models.ReplicationObject

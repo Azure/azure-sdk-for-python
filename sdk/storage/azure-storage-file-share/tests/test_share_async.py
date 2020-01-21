@@ -30,12 +30,12 @@ from azure.storage.fileshare.aio import (
     ShareClient
 )
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record,
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.filetestcase import (
     LogCaptured,
+    GlobalStorageAccountPreparer
 )
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -55,28 +55,26 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageShareTest(FileTestCase):
-    def setUp(self):
-        super(StorageShareTest, self).setUp()
-
-        file_url = self.get_file_url()
-        credentials = self.get_shared_key_credential()
+class StorageShareTest(AsyncStorageTestCase):
+    def _setup(self, storage_account, storage_account_key):
+        file_url = self.get_file_url(storage_account.name)
+        credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.fsc.__aenter__())
         self.test_shares = []
 
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
             try:
-                for s in self.test_shares:
-                    loop.run_until_complete(self.fsc.delete_share(s.share_name, delete_snapshots=True))
-                loop.run_until_complete(self.fsc.__aexit__())
+                os.remove(FILE_PATH)
             except:
                 pass
-        return super(StorageShareTest, self).tearDown()
 
+    async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
+        async for l in self.fsc.list_shares(include_snapshots=True):
+            try:
+                await self.fsc.delete_share(l.name, delete_snapshots=True)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)
@@ -90,8 +88,10 @@ class StorageShareTest(FileTestCase):
         return share_client
 
     # --Test cases for shares -----------------------------------------
-    async def _test_create_share_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
 
         # Act
@@ -99,14 +99,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_create_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_async())
-
-    async def _test_create_share_snapshot_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
 
         # Act
@@ -118,14 +116,13 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(snapshot['snapshot'])
         self.assertIsNotNone(snapshot['etag'])
         self.assertIsNotNone(snapshot['last_modified'])
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_create_share_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_snapshot_async())
 
-    async def _test_create_snapshot_with_metadata_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_snapshot_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         metadata = {"test1": "foo", "test2": "bar"}
         metadata2 = {"test100": "foo100", "test200": "bar200"}
@@ -136,10 +133,10 @@ class StorageShareTest(FileTestCase):
 
         share_props = await share.get_share_properties()
         snapshot_client = ShareClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY
+            credential=storage_account_key
         )
         snapshot_props = await snapshot_client.get_share_properties()
         # Assert
@@ -149,14 +146,13 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(snapshot['last_modified'])
         self.assertEqual(share_props.metadata, metadata)
         self.assertEqual(snapshot_props.metadata, metadata2)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_create_snapshot_with_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_snapshot_with_metadata_async())
 
-    async def _test_delete_share_with_snapshots_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_snapshots_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
         snapshot = await share.create_snapshot()
@@ -167,14 +163,12 @@ class StorageShareTest(FileTestCase):
 
         deleted = await share.delete_share(delete_snapshots=True)
         self.assertIsNone(deleted)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_delete_share_with_snapshots_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_share_with_snapshots_async())
-
-    async def _test_delete_snapshot_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
         snapshot = await share.create_snapshot()
@@ -184,22 +178,20 @@ class StorageShareTest(FileTestCase):
             await share.delete_share()
 
         snapshot_client = ShareClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=self.settings.STORAGE_ACCOUNT_KEY
+            credential=storage_account_key
         )
 
         deleted = await snapshot_client.delete_share()
         self.assertIsNone(deleted)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_delete_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_snapshot_async())
-
-    async def _test_create_share_fail_on_exist(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
 
         # Act
@@ -207,14 +199,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_create_share_fail_on_exist(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_fail_on_exist())
-
-    async def _test_create_share_with_already_existing_share_fail_on_exist_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_already_existing_share_fail_on_exist_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
 
         # Act
@@ -224,14 +214,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_create_share_with_already_existing_share_fail_on_exist_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_with_already_existing_share_fail_on_exist_async())
-
-    async def _test_create_share_with_metadata_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -242,14 +230,12 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         props = await client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_create_share_with_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_with_metadata_async())
-
-    async def _test_create_share_with_quota_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_quota_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
 
         # Act
         client = self._get_share_reference()
@@ -259,14 +245,12 @@ class StorageShareTest(FileTestCase):
         props = await client.get_share_properties()
         self.assertTrue(created)
         self.assertEqual(props.quota, 1)
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_create_share_with_quota_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_with_quota_async())
-
-    async def _test_share_exists_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_share_exists_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
 
         # Act
@@ -274,14 +258,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertTrue(exists)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_share_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_exists_async())
-
-    async def _test_share_not_exists_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_share_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
 
         # Act
@@ -289,14 +271,12 @@ class StorageShareTest(FileTestCase):
             await share.get_share_properties()
 
         # Assert
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_share_not_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_not_exists_async())
-
-    async def _test_share_snapshot_exists_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_share_snapshot_exists_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         snapshot = await share.create_snapshot()
 
@@ -306,14 +286,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertTrue(exists)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_share_snapshot_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_snapshot_exists_async())
-
-    async def _test_share_snapshot_not_exists_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_share_snapshot_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         made_up_snapshot = '2017-07-19T06:53:46.0000000Z'
 
@@ -323,14 +301,12 @@ class StorageShareTest(FileTestCase):
             await snapshot_client.get_share_properties()
 
         # Assert
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_share_snapshot_not_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_snapshot_not_exists_async())
-
-    async def _test_unicode_create_share_unicode_name_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_unicode_create_share_unicode_name_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share_name = u'啊齄丂狛狜'
 
         # Act
@@ -340,14 +316,12 @@ class StorageShareTest(FileTestCase):
             await client.create_share()
 
             # Assert
+        await self._delete_shares(share_name)
 
-    @record
-    def test_unicode_create_share_unicode_name_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_unicode_create_share_unicode_name_async())
-
-    async def _test_list_shares_no_options_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_no_options_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         # Act
         shares = []
@@ -359,14 +333,12 @@ class StorageShareTest(FileTestCase):
         self.assertGreaterEqual(len(shares), 1)
         self.assertIsNotNone(shares[0])
         self.assertNamedItemInContainer(shares, share.share_name)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_list_shares_no_options_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_shares_no_options_async())
-
-    async def _test_list_shares_with_snapshot_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
         snapshot1 = await share.create_snapshot()
@@ -384,14 +356,12 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(all_shares, share.share_name)
         self.assertNamedItemInContainer(all_shares, snapshot1['snapshot'])
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_list_shares_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_shares_with_snapshot_async())
-
-    async def _test_list_shares_with_prefix_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -405,14 +375,12 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(shares[0])
         self.assertEqual(shares[0].name, share.share_name)
         self.assertIsNone(shares[0].metadata)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_list_shares_with_prefix_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_shares_with_prefix_async())
-
-    async def _test_list_shares_with_include_metadata_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_with_include_metadata_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
         share = self._get_share_reference()
         await share.create_share(metadata=metadata)
@@ -429,13 +397,12 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(shares, share.share_name)
         self.assertDictEqual(shares[0].metadata, metadata)
 
-    @record
-    def test_list_shares_with_include_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_shares_with_include_metadata_async())
+        await self._delete_shares(share.share_name)
 
-    async def _test_list_shares_with_num_results_and_marker_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_with_num_results_and_marker_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         prefix = 'listshare'
         share_names = []
         for i in range(0, 4):
@@ -464,14 +431,13 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(len(shares2), 2)
         self.assertNamedItemInContainer(shares2, share_names[2])
         self.assertNamedItemInContainer(shares2, share_names[3])
+        await self._delete_shares(prefix)
 
-    @record
-    def test_list_shares_with_num_results_and_marker_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_shares_with_num_results_and_marker_async())
 
-    async def _test_set_share_metadata_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_metadata_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         metadata = {'hello': 'world', 'number': '42'}
 
@@ -482,14 +448,13 @@ class StorageShareTest(FileTestCase):
         props = await share.get_share_properties()
         md = props.metadata
         self.assertDictEqual(md, metadata)
+        await self._delete_shares(share.share_name)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_set_share_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_metadata_async())
-
-    async def _test_get_share_metadata_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_metadata_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -500,14 +465,12 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         props = await client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_get_share_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_share_metadata_async())
-
-    async def _test_get_share_metadata_with_snapshot_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_metadata_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -520,14 +483,12 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         props = await snapshot_client.get_share_properties()
         self.assertDictEqual(props.metadata, metadata)
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_get_share_metadata_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_share_metadata_with_snapshot_async())
-
-    async def _test_set_share_properties_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_properties_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         await share.set_share_quota(1)
 
@@ -537,14 +498,12 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertEqual(props.quota, 1)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_set_share_properties_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_properties_async())
-
-    async def _test_delete_share_with_existing_share_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -553,14 +512,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertIsNone(deleted)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_delete_share_with_existing_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_share_with_existing_share_async())
-
-    async def _test_delete_share_with_existing_share_fail_not_exist_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_existing_share_fail_not_exist_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         client = self._get_share_reference()
 
         # Act
@@ -569,14 +526,12 @@ class StorageShareTest(FileTestCase):
                 await client.delete_share()
 
             log_as_str = log_captured.getvalue()
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_delete_share_with_existing_share_fail_not_exist_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_share_with_existing_share_fail_not_exist_async())
-
-    async def _test_delete_share_with_non_existing_share_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_non_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         client = self._get_share_reference()
 
         # Act
@@ -586,14 +541,12 @@ class StorageShareTest(FileTestCase):
 
             log_as_str = log_captured.getvalue()
             self.assertTrue('ERROR' not in log_as_str)
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_delete_share_with_non_existing_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_share_with_non_existing_share_async())
-
-    async def _test_delete_share_with_non_existing_share_fail_not_exist_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_non_existing_share_fail_not_exist_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         client = self._get_share_reference()
 
         # Act
@@ -602,14 +555,12 @@ class StorageShareTest(FileTestCase):
                 await client.delete_share()
 
             log_as_str = log_captured.getvalue()
+        await self._delete_shares(client.share_name)
 
-    @record
-    def test_delete_share_with_non_existing_share_fail_not_exist_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_share_with_non_existing_share_fail_not_exist_async())
-
-    async def _test_get_share_stats_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_stats_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -618,14 +569,12 @@ class StorageShareTest(FileTestCase):
 
         # Assert
         self.assertEqual(share_usage, 0)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_get_share_stats_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_share_stats_async())
-
-    async def _test_set_share_acl_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_acl_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -635,14 +584,12 @@ class StorageShareTest(FileTestCase):
         # Assert
         acl = await share.get_share_access_policy()
         self.assertIsNotNone(acl)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_set_share_acl_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_acl_async())
-
-    async def _test_set_share_acl_with_empty_signed_identifiers_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_acl_with_empty_signed_identifiers_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -653,14 +600,12 @@ class StorageShareTest(FileTestCase):
         acl = await share.get_share_access_policy()
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_set_share_acl_with_empty_signed_identifiers_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_acl_with_empty_signed_identifiers_async())
-
-    async def _test_set_share_acl_with_signed_identifiers_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_acl_with_signed_identifiers_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -679,14 +624,12 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl['signed_identifiers']), 1)
         self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_set_share_acl_with_signed_identifiers_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_acl_with_signed_identifiers_async())
-
-    async def _test_set_share_acl_too_many_ids_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_acl_too_many_ids_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
         await share.create_share()
 
@@ -702,14 +645,12 @@ class StorageShareTest(FileTestCase):
             str(e.exception),
             'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         )
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_set_share_acl_too_many_ids_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_acl_too_many_ids_async())
-
-    async def _test_list_directories_and_files_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_directories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         dir0 = share.get_directory_client()
         await dir0.upload_file('file1', 'data1')
@@ -731,14 +672,12 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'dir1')
         self.assertNamedItemInContainer(resp, 'dir2')
         self.assertNamedItemInContainer(resp, 'file1')
+        await self._delete_shares(share)
 
-    @record
-    def test_list_directories_and_files_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_directories_and_files_async())
-
-    async def _test_list_directories_and_files_with_snapshot_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_directories_and_files_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share_name = await self._create_share()
         dir1 = share_name.get_directory_client('dir1')
         await dir1.create_directory()
@@ -763,14 +702,12 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(resp[0])
         self.assertNamedItemInContainer(resp, 'dir1')
         self.assertNamedItemInContainer(resp, 'dir2')
+        await self._delete_shares(share_name)
 
-    @record
-    def test_list_directories_and_files_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_directories_and_files_with_snapshot_async())
-
-    async def _test_list_directories_and_files_with_num_results_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_directories_and_files_with_num_results_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share_name = await self._create_share()
         dir1 = await share_name.create_directory('dir1')
         root = share_name.get_directory_client()
@@ -790,14 +727,12 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(len(results), 2)
         self.assertNamedItemInContainer(results, 'dir1')
         self.assertNamedItemInContainer(results, 'filea1')
+        await self._delete_shares(share_name)
 
-    @record
-    def test_list_directories_and_files_with_num_results_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_directories_and_files_with_num_results_async())
-
-    async def _test_list_directories_and_files_with_num_results_and_marker_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_directories_and_files_with_num_results_and_marker_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share_name = await self._create_share()
         dir1 = share_name.get_directory_client('dir1')
         await dir1.create_directory()
@@ -827,14 +762,12 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(result2, 'filea3')
         self.assertNamedItemInContainer(result2, 'fileb1')
         self.assertEqual(generator2.continuation_token, None)
+        await self._delete_shares(share_name)
 
-    @record
-    def test_list_directories_and_files_with_num_results_and_marker_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_directories_and_files_with_num_results_and_marker_async())
-
-    async def _test_list_directories_and_files_with_prefix_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_directories_and_files_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         dir1 = await share.create_directory('dir1')
         await share.create_directory('dir1/pref_dir3')
@@ -856,18 +789,16 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(resp[0])
         self.assertNamedItemInContainer(resp, 'pref_file2')
         self.assertNamedItemInContainer(resp, 'pref_dir3')
+        await self._delete_shares(share)
 
-    @record
-    def test_list_directories_and_files_with_prefix_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_directories_and_files_with_prefix_async())
-
-    async def _test_shared_access_share_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_shared_access_share_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         file_name = 'file1'
         dir_name = 'dir1'
         data = b'hello world'
@@ -884,7 +815,7 @@ class StorageShareTest(FileTestCase):
             permission=ShareSasPermissions(read=True),
         )
         sas_client = ShareFileClient(
-            self.get_file_url(),
+            self.get_file_url(storage_account.name),
             share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
@@ -896,13 +827,12 @@ class StorageShareTest(FileTestCase):
         # Assert
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_shared_access_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_shared_access_share_async())
-
-    async def _test_create_permission_for_share(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_permission_for_share(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
                                 "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
                                 "S-1-5-21-397955417-626881126-188441444-3053964)"
@@ -917,18 +847,17 @@ class StorageShareTest(FileTestCase):
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
         self.assertEqual(permission_key, permission_key2)
+        await self._delete_shares(share_client.share_name)
 
-    @record
-    def test_create_permission_for_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_permission_for_share())
-
-    async def _test_transport_closed_only_once_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
             return
+        self._setup(storage_account, storage_account_key)
         transport = AioHttpTransport()
-        url = self.get_file_url()
-        credential = self.get_shared_key_credential()
+        url = self.get_file_url(storage_account.name)
+        credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
         async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
@@ -938,14 +867,12 @@ class StorageShareTest(FileTestCase):
                 assert transport.session is not None
             await fsc.get_service_properties()
             assert transport.session is not None
+        await self._delete_shares(share_name)
 
-    @record
-    def test_transport_closed_only_once_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_transport_closed_only_once_async())
-
-    async def _test_delete_directory_from_share_async(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_directory_from_share_async(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
         await share.create_directory('dir1')
         await share.create_directory('dir2')
@@ -964,11 +891,5 @@ class StorageShareTest(FileTestCase):
         async for d in share.list_directories_and_files():
             resp.append(d)
         self.assertEqual(len(resp), 2)
+        await self._delete_shares(share.share_name)
 
-    @record
-    def test_delete_directory_from_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_directory_from_share_async())
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

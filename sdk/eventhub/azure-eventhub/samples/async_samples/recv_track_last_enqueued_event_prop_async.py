@@ -27,6 +27,7 @@ async def on_event(partition_context, event):
         partition_context.partition_id,
         partition_context.last_enqueued_event_properties)
     )
+    await partition_context.update_checkpoint(event)
 
 
 async def main():
@@ -39,7 +40,8 @@ async def main():
         await client.receive(
             on_event=on_event,
             partition_id='0',
-            track_last_enqueued_event_properties=True
+            track_last_enqueued_event_properties=True,
+            starting_position="-1",  # "-1" is from the beginning of the partition.
         )
 
 

@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.0.0rc8 (2020-01-10)
++++++++++++++++++++++
+
+**Features**
+
+- Added operation group TaskRunsOperations
+
 3.0.0rc7 (2019-10-23)
 +++++++++++++++++++++
 

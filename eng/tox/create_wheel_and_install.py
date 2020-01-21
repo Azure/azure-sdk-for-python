@@ -73,6 +73,12 @@ if __name__ == "__main__":
         help="Install preview version of dependent packages. This is helpful when installing dev build version of packages from alternate package location",
     )
 
+    parser.add_argument(
+        "--cache-dir",
+        dest="cache_dir",
+        help="Location that, if present, will be used as the pip cache directory.",
+    )
+
     args = parser.parse_args()
 
     check_call(
@@ -133,6 +139,10 @@ if __name__ == "__main__":
             # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
             if args.install_preview:
                 commands.append("--pre")
+
+            if args.cache_dir:
+                commands.extend(["--cache-dir", args.cache_dir])
+
 
             check_call(commands)
             logging.info("Installed {w}".format(w=wheel))

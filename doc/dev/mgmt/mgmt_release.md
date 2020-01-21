@@ -1,4 +1,18 @@
-# Doing a mgmt release
+# Management Package Release
+
+## General Release Process Overview
+
+Once Swagger PR is merged, SDK automation will create pull request to Azure SDK for Python repository, and here are steps that you need to do in order to release a new package:
+
+- open PR that was merged in swagger repository and find the link to the PR createted in Azure SDK for Python
+- reopen generated SDK PR and make sure the CI passes
+- verify that generated code was generated correctly, make sure right version was generated with right configuration
+- merge the PR if everything looks good
+- create another PR manually in order to add release notest and update version (this is currently not done by automation)
+- generate release notes as described below, verify they match actual changes (HISTORY.rst)
+- update version accordingly to changes that were made (version.py)
+- merge the PR
+- run release pipeline
 
 Once you have a PR that contains accurate with correct tests (or no tests at all, but CI is green), this page explains how to prepare for a release.
 
