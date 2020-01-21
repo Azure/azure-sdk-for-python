@@ -376,7 +376,7 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 # are ported to offline-compatible code.
 def AreLiveTestsEnabled():
     # This is how the CI pipe denotes that it's a live test run.
-    if os.environ.get('AZURE_TEST_MODE', None) == 'Live':
+    if os.environ.get('AZURE_RUN_MODE', None) == 'Live':
         return True
     # This is how local test runs denote that they're live.
     # Note: This isn't amazing, because it could be present but not populated,
@@ -385,4 +385,5 @@ def AreLiveTestsEnabled():
         from devtools_testutils import mgmt_settings_real
         return True
     except:
-        return False        
+        pass
+    return False
