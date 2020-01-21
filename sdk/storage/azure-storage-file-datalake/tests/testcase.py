@@ -397,6 +397,14 @@ class StorageTestCase(unittest.TestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def generate_async_oauth_token(self):
+        from azure.identity.aio import ClientSecretCredential
+        return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
+        )
+
 def record(test):
     def recording_test(self):
         with self.recording():

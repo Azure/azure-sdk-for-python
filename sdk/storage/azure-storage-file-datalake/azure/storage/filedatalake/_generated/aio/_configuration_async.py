@@ -39,10 +39,8 @@ class DataLakeStorageClientConfiguration(Configuration):
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        if file_system is None:
-            raise ValueError("Parameter 'file_system' must not be None.")
-        if path1 is None:
-            raise ValueError("Parameter 'path1' must not be None.")
+        # if file_system is None:
+        #     raise ValueError("Parameter 'file_system' must not be None.")
 
         super(DataLakeStorageClientConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
