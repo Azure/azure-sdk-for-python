@@ -18,6 +18,7 @@ try:
     from ._models_py3 import ExportPolicyRule
     from ._models_py3 import MetricSpecification
     from ._models_py3 import MountTarget
+    from ._models_py3 import MountTargetList
     from ._models_py3 import NetAppAccount
     from ._models_py3 import NetAppAccountPatch
     from ._models_py3 import Operation
@@ -43,6 +44,7 @@ except (SyntaxError, ImportError):
     from ._models import ExportPolicyRule
     from ._models import MetricSpecification
     from ._models import MountTarget
+    from ._models import MountTargetList
     from ._models import NetAppAccount
     from ._models import NetAppAccountPatch
     from ._models import Operation
@@ -84,6 +86,7 @@ __all__ = [
     'ExportPolicyRule',
     'MetricSpecification',
     'MountTarget',
+    'MountTargetList',
     'NetAppAccount',
     'NetAppAccountPatch',
     'Operation',
