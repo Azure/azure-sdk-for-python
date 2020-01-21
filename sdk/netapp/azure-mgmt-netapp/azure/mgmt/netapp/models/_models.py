@@ -413,6 +413,22 @@ class MountTarget(Model):
         self.provisioning_state = None
 
 
+class MountTargetList(Model):
+    """List of Mount Targets.
+
+    :param value: A list of Mount targets
+    :type value: list[~azure.mgmt.netapp.models.MountTarget]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[MountTarget]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MountTargetList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class NetAppAccount(Model):
     """NetApp account resource.
 
@@ -871,7 +887,7 @@ class Volume(Model):
      Must have the delegation Microsoft.NetApp/volumes
     :type subnet_id: str
     :param mount_targets: mountTargets. List of mount targets
-    :type mount_targets: object
+    :type mount_targets: list[~azure.mgmt.netapp.models.MountTargetList]
     :param volume_type: What type of volume is this
     :type volume_type: str
     :param data_protection: DataProtection. DataProtection type volumes
@@ -912,7 +928,7 @@ class Volume(Model):
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'mount_targets': {'key': 'properties.mountTargets', 'type': 'object'},
+        'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTargetList]'},
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
         'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
