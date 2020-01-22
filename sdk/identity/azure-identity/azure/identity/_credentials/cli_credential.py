@@ -34,9 +34,15 @@ class AzureCliCredential(object):
             command.extend(['--resource', resource])
             command2 = ' '.join([command2, '--resource', resource])
 
-        get_access_token_stdout = self._get_cli_access_token(command if _IS_WINDOWS else command2)
-        get_access_token_object = json.loads(get_access_token_stdout)
-        access_token = get_access_token_object['accessToken']
+        try:
+            get_access_token_stdout = self._get_cli_access_token(command if _IS_WINDOWS else command2)
+            get_access_token_object = json.loads(get_access_token_stdout)
+            access_token = get_access_token_object['accessToken']
+        except ClientAuthenticationError:
+            raise
+        except Exception as e:
+            raise ClientAuthenticationError(repr(e))
+        
         expires_on = int((
             datetime.strptime(get_access_token_object['expiresOn'], '%Y-%m-%d %H:%M:%S.%f')
                 - datetime.now()
