@@ -26,7 +26,7 @@ from azure.servicebus.common.errors import (
     AutoLockRenewTimeout,
     MessageSettleFailed)
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer, AreLiveTestsEnabled
 
 
 def get_logger(level):
@@ -67,6 +67,7 @@ def print_message(message):
 class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -99,6 +100,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -138,6 +140,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -182,6 +185,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -199,6 +203,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -221,6 +226,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -263,6 +269,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 await message.complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -311,6 +318,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -350,6 +358,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -387,6 +396,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -430,6 +440,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -462,6 +473,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -492,6 +504,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -539,6 +552,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -593,6 +607,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -622,6 +637,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -665,6 +681,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -707,6 +724,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -752,6 +770,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -791,6 +810,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -822,6 +842,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -856,6 +877,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -889,6 +911,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')

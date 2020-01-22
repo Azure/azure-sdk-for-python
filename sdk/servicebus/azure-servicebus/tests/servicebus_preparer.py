@@ -1,4 +1,5 @@
 import hashlib
+import os
 from collections import namedtuple
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
@@ -368,3 +369,21 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
             template = 'To create this service bus queue authorization rule a service bus queue is required. Please add ' \
                        'decorator @{} in front of this service bus preparer.'
             raise AzureTestError(template.format(ServiceBusQueuePreparer.__name__))
+
+
+# Old servicebus tests were not written to work on both stubs and live entities.
+# This disables those tests for non-live scenarios, and should be removed as tests
+# are ported to offline-compatible code.
+def AreLiveTestsEnabled():
+    # This is how the CI pipe denotes that it's a live test run.
+    if os.environ.get('AZURE_RUN_MODE', None) == 'Live':
+        return True
+    # This is how local test runs denote that they're live.
+    # Note: This isn't amazing, because it could be present but not populated,
+    # but it's isomorphic to the old skips where it'd only check if the env vars were present.
+    try:
+        from devtools_testutils import mgmt_settings_real
+        return True
+    except:
+        pass
+    return False
