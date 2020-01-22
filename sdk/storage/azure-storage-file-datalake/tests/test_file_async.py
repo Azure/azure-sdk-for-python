@@ -598,6 +598,8 @@ class FileTest(StorageTestCase):
         loop.run_until_complete(self._test_rename_file_to_existing_file())
 
     async def _test_rename_file_will_not_change_existing_directory(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # create none empty directory(with 2 files)
         dir1 = await self._create_directory_and_return_client(directory="dir1")
         f1 = await dir1.create_file("file1")
