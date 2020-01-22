@@ -35,6 +35,7 @@ setup(
     version='3.0.1',
     description='Microsoft Azure Data Lake Management Namespace Package [Internal]',
     long_description=open('README.md', 'r').read(),
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
