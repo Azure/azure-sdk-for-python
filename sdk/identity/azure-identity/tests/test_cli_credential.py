@@ -7,7 +7,8 @@ import json
 from azure.identity import AzureCliCredential
 from azure.core.exceptions import ClientAuthenticationError
 
-from subprocess import CalledProcessError
+from subprocess import CompletedProcess
+import pytest
 try:
     from unittest.mock import Mock, patch
 except ImportError:
@@ -18,44 +19,60 @@ def test_cli_credential():
     access_token = '***'
     expires_on = '9999-1-1 00:00:00.1' 
     mock_token = json.dumps({"accessToken" : access_token, "expiresOn" : expires_on})
+    mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
 
-    with patch('azure.identity._credentials.cli_credential.check_output', return_value=mock_token):
+    with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
         cred = AzureCliCredential()
         token = cred.get_token()
+
         assert token.token == access_token
 
 def test_cli_installation():
-    cmd = ['az', 'account', 'get-access-token']
-    with patch('azure.identity._credentials.cli_credential.check_output',
-        side_effect=[CalledProcessError(1, cmd, "'az' is not recognized as ..."),
-            FileNotFoundError("No such file or directory: 'az'"),
-            CalledProcessError(1, cmd, "command not found")]):
+    mock_proc = CompletedProcess(args=None, stdout='', returncode=127, stderr='')
 
-        creds = (
-            AzureCliCredential(), # cred on windows
-            AzureCliCredential(), # cred on mac
-            AzureCliCredential()  # cred on linux
-        )
-        for cred in creds:
-            try:
-                token = cred.get_token()
-            except ClientAuthenticationError as e:
-                assert AzureCliCredential._CLI_NOT_INSTALLED_ERR in e.message
+    with pytest.raises(ClientAuthenticationError) as excinfo:
+        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
+            cred = AzureCliCredential()
+            token = cred.get_token()
+
+    assert ClientAuthenticationError == excinfo.type
+    assert AzureCliCredential._CLI_NOT_INSTALLED_ERR in str(excinfo.value)
 
 def test_cli_login():
-    cmd = ['az', 'account', 'get-access-token']
-    with patch('azure.identity._credentials.cli_credential.check_output',
-        side_effect=[CalledProcessError(1, cmd, "Please run 'az login'"),
-            CalledProcessError(1, cmd, "No subscription found"),
-            CalledProcessError(1, cmd, "Please run 'az login'")]):
+    mock_proc = CompletedProcess(args=None, stdout='', returncode=1, stderr='')
 
-        creds = (
-            AzureCliCredential(), # cred on windows
-            AzureCliCredential(), # cred on mac
-            AzureCliCredential()  # cred on linux
-        )
-        for cred in creds:
-            try:
+    with pytest.raises(ClientAuthenticationError) as excinfo:
+        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
+            cred = AzureCliCredential()
+            token = cred.get_token()
+
+    assert ClientAuthenticationError == excinfo.type
+    assert AzureCliCredential._CLI_LOGIN_ERR in str(excinfo.value)
+
+def test_stdout_error():
+    def test_no_json():
+        mock_token = 'not a json'
+        mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
+
+        with pytest.raises(ClientAuthenticationError) as excinfo:
+            with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
+                cred = AzureCliCredential()
                 token = cred.get_token()
-            except ClientAuthenticationError as e:
-                assert AzureCliCredential._CLI_LOGIN_ERR in e.message
+
+        assert ClientAuthenticationError == excinfo.type
+        assert 'JSONDecodeError' in str(excinfo.value)
+
+    def test_bad_token():
+        mock_token = json.dumps({"foo" : "bar"})
+        mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
+
+        with pytest.raises(ClientAuthenticationError) as excinfo:
+            with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
+                cred = AzureCliCredential()
+                token = cred.get_token()
+
+        assert ClientAuthenticationError == excinfo.type
+        assert 'KeyError' in str(excinfo.value)
+
+    test_no_json()
+    test_bad_token()
