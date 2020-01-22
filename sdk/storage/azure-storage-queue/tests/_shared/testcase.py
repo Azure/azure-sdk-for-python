@@ -94,10 +94,12 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
                 "storagename"
             )
         else:
-            storage_account = FakeResource(
-                id=storage_account.id,
-                name="storagename"
-            )
+            name = "storagename"
+            storage_account.name = name
+            storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')
+            storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(name, 'queue')
+            storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
+            storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
 
         return {
             'location': 'westus',
@@ -148,7 +150,7 @@ class StorageTestCase(AzureMgmtTestCase):
         :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        if "StorageAccount" in str(type(storage_account)):
+        try:
             if storage_type == "blob":
                 return storage_account.primary_endpoints.blob
             if storage_type == "queue":
@@ -157,8 +159,8 @@ class StorageTestCase(AzureMgmtTestCase):
                 return storage_account.primary_endpoints.file
             else:
                 raise ValueError("Unknown storage type {}".format(storage_type))
-
-        return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
+        except AttributeError: # Didn't find "primary_endpoints"
+            return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
 
     def configure_logging(self):
         try:
