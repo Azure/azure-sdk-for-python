@@ -30,7 +30,7 @@ from azure.servicebus.common.errors import (
     MessageSendFailed,
     MessageSettleFailed)
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer, AreLiveTestsEnabled
 
 
 def get_logger(level):
@@ -71,6 +71,7 @@ def print_message(message):
 class ServiceBusQueueTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -101,6 +102,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 10
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -112,7 +114,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
         async with queue.get_sender() as sender:
             for i in range(5):
-                await sender.send(Message(f"Message {i}"))
+                await sender.send(Message("Message {}".format(i)))
         messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
         batch = await messages.fetch_next()
         count = len(batch)
@@ -123,6 +125,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 5
     
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -133,7 +136,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         queue = sb_client.get_queue(servicebus_queue.name)
     
         for i in range(3):
-            await queue.send(Message(f"Message {i}"))
+            await queue.send(Message("Message {}".format(i)))
     
         messages = queue.get_receiver(idle_timeout=60)
         async for message in messages:
@@ -146,6 +149,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -181,6 +185,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert len(messages) == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -218,6 +223,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert len(messages) == 6
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -253,6 +259,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 10
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -289,6 +296,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -326,6 +334,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -369,6 +378,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             await queue_client.receive_deferred_messages(deferred_messages)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -407,6 +417,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 await message.complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -452,6 +463,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 10
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -489,6 +501,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 deferred = await receiver.receive_deferred_messages(deferred_messages)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -525,6 +538,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             deferred = await queue_client.receive_deferred_messages([5, 6, 7], mode=ReceiveSettleMode.PeekLock)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -564,6 +578,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -606,6 +621,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert count == 10
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -625,6 +641,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             await sender.send(Message("test session sender"))
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -651,6 +668,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message.complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -678,6 +696,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -695,6 +714,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert len(messages) == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -736,6 +756,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     await messages[2].complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -786,6 +807,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert len(messages) == 11
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -820,6 +842,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert isinstance(results[0][1], MessageSendFailed)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -854,6 +877,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert isinstance(results[0][1], MessageSendFailed)
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -888,6 +912,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert count == 1
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -918,6 +943,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert count == 1
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -944,6 +970,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             await messages[0].complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -980,6 +1007,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             await messages[0].complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -1014,6 +1042,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert len(messages) == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -1054,6 +1083,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert len(messages) == 0
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -1088,6 +1118,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 await m.complete()
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -1126,6 +1157,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 raise Exception("Failed to receive scheduled message.")
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -1171,6 +1203,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 raise Exception("Failed to receive scheduled message.")
 
     @pytest.mark.liveTest
+    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
     @pytest.mark.asyncio
     @ResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
