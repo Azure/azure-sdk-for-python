@@ -6,7 +6,6 @@ import base64
 import json
 import time
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
 import six
 
 try:
@@ -142,15 +141,3 @@ def urlsafeb64_decode(s):
 
     padding_needed = 4 - len(s) % 4
     return base64.urlsafe_b64decode(s + b"=" * padding_needed)
-
-
-try:
-    import asyncio
-
-    def async_validating_transport(requests, responses):
-        sync_transport = validating_transport(requests, responses)
-        return mock.Mock(send=asyncio.coroutine(sync_transport.send))
-
-
-except ImportError:
-    pass

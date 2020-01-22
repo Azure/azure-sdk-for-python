@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .custom_search_client import CustomSearchClient
-from .version import VERSION
+from ._configuration import CustomSearchClientConfiguration
+from ._custom_search_client import CustomSearchClient
+__all__ = ['CustomSearchClient', 'CustomSearchClientConfiguration']
 
-__all__ = ['CustomSearchClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -62,7 +62,7 @@ class ProtectionPoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2019-05-13"
+        api_version = "2019-06-15"
 
         # Construct URL
         url = self.get.metadata['url']
@@ -135,7 +135,7 @@ class ProtectionPoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2019-05-13"
+        api_version = "2019-06-15"
 
         # Construct URL
         url = self.create_or_update.metadata['url']

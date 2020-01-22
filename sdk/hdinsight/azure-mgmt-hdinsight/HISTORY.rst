@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.4.0 (2020-01-16)
+++++++++++++++++++
+
+**Features**
+
+- Model ClusterCreateProperties has a new parameter min_supported_tls_version
+- Model ClusterGetProperties has a new parameter min_supported_tls_version
+
 1.3.0 (2019-12-07)
 ++++++++++++++++++
 

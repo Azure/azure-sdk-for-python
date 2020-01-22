@@ -21,6 +21,7 @@ async def on_event(partition_context, event):
     # Put your code here.
     # If the operation is i/o intensive, async will have better performance.
     print("Received event from partition: {}.".format(partition_context.partition_id))
+    await partition_context.update_checkpoint(event)
 
 
 async def on_partition_initialize(partition_context):
@@ -58,7 +59,8 @@ async def main():
             on_event=on_event,
             on_error=on_error,
             on_partition_close=on_partition_close,
-            on_partition_initialize=on_partition_initialize
+            on_partition_initialize=on_partition_initialize,
+            starting_position="-1",  # "-1" is from the beginning of the partition.
         )
 
 if __name__ == '__main__':
