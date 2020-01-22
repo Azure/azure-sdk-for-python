@@ -1,0 +1,33 @@
+parameters:
+  EnvVars: {}
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-storage-blob
+      JobName: Test_Blob
+      ServiceDirectory: storage
+      EnvVars: ${{ parameters.EnvVars }}
+
+
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-storage-queue
+      JobName: Test_Queue
+      ServiceDirectory: storage
+      EnvVars: ${{ parameters.EnvVars }}
+
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      MaxParallel: 1
+      BuildTargetingString: azure-storage-file-datalake
+      JobName: Test_Datalake
+      ServiceDirectory: storage
+      EnvVars: ${{ parameters.EnvVars }}
+
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-storage-file-share
+      JobName: Test_FileShares
+      ServiceDirectory: storage
+      EnvVars: ${{ parameters.EnvVars }}
