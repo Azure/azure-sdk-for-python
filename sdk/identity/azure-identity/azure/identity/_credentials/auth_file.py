@@ -45,4 +45,4 @@ class AuthFileCredential(object):
             raise ClientAuthenticationError("Malformed Azure SDK Auth file. The file should contain \
                 'clientId', 'clientSecret', 'tenantId' and 'activeDirectoryEndpointUrl' values.")
         
-        return ClientSecretCredential(tenant_id, client_id, client_secret, authority=active_directory_endpoint_url, **self.kwargs)
+        return ClientSecretCredential(tenant_id, client_id, client_secret, authority=active_directory_endpoint_url, **self._kwargs)
