@@ -195,7 +195,7 @@ def execute_tox_parallel(tox_command_tuples):
             )
             run_result = 1
 
-    return failed_run
+    return run_result
 
 
 def replace_dev_reqs(file):
