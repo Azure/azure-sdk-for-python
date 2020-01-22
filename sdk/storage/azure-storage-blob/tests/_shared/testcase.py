@@ -439,6 +439,7 @@ def storage_account():
                     storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", None)
                     storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", None)
                     storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", None)
+                    storage_account.secondary_endpoints=Endpoints()
                     storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", None)
                     storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", None)
                     storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", None)
