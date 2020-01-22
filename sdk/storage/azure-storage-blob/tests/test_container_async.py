@@ -983,7 +983,7 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         data = b'hello world'
         await (container.get_blob_client('blob1')).upload_blob(data, metadata={'status': 'original'})
         sourceblob = 'https://{0}.blob.core.windows.net/{1}/blob1'.format(
-        storage_account.name,
+            storage_account.name,
             container.container_name)
 
         blobcopy = container.get_blob_client('blob1copy')

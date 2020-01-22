@@ -1719,7 +1719,7 @@ class StoragePageBlobTest(StorageTestCase):
         # parallel tests introduce random order of requests, can only run live
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         self.config.max_single_get_size = 4 * 1024
         self.config.max_chunk_get_size = 1024
