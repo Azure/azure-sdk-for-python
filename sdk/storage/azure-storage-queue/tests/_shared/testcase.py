@@ -39,7 +39,7 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
-from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 
 try:
