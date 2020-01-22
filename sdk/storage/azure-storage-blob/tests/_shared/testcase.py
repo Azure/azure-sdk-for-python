@@ -142,25 +142,23 @@ class StorageTestCase(AzureMgmtTestCase):
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
-    def account_url(self, name, storage_type):
+    def account_url(self, storage_account, storage_type):
         """Return an url of storage account.
 
-        :param str name: Storage account name
+        :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        if "StorageAccount" in str(type(name)):
+        if "StorageAccount" in str(type(storage_account)):
             if storage_type == "blob":
-                return name.primary_endpoints.blob
+                return storage_account.primary_endpoints.blob
             if storage_type == "queue":
-                return name.primary_endpoints.queue
+                return storage_account.primary_endpoints.queue
             if storage_type == "file":
-                return name.primary_endpoints.file
-            if storage_type == "table":
-                return name.primary_endpoints.table
+                return storage_account.primary_endpoints.file
             else:
                 raise ValueError("Unknown storage type {}".format(storage_type))
 
-        return 'https://{}.{}.core.windows.net'.format(name, storage_type)
+        return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
 
     def configure_logging(self):
         try:
@@ -416,9 +414,10 @@ def storage_account():
                     storage_key = existing_storage_key
 
                 if not storage_connection_string:
+                    # It means I have received a storage name from env
                     storage_connection_string=";".join([
                         "DefaultEndpointsProtocol=https",
-                        "AccountName={}".format(name),
+                        "AccountName={}".format(storage_name),
                         "AccountKey={}".format(storage_key),
                         "BlobEndpoint={}".format(storage_account.primary_endpoints.blob),
                         "TableEndpoint={}".format(storage_account.primary_endpoints.table),
@@ -427,6 +426,7 @@ def storage_account():
                     ])
 
                 if not storage_account:
+                    # It means I have received a connection string
                     storage_name = storage_connection_string_parts["AccountName"]
                     storage_account = StorageAccount(
                         location=location,
@@ -436,8 +436,10 @@ def storage_account():
                     storage_account.primary_endpoints=Endpoints()
                     storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", None)
                     storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", None)
-                    storage_account.primary_endpoints.table = storage_connection_string_parts.get("TableEndpoint", None)
                     storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", None)
+                    storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", None)
+                    storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", None)
+                    storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", None)
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
