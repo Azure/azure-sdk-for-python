@@ -149,9 +149,9 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         request_id = unset = object()
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
-            if not request_id:
+            if request_id is None:
                 return
-        elif not self._request_id:
+        elif self._request_id is None:
             return
         elif self._request_id is not _Unset:
             request_id = self._request_id   # type: ignore
