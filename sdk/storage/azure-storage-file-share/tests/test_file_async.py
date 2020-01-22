@@ -914,6 +914,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         self._setup(storage_account, storage_account_key, rmt.name, rmt_key)
+        await self._setup_share(storage_account, storage_account_key)
         await self._create_remote_share()
         source_file = await self._create_remote_file()
 
@@ -930,6 +931,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
+        await self.fsc2.delete_share(self.remote_share_name)
 
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')

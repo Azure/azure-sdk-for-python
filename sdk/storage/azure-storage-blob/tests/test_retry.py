@@ -35,12 +35,12 @@ from _shared.testcase import (
 class RetryRequestTransport(RequestsTransport):
     """Transport to test retry"""
     def __init__(self, *args, **kwargs):
+        super(RetryRequestTransport, self).__init__(*args, **kwargs)
         self.count = 0
-        super(RequestsTransport, self).__init__(*args, **kwargs)
     
     def send(self, request, **kwargs):
         self.count += 1
-        response = super(RequestsTransport, self).send(request, **kwargs)
+        response = super(RetryRequestTransport, self).send(request, **kwargs)
         return response
 
 # --Test Class -----------------------------------------------------------------
