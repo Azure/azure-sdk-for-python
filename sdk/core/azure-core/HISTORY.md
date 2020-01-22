@@ -1,6 +1,12 @@
 
 # Release History
 
+## 1.2.2 (Unreleased)
+
+### Bug fixes
+
+- Fixed a bug that sends None as request_id #9545
+
 ## 1.2.1 (2020-01-14)
 
 ### Bug fixes
