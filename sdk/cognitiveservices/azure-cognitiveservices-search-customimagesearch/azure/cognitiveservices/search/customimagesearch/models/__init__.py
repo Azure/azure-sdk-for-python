@@ -10,63 +10,63 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .image_object_py3 import ImageObject
-    from .images_py3 import Images
-    from .search_results_answer_py3 import SearchResultsAnswer
-    from .query_py3 import Query
-    from .answer_py3 import Answer
-    from .media_object_py3 import MediaObject
-    from .response_py3 import Response
-    from .thing_py3 import Thing
-    from .creative_work_py3 import CreativeWork
-    from .identifiable_py3 import Identifiable
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .web_page_py3 import WebPage
-    from .response_base_py3 import ResponseBase
+    from ._models_py3 import Answer
+    from ._models_py3 import CreativeWork
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Identifiable
+    from ._models_py3 import ImageObject
+    from ._models_py3 import Images
+    from ._models_py3 import MediaObject
+    from ._models_py3 import Query
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import SearchResultsAnswer
+    from ._models_py3 import Thing
+    from ._models_py3 import WebPage
 except (SyntaxError, ImportError):
-    from .image_object import ImageObject
-    from .images import Images
-    from .search_results_answer import SearchResultsAnswer
-    from .query import Query
-    from .answer import Answer
-    from .media_object import MediaObject
-    from .response import Response
-    from .thing import Thing
-    from .creative_work import CreativeWork
-    from .identifiable import Identifiable
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .web_page import WebPage
-    from .response_base import ResponseBase
-from .custom_image_search_api_enums import (
+    from ._models import Answer
+    from ._models import CreativeWork
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Identifiable
+    from ._models import ImageObject
+    from ._models import Images
+    from ._models import MediaObject
+    from ._models import Query
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import SearchResultsAnswer
+    from ._models import Thing
+    from ._models import WebPage
+from ._custom_image_search_client_enums import (
     ErrorCode,
     ErrorSubCode,
+    Freshness,
     ImageAspect,
     ImageColor,
-    Freshness,
     ImageContent,
-    ImageType,
     ImageLicense,
-    SafeSearch,
     ImageSize,
+    ImageType,
+    SafeSearch,
 )
 
 __all__ = [
-    'ImageObject',
-    'Images',
-    'SearchResultsAnswer',
-    'Query',
     'Answer',
-    'MediaObject',
-    'Response',
-    'Thing',
     'CreativeWork',
-    'Identifiable',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'WebPage',
+    'Identifiable',
+    'ImageObject',
+    'Images',
+    'MediaObject',
+    'Query',
+    'Response',
     'ResponseBase',
+    'SearchResultsAnswer',
+    'Thing',
+    'WebPage',
     'ErrorCode',
     'ErrorSubCode',
     'ImageAspect',

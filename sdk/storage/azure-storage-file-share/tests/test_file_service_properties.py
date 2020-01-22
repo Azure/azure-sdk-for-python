@@ -16,10 +16,11 @@ from azure.storage.fileshare import (
     RetentionPolicy,
 )
 
-from filetestcase import (
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.filetestcase import (
     FileTestCase,
-    record,
-    not_for_emulator,
+    LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 
@@ -27,13 +28,17 @@ from filetestcase import (
 
 
 class FileServicePropertiesTest(FileTestCase):
-    def setUp(self):
-        super(FileServicePropertiesTest, self).setUp()
-
-        url = self.get_file_url()
-        credential = self.get_shared_key_credential()
+    def _setup(self, storage_account, storage_account_key):
+        url = self.get_file_url(storage_account.name)
+        credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential)
 
+    def _teardown(self, FILE_PATH):
+        if os.path.isfile(FILE_PATH):
+            try:
+                os.remove(FILE_PATH)
+            except:
+                pass
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -66,9 +71,9 @@ class FileServicePropertiesTest(FileTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @record
-    def test_file_service_properties(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
 
         # Act
         resp = self.fsc.set_service_properties(
@@ -82,9 +87,9 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_cors_equal(props['cors'], list())
 
     # --Test cases per feature ---------------------------------------
-    @record
-    def test_set_hour_metrics(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -94,9 +99,9 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @record
-    def test_set_minute_metrics(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -107,9 +112,9 @@ class FileServicePropertiesTest(FileTestCase):
         received_props = self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @record
-    def test_set_cors(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -134,16 +139,17 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @record
-    def test_retention_no_days(self):
+    @GlobalStorageAccountPreparer()
+    def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @record
-    def test_too_many_cors_rules(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -155,5 +161,4 @@ class FileServicePropertiesTest(FileTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
+

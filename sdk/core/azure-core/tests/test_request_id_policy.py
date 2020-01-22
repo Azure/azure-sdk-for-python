@@ -6,7 +6,10 @@
 from azure.core.pipeline.policies import RequestIdPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest, PipelineContext
-from mock import patch
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from itertools import product
 import pytest
 
@@ -31,7 +34,7 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     if request_id_req != "_unset":
         pipeline_request.context.options['request_id'] = request_id_req
-    with patch('uuid.uuid1', return_value="VALUE"):
+    with mock.patch('uuid.uuid1', return_value="VALUE"):
         request_id_policy.on_request(pipeline_request)
 
     if request_id_req != "_unset":

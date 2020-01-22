@@ -10,44 +10,46 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .spelling_token_suggestion_py3 import SpellingTokenSuggestion
-    from .spelling_flagged_token_py3 import SpellingFlaggedToken
-    from .spell_check_py3 import SpellCheck
-    from .answer_py3 import Answer
-    from .response_py3 import Response
-    from .identifiable_py3 import Identifiable
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .response_base_py3 import ResponseBase
+    from ._models_py3 import Answer
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Identifiable
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import SpellCheck
+    from ._models_py3 import SpellingFlaggedToken
+    from ._models_py3 import SpellingTokenSuggestion
 except (SyntaxError, ImportError):
-    from .spelling_token_suggestion import SpellingTokenSuggestion
-    from .spelling_flagged_token import SpellingFlaggedToken
-    from .spell_check import SpellCheck
-    from .answer import Answer
-    from .response import Response
-    from .identifiable import Identifiable
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .response_base import ResponseBase
-from .spell_check_api_enums import (
-    ErrorType,
+    from ._models import Answer
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Identifiable
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import SpellCheck
+    from ._models import SpellingFlaggedToken
+    from ._models import SpellingTokenSuggestion
+from ._spell_check_client_enums import (
+    ActionType,
     ErrorCode,
     ErrorSubCode,
-    ActionType,
+    ErrorType,
+    Mode,
 )
 
 __all__ = [
-    'SpellingTokenSuggestion',
-    'SpellingFlaggedToken',
-    'SpellCheck',
     'Answer',
-    'Response',
-    'Identifiable',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
+    'Identifiable',
+    'Response',
     'ResponseBase',
+    'SpellCheck',
+    'SpellingFlaggedToken',
+    'SpellingTokenSuggestion',
     'ErrorType',
     'ErrorCode',
     'ErrorSubCode',
     'ActionType',
+    'Mode',
 ]
