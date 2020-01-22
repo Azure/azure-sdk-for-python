@@ -17,12 +17,13 @@ from azure.storage.fileshare import (
     RetentionPolicy,
 )
 from azure.storage.fileshare.aio import ShareServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
-    LogCaptured,
-    GlobalStorageAccountPreparer
+
+from filetestcase import (
+    FileTestCase,
+    TestMode,
+    record,
+    not_for_emulator,
 )
-from _shared.asynctestcase import AsyncStorageTestCase
 
 
 # ------------------------------------------------------------------------------
@@ -37,18 +38,14 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class FileServicePropertiesTest(AsyncStorageTestCase):
-    def _setup(self, storage_account, storage_account_key):
-        url = self.get_file_url(storage_account.name)
-        credential = storage_account_key
+class FileServicePropertiesTest(FileTestCase):
+    def setUp(self):
+        super(FileServicePropertiesTest, self).setUp()
+
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
         self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -81,10 +78,8 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def _test_file_service_properties_async(self):
+        # Arrange
 
         # Act
         resp = await self.fsc.set_service_properties(
@@ -97,11 +92,14 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self._assert_metrics_equal(props['minute_metrics'], Metrics())
         self._assert_cors_equal(props['cors'], list())
 
+    @record
+    def test_file_service_properties_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_file_service_properties_async())
+
     # --Test cases per feature ---------------------------------------
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def _test_set_hour_metrics_async(self):
+        # Arrange
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -111,10 +109,13 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_hour_metrics_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_hour_metrics_async())
+
+    async def _test_set_minute_metrics_async(self):
+        # Arrange
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -125,10 +126,13 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_minute_metrics_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_minute_metrics_async())
+
+    async def _test_set_cors_async(self):
+        # Arrange
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -152,13 +156,16 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         received_props = await self.fsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
+    @record
+    def test_set_cors_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_cors_async())
+
     # --Test cases for errors ---------------------------------------
 
 
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    async def _test_too_many_cors_rules_async(self):
+        # Arrange
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -166,3 +173,13 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             await self.fsc.set_service_properties(None, None, cors)
+
+    @record
+    def test_too_many_cors_rules_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_too_many_cors_rules_async())
+
+
+# ------------------------------------------------------------------------------
+if __name__ == '__main__':
+    unittest.main()

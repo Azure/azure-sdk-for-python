@@ -26,11 +26,11 @@ from azure.storage.fileshare import (
     generate_share_sas)
 
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
+from filetestcase import (
     FileTestCase,
+    TestMode,
+    record,
     LogCaptured,
-    GlobalStorageAccountPreparer
 )
 
 # ------------------------------------------------------------------------------
@@ -40,18 +40,23 @@ TEST_SHARE_PREFIX = 'share'
 # ------------------------------------------------------------------------------
 
 class StorageShareTest(FileTestCase):
-    def _setup(self, storage_account, storage_account_key):
-        file_url = self.get_file_url(storage_account.name)
-        credentials = storage_account_key
+    def setUp(self):
+        super(StorageShareTest, self).setUp()
+
+        file_url = self.get_file_url()
+        credentials = self.get_shared_key_credential()
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
+    def tearDown(self):
+        if not self.is_playback():
+            for share in self.test_shares:
+                try:
+                    self.fsc.delete_share(share, delete_snapshots=True)
+                except Exception as e:
+                    print("Delete failed", e)
+        return super(StorageShareTest, self).tearDown()
+
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)
@@ -72,9 +77,9 @@ class StorageShareTest(FileTestCase):
                 pass
 
     # --Test cases for shares -----------------------------------------
-    @GlobalStorageAccountPreparer()
-    def test_create_share(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_share(self):
+        # Arrange
         share = self._get_share_reference()
 
         # Act
@@ -84,9 +89,9 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_create_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_share_snapshot(self):
+        # Arrange
         share = self._get_share_reference()
 
         # Act
@@ -100,9 +105,9 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(snapshot['last_modified'])
         self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_create_snapshot_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_snapshot_with_metadata(self):
+        # Arrange
         share = self._get_share_reference()
         metadata = {"test1": "foo", "test2": "bar"}
         metadata2 = {"test100": "foo100", "test200": "bar200"}
@@ -113,10 +118,10 @@ class StorageShareTest(FileTestCase):
 
         share_props = share.get_share_properties()
         snapshot_client = ShareClient(
-            self.get_file_url(storage_account.name),
+            self.get_file_url(),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=self.settings.STORAGE_ACCOUNT_KEY
         )
         snapshot_props = snapshot_client.get_share_properties()
         # Assert
@@ -128,9 +133,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(snapshot_props.metadata, metadata2)
         self._delete_shares(share.share_name)
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_share_with_snapshots(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_share_with_snapshots(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
         snapshot = share.create_snapshot()
@@ -143,9 +148,9 @@ class StorageShareTest(FileTestCase):
         self.assertIsNone(deleted)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_snapshot(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
         snapshot = share.create_snapshot()
@@ -155,19 +160,19 @@ class StorageShareTest(FileTestCase):
             share.delete_share()
 
         snapshot_client = ShareClient(
-            self.get_file_url(storage_account.name),
+            self.get_file_url(),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=self.settings.STORAGE_ACCOUNT_KEY
         )
 
         deleted = snapshot_client.delete_share()
         self.assertIsNone(deleted)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_create_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_share_fail_on_exist(self):
+        # Arrange
         share = self._get_share_reference()
 
         # Act
@@ -177,9 +182,9 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_create_share_with_already_existing_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_share_with_already_existing_share_fail_on_exist(self):
+        # Arrange
         share = self._get_share_reference()
 
         # Act
@@ -191,9 +196,9 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_create_share_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_share_with_metadata(self):
+        # Arrange
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -206,9 +211,9 @@ class StorageShareTest(FileTestCase):
         self.assertDictEqual(md, metadata)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_create_share_with_quota(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_share_with_quota(self):
+        # Arrange
 
         # Act
         client = self._get_share_reference()
@@ -220,9 +225,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(props.quota, 1)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_share_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_share_exists(self):
+        # Arrange
         share = self._create_share()
 
         # Act
@@ -232,9 +237,9 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(exists)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_share_not_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_share_not_exists(self):
+        # Arrange
         share = self._get_share_reference()
 
         # Act
@@ -244,9 +249,9 @@ class StorageShareTest(FileTestCase):
         # Assert
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_share_snapshot_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_share_snapshot_exists(self):
+        # Arrange
         share = self._create_share()
         snapshot = share.create_snapshot()
 
@@ -258,9 +263,9 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(exists)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_share_snapshot_not_exists(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_share_snapshot_not_exists(self):
+        # Arrange
         share = self._create_share()
         made_up_snapshot = '2017-07-19T06:53:46.0000000Z'
 
@@ -272,9 +277,9 @@ class StorageShareTest(FileTestCase):
         # Assert
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_unicode_create_share_unicode_name(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_unicode_create_share_unicode_name(self):
+        # Arrange
         share_name = u'啊齄丂狛狜'
 
         # Act
@@ -286,9 +291,9 @@ class StorageShareTest(FileTestCase):
             # Assert
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_shares_no_options(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_shares_no_options(self):
+        # Arrange
         share = self._create_share()
         # Act
         shares = list(self.fsc.list_shares())
@@ -300,9 +305,9 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(shares, share.share_name)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_shares_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_shares_with_snapshot(self):
+        # Arrange
         #share = self._get_share_reference()
         share = self._create_share('random')
         snapshot1 = share.create_snapshot()
@@ -321,9 +326,9 @@ class StorageShareTest(FileTestCase):
         self._delete_shares()
 
 
-    @GlobalStorageAccountPreparer()
-    def test_list_shares_with_prefix(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_shares_with_prefix(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -337,9 +342,9 @@ class StorageShareTest(FileTestCase):
         self.assertIsNone(shares[0].metadata)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_shares_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_shares_with_include_metadata(self):
+        # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         share = self._get_share_reference()
         share.create_share(metadata=metadata)
@@ -356,9 +361,9 @@ class StorageShareTest(FileTestCase):
         self.assertDictEqual(shares[0].metadata, metadata)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_shares_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_shares_with_num_results_and_marker(self):
+        # Arrange
         prefix = 'listshare'
         share_names = []
         for i in range(0, 4):
@@ -385,9 +390,9 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(shares2, share_names[3])
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_share_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_share_metadata(self):
+        # Arrange
         share = self._create_share()
         metadata = {'hello': 'world', 'number': '42'}
 
@@ -399,9 +404,9 @@ class StorageShareTest(FileTestCase):
         self.assertDictEqual(md, metadata)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_get_share_metadata(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_get_share_metadata(self):
+        # Arrange
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -414,9 +419,9 @@ class StorageShareTest(FileTestCase):
         self.assertDictEqual(md, metadata)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_get_share_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_get_share_metadata_with_snapshot(self):
+        # Arrange
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -431,9 +436,9 @@ class StorageShareTest(FileTestCase):
         self.assertDictEqual(md, metadata)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_share_properties(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_share_properties(self):
+        # Arrange
         share = self._create_share()
         share.set_share_quota(1)
 
@@ -445,9 +450,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(props.quota, 1)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_share_with_existing_share(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_share_with_existing_share(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -458,9 +463,9 @@ class StorageShareTest(FileTestCase):
         self.assertIsNone(deleted)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_share_with_existing_share_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_share_with_existing_share_fail_not_exist(self):
+        # Arrange
         client = self._get_share_reference()
 
         # Act
@@ -471,9 +476,9 @@ class StorageShareTest(FileTestCase):
             log_as_str = log_captured.getvalue()
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_share_with_non_existing_share(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_share_with_non_existing_share(self):
+        # Arrange
         client = self._get_share_reference()
 
         # Act
@@ -485,9 +490,9 @@ class StorageShareTest(FileTestCase):
             self.assertTrue('ERROR' not in log_as_str)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_share_with_non_existing_share_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_share_with_non_existing_share_fail_not_exist(self):
+        # Arrange
         client = self._get_share_reference()
 
         # Act
@@ -498,9 +503,9 @@ class StorageShareTest(FileTestCase):
             log_as_str = log_captured.getvalue()
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_get_share_stats(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_get_share_stats(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -511,9 +516,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(share_usage, 0)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_share_acl(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_share_acl(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -525,9 +530,9 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(acl)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_share_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_share_acl_with_empty_signed_identifiers(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -540,9 +545,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_share_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_share_acl_with_signed_identifiers(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -563,9 +568,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_share_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_set_share_acl_too_many_ids(self):
+        # Arrange
         share = self._get_share_reference()
         share.create_share()
 
@@ -583,9 +588,9 @@ class StorageShareTest(FileTestCase):
         )
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_directories_and_files(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_directories_and_files(self):
+        # Arrange
         share = self._create_share()
         dir0 = share.get_directory_client()
         dir0.upload_file('file1', 'data1')
@@ -607,9 +612,9 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'file1')
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_directories_and_files_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_directories_and_files_with_snapshot(self):
+        # Arrange
         share_name = self._create_share()
         dir1 = share_name.get_directory_client('dir1')
         dir1.create_directory()
@@ -634,9 +639,9 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'dir2')
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_directories_and_files_with_num_results(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_directories_and_files_with_num_results(self):
+        # Arrange
         share_name = self._create_share()
         dir1 = share_name.create_directory('dir1')
         root = share_name.get_directory_client()
@@ -656,9 +661,9 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(result, 'filea1')
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_directories_and_files_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_directories_and_files_with_num_results_and_marker(self):
+        # Arrange
         share_name = self._create_share()
         dir1 = share_name.get_directory_client('dir1')
         dir1.create_directory()
@@ -686,9 +691,9 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(generator2.continuation_token, None)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_list_directories_and_files_with_prefix(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_list_directories_and_files_with_prefix(self):
+        # Arrange
         share = self._create_share()
         dir1 = share.create_directory('dir1')
         share.create_directory('dir1/pref_dir3')
@@ -710,13 +715,13 @@ class StorageShareTest(FileTestCase):
         self.assertNamedItemInContainer(resp, 'pref_dir3')
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_shared_access_share(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_shared_access_share(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
+        if TestMode.need_recording_file(self.test_mode):
             return
 
-        self._setup(storage_account, storage_account_key)
+        # Arrange
         file_name = 'file1'
         dir_name = 'dir1'
         data = b'hello world'
@@ -733,7 +738,7 @@ class StorageShareTest(FileTestCase):
             permission=ShareSasPermissions(read=True),
         )
         sas_client = ShareFileClient(
-            self.get_file_url(storage_account.name),
+            self.get_file_url(),
             share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
             credential=token,
@@ -748,9 +753,8 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(data, response.content)
         self._delete_shares()
 
-    @GlobalStorageAccountPreparer()
-    def test_create_permission_for_share(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_create_permission_for_share(self):
         user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
                                 "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
                                 "S-1-5-21-397955417-626881126-188441444-3053964)"
@@ -766,14 +770,13 @@ class StorageShareTest(FileTestCase):
         # server returned permission
         self.assertEqual(permission_key, permission_key2)
 
-    @GlobalStorageAccountPreparer()
-    def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
+    @record
+    def test_transport_closed_only_once(self):
+        if TestMode.need_recording_file(self.test_mode):
             return
-        self._setup(storage_account, storage_account_key)
         transport = RequestsTransport()
-        url = self.get_file_url(storage_account.name)
-        credential = storage_account_key
+        url = self.get_file_url()
+        credential = self.get_shared_key_credential()
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
         with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
@@ -784,9 +787,9 @@ class StorageShareTest(FileTestCase):
             fsc.get_service_properties()
             assert transport.session is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_directory_from_share(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @record
+    def test_delete_directory_from_share(self):
+        # Arrange
         share = self._create_share()
         dir1 = share.create_directory('dir1')
         share.create_directory('dir2')
