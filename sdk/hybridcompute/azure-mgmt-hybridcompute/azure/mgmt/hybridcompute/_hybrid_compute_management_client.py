@@ -32,9 +32,7 @@ class HybridComputeManagementClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -46,7 +44,7 @@ class HybridComputeManagementClient(SDKClient):
         super(HybridComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-08-02-preview'
+        self.api_version = '2019-12-12'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
