@@ -16,11 +16,11 @@ import json
 # 2. Microsoft Azure Cosmos
 #    pip install azure-cosmos==4.0.0b6
 # ----------------------------------------------------------------------------------------------------------
-# Sample - how to get and use resource token that allows restricted access to data  
+# Sample - how to get and use resource token that allows restricted access to data
 # ----------------------------------------------------------------------------------------------------------
-# Note: 
+# Note:
 #
-# This sample creates a Container to your database account. 
+# This sample creates a Container to your database account.
 # Each time a Container is created the account will be billed for 1 hour of usage based on
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
@@ -39,6 +39,7 @@ USERNAME, USERNAME_2 = "user", "user2"
 CONTAINER_ALL_PERMISSION = "CONTAINER_ALL_PERMISSION"
 PARTITION_READ_PERMISSION = "PARTITION_READ_PERMISSION"
 DOCUMENT_ALL_PERMISSION = "DOCUMENT_ALL_PERMISSION"
+
 
 def create_user_if_not_exists(db, username):
     try:
@@ -64,13 +65,12 @@ def token_client_upsert(container, username, item_id):
             {
                 "id": item_id,
                 "username": username,
-                "msg": "This is a message for " + username 
+                "msg": "This is a message for " + username,
             }
         )
     except exceptions.CosmosHttpResponseError:
-        print(
-            "Error in upserting item with id '{0}'.".format(item_id)
-        )  
+        print("Error in upserting item with id '{0}'.".format(item_id))
+
 
 def token_client_read_all(container):
     try:
@@ -81,6 +81,7 @@ def token_client_read_all(container):
         print("Cannot read items--container '{0}' not found.".format(container.id))
     except exceptions.CosmosHttpResponseError:
         print("Error in reading items in container '{0}'.".format(container.id))
+
 
 def token_client_read_item(container, username, item_id):
     try:
@@ -139,15 +140,15 @@ def run_sample():
         }
 
         permission = create_permission_if_not_exists(user, permission_definition)
-        token = {} 
-        token[container.id] = permission.properties["_token"] 
+        token = {}
+        token[container.id] = permission.properties["_token"]
 
         # Use token to connect to database
         token_client = cosmos_client.CosmosClient(HOST, token)
         token_db = token_client.get_database_client(DATABASE_ID)
         token_container = token_db.get_container_client(CONTAINER_ID)
 
-        ITEM_1_ID, ITEM_2_ID, ITEM_3_ID  = "1", "2", "3"
+        ITEM_1_ID, ITEM_2_ID, ITEM_3_ID = "1", "2", "3"
 
         # Update or insert item if not exists
         token_client_upsert(token_container, USERNAME, ITEM_1_ID)
@@ -166,19 +167,18 @@ def run_sample():
         # Delete an item
         token_client_delete(token_container, USERNAME, ITEM_2_ID)
 
-    
-        # Give user read-only permission, for a specific partition 
+        # Give user read-only permission, for a specific partition
         user_2 = create_user_if_not_exists(db, USERNAME_2)
         permission_definition = {
             "id": PARTITION_READ_PERMISSION,
             "permissionMode": documents.PermissionMode.Read,
             "resource": container.container_link,
-            "resourcePartitionKey": [USERNAME_2]
+            "resourcePartitionKey": [USERNAME_2],
         }
         permission = create_permission_if_not_exists(user_2, permission_definition)
         read_token = {}
         read_token[container.id] = permission.properties["_token"]
- 
+
         # Use token to connect to database
         token_client = cosmos_client.CosmosClient(HOST, read_token)
         token_db = token_client.get_database_client(DATABASE_ID)
@@ -193,15 +193,17 @@ def run_sample():
         # Can't upsert or delete since it's read-only
         token_client_upsert(token_container, USERNAME_2, ITEM_3_ID)
 
-
         # Give user CRUD permissions, only for a specific item
-        user_2.delete_permission(PARTITION_READ_PERMISSION)
+        item_3 = token_container.read_item(item=ITEM_3_ID, partition_key=USERNAME_2)
+        permission_list = list(user_2.list_permissions())
+        for p in permission_list:
+            user_2.delete_permission(p.get('id'))
         assert len(list(user_2.list_permissions())) == 0
 
         permission_definition = {
             "id": DOCUMENT_ALL_PERMISSION,
             "permissionMode": documents.PermissionMode.All,
-            "resource": "dbs/FCJ5AA==/colls/FCJ5APInZmE=/docs/FCJ5APInZmELAAAAAAAAAA==/" #this identifies the item with id "3"
+            "resource": item_3.get('_self') #this identifies the item with id "3"
         }
 
         permission = create_permission_if_not_exists(user_2, permission_definition)
@@ -220,7 +222,7 @@ def run_sample():
         # Fails too, for same reason
         token_client_read_item(token_container, USERNAME, ITEM_1_ID)
 
-        # Ok to perform operations on that specific item 
+        # Ok to perform operations on that specific item
         token_client_read_item(token_container, USERNAME_2, ITEM_3_ID)
         token_client_delete(token_container, USERNAME_2, ITEM_3_ID)
 
