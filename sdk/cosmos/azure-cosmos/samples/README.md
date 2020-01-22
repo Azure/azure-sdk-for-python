@@ -55,7 +55,7 @@ The following are code samples that show common scenario operations with the Azu
 1. Install the latest beta version of Azure Cosmos that the samples use:
 
 ```bash
-pip install azure-cosmos==4.0.0b6
+pip install --pre azure-cosmos
 ```
 
 2. Clone or download this sample repository.
@@ -69,5 +69,5 @@ pip install azure-cosmos==4.0.0b6
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b6/azure.cosmos.html) to learn more about
+Check out the [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Cosmos.html) to learn more about
 what you can do with the Azure Cosmos DB SQL API client library.
