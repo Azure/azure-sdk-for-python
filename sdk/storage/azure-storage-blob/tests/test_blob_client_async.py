@@ -549,6 +549,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_closing_pipeline_client(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -560,9 +561,10 @@ class StorageClientTestAsync(AsyncStorageTestCase):
             # Assert
             async with service:
                 assert hasattr(service, 'close')
-                service.close()
+                await service.close()
 
     @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_closing_pipeline_client_simple(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -570,6 +572,6 @@ class StorageClientTestAsync(AsyncStorageTestCase):
             # Act
             service = client(
                 self.account_url(storage_account, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
-            service.close()
+            await service.close()
                 
 # ------------------------------------------------------------------------------
