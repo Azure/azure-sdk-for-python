@@ -23,16 +23,14 @@ class AzureCliCredential(object):
     _CLI_LOGIN_ERR = "ERROR: Please run 'az login' to setup account.\r\n"
 
     def get_token(self, *scopes, **kwargs): # pylint:disable=unused-argument
-        command = ['az', 'account', 'get-access-token']
-        command2 = 'az account get-access-token'
+        command = 'az account get-access-token'
         
         if scopes:
             resource = scopes[0]
             if resource.endswith(self._DEFAULT_PREFIX):
                 resource = resource[:-len(self._DEFAULT_PREFIX)]
 
-            command.extend(['--resource', resource])
-            command2 = ' '.join([command2, '--resource', resource])
+            command = ' '.join([command, '--resource', resource])
 
         try:
             get_access_token_stdout = self._get_cli_access_token(command if _IS_WINDOWS else command2)
