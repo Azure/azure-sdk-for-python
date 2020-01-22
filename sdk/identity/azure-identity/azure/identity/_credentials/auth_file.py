@@ -30,7 +30,9 @@ class AuthFileCredential(object):
         if self._credential is None:
             try:
                 self._credential = self._build_credential_for_creds_file(_parse_credentials_file(self._file_path))
-            except Exception as e:
+            except IOError as e:
+                raise ClientAuthenticationError('No file found on the given path')
+            except Exception as parse_e:
                 raise ClientAuthenticationError('Error parsing SDK Auth File')
 
     def _build_credential_for_creds_file(self, auth_data):
