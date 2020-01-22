@@ -17,7 +17,7 @@ from .._user_agent import USER_AGENT
 if TYPE_CHECKING:
     try:
         # pylint:disable=unused-import
-        from azure.core.credentials import TokenCredential
+        from azure.core.credentials_async import AsyncTokenCredential
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
@@ -27,7 +27,7 @@ class AsyncKeyVaultClientBase:
     """Base class for async Key Vault clients"""
 
     @staticmethod
-    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
+    def _create_config(credential: "AsyncTokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
@@ -56,10 +56,10 @@ class AsyncKeyVaultClientBase:
 
         return config
 
-    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         if not credential:
             raise ValueError(
-                "credential should be an object supporting the TokenCredential protocol, "
+                "credential should be an object supporting the AsyncTokenCredential protocol, "
                 "such as a credential from azure-identity"
             )
         if not vault_url:
@@ -104,3 +104,13 @@ class AsyncKeyVaultClientBase:
     @property
     def vault_url(self) -> str:
         return self._vault_url
+
+    async def __aenter__(self) -> "AsyncKeyVaultClientBase":
+        await self._client._pipeline.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
+
+    async def close(self):
+        await self._client._pipeline.__aexit__()
