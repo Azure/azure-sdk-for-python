@@ -433,16 +433,25 @@ def storage_account():
                     storage_account = StorageAccount(
                         location=location,
                     )
+
+                    def build_service_endpoint(service):
+                        return "{}://{}.{}.{}".format(
+                            storage_connection_string_parts.get("DefaultEndpointsProtocol", "https"),
+                            storage_connection_string_parts["AccountName"],
+                            service,
+                            storage_connection_string_parts["EndpointSuffix"], # Let it fail if we don't even have that
+                        )
+
                     storage_account.name = storage_name
                     storage_account.id = storage_name
                     storage_account.primary_endpoints=Endpoints()
-                    storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", None)
-                    storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", None)
-                    storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", None)
+                    storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", build_service_endpoint("blob"))
+                    storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", build_service_endpoint("queue"))
+                    storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", build_service_endpoint("file"))
                     storage_account.secondary_endpoints=Endpoints()
-                    storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", None)
-                    storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", None)
-                    storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", None)
+                    storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", build_service_endpoint("blob"))
+                    storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", build_service_endpoint("queue"))
+                    storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", build_service_endpoint("file"))
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
