@@ -52,8 +52,8 @@ class StorageAppendBlobTest(StorageTestCase):
             except:
                 pass
 
-    def _get_blob_reference(self):
-        return self.get_resource_name(TEST_BLOB_PREFIX)
+    def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
+        return self.get_resource_name(prefix)
 
     def _create_blob(self, bsc):
         blob_name = self._get_blob_reference()
@@ -692,7 +692,7 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
-                                  if_unmodified_since=source_properties.get('last_modified'))
+                                  if_unmodified_since=source_properties.get('last_modified') + timedelta(minutes=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
