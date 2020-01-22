@@ -16,12 +16,6 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 
-def _microseconds_parsed(timestamp):
-    _index = timestamp.index('.')
-    _microseconds = timestamp[_index + 1:]
-    return '.'.join([timestamp[:_index]] + ['{:06d}'.format(int(_microseconds))])
-
-
 class AzureCliCredential(object):
 
     _DEFAULT_PREFIX = "/.default"
@@ -44,8 +38,7 @@ class AzureCliCredential(object):
         get_access_token_object = json.loads(get_access_token_stdout)
         access_token = get_access_token_object['accessToken']
         expires_on = int((
-            datetime.strptime(
-                _microseconds_parsed(get_access_token_object['expiresOn']), '%Y-%m-%d %H:%M:%S.%f')
+            datetime.strptime(get_access_token_object['expiresOn'], '%Y-%m-%d %H:%M:%S.%f')
                 - datetime.now()
             ).total_seconds() + time.time())
 
@@ -60,6 +53,5 @@ class AzureCliCredential(object):
             raise ClientAuthenticationError(self._CLI_NOT_INSTALLED_ERR)
         elif return_code == 1:
             raise ClientAuthenticationError(self._CLI_LOGIN_ERR)
-        # elif : need to handle other/unexcepted error?
         
         return stdout
