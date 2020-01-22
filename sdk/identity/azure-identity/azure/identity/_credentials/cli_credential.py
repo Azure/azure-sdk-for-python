@@ -2,9 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import platform
-_IS_WINDOWS = platform.system() == 'Windows'
-
 import json
 import time
 from datetime import datetime
@@ -33,7 +30,7 @@ class AzureCliCredential(object):
             command = ' '.join([command, '--resource', resource])
 
         try:
-            get_access_token_stdout = self._get_cli_access_token(command if _IS_WINDOWS else command2)
+            get_access_token_stdout = self._get_cli_access_token(command)
             get_access_token_object = json.loads(get_access_token_stdout)
             access_token = get_access_token_object['accessToken']
         except ClientAuthenticationError:
