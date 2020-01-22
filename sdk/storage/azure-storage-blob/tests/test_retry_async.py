@@ -10,7 +10,7 @@ import asyncio
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
-    ServiceResponseError,
+    AzureError,
     ClientAuthenticationError
 )
 from azure.core.pipeline.transport import (
@@ -45,6 +45,18 @@ class AiohttpTestTransport(AioHttpTransport):
         if not isinstance(response.headers, CIMultiDictProxy):
             response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
             response.content_type = response.headers.get("content-type")
+        return response
+
+class AiohttpRetryTestTransport(AioHttpTransport):
+    """Mock transport for testing retry
+    """
+    def __init__(self, *args, **kwargs):
+        super(AiohttpRetryTestTransport, self).__init__(*args, **kwargs)
+        self.count = 0
+
+    async def send(self, request, **config):
+        self.count += 1
+        response = await super(AiohttpRetryTestTransport, self).send(request, **config)
         return response
 
 
@@ -137,20 +149,23 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
-
+        retry_transport = AiohttpRetryTestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
-        import aiohttp
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport(connection_timeout=11, read_timeout=0.000000000001))
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=retry_transport)
 
         assert service._client._client._pipeline._transport.connection_config.timeout == 11
         assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
 
         # Act
         try:
-            with self.assertRaises(ServiceResponseError) as error:
+            with self.assertRaises(AzureError) as error:
                 await service.create_container(container_name)
+            
+
             # Assert
+            # 3 retries + 1 original == 4
+            assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue(
                 'Timeout on reading data from socket' in str(error.exception),

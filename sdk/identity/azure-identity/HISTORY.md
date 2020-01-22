@@ -1,4 +1,14 @@
-# 2019-11-27 1.1.0
+# Release History
+
+## 1.2.0 (2020-01-14)
+
+- All credential pipelines include `ProxyPolicy`
+([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
+- Async credentials are async context managers and have an async `close` method
+([#9090](https://github.com/Azure/azure-sdk-for-python/pull/9090))
+
+
+## 1.1.0 (2019-11-27)
 
 - Constructing `DefaultAzureCredential` no longer raises `ImportError` on Python
 3.8 on Windows ([8294](https://github.com/Azure/azure-sdk-for-python/pull/8294))
@@ -12,7 +22,7 @@ arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
 ([8689](https://github.com/Azure/azure-sdk-for-python/pull/8689))
 
 
-# 2019-11-05 1.0.1
+## 1.0.1 (2019-11-05)
 
 - `ClientCertificateCredential` uses application and tenant IDs correctly
 ([8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))

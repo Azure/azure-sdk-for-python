@@ -3,13 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - f03199d2-d9a6-11e9-96a0-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:57:42 GMT
+      - Wed, 15 Jan 2020 23:50:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -18,17 +14,10 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Tue, 17 Sep 2019 23:57:42 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Transfer-Encoding
-      : chunked
+      date: Wed, 15 Jan 2020 23:50:50 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
       x-ms-error-code: ShareNotFound
-      x-ms-request-id: c348f582-701a-00d9-68b3-6d2b71000000
       x-ms-version: '2019-02-02'
     status:
       code: 404
@@ -37,7 +26,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utsharee2101c80/filee2101c80
         - ''
         - ''

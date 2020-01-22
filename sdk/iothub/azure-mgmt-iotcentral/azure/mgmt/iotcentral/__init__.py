@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .iot_central_client import IotCentralClient
-from .version import VERSION
+from ._configuration import IotCentralClientConfiguration
+from ._iot_central_client import IotCentralClient
+__all__ = ['IotCentralClient', 'IotCentralClientConfiguration']
 
-__all__ = ['IotCentralClient']
+from .version import VERSION
 
 __version__ = VERSION
 

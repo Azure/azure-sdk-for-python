@@ -8,10 +8,8 @@ from collections import namedtuple
 from azure_devtools.scenario_tests import ReplayableTest
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests.exceptions import AzureTestError
-
 from . import AzureMgmtPreparer, ResourceGroupPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
-
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -22,6 +20,7 @@ FakeCognitiveServicesAccount = namedtuple(
 
 
 class CognitiveServiceTest(AzureTestCase):
+    """Can be used for Track 1 tests"""
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
@@ -31,16 +30,18 @@ class CognitiveServiceTest(AzureTestCase):
 class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
     def __init__(self,
                  name_prefix='',
-                 sku='S0', location='westus', kind='cognitiveservices',
+                 sku='S0', location='westus2', kind='cognitiveservices',
                  parameter_name='cognitiveservices_account',
                  legacy=False,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None,
+                 random_name_enabled=True):
         super(CognitiveServicesAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs)
+                                                     client_kwargs=client_kwargs,
+                                                     random_name_enabled=random_name_enabled)
         self.location = location
         self.sku = sku
         self.kind = kind
@@ -92,6 +93,6 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         try:
             return kwargs.get(self.resource_group_parameter_name)
         except KeyError:
-            template = 'To create a storage account a resource group is required. Please add ' \
-                       'decorator @{} in front of this storage account preparer.'
+            template = 'To create a cognitive services account a resource group is required. Please add ' \
+                       'decorator @{} in front of this cognitive services account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))

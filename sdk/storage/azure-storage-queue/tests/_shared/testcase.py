@@ -364,19 +364,14 @@ class LogCaptured(object):
 @pytest.fixture(scope="session")
 def storage_account():
     test_case = AzureMgmtTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer()
-    storage_preparer = StorageAccountPreparer(name_prefix='pyacrstorage')
-
-    # Set what the decorator is supposed to set for us
-    for prep in [rg_preparer, storage_preparer]:
-        prep.live_test = False
-        prep.test_class_instance = test_case
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
+    storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
 
     # Create
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
     location = os.environ.get("AZURE_LOCATION", "westus")
 
-    existing_rg_name = os.environ.get("AZURE_RESOURCE_GROUP_NAME")
+    existing_rg_name = os.environ.get("AZURE_RESOURCEGROUP_NAME")
     existing_storage_name = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
     existing_storage_key = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
     storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
@@ -386,8 +381,8 @@ def storage_account():
 
     try:
         if i_need_to_create_rg:
-            rg_name = create_random_name("pystorage", 24)
-            rg = rg_preparer.create_resource(rg_name, location=location)['resource_group']
+            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+            rg = rg_kwargs['resource_group']
         else:
             rg_name = existing_rg_name or "no_rg_needed"
             rg = FakeResource(
@@ -446,14 +441,10 @@ def storage_account():
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
-                storage_name = create_random_name("pyacrstorage", 24)
-                storage_dict = storage_preparer.create_resource(
-                    storage_name,
-                    resource_group=rg
-                )
-                storage_account = storage_dict['storage_account']
-                storage_key = storage_dict['storage_account_key']
-                storage_connection_string = storage_dict['storage_account_cs']
+                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                storage_account = storage_kwargs['storage_account']
+                storage_key = storage_kwargs['storage_account_key']
+                storage_connection_string = storage_kwargs['storage_account_cs']
 
             StorageTestCase._STORAGE_ACCOUNT = storage_account
             StorageTestCase._STORAGE_KEY = storage_key
@@ -465,9 +456,6 @@ def storage_account():
                     storage_name,
                     resource_group=rg
                 )
-            StorageTestCase._STORAGE_ACCOUNT = None
-            StorageTestCase._STORAGE_KEY = None
-            StorageTestCase._STORAGE_CONNECTION_STRING = None
     finally:
         if i_need_to_create_rg:
             rg_preparer.remove_resource(rg_name)

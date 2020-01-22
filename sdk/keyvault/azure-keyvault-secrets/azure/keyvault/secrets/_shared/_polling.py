@@ -16,7 +16,6 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from azure.core.pipeline.transport._base import HttpResponse  # type: ignore
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
@@ -92,6 +91,8 @@ class RecoverDeletedPollingMethod(PollingMethod):
         except ResourceNotFoundError:
             pass
         except HttpResponseError as e:
+            # If we are polling on get_deleted_* and we don't have get permissions, we will get
+            # ResourceNotFoundError until the resource is recovered, at which point we'll get a 403.
             if e.status_code == 403:
                 self._status = self._finished_status
             else:

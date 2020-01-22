@@ -8,7 +8,10 @@ import pytest
 import unittest
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core import MatchConditions
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
+    ResourceModifiedError
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient
 from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
 from testcase import (
@@ -82,6 +85,43 @@ class DirectoryTest(StorageTestCase):
         self.assertTrue(created)
 
     @record
+    def test_using_oauth_token_credential_to_create_directory(self):
+        # generate a token with directory level create permission
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        response = directory_client.create_directory()
+        self.assertIsNotNone(response)
+
+    @record
+    def test_create_directory_with_match_conditions(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Act
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        created = directory_client.create_directory(match_condition=MatchConditions.IfMissing)
+
+        # Assert
+        self.assertTrue(created)
+
+    @record
+    def test_create_directory_with_permission(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Act
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        created = directory_client.create_directory(permissions="rwxr--r--", umask="0000")
+
+        prop = directory_client.get_access_control()
+
+        # Assert
+        self.assertTrue(created)
+        self.assertEqual(prop['permissions'], 'rwxr--r--')
+
+    @record
     def test_create_directory_with_content_settings(self):
         # Arrange
         directory_name = self._get_directory_reference()
@@ -120,6 +160,18 @@ class DirectoryTest(StorageTestCase):
         response = directory_client.delete_directory()
         # Assert
         self.assertIsNone(response)
+
+    @record
+    def test_delete_directory_with_if_modified_since(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        prop = directory_client.get_directory_properties()
+
+        with self.assertRaises(ResourceModifiedError):
+            directory_client.delete_directory(if_modified_since=prop['last_modified'])
 
     @record
     def test_create_sub_directory_and_delete_sub_directory(self):
@@ -161,6 +213,33 @@ class DirectoryTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @record
+    def test_set_access_control_with_acl(self):
+        directory_name = self._get_directory_reference()
+        metadata = {'hello': 'world', 'number': '42'}
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(metadata=metadata)
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        directory_client.set_access_control(acl=acl)
+        access_control = directory_client.get_access_control()
+
+        # Assert
+
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_set_access_control_if_none_modified(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        resp = directory_client.create_directory()
+
+        response = directory_client.set_access_control(permissions='0777', etag=resp['etag'],
+                                                       match_condition=MatchConditions.IfNotModified)
+        # Assert
+        self.assertIsNotNone(response)
+
+    @record
     def test_get_access_control(self):
         directory_name = self._get_directory_reference()
         metadata = {'hello': 'world', 'number': '42'}
@@ -171,6 +250,18 @@ class DirectoryTest(StorageTestCase):
         response = directory_client.get_access_control()
         # Assert
         self.assertIsNotNone(response)
+
+    @record
+    def test_get_access_control_with_match_conditions(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        resp = directory_client.create_directory(permissions='0777', umask='0000')
+
+        # Act
+        response = directory_client.get_access_control(etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
+        # Assert
+        self.assertIsNotNone(response)
+        self.assertEquals(response['permissions'], 'rwxrwxrwx')
 
     @record
     def test_rename_from(self):
@@ -247,6 +338,34 @@ class DirectoryTest(StorageTestCase):
             source_directory_client.get_directory_properties()
 
         self.assertEquals(res.url, destination_directory_client.url)
+
+    @record
+    def test_rename_with_none_existing_destination_condition_and_source_unmodified_condition(self):
+        non_existing_dir_name = "nonexistingdir"
+
+        # create a file system1
+        destination_file_system_name = self._get_directory_reference("destfilesystem")
+        fs_client = self.dsc.get_file_system_client(destination_file_system_name)
+        fs_client.create_file_system()
+
+        # create a dir2 under file system2
+        source_name = "source"
+        source_directory_client = self._create_directory_and_get_directory_client(directory_name=source_name)
+        source_directory_client = source_directory_client.create_sub_directory("subdir")
+
+        # rename dir2 under file system2 to a non existing directory under file system1,
+        # when dir1 does not exist and dir2 wasn't modified
+        etag = source_directory_client.get_directory_properties()['etag']
+        res = source_directory_client.rename_directory('/' + destination_file_system_name + '/' + non_existing_dir_name,
+                                                       match_condition=MatchConditions.IfMissing,
+                                                       source_etag=etag,
+                                                       source_match_condition=MatchConditions.IfNotModified)
+
+        # the source directory has been renamed to destination directory, so it cannot be found
+        with self.assertRaises(HttpResponseError):
+            source_directory_client.get_directory_properties()
+
+        self.assertEquals(non_existing_dir_name, res.path_name)
 
     @record
     def test_rename_to_an_non_existing_directory_in_another_file_system(self):

@@ -3,13 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 51c0baf4-d9a6-11e9-859a-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:53:17 GMT
+      - Wed, 15 Jan 2020 23:44:20 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -18,22 +14,11 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Tue, 17 Sep 2019 23:53:16 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D73BCA35EEB8BB"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Tue, 17 Sep 2019 23:53:17 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: f244e9a9-601a-006c-50b3-6db863000000
+      content-length: '0'
+      date: Wed, 15 Jan 2020 23:44:20 GMT
+      etag: '"0x8D79A14D7B54687"'
+      last-modified: Wed, 15 Jan 2020 23:44:20 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -42,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshared07a231f
         - restype=share
         - ''
@@ -50,13 +35,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 51cc989e-d9a6-11e9-9e5e-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:53:17 GMT
+      - Wed, 15 Jan 2020 23:44:20 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -64,22 +45,13 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:f244e9ac-601a-006c-51b3-6db863000000\nTime:2019-09-17T23:53:17.0814639Z</Message></Error>"
+        specified resource does not exist.\nRequestId:bf9fc753-701a-0071-01fd-cb90ac000000\nTime:2020-01-15T23:44:20.5999987Z</Message></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '223'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Tue, 17 Sep 2019 23:53:16 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '223'
+      content-type: application/xml
+      date: Wed, 15 Jan 2020 23:44:20 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
-      x-ms-request-id: f244e9ac-601a-006c-51b3-6db863000000
       x-ms-version: '2019-02-02'
     status:
       code: 404
@@ -88,7 +60,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.file.core.windows.net
+        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
         - /utshared07a231f/dir1
         - restype=directory
         - ''

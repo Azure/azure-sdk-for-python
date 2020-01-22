@@ -158,7 +158,7 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
             versions = [version]
         else:
             _LOGGER.info(f"Download versions of {package_name} on PyPI")
-            from .pypi import PyPIClient
+            from pypi_tools.pypi import PyPIClient
             client = PyPIClient()
             versions = [str(v) for v in client.get_ordered_versions(package_name)]
             _LOGGER.info(f"Got {versions}")

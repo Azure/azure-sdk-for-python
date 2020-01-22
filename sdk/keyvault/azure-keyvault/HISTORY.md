@@ -1,6 +1,6 @@
-## Release History
+# Release History
 
-### 2019-10-31 4.0.0
+## 4.0.0 (2019-10-31)
 
 **Disclaimer**
 
@@ -13,17 +13,17 @@ Certificates scenarios are in preview with the additional package `azure-keyvaul
 
 All code needs to be adapted to use the new namespaces. See individual package readme for details.
 
-### 2018-08-07 1.1.0
+## 1.1.0 (2018-08-07)
 
 * Adding support for multi-api and API profiles
 
-### 2018-06-27 1.0.0
+## 1.0.0 (2018-06-27)
 
 * Moving azure-keyvault to stable API version 7.0
 * Adding support for EC certificate create and import
 * Renaming curve SECP256K1 and algorithm ECDSA256 to P-256K and ES256K respectively
 
-### 2018-04-10 1.0.0b1
+## 1.0.0b1 (2018-04-10)
 
 * Upgraded to autorest 3.0 generated code
 
@@ -53,7 +53,7 @@ This version uses a next-generation code generator that *might* introduce breaki
   - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
 
 
-### 2018-03-28 1.0.0a2
+## 1.0.0a2 (2018-03-28)
 
 * Upgrading to API version 7.0-preview
 * Adding elliptic curve key support
@@ -62,46 +62,46 @@ This version uses a next-generation code generator that *might* introduce breaki
 * Adding certificate backup and restore support
 * Adding certificate transparency
 
-### 2018-01-25 1.0.0a1
+## 1.0.0a1 (2018-01-25)
 
 * Added message encryption support for message encryption enabled vaults
 
-### 2017-09-22 0.3.7
+## 0.3.7 (2017-09-22)
 
 * Workaround for Azure Stack ADFS authentication issue https://github.com/Azure/azure-cli/issues/4448
 
-### 2017-08-16 0.3.6
+## 0.3.6 (2017-08-16)
 
 * Updated KeyVaultClient to accept both KeyVaultAuthentication and azure.common.credentials instances for authentication
 
-### 2017-06-23 0.3.5
+## 0.3.5 (2017-06-23)
 
 * Fix: https://github.com/Azure/azure-sdk-for-python/issues/1159
 * KeyVaultId refactoring
   - adding object specific id classes to make usage more uniform with other key vault SDKs
   - added storage account id and storage sas definition id parsing and formatting
 
-### 2017-06-07 0.3.4
+## 0.3.4 (2017-06-07)
 
 * Adding Preview Features
   - Managed Storage Account keys for managing storage credentials and provisioning SAS tokens
   - Key Vault "Soft Delete" allowing for recovery of deleted keys, secrets and certificates
   - Secret Backup and Restore for secret recovery and migration
 
-### 2017-05-10 0.3.3
+## 0.3.3 (2017-05-10)
 
 * Reverting to 0.3.0, since behavior of 0.3.2 is not satisfaying either.
 
-### 2017-05-09 0.3.2
+## 0.3.2 (2017-05-09)
 
 * Fix critical regression on 0.3.1 (#1157)
 * Now the client respects 'REQUESTS_CA_BUNDLE' and 'CURL_CA_BUNDLE'
 
-### 2017-05-09 0.3.1
+## 0.3.1 (2017-05-09)
 
 * Support for REQUESTS_CA_BUNDLE (#1154)
 
-### 2017-05-08 0.3.0
+## 0.3.0 (2017-05-08)
 
 * Moving KeyVaultClient class to the azure.keyvault namespace
 * Moving model classes to the azure.keyvault.models namespace
@@ -121,7 +121,7 @@ This version uses a next-generation code generator that *might* introduce breaki
   - get_secret(self, secret_identifer, ...
   - get_certificate(self, certificate_identifier, ...
 
-### 2017-04-09 0.2.0
+## 0.2.0 (2017-04-09)
 
 **Bugfixes**
 
@@ -131,6 +131,6 @@ This version uses a next-generation code generator that *might* introduce breaki
 
 - This wheel package is now built with the azure wheel extension
 
-### 2016-12-29 0.1.0
+## 0.1.0 (2016-12-29)
 
 * Initial Release

@@ -11,11 +11,22 @@ try:
 except ImportError:
     import mock
 
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse, AsyncHttpTransport
+from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse, AsyncHttpTransport, AioHttpTransport
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
 
 import pytest
+
+
+@pytest.mark.asyncio
+async def test_basic_options_aiohttp():
+
+    request = HttpRequest("OPTIONS", "https://httpbin.org")
+    async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
+        response = await pipeline.run(request)
+
+    assert pipeline._transport.session is None
+    assert response.http_response.status_code == 200
 
 
 @pytest.mark.asyncio

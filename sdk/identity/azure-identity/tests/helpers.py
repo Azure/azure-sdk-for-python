@@ -4,8 +4,9 @@
 # ------------------------------------
 import base64
 import json
-import six
 import time
+
+import six
 
 try:
     from unittest import mock
@@ -90,7 +91,14 @@ class Request:
         for param, expected_value in self.required_params.items():
             assert request.query.get(param) == expected_value
         for header, expected_value in self.required_headers.items():
-            assert request.headers.get(header) == expected_value
+            actual = request.headers.get(header)
+            if header.lower() == "user-agent":
+                # UserAgentPolicy appends the value of $AZURE_HTTP_USER_AGENT, which is set in pipelines.
+                assert expected_value in actual
+            else:
+                assert actual == expected_value, "expected header '{}: {}', actual value was '{}'".format(
+                    header, expected_value, actual
+                )
         for field, expected_value in self.required_data.items():
             assert request.body.get(field) == expected_value
 
@@ -102,6 +110,11 @@ def mock_response(status_code=200, headers={}, json_payload=None):
         response.headers["content-type"] = "application/json"
         response.content_type = "application/json"
     return response
+
+
+def get_discovery_response(endpoint="https://a/b"):
+    aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
+    return mock_response(json_payload={name: endpoint for name in aad_metadata_endpoint_names})
 
 
 def validating_transport(requests, responses):
@@ -128,15 +141,3 @@ def urlsafeb64_decode(s):
 
     padding_needed = 4 - len(s) % 4
     return base64.urlsafe_b64decode(s + b"=" * padding_needed)
-
-
-try:
-    import asyncio
-
-    def async_validating_transport(requests, responses):
-        sync_transport = validating_transport(requests, responses)
-        return mock.Mock(send=asyncio.coroutine(sync_transport.send))
-
-
-except ImportError:
-    pass

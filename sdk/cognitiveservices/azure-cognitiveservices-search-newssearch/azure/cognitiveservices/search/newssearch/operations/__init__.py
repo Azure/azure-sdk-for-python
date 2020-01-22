@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .news_operations import NewsOperations
+from ._news_operations import NewsOperations
 
 __all__ = [
     'NewsOperations',
