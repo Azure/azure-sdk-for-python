@@ -6,6 +6,7 @@ parameters:
   BuildTargetingString: 'azure-*'
   AdditionalTestArgs: ''
   TestMarkArgument: ''
+  InjectedPackages: ''
   JobName: Test
   Matrix:
     Linux_Python35:
