@@ -116,6 +116,32 @@ class BastionHostPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(BastionHostPaged, self).__init__(*args, **kwargs)
+class BastionShareableLinkPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BastionShareableLink <azure.mgmt.network.v2019_11_01.models.BastionShareableLink>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BastionShareableLink]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BastionShareableLinkPaged, self).__init__(*args, **kwargs)
+class BastionSessionStatePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BastionSessionState <azure.mgmt.network.v2019_11_01.models.BastionSessionState>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BastionSessionState]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BastionSessionStatePaged, self).__init__(*args, **kwargs)
 class DdosProtectionPlanPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DdosProtectionPlan <azure.mgmt.network.v2019_11_01.models.DdosProtectionPlan>` object
