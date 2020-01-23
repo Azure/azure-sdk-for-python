@@ -121,7 +121,11 @@ class AzureTestCase(ReplayableTest):
             raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
 
         if not key_value:
-            key_value = getattr(self.settings, key)
+            try:
+                key_value = getattr(self.settings, key)
+            except Exception:
+                print("Could not get {}".format(key))
+                raise
         return key_value
 
     def set_value_to_scrub(self, key, default_value):
