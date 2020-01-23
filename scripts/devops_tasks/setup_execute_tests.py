@@ -271,6 +271,7 @@ if __name__ == "__main__":
         "-i",
         "--injected-packages",
         dest="injected_packages",
+        default="",
         help="Comma or space-separated list of packages that should be installed prior to dev_requirements.",
     )
 
