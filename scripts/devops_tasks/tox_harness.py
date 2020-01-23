@@ -21,8 +21,10 @@ from common_tasks import (
     read_file,
     is_error_code_5_allowed,
     create_code_coverage_params,
+    parse_requirements_file,
 )
 
+from pkg_resources import parse_requirements
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -200,22 +202,31 @@ def execute_tox_parallel(tox_command_tuples):
         exit(1)
 
 
+def compare_req_to_injected_reqs(package_name, injected_packages):
+    return any(package_name in req for req in injected_packages)
+
+
 def replace_dev_reqs(file, injected_packages):
     adjusted_req_lines = []
-
-    injected_packages = [p for p in re.split('[\s,]', injected_packages) if p]
+    injected_packages = [p for p in re.split("[\s,]", injected_packages) if p]
+    existing_reqs = parse_requirements_file(file)
 
     with open(file, "r") as f:
         for line in f:
+            parsed_req = [req for req in parse_requirements(line)]
             args = [
                 part.strip()
                 for part in line.split()
                 if part and not part.strip() == "-e"
             ]
             amended_line = " ".join(args)
-            adjusted_req_lines.append(amended_line)
+            adjusted_req_lines.append((amended_line, parsed_req))
 
-    all_adjustments = injected_packages + adjusted_req_lines
+    all_adjustments = injected_packages + [
+        line_tuple[0]
+        for line_tuple in adjusted_req_lines
+        if not compare_req_to_injected_reqs(line_tuple[1][0].name, injected_packages)
+    ]
 
     with open(file, "w") as f:
         # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
