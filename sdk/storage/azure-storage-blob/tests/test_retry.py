@@ -9,7 +9,7 @@ import pytest
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
-    ServiceResponseError,
+    AzureError,
     ClientAuthenticationError
 )
 from azure.core.pipeline.transport import(
@@ -32,6 +32,16 @@ from _shared.testcase import (
     GlobalStorageAccountPreparer
 )
 
+class RetryRequestTransport(RequestsTransport):
+    """Transport to test retry"""
+    def __init__(self, *args, **kwargs):
+        self.count = 0
+        super(RequestsTransport, self).__init__(*args, **kwargs)
+    
+    def send(self, request, **kwargs):
+        self.count += 1
+        response = super(RequestsTransport, self).send(request, **kwargs)
+        return response
 
 # --Test Class -----------------------------------------------------------------
 class StorageRetryTest(StorageTestCase):
@@ -40,7 +50,7 @@ class StorageRetryTest(StorageTestCase):
         if connection_string:
             service = service_class.from_connection_string(connection_string, **kwargs)
         else:
-            service = service_class(self.account_url(account.name, "blob"), credential=key, **kwargs)
+            service = service_class(self.account_url(account, "blob"), credential=key, **kwargs)
         return service
 
     # --Test Cases --------------------------------------------
@@ -118,19 +128,21 @@ class StorageRetryTest(StorageTestCase):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
-
+        retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         service = self._create_storage_service(
-            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, connection_timeout=11, read_timeout=0.000000000001)
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=retry_transport)
 
         assert service._client._client._pipeline._transport.connection_config.timeout == 11
         assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
 
         # Act
         try:
-            with self.assertRaises(ServiceResponseError) as error:
+            with self.assertRaises(AzureError) as error:
                 service.create_container(container_name)
             # Assert
+            # 3 retries + 1 original == 4
+            assert retry_transport.count == 4
             # This call should succeed on the server side, but fail on the client side due to socket timeout
             self.assertTrue('read timeout' in str(error.exception), 'Expected socket timeout but got different exception.')
 
