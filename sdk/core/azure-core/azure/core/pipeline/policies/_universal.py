@@ -149,6 +149,10 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         request_id = unset = object()
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
+            if request_id is None:
+                return
+        elif self._request_id is None:
+            return
         elif self._request_id is not _Unset:
             request_id = self._request_id   # type: ignore
         elif self._auto_request_id:
@@ -164,6 +168,9 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     :keyword bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
     :keyword bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
+    :keyword str user_agent: If specified, this will be added in front of the user agent string.
+    :keyword str sdk_moniker: If specified, the user agent string will be
+        azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])
 
     .. admonition:: Example:
 
@@ -178,18 +185,23 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
     def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Optional[str], bool) -> None
+        # type: (Optional[str], **Any) -> None
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
+        application_id = kwargs.pop('user_agent', None)
+        sdk_moniker = kwargs.pop('sdk_moniker', 'core/{}'.format(azcore_version))
 
-        if base_user_agent is None:
-            self._user_agent = "azsdk-python-core/{} Python/{} ({})".format(
-                azcore_version,
+        if base_user_agent:
+            self._user_agent = base_user_agent
+        else:
+            self._user_agent = "azsdk-python-{} Python/{} ({})".format(
+                sdk_moniker,
                 platform.python_version(),
                 platform.platform()
             )
-        else:
-            self._user_agent = base_user_agent
+
+        if application_id:
+            self._user_agent = "{} {}".format(application_id, self._user_agent)
 
     @property
     def user_agent(self):
@@ -222,7 +234,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
             if options_dict.pop('user_agent_overwrite', self.overwrite):
                 http_request.headers[self._USERAGENT] = user_agent
             else:
-                user_agent = "{} {}".format(self.user_agent, user_agent)
+                user_agent = "{} {}".format(user_agent, self.user_agent)
                 http_request.headers[self._USERAGENT] = user_agent
 
         elif self.overwrite or self._USERAGENT not in http_request.headers:

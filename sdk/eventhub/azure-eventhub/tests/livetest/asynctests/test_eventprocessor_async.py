@@ -161,7 +161,7 @@ async def test_loadbalancer_list_ownership_error():
                                      error_handler=on_error,
                                      partition_initialize_handler=None,
                                      partition_close_handler=None,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     try:
@@ -170,7 +170,7 @@ async def test_loadbalancer_list_ownership_error():
         assert on_error.called is True
     finally:
         await event_processor.stop()
-        task.cancel()
+        await task
         await eventhub_client.close()
 
 
@@ -243,14 +243,14 @@ async def test_partition_processor():
                                      error_handler=error_handler,
                                      partition_initialize_handler=partition_initialize_handler,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
 
     task = asyncio.ensure_future(event_processor.start())
 
     await asyncio.sleep(2)
     assert len(event_processor._tasks) == 2
     await event_processor.stop()
-    task.cancel()
+    await task
     await eventhub_client.close()
     assert event_map['0'] >= 1 and event_map['1'] >= 1
     assert checkpoint is not None
@@ -259,7 +259,6 @@ async def test_partition_processor():
     assert partition_initialize_handler.partition_context
 
 
-@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_events_error():
 
@@ -313,11 +312,11 @@ async def test_partition_processor_process_events_error():
                                      error_handler=error_handler,
                                      initial_event_position="-1",
                                      partition_initialize_handler=None,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
-    # task.cancel()
+    await task
     await asyncio.sleep(1)
     await eventhub_client.close()
     assert isinstance(error_handler.error, RuntimeError)
@@ -367,11 +366,11 @@ async def test_partition_processor_process_eventhub_consumer_error():
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
-    task.cancel()
+    await task
     assert isinstance(error_handler.error, EventHubError)
     assert partition_close_handler.reason == CloseReason.OWNERSHIP_LOST
 
@@ -437,12 +436,12 @@ async def test_partition_processor_process_error_close_error():
                                      error_handler=error_handler,
                                      partition_initialize_handler=partition_initialize_handler,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     event_processor._ownership_manager = ownership_manager
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
-    # task.cancel()
+    await task
     assert partition_initialize_handler.called
     assert event_handler.called
     assert error_handler.called
@@ -642,7 +641,6 @@ def test_balance_ownership(ownerships, partitions, expected_result):
     assert len(to_claim_ownership) == expected_result
 
 
-@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error():
 
@@ -700,11 +698,11 @@ async def test_partition_processor_process_update_checkpoint_error():
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,
                                      partition_close_handler=partition_close_handler,
-                                     load_balancing_interval=1)
+                                     load_balancing_interval=1.3)
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
-    # task.cancel()
+    await task
     await asyncio.sleep(1)
     await eventhub_client.close()
     assert partition_close_handler.called

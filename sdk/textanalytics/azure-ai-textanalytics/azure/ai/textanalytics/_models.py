@@ -84,6 +84,10 @@ class DetectedLanguage(DictMixin):
             name=language.name, iso6391_name=language.iso6391_name, score=language.score
         )
 
+    def __repr__(self):
+        return "DetectedLanguage(name={}, iso6391_name={}, score={})" \
+            .format(self.name, self.iso6391_name, self.score)[:1024]
+
 
 class RecognizeEntitiesResult(DictMixin):
     """RecognizeEntitiesResult.
@@ -107,6 +111,10 @@ class RecognizeEntitiesResult(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
+    def __repr__(self):
+        return "RecognizeEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
+
 
 class RecognizePiiEntitiesResult(DictMixin):
     """RecognizePiiEntitiesResult.
@@ -129,6 +137,10 @@ class RecognizePiiEntitiesResult(DictMixin):
         self.entities = kwargs.get("entities", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
+
+    def __repr__(self):
+        return "RecognizePiiEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
 
 
 class DetectLanguageResult(DictMixin):
@@ -155,6 +167,11 @@ class DetectLanguageResult(DictMixin):
         self.primary_language = kwargs.get("primary_language", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
+
+    def __repr__(self):
+        return "DetectLanguageResult(id={}, detected_languages={}, primary_language={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.detected_languages), repr(self.primary_language), repr(self.statistics),
+                    self.is_error)[:1024]
 
 
 class NamedEntity(DictMixin):
@@ -196,6 +213,10 @@ class NamedEntity(DictMixin):
             score=entity.score,
         )
 
+    def __repr__(self):
+        return "NamedEntity(text={}, type={}, subtype={}, offset={}, length={}, score={})" \
+            .format(self.text, self.type, self.subtype, self.offset, self.length, self.score)[:1024]
+
 
 class TextAnalyticsError(DictMixin):
     """TextAnalyticsError.
@@ -231,6 +252,10 @@ class TextAnalyticsError(DictMixin):
             inner_error=InnerError._from_generated(err.inner_error),  # pylint: disable=protected-access
             details=err.details,
         )
+
+    def __repr__(self):
+        return "TextAnalyticsError(code={}, message={}, target={}, inner_error={}, details={})" \
+            .format(self.code, self.message, self.target, repr(self.inner_error), repr(self.details))[:1024]
 
 
 class InnerError(DictMixin):
@@ -268,6 +293,10 @@ class InnerError(DictMixin):
             inner_error=inner_err.inner_error
         )
 
+    def __repr__(self):
+        return "InnerError(code={}, message={}, details={}, target={}, inner_error={})" \
+            .format(self.code, self.message, self.details, self.target, repr(self.inner_error))[:1024]
+
 
 class ExtractKeyPhrasesResult(DictMixin):
     """ExtractKeyPhrasesResult.
@@ -292,6 +321,10 @@ class ExtractKeyPhrasesResult(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
+    def __repr__(self):
+        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, statistics={}, is_error={})" \
+            .format(self.id, self.key_phrases, repr(self.statistics), self.is_error)[:1024]
+
 
 class RecognizeLinkedEntitiesResult(DictMixin):
     """RecognizeLinkedEntitiesResult.
@@ -314,6 +347,10 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         self.entities = kwargs.get("entities", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
+
+    def __repr__(self):
+        return "RecognizeLinkedEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -348,6 +385,11 @@ class AnalyzeSentimentResult(DictMixin):
         self.sentences = kwargs.get("sentences", None)
         self.is_error = False
 
+    def __repr__(self):
+        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, document_scores={}, sentences={}, " \
+               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.document_scores),
+                                     repr(self.sentences), self.is_error)[:1024]
+
 
 class TextDocumentStatistics(DictMixin):
     """If showStats=true was specified in the request this field will contain
@@ -373,6 +415,10 @@ class TextDocumentStatistics(DictMixin):
             character_count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
+
+    def __repr__(self):
+        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
+            .format(self.character_count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):
@@ -416,6 +462,10 @@ class DocumentError(DictMixin):
             is_error=True
         )
 
+    def __repr__(self):
+        return "DocumentError(id={}, error={}, is_error={})" \
+            .format(self.id, repr(self.error), self.is_error)[:1024]
+
 
 class DetectLanguageInput(LanguageInput):
     """Contains an input document to be analyzed for type of language.
@@ -437,6 +487,10 @@ class DetectLanguageInput(LanguageInput):
         self.text = kwargs.get("text", None)
         self.country_hint = kwargs.get("country_hint", None)
 
+    def __repr__(self):
+        return "DetectLanguageInput(id={}, text={}, country_hint={})" \
+            .format(self.id, self.text, self.country_hint)[:1024]
+
 
 class LinkedEntity(DictMixin):
     """LinkedEntity.
@@ -457,8 +511,6 @@ class LinkedEntity(DictMixin):
     :param data_source: Data source used to extract entity linking,
      such as Wiki/Bing etc.
     :type data_source: str
-    :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a LinkedEntity.
     """
 
     def __init__(self, **kwargs):
@@ -468,7 +520,6 @@ class LinkedEntity(DictMixin):
         self.id = kwargs.get("id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
-        self.is_error = False
 
     @classmethod
     def _from_generated(cls, entity):
@@ -480,6 +531,10 @@ class LinkedEntity(DictMixin):
             url=entity.url,
             data_source=entity.data_source,
         )
+
+    def __repr__(self):
+        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, data_source={})" \
+            .format(self.name, repr(self.matches), self.language, self.id, self.url, self.data_source)[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
@@ -511,6 +566,10 @@ class LinkedEntityMatch(DictMixin):
             score=match.score, text=match.text, offset=match.offset, length=match.length
         )
 
+    def __repr__(self):
+        return "LinkedEntityMatch(score={}, text={}, offset={}, length={})" \
+            .format(self.score, self.text, self.offset, self.length)[:1024]
+
 
 class TextDocumentInput(MultiLanguageInput):
     """Contains an input document to be analyzed by the service.
@@ -530,6 +589,10 @@ class TextDocumentInput(MultiLanguageInput):
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.language = kwargs.get("language", None)
+
+    def __repr__(self):
+        return "TextDocumentInput(id={}, text={}, language={})" \
+            .format(self.id, self.text, self.language)[:1024]
 
 
 class TextDocumentBatchStatistics(DictMixin):
@@ -565,6 +628,11 @@ class TextDocumentBatchStatistics(DictMixin):
             erroneous_document_count=statistics["erroneousDocumentsCount"],
             transaction_count=statistics["transactionsCount"],
         )
+
+    def __repr__(self):
+        return "TextDocumentBatchStatistics(document_count={}, valid_document_count={}, erroneous_document_count={}, " \
+               "transaction_count={})".format(self.document_count, self.valid_document_count,
+                                              self.erroneous_document_count, self.transaction_count)[:1024]
 
 
 class SentenceSentiment(DictMixin):
@@ -603,6 +671,10 @@ class SentenceSentiment(DictMixin):
             warnings=sentence.warnings,
         )
 
+    def __repr__(self):
+        return "SentenceSentiment(sentiment={}, sentence_scores={}, offset={}, length={}, warnings={})" \
+            .format(self.sentiment, repr(self.sentence_scores), self.offset, self.length, self.warnings)[:1024]
+
 
 class SentimentConfidenceScorePerLabel(DictMixin):
     """Represents the confidence scores between 0 and 1 across all sentiment
@@ -628,3 +700,7 @@ class SentimentConfidenceScorePerLabel(DictMixin):
             neutral=score.neutral,
             negative=score.negative
         )
+
+    def __repr__(self):
+        return "SentimentConfidenceScorePerLabel(positive={}, neutral={}, negative={})" \
+            .format(self.positive, self.neutral, self.negative)[:1024]

@@ -177,7 +177,7 @@ def individual_workload(tox_command_tuple, workload_results):
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     workload_results = {}
-    failed_run = False
+    run_result = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         pool.add_task(individual_workload, cmd_tuple, workload_results)
@@ -193,13 +193,34 @@ def execute_tox_parallel(tox_command_tuples):
                     os.path.basename(key), workload_results[key][0]
                 )
             )
-            failed_run = True
+            run_result = 1
 
-    if failed_run:
-        exit(1)
+    return run_result
+
+
+def replace_dev_reqs(file):
+    adjusted_req_lines = []
+
+    with open(file, "r") as f:
+        for line in f:
+            args = [
+                part.strip()
+                for part in line.split()
+                if part and not part.strip() == "-e"
+            ]
+            amended_line = " ".join(args)
+            adjusted_req_lines.append(amended_line)
+
+    with open(file, "w") as f:
+        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
+        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
+        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
+        f.write("\n".join(adjusted_req_lines))
 
 
 def execute_tox_serial(tox_command_tuples):
+    return_code = 0
+
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.join(cmd_tuple[1], "./.tox/")
 
@@ -208,10 +229,16 @@ def execute_tox_serial(tox_command_tuples):
                 os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
             )
         )
-        run_check_call(cmd_tuple[0], cmd_tuple[1])
+
+        result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
+
+        if result is not None and result != 0:
+            return_code = result
 
         if in_ci():
             shutil.rmtree(tox_dir)
+
+    return return_code
 
 
 def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
@@ -260,8 +287,15 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             with open(destination_dev_req, "w+") as file:
                 file.write("\n")
 
+        if in_ci():
+            replace_dev_reqs(destination_dev_req)
+            os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
+
         if parsed_args.tox_env:
             tox_execution_array.extend(["-e", parsed_args.tox_env])
+
+        if parsed_args.tenvparallel:
+            tox_execution_array.extend(["-p", "all"])
 
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
@@ -269,9 +303,11 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         tox_command_tuples.append((tox_execution_array, package_dir))
 
     if parsed_args.tparallel:
-        execute_tox_parallel(tox_command_tuples)
+        return_code = execute_tox_parallel(tox_command_tuples)
     else:
-        execute_tox_serial(tox_command_tuples)
+        return_code = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
+
+    sys.exit(return_code)

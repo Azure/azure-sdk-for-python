@@ -27,8 +27,8 @@ The code samples in this migration guide use async APIs.
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
-| `EventHubClientAsync()`    | `EventHubProducerClient()` or `EventHubConsumerClient()` | [using credential](./samples/async_samples/client_secret_auth_async.py ) |
-| `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[receive events](./samples/async_samples/recv_async.py),  [send events](./samples/async_samples/send_async.py) |
+| `EventHubClientAsync()`    | `EventHubProducerClient()` or `EventHubConsumerClient()` | [using credential](./samples/async_samples/client_identity_authentication_async.py ) |
+| `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[client creation](./samples/async_samples/client_creation_async.py) |
 | `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](./samples/async_samples/recv_with_checkpoint_store_async.py) |
 
 ### Receiving events 
@@ -59,7 +59,7 @@ For example, this code which keeps receiving from a partition in V1:
 
 ```python
 client = EventHubClientAsync.from_connection_string(connection_str, eventhub=EVENTHUB_NAME)
-receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
+receiver = client.add_async_receiver(consumer_group="$Default", partition="0", offset=Offset('@latest'))
 try:
     await client.run_async()
     logger = logging.getLogger("azure.eventhub")
@@ -77,9 +77,10 @@ Becomes this in V5:
 logger = logging.getLogger("azure.eventhub")
 async def on_event(partition_context, event):
     logger.info("Message received:{}".format(event.body_as_str()))
+    await partition_context.update_checkpoint(event)
 
 client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, consumer_group="$default", eventhub_name=EVENTHUB_NAME
+    conn_str=CONNECTION_STR, consumer_group="$Default", eventhub_name=EVENTHUB_NAME
 )
 async with client:
     await client.receive(on_event=on_event, partition_id="0", starting_position="@latest")
@@ -172,7 +173,7 @@ USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 # Eventhub config and storage manager
-eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
+eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$Default")
 eh_options = EPHOptions()
 eh_options.debug_trace = False
 storage_manager = AzureStorageCheckpointLeaseManager(
@@ -207,6 +208,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 logging.basicConfig(level=logging.INFO)
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME = "your-blob-container-name"
 logger = logging.getLogger("azure.eventhub")
 
 events_processed = defaultdict(int)
@@ -214,8 +216,7 @@ async def on_event(partition_context, event):
     partition_id = partition_context.partition_id
     events_processed[partition_id] += 1
     logger.info("Partition id {}, Events processed {}".format(partition_id, events_processed[partition_id]))
-    if events_processed[partition_id] % 10 == 0:
-        await partition_context.update_checkpoint(event)
+    await partition_context.update_checkpoint(event)
 
 async def on_partition_initialize(context):
     logger.info("Partition {} initialized".format(context.partition_id))
@@ -230,7 +231,7 @@ async def on_error(context, error):
         logger.error("Receiving event has a non-partition error {!r}".format(error))
 
 async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "aStorageBlobContainerName")
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
@@ -242,6 +243,7 @@ async def main():
             on_error=on_error,  # optional
             on_partition_initialize=on_partition_initialize,  # optional
             on_partition_close=on_partition_close,  # optional
+            starting_position="-1",  # "-1" is from the beginning of the partition.
         )
 
 if __name__ == '__main__':

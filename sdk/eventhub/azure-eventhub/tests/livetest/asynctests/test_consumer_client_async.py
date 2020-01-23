@@ -16,14 +16,35 @@ async def test_receive_no_partition_async(connstr_senders):
 
     async def on_event(partition_context, event):
         on_event.received += 1
+        await partition_context.update_checkpoint(event)
+        on_event.namespace = partition_context.fully_qualified_namespace
+        on_event.eventhub_name = partition_context.eventhub_name
+        on_event.consumer_group = partition_context.consumer_group
+        on_event.offset = event.offset
+        on_event.sequence_number = event.sequence_number
 
     on_event.received = 0
+
+    on_event.namespace = None
+    on_event.eventhub_name = None
+    on_event.consumer_group = None
+    on_event.offset = None
+    on_event.sequence_number = None
+
     async with client:
         task = asyncio.ensure_future(
             client.receive(on_event, starting_position="-1"))
         await asyncio.sleep(10)
         assert on_event.received == 2
-    task.cancel()
+
+        checkpoints = await list(client._event_processors.values())[0]._checkpoint_store.list_checkpoints(
+            on_event.namespace, on_event.eventhub_name, on_event.consumer_group
+        )
+        assert len([checkpoint for checkpoint in checkpoints if checkpoint["offset"] == on_event.offset]) > 0
+        assert len(
+            [checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number]) > 0
+
+    await task
 
 
 @pytest.mark.liveTest
@@ -46,7 +67,7 @@ async def test_receive_partition_async(connstr_senders):
             client.receive(on_event, partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
         assert on_event.received == 1
-    task.cancel()
+    await task
 
 
 @pytest.mark.liveTest

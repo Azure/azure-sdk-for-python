@@ -143,34 +143,26 @@ class EventProcessor(
         for partition_id in claimed_partitions:
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
-                self._tasks[partition_id] = self._loop.create_task(
-                    self._receive(partition_id, checkpoint)
-                )
-                _LOGGER.info(
-                    "EventProcessor %r has claimed partition %r",
-                    self._id,
-                    partition_id
-                )
+                if self._running:
+                    self._tasks[partition_id] = self._loop.create_task(
+                        self._receive(partition_id, checkpoint)
+                    )
+                    _LOGGER.info(
+                        "EventProcessor %r has claimed partition %r",
+                        self._id,
+                        partition_id
+                    )
 
     async def _process_error(
         self, partition_context: PartitionContext, err: Exception
     ) -> None:
-        _LOGGER.warning(
-            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-            " has met an error. The exception is %r.",
-            self._id,
-            self._eventhub_name,
-            partition_context.partition_id if partition_context else None,
-            self._consumer_group,
-            err,
-        )
         if self._error_handler:
             try:
                 await self._error_handler(partition_context, err)
             except Exception as err_again:  # pylint:disable=broad-except
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
-                    "An error occurred while running process_error(). The exception is %r.",
+                    "An error occurred while running on_error. The exception is %r.",
                     self._id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
@@ -196,7 +188,7 @@ class EventProcessor(
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
-                    "An error occurred while running close(). The exception is %r.",
+                    "An error occurred while running on_partition_close. The exception is %r.",
                     self._id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
@@ -214,6 +206,20 @@ class EventProcessor(
                     event
                 )
             await self._event_handler(partition_context, event)
+
+    async def _close_consumer(self, partition_context):
+        partition_id = partition_context.partition_id
+        try:
+            await self._consumers[partition_id].close()
+            del self._consumers[partition_id]
+            await self._close_partition(
+                partition_context,
+                CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
+            )
+            await self._ownership_manager.release_ownership(partition_id)
+        finally:
+            if partition_id in self._tasks:
+                del self._tasks[partition_id]
 
     async def _receive(
         self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
@@ -252,7 +258,7 @@ class EventProcessor(
                 except Exception as err:  # pylint:disable=broad-except
                     _LOGGER.warning(
                         "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
-                        "An error occurred while running initialize(). The exception is %r.",
+                        "An error occurred while running on_partition_initialize. The exception is %r.",
                         self._id,
                         self._eventhub_name,
                         partition_id,
@@ -275,18 +281,19 @@ class EventProcessor(
                     )
                     raise
                 except Exception as error:  # pylint:disable=broad-except
+                    _LOGGER.warning(
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                        "An error occurred while receiving. The exception is %r.",
+                        self._id,
+                        self._eventhub_name,
+                        partition_id,
+                        self._consumer_group,
+                        error,
+                    )
                     await self._process_error(partition_context, error)
                     break
         finally:
-            await self._consumers[partition_id].close()
-            del self._consumers[partition_id]
-            await self._close_partition(
-                partition_context,
-                CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN,
-            )
-            await self._ownership_manager.release_ownership(partition_id)
-            if partition_id in self._tasks:
-                del self._tasks[partition_id]
+            await asyncio.shield(self._close_consumer(partition_context))
 
     async def start(self) -> None:
         """Start the EventProcessor.
@@ -326,27 +333,30 @@ class EventProcessor(
                         )
                         to_cancel_pids = set(self._tasks.keys())
                     await self._cancel_tasks_for_partitions(to_cancel_pids)
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    raise
                 except Exception as err:  # pylint:disable=broad-except
-                    await self._process_error(None, err)  # type: ignore
-                    """
-                    ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                    when there are load balancing and/or checkpointing (checkpoint_store isn't None).
-                    They're swallowed here to retry every self._load_balancing_interval seconds. Meanwhile this event
-                    processor won't lose the partitions it has claimed before.
-                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions
-                    that this EventProcessor is working on. So two or multiple EventProcessors may be working
-                    on the same partition for a short while.
-                    Setting owner_level would create exclusive connection to the partition and
-                    alleviate duplicate-receiving greatly.
-                    """  # pylint:disable=pointless-string-statement
+                    # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
+                    # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
+                    # They're swallowed here to retry every self._load_balancing_interval seconds. Meanwhile this event
+                    # processor won't lose the partitions it has claimed before.
+                    # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
+                    # that this EventProcessor is working on. So two or multiple EventProcessors may be working
+                    # on the same partition for a short while.
+                    # Setting owner_level would create exclusive connection to the partition and
+                    # alleviate duplicate-receiving greatly.
                     _LOGGER.warning(
-                        "An exception (%r) occurred during balancing and claiming ownership for "
-                        "eventhub %r consumer group %r. Retrying after %r seconds",
-                        err,
+                        "EventProcessor instance %r of eventhub %r consumer group %r. "
+                        "An error occurred while load-balancing and claiming ownership. "
+                        "The exception is %r. Retrying after %r seconds",
+                        self._id,
                         self._eventhub_name,
                         self._consumer_group,
-                        self._load_balancing_interval,
+                        err,
+                        self._load_balancing_interval
                     )
+                    await self._process_error(None, err)  # type: ignore
+
                 await asyncio.sleep(self._load_balancing_interval, loop=self._loop)
 
     async def stop(self) -> None:
