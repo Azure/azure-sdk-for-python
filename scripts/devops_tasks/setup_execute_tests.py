@@ -272,7 +272,7 @@ if __name__ == "__main__":
         "--injected-packages",
         dest="injected_packages",
         default="",
-        help="Comma or space-separated list of packages that should be installed prior to dev_requirements.",
+        help="Comma or space-separated list of packages that should be installed prior to dev_requirements. If local path, should be absolute.",
     )
 
     args = parser.parse_args()
