@@ -152,11 +152,11 @@ class StorageTestCase(AzureMgmtTestCase):
         """
         try:
             if storage_type == "blob":
-                return storage_account.primary_endpoints.blob
+                return storage_account.primary_endpoints.blob.rstrip("/")
             if storage_type == "queue":
-                return storage_account.primary_endpoints.queue
+                return storage_account.primary_endpoints.queue.rstrip("/")
             if storage_type == "file":
-                return storage_account.primary_endpoints.file
+                return storage_account.primary_endpoints.file.rstrip("/")
             else:
                 raise ValueError("Unknown storage type {}".format(storage_type))
         except AttributeError: # Didn't find "primary_endpoints"
