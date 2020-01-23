@@ -209,7 +209,7 @@ def compare_req_to_injected_reqs(parsed_req, injected_packages):
 
 
 def inject_custom_reqs(file, injected_packages):
-    adjusted_req_lines = []
+    req_lines = []
     injected_packages = [p for p in re.split("[\s,]", injected_packages) if p]
     
     with open(file, "r") as f:
@@ -218,13 +218,19 @@ def inject_custom_reqs(file, injected_packages):
                 parsed_req = [req for req in parse_requirements(line)]
             except RequirementParseError as e:
                 parsed_req = [None]
-            adjusted_req_lines.append((line, parsed_req))
+            req_lines.append((line, parsed_req))
 
-    all_adjustments = injected_packages + [
-        line_tuple[0]
-        for line_tuple in adjusted_req_lines
-        if not compare_req_to_injected_reqs(line_tuple[1][0], injected_packages)
-    ]
+    import pdb
+    pdb.set_trace()
+
+    if req_lines:
+        all_adjustments = injected_packages + [
+            line_tuple[0].strip()
+            for line_tuple in req_lines
+            if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1][0], injected_packages)
+        ]
+    else:
+        all_adjustments = injected_packages
 
     with open(file, "w") as f:
         # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
@@ -318,6 +324,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             replace_dev_reqs(destination_dev_req)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
+        logging.info("Injecting Packages to {}".format(package_dir))
         inject_custom_reqs(destination_dev_req, parsed_args.injected_packages)
         
         if parsed_args.tox_env:
