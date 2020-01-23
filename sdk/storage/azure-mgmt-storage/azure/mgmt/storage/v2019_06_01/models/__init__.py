@@ -15,6 +15,9 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
+    from ._models_py3 import BlobRestoreParameters
+    from ._models_py3 import BlobRestoreRange
+    from ._models_py3 import BlobRestoreStatus
     from ._models_py3 import BlobServiceProperties
     from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
@@ -66,6 +69,7 @@ try:
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
+    from ._models_py3 import RestorePolicyProperties
     from ._models_py3 import Restriction
     from ._models_py3 import RoutingPreference
     from ._models_py3 import ServiceSasParameters
@@ -94,6 +98,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureEntityResource
     from ._models import AzureFilesIdentityBasedAuthentication
     from ._models import BlobContainer
+    from ._models import BlobRestoreParameters
+    from ._models import BlobRestoreRange
+    from ._models import BlobRestoreStatus
     from ._models import BlobServiceProperties
     from ._models import ChangeFeed
     from ._models import CheckNameAvailabilityResult
@@ -145,6 +152,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
     from ._models import Resource
+    from ._models import RestorePolicyProperties
     from ._models import Restriction
     from ._models import RoutingPreference
     from ._models import ServiceSasParameters
@@ -191,6 +199,7 @@ from ._storage_management_client_enums import (
     LargeFileSharesState,
     RoutingChoice,
     GeoReplicationStatus,
+    BlobRestoreProgressStatus,
     ProvisioningState,
     AccountStatus,
     PrivateEndpointServiceConnectionStatus,
@@ -218,6 +227,9 @@ __all__ = [
     'AzureEntityResource',
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
+    'BlobRestoreParameters',
+    'BlobRestoreRange',
+    'BlobRestoreStatus',
     'BlobServiceProperties',
     'ChangeFeed',
     'CheckNameAvailabilityResult',
@@ -269,6 +281,7 @@ __all__ = [
     'PrivateLinkServiceConnectionState',
     'ProxyResource',
     'Resource',
+    'RestorePolicyProperties',
     'Restriction',
     'RoutingPreference',
     'ServiceSasParameters',
@@ -314,6 +327,7 @@ __all__ = [
     'LargeFileSharesState',
     'RoutingChoice',
     'GeoReplicationStatus',
+    'BlobRestoreProgressStatus',
     'ProvisioningState',
     'AccountStatus',
     'PrivateEndpointServiceConnectionStatus',

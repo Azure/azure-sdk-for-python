@@ -341,7 +341,7 @@ class BlobContainer(AzureEntityResource):
 
 
 class BlobServiceProperties(Resource):
-    """The properties of a storage account’s Blob service.
+    """The properties of a storage account��s Blob service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
