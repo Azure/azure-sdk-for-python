@@ -56,7 +56,7 @@ def discover_prebuilt_whl(whl_directory, setuppy_path):
 def build_and_discover_whl(setuppy_path, dist_dir, target_setup):
     check_call(
         [
-            "python",
+            sys.executable,
             setuppy_path,
             "bdist_wheel",
             "-d",
@@ -156,8 +156,7 @@ if __name__ == "__main__":
                 "-m",
                 "pip",
                 "install",
-                pkg_wheel_path,
-                "--verbose"
+                pkg_wheel_path
             ]
 
             # If extra index URL is passed then set it as argument to pip command
