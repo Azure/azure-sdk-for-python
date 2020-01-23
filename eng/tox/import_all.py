@@ -6,10 +6,12 @@
 # --------------------------------------------------------------------------------------------
 
 # This script is used to verify package dependency by importing all modules
+import sys
 import argparse
 import logging
 import os
 from tox_helper_tasks import get_package_details
+from subprocess import check_call
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -48,7 +50,12 @@ if __name__ == "__main__":
             )
         )
         import_script_all = "from {0} import *".format(namespace)
-        exec(import_script_all)
+        commands = [
+            sys.executable,
+            "-c",
+            import_script_all
+        ]
+        check_call(commands)
         logging.info("Verified module dependency, no issues found")
     else:
         pass

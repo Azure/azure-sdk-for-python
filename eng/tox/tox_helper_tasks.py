@@ -7,10 +7,12 @@
 
 # This script is intended to be a place holder for common tasks that are requried by scripts running on tox
 
+import sys
 import logging
 import argparse
 import ast
 import os
+import platform
 import textwrap
 import io
 import glob
@@ -79,5 +81,49 @@ def unzip_file_to_directory(path_to_zip_file, extract_location):
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
     os.rename(source_location, new_location)
-
     return new_location
+
+def find_whl(whl_dir, pkg_name, pkg_version):
+    # This function will find a whl for given package name
+    if not os.path.exists(whl_dir):
+        logging.error("whl_dir is incorrect")
+        return
+
+    if pkg_name is None:
+        logging.error("Package name cannot be empty to find whl")
+        return
+
+    pkg_name_format = "{0}-{1}-*.whl".format(pkg_name.replace("-", "_"), pkg_version)
+    whls = [os.path.basename(w) for w in glob.glob(os.path.join(whl_dir, pkg_name_format))]
+    if not whls:
+        logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
+        logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
+        return
+
+    if len(whls) > 1:
+        # So we have whls specific to py version or platform since we are here
+        py_version = "py{0}".format(sys.version_info.major)
+        # filter whl for py version and check if we found just one whl
+        whls = [w for w in whls if py_version in w]
+
+        # if whl is platform independent then there should only be one whl in filtered list
+        if len(whls) > 1:
+            # if we have reached here, that means we have whl specific to platform as well.
+            platform_type = platform.system().lower()
+            ostype = "win"
+            if "linux" in platform_type:
+                ostype = "linux"
+            else:
+                if "win" not in platform_type:
+                    ostype = "mac"
+
+            whls = [w for w in whls if ostype in w]
+    
+    # Additional filtering based on arch type willbe required in future if that need arises.
+    # for now assumption is that no arch specific whl is generated
+    if len(whls) == 1:
+        logging.info("Found whl {}".format(whls[0]))
+        return whls[0]
+
+
+

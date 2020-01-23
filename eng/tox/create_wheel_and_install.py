@@ -17,6 +17,7 @@ import sys
 import glob
 import shutil
 
+from tox_helper_tasks import find_whl, get_package_details
 logging.getLogger().setLevel(logging.INFO)
 
 
@@ -30,6 +31,45 @@ def cleanup_build_artifacts(build_folder):
 
     # clean up build results
     shutil.rmtree(os.path.join(build_folder, "build"))
+
+
+def discover_whls(setuppy_path, dist_dir, target_setup):
+    wheels = []
+    if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+        wheels = discover_prebuilt_whl(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path)
+    else:
+        wheels = build_and_discover_whl(setuppy_path, dist_dir, target_setup)
+    return wheels
+
+
+def discover_prebuilt_whl(whl_directory, setuppy_path):
+    wheels = []
+    pkg_name, _, version = get_package_details(setuppy_path)
+    whl_name = find_whl(whl_directory, pkg_name, version)
+    if whl_name is None:
+        logging.error("whl is missing in prebuilt whl directory {0} for package {1} and version {2}".format(whl_directory, pkg_name, version))
+        exit(1)
+    wheels.append(whl_name)
+    return wheels
+
+
+def build_and_discover_whl(setuppy_path, dist_dir, target_setup):
+    check_call(
+        [
+            "python",
+            setuppy_path,
+            "bdist_wheel",
+            "-d",
+            dist_dir,
+        ]
+    )
+
+    wheels = [
+        f for f in os.listdir(args.distribution_directory) if f.endswith(".whl")
+    ]
+
+    cleanup_build_artifacts(target_setup)
+    return wheels
 
 
 if __name__ == "__main__":
@@ -81,21 +121,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    check_call(
-        [
-            "python",
-            os.path.join(args.target_setup, "setup.py"),
-            "bdist_wheel",
-            "-d",
-            args.distribution_directory,
-        ]
-    )
-
-    discovered_wheels = [
-        f for f in os.listdir(args.distribution_directory) if f.endswith(".whl")
-    ]
-
-    cleanup_build_artifacts(args.target_setup)
+    setup_py_path = os.path.join(args.target_setup, "setup.py")
+    discovered_wheels = discover_whls(setup_py_path, args.distribution_directory, args.target_setup)
 
     if args.skip_install:
         logging.info(
@@ -130,6 +157,7 @@ if __name__ == "__main__":
                 "pip",
                 "install",
                 pkg_wheel_path,
+                "--verbose"
             ]
 
             # If extra index URL is passed then set it as argument to pip command
