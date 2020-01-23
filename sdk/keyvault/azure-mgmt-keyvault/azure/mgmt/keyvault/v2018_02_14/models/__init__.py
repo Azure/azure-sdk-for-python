@@ -20,6 +20,12 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Permissions
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionItem
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Resource
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
@@ -43,6 +49,12 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Permissions
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionItem
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceListResult
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import Resource
     from ._models import ServiceSpecification
     from ._models import Sku
@@ -68,6 +80,8 @@ from ._key_vault_management_client_enums import (
     CreateMode,
     NetworkRuleBypassOptions,
     NetworkRuleAction,
+    PrivateEndpointServiceConnectionStatus,
+    PrivateEndpointConnectionProvisioningState,
     Reason,
     AccessPolicyUpdateKind,
 )
@@ -83,6 +97,12 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'Permissions',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionItem',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'Resource',
     'ServiceSpecification',
     'Sku',
@@ -107,6 +127,8 @@ __all__ = [
     'CreateMode',
     'NetworkRuleBypassOptions',
     'NetworkRuleAction',
+    'PrivateEndpointServiceConnectionStatus',
+    'PrivateEndpointConnectionProvisioningState',
     'Reason',
     'AccessPolicyUpdateKind',
 ]
