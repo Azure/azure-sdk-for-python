@@ -14,6 +14,7 @@ pr: none
 stages:
   - stage: Build
     jobs:
-    - template: ./templates/jobs/archetype-sdk-nightly.yml
+    - template: ./templates/jobs/archetype-sdk-client.yml
       parameters:
         ToxEnvParallel: '--tenvparallel'
+        InjectedPackages: $(InjectedPackages)

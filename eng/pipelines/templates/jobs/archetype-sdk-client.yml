@@ -5,6 +5,7 @@ parameters:
   BuildTargetingString: 'azure-*'
   TestTimeoutInMinutes: 0
   ToxEnvParallel: '--tenvparallel'
+  InjectedPackages: ''
   TestMatrix:
     Linux_Python27:
       OSName: 'Linux'
@@ -129,7 +130,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: "$(InjectedPackages)"
+        InjectedPackages: ${{ parameters.InjectedPackages }}
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
