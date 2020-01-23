@@ -12,8 +12,10 @@ trigger: none
 
 pr: none
 
-jobs:
-  - template: ../jobs/archetype-sdk-client.yml
-    parameters:
-      ServiceDirectory: ${{parameters.ServiceDirectory}}
-      ToxEnvParallel: ${{parameters.ToxEnvParallel}}
+stages:
+  - stage: Build
+    jobs:
+    - template: ../jobs/archetype-sdk-nightly.yml
+      parameters:
+        ServiceDirectory: ${{parameters.ServiceDirectory}}
+        ToxEnvParallel: ${{parameters.ToxEnvParallel}}
