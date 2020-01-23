@@ -9,7 +9,6 @@ resources:
       name: internal/azure-sdk-build-tools
 
 trigger: none
-
 pr: none
 
 stages:
@@ -17,5 +16,4 @@ stages:
     jobs:
     - template: ../jobs/archetype-sdk-nightly.yml
       parameters:
-        ServiceDirectory: ${{parameters.ServiceDirectory}}
-        ToxEnvParallel: ${{parameters.ToxEnvParallel}}
+        ToxEnvParallel: '--tenvparallel'
