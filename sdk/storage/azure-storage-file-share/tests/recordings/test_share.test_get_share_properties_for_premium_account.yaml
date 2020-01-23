@@ -19,7 +19,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: https://premiumstoragename.file.core.windows.net/share9125172e?restype=share
+    uri: https://pyacrstoragestorname.file.core.windows.net/share9125172e?restype=share
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://premiumstoragename.file.core.windows.net/share9125172e?restype=share
+    uri: https://pyacrstoragestorname.file.core.windows.net/share9125172e?restype=share
   response:
     body:
       string: ''
@@ -115,11 +115,11 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://premiumstoragename.file.core.windows.net/?include=snapshots&comp=list
+    uri: https://pyacrstoragestorname.file.core.windows.net/?include=snapshots&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://premiumstoragename.file.core.windows.net/\"><Shares><Share><Name>share9125172e</Name><Properties><Last-Modified>Tue,
+        ServiceEndpoint=\"https://pyacrstoragestorname.file.core.windows.net/\"><Shares><Share><Name>share9125172e</Name><Properties><Last-Modified>Tue,
         10 Dec 2019 04:36:27 GMT</Last-Modified><Etag>\"0x8D77D2A851F8DC1\"</Etag><Quota>100</Quota><EnabledProtocols>SMB</EnabledProtocols><ProvisionedIops>100</ProvisionedIops><ProvisionedIngressMBps>44</ProvisionedIngressMBps><ProvisionedEgressMBps>66</ProvisionedEgressMBps><NextAllowedQuotaDowngradeTime>Tue,
         10 Dec 2019 04:36:27 GMT</NextAllowedQuotaDowngradeTime></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
@@ -161,7 +161,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://premiumstoragename.file.core.windows.net/share9125172e?restype=share
+    uri: https://pyacrstoragestorname.file.core.windows.net/share9125172e?restype=share
   response:
     body:
       string: ''
