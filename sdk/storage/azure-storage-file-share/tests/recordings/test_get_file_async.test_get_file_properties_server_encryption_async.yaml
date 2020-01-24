@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:57 GMT
       etag: '"0x8D79A160BF7798A"'
       last-modified: Wed, 15 Jan 2020 23:52:57 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:57 GMT
       etag: '"0x8D79A160C01728A"'
       last-modified: Wed, 15 Jan 2020 23:52:57 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:52:57 GMT
       etag: '"0x8D79A160C1BDCE4"'
       last-modified: Wed, 15 Jan 2020 23:52:57 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:52:57 GMT
       etag: '"0x8D79A160C2ECBEA"'
@@ -188,7 +188,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '65541'
+      Content-Length: '65541'
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:52:57 GMT
       etag: '"0x8D79A160C2ECBEA"'
