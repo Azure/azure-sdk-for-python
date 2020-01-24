@@ -20,3 +20,4 @@ stages:
         InjectedPackages: $(InjectedPackages)
         BuildDocs: false
         TestTimeoutInMinutes: 300
+        TestMarkArgument: not cosmosEmulator
