@@ -287,8 +287,8 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         if parsed_args.tox_env:
             tox_execution_array.extend(["-e", parsed_args.tox_env])
 
-        if parsed_args.tenvparallel:
-            tox_execution_array.extend(["-p", "all"])
+       # if parsed_args.tenvparallel:
+            #tox_execution_array.extend(["-p", "all"])
 
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
