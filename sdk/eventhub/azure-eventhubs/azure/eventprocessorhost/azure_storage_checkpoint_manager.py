@@ -37,7 +37,10 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
      will be used.
     :param str lease_container_name: The name of the container that will be used to store
      leases. If it does not already exist it will be created. Default value is 'eph-leases'.
-    :param str storage_blob_prefix: A string to prefix the lease storage path, default empty.
+     Leases are named via internal partition_ids, locations can be modified via
+     storage_blob_prefix and use_consumer_group_as_directory.
+    :param str storage_blob_prefix: If populated, prepends a prefix when constructing
+     the location that leases are stored within the lease_container. Default None.
     :param int lease_renew_interval: The interval in seconds at which EPH will attempt to
      renew the lease of a particular partition. Default value is 10.
     :param int lease_duration: The duration in seconds of a lease on a partition.
@@ -50,8 +53,10 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     :param str connection_string: If specified, this will override all other endpoint parameters.
      See http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
      for the connection string format.
-    :param bool use_consumer_group_as_directory: If true, uses the consumer group when constructing
-     the lease storage path, as such:  <consumer_group>/<partition_id>. Default False.
+    :param bool use_consumer_group_as_directory: If true, includes the consumer group as part of the
+     location we use to store leases within the container, as such:  <consumer_group>/<partition_id>, 
+     otherwise leases are simply named by their partition_id.  Default False.
+     If storage_blob_prefix is provided this prefix will be prepended in either case.
     """
 
     def __init__(self, storage_account_name=None, storage_account_key=None, lease_container_name="eph-leases",
