@@ -142,6 +142,39 @@ transport = AioHttpTransport(
 )
 ```
 
+### Proxy Settings
+
+There are ways to configure a proxy.
+
+- Use environment proxy settings
+
+When creating the transport, "use_env_settings" parameter can be used to enable or disable the environment proxy settings. e.g.:
+
+```python
+synchronous_transport = RequestsTransport(use_env_settings = True)
+```
+
+If "use_env_settings" is set to True which is by default, the transport will look for environment variables 
+
+**HTTP_PROXY** and **HTTPS_PROXY**
+
+and use them.
+
+- Use ProxyPolicy
+
+You can use ProxyPolicy to configure the proxy settings as well.e.g.
+
+```python
+from azure.core.pipeline.policies import ProxyPolicy
+
+proxy_policy = ProxyPolicy()
+
+proxy_policy.proxies = {'http': 'http://10.10.1.10:3148'}
+
+# Use basic auth
+proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
+```
+
 ### HttpRequest and HttpResponse
 
 The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
