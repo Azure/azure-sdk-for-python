@@ -63,7 +63,7 @@ setup(
         'azure',
     ]),
     package_data={
-        'pytyped': 'py.typed',
+        'pytyped': ['py.typed'],
     },
     install_requires=[
         'requests>=2.18.4',
