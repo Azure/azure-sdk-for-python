@@ -17,7 +17,7 @@ from version_shared import get_packages, get_version_py
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--always-succeed', action='store_true', help='return exit code 0 even if incorrect versions are detected')
-    parser.add_argument('--service', help='name of a service directory to target packages')
+    parser.add_argument('--service', required=False, help='name of a service directory to target packages')
     parser.add_argument(
         dest="glob_string",
         nargs="?",
