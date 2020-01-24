@@ -36,6 +36,7 @@ with open('HISTORY.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft Azure {} Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
     long_description_content_type='text/markdown',
@@ -61,6 +62,9 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]),
+    package_data={
+        'pytyped': 'py.typed',
+    },
     install_requires=[
         'requests>=2.18.4',
         'six>=1.6',
