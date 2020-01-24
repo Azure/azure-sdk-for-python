@@ -2,7 +2,7 @@
 Azure SDK for Python
 ====================
 
-.. important:: The most part of this documentation has moved to https://docs.microsoft.com/python/azure
+.. important:: You can find all of the Python on Azure documentation at https://docs.microsoft.com/python/azure
 
 The Azure SDK for Python is a set of libraries which allow you to work on Azure for your management, runtime or data needs.
 
@@ -58,14 +58,6 @@ Guidelines <http://windowsazure.github.com/guidelines.html>`__.
 If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
-
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 .. toctree::
   :glob:

@@ -26,22 +26,22 @@ USAGE:
 
 OUTPUT:
     Overall sentiment: mixed
-    Overall scores: positive=0.338; neutral=0.338; negative=0.338
+    Overall scores: positive=0.338; neutral=0.432; negative=0.230
 
     Sentence 1 sentiment: neutral
     Offset: 0
     Length: 35
-    Sentence score: positive=0.006; neutral=0.006; negative=0.006
+    Sentence score: positive=0.006; neutral=0.987; negative=0.007
 
     Sentence 2 sentiment: positive
     Offset: 36
     Length: 32
-    Sentence score: positive=0.999; neutral=0.999; negative=0.999
+    Sentence score: positive=0.999; neutral=0.000; negative=0.001
 
     Sentence 3 sentiment: negative
     Offset: 69
     Length: 39
-    Sentence score: positive=0.010; neutral=0.010; negative=0.010
+    Sentence score: positive=0.010; neutral=0.307; negative=0.683
 """
 
 import os
@@ -68,7 +68,7 @@ class SingleAnalyzeSentimentSampleAsync(object):
         )
 
         print("Overall sentiment: {}".format(result.sentiment))
-        print("Overall scores: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
+        print("Overall scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
             result.document_scores.positive,
             result.document_scores.neutral,
             result.document_scores.negative,
@@ -78,7 +78,7 @@ class SingleAnalyzeSentimentSampleAsync(object):
             print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
             print("Offset: {}".format(sentence.offset))
             print("Length: {}".format(sentence.length))
-            print("Sentence score: positive={0:.3f}; neutral={0:.3f}; negative={0:.3f} \n".format(
+            print("Sentence score: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
                 sentence.sentence_scores.positive,
                 sentence.sentence_scores.neutral,
                 sentence.sentence_scores.negative,

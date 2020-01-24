@@ -12,7 +12,8 @@ from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
 
-from helpers import async_validating_transport, mock_response, Request
+from helpers import mock_response, Request
+from helpers_async import async_validating_transport
 
 
 @pytest.mark.asyncio

@@ -4,6 +4,7 @@ parameters:
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
   TestTimeoutInMinutes: 0
+  ToxEnvParallel: '--tenvparallel'
   TestMatrix:
     Linux_Python27:
       OSName: 'Linux'
@@ -92,7 +93,7 @@ jobs:
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
-
+    
     dependsOn:
        - 'Build'
 
@@ -106,7 +107,19 @@ jobs:
     pool:
       vmImage: '$(OSVmImage)'
 
-    steps:
+    steps:    
+    - pwsh: |
+        $toxenvvar = "whl,sdist"
+        if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
+          $toxenvvar = "whl,sdist"
+        }
+
+        if ('$(Run.ImportTest)' -eq 'true') {
+          $toxenvvar = "whl,sdist,depends"
+        }
+        echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
+      displayName: "Set Tox Environment"
+
     - template: ../steps/build-test.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -116,7 +129,8 @@ jobs:
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
+        ToxTestEnv: $(toxenv)
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:

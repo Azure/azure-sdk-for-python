@@ -4,18 +4,32 @@
 # license information.
 #--------------------------------------------------------------------------
 
+"""
+Examples to show basic async use case of python azure-eventhub SDK, including:
+    - Create EventHubProducerClient
+    - Create EventHubConsumerClient
+    - Create EventData
+    - Create EventDataBatch
+    - Send EventDataBatch
+    - Receive EventData
+    - Close EventHubProducerClient
+    - Close EventHubConsumerClient
+"""
+
 import logging
 import asyncio
 
 
-def create_async_eventhub_producer_client():
+def example_create_async_eventhub_producer_client():
     # [START create_eventhub_producer_client_from_conn_str_async]
     import os
     from azure.eventhub.aio import EventHubProducerClient
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
-    producer = EventHubProducerClient.from_connection_string(conn_str=event_hub_connection_str,
-                                                             eventhub_name=eventhub_name)
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=event_hub_connection_str,
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
+    )
     # [END create_eventhub_producer_client_from_conn_str_async]
 
     # [START create_eventhub_producer_client_async]
@@ -34,15 +48,17 @@ def create_async_eventhub_producer_client():
     return producer
 
 
-def create_async_eventhub_consumer_client():
+def example_create_async_eventhub_consumer_client():
     # [START create_eventhub_consumer_client_from_conn_str_async]
     import os
     from azure.eventhub.aio import EventHubConsumerClient
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
-    consumer = EventHubConsumerClient.from_connection_string(conn_str=event_hub_connection_str,
-                                                             consumer_group='$Default',
-                                                             eventhub_name=eventhub_name)
+    consumer = EventHubConsumerClient.from_connection_string(
+        conn_str=event_hub_connection_str,
+        consumer_group='$Default',
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
+    )
     # [END create_eventhub_consumer_client_from_conn_str_async]
 
     # [START create_eventhub_consumer_client_async]
@@ -63,12 +79,12 @@ def create_async_eventhub_consumer_client():
 
 
 async def example_eventhub_async_send_and_receive():
-    producer = create_async_eventhub_producer_client()
-    consumer = create_async_eventhub_consumer_client()
+    producer = example_create_async_eventhub_producer_client()
+    consumer = example_create_async_eventhub_consumer_client()
     try:
         # [START eventhub_producer_client_create_batch_async]
         from azure.eventhub import EventData
-        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
+        event_data_batch = await producer.create_batch()
         while True:
             try:
                 event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -80,7 +96,7 @@ async def example_eventhub_async_send_and_receive():
 
         # [START eventhub_producer_client_send_async]
         async with producer:
-            event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
+            event_data_batch = await producer.create_batch()
             while True:
                 try:
                     event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -96,17 +112,21 @@ async def example_eventhub_async_send_and_receive():
         logger = logging.getLogger("azure.eventhub")
 
         async def on_event(partition_context, event):
+            # Put your code here.
+            # If the operation is i/o intensive, async will have better performance.
             logger.info("Received event from partition: {}".format(partition_context.partition_id))
-            # Do asnchronous ops on received events
 
         async with consumer:
-            await consumer.receive(on_event=on_event)
+            await consumer.receive(
+                on_event=on_event,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
         # [END eventhub_consumer_client_receive_async]
     finally:
         pass
 
 
-async def example_eventhub_async_producer_ops():
+async def example_eventhub_async_producer_send_and_close():
     # [START eventhub_producer_client_close_async]
     import os
     from azure.eventhub.aio import EventHubProducerClient
@@ -117,10 +137,10 @@ async def example_eventhub_async_producer_ops():
 
     producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        eventhub_name=eventhub_name
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
     try:
-        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
+        event_data_batch = await producer.create_batch()
         while True:
             try:
                 event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -135,7 +155,7 @@ async def example_eventhub_async_producer_ops():
     # [END eventhub_producer_client_close_async]
 
 
-async def example_eventhub_async_consumer_ops():
+async def example_eventhub_async_consumer_receive_and_close():
     # [START eventhub_consumer_client_close_async]
     import os
 
@@ -146,14 +166,15 @@ async def example_eventhub_async_consumer_ops():
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         consumer_group='$Default',
-        eventhub_name=eventhub_name
+        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
 
     logger = logging.getLogger("azure.eventhub")
 
     async def on_event(partition_context, event):
+        # Put your code here.
+        # If the operation is i/o intensive, async will have better performance.
         logger.info("Received event from partition: {}".format(partition_context.partition_id))
-        # Do asynchronous ops on the received event
 
     # The receive method is a coroutine which will be blocking when awaited.
     # It can be executed in an async task for non-blocking behavior, and combined with the 'close' method.
@@ -168,6 +189,7 @@ async def example_eventhub_async_consumer_ops():
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(example_eventhub_async_producer_ops())
-    loop.run_until_complete(example_eventhub_async_consumer_ops())
+    loop.run_until_complete(example_eventhub_async_consumer_receive_and_close())
+    # loop.run_until_complete(example_eventhub_async_producer_send_and_close())
     # loop.run_until_complete(example_eventhub_async_send_and_receive())
+

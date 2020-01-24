@@ -633,22 +633,21 @@ class AudioAnalyzerPreset(Preset):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param audio_language: The language for the audio payload in the input
-     using the BCP-47 format of 'language tag-region' (e.g: 'en-US').  The list
-     of supported languages are English ('en-US' and 'en-GB'), Spanish ('es-ES'
-     and 'es-MX'), French ('fr-FR'), Italian ('it-IT'), Japanese ('ja-JP'),
-     Portuguese ('pt-BR'), Chinese ('zh-CN'), German ('de-DE'), Arabic ('ar-EG'
-     and 'ar-SY'), Russian ('ru-RU'), Hindi ('hi-IN'), and Korean ('ko-KR'). If
-     you know the language of your content, it is recommended that you specify
-     it. If the language isn't specified or set to null, automatic language
+     using the BCP-47 format of 'language tag-region' (e.g: 'en-US').  If you
+     know the language of your content, it is recommended that you specify it.
+     If the language isn't specified or set to null, automatic language
      detection will choose the first language detected and process with the
-     selected language for the duration of the file. This language detection
-     feature currently supports English, Chinese, French, German, Italian,
-     Japanese, Spanish, Russian, and Portuguese. It does not currently support
-     dynamically switching between languages after the first language is
-     detected. The automatic detection works best with audio recordings with
+     selected language for the duration of the file. It does not currently
+     support dynamically switching between languages after the first language
+     is detected. The automatic detection works best with audio recordings with
      clearly discernable speech. If automatic detection fails to find the
-     language, transcription would fallback to 'en-US'."
+     language, transcription would fallback to 'en-US'." The list of supported
+     languages is available here:
+     https://go.microsoft.com/fwlink/?linkid=2109463
     :type audio_language: str
+    :param experimental_options: Dictionary containing key value pairs for
+     parameters not exposed in the preset itself
+    :type experimental_options: dict[str, str]
     """
 
     _validation = {
@@ -658,15 +657,17 @@ class AudioAnalyzerPreset(Preset):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'audio_language': {'key': 'audioLanguage', 'type': 'str'},
+        'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
     }
 
     _subtype_map = {
         'odatatype': {'#Microsoft.Media.VideoAnalyzerPreset': 'VideoAnalyzerPreset'}
     }
 
-    def __init__(self, *, audio_language: str=None, **kwargs) -> None:
+    def __init__(self, *, audio_language: str=None, experimental_options=None, **kwargs) -> None:
         super(AudioAnalyzerPreset, self).__init__(**kwargs)
         self.audio_language = audio_language
+        self.experimental_options = experimental_options
         self.odatatype = '#Microsoft.Media.AudioAnalyzerPreset'
 
 
@@ -811,8 +812,8 @@ class BuiltInStandardEncoderPreset(Preset):
      videos. Possible values include: 'H264SingleBitrateSD',
      'H264SingleBitrate720p', 'H264SingleBitrate1080p', 'AdaptiveStreaming',
      'AACGoodQualityAudio', 'ContentAwareEncodingExperimental',
-     'H264MultipleBitrate1080p', 'H264MultipleBitrate720p',
-     'H264MultipleBitrateSD'
+     'ContentAwareEncoding', 'H264MultipleBitrate1080p',
+     'H264MultipleBitrate720p', 'H264MultipleBitrateSD'
     :type preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
     """
 
@@ -1100,13 +1101,16 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
      certificate in PKCS 12 (pfx) format (including private key).
     :type fair_play_pfx: str
     :param rental_and_lease_key_type: Required. The rental and lease key type.
-     Possible values include: 'Unknown', 'Undefined', 'PersistentUnlimited',
-     'PersistentLimited'
+     Possible values include: 'Unknown', 'Undefined', 'DualExpiry',
+     'PersistentUnlimited', 'PersistentLimited'
     :type rental_and_lease_key_type: str or
      ~azure.mgmt.media.models.ContentKeyPolicyFairPlayRentalAndLeaseKeyType
     :param rental_duration: Required. The rental duration. Must be greater
      than or equal to 0.
     :type rental_duration: long
+    :param offline_rental_configuration: Offline rental policy
+    :type offline_rental_configuration:
+     ~azure.mgmt.media.models.ContentKeyPolicyFairPlayOfflineRentalConfiguration
     """
 
     _validation = {
@@ -1125,16 +1129,45 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
         'fair_play_pfx': {'key': 'fairPlayPfx', 'type': 'str'},
         'rental_and_lease_key_type': {'key': 'rentalAndLeaseKeyType', 'type': 'str'},
         'rental_duration': {'key': 'rentalDuration', 'type': 'long'},
+        'offline_rental_configuration': {'key': 'offlineRentalConfiguration', 'type': 'ContentKeyPolicyFairPlayOfflineRentalConfiguration'},
     }
 
-    def __init__(self, *, ask: bytearray, fair_play_pfx_password: str, fair_play_pfx: str, rental_and_lease_key_type, rental_duration: int, **kwargs) -> None:
+    def __init__(self, *, ask: bytearray, fair_play_pfx_password: str, fair_play_pfx: str, rental_and_lease_key_type, rental_duration: int, offline_rental_configuration=None, **kwargs) -> None:
         super(ContentKeyPolicyFairPlayConfiguration, self).__init__(**kwargs)
         self.ask = ask
         self.fair_play_pfx_password = fair_play_pfx_password
         self.fair_play_pfx = fair_play_pfx
         self.rental_and_lease_key_type = rental_and_lease_key_type
         self.rental_duration = rental_duration
+        self.offline_rental_configuration = offline_rental_configuration
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration'
+
+
+class ContentKeyPolicyFairPlayOfflineRentalConfiguration(Model):
+    """ContentKeyPolicyFairPlayOfflineRentalConfiguration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param playback_duration_seconds: Required. Playback duration
+    :type playback_duration_seconds: long
+    :param storage_duration_seconds: Required. Storage duration
+    :type storage_duration_seconds: long
+    """
+
+    _validation = {
+        'playback_duration_seconds': {'required': True},
+        'storage_duration_seconds': {'required': True},
+    }
+
+    _attribute_map = {
+        'playback_duration_seconds': {'key': 'playbackDurationSeconds', 'type': 'long'},
+        'storage_duration_seconds': {'key': 'storageDurationSeconds', 'type': 'long'},
+    }
+
+    def __init__(self, *, playback_duration_seconds: int, storage_duration_seconds: int, **kwargs) -> None:
+        super(ContentKeyPolicyFairPlayOfflineRentalConfiguration, self).__init__(**kwargs)
+        self.playback_duration_seconds = playback_duration_seconds
+        self.storage_duration_seconds = storage_duration_seconds
 
 
 class ContentKeyPolicyRestriction(Model):
@@ -2098,6 +2131,9 @@ class FaceDetectorPreset(Preset):
      video may not be detected. Possible values include: 'SourceResolution',
      'StandardDefinition'
     :type resolution: str or ~azure.mgmt.media.models.AnalysisResolution
+    :param experimental_options: Dictionary containing key value pairs for
+     parameters not exposed in the preset itself
+    :type experimental_options: dict[str, str]
     """
 
     _validation = {
@@ -2107,11 +2143,13 @@ class FaceDetectorPreset(Preset):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'resolution': {'key': 'resolution', 'type': 'str'},
+        'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
     }
 
-    def __init__(self, *, resolution=None, **kwargs) -> None:
+    def __init__(self, *, resolution=None, experimental_options=None, **kwargs) -> None:
         super(FaceDetectorPreset, self).__init__(**kwargs)
         self.resolution = resolution
+        self.experimental_options = experimental_options
         self.odatatype = '#Microsoft.Media.FaceDetectorPreset'
 
 
@@ -2814,6 +2852,12 @@ class Job(ProxyResource):
     :param correlation_data: Customer provided key, value pairs that will be
      returned in Job and JobOutput state events.
     :type correlation_data: dict[str, str]
+    :ivar start_time: The UTC date and time at which this Job began
+     processing.
+    :vartype start_time: datetime
+    :ivar end_time: The UTC date and time at which this Job finished
+     processing.
+    :vartype end_time: datetime
     """
 
     _validation = {
@@ -2825,6 +2869,8 @@ class Job(ProxyResource):
         'input': {'required': True},
         'last_modified': {'readonly': True},
         'outputs': {'required': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2839,6 +2885,8 @@ class Job(ProxyResource):
         'outputs': {'key': 'properties.outputs', 'type': '[JobOutput]'},
         'priority': {'key': 'properties.priority', 'type': 'str'},
         'correlation_data': {'key': 'properties.correlationData', 'type': '{str}'},
+        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, *, input, outputs, description: str=None, priority=None, correlation_data=None, **kwargs) -> None:
@@ -2851,6 +2899,8 @@ class Job(ProxyResource):
         self.outputs = outputs
         self.priority = priority
         self.correlation_data = correlation_data
+        self.start_time = None
+        self.end_time = None
 
 
 class JobError(Model):
@@ -3172,6 +3222,12 @@ class JobOutput(Model):
      JobOutput within the Job. Note that this index is the same as the relative
      index of the corresponding TransformOutput within its Transform.
     :type label: str
+    :ivar start_time: The UTC date and time at which this Job Output began
+     processing.
+    :vartype start_time: datetime
+    :ivar end_time: The UTC date and time at which this Job Output finished
+     processing.
+    :vartype end_time: datetime
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
@@ -3180,6 +3236,8 @@ class JobOutput(Model):
         'error': {'readonly': True},
         'state': {'readonly': True},
         'progress': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'odatatype': {'required': True},
     }
 
@@ -3188,6 +3246,8 @@ class JobOutput(Model):
         'state': {'key': 'state', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'int'},
         'label': {'key': 'label', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
     }
 
@@ -3201,6 +3261,8 @@ class JobOutput(Model):
         self.state = None
         self.progress = None
         self.label = label
+        self.start_time = None
+        self.end_time = None
         self.odatatype = None
 
 
@@ -3237,6 +3299,12 @@ class JobOutputAsset(JobOutput):
      JobOutput within the Job. Note that this index is the same as the relative
      index of the corresponding TransformOutput within its Transform.
     :type label: str
+    :ivar start_time: The UTC date and time at which this Job Output began
+     processing.
+    :vartype start_time: datetime
+    :ivar end_time: The UTC date and time at which this Job Output finished
+     processing.
+    :vartype end_time: datetime
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param asset_name: Required. The name of the output Asset.
@@ -3247,6 +3315,8 @@ class JobOutputAsset(JobOutput):
         'error': {'readonly': True},
         'state': {'readonly': True},
         'progress': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'odatatype': {'required': True},
         'asset_name': {'required': True},
     }
@@ -3256,6 +3326,8 @@ class JobOutputAsset(JobOutput):
         'state': {'key': 'state', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'int'},
         'label': {'key': 'label', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'asset_name': {'key': 'assetName', 'type': 'str'},
     }
@@ -5401,22 +5473,21 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param audio_language: The language for the audio payload in the input
-     using the BCP-47 format of 'language tag-region' (e.g: 'en-US').  The list
-     of supported languages are English ('en-US' and 'en-GB'), Spanish ('es-ES'
-     and 'es-MX'), French ('fr-FR'), Italian ('it-IT'), Japanese ('ja-JP'),
-     Portuguese ('pt-BR'), Chinese ('zh-CN'), German ('de-DE'), Arabic ('ar-EG'
-     and 'ar-SY'), Russian ('ru-RU'), Hindi ('hi-IN'), and Korean ('ko-KR'). If
-     you know the language of your content, it is recommended that you specify
-     it. If the language isn't specified or set to null, automatic language
+     using the BCP-47 format of 'language tag-region' (e.g: 'en-US').  If you
+     know the language of your content, it is recommended that you specify it.
+     If the language isn't specified or set to null, automatic language
      detection will choose the first language detected and process with the
-     selected language for the duration of the file. This language detection
-     feature currently supports English, Chinese, French, German, Italian,
-     Japanese, Spanish, Russian, and Portuguese. It does not currently support
-     dynamically switching between languages after the first language is
-     detected. The automatic detection works best with audio recordings with
+     selected language for the duration of the file. It does not currently
+     support dynamically switching between languages after the first language
+     is detected. The automatic detection works best with audio recordings with
      clearly discernable speech. If automatic detection fails to find the
-     language, transcription would fallback to 'en-US'."
+     language, transcription would fallback to 'en-US'." The list of supported
+     languages is available here:
+     https://go.microsoft.com/fwlink/?linkid=2109463
     :type audio_language: str
+    :param experimental_options: Dictionary containing key value pairs for
+     parameters not exposed in the preset itself
+    :type experimental_options: dict[str, str]
     :param insights_to_extract: Defines the type of insights that you want the
      service to generate. The allowed values are 'AudioInsightsOnly',
      'VideoInsightsOnly', and 'AllInsights'. The default is AllInsights. If you
@@ -5437,11 +5508,12 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'audio_language': {'key': 'audioLanguage', 'type': 'str'},
+        'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
         'insights_to_extract': {'key': 'insightsToExtract', 'type': 'str'},
     }
 
-    def __init__(self, *, audio_language: str=None, insights_to_extract=None, **kwargs) -> None:
-        super(VideoAnalyzerPreset, self).__init__(audio_language=audio_language, **kwargs)
+    def __init__(self, *, audio_language: str=None, experimental_options=None, insights_to_extract=None, **kwargs) -> None:
+        super(VideoAnalyzerPreset, self).__init__(audio_language=audio_language, experimental_options=experimental_options, **kwargs)
         self.insights_to_extract = insights_to_extract
         self.odatatype = '#Microsoft.Media.VideoAnalyzerPreset'
 

@@ -8,10 +8,8 @@ from collections import namedtuple
 from azure_devtools.scenario_tests import ReplayableTest
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests.exceptions import AzureTestError
-
 from . import AzureMgmtPreparer, ResourceGroupPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
-from azure.core.credentials import AccessToken
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -21,38 +19,12 @@ FakeCognitiveServicesAccount = namedtuple(
 )
 
 
-class AsyncFakeTokenCredential(object):
-    """Protocol for classes able to provide OAuth tokens.
-    :param str scopes: Lets you specify the type of access needed.
-    """
-    def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
-
-    def get_token(self, *args):
-        return self.token
-
-
 class CognitiveServiceTest(AzureTestCase):
+    """Can be used for Track 1 tests"""
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
         super(CognitiveServiceTest, self).__init__(method_name)
-
-    def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ACCOUNT_NAME")
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("AZURE_TENANT_ID"),
-                self.get_settings_value("AZURE_CLIENT_ID"),
-                self.get_settings_value("AZURE_CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
-    def generate_fake_token(self):
-        return AsyncFakeTokenCredential()
 
 
 class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
@@ -63,11 +35,13 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                  legacy=False,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None,
+                 random_name_enabled=True):
         super(CognitiveServicesAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
-                                                     client_kwargs=client_kwargs)
+                                                     client_kwargs=client_kwargs,
+                                                     random_name_enabled=random_name_enabled)
         self.location = location
         self.sku = sku
         self.kind = kind
@@ -119,6 +93,6 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         try:
             return kwargs.get(self.resource_group_parameter_name)
         except KeyError:
-            template = 'To create a storage account a resource group is required. Please add ' \
-                       'decorator @{} in front of this storage account preparer.'
+            template = 'To create a cognitive services account a resource group is required. Please add ' \
+                       'decorator @{} in front of this cognitive services account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))

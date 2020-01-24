@@ -10,133 +10,133 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .query_context_py3 import QueryContext
-    from .image_object_py3 import ImageObject
-    from .entities_entity_presentation_info_py3 import EntitiesEntityPresentationInfo
-    from .thing_py3 import Thing
-    from .entities_py3 import Entities
-    from .places_py3 import Places
-    from .search_response_py3 import SearchResponse
-    from .contractual_rules_contractual_rule_py3 import ContractualRulesContractualRule
-    from .response_py3 import Response
-    from .search_results_answer_py3 import SearchResultsAnswer
-    from .identifiable_py3 import Identifiable
-    from .answer_py3 import Answer
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .postal_address_py3 import PostalAddress
-    from .place_py3 import Place
-    from .organization_py3 import Organization
-    from .response_base_py3 import ResponseBase
-    from .creative_work_py3 import CreativeWork
-    from .intangible_py3 import Intangible
-    from .movie_theater_py3 import MovieTheater
-    from .contractual_rules_attribution_py3 import ContractualRulesAttribution
-    from .media_object_py3 import MediaObject
-    from .civic_structure_py3 import CivicStructure
-    from .local_business_py3 import LocalBusiness
-    from .tourist_attraction_py3 import TouristAttraction
-    from .airport_py3 import Airport
-    from .license_py3 import License
-    from .structured_value_py3 import StructuredValue
-    from .entertainment_business_py3 import EntertainmentBusiness
-    from .contractual_rules_license_attribution_py3 import ContractualRulesLicenseAttribution
-    from .contractual_rules_link_attribution_py3 import ContractualRulesLinkAttribution
-    from .contractual_rules_media_attribution_py3 import ContractualRulesMediaAttribution
-    from .contractual_rules_text_attribution_py3 import ContractualRulesTextAttribution
-    from .food_establishment_py3 import FoodEstablishment
-    from .lodging_business_py3 import LodgingBusiness
-    from .restaurant_py3 import Restaurant
-    from .hotel_py3 import Hotel
+    from ._models_py3 import Airport
+    from ._models_py3 import Answer
+    from ._models_py3 import CivicStructure
+    from ._models_py3 import ContractualRulesAttribution
+    from ._models_py3 import ContractualRulesContractualRule
+    from ._models_py3 import ContractualRulesLicenseAttribution
+    from ._models_py3 import ContractualRulesLinkAttribution
+    from ._models_py3 import ContractualRulesMediaAttribution
+    from ._models_py3 import ContractualRulesTextAttribution
+    from ._models_py3 import CreativeWork
+    from ._models_py3 import EntertainmentBusiness
+    from ._models_py3 import Entities
+    from ._models_py3 import EntitiesEntityPresentationInfo
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import FoodEstablishment
+    from ._models_py3 import Hotel
+    from ._models_py3 import Identifiable
+    from ._models_py3 import ImageObject
+    from ._models_py3 import Intangible
+    from ._models_py3 import License
+    from ._models_py3 import LocalBusiness
+    from ._models_py3 import LodgingBusiness
+    from ._models_py3 import MediaObject
+    from ._models_py3 import MovieTheater
+    from ._models_py3 import Organization
+    from ._models_py3 import Place
+    from ._models_py3 import Places
+    from ._models_py3 import PostalAddress
+    from ._models_py3 import QueryContext
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import Restaurant
+    from ._models_py3 import SearchResponse
+    from ._models_py3 import SearchResultsAnswer
+    from ._models_py3 import StructuredValue
+    from ._models_py3 import Thing
+    from ._models_py3 import TouristAttraction
 except (SyntaxError, ImportError):
-    from .query_context import QueryContext
-    from .image_object import ImageObject
-    from .entities_entity_presentation_info import EntitiesEntityPresentationInfo
-    from .thing import Thing
-    from .entities import Entities
-    from .places import Places
-    from .search_response import SearchResponse
-    from .contractual_rules_contractual_rule import ContractualRulesContractualRule
-    from .response import Response
-    from .search_results_answer import SearchResultsAnswer
-    from .identifiable import Identifiable
-    from .answer import Answer
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .postal_address import PostalAddress
-    from .place import Place
-    from .organization import Organization
-    from .response_base import ResponseBase
-    from .creative_work import CreativeWork
-    from .intangible import Intangible
-    from .movie_theater import MovieTheater
-    from .contractual_rules_attribution import ContractualRulesAttribution
-    from .media_object import MediaObject
-    from .civic_structure import CivicStructure
-    from .local_business import LocalBusiness
-    from .tourist_attraction import TouristAttraction
-    from .airport import Airport
-    from .license import License
-    from .structured_value import StructuredValue
-    from .entertainment_business import EntertainmentBusiness
-    from .contractual_rules_license_attribution import ContractualRulesLicenseAttribution
-    from .contractual_rules_link_attribution import ContractualRulesLinkAttribution
-    from .contractual_rules_media_attribution import ContractualRulesMediaAttribution
-    from .contractual_rules_text_attribution import ContractualRulesTextAttribution
-    from .food_establishment import FoodEstablishment
-    from .lodging_business import LodgingBusiness
-    from .restaurant import Restaurant
-    from .hotel import Hotel
-from .entity_search_api_enums import (
+    from ._models import Airport
+    from ._models import Answer
+    from ._models import CivicStructure
+    from ._models import ContractualRulesAttribution
+    from ._models import ContractualRulesContractualRule
+    from ._models import ContractualRulesLicenseAttribution
+    from ._models import ContractualRulesLinkAttribution
+    from ._models import ContractualRulesMediaAttribution
+    from ._models import ContractualRulesTextAttribution
+    from ._models import CreativeWork
+    from ._models import EntertainmentBusiness
+    from ._models import Entities
+    from ._models import EntitiesEntityPresentationInfo
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import FoodEstablishment
+    from ._models import Hotel
+    from ._models import Identifiable
+    from ._models import ImageObject
+    from ._models import Intangible
+    from ._models import License
+    from ._models import LocalBusiness
+    from ._models import LodgingBusiness
+    from ._models import MediaObject
+    from ._models import MovieTheater
+    from ._models import Organization
+    from ._models import Place
+    from ._models import Places
+    from ._models import PostalAddress
+    from ._models import QueryContext
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import Restaurant
+    from ._models import SearchResponse
+    from ._models import SearchResultsAnswer
+    from ._models import StructuredValue
+    from ._models import Thing
+    from ._models import TouristAttraction
+from ._entity_search_client_enums import (
+    AnswerType,
     EntityQueryScenario,
     EntityScenario,
     EntityType,
     ErrorCode,
     ErrorSubCode,
-    AnswerType,
     ResponseFormat,
     SafeSearch,
 )
 
 __all__ = [
-    'QueryContext',
-    'ImageObject',
-    'EntitiesEntityPresentationInfo',
-    'Thing',
-    'Entities',
-    'Places',
-    'SearchResponse',
-    'ContractualRulesContractualRule',
-    'Response',
-    'SearchResultsAnswer',
-    'Identifiable',
-    'Answer',
-    'Error',
-    'ErrorResponse', 'ErrorResponseException',
-    'PostalAddress',
-    'Place',
-    'Organization',
-    'ResponseBase',
-    'CreativeWork',
-    'Intangible',
-    'MovieTheater',
-    'ContractualRulesAttribution',
-    'MediaObject',
-    'CivicStructure',
-    'LocalBusiness',
-    'TouristAttraction',
     'Airport',
-    'License',
-    'StructuredValue',
-    'EntertainmentBusiness',
+    'Answer',
+    'CivicStructure',
+    'ContractualRulesAttribution',
+    'ContractualRulesContractualRule',
     'ContractualRulesLicenseAttribution',
     'ContractualRulesLinkAttribution',
     'ContractualRulesMediaAttribution',
     'ContractualRulesTextAttribution',
+    'CreativeWork',
+    'EntertainmentBusiness',
+    'Entities',
+    'EntitiesEntityPresentationInfo',
+    'Error',
+    'ErrorResponse', 'ErrorResponseException',
     'FoodEstablishment',
-    'LodgingBusiness',
-    'Restaurant',
     'Hotel',
+    'Identifiable',
+    'ImageObject',
+    'Intangible',
+    'License',
+    'LocalBusiness',
+    'LodgingBusiness',
+    'MediaObject',
+    'MovieTheater',
+    'Organization',
+    'Place',
+    'Places',
+    'PostalAddress',
+    'QueryContext',
+    'Response',
+    'ResponseBase',
+    'Restaurant',
+    'SearchResponse',
+    'SearchResultsAnswer',
+    'StructuredValue',
+    'Thing',
+    'TouristAttraction',
     'EntityQueryScenario',
     'EntityScenario',
     'EntityType',

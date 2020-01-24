@@ -31,7 +31,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
         senders[0].send(EventData(b"Receiving only a single event"))
         await asyncio.sleep(10)
         assert on_event.called is True
-    task.cancel()
+    await task
 
 
 @pytest.mark.parametrize("position, inclusive, expected_result",
@@ -68,17 +68,17 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
                                                     track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event_position is not None
-    task.cancel()
+    await task
     senders[0].send(EventData(expected_result))
     client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client2:
         task = asyncio.ensure_future(
             client2.receive(on_event,
-                            starting_position= on_event.event_position, starting_position_inclusive=inclusive,
+                            starting_position=on_event.event_position, starting_position_inclusive=inclusive,
                             track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event.body_as_str() == expected_result
-    task.cancel()
+    await task
 
 
 @pytest.mark.liveTest
@@ -110,8 +110,8 @@ async def test_receive_owner_level_async(connstr_senders):
             ed = EventData("Event Number {}".format(i))
             senders[0].send(ed)
         await asyncio.sleep(10)
-    task1.cancel()
-    task2.cancel()
+    await task1
+    await task2
     assert isinstance(on_error.error, EventHubError)
 
 
@@ -141,7 +141,7 @@ async def test_receive_over_websocket_async(connstr_senders):
         task = asyncio.ensure_future(client.receive(on_event,
                                                     partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
-    task.cancel()
+    await task
     assert len(on_event.received) == 5
     for ed in on_event.received:
         assert ed.properties[b"raw_prop"] == b"raw_value"

@@ -54,6 +54,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
+    :keyword str default_country_hint: Sets the default country_hint to use for all operations.
+        Defaults to "US". If you don't want to use a country hint, pass the empty string "".
+    :keyword str default_language: Sets the default language to use for all operations.
+        Defaults to "en".
 
     .. admonition:: Example:
 
@@ -78,12 +82,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
+        self._default_language = kwargs.pop("default_language", "en")
+        self._default_country_hint = kwargs.pop("default_country_hint", "US")
 
     @distributed_trace_async
     async def detect_languages(  # type: ignore
         self,
         inputs: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
-        country_hint: Optional[str] = "US",
+        country_hint: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detects Language for a batch of documents.
@@ -122,6 +128,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
+        country_hint = country_hint if country_hint is not None else self._default_country_hint
         docs = _validate_batch_input(inputs, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -140,7 +147,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_entities(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = "en",
+        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Named Entity Recognition for a batch of documents.
@@ -178,6 +185,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -196,7 +204,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_pii_entities(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = "en",
+        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
@@ -235,6 +243,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -253,7 +262,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_linked_entities(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = "en",
+        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
@@ -291,6 +300,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -309,7 +319,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def extract_key_phrases(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = "en",
+        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract Key Phrases from a batch of documents.
@@ -347,6 +357,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -365,7 +376,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def analyze_sentiment(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = "en",
+        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents.
@@ -404,6 +415,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)

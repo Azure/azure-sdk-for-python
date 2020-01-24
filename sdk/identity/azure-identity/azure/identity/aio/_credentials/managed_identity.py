@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import abc
 import os
 from typing import TYPE_CHECKING
 
@@ -10,6 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from azure.identity._credentials.managed_identity import _ManagedIdentityBase
+from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
 from ..._constants import Endpoints, EnvironmentVariables
 
@@ -37,6 +39,15 @@ class ManagedIdentityCredential(object):
     def __init__(self, **kwargs: "Any") -> None:
         pass
 
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def close(self):
+        """Close the credential's transport session."""
+
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
@@ -49,9 +60,22 @@ class ManagedIdentityCredential(object):
         return AccessToken()
 
 
-class _AsyncManagedIdentityBase(_ManagedIdentityBase):
+class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
     def __init__(self, endpoint: str, **kwargs: "Any") -> None:
         super().__init__(endpoint=endpoint, client_cls=AsyncAuthnClient, **kwargs)
+
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
+    async def close(self):
+        """Close the credential's transport session."""
+
+        await self._client.__aexit__()
+
+    @abc.abstractmethod
+    async def get_token(self, *scopes, **kwargs):
+        pass
 
     @staticmethod
     def _create_config(**kwargs: "Any") -> "Configuration":

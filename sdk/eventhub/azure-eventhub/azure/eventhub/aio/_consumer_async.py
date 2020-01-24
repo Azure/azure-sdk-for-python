@@ -16,7 +16,6 @@ from ._client_base_async import ConsumerProducerMixin
 from .._common import EventData
 from ..exceptions import _error_handler
 from .._utils import create_properties, trace_link_message, event_position_selector
-from ._eventprocessor.utils import get_running_loop
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
@@ -74,7 +73,6 @@ class EventHubConsumer(
             "track_last_enqueued_event_properties", False
         )
         idle_timeout = kwargs.get("idle_timeout", None)
-        loop = kwargs.get("loop", None)
 
         self.running = False
         self.closed = False
@@ -82,7 +80,7 @@ class EventHubConsumer(
         self._on_event_received = kwargs[
             "on_event_received"
         ]  # type: Callable[[EventData], Awaitable[None]]
-        self._loop = loop or get_running_loop()
+        self._loop = kwargs.get("loop", None)
         self._client = client
         self._source = source
         self._offset = event_position
@@ -101,7 +99,7 @@ class EventHubConsumer(
         partition = self._source.split("/")[-1]
         self._partition = partition
         self._name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
-        if owner_level:
+        if owner_level is not None:
             self._link_properties[types.AMQPSymbol(EPOCH_SYMBOL)] = types.AMQPLong(
                 int(owner_level)
             )
@@ -172,16 +170,7 @@ class EventHubConsumer(
             try:
                 await self._open()
                 await cast(ReceiveClientAsync, self._handler).do_work_async()
-                while not self._event_queue.empty():
-                    message = self._event_queue.get()
-                    event_data = EventData._from_message(  # pylint:disable=protected-access
-                        message
-                    )
-                    self._last_received_event = event_data
-                    trace_link_message(event_data)
-                    await self._on_event_received(event_data)
-                    self._event_queue.task_done()
-                return
+                break
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint: disable=broad-except
@@ -203,3 +192,14 @@ class EventHubConsumer(
                         last_exception,
                     )
                     raise last_exception
+
+        while not self._event_queue.empty():
+            message = self._event_queue.get()
+            event_data = EventData._from_message(  # pylint:disable=protected-access
+                message
+            )
+            self._last_received_event = event_data
+            trace_link_message(event_data)
+            await self._on_event_received(event_data)
+            self._event_queue.task_done()
+        return
