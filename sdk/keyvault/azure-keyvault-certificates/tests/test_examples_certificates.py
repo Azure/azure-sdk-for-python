@@ -199,7 +199,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         polling_interval = 0 if self.is_playback() else None
         cert_name = "cert-name"
         certificate_client.begin_create_certificate(
-            certificate_name=cert_name, policy=cert_policy, _polling_interval=polling_interval
+            certificate_name=cert_name, policy=cert_policy
         ).wait()
 
         # [START backup_certificate]
@@ -213,7 +213,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END backup_certificate]
 
         certificate_client.begin_delete_certificate(
-            certificate_name=cert_name, _polling_interval=polling_interval
+            certificate_name=cert_name
         ).wait()
 
         # [START restore_certificate]
@@ -250,11 +250,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         polling_interval = 0 if self.is_playback() else None
         certificate_client.begin_create_certificate(
-            certificate_name=cert_name, policy=cert_policy, _polling_interval=polling_interval
+            certificate_name=cert_name, policy=cert_policy
         ).wait()
 
         certificate_client.begin_delete_certificate(
-            certificate_name=cert_name, _polling_interval=polling_interval
+            certificate_name=cert_name
         ).wait()
         # [START get_deleted_certificate]
 

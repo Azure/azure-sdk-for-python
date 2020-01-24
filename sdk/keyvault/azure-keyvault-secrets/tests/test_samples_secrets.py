@@ -166,8 +166,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret_backup)
 
         # [END backup_secret]
-        polling_interval = 0 if self.is_playback() else 2
-        secret_client.begin_delete_secret("secret-name", _polling_interval=polling_interval).wait()
+        secret_client.begin_delete_secret("secret-name").wait()
         # [START restore_secret_backup]
 
         # restores a backed up secret
@@ -183,8 +182,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
-        polling_interval = 0 if self.is_playback() else 2
-        secret_client.begin_delete_secret(created_secret.name, _polling_interval=polling_interval).wait()
+        secret_client.begin_delete_secret(created_secret.name).wait()
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)
