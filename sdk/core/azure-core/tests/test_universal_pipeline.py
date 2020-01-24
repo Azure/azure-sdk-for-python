@@ -177,6 +177,11 @@ def test_raw_deserializer():
     result = response.context["deserialized_data"]
     assert result.tag == "groot"
 
+    response = build_response(b"\xef\xbb\xbf<utf8groot/>", content_type="application/xml")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result.tag == "utf8groot"
+
     # The basic deserializer works with unicode XML
     response = build_response(u'<groot language="français"/>'.encode('utf-8'), content_type="application/xml")
     raw_deserializer.on_response(None, response)
@@ -206,6 +211,12 @@ def test_raw_deserializer():
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
+    # Simple JSON with BOM
+    response = build_response(b'\xef\xbb\xbf{"success": true}', content_type="application/json")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result["success"] is True
+
     # Simple JSON with complex content_type
     response = build_response(b'{"success": true}', content_type="application/vnd.microsoft.appconfig.kv.v1+json")
     raw_deserializer.on_response(None, response)
@@ -223,6 +234,18 @@ def test_raw_deserializer():
     raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result == "data"
+
+    # Let text/plain let through
+    response = build_response(b'I am groot', content_type="text/plain")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result == "I am groot"
+
+    # Let text/plain let through + BOM
+    response = build_response(b'\xef\xbb\xbfI am groot', content_type="text/plain")
+    raw_deserializer.on_response(None, response)
+    result = response.context["deserialized_data"]
+    assert result == "I am groot"
 
     # Try with a mock of requests
 

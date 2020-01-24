@@ -478,7 +478,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             data_as_str = cast(str, data)
 
         if mime_type is None:
-            return data
+            return data_as_str
 
         if cls.JSON_REGEXP.match(mime_type):
             try:
@@ -513,6 +513,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise_with_traceback(DecodeError, message="XML is invalid", response=response)
+        elif mime_type.startswith("text/"):
+            return data_as_str
         raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
 
     @classmethod
@@ -538,7 +540,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         else:
             mime_type = "application/json"
 
-        return cls.deserialize_from_text(response.text(), mime_type, response=response)
+        # FIXME should extract charset from content-type
+        return cls.deserialize_from_text(response.text(encoding="utf-8-sig"), mime_type, response=response)
 
     def on_response(self,
         request, # type: PipelineRequest[HTTPRequestType]
