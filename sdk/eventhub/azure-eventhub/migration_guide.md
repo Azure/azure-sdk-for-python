@@ -6,11 +6,11 @@ to migrate their application to V5 of the same library.
 For users new to the Python SDK for Event Hubs, please see the [readme file for the azure-eventhub](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/README.md).
 
 ## General changes
-Version 5 of the azure-eventhub package is a result of our efforts to create a client library that is user-friendly and idiomatic to the Python ecosystem.
-Apart from redesigns resulting from the new [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles), 
+Version 5 of the azure-eventhub package is the result of our efforts to create a client library that is user-friendly and idiomatic to the Python ecosystem.
+Alongside an API redesigns driven by the new [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles), 
 the latest version improves on several areas from V1.
 
-### Specific clients for sending vs receiving
+### Specific clients for sending and receiving
 In V5 we've simplified the API surface, making two distinct clients, rather than having a single `EventHubClient`:
 * `EventHubProducerClient` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.html#azure.eventhub.EventHubProducerClient)
 and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0/azure.eventhub.aio.html#azure.eventhub.aio.EventHubProducerClient)
@@ -34,7 +34,8 @@ The code samples in this migration guide use async APIs.
 | `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[client creation](./samples/async_samples/client_creation_async.py) |
 | `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](./samples/async_samples/recv_with_checkpoint_store_async.py) |
 
-In V5, the SDK provides `BlobCheckpointStore`
+In V5, the SDK provides `BlobCheckpointStore` in extension packages azure-eventhub-checkpointstoreblob (for sync) and azure-eventhub-checkpointstoreblob-aio (for async).
+You can define your own `CheckpointStore` class to persist checkpoint data.
 
 ### Receiving events 
 
