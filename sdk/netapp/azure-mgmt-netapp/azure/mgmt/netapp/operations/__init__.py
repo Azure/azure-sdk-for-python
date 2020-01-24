@@ -14,7 +14,6 @@ from ._net_app_resource_operations import NetAppResourceOperations
 from ._accounts_operations import AccountsOperations
 from ._pools_operations import PoolsOperations
 from ._volumes_operations import VolumesOperations
-from ._mount_targets_operations import MountTargetsOperations
 from ._snapshots_operations import SnapshotsOperations
 
 __all__ = [
@@ -23,6 +22,5 @@ __all__ = [
     'AccountsOperations',
     'PoolsOperations',
     'VolumesOperations',
-    'MountTargetsOperations',
     'SnapshotsOperations',
 ]

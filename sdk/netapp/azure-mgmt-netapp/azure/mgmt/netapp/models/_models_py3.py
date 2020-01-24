@@ -35,6 +35,9 @@ class ActiveDirectory(Model):
     :param organizational_unit: The Organizational Unit (OU) within the
      Windows Active Directory
     :type organizational_unit: str
+    :param site: The Active Directory site the service will limit Domain
+     Controller discovery to
+    :type site: str
     """
 
     _attribute_map = {
@@ -46,9 +49,10 @@ class ActiveDirectory(Model):
         'status': {'key': 'status', 'type': 'str'},
         'smb_server_name': {'key': 'smbServerName', 'type': 'str'},
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
+        'site': {'key': 'site', 'type': 'str'},
     }
 
-    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, status: str=None, smb_server_name: str=None, organizational_unit: str=None, **kwargs) -> None:
+    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, status: str=None, smb_server_name: str=None, organizational_unit: str=None, site: str=None, **kwargs) -> None:
         super(ActiveDirectory, self).__init__(**kwargs)
         self.active_directory_id = active_directory_id
         self.username = username
@@ -58,12 +62,13 @@ class ActiveDirectory(Model):
         self.status = status
         self.smb_server_name = smb_server_name
         self.organizational_unit = organizational_unit
+        self.site = site
 
 
 class AuthorizeRequest(Model):
     """Authorize request.
 
-    :param remote_volume_resource_id: Resource id
+    :param remote_volume_resource_id: Resource id of the remote volume
     :type remote_volume_resource_id: str
     """
 
@@ -344,25 +349,9 @@ class MountTarget(Model):
     :type file_system_id: str
     :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
-    :param subnet: subnet. The subnet
-    :type subnet: str
-    :param start_ip: startIp. The start of IPv4 address range to use when
-     creating a new mount target
-    :type start_ip: str
-    :param end_ip: endIp. The end of IPv4 address range to use when creating a
-     new mount target
-    :type end_ip: str
-    :param gateway: gateway. The gateway of the IPv4 address range to use when
-     creating a new mount target
-    :type gateway: str
-    :param netmask: netmask. The netmask of the IPv4 address range to use when
-     creating a new mount target
-    :type netmask: str
     :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
      Domain Name, FQDN
     :type smb_server_fqdn: str
-    :ivar provisioning_state: Azure lifecycle management
-    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -373,7 +362,6 @@ class MountTarget(Model):
         'mount_target_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'ip_address': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -385,16 +373,10 @@ class MountTarget(Model):
         'mount_target_id': {'key': 'properties.mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'start_ip': {'key': 'properties.startIp', 'type': 'str'},
-        'end_ip': {'key': 'properties.endIp', 'type': 'str'},
-        'gateway': {'key': 'properties.gateway', 'type': 'str'},
-        'netmask': {'key': 'properties.netmask', 'type': 'str'},
         'smb_server_fqdn': {'key': 'properties.smbServerFqdn', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, file_system_id: str, tags=None, subnet: str=None, start_ip: str=None, end_ip: str=None, gateway: str=None, netmask: str=None, smb_server_fqdn: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, file_system_id: str, tags=None, smb_server_fqdn: str=None, **kwargs) -> None:
         super(MountTarget, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -404,13 +386,23 @@ class MountTarget(Model):
         self.mount_target_id = None
         self.file_system_id = file_system_id
         self.ip_address = None
-        self.subnet = subnet
-        self.start_ip = start_ip
-        self.end_ip = end_ip
-        self.gateway = gateway
-        self.netmask = netmask
         self.smb_server_fqdn = smb_server_fqdn
-        self.provisioning_state = None
+
+
+class MountTargetList(Model):
+    """List of Mount Targets.
+
+    :param value: A list of Mount targets
+    :type value: list[~azure.mgmt.netapp.models.MountTarget]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[MountTarget]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(MountTargetList, self).__init__(**kwargs)
+        self.value = value
 
 
 class NetAppAccount(Model):
@@ -757,8 +749,6 @@ class Snapshot(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
     :vartype snapshot_id: str
     :param file_system_id: fileSystemId. UUID v4 used to identify the
@@ -786,40 +776,22 @@ class Snapshot(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, file_system_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, file_system_id: str=None, **kwargs) -> None:
         super(Snapshot, self).__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
         self.snapshot_id = None
         self.file_system_id = file_system_id
         self.created = None
         self.provisioning_state = None
-
-
-class SnapshotPatch(Model):
-    """Snapshot patch.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, tags=None, **kwargs) -> None:
-        super(SnapshotPatch, self).__init__(**kwargs)
-        self.tags = tags
 
 
 class Volume(Model):
@@ -888,7 +860,7 @@ class Volume(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'creation_token': {'required': True},
+        'creation_token': {'required': True, 'max_length': 80, 'min_length': 1, 'pattern': r'^[a-zA-Z][a-zA-Z0-9\-]{0,79}$'},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
@@ -1054,3 +1026,19 @@ class VolumePropertiesExportPolicy(Model):
     def __init__(self, *, rules=None, **kwargs) -> None:
         super(VolumePropertiesExportPolicy, self).__init__(**kwargs)
         self.rules = rules
+
+
+class VolumeRevert(Model):
+    """revert a volume to the snapshot.
+
+    :param snapshot_id: Resource id of the snapshot
+    :type snapshot_id: str
+    """
+
+    _attribute_map = {
+        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
+    }
+
+    def __init__(self, *, snapshot_id: str=None, **kwargs) -> None:
+        super(VolumeRevert, self).__init__(**kwargs)
+        self.snapshot_id = snapshot_id

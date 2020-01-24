@@ -27,7 +27,7 @@ class PoolsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-10-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class PoolsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -143,7 +143,7 @@ class PoolsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -190,7 +190,7 @@ class PoolsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -290,38 +290,16 @@ class PoolsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
-    def update(
+
+    def _update_initial(
             self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
-        """Update a capacity pool.
-
-        Patch the specified capacity pool.
-
-        :param body: Capacity pool object supplied in the body of the
-         operation.
-        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param pool_name: The name of the capacity pool
-        :type pool_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: CapacityPool or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.CapacityPool or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -353,6 +331,7 @@ class PoolsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('CapacityPool', response)
 
@@ -361,6 +340,61 @@ class PoolsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update(
+            self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update a capacity pool.
+
+        Patch the specified capacity pool.
+
+        :param body: Capacity pool object supplied in the body of the
+         operation.
+        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns CapacityPool or
+         ClientRawResponse<CapacityPool> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.CapacityPool]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.CapacityPool]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            body=body,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('CapacityPool', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
 
@@ -372,7 +406,7 @@ class PoolsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str')
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

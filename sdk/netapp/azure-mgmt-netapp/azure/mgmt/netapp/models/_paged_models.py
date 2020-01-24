@@ -64,19 +64,6 @@ class VolumePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(VolumePaged, self).__init__(*args, **kwargs)
-class MountTargetPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`MountTarget <azure.mgmt.netapp.models.MountTarget>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[MountTarget]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(MountTargetPaged, self).__init__(*args, **kwargs)
 class SnapshotPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Snapshot <azure.mgmt.netapp.models.Snapshot>` object
