@@ -14,6 +14,7 @@ from tox_helper_tasks import get_package_details
 from subprocess import check_call
 
 logging.getLogger().setLevel(logging.INFO)
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 # keyvault has dependency issue when loading private module _BearerTokenCredentialPolicyBase from azure.core.pipeline.policies
 # azure.core.tracing.opencensus and azure.eventhub.checkpointstoreblob.aio are skipped due to a known issue in loading azure.core.tracing.opencensus
@@ -55,7 +56,7 @@ if __name__ == "__main__":
             "-c",
             import_script_all
         ]
-        check_call(commands)
+        check_call(commands, cwd= root_dir)
         logging.info("Verified module dependency, no issues found")
     else:
         pass
