@@ -87,7 +87,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_container_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -104,7 +104,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_container_md_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -121,7 +121,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_container_acl_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -140,7 +140,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_container_acl_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -159,7 +159,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_container_acl_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -179,7 +179,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_container_acl_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -198,7 +198,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_container_acquire_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -213,7 +213,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_cont_acquire_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -229,7 +229,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_container_acquire_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -244,7 +244,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_container_acquire_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -260,7 +260,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_container_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -276,7 +276,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_container_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -290,7 +290,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_container_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() +
@@ -305,7 +305,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_container_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_datetime = (datetime.utcnow() -
@@ -319,7 +319,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -336,7 +336,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -354,7 +354,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -371,7 +371,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -389,7 +389,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -405,7 +405,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -423,7 +423,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -438,7 +438,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
@@ -455,7 +455,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -472,7 +472,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -489,7 +489,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -506,7 +506,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -523,7 +523,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -539,7 +539,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -554,7 +554,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -569,7 +569,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -585,7 +585,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -606,7 +606,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -626,7 +626,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -647,7 +647,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -667,7 +667,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -688,7 +688,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -707,7 +707,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -727,7 +727,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_props_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -747,7 +747,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -766,7 +766,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -783,7 +783,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -802,7 +802,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -819,7 +819,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -838,7 +838,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -854,7 +854,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -872,7 +872,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -889,7 +889,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -906,7 +906,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -924,7 +924,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -941,7 +941,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -959,7 +959,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -975,7 +975,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -991,7 +991,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1006,7 +1006,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1023,7 +1023,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1042,7 +1042,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1061,7 +1061,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1080,7 +1080,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1099,7 +1099,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1117,7 +1117,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1134,7 +1134,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1151,7 +1151,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1169,7 +1169,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         test_datetime = (datetime.utcnow() -
                          timedelta(minutes=15))
@@ -1186,7 +1186,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         test_datetime = (datetime.utcnow() +
                          timedelta(minutes=15))
@@ -1204,7 +1204,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         test_datetime = (datetime.utcnow() +
                          timedelta(minutes=15))
@@ -1221,7 +1221,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         test_datetime = (datetime.utcnow() -
                          timedelta(minutes=15))
@@ -1239,7 +1239,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1256,7 +1256,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1272,7 +1272,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1287,7 +1287,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1304,7 +1304,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1322,7 +1322,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1340,7 +1340,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1358,7 +1358,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1376,7 +1376,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1393,7 +1393,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1409,7 +1409,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1425,7 +1425,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1442,7 +1442,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1465,7 +1465,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1483,7 +1483,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1506,7 +1506,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1524,7 +1524,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1546,7 +1546,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1562,7 +1562,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1584,7 +1584,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1601,7 +1601,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1624,7 +1624,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1647,7 +1647,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1670,7 +1670,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1693,7 +1693,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1715,7 +1715,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1736,7 +1736,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1757,7 +1757,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1778,7 +1778,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1795,7 +1795,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1814,7 +1814,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1831,7 +1831,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1850,7 +1850,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1866,7 +1866,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1883,7 +1883,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1898,7 +1898,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1916,7 +1916,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -1936,7 +1936,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -1955,7 +1955,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -1975,7 +1975,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_unmod_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -1994,7 +1994,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2013,7 +2013,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2030,7 +2030,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2048,7 +2048,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_iter_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2067,7 +2067,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = (datetime.utcnow() -
@@ -2085,7 +2085,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = (datetime.utcnow() +
@@ -2101,7 +2101,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = (datetime.utcnow() +
@@ -2119,7 +2119,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = (datetime.utcnow() -
@@ -2135,7 +2135,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
@@ -2153,7 +2153,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
@@ -2168,7 +2168,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
@@ -2185,7 +2185,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
@@ -2201,7 +2201,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2219,7 +2219,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_apnd_blob_from_bytes_with_if_mod_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2235,7 +2235,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2253,7 +2253,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_with_if_unmod_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2269,7 +2269,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2287,7 +2287,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2303,7 +2303,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2321,7 +2321,7 @@ class StorageBlobAccessConditionsTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_apnd_blob_from_bytes_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)

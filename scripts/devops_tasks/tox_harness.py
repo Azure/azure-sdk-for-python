@@ -179,7 +179,7 @@ def individual_workload(tox_command_tuple, workload_results):
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     workload_results = {}
-    failed_run = False
+    run_result = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         pool.add_task(individual_workload, cmd_tuple, workload_results)
@@ -195,10 +195,9 @@ def execute_tox_parallel(tox_command_tuples):
                     os.path.basename(key), workload_results[key][0]
                 )
             )
-            failed_run = True
+            run_result = 1
 
-    if failed_run:
-        exit(1)
+    return run_result
 
 
 def compare_req_to_injected_reqs(parsed_req, injected_packages):
@@ -264,6 +263,8 @@ def replace_dev_reqs(file):
 
 
 def execute_tox_serial(tox_command_tuples):
+    return_code = 0
+
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.join(cmd_tuple[1], "./.tox/")
 
@@ -272,10 +273,16 @@ def execute_tox_serial(tox_command_tuples):
                 os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
             )
         )
-        run_check_call(cmd_tuple[0], cmd_tuple[1])
+
+        result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
+
+        if result is not None and result != 0:
+            return_code = result
 
         if in_ci():
             shutil.rmtree(tox_dir)
+
+    return return_code
 
 
 def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
@@ -344,9 +351,11 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         tox_command_tuples.append((tox_execution_array, package_dir))
 
     if parsed_args.tparallel:
-        execute_tox_parallel(tox_command_tuples)
+        return_code = execute_tox_parallel(tox_command_tuples)
     else:
-        execute_tox_serial(tox_command_tuples)
+        return_code = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
+
+    sys.exit(return_code)

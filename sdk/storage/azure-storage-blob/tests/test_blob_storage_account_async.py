@@ -71,7 +71,7 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_standard_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
 
         await self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
@@ -126,7 +126,7 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_std_blob_tier_w_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_client = await self._create_blob(bsc)
         blob_tier = StandardBlobTier.Archive
@@ -145,7 +145,7 @@ class BlobStorageAccountTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_rehydration_status(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = 'rehydration_test_blob_1'
         blob_name2 = 'rehydration_test_blob_2'

@@ -67,7 +67,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         if connection_string:
             service = service_class.from_connection_string(connection_string, **kwargs)
         else:
-            service = service_class(self.account_url(account.name, "blob"), credential=key, **kwargs)
+            service = service_class(self.account_url(account, "blob"), credential=key, **kwargs)
         return service
 
     # --Test Cases --------------------------------------------
