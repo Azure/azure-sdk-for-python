@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:26 GMT
       etag: '"0x8D79A161D013122"'
       last-modified: Wed, 15 Jan 2020 23:53:26 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:26 GMT
       etag: '"0x8D79A161D07B3DD"'
       last-modified: Wed, 15 Jan 2020 23:53:26 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:25 GMT
       etag: '"0x8D79A161D210C9E"'
       last-modified: Wed, 15 Jan 2020 23:53:26 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:53:25 GMT
       etag: '"0x8D79A161D3497F6"'
@@ -200,7 +200,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:26 GMT
       etag: '"0x8D79A161D4FC5C8"'
       last-modified: Wed, 15 Jan 2020 23:53:26 GMT
@@ -245,8 +245,8 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
         range specified is invalid for the current size of the resource.\nRequestId:85f9f14f-a01a-001e-65fe-cb3878000000\nTime:2020-01-15T23:53:26.8442368Z</Message></Error>"
     headers:
-      content-length: '249'
-      content-range: bytes */0
+      Content-Length: '249'
+      Content-Range: bytes */0
       content-type: application/xml
       date: Wed, 15 Jan 2020 23:53:26 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
@@ -284,8 +284,8 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
         range specified is invalid for the current size of the resource.\nRequestId:85f9f150-a01a-001e-66fe-cb3878000000\nTime:2020-01-15T23:53:26.8932720Z</Message></Error>"
     headers:
-      content-length: '249'
-      content-range: bytes */0
+      Content-Length: '249'
+      Content-Range: bytes */0
       content-type: application/xml
       date: Wed, 15 Jan 2020 23:53:26 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
