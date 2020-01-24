@@ -2,6 +2,7 @@ parameters:
   Artifacts: []
   ServiceDirectory: not-specified
   ToxEnvParallel: '--tenvparallel'
+  BuildDocs: true
   
 stages:
   - stage: Build
@@ -10,6 +11,7 @@ stages:
       parameters:
         ServiceDirectory: ${{parameters.ServiceDirectory}}
         ToxEnvParallel: ${{parameters.ToxEnvParallel}}
+        BuildDocs: ${{parameters.BuildDocs}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

@@ -6,6 +6,7 @@ parameters:
   TestTimeoutInMinutes: 0
   ToxEnvParallel: '--tenvparallel'
   InjectedPackages: ''
+  BuildDocs: true
   TestMatrix:
     Linux_Python27:
       OSName: 'Linux'

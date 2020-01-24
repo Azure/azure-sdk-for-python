@@ -18,3 +18,4 @@ stages:
       parameters:
         ToxEnvParallel: '--tenvparallel'
         InjectedPackages: $(InjectedPackages)
+        BuildDocs: false
