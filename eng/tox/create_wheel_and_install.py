@@ -36,7 +36,8 @@ def cleanup_build_artifacts(build_folder):
 def discover_whls(setuppy_path, dist_dir, target_setup):
     wheels = []
     if os.getenv("PREBUILT_WHEEL_DIR") is not None:
-        wheels = discover_prebuilt_whl(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path)
+        #wheels = discover_prebuilt_whl(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path)
+        wheels = build_and_discover_whl(setuppy_path, dist_dir, target_setup)
     else:
         wheels = build_and_discover_whl(setuppy_path, dist_dir, target_setup)
     return wheels
