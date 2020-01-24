@@ -109,7 +109,7 @@ jobs:
 
     steps:    
     - pwsh: |
-        $toxenvvar = "whl,sdist"
+        $toxenvvar = "whl"
         if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
           $toxenvvar = "whl,sdist"
         }
