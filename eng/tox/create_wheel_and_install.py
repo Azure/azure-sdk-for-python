@@ -159,6 +159,10 @@ if __name__ == "__main__":
                 pkg_wheel_path
             ]
 
+            # force install package when installing from prebuilt whl to make sure whl is installed on running environment
+            if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+                commands.append("--force")
+
             # If extra index URL is passed then set it as argument to pip command
             if args.extra_index_url:
                 commands.extend(["--extra-index-url", args.extra_index_url])
