@@ -63,7 +63,8 @@ class AzureTestCase(ReplayableTest):
     def __init__(self, method_name, config_file=None,
                  recording_dir=None, recording_name=None,
                  recording_processors=None, replay_processors=None,
-                 recording_patches=None, replay_patches=None):
+                 recording_patches=None, replay_patches=None,
+                 **kwargs):
         self.working_folder = os.path.dirname(__file__)
         self.qualified_test_name = get_qualified_method_name(self, method_name)
         self._fake_settings, self._real_settings = self._load_settings()
@@ -80,6 +81,7 @@ class AzureTestCase(ReplayableTest):
             replay_processors=replay_processors or self._get_replay_processors(),
             recording_patches=recording_patches,
             replay_patches=replay_patches,
+            **kwargs
         )
 
     @property
