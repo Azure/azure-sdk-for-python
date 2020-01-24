@@ -7,7 +7,7 @@ For users new to the Python SDK for Event Hubs, please see the [readme file for 
 
 ## General changes
 Version 5 of the azure-eventhub package is the result of our efforts to create a client library that is user-friendly and idiomatic to the Python ecosystem.
-Alongside an API redesigns driven by the new [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles), 
+Alongside an API redesign driven by the new [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python_introduction.html#design-principles), 
 the latest version improves on several areas from V1.
 
 ### Specific clients for sending and receiving
