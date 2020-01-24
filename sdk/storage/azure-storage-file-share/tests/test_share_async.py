@@ -474,7 +474,6 @@ class StorageShareTest(AsyncStorageTestCase):
         md = props.metadata
         self.assertDictEqual(md, metadata)
         await self._delete_shares(share.share_name)
-        await self._delete_shares(share.share_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
