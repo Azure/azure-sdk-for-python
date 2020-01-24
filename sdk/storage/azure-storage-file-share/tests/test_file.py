@@ -15,8 +15,8 @@ import pytest
 import uuid
 from azure.core import MatchConditions
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ServiceRequestError
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
@@ -280,6 +280,19 @@ class StorageFileTest(StorageTestCase):
 
         # There is currently a lease on the file so delete the file with the lease will succeed
         file_client.delete_file(lease=lease)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_file_with_lease_with_old_service_version(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key)
+        file_client = self._get_file_client()
+
+        # set an old service version to make sure sdk can throw exception when customers try to
+        # invoke new features that the old service doesn't support.
+        file_client._client._config.version = '2019-03-08'
+        with self.assertRaises(ServiceRequestError):
+            file_client.acquire_lease()
 
     @GlobalStorageAccountPreparer()
     def test_create_file_with_changed_lease(self, resource_group, location, storage_account, storage_account_key):

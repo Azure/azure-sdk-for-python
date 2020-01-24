@@ -16,7 +16,7 @@ import requests
 import pytest
 import uuid
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ServiceRequestError
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
@@ -1017,7 +1017,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             file_path=file_name,
             credential=storage_account_key)
         await file_client.create_file(1024)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -1053,7 +1053,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         data = b'abcdefghijklmnop' * 32
         resp1 = await file_client.upload_range(data, offset=0, length=512)
         resp2 = await file_client.upload_range(data, offset=1024, length=512)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -1100,6 +1100,26 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         copy_file = await file_client.download_file()
         content = await copy_file.readall()
         self.assertEqual(content, self.short_byte_data)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_copy_file_with_permission_in_old_service_version_async(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=storage_account_key,
+            transport=AiohttpTestTransport())
+
+        # Act
+        # set an old service version to make sure sdk can throw exception when customers try to
+        # invoke new features that the old service doesn't support.
+        file_client._client._config.version = '2019-02-02'
+        with self.assertRaises(ServiceRequestError):
+            await file_client.start_copy_from_url(file_client.url, file_permission_copy_mode="source")
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1261,7 +1281,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(copy_resp['copy_status'] in ['success', 'pending'])
-        await self._wait_for_async_copy(self.share_name, target_file_name) 
+        await self._wait_for_async_copy(self.share_name, target_file_name)
 
         content = await file_client.download_file()
         actual_data = await content.readall()
@@ -1535,7 +1555,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)        
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
@@ -1566,7 +1586,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)        
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
@@ -1608,7 +1628,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)       
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
@@ -1640,7 +1660,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)      
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
@@ -1670,7 +1690,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)      
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
@@ -1710,7 +1730,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)       
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
@@ -1739,7 +1759,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         if not self.is_live:
             return
 
-        self._setup(storage_account, storage_account_key)       
+        self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)

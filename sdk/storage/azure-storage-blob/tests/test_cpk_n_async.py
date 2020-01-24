@@ -9,7 +9,7 @@ import pytest
 import asyncio
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.blob import BlobType, BlobBlock, BlobSasPermissions, generate_blob_sas, CpkScopeInfo, \
@@ -692,6 +692,28 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(resp['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
 
         await container_client.delete_container()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_container_cpk_n_in_old_service_version(self, resource_group, location, storage_account,
+                                                                 storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account.name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+
+        # set an old service version to make sure sdk can throw exception when customers try to
+        # invoke new features that the old service doesn't support.
+        container_client = bsc.get_container_client('cpkcontainer')
+        container_client._client._config.version = '2019-02-02'
+        with self.assertRaises(ServiceRequestError):
+            await container_client.create_container(container_cpk_scope_info=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()

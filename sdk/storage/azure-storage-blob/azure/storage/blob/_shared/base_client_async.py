@@ -33,6 +33,7 @@ from .policies import (
 )
 from .policies_async import AsyncStorageResponseHook
 
+from .._policies import StorageVersionCheckPolicy
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -96,6 +97,7 @@ class AsyncStorageAccountHostsMixin(object):
             ContentDecodePolicy(),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
+            StorageVersionCheckPolicy(),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),

@@ -8,7 +8,7 @@
 import pytest
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.storage.blob import (
     BlobServiceClient,
     BlobType,
@@ -80,6 +80,26 @@ class StorageCPKNTest(StorageTestCase):
         return blob
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_put_block_with_cpk_n_with_old_service_version(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account.name, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=1024,
+            max_single_put_size=1024,
+            min_large_block_upload_threshold=1024,
+            max_block_size=1024,
+            max_page_size=1024)
+        blob_client = bsc.get_blob_client("container", "blob")
+
+        # set an old service version to make sure sdk can throw exception when customers try to
+        # invoke new features that the old service doesn't support.
+        blob_client._client._config.version = '2019-02-02'
+        with self.assertRaises(ServiceRequestError):
+            blob_client.stage_block('1', b'AAA', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
