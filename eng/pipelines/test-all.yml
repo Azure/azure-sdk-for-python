@@ -19,3 +19,4 @@ stages:
         ToxEnvParallel: '--tenvparallel'
         InjectedPackages: $(InjectedPackages)
         BuildDocs: false
+        TestTimeoutInMinutes: 300
