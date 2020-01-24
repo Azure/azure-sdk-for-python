@@ -30,6 +30,13 @@ known_presence_issues:
   - ['sdk/template/azure-template/HISTORY.rst','#4554']
   - ['sdk/storage/azure-storage-nspkg/HISTORY.rst', '#4554']
   - ['sdk/textanalytics/azure-ai-nspkg/HISTORY.rst', '#4554']
+  # Converted from README.rst to README.md
+  - ['sdk/batch/azure-batch/README.md', '#4554']
+  - ['sdk/core/azure-nspkg/README.md', '#4554']
+  - ['sdk/core/azure-common/README.md', '#4554']
+  - ['sdk/core/azure/README.md', '#4554']
+  - ['sdk/core/azure-servicemanagement-legacy/README.md', '#4554']
+  - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
 
 known_content_issues:
   # data plane. common issue filed to azure-sdk-for-python
