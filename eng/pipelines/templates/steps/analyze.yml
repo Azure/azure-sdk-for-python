@@ -10,7 +10,7 @@ steps:
 
   - script: |
      pip install -r eng/ci_tools.txt
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
+     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
     displayName: 'Verify Readmes'
 
   - task: PythonScript@0
