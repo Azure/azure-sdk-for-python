@@ -56,6 +56,8 @@ if __name__ == "__main__":
             "-c",
             import_script_all
         ]
+
+        logging.info(sys.path)
         check_call(commands, cwd= root_dir)
         logging.info("Verified module dependency, no issues found")
     else:
