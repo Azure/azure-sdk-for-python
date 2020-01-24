@@ -45,7 +45,7 @@ if not version:
 
 with open('README.md', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.md', encoding='utf-8') as f:
+with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
 setup(
