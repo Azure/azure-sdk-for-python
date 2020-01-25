@@ -267,6 +267,14 @@ if __name__ == "__main__":
         action="store_true"
     )
 
+    parser.add_argument(
+        "-i",
+        "--injected-packages",
+        dest="injected_packages",
+        default="",
+        help="Comma or space-separated list of packages that should be installed prior to dev_requirements. If local path, should be absolute.",
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
