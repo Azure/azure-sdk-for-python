@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
 from .._credential import SharedKeyCredential
 from .._policies import CognitiveServicesCredentialPolicy
 from ._policies_async import AsyncTextAnalyticsResponseHook
-from .._version import VERSION
+from .._user_agent import USER_AGENT
 
 
 class AsyncTextAnalyticsClientBase(object):
@@ -51,9 +51,6 @@ class AsyncTextAnalyticsClientBase(object):
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
             config.transport = AioHttpTransport(**kwargs)
-        config.user_agent_policy.add_user_agent(
-            'azsdk-python-azure-ai-textanalytics/{}'.format(VERSION)
-        )
 
         policies = [
             config.headers_policy,
@@ -72,7 +69,8 @@ class AsyncTextAnalyticsClientBase(object):
 
     def _create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
-        config.user_agent_policy = kwargs.get('user_agent_policy') or UserAgentPolicy(**kwargs)
+        config.user_agent_policy = kwargs.get('user_agent_policy') or \
+            UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         config.headers_policy = kwargs.get('headers_policy') or HeadersPolicy(**kwargs)
         config.proxy_policy = kwargs.get('proxy_policy') or ProxyPolicy(**kwargs)
         config.logging_policy = kwargs.get('logging_policy') or NetworkTraceLoggingPolicy(**kwargs)

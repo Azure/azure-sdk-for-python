@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
 )
 from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
 from ._credential import SharedKeyCredential
-from ._version import VERSION
+from ._user_agent import USER_AGENT
 
 
 class TextAnalyticsClientBase(object):
@@ -46,9 +46,6 @@ class TextAnalyticsClientBase(object):
         config.transport = kwargs.get("transport")  # type: ignore
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
-        config.user_agent_policy.add_user_agent(
-            "azsdk-python-azure-ai-textanalytics/{}".format(VERSION)
-        )
 
         policies = [
             config.headers_policy,
@@ -67,7 +64,8 @@ class TextAnalyticsClientBase(object):
 
     def _create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
-        config.user_agent_policy = kwargs.get("user_agent_policy") or UserAgentPolicy(**kwargs)
+        config.user_agent_policy = kwargs.get("user_agent_policy") or \
+            UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         config.headers_policy = kwargs.get("headers_policy") or HeadersPolicy(**kwargs)
         config.proxy_policy = kwargs.get("proxy_policy") or ProxyPolicy(**kwargs)
         config.logging_policy = kwargs.get("logging_policy") or NetworkTraceLoggingPolicy(**kwargs)

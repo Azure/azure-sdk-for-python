@@ -6,10 +6,13 @@
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+import platform
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
+    VERSION,
     DetectLanguageInput,
     TextDocumentInput,
     SharedKeyCredential
@@ -751,3 +754,20 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         credential.set_subscription_key(text_analytics_account_key)  # Authenticate successfully again
         response = await text_analytics.analyze_sentiment(docs)
         self.assertIsNotNone(response)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_user_agent_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+
+        def callback(resp):
+            self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
+                VERSION, platform.python_version(), platform.platform()),
+                resp.http_request.headers["User-Agent"]
+            )
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = await text_analytics.analyze_sentiment(docs, response_hook=callback)

@@ -113,6 +113,10 @@ jobs:
         if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
           $toxenvvar = "whl,sdist"
         }
+
+        if ('$(Run.ImportTest)' -eq 'true') {
+          $toxenvvar = "whl,sdist,depends"
+        }
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
 
