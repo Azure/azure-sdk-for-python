@@ -123,6 +123,8 @@ def find_whl(whl_dir, pkg_name, pkg_version):
     if len(whls) == 1:
         logging.info("Found whl {}".format(whls[0]))
         return whls[0]
+    else:
+        return None
 
 
 
