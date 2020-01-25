@@ -11,7 +11,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from azure.servicebus import ServiceBusClient, TopicClient
 from azure.servicebus.common.message import Message, PeekMessage
@@ -38,8 +38,8 @@ _logger = get_logger(logging.DEBUG)
 
 class ServiceBusTopicsTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
-    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
-    @ResourceGroupPreparer()
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     def test_topic_by_topic_client_conn_str_send_basic(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
@@ -52,8 +52,8 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         topic_client.send(message)
 
     @pytest.mark.liveTest
-    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
-    @ResourceGroupPreparer()
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     def test_topic_by_servicebus_client_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):
@@ -72,8 +72,8 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         topic_client.send(message)
 
     @pytest.mark.liveTest
-    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
-    @ResourceGroupPreparer()
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     def test_topic_by_servicebus_client_list_topics(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):
@@ -89,8 +89,8 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         assert all(isinstance(t, TopicClient) for t in topics)
 
     @pytest.mark.liveTest
-    @pytest.mark.skipif(not AreLiveTestsEnabled(), reason="This test only runs against live resources")
-    @ResourceGroupPreparer()
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     def test_topic_by_topic_client_conn_str_receive_fail(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
