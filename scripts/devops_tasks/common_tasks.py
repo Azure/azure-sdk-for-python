@@ -22,7 +22,7 @@ import re
 import pdb
 
 # ssumes the presence of setuptools
-from pkg_resources import parse_version
+from pkg_resources import parse_version, parse_requirements
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
@@ -127,12 +127,16 @@ def parse_setup(setup_path):
 
     return name, version, python_requires
 
+def parse_requirements_file(file_location):
+    with open(file_location, 'r') as f:
+        reqs = f.read()
+
+    return dict((req.name, req) for req in parse_requirements(reqs))
 
 def parse_setup_requires(setup_path):    
     _, _, python_requires = parse_setup(setup_path)
 
     return python_requires
-
 
 def filter_for_compatibility(package_set):
     collected_packages = []
