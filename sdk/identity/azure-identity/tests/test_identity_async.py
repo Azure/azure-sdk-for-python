@@ -123,7 +123,7 @@ async def test_imds_credential_cache():
     }
 
     mock_response = Mock(
-        text=lambda: json.dumps(token_payload),
+        text=lambda encoding=None: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
         content_type="application/json",
@@ -153,7 +153,7 @@ async def test_imds_credential_cache():
 @pytest.mark.asyncio
 async def test_imds_credential_retries():
     mock_response = Mock(
-        text=lambda: b"{}",
+        text=lambda encoding=None: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
         content_type="application/json",
     )

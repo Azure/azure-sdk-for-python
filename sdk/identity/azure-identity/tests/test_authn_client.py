@@ -81,7 +81,7 @@ def test_caching_when_only_expires_in_set():
     expected_token = AccessToken(access_token, expires_on)
 
     mock_response = Mock(
-        text=lambda: json.dumps({"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}),
+        text=lambda encoding=None: json.dumps({"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}),
         headers={"content-type": "application/json"},
         status_code=200,
         content_type="application/json",
@@ -125,7 +125,7 @@ def test_cache_expiry():
     expected_token = AccessToken(access_token, expires_on)
     token_payload = {"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}
     mock_response = Mock(
-        text=lambda: json.dumps(token_payload),
+        text=lambda encoding=None: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
         content_type="application/json",
