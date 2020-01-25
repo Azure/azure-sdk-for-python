@@ -108,15 +108,9 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         # if whl is platform independent then there should only be one whl in filtered list
         if len(whls) > 1:
             # if we have reached here, that means we have whl specific to platform as well.
-            platform_type = platform.system().lower()
-            ostype = "win"
-            if "linux" in platform_type:
-                ostype = "linux"
-            else:
-                if "win" not in platform_type:
-                    ostype = "mac"
-
-            whls = [w for w in whls if ostype in w]
+            # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
+            logging.error("More than one whl is found in wheel directory for package {}. Platform specific whl discovery is not supported now".format(pkg_name))
+            sys.exit(1)
     
     # Additional filtering based on arch type willbe required in future if that need arises.
     # for now assumption is that no arch specific whl is generated
