@@ -20,7 +20,6 @@ import zipfile
 
 logging.getLogger().setLevel(logging.INFO)
 
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 def get_package_details(setup_filename):
     mock_setup = textwrap.dedent(

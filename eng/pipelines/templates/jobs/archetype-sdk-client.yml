@@ -4,7 +4,7 @@ parameters:
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
   TestTimeoutInMinutes: 0
-  ToxEnvParallel: ''
+  ToxEnvParallel: '--tenvparallel'
   TestMatrix:
     Linux_Python27:
       OSName: 'Linux'
@@ -109,7 +109,7 @@ jobs:
 
     steps:    
     - pwsh: |
-        $toxenvvar = "depends,sdist"
+        $toxenvvar = "whl,sdist"
         if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
           $toxenvvar = "whl,sdist"
         }

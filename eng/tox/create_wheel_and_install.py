@@ -119,6 +119,13 @@ if __name__ == "__main__":
         help="Location that, if present, will be used as the pip cache directory.",
     )
 
+    parser.add_argument(
+        "--work-dir",
+        dest="work_dir",
+        help="Location that, if present, will be used as working directory to run pip install.",
+    )
+
+
     args = parser.parse_args()
 
     setup_py_path = os.path.join(args.target_setup, "setup.py")
@@ -160,8 +167,8 @@ if __name__ == "__main__":
             ]
 
             # force install package when installing from prebuilt whl to make sure whl is installed on running environment
-            if os.getenv("PREBUILT_WHEEL_DIR") is not None:
-                commands.append("--force")
+            #if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+                #commands.append("--force")
 
             # If extra index URL is passed then set it as argument to pip command
             if args.extra_index_url:
@@ -174,6 +181,9 @@ if __name__ == "__main__":
             if args.cache_dir:
                 commands.extend(["--cache-dir", args.cache_dir])
 
-
-            check_call(commands)
+            if args.work_dir and os.path.exists(args.work_dir):
+                logging.info("Executing command from {0}:{1}".format(args.work_dir, commands))
+                check_call(commands, cwd= args.work_dir)
+            else:
+                check_call(commands)
             logging.info("Installed {w}".format(w=wheel))
