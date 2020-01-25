@@ -29,8 +29,9 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
                  parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(ServiceBusNamespacePreparer, self).__init__(name_prefix, 24,
+                                                          random_name_enabled=random_name_enabled,
                                                           disable_recording=disable_recording,
                                                           playback_fake_resource=playback_fake_resource,
                                                           client_kwargs=client_kwargs)
@@ -91,8 +92,9 @@ class _ServiceBusChildResourcePreparer(AzureMgmtPreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(_ServiceBusChildResourcePreparer, self).__init__(name_prefix, 24,
+                                                               random_name_enabled=random_name_enabled,
                                                                disable_recording=disable_recording,
                                                                playback_fake_resource=playback_fake_resource,
                                                                client_kwargs=client_kwargs)
@@ -123,8 +125,9 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(ServiceBusTopicPreparer, self).__init__(name_prefix,
+                                                     random_name_enabled=random_name_enabled,
                                                      resource_group_parameter_name=resource_group_parameter_name,
                                                      servicebus_namespace_parameter_name=servicebus_namespace_parameter_name,
                                                      disable_recording=disable_recording,
@@ -165,8 +168,9 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  servicebus_topic_parameter_name=SERVICEBUS_TOPIC_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(ServiceBusSubscriptionPreparer, self).__init__(name_prefix,
+                                                     random_name_enabled=random_name_enabled,
                                                      resource_group_parameter_name=resource_group_parameter_name,
                                                      servicebus_namespace_parameter_name=servicebus_namespace_parameter_name,
                                                      disable_recording=disable_recording,
@@ -222,8 +226,9 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(ServiceBusQueuePreparer, self).__init__(name_prefix,
+                                                     random_name_enabled=random_name_enabled,
                                                      resource_group_parameter_name=resource_group_parameter_name,
                                                      servicebus_namespace_parameter_name=servicebus_namespace_parameter_name,
                                                      disable_recording=disable_recording,
@@ -272,8 +277,9 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(ServiceBusNamespaceAuthorizationRulePreparer, self).__init__(name_prefix,
+                                                     random_name_enabled=random_name_enabled,
                                                      resource_group_parameter_name=resource_group_parameter_name,
                                                      servicebus_namespace_parameter_name=servicebus_namespace_parameter_name,
                                                      disable_recording=disable_recording,
@@ -320,8 +326,9 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  servicebus_queue_parameter_name=SERVICEBUS_QUEUE_PARAM,
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None, random_name_enabled=True):
         super(ServiceBusQueueAuthorizationRulePreparer, self).__init__(name_prefix,
+                                                     random_name_enabled=random_name_enabled,
                                                      resource_group_parameter_name=resource_group_parameter_name,
                                                      servicebus_namespace_parameter_name=servicebus_namespace_parameter_name,
                                                      disable_recording=disable_recording,
@@ -369,21 +376,3 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
             template = 'To create this service bus queue authorization rule a service bus queue is required. Please add ' \
                        'decorator @{} in front of this service bus preparer.'
             raise AzureTestError(template.format(ServiceBusQueuePreparer.__name__))
-
-
-# Old servicebus tests were not written to work on both stubs and live entities.
-# This disables those tests for non-live scenarios, and should be removed as tests
-# are ported to offline-compatible code.
-def AreLiveTestsEnabled():
-    # This is how the CI pipe denotes that it's a live test run.
-    if os.environ.get('AZURE_RUN_MODE', None) == 'Live':
-        return True
-    # This is how local test runs denote that they're live.
-    # Note: This isn't amazing, because it could be present but not populated,
-    # but it's isomorphic to the old skips where it'd only check if the env vars were present.
-    try:
-        from devtools_testutils import mgmt_settings_real
-        return True
-    except:
-        pass
-    return False

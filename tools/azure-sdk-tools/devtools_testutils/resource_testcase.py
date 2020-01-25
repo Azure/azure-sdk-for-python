@@ -1,5 +1,6 @@
 from collections import namedtuple
 import os
+from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
@@ -81,3 +82,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     self.client.resource_groups.delete(name, polling=False)
             except CloudError:
                 pass
+
+RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
