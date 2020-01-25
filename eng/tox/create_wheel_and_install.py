@@ -156,7 +156,7 @@ if __name__ == "__main__":
                     )
                     exit(1)
             else:
-                pkg_wheel_path = os.path.join(args.distribution_directory, wheel)
+                pkg_wheel_path = os.path.abspath(os.path.join(args.distribution_directory, wheel))
                 logging.info("Installing {w} from fresh wheel.".format(w=wheel))
 
             commands = [
