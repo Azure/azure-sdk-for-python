@@ -52,7 +52,7 @@ from .policies import (
     StorageHosts,
     QueueMessagePolicy,
     ExponentialRetry,
-)
+    StorageVersionCheckPolicy)
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -228,6 +228,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             ContentDecodePolicy(),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
+            StorageVersionCheckPolicy(kwargs.pop('storage_sdk', None), None),
             config.retry_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),

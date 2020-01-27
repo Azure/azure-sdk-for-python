@@ -148,5 +148,5 @@ def add_metadata_headers(metadata=None):
 
 def throw_exception_if_contains_header(request_headers, header, operation_name, request_version):
     if header in request_headers:
-        raise ServiceRequestError('{} is not supported for {} operation in service version {}'
+        raise ServiceRequestError('\"{}\" is not supported for {} operation in service version {}'
                                   .format(header, operation_name, request_version))

@@ -29,11 +29,11 @@ from .policies import (
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy,
-    QueueMessagePolicy
-)
+    QueueMessagePolicy,
+    StorageVersionCheckPolicy)
 from .policies_async import AsyncStorageResponseHook
 
-from .._policies import StorageVersionCheckPolicy
+from .._policies import version_check
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -97,7 +97,7 @@ class AsyncStorageAccountHostsMixin(object):
             ContentDecodePolicy(),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
-            StorageVersionCheckPolicy(),
+            StorageVersionCheckPolicy(kwargs.pop('storage_sdk', None), version_check),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),

@@ -29,8 +29,8 @@ from .policies import (
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy,
-    QueueMessagePolicy
-)
+    QueueMessagePolicy,
+    StorageVersionCheckPolicy)
 from .policies_async import AsyncStorageResponseHook
 
 from .._generated.models import StorageErrorException
@@ -96,6 +96,7 @@ class AsyncStorageAccountHostsMixin(object):
             ContentDecodePolicy(),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
+            StorageVersionCheckPolicy(kwargs.pop('storage_sdk', None), None),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),

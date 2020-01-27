@@ -636,3 +636,15 @@ class LinearRetry(StorageRetryPolicy):
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class StorageVersionCheckPolicy(SansIOHTTPPolicy):
+
+    def __init__(self, service_name, version_check_function=None):
+        self.service_name = service_name
+        self.version_check_function = version_check_function
+
+    def on_request(self, request):
+        # type: (PipelineRequest, Any) -> None
+        if self.service_name == 'blob' or self.service_name == 'file-share':
+            self.version_check_function(request)

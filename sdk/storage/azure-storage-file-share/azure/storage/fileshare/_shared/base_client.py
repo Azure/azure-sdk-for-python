@@ -17,7 +17,6 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
-from azure.storage.fileshare._policies import StorageVersionCheckPolicy
 
 try:
     from urllib.parse import parse_qs, quote
@@ -54,8 +53,9 @@ from .policies import (
     StorageHosts,
     QueueMessagePolicy,
     ExponentialRetry,
-)
+    StorageVersionCheckPolicy)
 from .._generated.models import StorageErrorException
+from .._policies import version_check
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -232,7 +232,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             ContentDecodePolicy(),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
-            StorageVersionCheckPolicy(),
+            StorageVersionCheckPolicy(kwargs.pop('storage_sdk', None), version_check),
             config.retry_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),

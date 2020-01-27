@@ -15,8 +15,7 @@ from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
 
-from azure.core.exceptions import raise_with_traceback
-
+from azure.core.exceptions import raise_with_traceback, ServiceRequestError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -145,3 +144,9 @@ def add_metadata_headers(metadata=None):
         for key, value in metadata.items():
             headers['x-ms-meta-{}'.format(key)] = value
     return headers
+
+
+def throw_exception_if_contains_header(request_headers, header, operation_name, request_version):
+    if header in request_headers:
+        raise ServiceRequestError('\"{}\" is not supported for {} operation in service version {}'
+                                  .format(header, operation_name, request_version))
