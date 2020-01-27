@@ -1,0 +1,172 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
+      "I did not like the hotel we stayed it.", "language": "english"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '144'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=bad&showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
+        is incorrect. Allowed values are latest,2019-10-01"}}'
+    headers:
+      apim-request-id:
+      - 0679cdc2-7f26-4948-93e1-0dbe4159c206
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 27 Jan 2020 22:01:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '23'
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
+      "I did not like the hotel we stayed it.", "language": "english"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '144'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}},{"id":"2","error":{"code":"InvalidArgument","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"},"message":"Invalid
+        Language Code."}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - c5ecc678-424b-4817-ad59-023f2f384f4a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 27 Jan 2020 22:01:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '17'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"documents": []}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '17'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","innerError":{"code":"MissingInputRecords","message":"Missing
+        input records."},"message":"Invalid Request."}}'
+    headers:
+      apim-request-id:
+      - 77f143c2-d411-4bb8-96c5-096588d697b1
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 27 Jan 2020 22:01:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '4'
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
+      "1", "text": "I did not like the hotel we stayed it.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","innerError":{"code":"InvalidDocument","message":"Request
+        contains duplicated Ids. Make sure each document has a unique Id."},"message":"Invalid
+        document in request."}}'
+    headers:
+      apim-request-id:
+      - 00e25fff-4a47-4115-bc29-96fa51a2dfc2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 27 Jan 2020 22:01:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

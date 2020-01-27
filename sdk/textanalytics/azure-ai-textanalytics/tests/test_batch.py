@@ -731,3 +731,43 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_text_analytics_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+
+        docs = [{"id": "1", "text": ""},
+                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."}]
+
+        # Bad model version
+        try:
+            result = text_analytics.analyze_sentiment(docs, model_version="bad")
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidRequest")
+            self.assertIsNotNone(err.message)
+
+        # DocumentErrors
+        doc_errors = text_analytics.analyze_sentiment(docs)
+        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertIsNotNone(doc_errors[0].error.message)
+        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertIsNotNone(doc_errors[1].error.message)
+
+        # Missing input records
+        docs = []
+        try:
+            result = text_analytics.analyze_sentiment(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "MissingInputRecords")
+            self.assertIsNotNone(err.message)
+
+
+        # Duplicate Ids
+        docs = [{"id": "1", "text": "hello world"},
+                {"id": "1", "text": "I did not like the hotel we stayed it."}]
+
+        try:
+            result = text_analytics.analyze_sentiment(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidDocument")
+            self.assertIsNotNone(err.message)
