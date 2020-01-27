@@ -27,7 +27,7 @@ from azure.servicebus.common.errors import (
     MessageSettleFailed)
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer, AreLiveTestsEnabled
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusQueuePreparer
 
 
 def get_logger(level):

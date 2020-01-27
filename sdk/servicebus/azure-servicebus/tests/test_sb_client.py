@@ -28,8 +28,7 @@ from servicebus_preparer import (
     ServiceBusTopicPreparer, 
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
-    ServiceBusQueueAuthorizationRulePreparer,
-    AreLiveTestsEnabled
+    ServiceBusQueueAuthorizationRulePreparer
 )
 
 class ServiceBusClientTests(AzureMgmtTestCase):
