@@ -6,6 +6,8 @@ parameters:
   BuildTargetingString: 'azure-*'
   AdditionalTestArgs: ''
   TestMarkArgument: ''
+  InjectedPackages: ''
+  BuildDocs: true
   JobName: Test
   Matrix:
     Linux_Python35:
@@ -50,11 +52,15 @@ jobs:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CoverageArg: $(CoverageArg)
-          EnvVars: ${{ parameters.EnvVars }}
+          EnvVars:
+            AZURE_RUN_MODE: 'Live' #Record, Playback
+            ${{ insert }}: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
           ToxTestEnv: "whl"
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          InjectedPackages: ${{ parameters.InjectedPackages }}
+          BuildDocs: ${{parameters.BuildDocs}}
   

@@ -6,6 +6,20 @@ import textwrap
 # This was taken from /scripts/analyze_deps.py
 
 def parse_setup(setup_filename):
+    kwargs = parse_kwargs(setup_filename)
+
+    version = kwargs['version']
+    name = kwargs['name']
+    requires = []
+    if 'install_requires' in kwargs:
+        requires += kwargs['install_requires']
+    if 'extras_require' in kwargs:
+        for extra in kwargs['extras_require'].values():
+            requires += extra
+    return name, version, requires
+
+
+def parse_kwargs(setup_filename):
     mock_setup = textwrap.dedent('''\
     def setup(*args, **kwargs):
         __setup_calls__.append((args, kwargs))
@@ -35,12 +49,12 @@ def parse_setup(setup_filename):
     os.chdir(current_dir)
     _, kwargs = global_vars['__setup_calls__'][0]
 
-    version = kwargs['version']
-    name = kwargs['name']
+    return kwargs
+
+
+def get_install_requires(setup_filename):
+    kwargs = parse_kwargs(setup_filename)
     requires = []
     if 'install_requires' in kwargs:
         requires += kwargs['install_requires']
-    if 'extras_require' in kwargs:
-        for extra in kwargs['extras_require'].values():
-            requires += extra
-    return name, version, requires
+    return requires

@@ -1,9 +1,37 @@
 
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.2.2 (Unreleased)
 
-## 1.1.1 (2019-12-03) 
+### Bug fixes
+
+- Fixed a bug that sends None as request_id #9545
+- Enable mypy for customers #9572
+
+## 1.2.1 (2020-01-14)
+
+### Bug fixes
+
+- Fixed a regression in 1.2.0 that was incompatible with azure-keyvault-* 4.0.0
+[#9462](https://github.com/Azure/azure-sdk-for-python/issues/9462)
+
+
+## 1.2.0 (2020-01-14)
+
+### Features
+
+- Add user_agent & sdk_moniker kwargs in UserAgentPolicy init   #9355
+- Support OPTIONS HTTP verb     #9322
+- Add tracing_attributes to tracing decorator   #9297
+- Support auto_request_id in RequestIdPolicy   #9163
+- Support fixed retry   #6419
+- Support "retry-after-ms" in response header   #9240
+
+### Bug fixes
+
+- Removed `__enter__` and `__exit__` from async context managers    #9313
+
+## 1.1.1 (2019-12-03)
 
 ### Bug fixes
 

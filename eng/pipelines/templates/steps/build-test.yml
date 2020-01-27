@@ -10,6 +10,8 @@ parameters:
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
+  ToxEnvParallel: ''
+  InjectedPackages: ''
 
 steps:
   - pwsh: |
@@ -25,7 +27,7 @@ steps:
       OSName: ${{ parameters.OSName }}
 
   - script: |
-      pip install pathlib twine coverage==4.5.4 codecov beautifulsoup4 tox tox-monorepo packaging
+      pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     
   - ${{ parameters.BeforeTestSteps }}
@@ -41,6 +43,8 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
+        --injected-packages="${{ parameters.InjectedPackages }}"
+        ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2

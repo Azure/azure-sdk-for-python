@@ -564,7 +564,6 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(file_props)
         self.assertIsNotNone(snapshot_props)
         self.assertEqual(snapshot_props.snapshot, snapshot_client.snapshot)
-        self.assertEqual(file_props.size, snapshot_props.size)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
     @GlobalStorageAccountPreparer()
@@ -1229,6 +1228,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
+        await self.fsc2.delete_share(self.remote_share_name)
 
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')

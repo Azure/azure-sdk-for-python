@@ -9,9 +9,8 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - script: |
-     pip install setuptools wheel Jinja2 packaging tox tox-monorepo
-     pip install doc-warden==0.3.1
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
+     pip install -r eng/ci_tools.txt
+     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
     displayName: 'Verify Readmes'
 
   - task: PythonScript@0
@@ -33,8 +32,12 @@ steps:
   - script: |
       cd eng/versioning
       pip install -r requirements.txt
-      python find_invalid_versions.py --always-succeed --service ${{parameters.ServiceDirectory}}
+      python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
+
+  - template: eng/pipelines/templates/scripts/verify-path-length.yml@azure-sdk-tools
+    parameters:
+      SourceDirectory: $(Build.SourcesDirectory)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR

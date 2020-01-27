@@ -57,6 +57,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
     :type credential: str or ~azure.core.credentials.TokenCredential
+    :keyword str default_country_hint: Sets the default country_hint to use for all operations.
+        Defaults to "US". If you don't want to use a country hint, pass the empty string "".
+    :keyword str default_language: Sets the default language to use for all operations.
+        Defaults to "en".
 
     .. admonition:: Example:
 
@@ -81,12 +85,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
+        self._default_language = kwargs.pop("default_language", "en")
+        self._default_country_hint = kwargs.pop("default_country_hint", "US")
 
     @distributed_trace
     def detect_languages(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
-        country_hint="US",  # type: Optional[str]
+        country_hint=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
@@ -126,6 +132,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
+        country_hint = country_hint if country_hint is not None else self._default_country_hint
         docs = _validate_batch_input(inputs, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -144,7 +151,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language="en",  # type: Optional[str]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
@@ -184,6 +191,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -202,7 +210,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_pii_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language="en",  # type: Optional[str]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
@@ -242,6 +250,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -260,7 +269,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_linked_entities(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language="en",  # type: Optional[str]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
@@ -299,6 +308,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -317,7 +327,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def extract_key_phrases(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language="en",  # type: Optional[str]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
@@ -356,6 +366,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -374,7 +385,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def analyze_sentiment(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        language="en",  # type: Optional[str]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
@@ -414,6 +425,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
+        language = language if language is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)

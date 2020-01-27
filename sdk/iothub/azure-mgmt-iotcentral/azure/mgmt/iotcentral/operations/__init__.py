@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .apps_operations import AppsOperations
-from .operations import Operations
+from ._apps_operations import AppsOperations
+from ._operations import Operations
 
 __all__ = [
     'AppsOperations',

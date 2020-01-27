@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .custom_instance_operations import CustomInstanceOperations
+from ._custom_instance_operations import CustomInstanceOperations
 
 __all__ = [
     'CustomInstanceOperations',

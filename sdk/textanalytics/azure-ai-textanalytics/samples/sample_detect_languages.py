@@ -72,9 +72,9 @@ class DetectLanguagesSample(object):
         for idx, doc in enumerate(result):
             if not doc.is_error:
                 print("Document text: {}".format(documents[idx]))
-                print("Language detected: {}".format(doc.detected_languages[0].name))
-                print("ISO6391 name: {}".format(doc.detected_languages[0].iso6391_name))
-                print("Confidence score: {}\n".format(doc.detected_languages[0].score))
+                print("Language detected: {}".format(doc.primary_language.name))
+                print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
+                print("Confidence score: {}\n".format(doc.primary_language.score))
             if doc.is_error:
                 print(doc.id, doc.error)
         # [END batch_detect_languages]

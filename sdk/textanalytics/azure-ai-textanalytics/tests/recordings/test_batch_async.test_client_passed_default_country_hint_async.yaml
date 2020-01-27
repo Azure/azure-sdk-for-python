@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "CA"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 38b6fa9c-7b17-4180-969d-1a483faffe21
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 30 Dec 2019 22:40:41 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: a167131c-2af8-41f5-98de-c980ea94c1a7
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '10'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - showStats=false
+        - ''
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "DE"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "DE"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "DE"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: da44fde0-5761-4528-80b5-c758b15fdc5c
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 30 Dec 2019 22:40:41 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: d0f70e0e-ef92-4c4a-a77b-f6a09a96faef
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '6'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - showStats=false
+        - ''
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "CA"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-ai-textanalytics/1.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 7bf36e61-be9e-4ae5-b5b4-7e0dfd80200a
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Mon, 30 Dec 2019 22:40:41 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 1fe83611-091f-471d-9124-9a0cbdfa810b
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '6'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - showStats=false
+        - ''
+version: 1
