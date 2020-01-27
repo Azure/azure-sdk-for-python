@@ -41,6 +41,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
      storage_blob_prefix and use_consumer_group_as_directory.
     :param str storage_blob_prefix: If populated, prepends a prefix when constructing
      the location that leases are stored within the lease_container. Default None.
+     If consumer_group_as_directory is also provided, it is unified as such <prefix><group>/<id>.
     :param int lease_renew_interval: The interval in seconds at which EPH will attempt to
      renew the lease of a particular partition. Default value is 10.
     :param int lease_duration: The duration in seconds of a lease on a partition.
