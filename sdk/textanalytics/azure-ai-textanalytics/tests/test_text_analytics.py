@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.ai.textanalytics import TextAnalyticsClient, SharedKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
 from azure.ai.textanalytics import _models
 from testcase import GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsTest as TestAnalyticsTestCase
@@ -15,7 +15,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, SharedKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key))
 
         response = text_analytics.detect_languages(
             inputs=[{

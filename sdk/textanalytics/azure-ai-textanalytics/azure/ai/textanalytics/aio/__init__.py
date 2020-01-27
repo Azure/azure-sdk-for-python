@@ -44,10 +44,10 @@ async def single_detect_language(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of SharedKeyCredential if using a
+        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to detect language from.
     :param str country_hint: The country hint for the text. Accepts two
@@ -103,10 +103,10 @@ async def single_recognize_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of SharedKeyCredential if using a
+        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
@@ -162,10 +162,10 @@ async def single_recognize_pii_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of SharedKeyCredential if using a
+        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
@@ -221,10 +221,10 @@ async def single_recognize_linked_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of SharedKeyCredential if using a
+        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
@@ -279,10 +279,10 @@ async def single_extract_key_phrases(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of SharedKeyCredential if using a
+        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to extract key phrases from.
     :param str language: This is the 2 letter ISO 639-1 representation
@@ -338,10 +338,10 @@ async def single_analyze_sentiment(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of SharedKeyCredential if using a
+        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.SharedKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to analyze sentiment from.
     :param str language: This is the 2 letter ISO 639-1 representation

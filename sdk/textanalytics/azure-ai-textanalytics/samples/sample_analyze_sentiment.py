@@ -84,8 +84,8 @@ class AnalyzeSentimentSample(object):
 
     def analyze_sentiment(self):
         # [START batch_analyze_sentiment]
-        from azure.ai.textanalytics import TextAnalyticsClient, SharedKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=SharedKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
         documents = [
             "I had the best day of my life.",
             "This was a waste of my time. The speaker put me to sleep.",
@@ -124,8 +124,8 @@ class AnalyzeSentimentSample(object):
         using a list[TextDocumentInput] and supplying your own IDs and language hints along
         with the text.
         """
-        from azure.ai.textanalytics import TextAnalyticsClient, SharedKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=SharedKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en", "text": "I had the best day of my life."},

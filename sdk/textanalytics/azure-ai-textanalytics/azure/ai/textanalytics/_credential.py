@@ -7,7 +7,7 @@
 import six
 
 
-class SharedKeyCredential(object):
+class TextAnalyticsSubscriptionKeyCredential(object):
     """Credential type used for authenticating the client
     with a subscription key.
 
@@ -25,7 +25,7 @@ class SharedKeyCredential(object):
         """
         return self._subscription_key
 
-    def set_subscription_key(self, key):
+    def update_key(self, key):
         """Update the subscription key.
 
         This is intended to be used when you've regenerated your service subscription key

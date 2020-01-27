@@ -42,13 +42,13 @@ class SingleDetectLanguageSample(object):
 
     def detect_language(self):
         # [START single_detect_language]
-        from azure.ai.textanalytics import single_detect_language, SharedKeyCredential
+        from azure.ai.textanalytics import single_detect_language, TextAnalyticsSubscriptionKeyCredential
 
         text = "I need to take my cat to the veterinarian."
 
         result = single_detect_language(
             endpoint=self.endpoint,
-            credential=SharedKeyCredential(self.key),
+            credential=TextAnalyticsSubscriptionKeyCredential(self.key),
             input_text=text,
             country_hint="US",
             show_stats=True

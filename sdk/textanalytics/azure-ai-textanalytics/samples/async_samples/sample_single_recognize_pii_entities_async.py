@@ -47,13 +47,13 @@ class SingleRecognizePiiEntitiesSampleAsync(object):
     async def recognize_pii_entities_async(self):
         # [START single_recognize_pii_entities_async]
         from azure.ai.textanalytics.aio import single_recognize_pii_entities
-        from azure.ai.textanalytics import SharedKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsSubscriptionKeyCredential
 
         text = "The employee's ABA number is 111000025 and his SSN is 555-55-5555."
 
         result = await single_recognize_pii_entities(
             endpoint=self.endpoint,
-            credential=SharedKeyCredential(self.key),
+            credential=TextAnalyticsSubscriptionKeyCredential(self.key),
             input_text=text,
             language="en"
         )

@@ -59,14 +59,14 @@ class SingleRecognizeEntitiesSample(object):
 
     def recognize_entities(self):
         # [START single_recognize_entities]
-        from azure.ai.textanalytics import single_recognize_entities, SharedKeyCredential
+        from azure.ai.textanalytics import single_recognize_entities, TextAnalyticsSubscriptionKeyCredential
 
         text = "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975," \
                " to develop and sell BASIC interpreters for the Altair 8800."
 
         result = single_recognize_entities(
             endpoint=self.endpoint,
-            credential=SharedKeyCredential(self.key),
+            credential=TextAnalyticsSubscriptionKeyCredential(self.key),
             input_text=text,
             language="en"
         )

@@ -44,8 +44,8 @@ class RecognizeEntitiesSample(object):
 
     def recognize_entities(self):
         # [START batch_recognize_entities]
-        from azure.ai.textanalytics import TextAnalyticsClient, SharedKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=SharedKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
         documents = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
             "I had a wonderful trip to Seattle last week.",
@@ -70,8 +70,8 @@ class RecognizeEntitiesSample(object):
         using a list[TextDocumentInput] and supplying your own IDs and language hints along
         with the text.
         """
-        from azure.ai.textanalytics import TextAnalyticsClient, SharedKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=SharedKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
