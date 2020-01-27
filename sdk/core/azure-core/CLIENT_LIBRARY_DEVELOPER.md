@@ -144,25 +144,26 @@ transport = AioHttpTransport(
 
 ### Proxy Settings
 
-There are ways to configure a proxy.
+There are two ways to configure proxy settings.
 
 - Use environment proxy settings
 
 When creating the transport, "use_env_settings" parameter can be used to enable or disable the environment proxy settings. e.g.:
 
 ```python
-synchronous_transport = RequestsTransport(use_env_settings = True)
+synchronous_transport = RequestsTransport(use_env_settings=True)
 ```
 
-If "use_env_settings" is set to True which is by default, the transport will look for environment variables 
+If "use_env_settings" is set to True(by default), the transport will look for environment variables 
 
-**HTTP_PROXY** and **HTTPS_PROXY**
+- HTTP_PROXY
+- HTTPS_PROXY
 
-and use them.
+and use their values to configure the proxy settings.
 
 - Use ProxyPolicy
 
-You can use ProxyPolicy to configure the proxy settings as well.e.g.
+You can use ProxyPolicy to configure the proxy settings as well. e.g.
 
 ```python
 from azure.core.pipeline.policies import ProxyPolicy
