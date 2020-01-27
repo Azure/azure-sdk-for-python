@@ -8,37 +8,35 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - e839cd52-d9a6-11e9-be06-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:57:29 GMT
+      - Wed, 15 Jan 2020 23:47:32 GMT
       x-ms-version:
       - '2019-02-02'
-    method: HEAD
-    uri: https://storagename.file.core.windows.net/utsharebd5b0c5c/missingdir/filebd5b0c5c
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharebd5b0c5c?restype=share
   response:
     body:
       string: ''
     headers:
-      Date:
-      - Tue, 17 Sep 2019 23:57:28 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Wed, 15 Jan 2020 23:47:32 GMT
+      etag:
+      - '"0x8D79A154A56EE2E"'
+      last-modified:
+      - Wed, 15 Jan 2020 23:47:32 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      x-ms-error-code:
-      - ParentNotFound
-      x-ms-request-id:
-      - 00b6d6fe-701a-00bb-20b3-6de956000000
       x-ms-version:
       - '2019-02-02'
     status:
-      code: 404
-      message: The specified parent path does not exist.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -49,11 +47,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 8c7d79b6-1d1a-11ea-831c-2816a845e8c6
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Dec 2019 20:04:05 GMT
+      - Wed, 15 Jan 2020 23:47:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -62,18 +58,14 @@ interactions:
     body:
       string: ''
     headers:
-      Date:
-      - Thu, 12 Dec 2019 20:04:08 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:47:33 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-error-code:
       - ParentNotFound
-      x-ms-request-id:
-      - 74e6944a-401a-00c1-7c27-b1efb9000000
       x-ms-version:
       - '2019-02-02'
     status:

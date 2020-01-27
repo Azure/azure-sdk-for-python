@@ -16,11 +16,12 @@ from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
 )
-from filetestcase import (
-    FileTestCase,
-    record,
-    TestMode,
+from _shared.testcase import (
+    LogCaptured,
+    GlobalStorageAccountPreparer,
+    GlobalResourceGroupPreparer
 )
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
@@ -39,20 +40,12 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageHandleTest(FileTestCase):
-    def setUp(self):
-        super(StorageHandleTest, self).setUp()
-        file_url = self.get_file_url()
-        credentials = self.get_shared_key_credential()
+class StorageHandleTest(AsyncStorageTestCase):
+    def _setup(self, storage_account, storage_account_key):
+        file_url = self.account_url(storage_account, "file")
+        credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
         self.test_shares = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            for share in self.test_shares:
-                loop.run_until_complete(self.fsc.delete_share(share.share_name, delete_snapshots=True))
-        return super(StorageHandleTest, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
 
@@ -72,13 +65,15 @@ class StorageHandleTest(FileTestCase):
         self.assertIsNotNone(handles[0].client_ip)
         self.assertIsNotNone(handles[0].open_time)
 
-    async def _test_close_single_handle_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_close_single_handle_async(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
-            return
+        if self.is_live:
+            pytest.skip("Cannot run in live without manual setup")
 
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = []
@@ -96,18 +91,15 @@ class StorageHandleTest(FileTestCase):
         self.assertEqual(1, handles_info['closed_handles_count'])
         self.assertEqual(handles_info['failed_handles_count'], 0)
 
-    @record
-    def test_close_single_handle_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_close_single_handle_async())
-
-    async def _test_close_all_handle_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_close_all_handle_async(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
-            return
+        if self.is_live:
+            pytest.skip("Cannot run in live without manual setup")
 
-        # Arrange
+        self._setup(storage_account, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = []
@@ -121,12 +113,6 @@ class StorageHandleTest(FileTestCase):
         # Assert at least 1 handle has been closed
         self.assertTrue(handles_info['closed_handles_count'] > 1)
         self.assertEqual(handles_info['failed_handles_count'], 0)
-
-    @record
-    def test_close_all_handle_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_close_all_handle_async())
-
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: https://premiumstoragename.file.core.windows.net/sharec8081c28?restype=share
+    uri: https://pyacrstoragestorname.file.core.windows.net/sharec8081c28?restype=share
   response:
     body:
       string: ''
@@ -56,7 +56,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://premiumstoragename.file.core.windows.net/sharec8081c28?restype=share
+    uri: https://pyacrstoragestorname.file.core.windows.net/sharec8081c28?restype=share
   response:
     body:
       string: ''

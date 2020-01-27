@@ -93,7 +93,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -138,7 +138,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # parallel operation
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -184,7 +184,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -225,7 +225,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -263,7 +263,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -335,7 +335,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -373,7 +373,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -429,7 +429,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -467,7 +467,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -509,7 +509,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -568,7 +568,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -608,7 +608,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -654,7 +654,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
