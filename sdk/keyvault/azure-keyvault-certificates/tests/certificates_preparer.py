@@ -8,11 +8,19 @@ except ImportError:  # python < 3.3
     from mock import Mock
 
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.transport import RequestsTransport
 from azure.identity import EnvironmentCredential
 
 from devtools_testutils import AzureMgmtPreparer
 
 from certificates_vault_client import VaultClient
+
+
+class NoSleepTransport(RequestsTransport):
+    def sleep(self, _):
+        """Prevent sleeping between retries. (RetryPolicy doesn't expose configuration to ignore Retry-After headers.)
+        """
+        return
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
@@ -43,6 +51,8 @@ class VaultClientPreparer(AzureMgmtPreparer):
     def create_vault_client(self, vault_uri):
         if self.is_live:
             credential = EnvironmentCredential()
+            transport = None
         else:
             credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
-        return VaultClient(vault_uri, credential, is_live=self.is_live, **self.client_kwargs)
+            transport = NoSleepTransport()
+        return VaultClient(vault_uri, credential, transport=transport, is_live=self.is_live, **self.client_kwargs)

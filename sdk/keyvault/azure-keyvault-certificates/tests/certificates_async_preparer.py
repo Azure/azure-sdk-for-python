@@ -28,13 +28,22 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
+class NoSleepTransport(AiohttpTestTransport):
+    async def sleep(self, _):
+        """Prevent sleeping between retries. (RetryPolicy doesn't expose configuration to ignore Retry-After headers.)
+        """
+        f = asyncio.Future()
+        f.set_result(None)
+        return f
+
+
 class AsyncVaultClientPreparer(VaultClientPreparer):
     def create_vault_client(self, vault_uri):
         if self.is_live:
             credential = EnvironmentCredential()
+            transport = AiohttpTestTransport()
         else:
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+            transport = NoSleepTransport()
 
-        return VaultClient(
-            vault_uri, credential, transport=AiohttpTestTransport(), is_live=self.is_live, **self.client_kwargs
-        )
+        return VaultClient(vault_uri, credential, transport=transport, is_live=self.is_live, **self.client_kwargs)
