@@ -11,7 +11,7 @@ import json
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from secrets_async_preparer import AsyncVaultClientPreparer
-from secrets_async_test_case import AsyncKeyVaultTestCase
+from secrets_async_test_case import AsyncKeyVaultTestCase, AsyncMockTransport
 
 
 from dateutil import parser as date_parse
@@ -349,3 +349,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_close(self, vault_client, **kwargs):
+        transport = AsyncMockTransport()
+        client = vault_client.client
+        await client.close()
+
+        assert transport.__aexit__.call_count == 1
