@@ -17,7 +17,7 @@ from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusSubscriptionPreparer, AreLiveTestsEnabled
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, ServiceBusSubscriptionPreparer
 
 
 def get_logger(level):

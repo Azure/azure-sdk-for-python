@@ -17,7 +17,7 @@ from azure.servicebus import ServiceBusClient, TopicClient
 from azure.servicebus.common.message import Message, PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
-from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer, AreLiveTestsEnabled
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer
 
 def get_logger(level):
     azure_logger = logging.getLogger("azure")
