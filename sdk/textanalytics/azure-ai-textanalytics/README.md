@@ -58,7 +58,7 @@ your resource and a `credential` that allows you access:
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient
 
-text_analytics = TextAnalyticsClient(endpoint="https://westus2.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client  = TextAnalyticsClient(endpoint="https://westus2.api.cognitive.microsoft.com/", credential=credential)
 ```
 
 Note that if you create a [custom subdomain](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains) 
@@ -126,24 +126,15 @@ cognitive services.
 
 ## Key concepts
 
-### Client
-The Text Analytics client library provides a [TextAnalyticsClient](https://aka.ms/azsdk-python-textanalytics-textanalyticsclient) to do analysis on batches of documents.
+### Client batched operations
+The Text Analytics client library provides a [TextAnalyticsClient](https://aka.ms/azsdk-python-textanalytics-textanalyticsclient) to do analysis on [batches of documents](#Examples "examples").
 It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction. 
 
 ### Single text operations
 The Text Analytics client library also provides module-level operations which can be performed on a single string
 rather than a batch of documents. Each synchronous and asynchronous batching operation has a singular counterpart. 
 The endpoint and credential are passed in with the desired text and other optional parameters, e.g. 
-[single_analyze_sentiment()](https://aka.ms/azsdk-python-textanalytics-singleanalyzesentiment):
-
-```python
-from azure.ai.textanalytics import single_analyze_sentiment, TextAnalyticsAPIKeyCredential
-
-credential = TextAnalyticsAPIKeyCredential("<api_key>")
-text = "I did not like the restaurant. The food was too spicy."
-
-result = single_analyze_sentiment(endpoint=endpoint, credential=credential, input_text=text, language="en")
-```
+[single_analyze_sentiment()](https://aka.ms/azsdk-python-textanalytics-singleanalyzesentiment).
 
 ### Input
 A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
@@ -171,8 +162,18 @@ documents = [
 ### Operation Result
 An operation result, such as [AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), 
 is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
-With a batching operation, a list is returned containing a collection of operation results and any document errors. 
-These results/errors will be index-matched with the order of the provided documents.
+With a batching operation, a heterogeneous list is returned containing a collection of result and error objects. 
+These results/errors will be index-matched with the order of the provided documents. 
+
+### Document Error Handling
+You can filter for a result or error object in the list by using the `is_error` attribute. For a result object this is always `False` and for a 
+[DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror) this is `True`. 
+
+For example, to filter out all DocumentErrors you might use list comprehension:
+```python
+response = text_analytics_client.analyze_sentiment(documents)
+successful_responses = [doc for doc in response if not doc.is_error]
+```
 
 
 ## Examples
@@ -211,6 +212,8 @@ for doc in result:
     ))
 ```
 
+The returned response is a heterogeneous list of result and error objects: list[[AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror)]
+
 Please refer to the service documentation for a conceptual discussion of [sentiment analysis](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis).
 
 ### Recognize entities
@@ -236,11 +239,13 @@ for doc in result:
               "\tConfidence Score: \t", entity.score)
 ```
 
+The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult](https://aka.ms/azsdk-python-textanalytics-recognizeentitiesresult), [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror)]
+
 Please refer to the service documentation for a conceptual discussion of [named entity recognition](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
 and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
 
 ### Recognize PII entities
-Recognize PII entities in a batch of documents.
+Recognize Personally Identifiable Information (PII) entities in a batch of documents.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
@@ -260,6 +265,8 @@ for doc in result:
         print("Entity: \t", entity.text, "\tType: \t", entity.type,
               "\tConfidence Score: \t", entity.score)
 ```
+
+The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult](https://aka.ms/azsdk-python-textanalytics-recognizepiientitiesresult), [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror)]
 
 Please refer to the service documentation for [supported PII entity types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal).
 
@@ -290,6 +297,8 @@ for doc in result:
             print("Length: {}\n".format(match.length))
 ```
 
+The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult](https://aka.ms/azsdk-python-textanalytics-recognizelinkedentitiesresult), [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror)]
+
 Please refer to the service documentation for a conceptual discussion of [entity linking](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking)
 and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
 
@@ -313,6 +322,8 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     print(doc.key_phrases)
 ```
+
+The returned response is a heterogeneous list of result and error objects: list[[ExtractKeyPhrasesResult](https://aka.ms/azsdk-python-textanalytics-extractkeyphrasesresult), [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror)]
 
 Please refer to the service documentation for a conceptual discussion of [key phrase extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction).
 
@@ -339,42 +350,16 @@ for doc in result:
     print("Confidence score: {}\n".format(doc.primary_language.score))
 ```
 
+The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult](https://aka.ms/azsdk-python-textanalytics-detectlanguageresult), [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror)]
+
 Please refer to the service documentation for a conceptual discussion of [language detection](https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection)
 and [language and regional support](https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support).
 
 ## Optional Configuration
 
-Optional keyword arguments that can be passed in at the client and per-operation level. 
-
-### Retry Policy configuration
-
-Use the following keyword arguments when instantiating a client to configure the retry policy:
-
-* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
-Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
-* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
-* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
-
-### Other client / per-operation configuration
-
-Other optional configuration keyword arguments that can be specified on the client or per-operation.
-
-**Client keyword arguments:**
-
-* __connection_timeout__ (int): A single float in seconds for the connection timeout. Defaults to 300 seconds.
-* __read_timeout__ (int): A single float in seconds for the read timeout. Defaults to 300 seconds.
-* __transport__ (Any): User-provided transport to send the HTTP request.
-
-**Per-operation keyword arguments:**
-
-* __response_hook__ (callable): The given callback uses the raw response returned from the service.
-Can also be passed in at the client.
-* __request_id__ (str): Optional user specified identification of the request.
-* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
-* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
-the client level to enable it for all requests.
-* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+Optional keyword arguments can be passed in at the client and per-operation level.
+The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.2.1/azure.core.pipeline.policies.html)
+describes available configurations for retries, logging, transport protocols, and more.
 
 ## Troubleshooting
 The Text Analytics client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
