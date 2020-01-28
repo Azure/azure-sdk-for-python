@@ -30,6 +30,7 @@ from ._models import (
     SentenceSentiment,
     SentimentConfidenceScorePerLabel
 )
+from ._credential import TextAnalyticsAPIKeyCredential
 
 __all__ = [
     'TextAnalyticsClient',
@@ -57,7 +58,8 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScorePerLabel'
+    'SentimentConfidenceScorePerLabel',
+    'TextAnalyticsAPIKeyCredential'
 ]
 
 __version__ = VERSION
@@ -65,7 +67,7 @@ __version__ = VERSION
 
 def single_detect_language(
             endpoint,  # type: str
-            credential,  # type: str
+            credential,  # type: Any
             input_text,  # type: str
             country_hint="US",  # type: Optional[str]
             **kwargs  # type: Any
@@ -80,9 +82,11 @@ def single_detect_language(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to detect language from.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
@@ -123,7 +127,7 @@ def single_detect_language(
 
 def single_recognize_entities(
         endpoint,  # type: str
-        credential,  # type: str
+        credential,  # type: Any
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -138,9 +142,11 @@ def single_recognize_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -180,7 +186,7 @@ def single_recognize_entities(
 
 def single_recognize_pii_entities(
         endpoint,  # type: str
-        credential,  # type: str
+        credential,  # type: Any
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -196,9 +202,11 @@ def single_recognize_pii_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -238,7 +246,7 @@ def single_recognize_pii_entities(
 
 def single_recognize_linked_entities(
         endpoint,  # type: str
-        credential,  # type: str
+        credential,  # type: Any
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -254,9 +262,11 @@ def single_recognize_linked_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -296,7 +306,7 @@ def single_recognize_linked_entities(
 
 def single_extract_key_phrases(
         endpoint,  # type: str
-        credential,  # type: str
+        credential,  # type: Any
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -311,9 +321,11 @@ def single_extract_key_phrases(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to extract key phrases from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
@@ -353,7 +365,7 @@ def single_extract_key_phrases(
 
 def single_analyze_sentiment(
         endpoint,  # type: str
-        credential,  # type: str
+        credential,  # type: Any
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -369,9 +381,11 @@ def single_analyze_sentiment(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
+        cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to analyze sentiment from.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If

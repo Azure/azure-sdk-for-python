@@ -109,7 +109,8 @@ class RecognizeLinkedEntitiesSampleAsync(object):
     async def recognize_linked_entities_async(self):
         # [START batch_recognize_linked_entities_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
+        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
         documents = [
             "Microsoft moved its headquarters to Bellevue, Washington in January 1979.",
             "Steve Ballmer stepped down as CEO of Microsoft and was succeeded by Satya Nadella.",
@@ -143,7 +144,8 @@ class RecognizeLinkedEntitiesSampleAsync(object):
         with the text.
         """
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=self.key)
+        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en", "text": "Microsoft moved its headquarters to Bellevue, Washington in January 1979."},
