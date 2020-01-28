@@ -124,8 +124,9 @@ class Identity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of the resource identity.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned',
-     'None'
+    :param type: The identity type. This is the only required field when
+     adding a system assigned identity to a resource. Possible values include:
+     'SystemAssigned', 'None'
     :type type: str or
      ~azure.mgmt.resource.policy.v2019_09_01.models.ResourceIdentityType
     """
@@ -149,7 +150,7 @@ class Identity(Model):
 
 
 class ParameterDefinitionsValue(Model):
-    """ParameterDefinitionsValue.
+    """The definition of a parameter that can be provided to the policy.
 
     :param type: The data type of the parameter. Possible values include:
      'String', 'Array', 'Object', 'Boolean', 'Integer', 'Float', 'DateTime'
@@ -206,7 +207,7 @@ class ParameterDefinitionsValueMetadata(Model):
 
 
 class ParameterValuesValue(Model):
-    """ParameterValuesValue.
+    """The value of a parameter.
 
     :param value: The value of the parameter.
     :type value: object
