@@ -10,14 +10,14 @@ from ._models import TextDocumentBatchStatistics
 
 
 class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(self, cognitiveservices_key):
-        self.cognitiveservices_key = cognitiveservices_key
+    def __init__(self, api_key_credential):
+        self.credential = api_key_credential
         super(CognitiveServicesCredentialPolicy, self).__init__()
 
     def on_request(self, request):
         request.http_request.headers[
             "Ocp-Apim-Subscription-Key"
-        ] = self.cognitiveservices_key
+        ] = self.credential.subscription_key
         request.http_request.headers["X-BingApis-SDK-Client"] = "Python-SDK"
 
 
