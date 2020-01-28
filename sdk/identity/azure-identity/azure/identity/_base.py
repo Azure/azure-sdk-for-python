@@ -46,16 +46,16 @@ class ClientSecretCredentialBase(object):
 class CertificateCredentialBase(ABC):
     """Sans I/O base for certificate credentials"""
 
-    def __init__(self, tenant_id, client_id, certificate_path, password=None, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, str, str, Optional[Union[str, bytes]], **Any) -> None
+    def __init__(self, tenant_id, client_id, certificate_path, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, str, str, **Any) -> None
         if not certificate_path:
             raise ValueError(
-                "'certificate_path' must be the path to a PEM file containing an"
-                "x509 certificate and its private key"
+                "'certificate_path' must be the path to a PEM file containing an x509 certificate and its private key"
             )
 
         super(CertificateCredentialBase, self).__init__()
 
+        password = kwargs.pop("password", None)
         if isinstance(password, six.text_type):
             password = password.encode(encoding="utf-8")
 
