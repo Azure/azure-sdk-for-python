@@ -110,6 +110,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If you wish to specify the ID and country_hint on a per-item basis you must
             use as input a list[DetectLanguageInput] or a list of dict representations of
             DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
+            Limit document text length to 5120 chars and batch size to <= 1000 documents
+            (maximum size of entire request must be < 1MB). Text can be submitted in both
+            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
         :param str country_hint: A country hint for the entire batch. Accepts two
@@ -169,6 +172,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            Limit document text length to 5120 chars and batch size to <= 1000 documents
+            (maximum size of entire request must be < 1MB). Text can be submitted in both
+            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -229,6 +235,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            Limit document text length to 5120 chars and batch size to <= 1000 documents
+            (maximum size of entire request must be < 1MB). Text can be submitted in both
+            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -287,6 +296,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            Limit document text length to 5120 chars and batch size to <= 1000 documents
+            (maximum size of entire request must be < 1MB). Text can be submitted in both
+            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -345,6 +357,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            Limit document text length to 5120 chars and batch size to <= 1000 documents
+            (maximum size of entire request must be < 1MB). Text can be submitted in both
+            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -404,6 +419,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
+            Limit document text length to 5120 chars and batch size to <= 1000 documents
+            (maximum size of entire request must be < 1MB). Text can be submitted in both
+            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the

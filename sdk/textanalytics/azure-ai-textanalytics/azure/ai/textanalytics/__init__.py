@@ -91,6 +91,7 @@ def single_detect_language(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to detect language from.
+        Limit text length to 5120 chars.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
         Defaults to "US". If you don't want to use a country hint,
@@ -151,6 +152,7 @@ def single_recognize_entities(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -211,6 +213,7 @@ def single_recognize_pii_entities(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -271,6 +274,7 @@ def single_recognize_linked_entities(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -330,6 +334,7 @@ def single_extract_key_phrases(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to extract key phrases from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -390,6 +395,7 @@ def single_analyze_sentiment(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to analyze sentiment from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
