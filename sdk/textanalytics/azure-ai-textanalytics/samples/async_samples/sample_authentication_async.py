@@ -36,7 +36,7 @@ import asyncio
 
 class AuthenticationSampleAsync(object):
 
-    async def authentication_with_subscription_key_async(self):
+    async def authentication_with_api_key_credential_async(self):
         # [START create_ta_client_with_key_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
@@ -77,7 +77,7 @@ class AuthenticationSampleAsync(object):
 
 async def main():
     sample = AuthenticationSampleAsync()
-    await sample.authentication_with_subscription_key_async()
+    await sample.authentication_with_api_key_credential_async()
     await sample.authentication_with_azure_active_directory_async()
 
 if __name__ == '__main__':

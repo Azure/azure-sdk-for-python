@@ -35,7 +35,7 @@ import os
 
 class AuthenticationSample(object):
 
-    def authentication_with_subscription_key(self):
+    def authentication_with_api_key_credential(self):
         # [START create_ta_client_with_key]
         from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
@@ -73,5 +73,5 @@ class AuthenticationSample(object):
 
 if __name__ == '__main__':
     sample = AuthenticationSample()
-    sample.authentication_with_subscription_key()
+    sample.authentication_with_api_key_credential()
     sample.authentication_with_azure_active_directory()
