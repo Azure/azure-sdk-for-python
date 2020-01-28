@@ -667,7 +667,6 @@ class StorageFileTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_range_with_lease(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("Needs re-recording")
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
         lease = file_client.acquire_lease()
@@ -835,7 +834,6 @@ class StorageFileTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_clear_range(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("Needs re-recording")
         self._setup(storage_account, storage_account_key)
         file_client = self._create_file()
 
@@ -1021,7 +1019,6 @@ class StorageFileTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_copy_existing_file_with_lease(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("Needs re-recording")
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
         file_client = ShareFileClient(
@@ -1048,7 +1045,6 @@ class StorageFileTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_copy_file_with_specifying_acl_copy_behavior_attributes(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("Needs re-recording")
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
         user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
@@ -1088,7 +1084,6 @@ class StorageFileTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_copy_file_with_specifying_acl_and_attributes_from_source(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("Needs re-recording")
         self._setup(storage_account, storage_account_key)
         source_client = self._create_file()
         source_prop = source_client.get_file_properties()

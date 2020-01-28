@@ -3,11 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - f074b636-1d6f-11ea-a853-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 06:15:20 GMT
+      - Tue, 28 Jan 2020 05:16:35 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -16,22 +14,11 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 06:15:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F93DDC0896E"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 06:15:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 5b505103-601a-002f-307c-b19ff0000000
+      content-length: '0'
+      date: Tue, 28 Jan 2020 05:16:35 GMT
+      etag: '"0x8D7A3B13F220B08"'
+      last-modified: Tue, 28 Jan 2020 05:16:35 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-07-07'
     status:
       code: 201
@@ -48,13 +35,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - f999604a-1d6f-11ea-a242-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 13 Dec 2019 06:15:35 GMT
+      - Tue, 28 Jan 2020 05:16:36 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -73,29 +58,18 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 06:15:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F93DDF6D810"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 06:15:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '0'
+      date: Tue, 28 Jan 2020 05:16:36 GMT
+      etag: '"0x8D7A3B13FAD5E48"'
+      last-modified: Tue, 28 Jan 2020 05:16:36 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-12-13T06:15:35.7076496Z'
-      x-ms-file-creation-time: '2019-12-13T06:15:35.7076496Z'
+      x-ms-file-change-time: '2020-01-28T05:16:36.9079880Z'
+      x-ms-file-creation-time: '2020-01-28T05:16:36.9079880Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-12-13T06:15:35.7076496Z'
+      x-ms-file-last-write-time: '2020-01-28T05:16:36.9079880Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 16864655153240182536*4804112389554988934
-      x-ms-request-id: b05c25f5-f01a-0002-797c-b12c83000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-07-07'
     status:
@@ -110,36 +84,16 @@ interactions:
         - ''
         - ''
 - request:
-    body: !!binary |
-      ydDeZ3L5OQ/UR71Ppn+xYKKbVwYaC1snqwvI8/43fbhW6O1Um5sLXNgeZwtOhfHTNWTmBGXPlS0d
-      TOAK1LUKuQVXs4IA5N24xwW1sKKlVZRNR6basl2pwiSv7rGL2vMeED21FIqkVTyOnWxpEH16E9kA
-      NUhxDXb8nCxDDRWP+MSkSWk9oxWKv8AJQ04NtL+uaGL+jHdYcptIMW3rn0Fh/LlDUpgHOMnIQimO
-      vjZ8gMvZOBAwBEQj1FI1WlIUywqdsokrX9j6Ntp7Dm4eZfjjqVqzpsaKW25O9o0FyD8n+/KefYxi
-      KFp6hpsLdQ/7uQTuofkYOzuDQcwrKIIk2npDKMIxaZnTpD0YoZsqMrUHid4MbG9i7dSgIQ4rXGbj
-      abbVy4O5c+OFEj9y6A/8vJgyfUBVRaKfFXVbYn2Q0TMF0XuJr109UgtjOqrNGQDICZcp9ngJL45c
-      /F8WjWXVZMU0mh1lxC+ncxOKm84UcZHqPpP1Shs/FznAWHuOUvzZD6khB1YdUCh1VIT2d5GEli9J
-      rwVOALZdaLEqU+MWOtjCtYfxnobcqTupxyzDUsmpKMXLuveQe6JCHfV5wzD6pAykgSurzcynJi2e
-      uiwH9nU724WPY1UGw4VKlKOd9nGnBmO9q4KIeTn8B1C8RjmzD9l+/XEfgft2QLkduLICeDuPe63g
-      KpTjCLuSHjc/ChEilpy2Bf37PoIvnWDv6FRIlQZUQiXbsIR4oNfDdHYB0cNrfTt3+EtKR+jU9rQO
-      0JfmEFtsHVjFPDnevqntsDfVaHumNQjUABqAGq22WJgtuXLstELHGc5YhhIVALlCmu67/OGbsu9a
-      zkJ/nGR6azMLsg3xG3XWcdRWNgGLpCTjBDCRZzQMzAIMcb58qcqwdYFlTFDGKxTduX+SqJk6D6WN
-      P7hAcoid6S+CsohXM4qeBqLh0zylLH/8znQksZwFFeguGs964SGLWQR+g916qHJB5COYnQSD3UP1
-      FSiGEah1ODmOirFJWS0u8eCvdmDxt1LkcmqnXB9PeKD5UR08dhyWW/SrQCh8n3yCMCnj0bMWqmAB
-      9uPKLzOUKPcmI6mQL06o+nPFHDGP74N2OuFwRCrcazCjaBNEAwY6CmVc0/DjQnsHxsNPYWQ0TViB
-      bbKOU4G6eGJte3VpzVJfjpPUUcbibGFnp5c4XbZ73dyLxvgmD/WXfGyuyWvIGg+CHCZD1ADXWgUY
-      9ee5q6kQTgrG0fQxVR8Bc9lnJxGlCRo+yq0X7qCjFLXpC+8AN2jixTicHYCpMHgkd+54JO7Jm+yL
-      tl2ZzOgPMLReNo3llVjv0PY4CEiTcVv7aZS3it6Wf6NKUo8uM4iEuyQwCnLOBu+/EmWKGC1aRg==
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
       Content-Length:
       - '1024'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - f9ce215c-1d6f-11ea-8899-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 06:15:35 GMT
+      - Tue, 28 Jan 2020 05:16:37 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -152,25 +106,12 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-MD5
-      : 9YkVzBg7o74hNgfN2JRRzA==
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 06:15:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F93DE03F794"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 06:15:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: b05c25f8-f01a-0002-7a7c-b12c83000000
+      content-length: '0'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      date: Tue, 28 Jan 2020 05:16:36 GMT
+      etag: '"0x8D7A3B13FCD9A00"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-07-07'
     status:
@@ -188,13 +129,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - f9dadf24-1d6f-11ea-a846-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-source:
       - https://emilystageaccount.file.core.windows.net/utshare53de216a/file53de216a
       x-ms-date:
-      - Fri, 13 Dec 2019 06:15:35 GMT
+      - Tue, 28 Jan 2020 05:16:37 GMT
       x-ms-file-attributes:
       - Temporary|NoScrubData
       x-ms-file-copy-ignore-read-only:
@@ -215,24 +154,13 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 06:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F93DE60E4DA"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 06:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id: ceb0a795-550a-43c9-9723-02bd15541696
+      content-length: '0'
+      date: Tue, 28 Jan 2020 05:16:37 GMT
+      etag: '"0x8D7A3B1402FA49C"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id: 76e664d2-a782-4131-8a11-1cd4c8a64aeb
       x-ms-copy-status: success
-      x-ms-request-id: 706d5b05-c01a-0044-257c-b11804000000
       x-ms-version: '2019-07-07'
     status:
       code: 202
@@ -249,11 +177,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - fa3a0926-1d6f-11ea-b548-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 06:15:36 GMT
+      - Tue, 28 Jan 2020 05:16:37 GMT
       x-ms-version:
       - '2019-07-07'
     method: HEAD
@@ -262,39 +188,26 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '1024'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/octet-stream
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 06:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F93DE60E4DA"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 06:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-completion-time: Fri, 13 Dec 2019 06:15:36 GMT
-      x-ms-copy-id: ceb0a795-550a-43c9-9723-02bd15541696
+      content-length: '1024'
+      content-type: application/octet-stream
+      date: Tue, 28 Jan 2020 05:16:37 GMT
+      etag: '"0x8D7A3B1402FA49C"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-completion-time: Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-copy-id: 76e664d2-a782-4131-8a11-1cd4c8a64aeb
       x-ms-copy-progress: 1024/1024
-      x-ms-copy-source: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-copy-source: https://emilystageaccount.file.core.windows.net/utshare53de216a/file53de216a
       x-ms-copy-status: success
       x-ms-file-attributes: Archive | Temporary | NoScrubData
-      x-ms-file-change-time: '2019-12-13T06:15:36.4026586Z'
+      x-ms-file-change-time: '2020-01-28T05:16:37.7617564Z'
       x-ms-file-creation-time: '2017-05-10T17:52:33.9551860Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2019-12-13T06:15:36.4026586Z'
+      x-ms-file-last-write-time: '2020-01-28T05:16:37.7617564Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 11567002431961314099*4804112389554988934
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 706d5b08-c01a-0044-267c-b11804000000
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2019-07-07'
@@ -315,11 +228,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - fa46ee22-1d6f-11ea-a714-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 06:15:36 GMT
+      - Tue, 28 Jan 2020 05:16:37 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -328,65 +239,30 @@ interactions:
     uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
   response:
     body:
-      string: !!binary |
-        ydDeZ3L5OQ/UR71Ppn+xYKKbVwYaC1snqwvI8/43fbhW6O1Um5sLXNgeZwtOhfHTNWTmBGXPlS0d
-        TOAK1LUKuQVXs4IA5N24xwW1sKKlVZRNR6basl2pwiSv7rGL2vMeED21FIqkVTyOnWxpEH16E9kA
-        NUhxDXb8nCxDDRWP+MSkSWk9oxWKv8AJQ04NtL+uaGL+jHdYcptIMW3rn0Fh/LlDUpgHOMnIQimO
-        vjZ8gMvZOBAwBEQj1FI1WlIUywqdsokrX9j6Ntp7Dm4eZfjjqVqzpsaKW25O9o0FyD8n+/KefYxi
-        KFp6hpsLdQ/7uQTuofkYOzuDQcwrKIIk2npDKMIxaZnTpD0YoZsqMrUHid4MbG9i7dSgIQ4rXGbj
-        abbVy4O5c+OFEj9y6A/8vJgyfUBVRaKfFXVbYn2Q0TMF0XuJr109UgtjOqrNGQDICZcp9ngJL45c
-        /F8WjWXVZMU0mh1lxC+ncxOKm84UcZHqPpP1Shs/FznAWHuOUvzZD6khB1YdUCh1VIT2d5GEli9J
-        rwVOALZdaLEqU+MWOtjCtYfxnobcqTupxyzDUsmpKMXLuveQe6JCHfV5wzD6pAykgSurzcynJi2e
-        uiwH9nU724WPY1UGw4VKlKOd9nGnBmO9q4KIeTn8B1C8RjmzD9l+/XEfgft2QLkduLICeDuPe63g
-        KpTjCLuSHjc/ChEilpy2Bf37PoIvnWDv6FRIlQZUQiXbsIR4oNfDdHYB0cNrfTt3+EtKR+jU9rQO
-        0JfmEFtsHVjFPDnevqntsDfVaHumNQjUABqAGq22WJgtuXLstELHGc5YhhIVALlCmu67/OGbsu9a
-        zkJ/nGR6azMLsg3xG3XWcdRWNgGLpCTjBDCRZzQMzAIMcb58qcqwdYFlTFDGKxTduX+SqJk6D6WN
-        P7hAcoid6S+CsohXM4qeBqLh0zylLH/8znQksZwFFeguGs964SGLWQR+g916qHJB5COYnQSD3UP1
-        FSiGEah1ODmOirFJWS0u8eCvdmDxt1LkcmqnXB9PeKD5UR08dhyWW/SrQCh8n3yCMCnj0bMWqmAB
-        9uPKLzOUKPcmI6mQL06o+nPFHDGP74N2OuFwRCrcazCjaBNEAwY6CmVc0/DjQnsHxsNPYWQ0TViB
-        bbKOU4G6eGJte3VpzVJfjpPUUcbibGFnp5c4XbZ73dyLxvgmD/WXfGyuyWvIGg+CHCZD1ADXWgUY
-        9ee5q6kQTgrG0fQxVR8Bc9lnJxGlCRo+yq0X7qCjFLXpC+8AN2jixTicHYCpMHgkd+54JO7Jm+yL
-        tl2ZzOgPMLReNo3llVjv0PY4CEiTcVv7aZS3it6Wf6NKUo8uM4iEuyQwCnLOBu+/EmWKGC1aRg==
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Accept-Ranges
-      : bytes
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '1024'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Range
-      : bytes 0-1023/1024
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/octet-stream
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 06:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F93DE60E4DA"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 06:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-completion-time: Fri, 13 Dec 2019 06:15:36 GMT
-      x-ms-copy-id: ceb0a795-550a-43c9-9723-02bd15541696
+      accept-ranges: bytes
+      content-length: '1024'
+      content-range: bytes 0-1023/1024
+      content-type: application/octet-stream
+      date: Tue, 28 Jan 2020 05:16:38 GMT
+      etag: '"0x8D7A3B1402FA49C"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-completion-time: Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-copy-id: 76e664d2-a782-4131-8a11-1cd4c8a64aeb
       x-ms-copy-progress: 1024/1024
-      x-ms-copy-source: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-copy-source: https://emilystageaccount.file.core.windows.net/utshare53de216a/file53de216a
       x-ms-copy-status: success
       x-ms-file-attributes: Archive | Temporary | NoScrubData
-      x-ms-file-change-time: '2019-12-13T06:15:36.4026586Z'
+      x-ms-file-change-time: '2020-01-28T05:16:37.7617564Z'
       x-ms-file-creation-time: '2017-05-10T17:52:33.9551860Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2019-12-13T06:15:36.4026586Z'
+      x-ms-file-last-write-time: '2020-01-28T05:16:37.7617564Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 11567002431961314099*4804112389554988934
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: bfd551be-001a-0029-3d7c-b1ac4f000000
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2019-07-07'
