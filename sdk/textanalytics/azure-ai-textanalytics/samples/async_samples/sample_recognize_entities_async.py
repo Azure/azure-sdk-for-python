@@ -47,8 +47,8 @@ class RecognizeEntitiesSampleAsync(object):
     async def recognize_entities_async(self):
         # [START batch_recognize_entities_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsSubscriptionKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
         documents = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
             "I had a wonderful trip to Seattle last week.",
@@ -76,8 +76,8 @@ class RecognizeEntitiesSampleAsync(object):
         with the text.
         """
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsSubscriptionKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},

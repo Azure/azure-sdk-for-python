@@ -57,8 +57,8 @@ class DetectLanguagesSample(object):
 
     def detect_languages(self):
         # [START batch_detect_languages]
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
         documents = [
             "This document is written in English.",
             "Este es un document escrito en Español.",
@@ -87,8 +87,8 @@ class DetectLanguagesSample(object):
         using a list[DetectLanguageInput] and supplying your own IDs and country hints along
         with the text.
         """
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
 
         documents = [
             {"id": "0", "country_hint": "US", "text": "This is a document written in English."},

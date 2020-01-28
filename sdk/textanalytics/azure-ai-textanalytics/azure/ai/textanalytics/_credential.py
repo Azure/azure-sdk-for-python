@@ -7,7 +7,7 @@
 import six
 
 
-class TextAnalyticsSubscriptionKeyCredential(object):
+class TextAnalyticsAPIKeyCredential(object):
     """Credential type used for authenticating the client
     with a subscription key.
 

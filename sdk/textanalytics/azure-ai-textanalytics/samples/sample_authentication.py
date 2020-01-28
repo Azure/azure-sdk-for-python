@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to authenticate with the text analytics service.
 
     There are two supported methods of authentication:
-    1) Use a cognitive services subscription key with TextAnalyticsSubscriptionKeyCredential
+    1) Use a cognitive services subscription key with TextAnalyticsAPIKeyCredential
     2) Use a token credential to authenticate with Azure Active Directory
 
     See more details about authentication here:
@@ -37,11 +37,11 @@ class AuthenticationSample(object):
 
     def authentication_with_subscription_key(self):
         # [START create_ta_client_with_key]
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsSubscriptionKeyCredential
+        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
         endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
         key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
-        text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsSubscriptionKeyCredential(key))
+        text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
         # [END create_ta_client_with_key]
 
         doc = ["I need to take my cat to the veterinarian."]

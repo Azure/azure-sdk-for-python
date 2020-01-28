@@ -51,10 +51,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsSubscriptionKeyCredential if using a
+        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
         cognitive services/text analytics subscription key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsSubscriptionKeyCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential
         or ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the empty string "".

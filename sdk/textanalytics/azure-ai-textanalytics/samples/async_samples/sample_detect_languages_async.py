@@ -59,8 +59,8 @@ class DetectLanguagesSampleAsync(object):
     async def detect_languages_async(self):
         # [START batch_detect_languages_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsSubscriptionKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
         documents = [
             "This document is written in English.",
             "Este es un document escrito en Español.",
@@ -90,8 +90,8 @@ class DetectLanguagesSampleAsync(object):
         with the text.
         """
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsSubscriptionKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsSubscriptionKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
 
         documents = [
             {"id": "0", "country_hint": "US", "text": "This is a document written in English."},

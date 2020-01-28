@@ -10,8 +10,8 @@ from ._models import TextDocumentBatchStatistics
 
 
 class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(self, subscription_key_credential):
-        self.credential = subscription_key_credential
+    def __init__(self, api_key_credential):
+        self.credential = api_key_credential
         super(CognitiveServicesCredentialPolicy, self).__init__()
 
     def on_request(self, request):

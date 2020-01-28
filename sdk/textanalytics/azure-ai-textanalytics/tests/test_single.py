@@ -12,7 +12,7 @@ from azure.ai.textanalytics import (
     single_recognize_linked_entities,
     single_analyze_sentiment,
     single_extract_key_phrases,
-    TextAnalyticsSubscriptionKeyCredential
+    TextAnalyticsAPIKeyCredential
 )
 
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
@@ -26,7 +26,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
     def test_successful_single_language_detection(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = single_detect_language(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="This is written in English.",
             country_hint="US"
         )
@@ -40,7 +40,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(""),
+                credential=TextAnalyticsAPIKeyCredential(""),
                 input_text="This is written in English.",
             )
 
@@ -49,7 +49,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential("xxxxxxxxxxxx"),
+                credential=TextAnalyticsAPIKeyCredential("xxxxxxxxxxxx"),
                 input_text="This is written in English.",
             )
 
@@ -88,7 +88,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError) as err:
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -97,7 +97,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -106,7 +106,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -115,7 +115,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="This is written in English.",
                 country_hint="United States"
             )
@@ -125,7 +125,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_detect_language(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 country_hint="US",
                 model_version="old"
@@ -139,7 +139,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_detect_language(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             show_stats=True,
             model_version="latest",
@@ -155,7 +155,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_detect_language(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             country_hint="",
             response_hook=callback
@@ -170,7 +170,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_detect_language(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             country_hint="CA",
             response_hook=callback
@@ -185,7 +185,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_detect_language(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             response_hook=callback
         )
@@ -196,7 +196,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
     def test_successful_single_recognize_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = single_recognize_entities(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
@@ -214,7 +214,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(""),
+                credential=TextAnalyticsAPIKeyCredential(""),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
@@ -223,7 +223,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential("xxxxxxxxxxxx"),
+                credential=TextAnalyticsAPIKeyCredential("xxxxxxxxxxxx"),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
@@ -262,7 +262,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -271,7 +271,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -280,7 +280,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -289,7 +289,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
@@ -299,7 +299,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -313,7 +313,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_recognize_entities(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
@@ -326,7 +326,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
     def test_successful_single_recognize_pii_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = single_recognize_pii_entities(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="My SSN is 555-55-5555",
             language="en"
         )
@@ -343,7 +343,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(""),
+                credential=TextAnalyticsAPIKeyCredential(""),
                 input_text="My SSN is 555-55-5555",
             )
 
@@ -352,7 +352,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential("xxxxxxxxxxxx"),
+                credential=TextAnalyticsAPIKeyCredential("xxxxxxxxxxxx"),
                 input_text="My SSN is 555-55-5555",
             )
 
@@ -391,7 +391,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -400,7 +400,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -409,7 +409,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -418,7 +418,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="My SSN is 555-55-5555",
                 language="English"
             )
@@ -428,7 +428,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -442,7 +442,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_recognize_pii_entities(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="My SSN is 555-55-5555",
             show_stats=True,
             model_version="latest",
@@ -455,7 +455,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
     def test_successful_single_recognize_linked_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = single_recognize_linked_entities(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
@@ -474,7 +474,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(""),
+                credential=TextAnalyticsAPIKeyCredential(""),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
@@ -483,7 +483,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential("xxxxxxxxxxxx"),
+                credential=TextAnalyticsAPIKeyCredential("xxxxxxxxxxxx"),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
@@ -522,7 +522,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -531,7 +531,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -540,7 +540,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -549,7 +549,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
@@ -559,7 +559,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -573,7 +573,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_recognize_linked_entities(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
@@ -586,7 +586,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
     def test_successful_single_extract_key_phrases(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = single_extract_key_phrases(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
@@ -599,7 +599,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(""),
+                credential=TextAnalyticsAPIKeyCredential(""),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
@@ -608,7 +608,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential("xxxxxxxxxxxx"),
+                credential=TextAnalyticsAPIKeyCredential("xxxxxxxxxxxx"),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
@@ -647,7 +647,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -656,7 +656,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -665,7 +665,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -674,7 +674,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
@@ -684,7 +684,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -698,7 +698,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_extract_key_phrases(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
@@ -711,7 +711,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
     def test_successful_single_analyze_sentiment(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="I was unhappy with the food at the restaurant.",
             language="en"
         )
@@ -726,7 +726,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(""),
+                credential=TextAnalyticsAPIKeyCredential(""),
                 input_text="I was unhappy with the food at the restaurant.",
             )
 
@@ -735,7 +735,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential("xxxxxxxxxxxx"),
+                credential=TextAnalyticsAPIKeyCredential("xxxxxxxxxxxx"),
                 input_text="I was unhappy with the food at the restaurant.",
             )
 
@@ -774,7 +774,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -783,7 +783,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -792,7 +792,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -801,7 +801,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="I was unhappy with the food at the restaurant.",
                 language="English"
             )
@@ -811,7 +811,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+                credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -825,7 +825,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="I was unhappy with the food at the restaurant.",
             show_stats=True,
             model_version="latest",
@@ -841,7 +841,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             language="",
             response_hook=callback
@@ -856,7 +856,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             language="es",
             response_hook=callback
@@ -871,7 +871,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         response = single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=TextAnalyticsSubscriptionKeyCredential(text_analytics_account_key),
+            credential=TextAnalyticsAPIKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             response_hook=callback
         )
