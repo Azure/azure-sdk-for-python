@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     Any,
     List,
     Dict,
+    TYPE_CHECKING
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.models import TextAnalyticsErrorException
@@ -36,6 +37,10 @@ from .._models import (
     RecognizePiiEntitiesResult,
     DocumentError,
 )
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from .._credential import TextAnalyticsAPIKeyCredential
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -78,8 +83,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Any, Any) -> None
+    def __init__(  # type: ignore
+        self,
+        endpoint: str,
+        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        **kwargs: Any
+    ) -> None:
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline

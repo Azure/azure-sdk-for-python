@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Optional  # pylint: disable=unused-import
+from typing import Any, Optional, Union, TYPE_CHECKING  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
 from ._request_handlers import _validate_single_input
 from ._response_handlers import process_single_error
@@ -31,6 +31,9 @@ from ._models import (
     SentimentConfidenceScorePerLabel
 )
 from ._credential import TextAnalyticsAPIKeyCredential
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 __all__ = [
     'TextAnalyticsClient',
@@ -67,7 +70,7 @@ __version__ = VERSION
 
 def single_detect_language(
             endpoint,  # type: str
-            credential,  # type: Any
+            credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
             input_text,  # type: str
             country_hint="US",  # type: Optional[str]
             **kwargs  # type: Any
@@ -127,7 +130,7 @@ def single_detect_language(
 
 def single_recognize_entities(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -186,7 +189,7 @@ def single_recognize_entities(
 
 def single_recognize_pii_entities(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -246,7 +249,7 @@ def single_recognize_pii_entities(
 
 def single_recognize_linked_entities(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -306,7 +309,7 @@ def single_recognize_linked_entities(
 
 def single_extract_key_phrases(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -365,7 +368,7 @@ def single_extract_key_phrases(
 
 def single_analyze_sentiment(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any

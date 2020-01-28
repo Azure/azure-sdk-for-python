@@ -516,8 +516,9 @@ class LinkedEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, data_source_id={}, url={}, data_source={})" \
-            .format(self.name, repr(self.matches), self.language, self.data_source_id, self.url, self.data_source)[:1024]
+        return "LinkedEntity(name={}, matches={}, language={}, data_source_id={}, url={}, " \
+               "data_source={})".format(self.name, repr(self.matches), self.language, self.data_source_id, self.url,
+                                        self.data_source)[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
