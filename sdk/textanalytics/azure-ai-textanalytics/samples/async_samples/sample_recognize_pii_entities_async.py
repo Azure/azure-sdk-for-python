@@ -48,8 +48,8 @@ class RecognizePiiEntitiesSampleAsync(object):
     async def recognize_pii_entities_async(self):
         # [START batch_recognize_pii_entities_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
         documents = [
             "The employee's SSN is 555-55-5555.",
             "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
@@ -78,8 +78,8 @@ class RecognizePiiEntitiesSampleAsync(object):
         with the text.
         """
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en", "text": "The employee's SSN is 555-55-5555."},

@@ -7,31 +7,31 @@
 import six
 
 
-class TextAnalyticsAPIKeyCredential(object):
+class TextAnalyticsApiKeyCredential(object):
     """Credential type used for authenticating the client
-    with a subscription key.
+    with an API key.
 
-    :param str subscription_key: The subscription key to your Text Analytics
+    :param str api_key: The API key to your Text Analytics
         or Cognitive Services account.
     """
-    def __init__(self, subscription_key):
-        if not isinstance(subscription_key, six.string_types):
-            raise TypeError("Please provide the subscription key as a string.")
-        self._subscription_key = subscription_key
+    def __init__(self, api_key):
+        if not isinstance(api_key, six.string_types):
+            raise TypeError("Please provide the API key as a string.")
+        self._api_key = api_key
 
     @property
-    def subscription_key(self):
-        """Returns the current value of subscription key.
+    def api_key(self):
+        """Returns the current value of the API key.
         """
-        return self._subscription_key
+        return self._api_key
 
     def update_key(self, key):
-        """Update the subscription key.
+        """Update the API key.
 
-        This is intended to be used when you've regenerated your service subscription key
+        This is intended to be used when you've regenerated your service API key
         and want to update long-lived clients.
 
-        :param str key: The subscription key to your Text Analytics
+        :param str key: The API key to your Text Analytics
             or Cognitive Services account.
         """
-        self._subscription_key = key
+        self._api_key = key

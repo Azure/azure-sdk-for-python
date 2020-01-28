@@ -15,7 +15,7 @@ from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
     TextDocumentInput,
-    TextAnalyticsAPIKeyCredential
+    TextAnalyticsApiKeyCredential
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -52,7 +52,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_detect_language_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
@@ -69,7 +69,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_detect_language_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
@@ -86,7 +86,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_detect_language_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         text = ""
         for _ in range(5121):
             text += "x"
@@ -104,7 +104,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_recognize_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
@@ -117,7 +117,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_recognize_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
@@ -131,7 +131,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_recognize_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
@@ -145,7 +145,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_recognize_pii_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": "My SSN is 555-55-5555."},
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
@@ -162,7 +162,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_recognize_pii_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "es", "text": "hola"},
                 {"id": "2", "text": ""},
@@ -176,7 +176,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_recognize_pii_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "es", "text": "hola"},
                 {"id": "2", "text": ""}]
@@ -188,7 +188,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_recognize_linked_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -200,7 +200,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_recognize_linked_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -212,7 +212,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_recognize_linked_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -224,7 +224,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_extract_key_phrases_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -238,7 +238,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_extract_key_phrases_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -250,7 +250,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_extract_key_phrases_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": ""}]
@@ -262,7 +262,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_successful_analyze_sentiment_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed it. It was too expensive."},
@@ -276,7 +276,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_some_errors_analyze_sentiment_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it. It was too expensive."},
@@ -289,7 +289,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_all_errors_analyze_sentiment_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it. It was too expensive."},
@@ -303,7 +303,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_validate_input_string_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [
             "I should take my cat to the veterinarian.",
@@ -323,7 +323,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_validate_language_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [
             DetectLanguageInput(id="1", text="I should take my cat to the veterinarian."),
@@ -341,7 +341,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_validate_multilanguage_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
@@ -357,7 +357,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_mixing_inputs_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
@@ -369,7 +369,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_out_of_order_ids_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -385,7 +385,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_show_stats_and_model_version_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(response):
             self.assertIsNotNone(response.model_version)
@@ -411,7 +411,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_batch_size_over_limit_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = ["hello world"] * 1050
         with self.assertRaises(HttpResponseError):
@@ -420,7 +420,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -438,7 +438,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_dont_use_country_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -456,7 +456,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_per_item_dont_use_country_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -476,7 +476,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_obj_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -494,7 +494,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_dict_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -510,7 +510,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_obj_per_item_hints_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -531,7 +531,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_country_hint_and_dict_per_item_hints_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -550,7 +550,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"fr\""
@@ -568,7 +568,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_dont_use_language_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -586,7 +586,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_per_item_dont_use_language_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -606,7 +606,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_obj_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"de\""
@@ -624,7 +624,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_dict_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -640,7 +640,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_obj_per_item_hints_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -661,7 +661,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_whole_batch_language_hint_and_dict_per_item_hints_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -681,7 +681,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_bad_document_input_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = "This is the wrong type"
 
@@ -691,7 +691,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_client_passed_default_country_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key), default_country_hint="CA")
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="CA")
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -714,7 +714,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_client_passed_default_language_hint_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key), default_language="es")
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_language="es")
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -737,7 +737,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_rotate_subscription_key_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        credential = TextAnalyticsAPIKeyCredential(text_analytics_account_key)
+        credential = TextAnalyticsApiKeyCredential(text_analytics_account_key)
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -758,7 +758,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_user_agent_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsAPIKeyCredential(text_analytics_account_key))
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
