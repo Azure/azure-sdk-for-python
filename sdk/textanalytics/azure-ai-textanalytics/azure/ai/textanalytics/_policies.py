@@ -17,7 +17,7 @@ class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
     def on_request(self, request):
         request.http_request.headers[
             "Ocp-Apim-Subscription-Key"
-        ] = self.credential.subscription_key
+        ] = self.credential.api_key
         request.http_request.headers["X-BingApis-SDK-Client"] = "Python-SDK"
 
 
