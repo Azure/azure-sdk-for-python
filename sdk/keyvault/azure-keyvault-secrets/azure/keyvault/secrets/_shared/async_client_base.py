@@ -19,7 +19,7 @@ if TYPE_CHECKING:
         # pylint:disable=unused-import
         from azure.core.credentials_async import AsyncTokenCredential
     except ImportError:
-        # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
+        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
 
@@ -60,7 +60,7 @@ class AsyncKeyVaultClientBase:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the AsyncTokenCredential protocol, "
-                "such as an async credential from azure-identity"
+                "such as a credential from azure-identity"
             )
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
@@ -106,11 +106,11 @@ class AsyncKeyVaultClientBase:
         return self._vault_url
 
     async def __aenter__(self) -> "AsyncKeyVaultClientBase":
-        await self._client.__aenter__()
+        await self._client._pipeline.__aenter__()  # pylint: disable=protected-access
         return self
 
     async def __aexit__(self, *args) -> None:
         await self.close()
 
     async def close(self):
-        await self._client.__aexit__()
+        await self._client._pipeline.__aexit__()  # pylint: disable=protected-access
