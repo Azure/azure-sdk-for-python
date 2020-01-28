@@ -138,12 +138,13 @@ class AuthnClientBase(ABC):
         """
 
         # parse the string minus the timezone offset
-        date_string = expires_on[: -len(" +00:00")]
-        for format_string in ("%m/%d/%Y %H:%M:%S", "%m/%d/%Y %I:%M:%S %p"):  # (Linux, Windows)
-            try:
-                return time.strptime(date_string, format_string)
-            except ValueError:
-                pass
+        if expires_on.endswith(" +00:00"):
+            date_string = expires_on[: -len(" +00:00")]
+            for format_string in ("%m/%d/%Y %H:%M:%S", "%m/%d/%Y %I:%M:%S %p"):  # (Linux, Windows)
+                try:
+                    return time.strptime(date_string, format_string)
+                except ValueError:
+                    pass
 
         raise ValueError("'{}' doesn't match the expected format".format(expires_on))
 
