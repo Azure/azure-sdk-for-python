@@ -3,6 +3,20 @@
 Release History
 ===============
 
+8.0.0 (2020-01-24)
+++++++++++++++++++
+
+**Features**
+
+- Added operation PolicyAssignmentsOperations.list_for_management_group
+
+**Breaking changes**
+
+- Operation DeploymentsOperations.create_or_update_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.validate_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.validate_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_management_group_scope has a new signature
+
 7.0.0 (2019-12-07)
 ++++++++++++++++++
 
