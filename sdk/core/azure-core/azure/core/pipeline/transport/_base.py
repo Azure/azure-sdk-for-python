@@ -226,7 +226,7 @@ class HttpRequest(object):
             data = copy.deepcopy(self.body, memo)
             files = copy.deepcopy(self.files, memo)
             return HttpRequest(self.method, self.url, self.headers, files, data)
-        except ValueError:
+        except (ValueError, TypeError):
             return copy.copy(self)
 
     @property
