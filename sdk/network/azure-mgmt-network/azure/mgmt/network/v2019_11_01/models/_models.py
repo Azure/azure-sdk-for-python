@@ -3584,6 +3584,104 @@ class BackendAddressPool(SubResource):
         self.type = None
 
 
+class BastionActiveSession(Model):
+    """The session detail for a target.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar session_id: A unique id for the session.
+    :vartype session_id: str
+    :ivar start_time: The time when the session started.
+    :vartype start_time: object
+    :ivar target_subscription_id: The subscription id for the target virtual
+     machine.
+    :vartype target_subscription_id: str
+    :ivar resource_type: The type of the resource.
+    :vartype resource_type: str
+    :ivar target_host_name: The host name of the target.
+    :vartype target_host_name: str
+    :ivar target_resource_group: The resource group of the target.
+    :vartype target_resource_group: str
+    :ivar user_name: The user name who is active on this session.
+    :vartype user_name: str
+    :ivar target_ip_address: The IP Address of the target.
+    :vartype target_ip_address: str
+    :ivar protocol: The protocol used to connect to the target. Possible
+     values include: 'SSH', 'RDP'
+    :vartype protocol: str or
+     ~azure.mgmt.network.v2019_11_01.models.BastionConnectProtocol
+    :ivar target_resource_id: The resource id of the target.
+    :vartype target_resource_id: str
+    :ivar session_duration_in_mins: Duration in mins the session has been
+     active.
+    :vartype session_duration_in_mins: float
+    """
+
+    _validation = {
+        'session_id': {'readonly': True},
+        'start_time': {'readonly': True},
+        'target_subscription_id': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'target_host_name': {'readonly': True},
+        'target_resource_group': {'readonly': True},
+        'user_name': {'readonly': True},
+        'target_ip_address': {'readonly': True},
+        'protocol': {'readonly': True},
+        'target_resource_id': {'readonly': True},
+        'session_duration_in_mins': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'object'},
+        'target_subscription_id': {'key': 'targetSubscriptionId', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'target_host_name': {'key': 'targetHostName', 'type': 'str'},
+        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        'user_name': {'key': 'userName', 'type': 'str'},
+        'target_ip_address': {'key': 'targetIpAddress', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        'session_duration_in_mins': {'key': 'sessionDurationInMins', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BastionActiveSession, self).__init__(**kwargs)
+        self.session_id = None
+        self.start_time = None
+        self.target_subscription_id = None
+        self.resource_type = None
+        self.target_host_name = None
+        self.target_resource_group = None
+        self.user_name = None
+        self.target_ip_address = None
+        self.protocol = None
+        self.target_resource_id = None
+        self.session_duration_in_mins = None
+
+
+class BastionActiveSessionListResult(Model):
+    """Response for GetActiveSessions.
+
+    :param value: List of active sessions on the bastion.
+    :type value:
+     list[~azure.mgmt.network.v2019_11_01.models.BastionActiveSession]
+    :param next_link: Gets or sets the URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[BastionActiveSession]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BastionActiveSessionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class BastionHost(Resource):
     """Bastion Host resource.
 
@@ -3653,9 +3751,9 @@ class BastionHostIPConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param subnet: Required. Reference to the subnet resource.
+    :param subnet: Required. Reference of the subnet resource.
     :type subnet: ~azure.mgmt.network.v2019_11_01.models.SubResource
-    :param public_ip_address: Required. Reference to the PublicIP resource.
+    :param public_ip_address: Required. Reference of the PublicIP resource.
     :type public_ip_address:
      ~azure.mgmt.network.v2019_11_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the bastion host IP
@@ -3705,6 +3803,118 @@ class BastionHostIPConfiguration(SubResource):
         self.name = kwargs.get('name', None)
         self.etag = None
         self.type = None
+
+
+class BastionSessionState(Model):
+    """The session state detail for a target.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar session_id: A unique id for the session.
+    :vartype session_id: str
+    :ivar message: Used for extra information.
+    :vartype message: str
+    :ivar state: The state of the session. Disconnected/Failed/NotFound.
+    :vartype state: str
+    """
+
+    _validation = {
+        'session_id': {'readonly': True},
+        'message': {'readonly': True},
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BastionSessionState, self).__init__(**kwargs)
+        self.session_id = None
+        self.message = None
+        self.state = None
+
+
+class BastionShareableLink(Model):
+    """Bastion Shareable Link.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param vm: Required. Reference of the virtual machine resource.
+    :type vm: ~azure.mgmt.network.v2019_11_01.models.VM
+    :ivar bsl: The unique Bastion Shareable Link to the virtual machine.
+    :vartype bsl: str
+    :ivar created_at: The time when the link was created.
+    :vartype created_at: str
+    :ivar message: Optional field indicating the warning or error message
+     related to the vm in case of partial failure
+    :vartype message: str
+    """
+
+    _validation = {
+        'vm': {'required': True},
+        'bsl': {'readonly': True},
+        'created_at': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'vm': {'key': 'vm', 'type': 'VM'},
+        'bsl': {'key': 'bsl', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BastionShareableLink, self).__init__(**kwargs)
+        self.vm = kwargs.get('vm', None)
+        self.bsl = None
+        self.created_at = None
+        self.message = None
+
+
+class BastionShareableLinkListRequest(Model):
+    """Post request for all the Bastion Shareable Link endpoints.
+
+    :param vms: List of VM references.
+    :type vms:
+     list[~azure.mgmt.network.v2019_11_01.models.BastionShareableLink]
+    """
+
+    _attribute_map = {
+        'vms': {'key': 'vms', 'type': '[BastionShareableLink]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BastionShareableLinkListRequest, self).__init__(**kwargs)
+        self.vms = kwargs.get('vms', None)
+
+
+class BastionShareableLinkListResult(Model):
+    """Response for all the Bastion Shareable Link endpoints.
+
+    :param value: List of Bastion Shareable Links for the request.
+    :type value:
+     list[~azure.mgmt.network.v2019_11_01.models.BastionShareableLink]
+    :param next_link: Gets or sets the URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[BastionShareableLink]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BastionShareableLinkListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class BGPCommunity(Model):
@@ -13375,6 +13585,22 @@ class ServiceTagsListResult(Model):
         self.values = None
 
 
+class SessionIds(Model):
+    """List of session ids.
+
+    :param session_ids: List of session ids
+    :type session_ids: list[str]
+    """
+
+    _attribute_map = {
+        'session_ids': {'key': 'sessionIds', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SessionIds, self).__init__(**kwargs)
+        self.session_ids = kwargs.get('session_ids', None)
+
+
 class Subnet(SubResource):
     """Subnet in a virtual network resource.
 
@@ -15530,6 +15756,41 @@ class VirtualWanVpnProfileParameters(Model):
         super(VirtualWanVpnProfileParameters, self).__init__(**kwargs)
         self.vpn_server_configuration_resource_id = kwargs.get('vpn_server_configuration_resource_id', None)
         self.authentication_method = kwargs.get('authentication_method', None)
+
+
+class VM(Resource):
+    """Describes a Virtual Machine.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: Resource ID.
+    :type id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VM, self).__init__(**kwargs)
 
 
 class VpnClientConfiguration(Model):
