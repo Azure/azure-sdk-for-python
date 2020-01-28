@@ -761,13 +761,19 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             self.assertEqual(err.error_code, "MissingInputRecords")
             self.assertIsNotNone(err.message)
 
-
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed it."}]
-
         try:
             result = text_analytics.analyze_sentiment(docs)
         except HttpResponseError as err:
             self.assertEqual(err.error_code, "InvalidDocument")
+            self.assertIsNotNone(err.message)
+
+        # Batch size over limit
+        docs = [u"hello world"] * 1001
+        try:
+            response = text_analytics.detect_languages(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.message)
