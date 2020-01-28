@@ -152,11 +152,11 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
         response = await text_analytics.recognize_pii_entities(docs)
-        self.assertEqual(response[0].entities[0].text, "555-55-5555")
+        self.assertEqual(response[0].entities[0].name, "555-55-5555")
         self.assertEqual(response[0].entities[0].type, "U.S. Social Security Number (SSN)")
-        self.assertEqual(response[1].entities[0].text, "111000025")
+        self.assertEqual(response[1].entities[0].name, "111000025")
         self.assertEqual(response[1].entities[0].type, "ABA Routing Number")
-        self.assertEqual(response[2].entities[0].text, "998.214.865-68")
+        self.assertEqual(response[2].entities[0].name, "998.214.865-68")
         self.assertEqual(response[2].entities[0].type, "Brazil CPF Number")
 
     @GlobalTextAnalyticsAccountPreparer()

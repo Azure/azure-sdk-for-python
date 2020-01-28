@@ -74,7 +74,7 @@ class SingleRecognizeEntitiesSampleAsync(object):
         )
 
         for entity in result.entities:
-            print("Entity: {}".format(entity.text))
+            print("Entity: {}".format(entity.name))
             print("Type: {}".format(entity.type))
             print("Confidence Score: {0:.3f}\n".format(entity.score))
         # [END single_recognize_entities_async]

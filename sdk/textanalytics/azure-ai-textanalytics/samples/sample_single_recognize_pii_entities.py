@@ -57,7 +57,7 @@ class SingleRecognizePiiEntitiesSample(object):
         )
 
         for entity in result.entities:
-            print("Entity: {}".format(entity.text))
+            print("Entity: {}".format(entity.name))
             print("Type: {}".format(entity.type))
             print("Confidence Score: {}\n".format(entity.score))
         # [END single_recognize_pii_entities]

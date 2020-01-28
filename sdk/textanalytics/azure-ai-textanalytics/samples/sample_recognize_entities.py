@@ -58,7 +58,7 @@ class RecognizeEntitiesSample(object):
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: \t", entity.text, "\tType: \t", entity.type,
+                print("Entity: \t", entity.name, "\tType: \t", entity.type,
                       "\tConfidence Score: \t", round(entity.score, 3))
         # [END batch_recognize_entities]
 

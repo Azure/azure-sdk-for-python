@@ -60,7 +60,7 @@ class RecognizePiiEntitiesSample(object):
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: {}".format(entity.text))
+                print("Entity: {}".format(entity.name))
                 print("Type: {}".format(entity.type))
                 print("Confidence Score: {}\n".format(entity.score))
         # [END batch_recognize_pii_entities]

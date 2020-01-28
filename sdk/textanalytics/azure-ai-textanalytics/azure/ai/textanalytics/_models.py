@@ -177,8 +177,8 @@ class DetectLanguageResult(DictMixin):
 class NamedEntity(DictMixin):
     """NamedEntity.
 
-    :param text: Entity text as appears in the request.
-    :type text: str
+    :param name: Entity text as appears in the request.
+    :type name: str
     :param type: Entity type, such as Person/Location/Org/SSN etc
     :type type: str
     :param subtype: Entity sub type, such as Age/Year/TimeRange etc
@@ -195,7 +195,7 @@ class NamedEntity(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
+        self.name = kwargs.get('name', None)
         self.type = kwargs.get('type', None)
         self.subtype = kwargs.get('subtype', None)
         self.offset = kwargs.get('offset', None)
@@ -205,7 +205,7 @@ class NamedEntity(DictMixin):
     @classmethod
     def _from_generated(cls, entity):
         return cls(
-            text=entity.text,
+            name=entity.text,
             type=entity.type,
             subtype=entity.subtype,
             offset=entity.offset,
@@ -214,8 +214,8 @@ class NamedEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "NamedEntity(text={}, type={}, subtype={}, offset={}, length={}, score={})" \
-            .format(self.text, self.type, self.subtype, self.offset, self.length, self.score)[:1024]
+        return "NamedEntity(name={}, type={}, subtype={}, offset={}, length={}, score={})" \
+            .format(self.name, self.type, self.subtype, self.offset, self.length, self.score)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -486,9 +486,9 @@ class LinkedEntity(DictMixin):
      list[~azure.ai.textanalytics.LinkedEntityMatch]
     :param language: Language used in the data source.
     :type language: str
-    :param id: Unique identifier of the recognized entity from the data
+    :param data_source_id: Unique identifier of the recognized entity from the data
      source.
-    :type id: str
+    :type data_source_id: str
     :param url: URL for the entity's page from the data source.
     :type url: str
     :param data_source: Data source used to extract entity linking,
@@ -500,7 +500,7 @@ class LinkedEntity(DictMixin):
         self.name = kwargs.get("name", None)
         self.matches = kwargs.get("matches", None)
         self.language = kwargs.get("language", None)
-        self.id = kwargs.get("id", None)
+        self.data_source_id = kwargs.get("data_source_id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
 
@@ -510,14 +510,14 @@ class LinkedEntity(DictMixin):
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
-            id=entity.id,
+            data_source_id=entity.id,
             url=entity.url,
             data_source=entity.data_source,
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, data_source={})" \
-            .format(self.name, repr(self.matches), self.language, self.id, self.url, self.data_source)[:1024]
+        return "LinkedEntity(name={}, matches={}, language={}, data_source_id={}, url={}, data_source={})" \
+            .format(self.name, repr(self.matches), self.language, self.data_source_id, self.url, self.data_source)[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
@@ -527,8 +527,8 @@ class LinkedEntityMatch(DictMixin):
      decimal number denoting the confidence level between 0 and 1 will be
      returned.
     :type score: float
-    :param text: Entity text as appears in the request.
-    :type text: str
+    :param name: Entity text as appears in the request.
+    :type name: str
     :param offset: Start position (in Unicode characters) for the
      entity match text.
     :type offset: int
@@ -539,19 +539,19 @@ class LinkedEntityMatch(DictMixin):
 
     def __init__(self, **kwargs):
         self.score = kwargs.get("score", None)
-        self.text = kwargs.get("text", None)
+        self.name = kwargs.get("name", None)
         self.offset = kwargs.get("offset", None)
         self.length = kwargs.get("length", None)
 
     @classmethod
     def _from_generated(cls, match):
         return cls(
-            score=match.score, text=match.text, offset=match.offset, length=match.length
+            score=match.score, name=match.text, offset=match.offset, length=match.length
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(score={}, text={}, offset={}, length={})" \
-            .format(self.score, self.text, self.offset, self.length)[:1024]
+        return "LinkedEntityMatch(score={}, name={}, offset={}, length={})" \
+            .format(self.score, self.name, self.offset, self.length)[:1024]
 
 
 class TextDocumentInput(MultiLanguageInput):
