@@ -188,6 +188,18 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
+    @property
+    def api_version(self):
+        """The version of the Storage API used for requests.
+
+        :type: str
+        """
+        return self._client._config.version
+
+    @api_version.setter
+    def api_version(self, value):
+        self._client._config.version = value
+
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
         if snapshot:
