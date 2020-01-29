@@ -69,6 +69,19 @@ def test_request_history():
     assert request_history.http_request.url == request.url
     assert request_history.http_request.method == request.method
 
+def test_request_history_type_error():
+    class Non_deep_copiable(object):
+        def __deepcopy__(self, memodict={}):
+            raise TypeError()
+
+    body = Non_deep_copiable()
+    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request.body = body
+    request_history = RequestHistory(request)
+    assert request_history.http_request.headers == request.headers
+    assert request_history.http_request.url == request.url
+    assert request_history.http_request.method == request.method
+
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
