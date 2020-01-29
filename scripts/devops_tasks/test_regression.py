@@ -36,6 +36,8 @@ AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.gi
 TEMP_FOLDER_NAME = ".tmp_code_path"
 COSMOS_TEST_ARG = "not cosmosEmulator"
 
+PACKAGE_RELEASE_TAGS_TO_EXCLUDE = ['azure-storage-file-share:*',]
+
 logging.getLogger().setLevel(logging.INFO)
 
 
@@ -89,7 +91,7 @@ class RegressionContext:
         )
 
     def init_for_pkg(self, pkg_root):
-        # This method will set package root for which regression is tested
+        # This method is called each time context is switched to test regression for new package
         self.package_root_path = pkg_root
         self.package_name, _, _, _ = parse_setup(self.package_root_path)
 
@@ -99,7 +101,7 @@ class RegressionContext:
 
     def deactivate(self, dep_pkg_root_path):
         # This function can be used to reset code repo to master branch and also to deactivate virtual env
-        # revert to master branch
+        # Revert to master branch
         run_check_call(["git", "clean", "-fd"], dep_pkg_root_path)
         run_check_call(["git", "checkout", GIT_MASTER_BRANCH], dep_pkg_root_path)
         self.venv.deactivate()
@@ -139,13 +141,30 @@ class RegressionTest:
             )
 
     def _run_test(self, dep_pkg_path):
+        # find GA released tags for package and run test using that code base
+        dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
+        release_tag = get_release_tag(dep_pkg_name, self.context.is_latest_depend_test)
+        if not release_tag:
+            logging.error(
+                "Release tag is not avaiable. Skipping package {} from test".format(
+                    dep_pkg_name
+                )
+            )
+            sys.exit(1)
+
+        # Ommit based on package name and release tag
+        pkg_releae_tag = "{0}:{1}".format(dep_pkg_name, release_tag)
+        if pkg_release_tag in PACKAGE_RELEASE_TAGS_TO_EXCLUDE:
+            logging.info("Package {0} and release tag {1} is excluded from regression test")
+            return
+
         # Get code repo with released tag of dependent package
-        self._get_code_repo(dep_pkg_path)
+        checkout_code_repo(release_tag, dep_pkg_path)
 
         try:
             # activate virtual env
             self.context.activate(dep_pkg_path)
-            # install packages required to run tests after updating relative referefnce to abspath
+            # install packages required to run tests after updating relative reference to abspath
             run_check_call(
                 [
                     self.context.python_symlink,
@@ -170,22 +189,6 @@ class RegressionTest:
             # deactivate virtual env and revert repo
             self.context.deactivate(dep_pkg_path)
 
-    def _get_code_repo(self, dependent_pkg_path):
-        # find GA released tags for package and run test using that code base
-        dep_pkg_name, _, _, _ = parse_setup(dependent_pkg_path)
-        release_tag = get_release_tag(dep_pkg_name, self.context.is_latest_depend_test)
-        if not release_tag:
-            logging.info(
-                "Skipping package {} from test since release tag is not avaiable".format(
-                    dep_pkg_name
-                )
-            )
-            return
-
-        # todo: Exlcusion based on package name and release tag
-        pass
-        # checkout git hub repo with release tag
-        checkout_code_repo(release_tag, dependent_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
         # install dependent package from source
@@ -227,7 +230,7 @@ class RegressionTest:
         )
         run_check_call(
             [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path],
-            working_dir,
+            dependent_pkg_path,
         )
         # install dependent package which is being verified
         run_check_call(
@@ -244,7 +247,7 @@ def find_package_dependency(glob_string, repo_root_dir):
     for pkg_root in package_paths:
         dependent_pkg_name, _, _, requires = parse_setup(pkg_root)
         # todo: This should be removed once issue in storage file share test is resolved
-        if "storage" not in dependent_pkg_name:
+        if "storage" in dependent_pkg_name:
             continue
         # Get a list of package names from install requires
         required_pkgs = [parse_require(r)[0] for r in requires]
