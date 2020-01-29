@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.7.0 (2020-01-29)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group QuotaRequestsOperations
+- Added operation group QuotaOperations
+- Added operation group QuotaRequestOperations
+- Added operation group AutoQuotaIncreaseOperations
+- Added operation group QuotasOperations
+
 0.6.0 (2019-10-24)
 ++++++++++++++++++
 
