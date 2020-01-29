@@ -20,7 +20,7 @@ from common_tasks import (
     parse_require,
     install_package_from_whl,
     filter_dev_requirements,
-    OmmitType,
+    OmitType,
 )
 from git_helper import get_release_tag, checkout_code_repo, clone_repo
 
@@ -34,9 +34,10 @@ GIT_MASTER_BRANCH = "master"
 VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
-COSMOS_TEST_ARG = "not cosmosEmulator"
-
-RELEASE_TAGS_TO_EXCLUDE = ['azure-storage-file-share_12.0.0','azure-storage-file-share_12.0.0b5']
+RELEASE_TAGS_TO_EXCLUDE = [
+    "azure-storage-file-share_12.0.0",
+    "azure-storage-file-share_12.0.0b5",
+]
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -49,44 +50,22 @@ class CustomVirtualEnv:
         logging.info("Creating virtual environment [{}]".format(self.path))
         run_check_call([sys.executable, "-m", "venv", "ENV_DIR", self.path], root_dir)
 
-    def _process_venv(self, activate_env):
-        if activate_env:
-            # clear any previously installed packages
-            run_check_call(
-                [sys.executable, "-m", "venv", "--clear", "ENV_DIR", self.path],
-                root_dir,
-            )
-
-        scriptName = "activate.bat" if activate_env else "deactivate.bat"
-        venv_script = os.path.join(self.path, "Scripts", scriptName)
-        operation_type = "Activating" if activate_env else "Deactivating"
-
-        if os.path.exists(venv_script):
-            logging.info(
-                "{0} virtual environment {1}".format(operation_type, venv_script)
-            )
-            run_check_call([venv_script,], root_dir)
-        else:
-            logging.error(
-                "Script to process virtualenv is missing. path [{}]".format(venv_script)
-            )
-            sys.exit(1)
-
-    def activate(self):
-        self._process_venv(True)
-
-    def deactivate(self):
-        self._process_venv(False)
+    def clear_venv(self):
+        # clear any previously installed packages
+        run_check_call(
+            [sys.executable, "-m", "venv", "--clear", "ENV_DIR", self.path], root_dir
+        )
 
 
 class RegressionContext:
-    def __init__(self, whl_dir, tmp_path, is_latest):
+    def __init__(self, whl_dir, tmp_path, is_latest, pytest_mark_arg):
         self.whl_directory = whl_dir
         self.temp_path = tmp_path
         self.is_latest_depend_test = is_latest
         self.venv = CustomVirtualEnv(self.temp_path)
+        self.pytest_mark_arg = pytest_mark_arg
         self.venv.create()
-        self.python_symlink = os.path.abspath(
+        self.python_executable = os.path.abspath(
             os.path.join(self.venv.path, "Scripts", "python")
         )
 
@@ -95,16 +74,15 @@ class RegressionContext:
         self.package_root_path = pkg_root
         self.package_name, _, _, _ = parse_setup(self.package_root_path)
 
-    def activate(self, dep_pkg_root_path):
+    def initialize(self, dep_pkg_root_path):
         self.dep_pkg_root_path = dep_pkg_root_path
-        self.venv.activate()
+        self.venv.clear_venv()
 
-    def deactivate(self, dep_pkg_root_path):
+    def deinitialize(self, dep_pkg_root_path):
         # This function can be used to reset code repo to master branch and also to deactivate virtual env
         # Revert to master branch
         run_check_call(["git", "clean", "-fd"], dep_pkg_root_path)
         run_check_call(["git", "checkout", GIT_MASTER_BRANCH], dep_pkg_root_path)
-        self.venv.deactivate()
 
 
 class RegressionTest:
@@ -152,9 +130,11 @@ class RegressionTest:
             )
             sys.exit(1)
 
-        # Ommit based on package name and release tag
+        # Omit based on package name and release tag
         if release_tag in RELEASE_TAGS_TO_EXCLUDE:
-            logging.info("Release tag {0} is excluded from regression test".format(release_tag))
+            logging.info(
+                "Release tag {0} is excluded from regression test".format(release_tag)
+            )
             return
 
         # Get code repo with released tag of dependent package
@@ -162,11 +142,11 @@ class RegressionTest:
 
         try:
             # activate virtual env
-            self.context.activate(dep_pkg_path)
+            self.context.initialize(dep_pkg_path)
             # install packages required to run tests after updating relative reference to abspath
             run_check_call(
                 [
-                    self.context.python_symlink,
+                    self.context.python_executable,
                     "-m",
                     "pip",
                     "install",
@@ -180,43 +160,44 @@ class RegressionTest:
                 self.context.package_name,
                 self.context.whl_directory,
                 self.context.temp_path,
-                self.context.python_symlink,
+                self.context.python_executable,
             )
             # install package to be tested and run pytest
             self._execute_test(dep_pkg_path)
         finally:
             # deactivate virtual env and revert repo
-            self.context.deactivate(dep_pkg_path)
-
+            self.context.deinitialize(dep_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
         # install dependent package from source
         self._install_packages(dep_pkg_path, self.context.package_name)
         logging.info("Running test for {}".format(dep_pkg_path))
-        pkg_test_dir = self._get_package_test_dir(dep_pkg_path)
-        run_check_call(
-            [
-                self.context.python_symlink,
-                "-m",
-                "pytest",
-                "--verbose",
-                "-m",
-                COSMOS_TEST_ARG,
-                pkg_test_dir,
-            ],
-            self.context.temp_path,
-        )
+        commands = [
+            self.context.python_executable,
+            "-m",
+            "pytest",
+            "--verbose",
+        ]
+
+        # add any pytest mark arg if present. for e.g. 'not cosmosEmulator'
+        if self.context.pytest_mark_arg:
+            commands.extend(["-m", self.context.pytest_mark_arg])
+
+        commands.append(self._get_package_test_dir(dep_pkg_path))
+        run_check_call(commands, self.context.temp_path)
 
     def _get_package_test_dir(self, pkg_root_path):
         # Returns path to test or tests folder within package root directory.
         paths = glob.glob(os.path.join(pkg_root_path, "test*"))
         if paths is None:
+            # We will run into this situation only if test and tests are missing in repo.
+            # For now, running test for package repo itself to keep it same as regular CI in such cases
             logging.error("'test' folder is not found in {}".format(pkg_root_path))
-            sys.exit(1)
+            return pkg_root_path
         return paths[0]
 
     def _install_packages(self, dependent_pkg_path, pkg_to_exclude):
-        python_executable = self.context.python_symlink
+        python_executable = self.context.python_executable
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
@@ -240,7 +221,7 @@ class RegressionTest:
 # This method identifies package dependency map for all packages in azure sdk
 def find_package_dependency(glob_string, repo_root_dir):
     package_paths = process_glob_string(
-        glob_string, repo_root_dir, "", OmmitType.Regression
+        glob_string, repo_root_dir, "", OmitType.Regression
     )
     dependency_map = {}
     for pkg_root in package_paths:
@@ -305,7 +286,9 @@ def run_main(args):
     logging.info("Regression test will run for: {}".format(pkg_dependency.keys()))
 
     # Create regression text context. One context object will be reused for all packages
-    context = RegressionContext(args.whl_dir, temp_dir, args.verify_latest)
+    context = RegressionContext(
+        args.whl_dir, temp_dir, args.verify_latest, args.mark_arg
+    )
 
     for pkg_path in targeted_packages:
         context.init_for_pkg(pkg_path)
@@ -354,6 +337,15 @@ if __name__ == "__main__":
         "--temp-dir",
         help=(
             "Temporary path to clone github repo of azure-sdk-for-python to run tests. Any changes in this path will be overwritten"
+        ),
+    )
+
+    parser.add_argument(
+        "--mark-arg",
+        dest="mark_arg",
+        help=(
+            'The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
+            '--mark_arg="not cosmosEmulator"'
         ),
     )
 

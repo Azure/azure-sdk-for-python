@@ -194,7 +194,7 @@ jobs:
       - 'Build'
 
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'ubuntu-16.04'
 
     steps:
     - template: ../steps/test_regression.yml

@@ -17,11 +17,14 @@ def get_release_tag(dep_pkg_name, isLatest=True):
     # get versions from pypi and find latest
     # delayed import until sdk tools are installed on virtual env
     from pypi_tools.pypi import PyPIClient
+
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(dep_pkg_name)]
     logging.info("Versions for {0} is: [{1}]".format(dep_pkg_name, versions))
     if versions is None:
-        logging.info("Released version info for package {} is not available".format(dep_pkg_name))
+        logging.info(
+            "Released version info for package {} is not available".format(dep_pkg_name)
+        )
         # This is not a hard error. We can run into this situation when a new package is added to repo and not yet released
         return
 
@@ -32,7 +35,9 @@ def get_release_tag(dep_pkg_name, isLatest=True):
 
     # create tag in <pkg_name>_version format
     tag_name = "{0}_{1}".format(dep_pkg_name, latestVersion)
-    logging.info("Release tag for package [{0}] is [{1}]".format(dep_pkg_name, tag_name))
+    logging.info(
+        "Release tag for package [{0}] is [{1}]".format(dep_pkg_name, tag_name)
+    )
     return tag_name
 
 
@@ -49,9 +54,10 @@ def checkout_code_repo(tag_name, working_dir):
 
 def clone_repo(dest_dir, repo_url):
     if not os.path.isdir(dest_dir):
-        logging.error("Invalid destination directory to clone git repo:[{}]".format(dest_dir))
+        logging.error(
+            "Invalid destination directory to clone git repo:[{}]".format(dest_dir)
+        )
         sys.exit(1)
 
-    os.chdir(dest_dir)
     logging.info("cloning git repo using url {}".format(repo_url))
     run_check_call(["git", "clone", "--depth=1", repo_url], dest_dir)
