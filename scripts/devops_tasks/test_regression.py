@@ -36,7 +36,7 @@ AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.gi
 TEMP_FOLDER_NAME = ".tmp_code_path"
 COSMOS_TEST_ARG = "not cosmosEmulator"
 
-PACKAGE_RELEASE_TAGS_TO_EXCLUDE = ['azure-storage-file-share:*',]
+RELEASE_TAGS_TO_EXCLUDE = ['azure-storage-file-share_12.0.0','azure-storage-file-share_12.0.0b5']
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -153,9 +153,8 @@ class RegressionTest:
             sys.exit(1)
 
         # Ommit based on package name and release tag
-        pkg_releae_tag = "{0}:{1}".format(dep_pkg_name, release_tag)
-        if pkg_release_tag in PACKAGE_RELEASE_TAGS_TO_EXCLUDE:
-            logging.info("Package {0} and release tag {1} is excluded from regression test")
+        if release_tag in RELEASE_TAGS_TO_EXCLUDE:
+            logging.info("Release tag {0} is excluded from regression test".format(release_tag))
             return
 
         # Get code repo with released tag of dependent package
@@ -245,10 +244,8 @@ def find_package_dependency(glob_string, repo_root_dir):
     )
     dependency_map = {}
     for pkg_root in package_paths:
-        dependent_pkg_name, _, _, requires = parse_setup(pkg_root)
-        # todo: This should be removed once issue in storage file share test is resolved
-        if "storage" in dependent_pkg_name:
-            continue
+        _, _, _, requires = parse_setup(pkg_root)
+
         # Get a list of package names from install requires
         required_pkgs = [parse_require(r)[0] for r in requires]
         required_pkgs = [p for p in required_pkgs if p.startswith("azure")]

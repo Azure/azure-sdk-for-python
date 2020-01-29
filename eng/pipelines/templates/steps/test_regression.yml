@@ -19,10 +19,20 @@ steps:
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
-    displayName: 'Run Regression'
+    displayName: 'Test Latest Released Dependents'
     inputs:
       scriptPath: 'scripts/devops_tasks/test_regression.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "${{ parameters.BuildTargetingString }}"
         --service="${{ parameters.ServiceDirectory }}"
         --whl-dir="${{ parameters.BuildStagingDirectory }}"
+
+  - task: PythonScript@0
+    displayName: 'Test Oldest Released Dependents'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/test_regression.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --whl-dir="${{ parameters.BuildStagingDirectory }}"
+        --verify-latest=False
