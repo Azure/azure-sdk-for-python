@@ -352,11 +352,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
+    @AsyncVaultClientPreparer(client_kwargs={'transport': AsyncMockTransport()})
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_close(self, vault_client, **kwargs):
-        transport = AsyncMockTransport()
-        client = vault_client.client
-        await client.close()
+        await vault_client.close()
 
-        assert transport.__aexit__.call_count == 1
+        assert vault_client.transport.__aexit__.call_count == 1

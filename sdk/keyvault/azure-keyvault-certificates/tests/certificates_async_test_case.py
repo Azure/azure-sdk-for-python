@@ -4,8 +4,22 @@
 # ------------------------------------
 import asyncio
 import functools
+import sys
 
+from unittest import mock
 from certificates_test_case import KeyVaultTestCase
+
+class AsyncMockTransport(mock.MagicMock):
+    """Mock with do-nothing aenter/exit for mocking async transport.
+    This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if sys.version_info < (3, 8):
+            self.__aenter__ = mock.Mock(return_value=AsyncKeyVaultTestCase.get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=AsyncKeyVaultTestCase.get_completed_future())
 
 
 class AsyncKeyVaultTestCase(KeyVaultTestCase):
@@ -22,6 +36,12 @@ class AsyncKeyVaultTestCase(KeyVaultTestCase):
             return loop.run_until_complete(test_fn(test_class_instance, vault_client))
 
         return run
+
+    @staticmethod
+    def get_completed_future(result=None):
+        future = asyncio.Future()
+        future.set_result(result)
+        return future
 
     async def _poll_until_no_exception(self, fn, *resource_names, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""

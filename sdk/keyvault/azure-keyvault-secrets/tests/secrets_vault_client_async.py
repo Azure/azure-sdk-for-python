@@ -36,15 +36,12 @@ class VaultClient(AsyncKeyVaultClientBase):
         )
         self._credential = credential
         self._secrets = SecretClient(self.vault_url, self._credential, generated_client=self._client, **kwargs)
+        self._transport = transport
 
     @property
     def secrets(self):
         return self._secrets
 
     @property
-    def client(self):
-        return self._client
-
-    async def close(self):
-        await self._client.close()
-        await self._credential.close()
+    def transport(self):
+        return self._transport

@@ -11,7 +11,7 @@ import logging
 import json
 
 from azure_devtools.scenario_tests import RecordingProcessor
-from certificates_async_test_case import AsyncKeyVaultTestCase
+from certificates_async_test_case import AsyncKeyVaultTestCase, AsyncMockTransport
 
 from azure.keyvault.certificates import (
     AdministratorContact,
@@ -773,3 +773,12 @@ class CertificateClientTests(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @AsyncVaultClientPreparer(client_kwargs={'transport': AsyncMockTransport()})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_close(self, vault_client, **kwargs):
+        await vault_client.close()
+
+        assert vault_client.transport.__aexit__.call_count == 1
