@@ -176,9 +176,13 @@ This example demonstrates authenticating the `SecretClient` from the
 from azure.identity import CertificateCredential
 from azure.keyvault.secrets import SecretClient
 
-# requires a PEM-encoded certificate with private key, not protected with a password
+# requires a PEM-encoded certificate with private key
 cert_path = "/app/certs/certificate.pem"
 credential = CertificateCredential(tenant_id, client_id, cert_path)
+
+# if the private key is password protected, provide a 'password' keyword argument
+credential = CertificateCredential(tenant_id, client_id, cert_path, password="cert-password")
+
 
 client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
