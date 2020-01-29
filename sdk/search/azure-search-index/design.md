@@ -103,6 +103,13 @@ SearchIndexClient.get_suggestions(
 ) -> List[dict]
 
 
+SearchIndexClient.get_autocompletions(
+    search_text: str,
+    suggester_name: str,
+    **kwargs
+) -> List[dict]
+
+
 SearchIndexClient.upload_documents(
     documents: List[dict],
     **kwargs
