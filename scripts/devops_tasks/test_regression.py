@@ -20,7 +20,7 @@ from common_tasks import (
     parse_require,
     install_package_from_whl,
     filter_dev_requirements,
-    OmitType,
+    is_package_installed
 )
 from git_helper import get_release_tag, checkout_code_repo, clone_repo
 
@@ -72,7 +72,7 @@ class RegressionContext:
     def init_for_pkg(self, pkg_root):
         # This method is called each time context is switched to test regression for new package
         self.package_root_path = pkg_root
-        self.package_name, _, _, _ = parse_setup(self.package_root_path)
+        self.package_name, self.pkg_version, _, _ = parse_setup(self.package_root_path)
 
     def initialize(self, dep_pkg_root_path):
         self.dep_pkg_root_path = dep_pkg_root_path
@@ -171,6 +171,12 @@ class RegressionTest:
     def _execute_test(self, dep_pkg_path):
         # install dependent package from source
         self._install_packages(dep_pkg_path, self.context.package_name)
+
+        #  Ensure correct version of package is installed
+        if not is_package_installed(self.context.python_executable, self.context.package_name, self.context.pkg_version):
+            logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
+            sys.exit(1)
+
         logging.info("Running test for {}".format(dep_pkg_path))
         commands = [
             self.context.python_executable,
@@ -221,7 +227,7 @@ class RegressionTest:
 # This method identifies package dependency map for all packages in azure sdk
 def find_package_dependency(glob_string, repo_root_dir):
     package_paths = process_glob_string(
-        glob_string, repo_root_dir, "", OmitType.Regression
+        glob_string, repo_root_dir, "", "Regression"
     )
     dependency_map = {}
     for pkg_root in package_paths:

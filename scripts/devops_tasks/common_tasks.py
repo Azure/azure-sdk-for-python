@@ -29,6 +29,8 @@ from pkg_resources import parse_version, parse_requirements, Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
+from pip._internal.operations import freeze
+
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 
@@ -53,15 +55,6 @@ REGRESSION_EXCLUDED_PACKAGES = [
     "azure-servicefabric",
 ]
 
-
-class OmitType(int, Enum):
-    Build = (1,)
-    Docs = (2,)
-    Test = (3,)
-    Release = (4,)
-    Regression = 5
-
-
 omit_regression = (
     lambda x: "nspkg" not in x
     and "mgmt" not in x
@@ -70,10 +63,11 @@ omit_regression = (
 )
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
 omit_build = lambda x: os.path.basename(x) not in META_PACKAGES
+# dict of filter type and filter function
 omit_funct_dict = {
-    OmitType.Regression: omit_regression,
-    OmitType.Docs: omit_docs,
-    OmitType.Build: omit_build,
+    "Build": omit_build,
+    "Docs": omit_docs,
+    "Regression": omit_regression,
 }
 
 
@@ -198,7 +192,7 @@ def process_glob_string(
     glob_string,
     target_root_dir,
     additional_contains_filter="",
-    omit_type=OmitType.Build,
+    filter_type="Build",
 ):
     if glob_string:
         individual_globs = glob_string.split(",")
@@ -230,7 +224,7 @@ def process_glob_string(
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
-        allowed_package_set = remove_omitted_packages(collected_directories, omit_type)
+        allowed_package_set = remove_omitted_packages(collected_directories, filter_type)
         logging.info(
             "Target packages after filtering by omission list: {}".format(
                 allowed_package_set
@@ -247,7 +241,7 @@ def process_glob_string(
         return sorted(pkg_set_ci_filtered)
 
 
-def remove_omitted_packages(collected_directories, omit_type=OmitType.Build):
+def remove_omitted_packages(collected_directories, filter_type="Build"):
 
     packages = [
         package_dir
@@ -255,7 +249,7 @@ def remove_omitted_packages(collected_directories, omit_type=OmitType.Build):
         if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
     ]
 
-    packages = list(filter(omit_funct_dict.get(omit_type, omit_build), packages))
+    packages = list(filter(omit_funct_dict.get(filter_type, omit_build), packages))
     return packages
 
 
@@ -379,3 +373,9 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
         dev_req_file.writelines(requirements)
 
     return new_dev_req_path
+
+def is_package_installed(python_executable_path, package, version):
+    installed_pkgs = freeze.freeze()
+    logging.info("Installed packages: {}".format(installed_pkgs))
+    return "{0}=={1}".format(package, version) in installed_pkgs
+    
