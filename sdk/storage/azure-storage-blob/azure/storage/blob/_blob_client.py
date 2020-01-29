@@ -1044,6 +1044,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        self._check_parameter_api_version('create_page_blob', **kwargs)
         options = self._create_page_blob_options(
             size,
             content_settings=content_settings,
@@ -1140,6 +1141,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        self._check_parameter_api_version('create_append_blob', **kwargs)
         options = self._create_append_blob_options(
             content_settings=content_settings,
             metadata=metadata,
@@ -2112,6 +2114,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
+        self._check_operation_api_version('get_managed_disk_page_range_diff', '2019-07-07')
         options = self._get_page_ranges_options(
             offset=offset,
             length=length,
@@ -2253,6 +2256,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        self._check_parameter_api_version('resize_blob', **kwargs)
         options = self._resize_blob_options(size, **kwargs)
         try:
             return self._client.page_blob.resize(**options) # type: ignore
@@ -2383,6 +2387,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        self._check_parameter_api_version('upload_page', **kwargs)
         options = self._upload_page_options(
             page=page,
             offset=offset,
@@ -2540,7 +2545,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
-
+        self._check_parameter_api_version('upload_pages_from_url', **kwargs)
         options = self._upload_pages_from_url_options(
             source_url=source_url,
             offset=offset,
@@ -2646,6 +2651,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        self._check_parameter_api_version('clear_page', **kwargs)
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return self._client.page_blob.clear_pages(**options)  # type: ignore
@@ -2775,6 +2781,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
+        self._check_parameter_api_version('append_block', **kwargs)
         options = self._append_block_options(
             data,
             length=length,
@@ -2924,6 +2931,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
+        self._check_parameter_api_version('append_block_from_url', **kwargs)
         options = self._append_block_from_url_options(
             copy_source_url,
             source_offset=source_offset,

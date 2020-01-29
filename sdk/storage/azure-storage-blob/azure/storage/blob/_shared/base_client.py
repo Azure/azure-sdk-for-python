@@ -54,6 +54,7 @@ from .policies import (
     ExponentialRetry,
 )
 from .._generated.models import StorageErrorException
+from .._version import _API_VERSION_PARAMETER_COMPATIBILITY
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -199,6 +200,38 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     @api_version.setter
     def api_version(self, value):
         self._client._config.version = value
+
+    def _check_operation_api_version(self, operation, version_introduced):
+        """Validate that the client is using an API version equal to or
+        above that which the operation was introduced.
+
+        :param str operation: The name of the operation.
+        :param str version_introduced: The minimum supported API version for the operation.
+        """
+        if self.api_version < version_introduced:
+            raise ValueError(
+                "The function '{}' only supports API version '{}' or above. "
+                "Currently using API version: '{}'.".format(operation, version_introduced, self.api_version))
+
+    def _check_parameter_api_version(self, operation, **kwargs):
+        """Validate whether optional parameters have been specified when using
+        an incompatible API version.
+
+        :param str operation: The name of the operation.
+        """
+        compat_map = _API_VERSION_PARAMETER_COMPATIBILITY.get(operation)
+        if not compat_map or not kwargs:
+            return
+
+        invalid_params = [param for api_version, param in compat_map.items() if api_version > self.api_version]
+        invalid_values = list(kwargs.keys() & invalid_params)
+        if invalid_values:
+            raise ValueError(
+                "The current API version '{}' does not support the following parameters: {}".format(
+                    self.api_version,
+                    invalid_values
+                )
+            )
 
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
