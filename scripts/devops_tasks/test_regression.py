@@ -26,7 +26,7 @@ GIT_MASTER_BRANCH = "master"
 VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
-COSMOS_TEST_ARG = '-m="not cosmosEmulator"'
+COSMOS_TEST_ARG = 'not cosmosEmulator'
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -69,7 +69,12 @@ def pre_test_step(dependent_pkg_path, whl_directory, pkg_name, venv_path, workin
     # Install pre-built whl for current package
     install_package_from_whl(pkg_name, whl_directory, root_dir, python_sym_link)
 
-
+def get_package_test_path(pkg_root_path):
+    paths = glob.glob(os.path.join(pkg_root_path, "test*"))
+    if paths is None:
+        logging.error("'test' folder is not found in {}".format(pkg_root_path))
+        sys.exit(1)
+    return paths[0]
 
 def run_test(dependent_pkg_path, package_name, isLatest, python_sym_link):
     # find GA released tags for package and run test using that code base
@@ -85,7 +90,8 @@ def run_test(dependent_pkg_path, package_name, isLatest, python_sym_link):
     # install dependent package from source
     install_packages(dependent_pkg_path, package_name, python_sym_link)
     logging.info("Running test for {}".format(dependent_pkg_path))
-    run_check_call([python_sym_link, "-m", "pytest", "--verbose", COSMOS_TEST_ARG, dependent_pkg_path], root_dir)
+    pkg_test_path = get_package_test_path(dependent_pkg_path)
+    run_check_call([python_sym_link, "-m", "pytest", "--verbose", "-m", COSMOS_TEST_ARG, pkg_test_path], root_dir)
 
 
 def install_packages(dependent_pkg_path, package_name, python_sym_link):
