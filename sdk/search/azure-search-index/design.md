@@ -48,13 +48,13 @@ Azure Search Service affords the ability to batch CRUD-type operations, returnin
 ```python
 azure.search.IndexOperationBatch()
 
-IndexOperationBatch.add_update_documnents(documents: List[dict])
+IndexOperationBatch.add_upload_documents(documents: List[dict])
 
 IndexOperationBatch.add_delete_documents(documents: List[dict])
 
 IndexOperationBatch.add_merge_documents(documents: List[dict])
 
-IndexOperationBatch.add_merge_or_update_documents(documents: List[dict])
+IndexOperationBatch.add_merge_or_upload_documents(documents: List[dict])
 ```
 
 ### `IndexOperationResult` API
@@ -326,7 +326,7 @@ client = SearchIndexClient(
 )
 
 work = IndexOperationBatch()
-batch.add_update_document([{ "id": "10", "description": "new item" }])
+batch.add_upload_document([{ "id": "10", "description": "new item" }])
 batch.add_delete_document([{ "id": "8"}, { "id": "9" }])
 batch.add_merge_document([{ "id": "10", None }])
 
