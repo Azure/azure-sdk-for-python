@@ -14,9 +14,9 @@ from azure.keyvault.secrets.aio import SecretClient
 
 if TYPE_CHECKING:
     try:
-        from azure.core.credentials_async import AsyncTokenCredential
+        from azure.core.credentials import TokenCredential
     except ImportError:
-        # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
+        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
@@ -26,7 +26,7 @@ class VaultClient(AsyncKeyVaultClientBase):
     def __init__(
         self,
         vault_url: str,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Any
@@ -34,14 +34,8 @@ class VaultClient(AsyncKeyVaultClientBase):
         super(VaultClient, self).__init__(
             vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
-        self._credential = credential
-        self._secrets = SecretClient(self.vault_url, self._credential, generated_client=self._client, **kwargs)
-        self._transport = transport
+        self._secrets = SecretClient(self.vault_url, credential, generated_client=self._client, **kwargs)
 
     @property
     def secrets(self):
         return self._secrets
-
-    @property
-    def transport(self):
-        return self._transport

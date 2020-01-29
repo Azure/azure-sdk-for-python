@@ -34,5 +34,4 @@ class AsyncVaultClientPreparer(VaultClientPreparer):
             credential = EnvironmentCredential()
         else:
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
-        transport = self.client_kwargs.pop('transport', AiohttpTestTransport())
-        return VaultClient(vault_uri, credential, transport=transport, **self.client_kwargs)
+        return VaultClient(vault_uri, credential, transport=AiohttpTestTransport(), **self.client_kwargs)

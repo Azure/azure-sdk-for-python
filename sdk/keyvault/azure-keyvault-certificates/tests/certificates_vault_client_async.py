@@ -31,12 +31,7 @@ class VaultClient(AsyncKeyVaultClientBase):
             vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
         self._certificates = CertificateClient(self.vault_url, credential, generated_client=self._client, **kwargs)
-        self._transport = transport
 
     @property
     def certificates(self):
         return self._certificates
-
-    @property
-    def transport(self):
-        return self._transport

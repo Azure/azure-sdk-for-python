@@ -37,7 +37,6 @@ class VaultClient(AsyncKeyVaultClientBase):
         )
         self._credential = credential
         self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
-        self._transport = transport
 
     def get_cryptography_client(self, key):
         return CryptographyClient(key, self._credential)
@@ -45,7 +44,3 @@ class VaultClient(AsyncKeyVaultClientBase):
     @property
     def keys(self):
         return self._keys
-
-    @property
-    def transport(self):
-        return self._transport
