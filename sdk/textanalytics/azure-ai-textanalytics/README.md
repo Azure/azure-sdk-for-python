@@ -235,7 +235,7 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: \t", entity.text, "\tType: \t", entity.type,
+        print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
               "\tConfidence Score: \t", entity.score)
 ```
 
@@ -262,7 +262,7 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: \t", entity.text, "\tType: \t", entity.type,
+        print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
               "\tConfidence Score: \t", entity.score)
 ```
 

@@ -105,8 +105,8 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
-                self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.text)
+                self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.score)
@@ -146,18 +146,18 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
         response = text_analytics.recognize_pii_entities(docs, show_stats=True)
-        self.assertEqual(response[0].entities[0].name, "555-55-5555")
-        self.assertEqual(response[0].entities[0].type, "U.S. Social Security Number (SSN)")
-        self.assertEqual(response[1].entities[0].name, "111000025")
-        self.assertEqual(response[1].entities[0].type, "ABA Routing Number")
-        self.assertEqual(response[2].entities[0].name, "998.214.865-68")
-        self.assertEqual(response[2].entities[0].type, "Brazil CPF Number")
+        self.assertEqual(response[0].entities[0].text, "555-55-5555")
+        self.assertEqual(response[0].entities[0].category, "U.S. Social Security Number (SSN)")
+        self.assertEqual(response[1].entities[0].text, "111000025")
+        self.assertEqual(response[1].entities[0].category, "ABA Routing Number")
+        self.assertEqual(response[2].entities[0].text, "998.214.865-68")
+        self.assertEqual(response[2].entities[0].category, "Brazil CPF Number")
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
-                self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.text)
+                self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.score)
@@ -202,7 +202,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.data_source_id)
+                self.assertIsNotNone(entity.entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
 

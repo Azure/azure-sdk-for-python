@@ -29,8 +29,8 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
     def test_repr(self):
         detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", score=1.0)
 
-        named_entity = _models.NamedEntity(name="Bill Gates", type="Person", subtype="Age", offset=0, length=8,
-                                           score=0.899)
+        named_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age", offset=0,
+                                                 length=8, score=0.899)
 
         text_document_statistics = _models.TextDocumentStatistics(character_count=14, transaction_count=18)
 
@@ -89,13 +89,13 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                 id="1", key_phrases=["dog", "cat", "bird"], statistics=text_document_statistics, is_error=False
             )
 
-        linked_entity_match = _models.LinkedEntityMatch(score=0.999, name="Bill Gates", offset=0, length=8)
+        linked_entity_match = _models.LinkedEntityMatch(score=0.999, text="Bill Gates", offset=0, length=8)
 
         linked_entity = _models.LinkedEntity(
             name="Bill Gates",
             matches=[linked_entity_match, linked_entity_match],
             language="English",
-            data_source_id="Bill Gates",
+            entity_id="Bill Gates",
             url="https://en.wikipedia.org/wiki/Bill_Gates",
             data_source="wikipedia"
         )
@@ -138,16 +138,16 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         )
 
         self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, score=1.0)", repr(detected_language))
-        self.assertEqual("NamedEntity(name=Bill Gates, type=Person, subtype=Age, offset=0, length=8, score=0.899)",
+        self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, offset=0, length=8, score=0.899)",
                          repr(named_entity))
         self.assertEqual("TextDocumentStatistics(character_count=14, transaction_count=18)",
                          repr(text_document_statistics))
-        self.assertEqual("RecognizeEntitiesResult(id=1, entities=[NamedEntity(name=Bill Gates, type=Person, "
-                         "subtype=Age, offset=0, length=8, score=0.899)], "
+        self.assertEqual("RecognizeEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
+                         "subcategory=Age, offset=0, length=8, score=0.899)], "
                          "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
-        self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[NamedEntity(name=Bill Gates, type=Person, "
-                         "subtype=Age, offset=0, length=8, score=0.899)], "
+        self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
+                         "subcategory=Age, offset=0, length=8, score=0.899)], "
                          "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_pii_entities_result))
         self.assertEqual("DetectLanguageResult(id=1, detected_languages=[DetectedLanguage(name=English, "
@@ -168,15 +168,15 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], statistics="
                          "TextDocumentStatistics(character_count=14, transaction_count=18), is_error=False)",
                          repr(extract_key_phrases_result))
-        self.assertEqual("LinkedEntityMatch(score=0.999, name=Bill Gates, offset=0, length=8)", repr(linked_entity_match))
-        self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(score=0.999, name=Bill Gates, "
-                         "offset=0, length=8), LinkedEntityMatch(score=0.999, name=Bill Gates, offset=0, length=8)], "
-                         "language=English, data_source_id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, data_source="
+        self.assertEqual("LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)", repr(linked_entity_match))
+        self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(score=0.999, text=Bill Gates, "
+                         "offset=0, length=8), LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)], "
+                         "language=English, entity_id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, data_source="
                          "wikipedia)", repr(linked_entity))
         self.assertEqual("RecognizeLinkedEntitiesResult(id=1, entities=[LinkedEntity(name=Bill Gates, "
-                         "matches=[LinkedEntityMatch(score=0.999, name=Bill Gates, offset=0, length=8), "
-                         "LinkedEntityMatch(score=0.999, name=Bill Gates, offset=0, length=8)], language=English, "
-                         "data_source_id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
+                         "matches=[LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8), "
+                         "LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)], language=English, "
+                         "entity_id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
                          "statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
         self.assertEqual("SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)",

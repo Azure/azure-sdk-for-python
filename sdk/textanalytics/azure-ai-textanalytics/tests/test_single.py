@@ -201,10 +201,10 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
             language="en"
         )
 
-        self.assertEqual(response.entities[0].name, "Microsoft")
-        self.assertEqual(response.entities[1].name, "Bill Gates")
+        self.assertEqual(response.entities[0].text, "Microsoft")
+        self.assertEqual(response.entities[1].text, "Bill Gates")
         for entity in response.entities:
-            self.assertIsNotNone(entity.type)
+            self.assertIsNotNone(entity.category)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
@@ -331,9 +331,9 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
             language="en"
         )
 
-        self.assertEqual(response.entities[0].name, "555-55-5555")
+        self.assertEqual(response.entities[0].text, "555-55-5555")
         for entity in response.entities:
-            self.assertIsNotNone(entity.type)
+            self.assertIsNotNone(entity.category)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
@@ -465,7 +465,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         for entity in response.entities:
             self.assertIsNotNone(entity.matches)
             self.assertIsNotNone(entity.language)
-            self.assertIsNotNone(entity.data_source_id)
+            self.assertIsNotNone(entity.entity_id)
             self.assertIsNotNone(entity.url)
             self.assertIsNotNone(entity.data_source)
 

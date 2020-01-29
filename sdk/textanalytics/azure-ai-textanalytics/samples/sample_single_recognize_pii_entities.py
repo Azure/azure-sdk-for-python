@@ -27,11 +27,11 @@ USAGE:
 
 OUTPUT:
     Entity: 111000025
-    Type: ABA Routing Number
+    Category: ABA Routing Number
     Confidence Score: 0.75
 
     Entity: 555-55-5555
-    Type: U.S. Social Security Number (SSN)
+    Category: U.S. Social Security Number (SSN)
     Confidence Score: 0.85
 """
 
@@ -57,8 +57,8 @@ class SingleRecognizePiiEntitiesSample(object):
         )
 
         for entity in result.entities:
-            print("Entity: {}".format(entity.name))
-            print("Type: {}".format(entity.type))
+            print("Entity: {}".format(entity.text))
+            print("Category: {}".format(entity.category))
             print("Confidence Score: {}\n".format(entity.score))
         # [END single_recognize_pii_entities]
 

@@ -22,17 +22,17 @@ USAGE:
 OUTPUT:
     Document text: The employee's SSN is 555-55-5555.
     Entity: 555-55-5555
-    Type: U.S. Social Security Number (SSN)
+    Category: U.S. Social Security Number (SSN)
     Confidence Score: 0.85
 
     Document text: Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.
     Entity: 111000025
-    Type: ABA Routing Number
+    Category: ABA Routing Number
     Confidence Score: 0.75
 
     Document text: Is 998.214.865-68 your Brazilian CPF number?
     Entity: 998.214.865-68
-    Type: Brazil CPF Number
+    Category: Brazil CPF Number
     Confidence Score: 0.85
 """
 
@@ -64,8 +64,8 @@ class RecognizePiiEntitiesSampleAsync(object):
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: {}".format(entity.name))
-                print("Type: {}".format(entity.type))
+                print("Entity: {}".format(entity.text))
+                print("Category: {}".format(entity.category))
                 print("Confidence Score: {}\n".format(entity.score))
         # [END batch_recognize_pii_entities_async]
 

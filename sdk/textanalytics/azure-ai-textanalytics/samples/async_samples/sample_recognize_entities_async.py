@@ -21,17 +21,17 @@ USAGE:
 
 OUTPUT:
     Document text: Microsoft was founded by Bill Gates and Paul Allen.
-    Entity:          Microsoft      Type:    Organization   Confidence Score:        1.0
-    Entity:          Bill Gates     Type:    Person         Confidence Score:        1.0
-    Entity:          Paul Allen     Type:    Person         Confidence Score:        1.0
+    Entity:          Microsoft      Category:    Organization   Confidence Score:        1.0
+    Entity:          Bill Gates     Category:    Person         Confidence Score:        1.0
+    Entity:          Paul Allen     Category:    Person         Confidence Score:        1.0
 
     Document text: I had a wonderful trip to Seattle last week.
-    Entity:          Seattle        Type:    Location       Confidence Score:        0.806
-    Entity:          last week      Type:    DateTime       Confidence Score:        0.8
+    Entity:          Seattle        Category:    Location       Confidence Score:        0.806
+    Entity:          last week      Category:    DateTime       Confidence Score:        0.8
 
     Document text: I visited the Space Needle 2 times.
-    Entity:          Space Needle   Type:    Organization   Confidence Score:        0.922
-    Entity:          2              Type:    Quantity       Confidence Score:        0.8
+    Entity:          Space Needle   Category:    Organization   Confidence Score:        0.922
+    Entity:          2              Category:    Quantity       Confidence Score:        0.8
 
 """
 
@@ -63,7 +63,7 @@ class RecognizeEntitiesSampleAsync(object):
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: \t", entity.name, "\tType: \t", entity.type,
+                print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
                       "\tConfidence Score: \t", round(entity.score, 3))
         # [END batch_recognize_entities_async]
 

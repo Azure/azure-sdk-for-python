@@ -13,7 +13,7 @@ from azure.core.exceptions import (
 )
 from ._models import (
     RecognizeEntitiesResult,
-    NamedEntity,
+    CategorizedEntity,
     TextDocumentStatistics,
     RecognizeLinkedEntitiesResult,
     RecognizePiiEntitiesResult,
@@ -120,7 +120,7 @@ def language_result(language):
 def entities_result(entity):
     return RecognizeEntitiesResult(
         id=entity.id,
-        entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
@@ -129,7 +129,7 @@ def entities_result(entity):
 def pii_entities_result(entity):
     return RecognizePiiEntitiesResult(
         id=entity.id,
-        entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 

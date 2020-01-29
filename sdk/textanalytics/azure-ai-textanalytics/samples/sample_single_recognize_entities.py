@@ -25,27 +25,27 @@ USAGE:
 
 OUTPUT:
     Entity: Microsoft
-    Type: Organization
+    Category: Organization
     Confidence Score: 1.000
 
     Entity: Bill Gates
-    Type: Person
+    Category: Person
     Confidence Score: 1.000
 
     Entity: Paul Allen
-    Type: Person
+    Category: Person
     Confidence Score: 0.999
 
     Entity: April 4, 1975
-    Type: DateTime
+    Category: DateTime
     Confidence Score: 0.800
 
     Entity: Altair
-    Type: Organization
+    Category: Organization
     Confidence Score: 0.525
 
     Entity: 8800
-    Type: Quantity
+    Category: Quantity
     Confidence Score: 0.80
 """
 
@@ -72,8 +72,8 @@ class SingleRecognizeEntitiesSample(object):
         )
 
         for entity in result.entities:
-            print("Entity: {}".format(entity.name))
-            print("Type: {}".format(entity.type))
+            print("Entity: {}".format(entity.text))
+            print("Category: {}".format(entity.category))
             print("Confidence Score: {0:.3f}\n".format(entity.score))
         # [END single_recognize_entities]
 
