@@ -8,8 +8,8 @@ import sys
 import pytest
 from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
 
-# Ignore async tests on unsupported platforms
-if sys.version_info < (3, 5):
+
+if sys.version_info < (3, 5, 3):
     collect_ignore_glob = ["*_async.py"]
 
 
@@ -93,8 +93,3 @@ def live_user_details():
         pytest.skip("To test username/password authentication, set $AZURE_USERNAME, $AZURE_PASSWORD, $USER_TENANT")
     else:
         return user_details
-
-
-@pytest.fixture()
-def managed_identity_id():
-    return os.environ.get("MANAGED_IDENTITY_ID")

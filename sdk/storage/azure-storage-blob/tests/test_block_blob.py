@@ -31,11 +31,11 @@ LARGE_BLOB_SIZE = 64 * 1024 + 5
 
 class StorageBlockBlobTest(StorageTestCase):
 
-    def _setup(self, name, key):
+    def _setup(self, storage_account, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self.account_url(name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
@@ -82,7 +82,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_block(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -94,7 +94,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_block_unicode(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -105,7 +105,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_block_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -115,7 +115,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_block_list(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -134,7 +134,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_block_list_invalid_block_id(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -153,7 +153,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_block_list_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -170,7 +170,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_put_block_list_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
 
         # Arrange
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_client.stage_block('1', b'AAA')
@@ -189,7 +189,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -202,7 +202,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_block_list_uncommitted_blocks(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -226,7 +226,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_block_list_committed_blocks(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -253,7 +253,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_small_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = b'hello world'
@@ -275,7 +275,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_small_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = b'hello world'
@@ -295,7 +295,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_large_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -319,7 +319,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_large_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -341,7 +341,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_single_put(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -357,7 +357,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b''
@@ -373,7 +373,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = u'hello world'
@@ -389,7 +389,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -408,7 +408,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_from_bytes_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         lease = blob.acquire_lease()
@@ -427,7 +427,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -445,7 +445,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -467,7 +467,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -494,7 +494,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -507,7 +507,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -520,7 +520,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count_and_properties(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -539,7 +539,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -553,7 +553,7 @@ class StorageBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -571,7 +571,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -592,7 +592,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
@@ -614,7 +614,7 @@ class StorageBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
@@ -636,7 +636,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -665,7 +665,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -692,7 +692,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -716,7 +716,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_frm_stream_nonseek_chunk_upld_knwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -739,7 +739,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_from_stream_nonseek_chunk_upld_unkwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -761,7 +761,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -790,7 +790,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -812,7 +812,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_from_stream_chunk_upload_with_cntandrops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -840,7 +840,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_stream_chnked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -868,7 +868,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # parallel tests introduce random order of requests, can only run live
 
         # Arrange
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -892,7 +892,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_text(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -909,7 +909,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -923,7 +923,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -948,7 +948,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_text_data(LARGE_BLOB_SIZE)
@@ -965,7 +965,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -980,7 +980,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account.name, storage_account_key)
+        self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
