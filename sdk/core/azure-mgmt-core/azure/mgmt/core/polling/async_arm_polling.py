@@ -43,14 +43,14 @@ class AsyncARMPolling(ARMPolling):
             await self._poll()
         except BadStatus as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._response, error=err)
+            raise ARMError(self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
             self._operation.status = 'Failed'
-            raise ARMError(self._response, message=str(err), error=err)
+            raise ARMError(self._pipeline_response.http_response, message=str(err), error=err)
 
         except OperationFailed as err:
-            raise ARMError(self._response, error=err)
+            raise ARMError(self._pipeline_response.http_response, error=err)
 
     async def _poll(self):
         """Poll status of operation so long as operation is incomplete and
@@ -74,9 +74,9 @@ class AsyncARMPolling(ARMPolling):
             if self._operation.method == 'POST' and self._operation.location_url:
                 final_get_url = self._operation.location_url
             else:
-                final_get_url = self._operation.initial_response.request.url
-            self._response = await self.request_status(final_get_url)
-            self._operation.parse_resource(self._response)
+                final_get_url = self._operation.initial_response.http_response.request.url
+            self._pipeline_response = await self.request_status(final_get_url)
+            self._operation.parse_resource(self._pipeline_response)
 
     async def _sleep(self, delay):
         await self._transport.sleep(delay)
@@ -85,10 +85,11 @@ class AsyncARMPolling(ARMPolling):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
-        if self._response is None:
-            await self._sleep(0)
-        if self._response.headers.get('retry-after'):
-            await self._sleep(int(self._response.headers['retry-after']))
+        if self._pipeline_response is None:
+            return
+        response = self._pipeline_response.http_response
+        if response.headers.get('retry-after'):
+            await self._sleep(int(response.headers['retry-after']))
         else:
             await self._sleep(self._timeout)
 
@@ -96,18 +97,18 @@ class AsyncARMPolling(ARMPolling):
         """Update the current status of the LRO.
         """
         if self._operation.async_url:
-            self._response = await self.request_status(self._operation.async_url)
-            self._operation.set_async_url_if_present(self._response)
-            self._operation.get_status_from_async(self._response)
+            self._pipeline_response = await self.request_status(self._operation.async_url)
+            self._operation.set_async_url_if_present(self._pipeline_response.http_response)
+            self._operation.get_status_from_async(self._pipeline_response)
         elif self._operation.location_url:
-            self._response = await self.request_status(self._operation.location_url)
-            self._operation.set_async_url_if_present(self._response)
-            self._operation.get_status_from_location(self._response)
+            self._pipeline_response = await self.request_status(self._operation.location_url)
+            self._operation.set_async_url_if_present(self._pipeline_response.http_response)
+            self._operation.get_status_from_location(self._pipeline_response)
         elif self._operation.method == "PUT":
-            initial_url = self._operation.initial_response.request.url
-            self._response = await self.request_status(initial_url)
-            self._operation.set_async_url_if_present(self._response)
-            self._operation.get_status_from_resource(self._response)
+            initial_url = self._operation.initial_response.http_response.request.url
+            self._pipeline_response = await self.request_status(initial_url)
+            self._operation.set_async_url_if_present(self._pipeline_response.http_response)
+            self._operation.get_status_from_resource(self._pipeline_response)
         else:
             raise BadResponse("Unable to find status link for polling.")
 
@@ -116,10 +117,10 @@ class AsyncARMPolling(ARMPolling):
 
         This method re-inject 'x-ms-client-request-id'.
 
-        :rtype: requests.Response
+        :rtype: azure.core.pipeline.PipelineResponse
         """
         request = self._client.get(status_link)
         # ARM requires to re-inject 'x-ms-client-request-id' while polling
         if 'request_id' not in self._operation_config:
-            self._operation_config['request_id'] = self._operation.initial_response.request.headers['x-ms-client-request-id']
-        return (await self._client._pipeline.run(request, stream=False, **self._operation_config)).http_response
+            self._operation_config['request_id'] = self._operation.initial_response.http_response.request.headers['x-ms-client-request-id']
+        return (await self._client._pipeline.run(request, stream=False, **self._operation_config))
