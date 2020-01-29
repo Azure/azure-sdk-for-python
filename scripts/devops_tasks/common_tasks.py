@@ -299,7 +299,7 @@ def parse_require(req):
 
 
 # This method installs package from a pre-built whl
-def install_package_from_whl(package_name, whl_directory, working_dir):
+def install_package_from_whl(package_name, whl_directory, working_dir, python_sym_link = sys.executable):
     if not os.path.exists(whl_directory):
         logging.error("Whl directory is incorrect")
         exit(1)
@@ -312,7 +312,7 @@ def install_package_from_whl(package_name, whl_directory, working_dir):
         exit(1)
     
     package_whl_path = paths[0]
-    commands = [sys.executable, "-m", "pip", "install", package_whl_path]
+    commands = [python_sym_link, "-m", "pip", "install", package_whl_path]
     run_check_call(commands, working_dir)
     logging.info("Installed package {}".format(package_name))
 

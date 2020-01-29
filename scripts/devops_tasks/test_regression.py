@@ -26,6 +26,7 @@ GIT_MASTER_BRANCH = "master"
 VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
+COSMOS_TEST_ARG = '-m="not cosmosEmulator"'
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -40,36 +41,37 @@ def run_regression_test(pkg_name, dep_packages, whl_directory, isLatestDepend, t
     venv_path = os.path.join(tmp_path, VENV_NAME)
     #create a virtual environment to run test
     create_virtual_env(venv_path)
+    python_sym_link = os.path.abspath(os.path.join(venv_path, "Scripts", "python"))
 
     logging.info("Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages))
     # Run test for each dependent package in its own virtual environment
     for dep_pkg_path in dep_packages:
         dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
         logging.info("Starting regression test of {0} against released {1}".format(pkg_name, dep_pkg_name))
-        pre_test_step(dep_pkg_path, whl_directory, pkg_name, venv_path, working_dir)
+        pre_test_step(dep_pkg_path, whl_directory, pkg_name, venv_path, working_dir, python_sym_link)
         try:
-            run_test(dep_pkg_path, pkg_name, isLatestDepend)
+            run_test(dep_pkg_path, pkg_name, isLatestDepend, python_sym_link)
         finally:
-            post_test_step(venv_path, dep_pkg_path)
+            post_test_step(venv_path, dep_pkg_path, python_sym_link)
         logging.info("Completed regression test of {0} against released {1}".format(pkg_name, dep_pkg_name))
-    logging.info("Completed regression test for [{0}]".format(pkg_name))
 
 
-def pre_test_step(dependent_pkg_path, whl_directory, pkg_name, venv_path, working_dir):
+def pre_test_step(dependent_pkg_path, whl_directory, pkg_name, venv_path, working_dir, python_sym_link):
     # This function will execute any pre step required before running test for individual dependent packages
     # pre steps are like: checking out master branch to revert code repo
     # start and activate new virtual environment
     # install pre build whl for the package for which regression is tested. (for e.g. azure-core)
     logging.info("Running pre-run-step for package: {}".format(dependent_pkg_path))
     # activate virtual env and change working directory to package root
-    process_virtual_env(True, venv_path)
+    process_virtual_env(True, venv_path, python_sym_link)
     # install packages required to run tests after updating relative referefnce to abspath
-    install_requirements(test_tools_req_file, working_dir)
+    install_requirements(test_tools_req_file, working_dir, python_sym_link)
     # Install pre-built whl for current package
-    install_package_from_whl(pkg_name, whl_directory, root_dir)    
+    install_package_from_whl(pkg_name, whl_directory, root_dir, python_sym_link)
 
 
-def run_test(dependent_pkg_path, package_name, isLatest):
+
+def run_test(dependent_pkg_path, package_name, isLatest, python_sym_link):
     # find GA released tags for package and run test using that code base
     dep_pkg_name, _, _, _ = parse_setup(dependent_pkg_path)
     release_tag = get_release_tag(dep_pkg_name, isLatest)
@@ -81,29 +83,29 @@ def run_test(dependent_pkg_path, package_name, isLatest):
     checkout_code_repo(release_tag, dependent_pkg_path)
     
     # install dependent package from source
-    install_packages(dependent_pkg_path, package_name)
+    install_packages(dependent_pkg_path, package_name, python_sym_link)
     logging.info("Running test for {}".format(dependent_pkg_path))
-    run_check_call(["pytest", "--ignore=azure", dependent_pkg_path], dependent_pkg_path)
+    run_check_call([python_sym_link, "-m", "pytest", "--verbose", COSMOS_TEST_ARG, dependent_pkg_path], root_dir)
 
 
-def install_packages(dependent_pkg_path, package_name):
+def install_packages(dependent_pkg_path, package_name, python_sym_link):
      # install dev requirement but skip already installed package which is being tested
     filtered_dev_req_path = filter_dev_requirements(dependent_pkg_path, [package_name,], dependent_pkg_path)
     logging.info("Installing filtered dev requirements from {}".format(filtered_dev_req_path))
-    install_requirements(filtered_dev_req_path, dependent_pkg_path)    
+    install_requirements(filtered_dev_req_path, dependent_pkg_path, python_sym_link)    
     # install dependent package which is being verified
-    run_check_call([sys.executable, "-m", "pip", "install", dependent_pkg_path], root_dir)   
+    run_check_call([python_sym_link, "-m", "pip", "install", dependent_pkg_path], root_dir)   
 
 
-def post_test_step(venv_path, dependent_pkg_path):
+def post_test_step(venv_path, dependent_pkg_path, python_sym_link):
     # This function can be used to reset code repo to master branch and also to deactivate virtual env
     # revert to master branch
     run_check_call(["git", "clean", "-fd"], dependent_pkg_path)
     run_check_call(["git", "checkout", GIT_MASTER_BRANCH], dependent_pkg_path)
-    process_virtual_env(False, venv_path)
+    process_virtual_env(False, venv_path, python_sym_link)
 
 
-def process_virtual_env(activate_env, venv_path):
+def process_virtual_env(activate_env, venv_path, python_sym_link):
     # for now this will work only on Windows. I will update this to make it platform independent
     if activate_env:
         # clear any previously installed packages
@@ -126,9 +128,9 @@ def create_virtual_env(venv_path):
     run_check_call([sys.executable, "-m", "venv", "ENV_DIR", venv_path], root_dir)
 
 
-def install_requirements(req_path, working_dir):
+def install_requirements(req_path, working_dir, python_sym_link):
     # install packages required to run tests
-    run_check_call([sys.executable, "-m", "pip", "install", "-r", req_path], working_dir)   
+    run_check_call([python_sym_link, "-m", "pip", "install", "-r", req_path], working_dir)   
 
 
 # This method identifies package dependency map for all packages in azure sdk
@@ -138,7 +140,7 @@ def find_package_dependency(glob_string, repo_root_dir):
     for pkg_root in package_paths:
         dependent_pkg_name, _, _, requires = parse_setup(pkg_root)
         # todo: This should be removed once issue in storage file share test is resolved
-        if "storage" in dependent_pkg_name:
+        if "cosmos" not in dependent_pkg_name:
             continue
         # Get a list of package names from install requires
         required_pkgs = [parse_require(r)[0] for r in requires]
