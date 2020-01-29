@@ -2,6 +2,7 @@ parameters:
   BeforePublishSteps: []
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
+  BuildDocs: true
 
 steps:
   - script: |
@@ -57,6 +58,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
@@ -79,7 +81,7 @@ steps:
     artifact: packages 
 
   - task: PublishBuildArtifacts@1
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
     displayName: 'Publish Artifacts'
     inputs:
       artifactName: 'documentation'

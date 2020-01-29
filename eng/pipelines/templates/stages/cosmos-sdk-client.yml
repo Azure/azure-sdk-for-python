@@ -3,6 +3,8 @@ parameters:
   ServiceDirectory: not-specified
   EmulatorMsiUrl: 'https://aka.ms/cosmosdb-emulator'
   EmulatorStartParameters: ''
+  InjectedPackages: ''
+  BuildDocs: true
 
 stages:
   - stage: Build
@@ -12,7 +14,8 @@ stages:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           # Skip emulator tests in the CI run
           TestMarkArgument: not cosmosEmulator
-
+          BuildDocs: ${{parameters.BuildDocs}}
+          InjectedPackages: ${{parameters.InjectedPackages}}
       - job: Emulator
         strategy:
           matrix:
@@ -42,6 +45,8 @@ stages:
               PythonVersion: $(PythonVersion)
               OSName: $(OSName)
               ToxTestEnv: 'whl,sdist'
+              BuildDocs: ${{parameters.BuildDocs}}
+              InjectedPackages: ${{parameters.InjectedPackages}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

@@ -47,12 +47,13 @@ class SingleExtractKeyPhrasesSampleAsync(object):
     async def extract_key_phrases_async(self):
         # [START single_extract_key_phrases_async]
         from azure.ai.textanalytics.aio import single_extract_key_phrases
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
 
         text = "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle."
 
         result = await single_extract_key_phrases(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             language="en"
         )

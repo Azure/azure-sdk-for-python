@@ -108,7 +108,7 @@ class ServicePropertiesTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_blob_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         # Act
         resp = bsc.set_service_properties(
             analytics_logging=BlobAnalyticsLogging(),
@@ -128,7 +128,7 @@ class ServicePropertiesTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_default_service_version(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         # Act
         bsc.set_service_properties(target_version='2014-02-14')
 
@@ -138,7 +138,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_delete_retention_policy(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         delete_retention_policy = RetentionPolicy(enabled=True, days=2)
 
         # Act
@@ -150,7 +150,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_delete_retention_policy_edge_cases(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         delete_retention_policy = RetentionPolicy(enabled=True, days=1)
         bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
@@ -188,7 +188,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_disabled_delete_retention_policy(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         delete_retention_policy = RetentionPolicy(enabled=False)
 
         # Act
@@ -200,7 +200,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_static_website_properties(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         static_website = StaticWebsite(
             enabled=True,
             index_document="index.html",
@@ -215,7 +215,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_static_website_properties_missing_field(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
 
         # Case1: Arrange both missing
         static_website = StaticWebsite(enabled=True)
@@ -249,7 +249,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_disabled_static_website_properties(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         static_website = StaticWebsite(enabled=False, index_document="index.html",
                                        error_document404_path="errors/error/404error.html")
 
@@ -262,7 +262,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_static_website_props_dont_impact_other_props(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -300,7 +300,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -312,7 +312,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -324,7 +324,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -337,7 +337,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -364,14 +364,14 @@ class ServicePropertiesTest(StorageTestCase):
     # --Test cases for errors ---------------------------------------
     @GlobalStorageAccountPreparer()
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
     @GlobalStorageAccountPreparer()
     def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -382,7 +382,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 

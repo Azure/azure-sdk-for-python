@@ -13,26 +13,37 @@ The policy caches the challenge and thus knows how to authenticate future reques
 requirements can change. For example, a vault may move to a new tenant. In such a case the policy will attempt the
 protocol again.
 """
+from typing import TYPE_CHECKING
 
-from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport import HttpResponse
 
-from . import ChallengeAuthPolicyBase, HttpChallenge, HttpChallengeCache
+from . import HttpChallengeCache
+from .challenge_auth_policy import _enforce_tls, _get_challenge_request, _update_challenge, ChallengeAuthPolicyBase
+
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline import PipelineRequest
+    from azure.core.pipeline.transport import AsyncHttpResponse
+    from . import HttpChallenge
 
 
 class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    async def send(self, request: PipelineRequest) -> HttpResponse:
-        self._enforce_tls(request)
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
+        self._credential = credential
+        super(AsyncChallengeAuthPolicy, self).__init__(**kwargs)
+
+    async def send(self, request: "PipelineRequest") -> "AsyncHttpResponse":
+        _enforce_tls(request)
 
         challenge = HttpChallengeCache.get_challenge_for_url(request.http_request.url)
         if not challenge:
-            challenge_request = self._get_challenge_request(request)
+            challenge_request = _get_challenge_request(request)
             challenger = await self.next.send(challenge_request)
             try:
-                challenge = self._update_challenge(request, challenger)
+                challenge = _update_challenge(request, challenger)
             except ValueError:
                 # didn't receive the expected challenge -> nothing more this policy can do
                 return challenger
@@ -46,7 +57,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
 
             # cached challenge could be outdated; maybe this response has a new one?
             try:
-                challenge = self._update_challenge(request, response)
+                challenge = _update_challenge(request, response)
             except ValueError:
                 # 401 with no legible challenge -> nothing more this policy can do
                 return response
@@ -56,7 +67,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
 
         return response
 
-    async def _handle_challenge(self, request: PipelineRequest, challenge: HttpChallenge) -> None:
+    async def _handle_challenge(self, request: "PipelineRequest", challenge: "HttpChallenge") -> None:
         """authenticate according to challenge, add Authorization header to request"""
 
         if self._need_new_token:
@@ -65,4 +76,4 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
             self._token = await self._credential.get_token(scope)
 
         # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
-        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
+        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore

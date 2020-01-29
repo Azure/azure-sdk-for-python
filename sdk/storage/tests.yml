@@ -8,10 +8,9 @@ resources:
       endpoint: azure
 
 jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+  - template: ./tests_invoke.yml
     parameters:
-      BuildTargetingString: azure-storage-*
-      ServiceDirectory: storage
+      InjectedPackages: $(InjectedPackages)
       EnvVars:
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
         STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)

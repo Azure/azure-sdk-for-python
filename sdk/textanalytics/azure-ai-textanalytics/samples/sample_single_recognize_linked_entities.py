@@ -72,14 +72,14 @@ class SingleRecognizeLinkedEntitiesSample(object):
 
     def recognize_linked_entities(self):
         # [START single_recognize_linked_entities]
-        from azure.ai.textanalytics import single_recognize_linked_entities
+        from azure.ai.textanalytics import single_recognize_linked_entities, TextAnalyticsApiKeyCredential
 
         text = "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia. " \
                "Its native name is Rapa Nui."
 
         result = single_recognize_linked_entities(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             language="en"
         )
