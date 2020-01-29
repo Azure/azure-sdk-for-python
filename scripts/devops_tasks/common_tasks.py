@@ -20,7 +20,6 @@ import textwrap
 import io
 import re
 import pdb
-from enum import Enum
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement
