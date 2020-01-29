@@ -19,7 +19,7 @@ from .._models import (
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._credential import TextAnalyticsAPIKeyCredential
+    from .._credential import TextAnalyticsApiKeyCredential
 
 
 __all__ = [
@@ -35,7 +35,7 @@ __all__ = [
 
 async def single_detect_language(
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         country_hint: Optional[str] = "US",
         **kwargs: Any
@@ -95,7 +95,7 @@ async def single_detect_language(
 
 async def single_recognize_entities(
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -154,7 +154,7 @@ async def single_recognize_entities(
 
 async def single_recognize_pii_entities(
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -214,7 +214,7 @@ async def single_recognize_pii_entities(
 
 async def single_recognize_linked_entities(
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -274,7 +274,7 @@ async def single_recognize_linked_entities(
 
 async def single_extract_key_phrases(
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -333,7 +333,7 @@ async def single_extract_key_phrases(
 
 async def single_analyze_sentiment(
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any

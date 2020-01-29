@@ -29,7 +29,7 @@ from ._response_handlers import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._credential import TextAnalyticsAPIKeyCredential
+    from ._credential import TextAnalyticsApiKeyCredential
     from ._models import (
         DetectLanguageInput,
         TextDocumentInput,
@@ -84,7 +84,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[TextAnalyticsAPIKeyCredential, TokenCredential], Any) -> None
+        # type: (str, Union[TextAnalyticsApiKeyCredential, TokenCredential], Any) -> None
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline

@@ -70,7 +70,7 @@ __version__ = VERSION
 
 def single_detect_language(
             endpoint,  # type: str
-            credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
+            credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
             input_text,  # type: str
             country_hint="US",  # type: Optional[str]
             **kwargs  # type: Any
@@ -131,7 +131,7 @@ def single_detect_language(
 
 def single_recognize_entities(
         endpoint,  # type: str
-        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -191,7 +191,7 @@ def single_recognize_entities(
 
 def single_recognize_pii_entities(
         endpoint,  # type: str
-        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -252,7 +252,7 @@ def single_recognize_pii_entities(
 
 def single_recognize_linked_entities(
         endpoint,  # type: str
-        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -313,7 +313,7 @@ def single_recognize_linked_entities(
 
 def single_extract_key_phrases(
         endpoint,  # type: str
-        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -373,7 +373,7 @@ def single_extract_key_phrases(
 
 def single_analyze_sentiment(
         endpoint,  # type: str
-        credential,  # type: Union[TextAnalyticsAPIKeyCredential, TokenCredential]
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any

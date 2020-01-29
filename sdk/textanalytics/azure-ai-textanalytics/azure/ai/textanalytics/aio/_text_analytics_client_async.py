@@ -40,7 +40,7 @@ from .._models import (
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._credential import TextAnalyticsAPIKeyCredential
+    from .._credential import TextAnalyticsApiKeyCredential
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -86,7 +86,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     def __init__(  # type: ignore
         self,
         endpoint: str,
-        credential: Union["TextAnalyticsAPIKeyCredential", "AsyncTokenCredential"],
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
