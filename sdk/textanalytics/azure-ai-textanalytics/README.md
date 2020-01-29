@@ -76,21 +76,21 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a `TextAnalyticsAPIKeyCredential` or as a token from Azure Active Directory.
+The `credential` parameter may be provided as a `TextAnalyticsApiKeyCredential` or as a token from Azure Active Directory.
 See the full details regarding [authentication](https://docs.microsoft.com/azure/cognitive-services/authentication) of 
 cognitive services.
 
 1. To use an [API key](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource), 
-   pass the key as a string into an instance of `TextAnalyticsAPIKeyCredential("<api_key>")`. 
+   pass the key as a string into an instance of `TextAnalyticsApiKeyCredential("<api_key>")`. 
    The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
     ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
     
     Use the key as the credential parameter to authenticate the client:
     ```python
-    from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+    from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-    credential = TextAnalyticsAPIKeyCredential("<api_key>")
+    credential = TextAnalyticsApiKeyCredential("<api_key>")
     text = TextAnalyticsClient(endpoint="https://westus2.api.cognitive.microsoft.com/", credential=credential)
     ```
 
@@ -190,9 +190,9 @@ The following section provides several code snippets covering some of the most c
 Analyze sentiment in a batch of documents.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
     "I did not like the restaurant. The food was too spicy.",
@@ -220,9 +220,9 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 Recognize entities in a batch of documents.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -248,9 +248,9 @@ and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-a
 Recognize Personally Identifiable Information (PII) entities in a batch of documents.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
     "The employee's SSN is 555-55-5555.",
@@ -274,9 +274,9 @@ Please refer to the service documentation for [supported PII entity types](https
 Recognize linked entities in a batch of documents.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
     "Microsoft was founded by Bill Gates and Paul Allen.",
@@ -306,9 +306,9 @@ and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-a
 Extract key phrases in a batch of documents.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
     "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
@@ -331,9 +331,9 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 Detect language in a batch of documents.
 
 ```python
-from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsAPIKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
     
-text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsAPIKeyCredential(key))
+text_analytics_client = TextAnalyticsClient(endpoint, TextAnalyticsApiKeyCredential(key))
 
 documents = [
     "This is written in English.",

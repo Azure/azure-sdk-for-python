@@ -45,13 +45,13 @@ class SingleRecognizePiiEntitiesSample(object):
 
     def recognize_pii_entities(self):
         # [START single_recognize_pii_entities]
-        from azure.ai.textanalytics import single_recognize_pii_entities, TextAnalyticsAPIKeyCredential
+        from azure.ai.textanalytics import single_recognize_pii_entities, TextAnalyticsApiKeyCredential
 
         text = "The employee's ABA number is 111000025 and his SSN is 555-55-5555."
 
         result = single_recognize_pii_entities(
             endpoint=self.endpoint,
-            credential=TextAnalyticsAPIKeyCredential(self.key),
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             language="en"
         )

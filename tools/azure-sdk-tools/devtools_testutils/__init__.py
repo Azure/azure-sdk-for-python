@@ -1,6 +1,6 @@
 from .mgmt_testcase import (AzureMgmtTestCase, AzureMgmtPreparer)
 from .azure_testcase import AzureTestCase, is_live
-from .resource_testcase import (FakeResource, ResourceGroupPreparer)
+from .resource_testcase import (FakeResource, ResourceGroupPreparer, RandomNameResourceGroupPreparer)
 from .storage_testcase import (FakeStorageAccount, StorageAccountPreparer)
 from .keyvault_preparer import KeyVaultPreparer
 
@@ -9,5 +9,5 @@ __all__ = [
     'FakeResource', 'ResourceGroupPreparer',
     'FakeStorageAccount', 'StorageAccountPreparer',
     'AzureTestCase', 'is_live',
-    "KeyVaultPreparer"
+    'KeyVaultPreparer', 'RandomNameResourceGroupPreparer'
 ]

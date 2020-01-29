@@ -49,10 +49,10 @@ async def single_detect_language(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to detect language from.
         Limit text length to 5120 chars.
@@ -109,10 +109,10 @@ async def single_recognize_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
         Limit text length to 5120 chars.
@@ -169,10 +169,10 @@ async def single_recognize_pii_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
         Limit text length to 5120 chars.
@@ -229,10 +229,10 @@ async def single_recognize_linked_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
         Limit text length to 5120 chars.
@@ -288,10 +288,10 @@ async def single_extract_key_phrases(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to extract key phrases from.
         Limit text length to 5120 chars.
@@ -348,10 +348,10 @@ async def single_analyze_sentiment(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential or
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to analyze sentiment from.
         Limit text length to 5120 chars.
