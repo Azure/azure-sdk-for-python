@@ -173,7 +173,7 @@ class StorageClientTest(StorageTestCase):
             blob_client.create_append_blob(cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
-        self.assertEqual(str(error.value), "The current API version '2019-02-02' does not support the following parameters: ['cpk_scope_info']")
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
 
     @GlobalStorageAccountPreparer()
     def test_old_api_append_block_succeeds(self, resource_group, location, storage_account, storage_account_key):
@@ -214,7 +214,7 @@ class StorageClientTest(StorageTestCase):
             blob_client.append_block(b'testdata', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
-        self.assertEqual(str(error.value), "The current API version '2019-02-02' does not support the following parameters: ['cpk_scope_info']")
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
 
     @GlobalStorageAccountPreparer()
     def test_old_api_create_page_blob_succeeds(self, resource_group, location, storage_account, storage_account_key):
@@ -253,7 +253,7 @@ class StorageClientTest(StorageTestCase):
             blob_client.create_page_blob(1024, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
-        self.assertEqual(str(error.value), "The current API version '2019-02-02' does not support the following parameters: ['cpk_scope_info']")
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
 
     @GlobalStorageAccountPreparer()
     def test_old_api_upload_page_succeeds(self, resource_group, location, storage_account, storage_account_key):
@@ -294,7 +294,7 @@ class StorageClientTest(StorageTestCase):
             blob_client.upload_page(512 * b'0', 0, 512, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
-        self.assertEqual(str(error.value), "The current API version '2019-02-02' does not support the following parameters: ['cpk_scope_info']")
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
 
     @GlobalStorageAccountPreparer()
     def test_old_api_clear_page_succeeds(self, resource_group, location, storage_account, storage_account_key):
@@ -335,7 +335,7 @@ class StorageClientTest(StorageTestCase):
             blob_client.clear_page(0, 512, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
-        self.assertEqual(str(error.value), "The current API version '2019-02-02' does not support the following parameters: ['cpk_scope_info']")
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
 
     @GlobalStorageAccountPreparer()
     def test_old_api_resize_succeeds(self, resource_group, location, storage_account, storage_account_key):
@@ -376,8 +376,7 @@ class StorageClientTest(StorageTestCase):
             blob_client.resize_blob(512, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
-        self.assertEqual(str(error.value), "The current API version '2019-02-02' does not support the following parameters: ['cpk_scope_info']")
-
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
 
     @GlobalStorageAccountPreparer()
     def test_new_api_get_page_managed_disk_diff_fails(self, resource_group, location, storage_account, storage_account_key):

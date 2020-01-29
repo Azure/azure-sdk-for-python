@@ -20,7 +20,12 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import (
+    StorageAccountHostsMixin,
+    parse_connection_str,
+    parse_query,
+    check_parameter_api_version,
+    check_operation_api_version)
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
@@ -981,6 +986,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def create_page_blob(  # type: ignore
             self, size,  # type: int
@@ -1044,7 +1050,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        self._check_parameter_api_version('create_page_blob', **kwargs)
         options = self._create_page_blob_options(
             size,
             content_settings=content_settings,
@@ -1095,6 +1100,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
@@ -1141,7 +1147,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        self._check_parameter_api_version('create_append_blob', **kwargs)
         options = self._create_append_blob_options(
             content_settings=content_settings,
             metadata=metadata,
@@ -2057,6 +2062,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
+    @check_operation_api_version('2019-07-07')
     @distributed_trace
     def get_managed_disk_page_range_diff( # type: ignore
             self, offset=None, # type: Optional[int]
@@ -2114,7 +2120,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
-        self._check_operation_api_version('get_managed_disk_page_range_diff', '2019-07-07')
         options = self._get_page_ranges_options(
             offset=offset,
             length=length,
@@ -2211,6 +2216,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def resize_blob(self, size, **kwargs):
         # type: (int, **Any) -> Dict[str, Union[str, datetime]]
@@ -2256,7 +2262,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        self._check_parameter_api_version('resize_blob', **kwargs)
         options = self._resize_blob_options(size, **kwargs)
         try:
             return self._client.page_blob.resize(**options) # type: ignore
@@ -2312,6 +2317,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def upload_page( # type: ignore
             self, page,  # type: bytes
@@ -2387,7 +2393,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        self._check_parameter_api_version('upload_page', **kwargs)
         options = self._upload_page_options(
             page=page,
             offset=offset,
@@ -2456,6 +2461,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def upload_pages_from_url(self, source_url,  # type: str
                               offset,  # type: int
@@ -2545,7 +2551,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
-        self._check_parameter_api_version('upload_pages_from_url', **kwargs)
         options = self._upload_pages_from_url_options(
             source_url=source_url,
             offset=offset,
@@ -2596,6 +2601,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def clear_page(self, offset, length, **kwargs):
         # type: (int, int, **Any) -> Dict[str, Union[str, datetime]]
@@ -2651,7 +2657,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        self._check_parameter_api_version('clear_page', **kwargs)
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return self._client.page_blob.clear_pages(**options)  # type: ignore
@@ -2711,6 +2716,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def append_block( # type: ignore
             self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
@@ -2781,7 +2787,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        self._check_parameter_api_version('append_block', **kwargs)
         options = self._append_block_options(
             data,
             length=length,
@@ -2850,6 +2855,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
+    @check_parameter_api_version(cpk_scope_info='2019-07-07')
     @distributed_trace
     def append_block_from_url(self, copy_source_url,  # type: str
                               source_offset=None,  # type: Optional[int]
@@ -2931,7 +2937,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
-        self._check_parameter_api_version('append_block_from_url', **kwargs)
         options = self._append_block_from_url_options(
             copy_source_url,
             source_offset=source_offset,
