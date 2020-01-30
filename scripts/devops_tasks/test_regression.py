@@ -22,6 +22,7 @@ from common_tasks import (
     filter_dev_requirements
 )
 from git_helper import get_release_tag, checkout_code_repo, clone_repo
+from pip._internal.operations import freeze
 
 AZURE_GLOB_STRING = "azure*"
 
@@ -141,7 +142,7 @@ class RegressionTest:
 
         try:
             self.context.initialize(dep_pkg_path)
-            # install packages required to run tests after updating relative reference to abspath
+            # install packages required to run tests
             run_check_call(
                 [
                     self.context.python_executable,
@@ -170,7 +171,7 @@ class RegressionTest:
         self._install_packages(dep_pkg_path, self.context.package_name)
 
         #  Ensure correct version of package is installed
-        if not is_package_installed(self.context.package_name, self.context.pkg_version):
+        if not self._is_package_installed(self.context.package_name, self.context.pkg_version):
             logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
             sys.exit(1)
 
