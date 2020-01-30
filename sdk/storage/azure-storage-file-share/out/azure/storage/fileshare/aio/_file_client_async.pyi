@@ -7,8 +7,9 @@ from .._file_client import ShareFileClient as ShareFileClientBase
 from .._generated.aio import AzureFileStorage
 from .._generated.models import FileHTTPHeaders, HandleItem, StorageErrorException
 from .._generated.version import VERSION
-from .._models import ContentSettings, FileProperties, NTFSAttributes, ShareProperties
+from .._models import ContentSettings, CopyFileSmbInfo, FileProperties, NTFSAttributes, ShareProperties
 from .._parser import _datetime_to_str, _get_file_permission
+from .._serialize import get_access_conditions, validate_copy_mode
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
@@ -16,6 +17,7 @@ from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import FileChunkUploader, IterStreamer, upload_data_chunks
 from ._download_async import StorageStreamDownloader
+from ._lease_async import ShareFileLeaseClient
 from ._models import HandlesPaged
 from azure.core.async_paging import AsyncItemPaged
 from datetime import datetime
@@ -23,9 +25,10 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     def __init__(self, account_url: str, share_name: str, file_path: str, snapshot: Optional[Union[str, Dict[str, Any]]]=..., credential: Optional[Any]=..., **kwargs: Any) -> None: ...
+    async def acquire_lease(self, lease_id: Optional[str]=..., **kwargs: Any) -> BlobLeaseClient: ...
     async def create_file(self, size: int, file_attributes: Union[str, NTFSAttributes]=..., file_creation_time: Union[str, datetime]=..., file_last_write_time: Union[str, datetime]=..., file_permission: Optional[str]=..., permission_key: Optional[str]=..., **kwargs: Any) -> Dict[str, Any]: ...
     async def upload_file(self, data: Any, length: Optional[int]=..., file_attributes: Union[str, NTFSAttributes]=..., file_creation_time: Union[str, datetime]=..., file_last_write_time: Union[str, datetime]=..., file_permission: Optional[str]=..., permission_key: Optional[str]=..., **kwargs: Any) -> Dict[str, Any]: ...
-    async def start_copy_from_url(self, source_url: str, **kwargs: Any) -> Any: ...
+    async def start_copy_from_url(self, source_url: str, file_permission_copy_mode: Optional[str]=..., file_permission: Optional[str]=..., file_permission_key: Optional[str]=..., copy_file_smb_info: Any=..., **kwargs: Any) -> Any: ...
     async def abort_copy(self, copy_id: Union[str, FileProperties], **kwargs: Any) -> None: ...
     async def download_file(self, offset: Optional[int]=..., length: Optional[int]=..., **kwargs: Any) -> Iterable[bytes]: ...
     async def delete_file(self, **kwargs: Any) -> None: ...

@@ -5,7 +5,7 @@
 from ._directory_client import ShareDirectoryClient as ShareDirectoryClient
 from ._file_client import ShareFileClient as ShareFileClient
 from ._generated.models import HandleItem as HandleItem
-from ._models import AccessPolicy as AccessPolicy, ContentSettings as ContentSettings, CorsRule as CorsRule, DirectoryProperties as DirectoryProperties, FileProperties as FileProperties, FileSasPermissions as FileSasPermissions, Handle as Handle, Metrics as Metrics, NTFSAttributes as NTFSAttributes, RetentionPolicy as RetentionPolicy, ShareProperties as ShareProperties, ShareSasPermissions as ShareSasPermissions
+from ._models import AccessPolicy as AccessPolicy, ContentSettings as ContentSettings, CopyFileSmbInfo as CopyFileSmbInfo, CorsRule as CorsRule, DirectoryProperties as DirectoryProperties, FileProperties as FileProperties, FileSasPermissions as FileSasPermissions, Handle as Handle, Metrics as Metrics, NTFSAttributes as NTFSAttributes, RetentionPolicy as RetentionPolicy, ShareProperties as ShareProperties, ShareSasPermissions as ShareSasPermissions
 from ._share_client import ShareClient as ShareClient
 from ._share_service_client import ShareServiceClient as ShareServiceClient
 from ._shared.models import AccountSasPermissions as AccountSasPermissions, LocationMode as LocationMode, ResourceTypes as ResourceTypes, StorageErrorCode as StorageErrorCode
