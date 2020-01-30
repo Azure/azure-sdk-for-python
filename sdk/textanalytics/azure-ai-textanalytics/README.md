@@ -130,27 +130,11 @@ cognitive services.
 The Text Analytics client library provides a [TextAnalyticsClient](https://aka.ms/azsdk-python-textanalytics-textanalyticsclient) to do analysis on batches of documents.
 It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction. 
 
-### Single text operations
-The Text Analytics client library also provides module-level operations which can be performed on a single string
-rather than a batch of documents. Each synchronous and asynchronous batching operation has a singular counterpart. 
-The endpoint and credential are passed in with the desired text and other optional parameters, e.g. 
-[single_analyze_sentiment()](https://aka.ms/azsdk-python-textanalytics-singleanalyzesentiment):
-
-```python
-from azure.ai.textanalytics import single_analyze_sentiment, TextAnalyticsApiKeyCredential
-
-credential = TextAnalyticsApiKeyCredential("<api_key>")
-text = "I did not like the restaurant. The food was too spicy."
-
-result = single_analyze_sentiment(endpoint=endpoint, credential=credential, input_text=text, language="en")
-```
-
 ### Input
 A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
-For the single text operations, the input document is simply passed as a string, e.g. `"hello world"`. 
-For the batched operations, the input is passed as a list of documents. 
+For the batched operations, the input is passed as a list of documents.
 
-Documents can be passed as a list of strings, e.g.
+The input can be passed as a list of strings, e.g.
 ```python
 docs = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
 ```
@@ -397,15 +381,6 @@ In a batch of documents:
 * Recognize personally identifiable information: [sample_recognize_pii_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py))
 * Extract key phrases: [sample_extract_key_phrases.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_key_phrases.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py))
 * Analyze sentiment: [sample_analyze_sentiment.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py))
-
-In a single string of text:
-* Detect language: [sample_single_detect_language.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_detect_language.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_detect_language_async.py))
-* Recognize entities: [sample_single_recognize_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_recognize_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_recognize_entities_async.py))
-* Recognize linked entities: [sample_single_recognize_linked_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_recognize_linked_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_recognize_linked_entities_async.py))
-* Recognize personally identifiable information: [sample_single_recognize_pii_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_recognize_pii_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_recognize_pii_entities_async.py))
-* Extract key phrases: [sample_single_extract_key_phrases.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_extract_key_phrases.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_extract_key_phrases_async.py))
-* Analyze sentiment: [sample_single_analyze_sentiment.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_analyze_sentiment.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_analyze_sentiment_async.py))
-
 
 ### Additional documentation
 For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview) on docs.microsoft.com.
