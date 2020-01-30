@@ -17,7 +17,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
     def test_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
-        response = text_analytics.detect_languages(
+        response = text_analytics.detect_language(
             inputs=[{
                 'id': 1,
                 'text': 'I had a wonderful experience! The rooms were wonderful and the staff was helpful.'

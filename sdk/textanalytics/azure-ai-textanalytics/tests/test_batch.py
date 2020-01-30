@@ -31,7 +31,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_successful_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -42,7 +42,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs, show_stats=True)
+        response = text_analytics.detect_language(docs, show_stats=True)
 
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
@@ -67,7 +67,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
 
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -86,7 +86,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": text}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
 
         for resp in response:
             self.assertTrue(resp.is_error)
@@ -320,7 +320,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             u""
         ]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -338,7 +338,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -416,7 +416,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = text_analytics.detect_languages(docs)
+            response = text_analytics.detect_language(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -433,7 +433,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -450,7 +450,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_per_item_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -469,7 +469,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -486,7 +486,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -501,7 +501,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -521,7 +521,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="US", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -539,7 +539,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -692,9 +692,9 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, response_hook=callback)
-        response = text_analytics.detect_languages(docs, country_hint="DE", response_hook=callback_2)
-        response = text_analytics.detect_languages(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="DE", response_hook=callback_2)
+        response = text_analytics.detect_language(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_client_passed_default_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):

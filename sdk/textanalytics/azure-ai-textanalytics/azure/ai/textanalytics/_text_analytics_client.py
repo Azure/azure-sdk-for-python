@@ -93,7 +93,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
 
     @distributed_trace
-    def detect_languages(  # type: ignore
+    def detect_language(  # type: ignore
         self,
         inputs,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
         country_hint=None,  # type: Optional[str]
@@ -132,9 +132,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detect_languages.py
-                :start-after: [START batch_detect_languages]
-                :end-before: [END batch_detect_languages]
+            .. literalinclude:: ../samples/sample_detect_language.py
+                :start-after: [START batch_detect_language]
+                :end-before: [END batch_detect_language]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.

@@ -118,7 +118,7 @@ def single_detect_language(
     model_version = kwargs.pop("model_version", None)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
-        response = client.detect_languages(
+        response = client.detect_language(
             inputs=doc,
             model_version=model_version,
             show_stats=show_stats,

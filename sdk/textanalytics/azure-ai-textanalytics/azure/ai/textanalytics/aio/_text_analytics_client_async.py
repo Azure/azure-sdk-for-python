@@ -97,7 +97,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
 
     @distributed_trace_async
-    async def detect_languages(  # type: ignore
+    async def detect_language(  # type: ignore
         self,
         inputs: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
         country_hint: Optional[str] = None,
@@ -135,9 +135,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_detect_languages_async.py
-                :start-after: [START batch_detect_languages_async]
-                :end-before: [END batch_detect_languages_async]
+            .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
+                :start-after: [START batch_detect_language_async]
+                :end-before: [END batch_detect_language_async]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
