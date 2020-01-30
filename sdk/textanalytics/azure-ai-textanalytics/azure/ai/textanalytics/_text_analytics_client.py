@@ -162,11 +162,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
-        """Named Entity Recognition for a batch of documents.
+        """Entity Recognition for a batch of documents.
 
-        Returns a list of general named entities in a given document.
-        For a list of supported entity types, check: https://aka.ms/taner
-        For a list of enabled languages, check: https://aka.ms/talangs
+        Identifies and categorizes entities in your text as people, places,
+        organizations, date/time, quantities, percentages, currencies, and more.
+        For the list of supported entity types, check: https://aka.ms/taner
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
@@ -180,12 +180,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document
-            level statistics.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
         :return: The combined list of RecognizeEntitiesResults and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
@@ -228,8 +228,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         Returns a list of personal information entities ("SSN",
         "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii. See https://aka.ms/talangs
-        for the list of enabled languages.
+        check https://aka.ms/tanerpii.
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
@@ -243,7 +242,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -288,9 +288,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
-        Returns a list of recognized entities with links to a
-        well-known knowledge base. See https://aka.ms/talangs for
-        supported languages in Text Analytics API.
+        Identifies and disambiguates the identity of each entity found in text (for example,
+        determining whether an occurrence of the word Mars refers to the planet, or to the
+        Roman god of war). Returns a list of recognized entities with hyperlinks to a
+        well-known knowledge base.
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
@@ -304,7 +305,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -350,8 +352,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """Extract Key Phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
-        text. See https://aka.ms/talangs for the list of enabled
-        languages.
+        text. For example, for the input text "The food was delicious and there
+        were wonderful staff", the API returns the main talking points: "food"
+        and "wonderful staff"
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
@@ -365,7 +368,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -412,8 +416,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         Returns a sentiment prediction, as well as sentiment scores for
         each sentiment class (Positive, Negative, and Neutral) for the document
-        and each sentence within it. See https://aka.ms/talangs for the list
-        of enabled languages.
+        and each sentence within it.
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
@@ -427,7 +430,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
