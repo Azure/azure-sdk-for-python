@@ -19,8 +19,7 @@ from common_tasks import (
     run_check_call,
     parse_require,
     install_package_from_whl,
-    filter_dev_requirements,
-    is_package_installed
+    filter_dev_requirements
 )
 from git_helper import get_release_tag, checkout_code_repo, clone_repo
 
@@ -79,7 +78,7 @@ class RegressionContext:
         self.venv.clear_venv()
 
     def deinitialize(self, dep_pkg_root_path):
-        # This function can be used to reset code repo to master branch and also to deactivate virtual env
+        # This function can be used to reset code repo to master branch
         # Revert to master branch
         run_check_call(["git", "clean", "-fd"], dep_pkg_root_path)
         run_check_call(["git", "checkout", GIT_MASTER_BRANCH], dep_pkg_root_path)
@@ -141,7 +140,6 @@ class RegressionTest:
         checkout_code_repo(release_tag, dep_pkg_path)
 
         try:
-            # activate virtual env
             self.context.initialize(dep_pkg_path)
             # install packages required to run tests after updating relative reference to abspath
             run_check_call(
@@ -165,7 +163,6 @@ class RegressionTest:
             # install package to be tested and run pytest
             self._execute_test(dep_pkg_path)
         finally:
-            # deactivate virtual env and revert repo
             self.context.deinitialize(dep_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
@@ -173,7 +170,7 @@ class RegressionTest:
         self._install_packages(dep_pkg_path, self.context.package_name)
 
         #  Ensure correct version of package is installed
-        if not is_package_installed(self.context.python_executable, self.context.package_name, self.context.pkg_version):
+        if not is_package_installed(self.context.package_name, self.context.pkg_version):
             logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
             sys.exit(1)
 
@@ -222,6 +219,15 @@ class RegressionTest:
         run_check_call(
             [python_executable, "-m", "pip", "install", dependent_pkg_path], temp_dir
         )
+
+    def _is_package_installed(self, package, version):
+        # find env root and pacakge locations
+        venv_root = self.context.venv.path
+        site_packages = [os.path.join(venv_root, "Lib", "site-packages"), os.path.join(venv_root,"Lib", "dist-packages")]
+        logging.info("Searching for packages in :{}".format(site_packages))
+        installed_pkgs = list(freeze.freeze(paths=site_packages))
+        logging.info("Installed packages: {}".format(installed_pkgs))
+        return "{0}=={1}".format(package, version) in installed_pkgs
 
 
 # This method identifies package dependency map for all packages in azure sdk
@@ -273,7 +279,7 @@ def run_main(args):
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir)
+    targeted_packages = process_glob_string(args.glob_string, target_dir, "", "Regression")
     if len(targeted_packages) == 0:
         exit(0)
 

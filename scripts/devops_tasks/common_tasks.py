@@ -372,9 +372,4 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
         dev_req_file.writelines(requirements)
 
     return new_dev_req_path
-
-def is_package_installed(python_executable_path, package, version):
-    installed_pkgs = freeze.freeze()
-    logging.info("Installed packages: {}".format(installed_pkgs))
-    return "{0}=={1}".format(package, version) in installed_pkgs
     
