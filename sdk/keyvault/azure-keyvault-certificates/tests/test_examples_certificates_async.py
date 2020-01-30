@@ -103,6 +103,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_certificate.recovery_id)
 
         # [END delete_certificate]
+        await certificate_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -175,6 +176,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.deleted_on)
 
         # [END list_deleted_certificates]
+        await certificate_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -229,6 +231,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(restored_certificate.properties.version)
 
         # [END restore_certificate]
+        await certificate_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -278,6 +281,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(recovered_certificate.name)
 
         # [END recover_deleted_certificate]
+        await certificate_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -325,6 +329,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(deleted_contact.phone)
 
         # [END delete_contacts]
+        await certificate_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -400,3 +405,4 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(contact.phone)
 
         # [END delete_issuer]
+        await certificate_client.close()
