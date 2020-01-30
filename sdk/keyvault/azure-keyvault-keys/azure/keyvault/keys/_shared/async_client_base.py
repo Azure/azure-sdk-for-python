@@ -106,11 +106,11 @@ class AsyncKeyVaultClientBase:
         return self._vault_url
 
     async def __aenter__(self) -> "AsyncKeyVaultClientBase":
-        await self._client._pipeline.__aenter__()  # pylint: disable=protected-access
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
         await self.close()
 
     async def close(self):
-        await self._client._pipeline.__aexit__()  # pylint: disable=protected-access
+        await self._client.__aexit__()
