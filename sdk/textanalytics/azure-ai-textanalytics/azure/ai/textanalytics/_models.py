@@ -520,8 +520,8 @@ class LinkedEntity(DictMixin):
     :param entity_id: Unique identifier of the recognized entity from the data
         source.
     :type entity_id: str
-    :param url: URL for the entity's page from the data source.
-    :type url: str
+    :param hyperlink: Hyperlink to the entity's page from the data source.
+    :type hyperlink: str
     :param data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :type data_source: str
@@ -532,7 +532,7 @@ class LinkedEntity(DictMixin):
         self.matches = kwargs.get("matches", None)
         self.language = kwargs.get("language", None)
         self.entity_id = kwargs.get("entity_id", None)
-        self.url = kwargs.get("url", None)
+        self.hyperlink = kwargs.get("hyperlink", None)
         self.data_source = kwargs.get("data_source", None)
 
     @classmethod
@@ -542,13 +542,13 @@ class LinkedEntity(DictMixin):
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
             entity_id=entity.id,
-            url=entity.url,
+            hyperlink=entity.url,
             data_source=entity.data_source,
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, entity_id={}, url={}, " \
-               "data_source={})".format(self.name, repr(self.matches), self.language, self.entity_id, self.url,
+        return "LinkedEntity(name={}, matches={}, language={}, entity_id={}, hyperlink={}, " \
+               "data_source={})".format(self.name, repr(self.matches), self.language, self.entity_id, self.hyperlink,
                                         self.data_source)[:1024]
 
 

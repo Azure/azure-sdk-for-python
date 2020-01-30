@@ -520,7 +520,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
             self.assertIsNotNone(entity.matches)
             self.assertIsNotNone(entity.language)
             self.assertIsNotNone(entity.entity_id)
-            self.assertIsNotNone(entity.url)
+            self.assertIsNotNone(entity.hyperlink)
             self.assertIsNotNone(entity.data_source)
 
     @GlobalTextAnalyticsAccountPreparer()

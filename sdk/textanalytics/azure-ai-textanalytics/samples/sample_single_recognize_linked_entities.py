@@ -26,7 +26,7 @@ USAGE:
 
 OUTPUT:
     Entity: Easter Island
-    Url: https://en.wikipedia.org/wiki/Easter_Island
+    Hyperlink: https://en.wikipedia.org/wiki/Easter_Island
     Data Source: Wikipedia
 
     Where this entity appears in the text:
@@ -41,7 +41,7 @@ OUTPUT:
     Length: 8
 
     Entity: Polynesia
-    Url: https://en.wikipedia.org/wiki/Polynesia
+    Hyperlink: https://en.wikipedia.org/wiki/Polynesia
     Data Source: Wikipedia
 
     Where this entity appears in the text:
@@ -51,7 +51,7 @@ OUTPUT:
     Length: 9
 
     Entity: Chile
-    Url: https://en.wikipedia.org/wiki/Chile
+    Hyperlink: https://en.wikipedia.org/wiki/Chile
     Data Source: Wikipedia
 
     Where this entity appears in the text:
@@ -86,7 +86,7 @@ class SingleRecognizeLinkedEntitiesSample(object):
 
         for entity in result.entities:
             print("Entity: {}".format(entity.name))
-            print("Url: {}".format(entity.url))
+            print("Hyperlink: {}".format(entity.hyperlink))
             print("Data Source: {}\n".format(entity.data_source))
             print("Where this entity appears in the text:")
             for idx, match in enumerate(entity.matches):
