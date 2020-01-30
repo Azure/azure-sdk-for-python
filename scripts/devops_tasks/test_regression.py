@@ -73,6 +73,18 @@ class RegressionContext:
         # This method is called each time context is switched to test regression for new package
         self.package_root_path = pkg_root
         self.package_name, self.pkg_version, _, _ = parse_setup(self.package_root_path)
+        # install test tools requirements outside virtual environment to access pypi_tools package
+        run_check_call(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "-r",
+                test_tools_req_file,
+            ],
+            pkg_root
+        )
 
     def initialize(self, dep_pkg_root_path):
         self.dep_pkg_root_path = dep_pkg_root_path
@@ -262,9 +274,9 @@ def run_main(args):
     else:
         temp_dir = os.path.abspath(os.path.join(root_dir, "..", TEMP_FOLDER_NAME))
 
-    core_repo_root = os.path.join(temp_dir, GIT_REPO_NAME)
+    code_repo_root = os.path.join(temp_dir, GIT_REPO_NAME)
     # Make sure root_dir where script is running is not same as code repo which will be reverted to old released branch to run test
-    if root_dir == core_repo_root:
+    if root_dir == code_repo_root:
         logging.error(
             "Invalid path to clone github code repo. Temporary path can not be same as current source root directory"
         )
@@ -285,17 +297,17 @@ def run_main(args):
         exit(0)
 
     # clone code repo only if it doesn't exists
-    if not os.path.exists(core_repo_root):
+    if not os.path.exists(code_repo_root):
         clone_repo(temp_dir, AZURE_SDK_FOR_PYTHON_GIT_URL)
     else:
         logging.info(
             "Path {} already exists. Skipping step to clone github repo".format(
-                core_repo_root
+                code_repo_root
             )
         )
 
     # find package dependency map for azure sdk
-    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, core_repo_root)
+    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root)
     logging.info("Regression test will run for: {}".format(pkg_dependency.keys()))
 
     # Create regression text context. One context object will be reused for all packages
