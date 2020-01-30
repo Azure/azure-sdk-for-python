@@ -26,14 +26,11 @@ partition_recv_cnt_since_last_checkpoint = defaultdict(int)
 checkpoint_batch_event_cnt = 20
 
 
-async def on_event(partition_context, event):
+async def on_event_batch(partition_context, event_batch):
     # Put your code here.
-    p_id = partition_context.partition_id
-    print("Received event from partition: {}.".format(p_id))
-    partition_recv_cnt_since_last_checkpoint[p_id] += 1
-    if partition_recv_cnt_since_last_checkpoint[p_id] >= checkpoint_batch_event_cnt:
-        await partition_context.update_checkpoint(event)
-        partition_recv_cnt_since_last_checkpoint[p_id] = 0
+    if event_batch:
+        print("Received events from partition: {}.".format(partition_context.partition_id))
+        await partition_context.update_checkpoint(event_batch[-1])
 
 
 async def receive(client):
@@ -42,12 +39,14 @@ async def receive(client):
     a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
     which also try to receive events from all partitions and use the same storage resource.
     """
-    await client.receive(
-        on_event=on_event,
+    await client.receive_batch(
+        on_event=on_event_batch,
+        max_batch_size=100,
+        max_wait_time=3,
         starting_position="-1",  # "-1" is from the beginning of the partition.
     )
     # With specified partition_id, load-balance will be disabled, for example:
-    # await client.receive(on_event=on_event, partition_id='0'))
+    # await client.receive_batch(on_event_batch=on_event_batch, partition_id='0'))
 
 
 async def main():
