@@ -235,13 +235,18 @@ class RegressionTest:
         filtered_dev_req_path = filter_dev_requirements(
             dependent_pkg_path, [pkg_to_exclude,], dependent_pkg_path
         )
-        logging.info(
-            "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
-        )
-        run_check_call(
-            [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path],
-            dependent_pkg_path,
-        )
+
+        if filtered_dev_req_path:
+            logging.info(
+                "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
+            )
+            run_check_call(
+                [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path],
+                dependent_pkg_path,
+            )
+        else:
+            logging.info("dev requirements is not found to install")
+
         # install dependent package which is being verified
         run_check_call(
             [python_executable, "-m", "pip", "install", dependent_pkg_path], temp_dir

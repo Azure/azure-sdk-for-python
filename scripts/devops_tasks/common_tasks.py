@@ -354,6 +354,10 @@ def install_package_from_whl(
 def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
     # This method returns list of requirements from dev_requirements by filtering out packages in given list
     dev_req_path = os.path.join(pkg_root_path, DEV_REQ_FILE)
+    if not os.path.exists(dev_req_path):
+        logging.info("{0} is not found in package root {1}".format(DEV_REQ_FILE, pkg_root_path))
+        return ""
+
     requirements = []
     with open(dev_req_path, "r") as dev_req_file:
         requirements = dev_req_file.readlines()
