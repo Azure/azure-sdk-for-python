@@ -7,14 +7,13 @@
 
 """
 An example to show receiving events from an Event Hub with checkpoint store doing checkpoint by batch asynchronously.
-In the `receive` method of `EventHubConsumerClient`:
+In the `receive_batch` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 
 import asyncio
 import os
-from collections import defaultdict
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
@@ -22,15 +21,16 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
-partition_recv_cnt_since_last_checkpoint = defaultdict(int)
-checkpoint_batch_event_cnt = 20
-
 
 async def on_event_batch(partition_context, event_batch):
-    # Put your code here.
     if event_batch:
         print("Received events from partition: {}.".format(partition_context.partition_id))
+        # Put your code here.
+
         await partition_context.update_checkpoint(event_batch[-1])
+    else:
+        # this is a heartbeat.
+        pass
 
 
 async def receive(client):
@@ -46,7 +46,7 @@ async def receive(client):
         starting_position="-1",  # "-1" is from the beginning of the partition.
     )
     # With specified partition_id, load-balance will be disabled, for example:
-    # await client.receive_batch(on_event_batch=on_event_batch, partition_id='0'))
+    # await client.receive_batch(on_event_batch=on_event_batch, max_batch_size=100, max_wait_time=3, partition_id='0'))
 
 
 async def main():
