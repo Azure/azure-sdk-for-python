@@ -16,7 +16,8 @@ logging.getLogger().setLevel(logging.INFO)
 # Oldest release of SDK packages that should be skipped
 EXCLUDED_PACKAGE_VERSIONS = {
     'azure-storage-file-share': ['12.0.0', '12.0.0b5'],
-    'azure-storage-queue': ['0.37.0', '0.37.1'],
+    'azure-storage-queue': ['0.37.0', '1.0.0', '1.1.0', '1.2.0rc1', '1.3.0', '1.4.0', '2.0.0', '2.0.1', '2.1.0'],
+    'azure-storage-file': ['0.37.0', '1.0.0', '1.1.0', '1.2.0rc1', '1.3.0', '1.3.1', '1.4.0', '2.0.0', '2.0.1', '2.1.0'],
     'azure-storage-blob': ['0.37.0', '0.37.1', '1.0.0', '1.1.0', '1.2.0rc1', '1.3.0', '1.3.1', '1.4.0', '1.5.0', '2.0.0', '2.0.1', '2.1.0',],
     'azure-eventhub': ['0.2.0', '1.0.0', '1.1.0', '1.1.1', '1.2.0rc1', '1.2.0', '1.3.0', '1.3.1', '1.3.2', '1.3.3',],
     'azure-cosmos': ['3.0.0', '3.0.1', '3.0.2', '3.1.0', '3.1.1', '3.1.2'],
@@ -30,14 +31,14 @@ def get_release_tag(dep_pkg_name, isLatest):
 
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(dep_pkg_name)]
-    logging.info("Versions for {0} is: [{1}]".format(dep_pkg_name, versions))
+    logging.info("Versions for {0} is: {1}".format(dep_pkg_name, versions))
 
     # filter excluded versions
     if dep_pkg_name in EXCLUDED_PACKAGE_VERSIONS:
         versions = [v for v in versions if  v not in EXCLUDED_PACKAGE_VERSIONS[dep_pkg_name]]
-        logging.info("Filtered versions for {0} is: [{1}]".format(dep_pkg_name, versions))
+        logging.info("Filtered versions for {0} is: {1}".format(dep_pkg_name, versions))
 
-    if versions is None:
+    if len(versions) == 0:
         logging.info(
             "Released version info for package {} is not available".format(dep_pkg_name)
         )

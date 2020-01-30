@@ -197,6 +197,8 @@ class RegressionTest:
             "-m",
             "pytest",
             "--verbose",
+            "--durations",
+            "10",
         ]
 
         # add any pytest mark arg if present. for e.g. 'not cosmosEmulator'
