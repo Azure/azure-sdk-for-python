@@ -82,6 +82,10 @@ class RegressionContext:
         # This method is called each time context is switched to test regression for new package
         self.package_root_path = pkg_root
         self.package_name, self.pkg_version, _, _ = parse_setup(self.package_root_path)
+
+    def initialize(self, dep_pkg_root_path):
+        self.dep_pkg_root_path = dep_pkg_root_path
+        self.venv.clear_venv()
         # install test tools requirements outside virtual environment to access pypi_tools package
         run_check_call(
             [
@@ -92,12 +96,8 @@ class RegressionContext:
                 "-r",
                 test_tools_req_file,
             ],
-            pkg_root
+            self.package_root_path
         )
-
-    def initialize(self, dep_pkg_root_path):
-        self.dep_pkg_root_path = dep_pkg_root_path
-        self.venv.clear_venv()
 
     def deinitialize(self, dep_pkg_root_path):
         # This function can be used to reset code repo to master branch
@@ -141,6 +141,8 @@ class RegressionTest:
             )
 
     def _run_test(self, dep_pkg_path):
+        self.context.initialize(dep_pkg_path)
+
         # find GA released tags for package and run test using that code base
         dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
         release_tag = get_release_tag(dep_pkg_name, self.context.is_latest_depend_test)
@@ -156,7 +158,6 @@ class RegressionTest:
         checkout_code_repo(release_tag, dep_pkg_path)
 
         try:
-            self.context.initialize(dep_pkg_path)
             # install packages required to run tests
             run_check_call(
                 [
@@ -319,7 +320,6 @@ def run_main(args):
 
     # find package dependency map for azure sdk
     pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root)
-    logging.info("Regression test will run for: {}".format(pkg_dependency.keys()))
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(
