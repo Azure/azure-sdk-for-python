@@ -122,6 +122,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_key.recovery_id)
 
         # [END delete_key]
+        await key_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -173,6 +174,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.deleted_date)
 
         # [END list_deleted_keys]
+        await key_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -205,6 +207,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(restored_key.properties.version)
 
         # [END restore_key_backup]
+        await key_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -232,3 +235,4 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(recovered_key.name)
 
         # [END recover_deleted_key]
+        await key_client.close()
