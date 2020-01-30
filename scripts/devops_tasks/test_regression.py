@@ -37,7 +37,6 @@ TEMP_FOLDER_NAME = ".tmp_code_path"
 RELEASE_TAGS_TO_EXCLUDE = [
     "azure-storage-file-share_12.0.0",
     "azure-storage-file-share_12.0.0b5",
-    "azure-appconfiguration_1.0.0b3"
 ]
 
 logging.getLogger().setLevel(logging.INFO)
@@ -125,6 +124,7 @@ class RegressionTest:
                 "Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages)
             )
 
+            error_details = []
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
                 logging.info(
@@ -132,13 +132,27 @@ class RegressionTest:
                         pkg_name, dep_pkg_name
                     )
                 )
-                self._run_test(dep_pkg_path)
-                logging.info(
-                    "Completed regression test of {0} against released {1}".format(
-                        pkg_name, dep_pkg_name
+                try:
+                    self._run_test(dep_pkg_path)
+                    logging.info(
+                        "Completed regression test of {0} against released {1}".format(
+                            pkg_name, dep_pkg_name
+                        )
                     )
-                )
-            logging.info("Completed regression test for {}".format(pkg_name))
+                except:
+                    logging.error(
+                        "Failed regression test of {0} against released {1}".format(
+                            pkg_name, dep_pkg_name
+                        )
+                    )
+                    error_details.append(dep_pkg_name)
+
+            if len(error_details) > 0:
+                logging.error("Test failed for {} packages".format(len(error_details)))
+                logging.error("Failed packages: {}".format(error_details))
+                sys.exit(1)
+            else:
+                logging.info("Completed regression test for {}".format(pkg_name))
         else:
             logging.info(
                 "Package {} is not added as required by any package".format(pkg_name)
@@ -154,7 +168,7 @@ class RegressionTest:
                     dep_pkg_name
                 )
             )
-            sys.exit(1)
+            return
 
         # Omit based on package name and release tag
         if release_tag in RELEASE_TAGS_TO_EXCLUDE:

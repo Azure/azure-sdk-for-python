@@ -8,6 +8,7 @@
 import sys
 import os
 import logging
+from packaging.version import parse
 from common_tasks import run_check_call
 
 logging.getLogger().setLevel(logging.INFO)
@@ -32,10 +33,17 @@ def get_release_tag(dep_pkg_name, isLatest):
     logging.info("Looking for {} released version".format("Latest" if isLatest == True else "Oldest"))
     if isLatest == True:
         versions.reverse()
-    latestVersion = versions[0]
+    else:
+        # find oldest GA version by filtering out all preview versions
+        versions = [ v for v in versions if parse(v).is_prerelease == False]
+        if(len(versions) <2):
+            logging.info("Only one or no released GA version found for package {}".format(dep_pkg_name))
+            return
+
+    version = versions[0]
 
     # create tag in <pkg_name>_version format
-    tag_name = "{0}_{1}".format(dep_pkg_name, latestVersion)
+    tag_name = "{0}_{1}".format(dep_pkg_name, version)
     logging.info(
         "Release tag for package [{0}] is [{1}]".format(dep_pkg_name, tag_name)
     )
