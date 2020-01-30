@@ -51,19 +51,13 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param resource_name: The Resource name for the specific resource
-     provider, such as SKU name for Microsoft.Compute, pool for
-     Microsoft.Batch.
-    :type resource_name: str
-    :param id: Quota Request id.
-    :type id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, resource_name, id, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = AzureReservationAPIConfiguration(credentials, resource_name, id, base_url)
+        self.config = AzureReservationAPIConfiguration(credentials, base_url)
         super(AzureReservationAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

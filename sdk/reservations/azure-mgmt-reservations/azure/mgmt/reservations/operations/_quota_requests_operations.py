@@ -39,7 +39,7 @@ class QuotaRequestsOperations(object):
         self.config = config
 
     def get_status(
-            self, subscription_id, provider_id, location, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, id, custom_headers=None, raw=False, **operation_config):
         """Gets the Quota request status by requestId, for the specified resource
         provider at specified location.
 
@@ -54,6 +54,8 @@ class QuotaRequestsOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
+        :param id: Quota Request id.
+        :type id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -71,7 +73,7 @@ class QuotaRequestsOperations(object):
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
             'location': self._serialize.url("location", location, 'str'),
-            'id': self._serialize.url("self.config.id", self.config.id, 'str')
+            'id': self._serialize.url("id", id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

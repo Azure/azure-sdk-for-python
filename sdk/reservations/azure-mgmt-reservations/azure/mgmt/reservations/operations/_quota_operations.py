@@ -39,7 +39,7 @@ class QuotaOperations(object):
         self.config = config
 
     def list_status(
-            self, subscription_id, provider_id, location, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets the current quota limit and usages for the resource provider for
         the specified location for the specific resource in the parameter.
 
@@ -53,6 +53,10 @@ class QuotaOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
+        :param resource_name: The Resource name for the specific resource
+         provider, such as SKU name for Microsoft.Compute, pool for
+         Microsoft.Batch.
+        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -70,7 +74,7 @@ class QuotaOperations(object):
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
             'location': self._serialize.url("location", location, 'str'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

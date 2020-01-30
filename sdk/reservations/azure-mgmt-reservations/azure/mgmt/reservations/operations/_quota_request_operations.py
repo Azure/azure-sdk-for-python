@@ -42,14 +42,14 @@ class QuotaRequestOperations(object):
 
 
     def _create_initial(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
             'location': self._serialize.url("location", location, 'str'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -93,7 +93,7 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def create(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
@@ -114,6 +114,10 @@ class QuotaRequestOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
+        :param resource_name: The Resource name for the specific resource
+         provider, such as SKU name for Microsoft.Compute, pool for
+         Microsoft.Batch.
+        :type resource_name: str
         :param create_quota_request: Quota requests payload.
         :type create_quota_request:
          ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
@@ -137,6 +141,7 @@ class QuotaRequestOperations(object):
             subscription_id=subscription_id,
             provider_id=provider_id,
             location=location,
+            resource_name=resource_name,
             create_quota_request=create_quota_request,
             if_match=if_match,
             custom_headers=custom_headers,
@@ -164,14 +169,14 @@ class QuotaRequestOperations(object):
 
 
     def _update_initial(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
             'location': self._serialize.url("location", location, 'str'),
-            'resourceName': self._serialize.url("self.config.resource_name", self.config.resource_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -215,7 +220,7 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def update(
-            self, subscription_id, provider_id, location, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
@@ -236,6 +241,10 @@ class QuotaRequestOperations(object):
         :type provider_id: str
         :param location: Azure region.
         :type location: str
+        :param resource_name: The Resource name for the specific resource
+         provider, such as SKU name for Microsoft.Compute, pool for
+         Microsoft.Batch.
+        :type resource_name: str
         :param create_quota_request: Quota requests payload.
         :type create_quota_request:
          ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
@@ -259,6 +268,7 @@ class QuotaRequestOperations(object):
             subscription_id=subscription_id,
             provider_id=provider_id,
             location=location,
+            resource_name=resource_name,
             create_quota_request=create_quota_request,
             if_match=if_match,
             custom_headers=custom_headers,
