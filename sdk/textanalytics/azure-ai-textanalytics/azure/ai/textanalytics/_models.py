@@ -159,9 +159,6 @@ class DetectLanguageResult(DictMixin):
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
     :type id: str
-    :param detected_languages: A list of extracted languages.
-    :type detected_languages:
-        list[~azure.ai.textanalytics.DetectedLanguage]
     :param primary_language: The primary language detected in the document.
     :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
     :param statistics: If show_stats=true was specified in the request this
@@ -174,15 +171,13 @@ class DetectLanguageResult(DictMixin):
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
-        self.detected_languages = kwargs.get("detected_languages", None)
         self.primary_language = kwargs.get("primary_language", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "DetectLanguageResult(id={}, detected_languages={}, primary_language={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.detected_languages), repr(self.primary_language), repr(self.statistics),
-                    self.is_error)[:1024]
+        return "DetectLanguageResult(id={}, primary_language={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.primary_language), repr(self.statistics), self.is_error)[:1024]
 
 
 class CategorizedEntity(DictMixin):

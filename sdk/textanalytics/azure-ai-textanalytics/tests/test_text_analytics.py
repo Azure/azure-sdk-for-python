@@ -50,7 +50,6 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         detect_language_result = _models.DetectLanguageResult(
             id="1",
-            detected_languages=[detected_language],
             primary_language=detected_language,
             statistics=text_document_statistics,
             is_error=False
@@ -150,8 +149,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "subcategory=Age, offset=0, length=8, score=0.899)], "
                          "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_pii_entities_result))
-        self.assertEqual("DetectLanguageResult(id=1, detected_languages=[DetectedLanguage(name=English, "
-                         "iso6391_name=en, score=1.0)], primary_language=DetectedLanguage(name=English, "
+        self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
                          "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(detect_language_result))
         self.assertEqual("InnerError(code=invalidParameterValue, message=The parameter is invalid, "
