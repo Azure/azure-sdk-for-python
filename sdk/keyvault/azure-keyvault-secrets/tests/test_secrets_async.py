@@ -8,10 +8,13 @@ import os
 import logging
 import json
 
+from unittest.mock import Mock
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from secrets_async_preparer import AsyncVaultClientPreparer
 from secrets_async_test_case import AsyncKeyVaultTestCase, AsyncMockTransport
+from azure.keyvault.secrets.aio import SecretClient
 
 
 from dateutil import parser as date_parse
@@ -352,9 +355,13 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer(client_kwargs={'transport': AsyncMockTransport()})
     @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_close(self, vault_client, **kwargs):
-        await vault_client.close()
+    async def test_close(self, vault_uri, **kwargs):
+        raise ValueError(vault_uri)
+        transport = AsyncMockTransport()
+        credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+        client = SecretClient(vault_uri, credential, transport=transport, **kwargs)
+        await client.close()
+        await credential.close()
 
-        assert vault_client.transport.__aexit__.call_count == 1
+        assert transport.__aexit__.call_count == 1
