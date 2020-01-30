@@ -13,7 +13,7 @@ from common_tasks import run_check_call
 logging.getLogger().setLevel(logging.INFO)
 
 # This method identifies release tag for latest or oldest released version of a given package
-def get_release_tag(dep_pkg_name, isLatest=True):
+def get_release_tag(dep_pkg_name, isLatest):
     # get versions from pypi and find latest
     # delayed import until sdk tools are installed on virtual env
     from pypi_tools.pypi import PyPIClient
@@ -29,7 +29,8 @@ def get_release_tag(dep_pkg_name, isLatest=True):
         return
 
     # find latest version
-    if isLatest:
+    logging.info("Looking for {} released version".format("Latest" if isLatest == True else "Oldest"))
+    if isLatest == True:
         versions.reverse()
     latestVersion = versions[0]
 
