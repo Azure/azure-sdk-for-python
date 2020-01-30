@@ -37,6 +37,7 @@ TEMP_FOLDER_NAME = ".tmp_code_path"
 RELEASE_TAGS_TO_EXCLUDE = [
     "azure-storage-file-share_12.0.0",
     "azure-storage-file-share_12.0.0b5",
+    "azure-appconfiguration_1.0.0b3"
 ]
 
 logging.getLogger().setLevel(logging.INFO)
