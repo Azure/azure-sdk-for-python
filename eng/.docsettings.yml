@@ -6,7 +6,7 @@ omitted_paths:
   - sdk/*/azure-mgmt*/*
   - sdk/keyvault/azure-keyvault/*
   - doc/*
-  - sdk/*/samples/*
+  - sdk/**/samples/*
 language: python
 root_check_enabled: True
 required_readme_sections:
