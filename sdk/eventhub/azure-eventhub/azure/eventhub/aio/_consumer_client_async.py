@@ -388,6 +388,32 @@ class EventHubConsumerClient(ClientBaseAsync):
                 except KeyError:
                     pass
 
+    async def receive_batch(
+        self,
+        on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
+        max_batch_size: int,
+        max_wait_time: float,
+        *,
+        partition_id: Optional[str] = None,
+        owner_level: Optional[int] = None,
+        prefetch: int = 300,
+        track_last_enqueued_event_properties: bool = False,
+        starting_position: Optional[
+            Union[str, int, datetime.datetime, Dict[str, Any]]
+        ] = None,
+        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        on_error: Optional[
+            Callable[["PartitionContext", Exception], Awaitable[None]]
+        ] = None,
+        on_partition_initialize: Optional[
+            Callable[["PartitionContext"], Awaitable[None]]
+        ] = None,
+        on_partition_close: Optional[
+            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
+        ] = None
+    ) -> None:
+        pass
+
     async def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.
 
