@@ -57,18 +57,6 @@ IndexOperationBatch.add_merge_documents(documents: List[dict])
 IndexOperationBatch.add_merge_or_upload_documents(documents: List[dict])
 ```
 
-### `IndexOperationResult` API
-
-This class records a status result for an individual CRUD operation on an Azure Search index.
-
-```python
-# read only properties
-IndexOperationResult.key: str
-IndexOperationResult.error_message: str
-IndexOperationResult.succeeded: bool
-IndexOperationResult.status_code: int
-```
-
 ### `SearchIndexClient` API
 
 The search index client is the primary interface for users to interact with an an Azure Search index from the Python API. It accepts credentials and information about the index on creation, and offers methods for all service REST operations.
@@ -113,30 +101,30 @@ SearchIndexClient.get_autocompletions(
 SearchIndexClient.upload_documents(
     documents: List[dict],
     **kwargs
-) -> List[IndexOperationResult]
+) ->  List[IndexingResult]
 
 
 SearchIndexClient.delete_documents(
     documents: List[dict],
     **kwargs
-) -> List[IndexOperationResult]
+) -> List[IndexingResult]
 
 
 SearchIndexClient.merge_documents(
     documents: List[dict],
     **kwargs
-) -> List[IndexOperationResult]
+) ->  List[IndexingResult]
 
 
 SearchIndexClient.merge_or_upload_documents(
     documents: List[dict],
     **kwargs
-) -> List[IndexOperationResult]
+) ->  List[IndexingResult]
 
 SearchIndexClient.batch_update(
     batch: IndexOperationBatch,
     **kwargs
-) -> List[IndexOperationResult]
+) ->  List[IndexingResult]
 
 ```
 
