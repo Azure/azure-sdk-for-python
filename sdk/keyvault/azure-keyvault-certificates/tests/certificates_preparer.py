@@ -17,9 +17,9 @@ from certificates_vault_client import VaultClient
 
 
 class NoSleepTransport(RequestsTransport):
+    """Prevents the transport from sleeping, e.g. to observe a Retry-After header"""
+
     def sleep(self, _):
-        """Prevent sleeping between retries. (RetryPolicy doesn't expose configuration to ignore Retry-After headers.)
-        """
         return
 
 
@@ -32,7 +32,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=True
+        random_name_enabled=True,
     ):
         super(VaultClientPreparer, self).__init__(
             name_prefix,
@@ -40,7 +40,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
             disable_recording=disable_recording,
             playback_fake_resource=playback_fake_resource,
             client_kwargs=client_kwargs,
-            random_name_enabled=random_name_enabled
+            random_name_enabled=random_name_enabled,
         )
         self.parameter_name = parameter_name
 

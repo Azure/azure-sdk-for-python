@@ -29,12 +29,10 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class NoSleepTransport(AiohttpTestTransport):
+    """Prevents the transport from sleeping, e.g. to observe a Retry-After header"""
+
     async def sleep(self, _):
-        """Prevent sleeping between retries. (RetryPolicy doesn't expose configuration to ignore Retry-After headers.)
-        """
-        f = asyncio.Future()
-        f.set_result(None)
-        return f
+        return
 
 
 class AsyncVaultClientPreparer(VaultClientPreparer):
