@@ -383,11 +383,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param public_access:
             Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo container_cpk_scope_info:
-            This scope is then used implicitly for all future writes within the container,
-            but can be overridden per-request via explicit request headers.
-            eg. if explicit cpk_scope_info is set when you create an append blob, the explicit encryption scope
-            will be applied to the blob instead of the default one on the container.
+        :keyword str or Tuple(str, bool) default_encryption_scope:
+            Specifies the default encryption scope to set on the container and use for
+            all future writes. If specified as a string, this will not allow overrides on an
+            individual blob. To allow overrides, specify as a tuple of two values, the scope name
+            and a boolean: ("scope", True). Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.aio.ContainerClient

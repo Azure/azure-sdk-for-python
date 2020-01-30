@@ -7,7 +7,12 @@
 
 from azure.core import MatchConditions
 
-from ._generated.models import ModifiedAccessConditions, SourceModifiedAccessConditions
+from ._generated.models import (
+    ModifiedAccessConditions,
+    SourceModifiedAccessConditions,
+    CpkScopeInfo,
+    ContainerCpkScopeInfo
+)
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
@@ -55,3 +60,30 @@ def get_source_conditions(kwargs):
         source_if_match=if_match or kwargs.pop('source_if_match', None),
         source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
     )
+
+
+def get_cpk_scope_info(kwargs):
+    # type: (Dict[str, Any]) -> CpkScopeInfo
+    if 'encryption_scope' in kwargs:
+        return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
+    return None
+
+
+def get_container_cpk_scope_info(kwargs):
+    # type: (Dict[str, Any]) -> ContainerCpkScopeInfo
+    try:
+        scope, deny_override = kwargs['default_encryption_scope']
+    except ValueError:
+        return ContainerCpkScopeInfo(
+            default_encryption_scope=kwargs.pop('default_encryption_scope'),
+            deny_encryption_scope_override=False
+        )
+    except KeyError:
+        pass
+    else:
+        del kwargs['default_encryption_scope']
+        return ContainerCpkScopeInfo(
+            default_encryption_scope=scope,
+            deny_encryption_scope_override=deny_override
+        )
+    return None

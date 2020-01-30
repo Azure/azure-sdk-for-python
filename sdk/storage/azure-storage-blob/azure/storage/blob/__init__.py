@@ -48,9 +48,7 @@ from ._models import (
     AccessPolicy,
     ContainerSasPermissions,
     BlobSasPermissions,
-    CustomerProvidedEncryptionKey,
-    CpkScopeInfo,
-    ContainerCpkScopeInfo
+    CustomerProvidedEncryptionKey
 )
 
 __version__ = VERSION
@@ -202,8 +200,6 @@ __all__ = [
     'AccountSasPermissions',
     'StorageStreamDownloader',
     'CustomerProvidedEncryptionKey',
-    'CpkScopeInfo',
-    'ContainerCpkScopeInfo',
     'RehydratePriority',
     'generate_account_sas',
     'generate_container_sas',

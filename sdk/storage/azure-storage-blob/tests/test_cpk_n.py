@@ -14,8 +14,6 @@ from azure.storage.blob import (
     BlobType,
     BlobBlock,
     BlobSasPermissions,
-    CpkScopeInfo,
-    ContainerCpkScopeInfo,
     generate_blob_sas
 )
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
@@ -23,11 +21,8 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 # ------------------------------------------------------------------------------
 # The encryption scope are pre-created using management plane tool ArmClient.
 # So we can directly use the scope in the test.
-TEST_ENCRYPTION_KEY_SCOPE = CpkScopeInfo(encryption_scope="antjoscope1")
-TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = ContainerCpkScopeInfo(default_encryption_scope="containerscope")
-TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE = ContainerCpkScopeInfo(default_encryption_scope="containerscope",
-                                                                          deny_encryption_scope_override=True)
-
+TEST_ENCRYPTION_KEY_SCOPE = "antjoscope1"
+TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = "containerscope"
 
 # ------------------------------------------------------------------------------
 
@@ -56,27 +51,27 @@ class StorageCPKNTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name("cpk")
 
-    def _create_block_blob(self, bsc, blob_name=None, data=None, cpk_scope_info=None, max_concurrency=1):
+    def _create_block_blob(self, bsc, blob_name=None, data=None, encryption_scope=None, max_concurrency=1):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b''
-        resp = blob_client.upload_blob(data, cpk_scope_info=cpk_scope_info, max_concurrency=max_concurrency)
+        resp = blob_client.upload_blob(data, encryption_scope=encryption_scope, max_concurrency=max_concurrency)
         return blob_client, resp
 
-    def _create_append_blob(self, bsc, cpk_scope_info=None):
+    def _create_append_blob(self, bsc, encryption_scope=None):
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
             self.container_name,
             blob_name)
-        blob.create_append_blob(cpk_scope_info=cpk_scope_info)
+        blob.create_append_blob(encryption_scope=encryption_scope)
         return blob
 
-    def _create_page_blob(self, bsc, cpk_scope_info=None):
+    def _create_page_blob(self, bsc, encryption_scope=None):
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
             self.container_name,
             blob_name)
-        blob.create_page_blob(1024 * 1024, cpk_scope_info=cpk_scope_info)
+        blob.create_page_blob(1024 * 1024, encryption_scope=encryption_scope)
         return blob
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
@@ -95,20 +90,20 @@ class StorageCPKNTest(StorageTestCase):
             max_page_size=1024)
         self._setup(bsc)
         blob_client, _ = self._create_block_blob(bsc)
-        blob_client.stage_block('1', b'AAA', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-        blob_client.stage_block('2', b'BBB', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-        blob_client.stage_block('3', b'CCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client.stage_block('1', b'AAA', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client.stage_block('2', b'BBB', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client.stage_block('3', b'CCC', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         put_block_list_resp = blob_client.commit_block_list(block_list,
-                                                            cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                            encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(put_block_list_resp['etag'])
         self.assertIsNotNone(put_block_list_resp['last_modified'])
         self.assertTrue(put_block_list_resp['request_server_encrypted'])
-        self.assertEqual(put_block_list_resp['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(put_block_list_resp['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob()
@@ -117,7 +112,7 @@ class StorageCPKNTest(StorageTestCase):
         self.assertEqual(blob.readall(), b'AAABBBCCC')
         self.assertEqual(blob.properties.etag, put_block_list_resp['etag'])
         self.assertEqual(blob.properties.last_modified, put_block_list_resp['last_modified'])
-        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
         self._teardown(bsc)
 
     @pytest.mark.live_test_only
@@ -142,14 +137,14 @@ class StorageCPKNTest(StorageTestCase):
 
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
-        blob_client, upload_response = self._create_block_blob(bsc, data=self.byte_data, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE,
+        blob_client, upload_response = self._create_block_blob(bsc, data=self.byte_data, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE,
                                                                max_concurrency=2)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
         self.assertIsNotNone(upload_response['last_modified'])
         self.assertTrue(upload_response['request_server_encrypted'])
-        self.assertEqual(upload_response['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(upload_response['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob()
@@ -179,14 +174,14 @@ class StorageCPKNTest(StorageTestCase):
 
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
-        blob_client, upload_response = self._create_block_blob(bsc, data=self.byte_data, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE,
+        blob_client, upload_response = self._create_block_blob(bsc, data=self.byte_data, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE,
                                                                max_concurrency=2)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
         self.assertIsNotNone(upload_response['last_modified'])
         self.assertTrue(upload_response['request_server_encrypted'])
-        self.assertEqual(upload_response['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(upload_response['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob()
@@ -214,7 +209,7 @@ class StorageCPKNTest(StorageTestCase):
         self._setup(bsc)
         data = b'AAABBBCCC'
         # create_blob_from_bytes forces the in-memory chunks to be used
-        blob_client, upload_response = self._create_block_blob(bsc, data=data, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client, upload_response = self._create_block_blob(bsc, data=data, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(upload_response['etag'])
@@ -262,15 +257,15 @@ class StorageCPKNTest(StorageTestCase):
 
         # create destination blob
         self.config.use_byte_buffer = False
-        destination_blob_client, _ = self._create_block_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        destination_blob_client, _ = self._create_block_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act part 1: make put block from url calls
         destination_blob_client.stage_block_from_url(block_id=1, source_url=source_blob_url,
                                                      source_offset=0, source_length=4 * 1024,
-                                                     cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                     encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
         destination_blob_client.stage_block_from_url(block_id=2, source_url=source_blob_url,
                                                      source_offset=4 * 1024, source_length=4 * 1024,
-                                                     cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                     encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert blocks
         committed, uncommitted = destination_blob_client.get_block_list('all')
@@ -284,7 +279,7 @@ class StorageCPKNTest(StorageTestCase):
 
         # Act commit the blocks with cpk should succeed
         put_block_list_resp = destination_blob_client.commit_block_list(block_list,
-                                                                        cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                                        encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(put_block_list_resp['etag'])
@@ -315,11 +310,11 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
-        blob_client = self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client = self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         for content in [b'AAA', b'BBB', b'CCC']:
-            append_blob_prop = blob_client.append_block(content, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+            append_blob_prop = blob_client.append_block(content, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
             # Assert
             self.assertIsNotNone(append_blob_prop['etag'])
@@ -363,26 +358,26 @@ class StorageCPKNTest(StorageTestCase):
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
         self.config.use_byte_buffer = False
-        destination_blob_client = self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        destination_blob_client = self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         append_blob_prop = destination_blob_client.append_block_from_url(source_blob_url,
                                                                          source_offset=0,
                                                                          source_length=4 * 1024,
-                                                                         cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                                         encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(append_blob_prop['etag'])
         self.assertIsNotNone(append_blob_prop['last_modified'])
         self.assertTrue(append_blob_prop['request_server_encrypted'])
-        self.assertEqual(append_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(append_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = destination_blob_client.download_blob()
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.readall(), self.byte_data[0: 4 * 1024])
-        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
         self._teardown(bsc)
 
     @pytest.mark.playback_test_only
@@ -400,24 +395,24 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
-        blob_client = self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client = self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         append_blob_prop = blob_client.upload_blob(self.byte_data,
-                                                   blob_type=BlobType.AppendBlob, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                   blob_type=BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(append_blob_prop['etag'])
         self.assertIsNotNone(append_blob_prop['last_modified'])
         self.assertTrue(append_blob_prop['request_server_encrypted'])
-        self.assertEqual(append_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(append_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob()
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.readall(), self.byte_data)
-        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
         self._teardown(bsc)
 
     @pytest.mark.playback_test_only
@@ -435,19 +430,19 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
-        blob_client = self._create_page_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client = self._create_page_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         page_blob_prop = blob_client.upload_page(self.byte_data,
                                                  offset=0,
                                                  length=len(self.byte_data),
-                                                 cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                 encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(page_blob_prop['etag'])
         self.assertIsNotNone(page_blob_prop['last_modified'])
         self.assertTrue(page_blob_prop['request_server_encrypted'])
-        self.assertEqual(page_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(page_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob(offset=0,
@@ -455,7 +450,7 @@ class StorageCPKNTest(StorageTestCase):
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.readall(), self.byte_data)
-        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
         self._teardown(bsc)
 
     @pytest.mark.playback_test_only
@@ -488,20 +483,20 @@ class StorageCPKNTest(StorageTestCase):
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
         self.config.use_byte_buffer = False
-        blob_client = self._create_page_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client = self._create_page_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         page_blob_prop = blob_client.upload_pages_from_url(source_blob_url,
                                                            offset=0,
                                                            length=len(self.byte_data),
                                                            source_offset=0,
-                                                           cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                           encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(page_blob_prop['etag'])
         self.assertIsNotNone(page_blob_prop['last_modified'])
         self.assertTrue(page_blob_prop['request_server_encrypted'])
-        self.assertEqual(page_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(page_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob(offset=0,
@@ -509,7 +504,7 @@ class StorageCPKNTest(StorageTestCase):
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.readall(), self.byte_data)
-        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
         self._teardown(bsc)
 
     @pytest.mark.live_test_only
@@ -532,20 +527,20 @@ class StorageCPKNTest(StorageTestCase):
         page_blob_prop = blob_client.upload_blob(self.byte_data,
                                                  blob_type=BlobType.PageBlob,
                                                  max_concurrency=2,
-                                                 cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+                                                 encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(page_blob_prop['etag'])
         self.assertIsNotNone(page_blob_prop['last_modified'])
         self.assertTrue(page_blob_prop['request_server_encrypted'])
-        self.assertEqual(page_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(page_blob_prop['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act get the blob content
         blob = blob_client.download_blob()
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.readall(), self.byte_data)
-        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob.properties.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
         self._teardown(bsc)
 
     @pytest.mark.playback_test_only
@@ -563,14 +558,14 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
-        blob_client, _ = self._create_block_blob(bsc, data=b'AAABBBCCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client, _ = self._create_block_blob(bsc, data=b'AAABBBCCC', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act
         blob_props = blob_client.get_blob_properties()
 
         # Assert
         self.assertTrue(blob_props.server_encrypted)
-        self.assertEqual(blob_props['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(blob_props['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act set blob properties
         metadata = {'hello': 'world', 'number': '42', 'up': 'upval'}
@@ -579,7 +574,7 @@ class StorageCPKNTest(StorageTestCase):
                 metadata=metadata,
             )
 
-        blob_client.set_blob_metadata(metadata=metadata, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client.set_blob_metadata(metadata=metadata, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         blob_props = blob_client.get_blob_properties()
@@ -606,14 +601,14 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
-        blob_client, _ = self._create_block_blob(bsc, data=b'AAABBBCCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client, _ = self._create_block_blob(bsc, data=b'AAABBBCCC', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Act without cpk should not work
         with self.assertRaises(HttpResponseError):
             blob_client.create_snapshot()
 
         # Act with cpk should work
-        blob_snapshot = blob_client.create_snapshot(cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_snapshot = blob_client.create_snapshot(encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         # Assert
         self.assertIsNotNone(blob_snapshot)
@@ -632,8 +627,8 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
-        blob_client, _ = self._create_block_blob(bsc, blob_name="blockblob", data=b'AAABBBCCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-        self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        blob_client, _ = self._create_block_blob(bsc, blob_name="blockblob", data=b'AAABBBCCC', encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
+        self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         container_client = bsc.get_container_client(self.container_name)
 
@@ -641,7 +636,7 @@ class StorageCPKNTest(StorageTestCase):
         for blob in generator:
             self.assertIsNotNone(blob)
             # Assert: every listed blob has encryption_scope
-            self.assertEqual(blob.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+            self.assertEqual(blob.encryption_scope, TEST_ENCRYPTION_KEY_SCOPE)
 
         self._teardown(bsc)
 
@@ -658,12 +653,12 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         container_client = bsc.create_container('cpkcontainer',
-                                                container_cpk_scope_info=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
+                                                default_encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
 
         blob_client = container_client.get_blob_client("appendblob")
 
         # providing encryption scope when upload the blob
-        resp = blob_client.upload_blob(b'aaaa', BlobType.AppendBlob, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        resp = blob_client.upload_blob(b'aaaa', BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
         # Use the provided encryption scope on the blob
         self.assertEqual(resp['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
 
@@ -681,18 +676,20 @@ class StorageCPKNTest(StorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024)
-        container_client = bsc.create_container('cpkcontainerwithdenyoverride',
-                                                container_cpk_scope_info=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE)
+        container_client = bsc.create_container(
+            'cpkcontainerwithdenyoverride',
+            default_encryption_scope=(TEST_CONTAINER_ENCRYPTION_KEY_SCOPE, True)
+        )
 
         blob_client = container_client.get_blob_client("appendblob")
 
         # It's not allowed to set encryption scope on the blob when the container denies encryption scope override.
         with self.assertRaises(HttpResponseError):
-            blob_client.upload_blob(b'aaaa', BlobType.AppendBlob, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+            blob_client.upload_blob(b'aaaa', BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
 
         resp = blob_client.upload_blob(b'aaaa', BlobType.AppendBlob)
 
-        self.assertEqual(resp['encryption_scope'], TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE.default_encryption_scope)
+        self.assertEqual(resp['encryption_scope'], TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
 
         container_client.delete_container()
 # ------------------------------------------------------------------------------

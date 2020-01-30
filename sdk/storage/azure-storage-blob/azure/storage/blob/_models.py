@@ -22,8 +22,6 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
 from ._generated.models import BlobItem
-from ._generated.models import CpkScopeInfo as CpkScopeInfoGen
-from ._generated.models import ContainerCpkScopeInfo as ContainerCpkScopeInfoGen
 
 
 class BlobType(str, Enum):
@@ -1016,42 +1014,6 @@ class BlobSasPermissions(object):
         parsed = cls(p_read, p_add, p_create, p_write, p_delete)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
-
-
-class ContainerCpkScopeInfo(ContainerCpkScopeInfoGen):
-    """This scope is then used implicitly for all future writes within the container,
-    but can be overridden per-request via explicit request headers.
-
-    :param default_encryption_scope: Optional. Version 2019-07-07 and later.
-        Specifies the default encryption scope to set on the container and use for
-        all future writes.
-    :type default_encryption_scope: str
-    :param deny_encryption_scope_override: Optional. Version 2019-07-07 and
-        newer.  If true, prevents any request from specifying a different
-        encryption scope than the scope set on the container.
-    :type deny_encryption_scope_override: bool
-    """
-
-    def __init__(self, **kwargs):
-        super(ContainerCpkScopeInfo, self).__init__(**kwargs)
-        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
-        self.deny_encryption_scope_override = kwargs.get('deny_encryption_scope_override', False)
-
-
-class CpkScopeInfo(CpkScopeInfoGen):
-    """This indicates the encryption scope that should be used to encrypt the application data
-
-    :param encryption_scope: Optional. Version 2019-07-07 and later.
-         Specifies the name of the encryption scope to use to encrypt the data
-         provided in the request. If not specified, encryption is performed with
-         the default account encryption scope.  For more information, see
-         Encryption at Rest for Azure Storage Services.
-    :type encryption_scope: str
-    """
-
-    def __init__(self, **kwargs):
-        super(CpkScopeInfo, self).__init__(**kwargs)
-        self.encryption_scope = kwargs.get('encryption_scope', None)
 
 
 class CustomerProvidedEncryptionKey(object):

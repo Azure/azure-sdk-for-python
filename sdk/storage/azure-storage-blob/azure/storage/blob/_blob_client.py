@@ -37,7 +37,7 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     UserDelegationKey,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions
+from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
@@ -341,6 +341,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
         kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
+        kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
         if content_settings:
             kwargs['blob_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -452,10 +453,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -856,6 +859,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        cpk_scope_info = get_cpk_scope_info(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -868,8 +872,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'cls': return_response_headers,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -910,10 +915,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -938,6 +945,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -971,8 +979,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'cls': return_response_headers,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1031,10 +1040,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1059,6 +1070,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -1084,8 +1096,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'cls': return_response_headers,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1127,10 +1140,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1151,7 +1166,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1164,8 +1179,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'cls': return_response_headers,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1212,10 +1228,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1570,6 +1588,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             data = data[:length]
 
         validate_content = kwargs.pop('validate_content', False)
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1586,6 +1605,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'validate_content': validate_content,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
         }
         options.update(kwargs)
@@ -1627,10 +1647,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1664,6 +1686,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if source_offset is not None:
             range_header, _ = validate_and_format_range_headers(source_offset, source_length)
 
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1679,8 +1702,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
-            'cls': return_response_headers,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
+            'cls': return_response_headers,
         }
         options.update(kwargs)
         return options
@@ -1719,10 +1743,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1816,6 +1842,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             )
 
         validate_content = kwargs.pop('validate_content', False)
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1834,6 +1861,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
             'validate_content': validate_content,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'tier': tier.value if tier else None,
             'headers': headers
@@ -1896,10 +1924,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2240,10 +2270,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2280,7 +2306,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
         mod_conditions = get_modify_conditions(kwargs)
-
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -2299,6 +2325,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
             'validate_content': validate_content,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -2368,10 +2395,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -2421,7 +2450,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
-
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         source_content_md5 = kwargs.pop('source_content_md5', None)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -2442,6 +2471,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
             'source_modified_access_conditions': source_mod_conditions,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -2529,10 +2559,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -2679,7 +2711,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2696,6 +2728,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
             'validate_content': validate_content,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -2762,10 +2795,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -2814,7 +2849,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
-
+        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2833,6 +2868,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
             'source_modified_access_conditions': source_mod_conditions,
+            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers,
             'timeout': kwargs.pop('timeout', None)}
@@ -2913,10 +2949,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """

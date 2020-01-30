@@ -35,7 +35,7 @@ from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
@@ -245,11 +245,11 @@ class ContainerClient(StorageAccountHostsMixin):
         :type metadata: dict[str, str]
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: 'container', 'blob'.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo container_cpk_scope_info:
-            This scope is then used implicitly for all future writes within the container,
-            but can be overridden per-request via explicit request headers.
-            eg. if explicit cpk_scope_info is set when you create an append blob, the explicit encryption scope
-            will be applied to the blob instead of the default one on the container.
+        :keyword str or Tuple(str, bool) default_encryption_scope:
+            Specifies the default encryption scope to set on the container and use for
+            all future writes. If specified as a string, this will not allow overrides on an
+            individual blob. To allow overrides, specify as a tuple of two values, the scope name
+            and a boolean: ("scope", True). Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -266,10 +266,12 @@ class ContainerClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         timeout = kwargs.pop('timeout', None)
         headers.update(add_metadata_headers(metadata)) # type: ignore
+        container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
             return self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
+                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -796,10 +798,12 @@ class ContainerClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
