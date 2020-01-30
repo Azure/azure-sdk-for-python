@@ -21,91 +21,10 @@ Usually `on_event_batch` should have a list with size max_batch_size. But it may
 
 A user can call both `receive` and `receive_batch` from one `EventHubConsumerClient`.
 
-API is
-```python
-class EventHubConsumerClient(ClientBase):
+Refer to _consumer_client_async.pyi of this PR for API
 
-    ...
-
-    async def receive_batch(
-        self,
-        on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
-        max_batch_size: int, 
-        max_wait_time: float,
-        *,
-        partition_id: Optional[str] = None,
-        owner_level: Optional[int] = None,
-        prefetch: int = 300,
-        track_last_enqueued_event_properties: bool = False,
-        starting_position: Optional[
-            Union[str, int, datetime.datetime, Dict[str, Any]]
-        ] = None,
-        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        on_error: Optional[
-            Callable[["PartitionContext", Exception], Awaitable[None]]
-        ] = None,
-        on_partition_initialize: Optional[
-            Callable[["PartitionContext"], Awaitable[None]]
-        ] = None,
-        on_partition_close: Optional[
-            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
-        ] = None
-    ) -> None:
-```
 **Sample code**
-```python
-import asyncio
-import os
-from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
-
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
-
-
-async def on_event_batch(partition_context, event_batch):
-    if event_batch:
-        print("Received events from partition: {}.".format(partition_context.partition_id))
-        # Put your code here.
-
-        await partition_context.update_checkpoint(event_batch[-1])
-    else:
-        # this is a heartbeat. Do something if you want.
-        pass
-
-
-async def receive(client):
-    """
-    Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
-    a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
-    which also try to receive events from all partitions and use the same storage resource.
-    """
-    await client.receive_batch(
-        on_event=on_event_batch,
-        max_batch_size=100,
-        max_wait_time=3,
-        starting_position="-1",  # "-1" is from the beginning of the partition.
-    )
-    # With specified partition_id, load-balance will be disabled, for example:
-    # await client.receive_batch(on_event_batch=on_event_batch, max_batch_size=100, max_wait_time=3, partition_id='0'))
-
-
-async def main():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    client = EventHubConsumerClient.from_connection_string(
-        CONNECTION_STR,
-        consumer_group="$Default",
-        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
-    )
-    async with client:
-        await receive(client)
-
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-```
+Refer to recv_batch_with_checkpoint_async.py of this PR
 
 **Describe alternatives you've considered**
 1. Make `EventHubConsumerClient.receive(on_event, **kwargs)` to have a "batch" mode. on_event can accept either an single event or a batch. But this will add complexity to specific users. A single user will use either receive_batch, or receive. Plus, max_batch_size will be meaningless for singe event callback.
