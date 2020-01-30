@@ -796,7 +796,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         self.assertIsNotNone(response.id)
         self.assertEqual(response.sentiment, "negative")
-        self.assertIsNotNone(response.document_scores)
+        self.assertIsNotNone(response.sentiment_scores)
         self.assertIsNotNone(response.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()

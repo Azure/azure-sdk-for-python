@@ -101,16 +101,16 @@ class AnalyzeSentimentSample(object):
             print("Overall sentiment: {}".format(doc.sentiment))
         # [END batch_analyze_sentiment]
             print("Overall scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
-                doc.document_scores.positive,
-                doc.document_scores.neutral,
-                doc.document_scores.negative,
+                doc.sentiment_scores.positive,
+                doc.sentiment_scores.neutral,
+                doc.sentiment_scores.negative,
             ))
             for idx, sentence in enumerate(doc.sentences):
                 print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
                 print("Sentence score: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
-                    sentence.sentence_scores.positive,
-                    sentence.sentence_scores.neutral,
-                    sentence.sentence_scores.negative,
+                    sentence.sentiment_scores.positive,
+                    sentence.sentiment_scores.neutral,
+                    sentence.sentiment_scores.negative,
                 ))
                 print("Offset: {}".format(sentence.offset))
                 print("Length: {}\n".format(sentence.length))

@@ -206,9 +206,9 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     print("Overall sentiment: {}".format(doc.sentiment))
     print("Scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
-        doc.document_scores.positive,
-        doc.document_scores.neutral,
-        doc.document_scores.negative,
+        doc.sentiment_scores.positive,
+        doc.sentiment_scores.neutral,
+        doc.sentiment_scores.negative,
     ))
 ```
 

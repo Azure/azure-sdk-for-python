@@ -158,6 +158,6 @@ def sentiment_result(sentiment):
         id=sentiment.id,
         sentiment=sentiment.sentiment.value,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
-        document_scores=SentimentConfidenceScorePerLabel._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
+        sentiment_scores=SentimentConfidenceScorePerLabel._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
     )
