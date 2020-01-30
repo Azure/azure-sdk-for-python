@@ -16,6 +16,7 @@ steps:
 
   - script: |
       pip install -r eng/ci_tools.txt
+      pip install -r eng/test_tools.txt
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
