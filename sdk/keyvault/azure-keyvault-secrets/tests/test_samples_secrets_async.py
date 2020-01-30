@@ -97,6 +97,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_secret.recovery_id)
 
         # [END delete_secret]
+        await secret_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -146,6 +147,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(secret.deleted_date)
 
         # [END list_deleted_secrets]
+        await secret_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -176,6 +178,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(restored_secret.version)
 
         # [END restore_secret_backup]
+        await secret_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -201,3 +204,4 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(recovered_secret.name)
 
         # [END recover_deleted_secret]
+        await secret_client.close()

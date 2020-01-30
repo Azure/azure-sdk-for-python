@@ -32,8 +32,9 @@ class AsyncKeyVaultTestCase(KeyVaultTestCase):
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
             vault_client = kwargs.get("vault_client")
+            vault_uri = kwargs.get("vault_uri")
             loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, vault_client))
+            return loop.run_until_complete(test_fn(test_class_instance, vault_client or vault_uri))
 
         return run
 

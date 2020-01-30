@@ -8,13 +8,13 @@ import os
 import logging
 import json
 
-from unittest.mock import Mock
+from azure.identity.aio import EnvironmentCredential
+from azure.keyvault.secrets.aio import SecretClient
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from secrets_async_preparer import AsyncVaultClientPreparer
 from secrets_async_test_case import AsyncKeyVaultTestCase, AsyncMockTransport
-from azure.keyvault.secrets.aio import SecretClient
 
 
 from dateutil import parser as date_parse
@@ -131,6 +131,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         polling_interval = 0 if self.is_playback() else 2
         deleted = await client.delete_secret(updated.name, _polling_interval=polling_interval)
         self.assertIsNotNone(deleted)
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -155,6 +156,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # list secrets
         result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -183,6 +185,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             self.assertIsNotNone(deleted_secret.recovery_id)
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -214,6 +217,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 del expected[secret.id]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -240,6 +244,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         restored = await client.restore_secret_backup(secret_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -274,6 +279,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         await self._poll_until_no_exception(
             client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
         )
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -303,6 +309,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # purge secrets
         for secret_name in secrets.keys():
             await client.purge_deleted_secret(secret_name)
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -329,6 +336,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                     pass
 
         assert False, "Expected request body wasn't logged"
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -352,14 +360,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_close(self, vault_uri, **kwargs):
-        raise ValueError(vault_uri)
         transport = AsyncMockTransport()
-        credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+        credential = EnvironmentCredential()
         client = SecretClient(vault_uri, credential, transport=transport, **kwargs)
         await client.close()
         await credential.close()
