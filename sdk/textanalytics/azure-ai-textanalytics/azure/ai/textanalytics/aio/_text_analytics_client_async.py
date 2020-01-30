@@ -109,13 +109,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
             use as input a list[DetectLanguageInput] or a list of dict representations of
             DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
-            Limit document text length to 5120 chars and batch size to <= 1000 documents
-            (maximum size of entire request must be < 1MB). Text can be submitted in both
-            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
         :param str country_hint: A country hint for the entire batch. Accepts two
@@ -170,13 +170,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         For the list of supported entity types, check: https://aka.ms/taner
         For the list of enabled languages, check: https://aka.ms/talangs
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-            Limit document text length to 5120 chars and batch size to <= 1000 documents
-            (maximum size of entire request must be < 1MB). Text can be submitted in both
-            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -231,13 +231,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         check https://aka.ms/tanerpii. See https://aka.ms/talangs
         for the list of enabled languages.
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-            Limit document text length to 5120 chars and batch size to <= 1000 documents
-            (maximum size of entire request must be < 1MB). Text can be submitted in both
-            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -291,13 +291,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         well-known knowledge base. See https://aka.ms/talangs for
         supported languages in Text Analytics API.
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-            Limit document text length to 5120 chars and batch size to <= 1000 documents
-            (maximum size of entire request must be < 1MB). Text can be submitted in both
-            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -351,13 +351,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         text. See https://aka.ms/talangs for the list of enabled
         languages.
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-            Limit document text length to 5120 chars and batch size to <= 1000 documents
-            (maximum size of entire request must be < 1MB). Text can be submitted in both
-            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
@@ -412,13 +412,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         and each sentence within it. See https://aka.ms/talangs for the list
         of enabled languages.
 
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
+
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[TextDocumentInput] or a list of dict representations of
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
-            Limit document text length to 5120 chars and batch size to <= 1000 documents
-            (maximum size of entire request must be < 1MB). Text can be submitted in both
-            UTF-8 and UTF-16.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
         :param str language: The 2 letter ISO 639-1 representation of language for the
