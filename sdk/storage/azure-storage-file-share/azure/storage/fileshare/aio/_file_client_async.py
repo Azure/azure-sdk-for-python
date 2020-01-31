@@ -108,6 +108,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
@@ -132,6 +135,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async

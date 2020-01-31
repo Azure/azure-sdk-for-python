@@ -308,7 +308,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+                'x-ms-version': self.api_version
             }
         )
 

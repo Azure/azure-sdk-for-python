@@ -113,7 +113,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async

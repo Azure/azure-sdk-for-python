@@ -112,6 +112,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
@@ -160,6 +163,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(

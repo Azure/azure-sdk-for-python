@@ -59,7 +59,7 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(service_client.api_version, self.api_version_2)
         self.assertEqual(service_client._client._config.version, self.api_version_2)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(AttributeError):
             service_client.api_version = "foo"
 
         service_client = BlobServiceClient(
