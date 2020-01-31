@@ -8,8 +8,8 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
-
-from ._generated import KeyVaultClient
+from ._generated.v7_0.version import VERSION as V7_0_VERSION
+from ._generated.v2016_10_01.version import VERSION as V2016_10_01_VERSION
 from . import AsyncChallengeAuthPolicy
 from .._user_agent import USER_AGENT
 
@@ -19,18 +19,34 @@ if TYPE_CHECKING:
         # pylint:disable=unused-import
         from azure.core.credentials_async import AsyncTokenCredential
     except ImportError:
-        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
+        # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
+DEFAULT_API_VERSION = V7_0_VERSION
 
-class AsyncKeyVaultClientBase:
+
+class AsyncKeyVaultClientBase(object):
     """Base class for async Key Vault clients"""
+
+    @staticmethod
+    def _get_configuration_class(api_version: str):
+        """
+        Get the versioned configuration implementation corresponding to the current profile.
+        :return: The versioned configuration implementation.
+        """
+        if api_version == V7_0_VERSION:
+            from ._generated.v7_0.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
+        elif api_version == V2016_10_01_VERSION:
+            from ._generated.v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
+        else:
+            raise NotImplementedError("API version {} is not available".format(api_version))
+        return ImplConfig
 
     @staticmethod
     def _create_config(credential: "AsyncTokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
         if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-        config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
+            api_version = DEFAULT_API_VERSION
+        config = AsyncKeyVaultClientBase._get_configuration_class(api_version)(credential, **kwargs)
         config.authentication_policy = AsyncChallengeAuthPolicy(credential)
 
         # replace the autorest-generated UserAgentPolicy and its hard-coded user agent
@@ -56,6 +72,18 @@ class AsyncKeyVaultClientBase:
 
         return config
 
+    @staticmethod
+    def _create_client(
+        credential: "AsyncTokenCredential", pipeline: AsyncPipeline, api_version: str
+    ) -> "KeyVaultClient":
+        if api_version == V7_0_VERSION:
+            from ._generated.v7_0.aio import KeyVaultClient as ImplClient
+        elif api_version == V2016_10_01_VERSION:
+            from ._generated.v2016_10_01.aio import KeyVaultClient as ImplClient
+        else:
+            raise NotImplementedError("API version {} is not available".format(api_version))
+        return ImplClient(credentials=credential, pipeline=pipeline)
+
     def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         if not credential:
             raise ValueError(
@@ -66,6 +94,8 @@ class AsyncKeyVaultClientBase:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
         self._vault_url = vault_url.strip(" /")
+        api_version = kwargs.pop('api_version', None) or DEFAULT_API_VERSION
+        self._api_version = api_version
 
         client = kwargs.get("generated_client")
         if client:
@@ -76,7 +106,7 @@ class AsyncKeyVaultClientBase:
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True)
+        self._client = self._create_client(credential, pipeline, api_version)
 
     @staticmethod
     def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "Any") -> AsyncPipeline:
@@ -105,12 +135,26 @@ class AsyncKeyVaultClientBase:
     def vault_url(self) -> str:
         return self._vault_url
 
+    @property
+    def _models(self):
+        """Module depends on the API version:
+            * 2016-10-01: :mod:`v2016_10_01.models<azure.keyvault._generated.v2016_10_01.models>`
+            * 7.0: :mod:`v7_0.models<azure.keyvault._generated.v7_0.models>`
+        """
+        if self._api_version == V7_0_VERSION:
+            from ._generated.v7_0 import models as impl_models
+        elif self._api_version == V2016_10_01_VERSION:
+            from ._generated.v2016_10_01 import models as impl_models
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self._api_version))
+        return impl_models
+
     async def __aenter__(self) -> "AsyncKeyVaultClientBase":
         await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.close()
+        await self.close(*args)
 
-    async def close(self):
-        await self._client.__aexit__()
+    async def close(self, *args):
+        await self._client.__aexit__(*args)
