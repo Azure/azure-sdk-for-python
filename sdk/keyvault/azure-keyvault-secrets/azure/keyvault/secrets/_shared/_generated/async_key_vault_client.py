@@ -1,65 +1,44 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+from .v7_0.version import VERSION as V7_0_VERSION
+from .v2016_10_01.version import VERSION as V2016_10_01_VERSION
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
-from .v7_0.version import VERSION as V7_0_VERSION
-from .v2016_10_01.version import VERSION as V2016_10_01_VERSION
 
-
-class KeyVaultClient(MultiApiClientMixin):
-    """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
-    Implementation depends on the API version:
-
-         * 2016-10-01: :class:`v2016_10_01.KeyVaultClient<azure.keyvault._generated.v2016_10_01.KeyVaultClient>`
-         * 7.0: :class:`v7_0.KeyVaultClient<azure.keyvault._generated.v7_0.KeyVaultClient>`
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param profile: A profile definition, from KnownProfiles to dict.
-    :type profile: azure.profiles.KnownProfiles
-    """
+class AsyncKeyVaultClient(MultiApiClientMixin):
 
     DEFAULT_API_VERSION = V7_0_VERSION
-    _PROFILE_TAG = "azure.keyvault.KeyVaultClient"
+    _PROFILE_TAG = "azure.keyvault.AsyncKeyVaultClient"
     LATEST_PROFILE = ProfileDefinition({_PROFILE_TAG: {None: DEFAULT_API_VERSION}}, _PROFILE_TAG + " latest")
 
     _init_complete = False
-
     def __init__(self, credentials, pipeline=None, api_version=None, profile=KnownProfiles.default):
         self._pipeline = pipeline
         self._entered = False
-        super(KeyVaultClient, self).__init__(api_version=api_version, profile=profile)
+        super(AsyncKeyVaultClient, self).__init__(api_version=api_version, profile=profile)
 
         self._credentials = credentials
 
         # create client
         api_version = self._get_api_version(None)
         if api_version == V7_0_VERSION:
-            from .v7_0 import KeyVaultClient as ImplClient
+            from .v7_0.aio import KeyVaultClient as ImplClient
         elif api_version == V2016_10_01_VERSION:
-            from .v2016_10_01 import KeyVaultClient as ImplClient
+            from .v2016_10_01.aio import KeyVaultClient as ImplClient
         else:
             raise NotImplementedError("API version {} is not available".format(api_version))
         self._client = ImplClient(credentials=self._credentials, pipeline=self._pipeline)
         self._init_complete = True
 
     @staticmethod
-    def get_configuration_class(api_version, aio=False):
+    def get_configuration_class(api_version):
         """
         Get the versioned configuration implementation corresponding to the current profile.
         :return: The versioned configuration implementation.
         """
         if api_version == V7_0_VERSION:
-            from .v7_0._configuration import KeyVaultClientConfiguration as ImplConfig
+            from .v7_0.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
         elif api_version == V2016_10_01_VERSION:
-            from .v2016_10_01._configuration import KeyVaultClientConfiguration as ImplConfig
+            from .v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
         else:
             raise NotImplementedError("API version {} is not available".format(api_version))
         return ImplConfig
@@ -80,24 +59,24 @@ class KeyVaultClient(MultiApiClientMixin):
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return impl_models
 
-    def __enter__(self, *args, **kwargs):
+    async def __aenter__(self, *args, **kwargs):
         """
-        Calls __enter__ on all client implementations which support it
-        :param args: positional arguments to relay to client implementations of __enter__
-        :param kwargs: keyword arguments to relay to client implementations of __enter__
+        Calls __aenter__ on all client implementations which support it
+        :param args: positional arguments to relay to client implementations of __aenter__
+        :param kwargs: keyword arguments to relay to client implementations of __aenter__
         :return: returns the current KeyVaultClient instance
         """
-        self._client.__enter__(*args, **kwargs)
+        await self._client.__aenter__(*args, **kwargs)
         return self
 
-    def __exit__(self, *args, **kwargs):
+    async def __aexit__(self, *args, **kwargs):
         """
-        Calls __exit__ on all client implementations which support it
-        :param args: positional arguments to relay to client implementations of __enter__
-        :param kwargs: keyword arguments to relay to client implementations of __enter__
+        Calls __aexit__ on all client implementations which support it
+        :param args: positional arguments to relay to client implementations of __aexit__
+        :param kwargs: keyword arguments to relay to client implementations of __aexit__
         :return: returns the current KeyVaultClient instance
         """
-        self._client.__exit__(*args, **kwargs)
+        await self._client.__aexit__(*args, **kwargs)
         return self
 
     def __getattr__(self, name):
@@ -119,4 +98,4 @@ class KeyVaultClient(MultiApiClientMixin):
         if self._init_complete and not hasattr(self, name):
             setattr(self._client, name, attr)
         else:
-            super(KeyVaultClient, self).__setattr__(name, attr)
+            super(AsyncKeyVaultClient, self).__setattr__(name, attr)

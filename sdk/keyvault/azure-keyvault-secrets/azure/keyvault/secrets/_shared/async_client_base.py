@@ -9,7 +9,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from ._generated import KeyVaultClient
+from ._generated import AsyncKeyVaultClient
 from . import AsyncChallengeAuthPolicy
 from .._user_agent import USER_AGENT
 
@@ -29,8 +29,8 @@ class AsyncKeyVaultClientBase:
     @staticmethod
     def _create_config(credential: "AsyncTokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
         if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-        config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
+            api_version = AsyncKeyVaultClient.DEFAULT_API_VERSION
+        config = AsyncKeyVaultClient.get_configuration_class(api_version)(credential, **kwargs)
         config.authentication_policy = AsyncChallengeAuthPolicy(credential)
 
         # replace the autorest-generated UserAgentPolicy and its hard-coded user agent
@@ -76,7 +76,7 @@ class AsyncKeyVaultClientBase:
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True)
+        self._client = AsyncKeyVaultClient(credential, pipeline=pipeline)
 
     @staticmethod
     def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "Any") -> AsyncPipeline:
@@ -110,7 +110,7 @@ class AsyncKeyVaultClientBase:
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.close()
+        await self.close(*args)
 
-    async def close(self):
-        await self._client.__aexit__()
+    async def close(self, *args):
+        await self._client.__aexit__(*args)

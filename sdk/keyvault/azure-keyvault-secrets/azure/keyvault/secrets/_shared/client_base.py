@@ -29,7 +29,7 @@ class KeyVaultClientBase(object):
         # type: (TokenCredential, Optional[str], **Any) -> Configuration
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
-        config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
+        config = KeyVaultClient.get_configuration_class(api_version)(credential, **kwargs)
         config.authentication_policy = ChallengeAuthPolicy(credential)
 
         # replace the autorest-generated UserAgentPolicy and its hard-coded user agent
@@ -76,7 +76,7 @@ class KeyVaultClientBase(object):
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False)
+        self._client = KeyVaultClient(credential, pipeline=pipeline)
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):
