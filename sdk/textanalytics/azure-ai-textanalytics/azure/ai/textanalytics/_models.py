@@ -452,7 +452,7 @@ class DocumentError(DictMixin):
                 "Document Id: {}\nError: {} - {}\n".
                 format(self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
             )
-        return self.__getattribute__(attr)
+        raise AttributeError("'DocumentError' object has no attribute '{}'".format(attr))
 
     @classmethod
     def _from_generated(cls, doc_err):
