@@ -7,13 +7,14 @@
 - The single text, module-level operations `single_detect_language()`, `single_recognize_entities()`, `single_extract_key_phrases()`, `single_analyze_sentiment()`, `single_recognize_pii_entities()`, and `single_recognize_linked_entities()`
 have been removed from the client library. Use the batching methods for optimal performance in production environments.
 - To use an API key as the credential for authenticating the client, a new credential class `TextAnalyticsApiKeyCredential("<api_key>")` must be passed in for the `credential` parameter. 
-Passing the API key string as the credential is no longer supported.
-- `detect_languages() is renamed to `detect_language()`
+Passing the API key as a string is no longer supported.
+- `detect_languages()` is renamed to `detect_language()`.
 - The `TextAnalyticsError` model has been simplified to an object with only attributes `code`, `message`, and `target`.
-- `NamedEntity` has been renamed to `CategorizedEntity` and its attributes `type` -> `category` and `subtype` to `subcategory`.
+- `NamedEntity` has been renamed to `CategorizedEntity` and its attributes `type` to `category` and `subtype` to `subcategory`.
 - `RecognizePiiEntitiesResult` now contains on the object a list of `PiiEntity` instead of `NamedEntity`.
-- `AnalyzeSentimentResult` attribute `document_scores` has been renamed to `sentiment_scores`
-- `SentenceSentiment` attribute `sentence_scores` has been renamed to `sentiment_scores`
+- `AnalyzeSentimentResult` attribute `document_scores` has been renamed to `sentiment_scores`.
+- `SentenceSentiment` attribute `sentence_scores` has been renamed to `sentiment_scores`.
+- `SentimentConfidenceScorePerLabel` has been renamed to `SentimentScorePerLabel`.
 - `DetectLanguageResult` no longer has attribute `detected_languages`. Use `primary_language` to access the detected language in text.
 
 **New features**
