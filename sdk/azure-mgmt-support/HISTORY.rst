@@ -7,4 +7,3 @@ Release History
 ++++++++++++++++++
 
 * Initial Release
-
