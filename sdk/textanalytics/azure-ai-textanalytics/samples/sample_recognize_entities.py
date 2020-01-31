@@ -10,7 +10,7 @@
 FILE: sample_recognize_entities.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize named entities in a batch of documents.
+    This sample demonstrates how to recognize categorized entities in a batch of documents.
 
 USAGE:
     python sample_recognize_entities.py

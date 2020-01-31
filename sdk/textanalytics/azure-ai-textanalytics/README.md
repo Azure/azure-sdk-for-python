@@ -2,7 +2,7 @@
 Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes six main functions:
 
 * Sentiment Analysis
-* Named Entity Recognition
+* Categorized Entity Recognition
 * Personally Identifiable Information (PII) Entity Recognition
 * Linked Entity Recognition
 * Language Detection
@@ -187,7 +187,7 @@ The following section provides several code snippets covering some of the most c
 * [Detect Language](#detect-language "Detect language")
 
 ### Analyze sentiment
-Analyze sentiment of your text to determine if it's positive, negative, neutral or mixed, including a per-sentence sentiment analysis and confidence scores.
+Analyze sentiment of text to determine if it's positive, negative, neutral or mixed, including per-sentence sentiment analysis and confidence scores.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
@@ -217,7 +217,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [sentiment analysis](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis).
 
 ### Recognize entities
-Recognize and categorize entities in your text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
+Recognize and categorize entities in text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
@@ -245,7 +245,7 @@ Please refer to the service documentation for a conceptual discussion of [named 
 and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
 
 ### Recognize PII entities
-Recognize and categorize Personally Identifiable Information (PII) entities in each text, such as 
+Recognize and categorize Personally Identifiable Information (PII) entities in text, such as 
 Social Security Numbers, bank account information, credit card numbers, and more. 
 
 ```python
@@ -331,7 +331,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [key phrase extraction](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction).
 
 ### Detect language
-Determine the language of each passed in text, including the confidence score of the predicted language.
+Determine the language in text, including the confidence score of the predicted language.
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
