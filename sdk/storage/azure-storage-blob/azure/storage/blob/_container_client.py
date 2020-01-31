@@ -145,7 +145,7 @@ class ContainerClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self.api_version = kwargs.get('api_version', VERSION)
+        self._client._config.version = kwargs.get('api_version', VERSION)
 
     def _format_url(self, hostname):
         container_name = self.container_name

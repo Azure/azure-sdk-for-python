@@ -243,10 +243,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         return self._client._config.version
 
-    @api_version.setter
-    def api_version(self, value):
-        self._client._config.version = value
-
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
         if snapshot:

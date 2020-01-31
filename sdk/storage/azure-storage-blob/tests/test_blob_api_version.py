@@ -55,22 +55,17 @@ class StorageClientTest(StorageTestCase):
     def test_service_client_api_version_property(self):
         service_client = BlobServiceClient(
             "https://foo.blob.core.windows.net/account",
-            credential="fake_key",
-            api_version=self.api_version_1)
-        self.assertEqual(service_client.api_version, self.api_version_1)
-        self.assertEqual(service_client._client._config.version, self.api_version_1)
-
-        service_client.api_version = self.api_version_2
-        self.assertEqual(service_client.api_version, self.api_version_2)
-        self.assertEqual(service_client._client._config.version, self.api_version_2)
-
-        service_client = BlobServiceClient(
-            "https://foo.blob.core.windows.net/account",
             credential="fake_key")
         self.assertEqual(service_client.api_version, self.api_version_2)
         self.assertEqual(service_client._client._config.version, self.api_version_2)
 
-        service_client.api_version = self.api_version_1
+        with pytest.raises(ValueError):
+            service_client.api_version = "foo"
+
+        service_client = BlobServiceClient(
+            "https://foo.blob.core.windows.net/account",
+            credential="fake_key",
+            api_version=self.api_version_1)
         self.assertEqual(service_client.api_version, self.api_version_1)
         self.assertEqual(service_client._client._config.version, self.api_version_1)
 
@@ -86,23 +81,15 @@ class StorageClientTest(StorageTestCase):
         container_client = ContainerClient(
             "https://foo.blob.core.windows.net/account",
             self.container_name,
-            credential="fake_key",
-            api_version=self.api_version_1)
-        self.assertEqual(container_client.api_version, self.api_version_1)
-        self.assertEqual(container_client._client._config.version, self.api_version_1)
-
-        container_client.api_version = self.api_version_2
+            credential="fake_key")
         self.assertEqual(container_client.api_version, self.api_version_2)
         self.assertEqual(container_client._client._config.version, self.api_version_2)
 
         container_client = ContainerClient(
             "https://foo.blob.core.windows.net/account",
             self.container_name,
-            credential="fake_key")
-        self.assertEqual(container_client.api_version, self.api_version_2)
-        self.assertEqual(container_client._client._config.version, self.api_version_2)
-
-        container_client.api_version = self.api_version_1
+            credential="fake_key",
+            api_version=self.api_version_1)
         self.assertEqual(container_client.api_version, self.api_version_1)
         self.assertEqual(container_client._client._config.version, self.api_version_1)
 
@@ -120,10 +107,6 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(blob_client.api_version, self.api_version_1)
         self.assertEqual(blob_client._client._config.version, self.api_version_1)
 
-        blob_client.api_version = self.api_version_2
-        self.assertEqual(blob_client.api_version, self.api_version_2)
-        self.assertEqual(blob_client._client._config.version, self.api_version_2)
-
         blob_client = BlobClient(
             "https://foo.blob.core.windows.net/account",
             self.container_name,
@@ -131,10 +114,6 @@ class StorageClientTest(StorageTestCase):
             credential="fake_key")
         self.assertEqual(blob_client.api_version, self.api_version_2)
         self.assertEqual(blob_client._client._config.version, self.api_version_2)
-
-        blob_client.api_version = self.api_version_1
-        self.assertEqual(blob_client.api_version, self.api_version_1)
-        self.assertEqual(blob_client._client._config.version, self.api_version_1)
 
     @GlobalStorageAccountPreparer()
     def test_old_api_create_append_blob_succeeds(self, resource_group, location, storage_account, storage_account_key):
