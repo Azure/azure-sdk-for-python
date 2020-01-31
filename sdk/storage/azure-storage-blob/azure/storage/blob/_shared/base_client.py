@@ -63,10 +63,14 @@ _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
     "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
+    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
 }
 
 
-class check_parameter_api_version(object):
+class check_parameter_api_version(object):  # pylint: disable=client-incorrect-naming-convention
+    """Validate that the parameters passed into the current operation
+    are compatible with the current API version.
+    """
     def __init__(self, **kwargs):
         self.compat_map = kwargs
 
@@ -76,7 +80,7 @@ class check_parameter_api_version(object):
             if self.compat_map and kwargs:
                 current = args[0].api_version  # client api version
                 invalid_params = [param for param, api in self.compat_map.items() if api > current]
-                invalid_values = list(kwargs.keys() & invalid_params)
+                invalid_values = [key for key in kwargs.keys() if key in invalid_params]
                 if invalid_values:
                     formatted_params = "\n".join(
                         ["'{}' (introduced in version {})".format(p, self.compat_map.get(p)) for p in invalid_values])
@@ -90,7 +94,7 @@ class check_parameter_api_version(object):
         return wrapper
 
 
-class check_operation_api_version(object):
+class check_operation_api_version(object):  # pylint: disable=client-incorrect-naming-convention
     """Validate that the client is using an API version equal to or
     above that which the operation was introduced.
 
@@ -125,7 +129,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file-share"]:
+        if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
@@ -241,7 +245,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         :type: str
         """
-        return self._client._config.version
+        return self._client._config.version  # pylint: disable=protected-access
 
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
