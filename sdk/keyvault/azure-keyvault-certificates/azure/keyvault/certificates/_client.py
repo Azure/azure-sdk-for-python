@@ -102,7 +102,7 @@ class CertificateClient(KeyVaultClientBase):
         tags = kwargs.pop("tags", None)
 
         if enabled is not None:
-            attributes = self._client.models.CertificateAttributes(enabled=enabled)
+            attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
 
@@ -364,7 +364,7 @@ class CertificateClient(KeyVaultClientBase):
         policy = kwargs.pop("policy", None)
 
         if enabled is not None:
-            attributes = self._client.models.CertificateAttributes(enabled=enabled)
+            attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
         base64_encoded_certificate = base64.b64encode(certificate_bytes).decode("utf-8")
@@ -450,7 +450,7 @@ class CertificateClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
 
         if enabled is not None:
-            attributes = self._client.models.CertificateAttributes(enabled=enabled)
+            attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
 
@@ -762,7 +762,7 @@ class CertificateClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
 
         if enabled is not None:
-            attributes = self._client.models.CertificateAttributes(enabled=enabled)
+            attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
         bundle = self._client.merge_certificate(
@@ -833,12 +833,12 @@ class CertificateClient(KeyVaultClientBase):
         admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
-            issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
+            issuer_credentials = self._models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
         if admin_contacts:
             admin_details = [
-                self._client.models.AdministratorDetails(
+                self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
                     email_address=contact.email,
@@ -849,13 +849,13 @@ class CertificateClient(KeyVaultClientBase):
         else:
             admin_details = None
         if organization_id or admin_details:
-            organization_details = self._client.models.OrganizationDetails(
+            organization_details = self._models.OrganizationDetails(
                 id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None
         if enabled is not None:
-            issuer_attributes = self._client.models.IssuerAttributes(enabled=enabled)
+            issuer_attributes = self._models.IssuerAttributes(enabled=enabled)
         else:
             issuer_attributes = None
         issuer_bundle = self._client.set_certificate_issuer(
@@ -895,12 +895,12 @@ class CertificateClient(KeyVaultClientBase):
         admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
-            issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
+            issuer_credentials = self._models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
         if admin_contacts:
             admin_details = [
-                self._client.models.AdministratorDetails(
+                self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
                     email_address=contact.email,
@@ -911,13 +911,13 @@ class CertificateClient(KeyVaultClientBase):
         else:
             admin_details = None
         if organization_id or admin_details:
-            organization_details = self._client.models.OrganizationDetails(
+            organization_details = self._models.OrganizationDetails(
                 id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None
         if enabled is not None:
-            issuer_attributes = self._client.models.IssuerAttributes(enabled=enabled)
+            issuer_attributes = self._models.IssuerAttributes(enabled=enabled)
         else:
             issuer_attributes = None
         issuer_bundle = self._client.update_certificate_issuer(

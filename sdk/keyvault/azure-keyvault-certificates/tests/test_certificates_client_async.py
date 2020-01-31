@@ -9,8 +9,8 @@ import os
 import pytest
 import logging
 import json
+import pytest
 
-from azure.identity.aio import EnvironmentCredential
 from azure.keyvault.certificates.aio import CertificateClient
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase, AsyncMockTransport
@@ -789,14 +789,19 @@ class CertificateClientTests(KeyVaultTestCase):
                     pass
         await client.close()
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_close(self, vault_uri, **kwargs):
+    @pytest.mark.asyncio
+    async def test_async_client_close(self):
         transport = AsyncMockTransport()
-        credential = EnvironmentCredential()
-        client = CertificateClient(vault_uri, credential, transport=transport, **kwargs)
-        await client.close()
-        await credential.close()
+        client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
 
+        await client.close()
+        assert transport.__aexit__.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_async_client_context_manager(self):
+        transport = AsyncMockTransport()
+        client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
+
+        async with client:
+            pass
         assert transport.__aexit__.call_count == 1
