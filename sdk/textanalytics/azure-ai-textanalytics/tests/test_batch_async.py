@@ -775,7 +775,7 @@ class BatchTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_document_attribute_error_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""}]
         response = await text_analytics.analyze_sentiment(docs)
