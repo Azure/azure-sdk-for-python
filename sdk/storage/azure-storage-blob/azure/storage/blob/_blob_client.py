@@ -1964,7 +1964,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        prev_snapshot_url = kwargs.pop('managed_disk_diff')
+        prev_snapshot_url = kwargs.pop('managed_disk_diff', None)
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:

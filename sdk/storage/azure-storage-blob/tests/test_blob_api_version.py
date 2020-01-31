@@ -116,252 +116,55 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(blob_client._client._config.version, self.api_version_2)
 
     @GlobalStorageAccountPreparer()
-    def test_old_api_create_append_blob_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+    def test_old_api_get_page_ranges_succeeds(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(
             self.account_url(storage_account, "blob"),
-            storage_account_key,
+            credential=storage_account_key,
+            connection_data_block_size=4 * 1024,
+            max_page_size=4 * 1024,
             api_version=self.api_version_1)
         container = self._create_container(bsc)
         blob_name = self._get_blob_reference()
 
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        create_resp = blob_client.create_append_blob()
+        blob = container.get_blob_client(blob_name)
+        blob.create_page_blob(2048)
+        data = self.get_random_bytes(1536)
 
-        # Assert
-        blob_properties = blob_client.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertIsNone(blob_properties.encryption_scope)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_create_append_blob_fails(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
+        snapshot1 = blob.create_snapshot()
+        blob.upload_page(data, offset=0, length=1536)
+        snapshot2 = blob.create_snapshot()
+        blob.clear_page(offset=512, length=512)
 
         # Act
-        blob_client = container.get_blob_client(blob_name)
-        with pytest.raises(ValueError) as error:
-            blob_client.create_append_blob(cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
+        ranges1, cleared1 = blob.get_page_ranges(previous_snapshot_diff=snapshot1)
+        ranges2, cleared2 = blob.get_page_ranges(previous_snapshot_diff=snapshot2['snapshot'])
 
         # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(len(ranges1), 2)
+        self.assertIsInstance(cleared1, list)
+        self.assertEqual(len(cleared1), 1)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(cleared1[0]['start'], 512)
+        self.assertEqual(cleared1[0]['end'], 1023)
+        self.assertEqual(ranges1[1]['start'], 1024)
+        self.assertEqual(ranges1[1]['end'], 1535)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(len(ranges2), 0)
+        self.assertIsInstance(cleared2, list)
+        self.assertEqual(len(cleared2), 1)
+        self.assertEqual(cleared2[0]['start'], 512)
+        self.assertEqual(cleared2[0]['end'], 1023)
 
     @GlobalStorageAccountPreparer()
-    def test_old_api_append_block_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+    def test_new_api_get_page_ranges_fails(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(
             self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_append_blob()
-        update_resp = blob_client.append_block(b'testdata')
-
-        # Assert
-        blob_properties = blob_client.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertIsNone(blob_properties.encryption_scope)
-        self.assertEqual(blob_properties.etag, update_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, update_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_append_block_fails(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_append_blob()
-        with pytest.raises(ValueError) as error:
-            blob_client.append_block(b'testdata', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-
-        # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
-
-    @GlobalStorageAccountPreparer()
-    def test_old_api_create_page_blob_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        create_resp = blob_client.create_page_blob(1024)
-
-        # Assert
-        blob_properties = blob_client.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertIsNone(blob_properties.encryption_scope)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_create_page_blob_fails(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        with pytest.raises(ValueError) as error:
-            blob_client.create_page_blob(1024, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-
-        # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
-
-    @GlobalStorageAccountPreparer()
-    def test_old_api_upload_page_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_page_blob(1024)
-        update_resp = blob_client.upload_page(512 * b'0', 0, 512)
-
-        # Assert
-        blob_properties = blob_client.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertIsNone(blob_properties.encryption_scope)
-        self.assertEqual(blob_properties.etag, update_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, update_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_upload_page_fails(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_page_blob(1024)
-        with pytest.raises(ValueError) as error:
-            blob_client.upload_page(512 * b'0', 0, 512, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-
-        # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
-
-    @GlobalStorageAccountPreparer()
-    def test_old_api_clear_page_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_page_blob(1024)
-        update_resp = blob_client.clear_page(0, 512)
-
-        # Assert
-        blob_properties = blob_client.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertIsNone(blob_properties.encryption_scope)
-        self.assertEqual(blob_properties.etag, update_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, update_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_clear_page_fails(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_page_blob(1024)
-        with pytest.raises(ValueError) as error:
-            blob_client.clear_page(0, 512, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-
-        # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
-
-    @GlobalStorageAccountPreparer()
-    def test_old_api_resize_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_page_blob(1024)
-        update_resp = blob_client.resize_blob(512)
-
-        # Assert
-        blob_properties = blob_client.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertIsNone(blob_properties.encryption_scope)
-        self.assertEqual(blob_properties.etag, update_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, update_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_resize_fails(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
-            api_version=self.api_version_1)
-        container = self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob_client = container.get_blob_client(blob_name)
-        blob_client.create_page_blob(1024)
-        with pytest.raises(ValueError) as error:
-            blob_client.resize_blob(512, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
-
-        # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'cpk_scope_info'"))
-
-    @GlobalStorageAccountPreparer()
-    def test_new_api_get_page_managed_disk_diff_fails(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            storage_account_key,
+            credential=storage_account_key,
             api_version=self.api_version_1)
         container = self._create_container(bsc)
         blob_name = self._get_blob_reference()
@@ -390,11 +193,9 @@ class StorageClientTest(StorageTestCase):
 
         # Act
         with pytest.raises(ValueError) as error:
-            blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob.url + '&' + sas_token1)
+            blob.get_page_ranges(managed_disk_diff=snapshot_blob.url + '&' + sas_token1)
         
         # Assert
-        self.assertEqual(
-            str(error.value),
-            "The function 'get_managed_disk_page_range_diff' only supports API version '2019-07-07' or above. Currently using API version: '2019-02-02'.")
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'managed_disk_diff'"))
 
 # ------------------------------------------------------------------------------

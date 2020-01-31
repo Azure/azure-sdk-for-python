@@ -6,8 +6,10 @@
 import unittest
 import pytest
 import platform
+from datetime import datetime, timedelta
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, ResourceExistsError
+from azure.storage.blob import generate_blob_sas, BlobSasPermissions
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -32,27 +34,30 @@ class StorageClientTest(AsyncStorageTestCase):
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
         return self.get_resource_name(prefix)
 
+    async def _create_container(self, bsc):
+        container = bsc.get_container_client(self.container_name)
+        try:
+            await container.create_container()
+        except ResourceExistsError:
+            pass
+        return container
+
     # --Test Cases--------------------------------------------------------------
 
     def test_service_client_api_version_property(self):
-        service_client = BlobServiceClient(
-            "https://foo.blob.core.windows.net/account",
-            credential="fake_key",
-            api_version=self.api_version_1)
-        self.assertEqual(service_client.api_version, self.api_version_1)
-        self.assertEqual(service_client._client._config.version, self.api_version_1)
-
-        service_client.api_version = self.api_version_2
-        self.assertEqual(service_client.api_version, self.api_version_2)
-        self.assertEqual(service_client._client._config.version, self.api_version_2)
-
         service_client = BlobServiceClient(
             "https://foo.blob.core.windows.net/account",
             credential="fake_key")
         self.assertEqual(service_client.api_version, self.api_version_2)
         self.assertEqual(service_client._client._config.version, self.api_version_2)
 
-        service_client.api_version = self.api_version_1
+        with pytest.raises(ValueError):
+            service_client.api_version = "foo"
+
+        service_client = BlobServiceClient(
+            "https://foo.blob.core.windows.net/account",
+            credential="fake_key",
+            api_version=self.api_version_1)
         self.assertEqual(service_client.api_version, self.api_version_1)
         self.assertEqual(service_client._client._config.version, self.api_version_1)
 
@@ -68,23 +73,15 @@ class StorageClientTest(AsyncStorageTestCase):
         container_client = ContainerClient(
             "https://foo.blob.core.windows.net/account",
             self.container_name,
-            credential="fake_key",
-            api_version=self.api_version_1)
-        self.assertEqual(container_client.api_version, self.api_version_1)
-        self.assertEqual(container_client._client._config.version, self.api_version_1)
-
-        container_client.api_version = self.api_version_2
+            credential="fake_key")
         self.assertEqual(container_client.api_version, self.api_version_2)
         self.assertEqual(container_client._client._config.version, self.api_version_2)
 
         container_client = ContainerClient(
             "https://foo.blob.core.windows.net/account",
             self.container_name,
-            credential="fake_key")
-        self.assertEqual(container_client.api_version, self.api_version_2)
-        self.assertEqual(container_client._client._config.version, self.api_version_2)
-
-        container_client.api_version = self.api_version_1
+            credential="fake_key",
+            api_version=self.api_version_1)
         self.assertEqual(container_client.api_version, self.api_version_1)
         self.assertEqual(container_client._client._config.version, self.api_version_1)
 
@@ -102,10 +99,6 @@ class StorageClientTest(AsyncStorageTestCase):
         self.assertEqual(blob_client.api_version, self.api_version_1)
         self.assertEqual(blob_client._client._config.version, self.api_version_1)
 
-        blob_client.api_version = self.api_version_2
-        self.assertEqual(blob_client.api_version, self.api_version_2)
-        self.assertEqual(blob_client._client._config.version, self.api_version_2)
-
         blob_client = BlobClient(
             "https://foo.blob.core.windows.net/account",
             self.container_name,
@@ -114,33 +107,89 @@ class StorageClientTest(AsyncStorageTestCase):
         self.assertEqual(blob_client.api_version, self.api_version_2)
         self.assertEqual(blob_client._client._config.version, self.api_version_2)
 
-        blob_client.api_version = self.api_version_1
-        self.assertEqual(blob_client.api_version, self.api_version_1)
-        self.assertEqual(blob_client._client._config.version, self.api_version_1)
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_old_api_get_page_ranges_succeeds_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key,
+            connection_data_block_size=4 * 1024,
+            max_page_size=4 * 1024,
+            api_version=self.api_version_1)
+        container = await self._create_container(bsc)
+        blob_name = self._get_blob_reference()
+
+        blob = container.get_blob_client(blob_name)
+        await blob.create_page_blob(2048)
+        data = self.get_random_bytes(1536)
+
+        snapshot1 = await blob.create_snapshot()
+        await blob.upload_page(data, offset=0, length=1536)
+        snapshot2 = await blob.create_snapshot()
+        await blob.clear_page(offset=512, length=512)
+
+        # Act
+        ranges1, cleared1 = await blob.get_page_ranges(previous_snapshot_diff=snapshot1)
+        ranges2, cleared2 = await blob.get_page_ranges(previous_snapshot_diff=snapshot2['snapshot'])
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(len(ranges1), 2)
+        self.assertIsInstance(cleared1, list)
+        self.assertEqual(len(cleared1), 1)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(cleared1[0]['start'], 512)
+        self.assertEqual(cleared1[0]['end'], 1023)
+        self.assertEqual(ranges1[1]['start'], 1024)
+        self.assertEqual(ranges1[1]['end'], 1535)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(len(ranges2), 0)
+        self.assertIsInstance(cleared2, list)
+        self.assertEqual(len(cleared2), 1)
+        self.assertEqual(cleared2[0]['start'], 512)
+        self.assertEqual(cleared2[0]['end'], 1023)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_old_api_create_append_blob_succeeds(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+    async def test_new_api_get_page_ranges_fails_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(
             self.account_url(storage_account, "blob"),
-            storage_account_key,
+            credential=storage_account_key,
             api_version=self.api_version_1)
+        container = await self._create_container(bsc)
         blob_name = self._get_blob_reference()
 
+        blob = container.get_blob_client(blob_name)
+        await blob.create_page_blob(1536)
+        data = self.get_random_bytes(1536)
+
+        snapshot = await blob.create_snapshot()
+        snapshot_blob = BlobClient.from_blob_url(
+            blob.url,
+            credential=storage_account_key,
+            snapshot=snapshot['snapshot'],
+            api_version=self.api_version_1)
+
+        sas_token1 = generate_blob_sas(
+            snapshot_blob.account_name,
+            snapshot_blob.container_name,
+            snapshot_blob.blob_name,
+            snapshot=snapshot_blob.snapshot,
+            account_key=snapshot_blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        await blob.upload_page(data, offset=0, length=1536)
+
         # Act
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        create_resp = await blob.create_append_blob()
-
+        with pytest.raises(ValueError) as error:
+            await blob.get_page_ranges(managed_disk_diff=snapshot_blob.url + '&' + sas_token1)
+        
         # Assert
-        blob_properties = await blob.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
-
-
-
-
-
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'managed_disk_diff'"))
 
 # ------------------------------------------------------------------------------
