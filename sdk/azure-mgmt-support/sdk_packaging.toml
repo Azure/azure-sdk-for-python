@@ -1,0 +1,8 @@
+[packaging]
+package_name = "sdk/azure-mgmt-support"
+package_nspkg = "sdk/azure-mgmt-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = true
