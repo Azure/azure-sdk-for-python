@@ -1,5 +1,25 @@
 # Change Log azure-ai-textanalytics
 
+## 1.0.0b2 (2020-02-11)
+
+**Breaking changes**
+
+- The single text, module-level operations `single_detect_language()`, `single_recognize_entities()`, `single_extract_key_phrases()`, `single_analyze_sentiment()`, `single_recognize_pii_entities()`, and `single_recognize_linked_entities()`
+have been removed from the client library. Use the batching methods for optimal performance in production environments.
+- `detect_languages() is renamed to `detect_language()`
+- To use an API key as the credential for authenticating the client, a new credential class `TextAnalyticsApiKeyCredential("<api_key>")` must be passed in for the `credential` parameter. 
+This credential class provides an `update_key()` method which allows you to rotate the API key for long-lived clients.
+
+
+**New features**
+
+**Fixes and improvements**
+
+- __repr__ has been added to all of the response objects.
+
+**Dependency updates**
+
+
 ## 1.0.0b1 (2020-01-09)
 
 Version (1.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Text Analytics. For more information about this, and preview releases of other Azure SDK libraries, please visit
