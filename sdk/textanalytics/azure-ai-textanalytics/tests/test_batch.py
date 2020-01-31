@@ -772,8 +772,8 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         except AttributeError as custom_error:
             self.assertEqual(
                 custom_error.args[0],
-                'The batched result has a DocumentError with the following details. Resolve the error or '
-                'filter for only successful results using the is_error property.\nDocument Id: 1\nError: '
+                '\'DocumentError\' object has no attribute \'sentiment\'. '
+                'The service was unable to process this document:\nDocument Id: 1\nError: '
                 'invalidDocument - Document text is empty.\n'
             )
 

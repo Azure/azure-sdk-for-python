@@ -447,10 +447,9 @@ class DocumentError(DictMixin):
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
             raise AttributeError(
-                "The batched result has a DocumentError with the following details. "
-                "Resolve the error or filter for only successful results using the is_error property.\n"
+                "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
                 "Document Id: {}\nError: {} - {}\n".
-                format(self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
+                format(attr, self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
             )
         raise AttributeError("'DocumentError' object has no attribute '{}'".format(attr))
 
