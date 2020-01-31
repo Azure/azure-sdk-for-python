@@ -80,7 +80,7 @@ class check_parameter_api_version(object):  # pylint: disable=client-incorrect-n
             if self.compat_map and kwargs:
                 current = args[0].api_version  # client api version
                 invalid_params = [param for param, api in self.compat_map.items() if api > current]
-                invalid_values = [key for key in kwargs.keys() if key in invalid_params]
+                invalid_values = [param for param in kwargs if param in invalid_params]
                 if invalid_values:
                     formatted_params = "\n".join(
                         ["'{}' (introduced in version {})".format(p, self.compat_map.get(p)) for p in invalid_values])
