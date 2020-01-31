@@ -6,18 +6,24 @@
 
 - The single text, module-level operations `single_detect_language()`, `single_recognize_entities()`, `single_extract_key_phrases()`, `single_analyze_sentiment()`, `single_recognize_pii_entities()`, and `single_recognize_linked_entities()`
 have been removed from the client library. Use the batching methods for optimal performance in production environments.
-- `detect_languages() is renamed to `detect_language()`
 - To use an API key as the credential for authenticating the client, a new credential class `TextAnalyticsApiKeyCredential("<api_key>")` must be passed in for the `credential` parameter. 
-This credential class provides an `update_key()` method which allows you to rotate the API key for long-lived clients.
-
+Passing the API key string as the credential is no longer supported.
+- `detect_languages() is renamed to `detect_language()`
+- The `TextAnalyticsError` model has been simplified to an object with only attributes `code`, `message`, and `target`.
+- `NamedEntity` has been renamed to `CategorizedEntity` and its attributes `type` -> `category` and `subtype` to `subcategory`.
+- `RecognizePiiEntitiesResult` now contains on the object a list of `PiiEntity` instead of `NamedEntity`.
+- `AnalyzeSentimentResult` attribute `document_scores` has been renamed to `sentiment_scores`
+- `SentenceSentiment` attribute `sentence_scores` has been renamed to `sentiment_scores`
+- `DetectLanguageResult` no longer has attribute `detected_languages`. Use `primary_language` to access the detected language in text.
 
 **New features**
 
+- Credential class `TextAnalyticsApiKeyCredential` provides an `update_key()` method which allows you to update the API key for long-lived clients.
+
 **Fixes and improvements**
 
-- __repr__ has been added to all of the response objects.
-
-**Dependency updates**
+- `__repr__` has been added to all of the response objects.
+- If you try to access a result attribute on a `DocumentError` object, an `AttributeError` is raised with a custom error message that provides the document ID and error of the invalid document.
 
 
 ## 1.0.0b1 (2020-01-09)
