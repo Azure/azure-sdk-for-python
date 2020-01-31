@@ -36,7 +36,7 @@ class CustomSearchClient(SDKClient):
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, credentials, endpoint="https://api.cognitive.microsoft.com"):
 
         self.config = CustomSearchClientConfiguration(endpoint, credentials)
         super(CustomSearchClient, self).__init__(self.config.credentials, self.config)
