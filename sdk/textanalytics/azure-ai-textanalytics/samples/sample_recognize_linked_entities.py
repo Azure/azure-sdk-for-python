@@ -25,21 +25,21 @@ OUTPUT:
     Document text: Microsoft moved its headquarters to Bellevue, Washington in January 1979.
 
     Entity: Bellevue, Washington
-    Hyperlink: https://en.wikipedia.org/wiki/Bellevue,_Washington
+    Url: https://en.wikipedia.org/wiki/Bellevue,_Washington
     Data Source: Wikipedia
     Score: 0.698
     Offset: 36
     Length: 20
 
     Entity: Microsoft
-    Hyperlink: https://en.wikipedia.org/wiki/Microsoft
+    Url: https://en.wikipedia.org/wiki/Microsoft
     Data Source: Wikipedia
     Score: 0.159
     Offset: 0
     Length: 9
 
     Entity: January
-    Hyperlink: https://en.wikipedia.org/wiki/January
+    Url: https://en.wikipedia.org/wiki/January
     Data Source: Wikipedia
     Score: 0.007
     Offset: 60
@@ -49,28 +49,28 @@ OUTPUT:
     Document text: Steve Ballmer stepped down as CEO of Microsoft and was succeeded by Satya Nadella.
 
     Entity: Steve Ballmer
-    Hyperlink: https://en.wikipedia.org/wiki/Steve_Ballmer
+    Url: https://en.wikipedia.org/wiki/Steve_Ballmer
     Data Source: Wikipedia
     Score: 0.672
     Offset: 0
     Length: 13
 
     Entity: Satya Nadella
-    Hyperlink: https://en.wikipedia.org/wiki/Satya_Nadella
+    Url: https://en.wikipedia.org/wiki/Satya_Nadella
     Data Source: Wikipedia
     Score: 0.681
     Offset: 68
     Length: 13
 
     Entity: Microsoft
-    Hyperlink: https://en.wikipedia.org/wiki/Microsoft
+    Url: https://en.wikipedia.org/wiki/Microsoft
     Data Source: Wikipedia
     Score: 0.164
     Offset: 37
     Length: 9
 
     Entity: Chief executive officer
-    Hyperlink: https://en.wikipedia.org/wiki/Chief_executive_officer
+    Url: https://en.wikipedia.org/wiki/Chief_executive_officer
     Data Source: Wikipedia
     Score: 0.074
     Offset: 30
@@ -80,14 +80,14 @@ OUTPUT:
     Document text: Microsoft superó a Apple Inc. como la compañía más valiosa que cotiza en bolsa en el mundo.
 
     Entity: Apple Inc.
-    Hyperlink: https://en.wikipedia.org/wiki/Apple_Inc.
+    Url: https://en.wikipedia.org/wiki/Apple_Inc.
     Data Source: Wikipedia
     Score: 0.677
     Offset: 19
     Length: 10
 
     Entity: Microsoft
-    Hyperlink: https://en.wikipedia.org/wiki/Microsoft
+    Url: https://en.wikipedia.org/wiki/Microsoft
     Data Source: Wikipedia
     Score: 0.132
     Offset: 0
@@ -122,7 +122,7 @@ class RecognizeLinkedEntitiesSample(object):
             print("Document text: {}\n".format(documents[idx]))
             for entity in doc.entities:
                 print("Entity: {}".format(entity.name))
-                print("Hyperlink: {}".format(entity.hyperlink))
+                print("Url: {}".format(entity.url))
                 print("Data Source: {}".format(entity.data_source))
                 for match in entity.matches:
                     print("Score: {0:.3f}".format(match.score))

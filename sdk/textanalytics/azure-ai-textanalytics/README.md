@@ -292,7 +292,7 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
         print("Entity: {}".format(entity.name))
-        print("Hyperlink: {}".format(entity.hyperlink))
+        print("URL: {}".format(entity.url))
         print("Data Source: {}".format(entity.data_source))
         for match in entity.matches:
             print("Score: {0:.3f}".format(match.score))

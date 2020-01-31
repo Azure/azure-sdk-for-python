@@ -559,11 +559,11 @@ class LinkedEntity(DictMixin):
         list[~azure.ai.textanalytics.LinkedEntityMatch]
     :param language: Language used in the data source.
     :type language: str
-    :param entity_id: Unique identifier of the recognized entity from the data
+    :param id: Unique identifier of the recognized entity from the data
         source.
-    :type entity_id: str
-    :param hyperlink: Hyperlink to the entity's page from the data source.
-    :type hyperlink: str
+    :type id: str
+    :param url: URL to the entity's page from the data source.
+    :type url: str
     :param data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :type data_source: str
@@ -573,8 +573,8 @@ class LinkedEntity(DictMixin):
         self.name = kwargs.get("name", None)
         self.matches = kwargs.get("matches", None)
         self.language = kwargs.get("language", None)
-        self.entity_id = kwargs.get("entity_id", None)
-        self.hyperlink = kwargs.get("hyperlink", None)
+        self.id = kwargs.get("id", None)
+        self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
 
     @classmethod
@@ -583,14 +583,14 @@ class LinkedEntity(DictMixin):
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
-            entity_id=entity.id,
-            hyperlink=entity.url,
+            id=entity.id,
+            url=entity.url,
             data_source=entity.data_source,
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, entity_id={}, hyperlink={}, " \
-               "data_source={})".format(self.name, repr(self.matches), self.language, self.entity_id, self.hyperlink,
+        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, " \
+               "data_source={})".format(self.name, repr(self.matches), self.language, self.id, self.url,
                                         self.data_source)[:1024]
 
 

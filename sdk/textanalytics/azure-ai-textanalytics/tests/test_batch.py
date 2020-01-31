@@ -202,8 +202,8 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.entity_id)
-                self.assertIsNotNone(entity.hyperlink)
+                self.assertIsNotNone(entity.id)
+                self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
 
     @GlobalTextAnalyticsAccountPreparer()

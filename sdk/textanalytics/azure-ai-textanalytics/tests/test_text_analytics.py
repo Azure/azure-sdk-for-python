@@ -96,8 +96,8 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             name="Bill Gates",
             matches=[linked_entity_match, linked_entity_match],
             language="English",
-            entity_id="Bill Gates",
-            hyperlink="https://en.wikipedia.org/wiki/Bill_Gates",
+            id="Bill Gates",
+            url="https://en.wikipedia.org/wiki/Bill_Gates",
             data_source="wikipedia"
         )
         recognize_linked_entities_result = \
@@ -173,12 +173,12 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)", repr(linked_entity_match))
         self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(score=0.999, text=Bill Gates, "
                          "offset=0, length=8), LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)], "
-                         "language=English, entity_id=Bill Gates, hyperlink=https://en.wikipedia.org/wiki/Bill_Gates, data_source="
+                         "language=English, id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, data_source="
                          "wikipedia)", repr(linked_entity))
         self.assertEqual("RecognizeLinkedEntitiesResult(id=1, entities=[LinkedEntity(name=Bill Gates, "
                          "matches=[LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8), "
                          "LinkedEntityMatch(score=0.999, text=Bill Gates, offset=0, length=8)], language=English, "
-                         "entity_id=Bill Gates, hyperlink=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
+                         "id=Bill Gates, url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
                          "statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
         self.assertEqual("SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)",
