@@ -402,7 +402,7 @@ class DocumentError(DictMixin):
             raise AttributeError(
                 "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
                 "Document Id: {}\nError: {} - {}\n".
-                format(attr, self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
+                format(attr, self.id, self.error.code, self.error.message)
             )
         raise AttributeError("'DocumentError' object has no attribute '{}'".format(attr))
 
