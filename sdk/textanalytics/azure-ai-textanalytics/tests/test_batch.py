@@ -755,6 +755,38 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_document_attribute_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        docs = [{"id": "1", "text": ""}]
+        response = text_analytics.analyze_sentiment(docs)
+
+        # Attributes on DocumentError
+        self.assertTrue(response[0].is_error)
+        self.assertEqual(response[0].id, "1")
+        self.assertIsNotNone(response[0].error)
+
+        # Result attribute not on DocumentError, custom error message
+        try:
+            sentiment = response[0].sentiment
+        except AttributeError as custom_error:
+            self.assertEqual(
+                custom_error.args[0],
+                '\'DocumentError\' object has no attribute \'sentiment\'. '
+                'The service was unable to process this document:\nDocument Id: 1\nError: '
+                'invalidDocument - Document text is empty.\n'
+            )
+
+        # Attribute not found on DocumentError or result obj, default behavior/message
+        try:
+            sentiment = response[0].attribute_not_on_result_or_error
+        except AttributeError as default_behavior:
+            self.assertEqual(
+                default_behavior.args[0],
+                '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_text_analytics_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         text = ""
