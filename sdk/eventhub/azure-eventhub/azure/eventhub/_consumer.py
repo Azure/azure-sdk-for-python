@@ -200,7 +200,7 @@ class EventHubConsumer(
             self._client._config.max_retries  # pylint:disable=protected-access
         )
 
-        if not self._message_buffer:
+        if not self._message_buffer:  # then fetch some messages into buffer
             while retried_times <= max_retries:
                 try:
                     if self._open():
@@ -226,10 +226,11 @@ class EventHubConsumer(
                         )
                         raise last_exception
 
-        # retrieve one message from the buffer and call on_event_received. So event processor will process events
-        # from all partitions alternately instead of processing all events of one partition at a time then another
-        # partition.
-        event_data = EventData._from_message(self._message_buffer.pop())  # pylint: disable=protected-access
-        trace_link_message(event_data)
-        self._last_received_event = event_data
-        self._on_event_received(event_data)
+        if self._message_buffer:
+            # retrieve one message from the buffer and call on_event_received. So event processor will process events
+            # from all partitions alternately instead of processing all events of one partition at a time then another
+            # partition.
+            event_data = EventData._from_message(self._message_buffer.pop())  # pylint: disable=protected-access
+            trace_link_message(event_data)
+            self._last_received_event = event_data
+            self._on_event_received(event_data)
