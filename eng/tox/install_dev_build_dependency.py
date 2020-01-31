@@ -11,10 +11,19 @@ import sys
 import argparse
 import logging
 from os import path
-from pip._internal.operations import freeze
-from pip._internal.req import parse_requirements
-from pip._internal.download import PipSession
 from subprocess import check_call
+
+from pip._internal.operations import freeze
+
+try:
+    # pip < 20
+    from pip._internal.req import parse_requirements
+    from pip._internal.download import PipSession
+except:
+    # pip >= 20
+    from pip._internal.req import parse_requirements
+    from pip._internal.network.session import PipSession
+
 
 # import common_task module
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
