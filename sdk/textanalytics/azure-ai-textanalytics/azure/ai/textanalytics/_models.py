@@ -123,7 +123,7 @@ class RecognizeEntitiesResult(DictMixin):
 class RecognizePiiEntitiesResult(DictMixin):
     """RecognizePiiEntitiesResult is a result object which contains
     the recognized Personally Identifiable Information (PII) entities
-    from a particular document
+    from a particular document.
 
     :param id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
@@ -131,7 +131,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :type id: str
     :param entities: Recognized PII entities in the document.
     :type entities:
-        list[~azure.ai.textanalytics.CategorizedEntity]
+        list[~azure.ai.textanalytics.PiiEntity]
     :param statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :type statistics:
@@ -222,6 +222,53 @@ class CategorizedEntity(DictMixin):
 
     def __repr__(self):
         return "CategorizedEntity(text={}, category={}, subcategory={}, offset={}, length={}, score={})" \
+            .format(self.text, self.category, self.subcategory, self.offset, self.length, self.score)[:1024]
+
+
+class PiiEntity(DictMixin):
+    """PiiEntity contains information about a personally identifiable
+    information (PII) entity found in text.
+
+    :param text: Entity text as appears in the request.
+    :type text: str
+    :param category: Entity category, such as Financial Account
+        Identification/Social Security Number/Phone Number, etc.
+    :type category: str
+    :param subcategory: Entity subcategory, such as Credit Card/EU
+        Phone number/ABA Routing Numbers, etc.
+    :type subcategory: str
+    :param offset: Start position (in Unicode characters) for the
+        entity text.
+    :type offset: int
+    :param length: Length (in Unicode characters) for the entity
+        text.
+    :type length: int
+    :param score: Confidence score between 0 and 1 of the extracted
+        entity.
+    :type score: float
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get('text', None)
+        self.category = kwargs.get('category', None)
+        self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
+        self.score = kwargs.get('score', None)
+
+    @classmethod
+    def _from_generated(cls, entity):
+        return cls(
+            text=entity.text,
+            category=entity.type,
+            subcategory=entity.subtype,
+            offset=entity.offset,
+            length=entity.length,
+            score=entity.score,
+        )
+
+    def __repr__(self):
+        return "PiiEntity(text={}, category={}, subcategory={}, offset={}, length={}, score={})" \
             .format(self.text, self.category, self.subcategory, self.offset, self.length, self.score)[:1024]
 
 

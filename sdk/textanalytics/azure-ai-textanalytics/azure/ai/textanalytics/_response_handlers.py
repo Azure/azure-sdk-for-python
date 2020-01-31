@@ -25,7 +25,8 @@ from ._models import (
     DetectedLanguage,
     DocumentError,
     SentimentConfidenceScorePerLabel,
-    TextAnalyticsError
+    TextAnalyticsError,
+    PiiEntity
 )
 
 
@@ -128,7 +129,7 @@ def entities_result(entity):
 def pii_entities_result(entity):
     return RecognizePiiEntitiesResult(
         id=entity.id,
-        entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 

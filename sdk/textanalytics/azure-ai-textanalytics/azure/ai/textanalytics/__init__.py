@@ -28,7 +28,8 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScorePerLabel
+    SentimentConfidenceScorePerLabel,
+    PiiEntity
 )
 from ._credential import TextAnalyticsApiKeyCredential
 
@@ -62,7 +63,8 @@ __all__ = [
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
     'SentimentConfidenceScorePerLabel',
-    'TextAnalyticsApiKeyCredential'
+    'TextAnalyticsApiKeyCredential',
+    'PiiEntity'
 ]
 
 __version__ = VERSION
