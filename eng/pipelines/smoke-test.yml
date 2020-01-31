@@ -38,6 +38,7 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: pip --version
+        displayName: pip --version
 
       - script: pip install packaging
         displayName: Install packaging requirements
