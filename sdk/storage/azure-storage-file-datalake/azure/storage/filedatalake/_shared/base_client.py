@@ -16,6 +16,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 import logging
+import functools
 
 try:
     from urllib.parse import parse_qs, quote
@@ -64,6 +65,52 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
     "dfs": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
 }
+
+
+class check_parameter_api_version(object):
+    def __init__(self, **kwargs):
+        self.compat_map = kwargs
+
+    def __call__(self, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if self.compat_map and kwargs:
+                current = args[0].api_version  # client api version
+                invalid_params = [param for param, api in self.compat_map.items() if api > current]
+                invalid_values = list(kwargs.keys() & invalid_params)
+                if invalid_values:
+                    formatted_params = "\n".join(
+                        ["'{}' (introduced in version {})".format(p, self.compat_map.get(p)) for p in invalid_values])
+                    raise ValueError(
+                        "The current API version '{}' does not support the following parameters:\n{}".format(
+                            current,
+                            formatted_params
+                        )
+                    )
+            return func(*args, **kwargs)
+        return wrapper
+
+
+class check_operation_api_version(object):
+    """Validate that the client is using an API version equal to or
+    above that which the operation was introduced.
+
+    :param str version_introduced: The minimum supported API version for the operation.
+    """
+    def __init__(self, intoduced_version):
+        self.version = intoduced_version
+
+    def __call__(self, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            current = args[0].api_version  # client api version
+            operation = func.__name__
+            if current < self.version:
+                raise ValueError(
+                    "The function '{}' only supports API version '{}' or above. "
+                    "Currently using API version: '{}'.".format(operation, self.version, current))
+            return func(*args, **kwargs)
+        return wrapper
 
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -115,6 +162,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._client.__exit__(*args)
 
     def close(self):
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
         self._client.close()
 
     @property
@@ -185,6 +235,14 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._client._config.url = self.url  # pylint: disable=protected-access
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
+
+    @property
+    def api_version(self):
+        """The version of the Storage API used for requests.
+
+        :type: str
+        """
+        return self._client._config.version
 
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
