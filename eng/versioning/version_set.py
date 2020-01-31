@@ -1,7 +1,7 @@
 import os
 import argparse
 
-from version_shared import get_packages, set_version_py, set_dev_classifier
+from version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
@@ -31,7 +31,8 @@ if __name__ == '__main__':
 
     target_package = package_map[package_name]
 
-    print(f'{package_name}: {target_package[1][1]} -> {new_version}')
+    print('{0}: {1} -> {2}'.format(package_name, target_package[1][1], new_version))
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
+    update_change_log(target_package[0], new_version, False, True)
