@@ -1,8 +1,8 @@
-azure-core==1.1.1
-azure-identity==1.1.0
-azure-cosmos==4.0.0b6
-azure-eventhub==5.0.0b6
-azure-keyvault-certificates==4.0.0b7
-azure-keyvault-keys==4.0.0
-azure-keyvault-secrets==4.0.0
-azure-storage-blob==12.1.0
+azure-core
+azure-identity
+azure-cosmos
+azure-eventhub
+azure-keyvault-certificates
+azure-keyvault-keys
+azure-keyvault-secrets
+azure-storage-blob

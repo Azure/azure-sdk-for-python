@@ -37,12 +37,14 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
+      - script: pip install packaging
+        displayName: Install packaging requirements
+
       - script: pip install -r ./common/smoketest/requirements.txt
         displayName: "Install requirements.txt"
 
-      - script: pip install -r ./common/smoketest/requirements_async.txt
-        displayName: "Install requirements_async.txt"
-        condition: eq(variables['InstallAsyncRequirements'], true)
+      - script: python ./eng/tox/install_dev_build_dependency.py -r ./common/smoketest/requirements.txt
+        displayName: "Install dev dependencies from feed"
 
       - script: python ./common/smoketest/program.py
         displayName: "Run Smoke Test"
