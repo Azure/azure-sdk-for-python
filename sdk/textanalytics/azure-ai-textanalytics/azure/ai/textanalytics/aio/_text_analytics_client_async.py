@@ -290,8 +290,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         Identifies and disambiguates the identity of each entity found in text (for example,
         determining whether an occurrence of the word Mars refers to the planet, or to the
-        Roman god of war). Returns a list of recognized entities with hyperlinks to a
-        well-known knowledge base.
+        Roman god of war). Recognized entities are associated with URLs to a well-known
+        knowledge base, like Wikipedia.
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.
