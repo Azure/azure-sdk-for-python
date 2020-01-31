@@ -16,35 +16,37 @@ from azure.storage.fileshare.aio import (
     ShareFileClient
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
 
 
-class StorageClientTest(StorageTestCase):
+class AsyncStorageClientTest(AsyncStorageTestCase):
     def setUp(self):
-        super(StorageClientTest, self).setUp()
+        super(AsyncStorageTestCase, self).setUp()
         self.api_version_1 = "2019-02-02"
         self.api_version_2 = "2019-07-07"
+        self.short_byte_data = self.get_random_bytes(1024)
 
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self, prefix=TEST_FILE_PREFIX):
         return self.get_resource_name(prefix)
 
-    def _create_share(self, fsc):
+    async def _create_share(self, fsc):
         share_name = self.get_resource_name('utshare')
         share = fsc.get_share_client(share_name)
         try:
-            share.create_share()
+            await share.create_share()
         except ResourceExistsError:
             pass
         return share
 
-    def _delete_share(self, share):
+    async def _delete_share(self, share):
         try:
-            share.delete_share()
+            await share.delete_share()
         except:
             pass
         return share
@@ -140,6 +142,72 @@ class StorageClientTest(StorageTestCase):
             api_version=self.api_version_1)
         self.assertEqual(file_client.api_version, self.api_version_1)
         self.assertEqual(file_client._client._config.version, self.api_version_1)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_old_api_copy_file_succeeds_async(self, resource_group, location, storage_account, storage_account_key):
+        fsc = ShareServiceClient(
+            self.account_url(storage_account, "file"),
+            credential=storage_account_key,
+            max_range_size=4 * 1024,
+            api_version=self.api_version_1
+        )
+        share = await self._create_share(fsc)
+        file_name = self._get_file_reference()
+
+        source_client = share.get_file_client(file_name)
+        await source_client.upload_file(self.short_byte_data)
+        source_prop = await source_client.get_file_properties()
+
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=share.share_name,
+            file_path='file1copy',
+            credential=storage_account_key,
+            api_version=self.api_version_1)
+
+        # Act
+        copy = await file_client.start_copy_from_url(source_client.url)
+
+        # Assert
+        dest_prop = await file_client.get_file_properties()
+        # to make sure the acl is copied from source
+        self.assertEqual(source_prop['permission_key'], dest_prop['permission_key'])
+
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = await (await file_client.download_file()).readall()
+        self.assertEqual(copy_file, self.short_byte_data)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_new_api_copy_file_fails_async(self, resource_group, location, storage_account, storage_account_key):
+        fsc = ShareServiceClient(
+            self.account_url(storage_account, "file"),
+            credential=storage_account_key,
+            max_range_size=4 * 1024,
+            api_version=self.api_version_1
+        )
+        share = await self._create_share(fsc)
+        file_name = self._get_file_reference()
+
+        source_client = share.get_file_client(file_name)
+
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=share.share_name,
+            file_path='file1copy',
+            credential=storage_account_key,
+            api_version=self.api_version_1)
+
+        # Act
+        with pytest.raises(ValueError) as error:
+            await file_client.start_copy_from_url(source_client.url, file_permission_copy_mode="override")
+
+        # Assert
+        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'file_permission_copy_mode'"))
 
 
 # ------------------------------------------------------------------------------

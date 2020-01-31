@@ -26,7 +26,11 @@ from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import (
+    StorageAccountHostsMixin,
+    parse_connection_str,
+    parse_query,
+    check_parameter_api_version)
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.parser import _str
@@ -508,16 +512,14 @@ class ShareFileClient(StorageAccountHostsMixin):
             file_permission_key=permission_key,
             **kwargs)
 
+    @check_parameter_api_version(
+        file_permission_copy_mode='2019-07-07',
+        file_permission='2019-07-07',
+        file_permission_key='2019-07-07',
+        copy_file_smb_info='2019-07-07')
     @distributed_trace
-    def start_copy_from_url(
-            self, source_url, # type: str
-            file_permission_copy_mode=None,  # type: Optional[str]
-            file_permission=None,  # type: Optional[str]
-            file_permission_key=None,  # type: Optional[str]
-            copy_file_smb_info=None,
-            **kwargs # type: Any
-        ):
-        # type: (...) -> Any
+    def start_copy_from_url(self, source_url, **kwargs):
+        # type: (str, Any) -> Any
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
 
@@ -528,17 +530,17 @@ class ShareFileClient(StorageAccountHostsMixin):
             Specifies the URL of the source file.
         :param file_permission_copy_mode: Specifies the option to copy file
             security descriptor from source file or to set it using the value which is
-            defined by the header value of x-ms-file-permission or
-            x-ms-file-permission-key. Possible values include: 'source', 'override'
+            defined by the value of file_permission or file_permission_key.
+            Possible values include: 'source', 'override'. Introduced in API version '2019-07-07'.
         :param str file_permission: If specified the permission (security
-            descriptor) shall be set for the directory/file. This header can be
-            used if Permission size is <= 8KB, else x-ms-file-permission-key
-            header shall be used. Default value: Inherit. If SDDL is specified as
+            descriptor) shall be set for the directory/file. This setting can be
+            used if Permission size is <= 8KB, otherwise file_permission_key
+            shall be used. Default value: Inherit. If SDDL is specified as
             input, it must have owner, group and dacl. Note: Only one of the
-            x-ms-file-permission or x-ms-file-permission-key should be specified.
+            file_permission or file_permission_key should be specified.
         :param str file_permission_key: Key of the permission to be set for the
-            directory/file. Note: Only one of the x-ms-file-permission or
-            x-ms-file-permission-key should be specified.
+            directory/file. Note: Only one of the file_permission or
+            file_permission_key should be specified.
         :param ~azure.storage.fileshare.CopyFileSmbInfo copy_file_smb_info:
             Additional parameters for the operation
         :keyword metadata:
@@ -567,10 +569,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
+        file_permission = kwargs.pop('file_permission', None)
+        file_permission_key = kwargs.pop('file_permission_key', None)
+        file_permission_copy_mode = kwargs.pop('file_permission_copy_mode', None)
         file_permission = _get_file_permission(file_permission, file_permission_key, None)
         validate_copy_mode(file_permission_copy_mode, file_permission, file_permission_key)
 
-        copy_file_smb_info = copy_file_smb_info or CopyFileSmbInfo()
+        copy_file_smb_info = kwargs.pop('copy_file_smb_info', None) or CopyFileSmbInfo()
         copy_file_smb_info.file_permission_copy_mode = file_permission_copy_mode
 
         try:

@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 31 Jan 2020 20:52:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare2294196f?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 31 Jan 2020 20:52:09 GMT
+      etag: '"0x8D7A68F70E0CFF4"'
+      last-modified: Fri, 31 Jan 2020 20:52:10 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
+        - /utshare2294196f
+        - restype=share
+        - ''
+version: 1
