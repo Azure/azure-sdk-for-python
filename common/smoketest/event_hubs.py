@@ -8,6 +8,7 @@ from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, Event
 
 RECEIVE_TIMEOUT = 30
 CONSUMER_GROUP = "$Default"
+STARTING_POSITION = "-1"
 TEST_EVENTS = [
     EventData(b"Test Event 1 in Python"),
     EventData(b"Test Event 2 in Python"),
@@ -52,7 +53,8 @@ class EventHub:
             # continue
             on_event=self.on_event,
             on_error=self.on_error,
-            timeout=RECEIVE_TIMEOUT
+            timeout=RECEIVE_TIMEOUT,
+            starting_position=STARTING_POSITION
         )
 
         # on_event closes the consumer_client which resumes execution

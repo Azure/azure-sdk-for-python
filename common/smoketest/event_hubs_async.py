@@ -9,6 +9,7 @@ from azure.eventhub import EventData
 
 RECEIVE_TIMEOUT = 30
 CONSUMER_GROUP = "$Default"
+STARTING_POSITION = "-1"
 TEST_EVENTS = [
     EventData(b"Test Event 1 in Python"),
     EventData(b"Test Event 2 in Python"),
@@ -52,7 +53,9 @@ class EventHubAsync:
         await self.consumer_client.receive(
             # on_event will close the consumer_client which resumes execution
             on_event=self.on_event,
-            on_error=self.on_error
+            on_error=self.on_error,
+            timeout=RECEIVE_TIMEOUT,
+            starting_position=STARTING_POSITION
         )
 
         print("\tdone")
