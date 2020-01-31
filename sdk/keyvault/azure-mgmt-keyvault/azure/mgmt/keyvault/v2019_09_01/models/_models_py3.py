@@ -31,7 +31,7 @@ class AccessPolicyEntry(Model):
     :type application_id: str
     :param permissions: Required. Permissions the identity has for keys,
      secrets and certificates.
-    :type permissions: ~azure.mgmt.keyvault.v2018_02_14.models.Permissions
+    :type permissions: ~azure.mgmt.keyvault.v2019_09_01.models.Permissions
     """
 
     _validation = {
@@ -68,7 +68,7 @@ class CheckNameAvailabilityResult(Model):
     :ivar reason: The reason that a vault name could not be used. The Reason
      element is only returned if NameAvailable is false. Possible values
      include: 'AccountNameInvalid', 'AlreadyExists'
-    :vartype reason: str or ~azure.mgmt.keyvault.v2018_02_14.models.Reason
+    :vartype reason: str or ~azure.mgmt.keyvault.v2019_09_01.models.Reason
     :ivar message: An error message explaining the Reason value in more
      detail.
     :vartype message: str
@@ -97,7 +97,7 @@ class CloudError(Model):
     """An error response from Key Vault resource provider.
 
     :param error:
-    :type error: ~azure.mgmt.keyvault.v2018_02_14.models.CloudErrorBody
+    :type error: ~azure.mgmt.keyvault.v2019_09_01.models.CloudErrorBody
     """
 
     _attribute_map = {
@@ -157,7 +157,7 @@ class DeletedVault(Model):
     :vartype type: str
     :param properties: Properties of the vault
     :type properties:
-     ~azure.mgmt.keyvault.v2018_02_14.models.DeletedVaultProperties
+     ~azure.mgmt.keyvault.v2019_09_01.models.DeletedVaultProperties
     """
 
     _validation = {
@@ -280,17 +280,17 @@ class NetworkRuleSet(Model):
      'AzureServices' or 'None'.  If not specified the default is
      'AzureServices'. Possible values include: 'AzureServices', 'None'
     :type bypass: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleBypassOptions
+     ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleBypassOptions
     :param default_action: The default action when no rule from ipRules and
      from virtualNetworkRules match. This is only used after the bypass
      property has been evaluated. Possible values include: 'Allow', 'Deny'
     :type default_action: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleAction
+     ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleAction
     :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.keyvault.v2018_02_14.models.IPRule]
+    :type ip_rules: list[~azure.mgmt.keyvault.v2019_09_01.models.IPRule]
     :param virtual_network_rules: The list of virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.VirtualNetworkRule]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.VirtualNetworkRule]
     """
 
     _attribute_map = {
@@ -314,13 +314,13 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.keyvault.v2018_02_14.models.OperationDisplay
+    :type display: ~azure.mgmt.keyvault.v2019_09_01.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
     :param service_specification: One property of operation, include metric
      specifications.
     :type service_specification:
-     ~azure.mgmt.keyvault.v2018_02_14.models.ServiceSpecification
+     ~azure.mgmt.keyvault.v2019_09_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -371,16 +371,16 @@ class Permissions(Model):
 
     :param keys: Permissions to keys
     :type keys: list[str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.KeyPermissions]
+     ~azure.mgmt.keyvault.v2019_09_01.models.KeyPermissions]
     :param secrets: Permissions to secrets
     :type secrets: list[str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.SecretPermissions]
+     ~azure.mgmt.keyvault.v2019_09_01.models.SecretPermissions]
     :param certificates: Permissions to certificates
     :type certificates: list[str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.CertificatePermissions]
+     ~azure.mgmt.keyvault.v2019_09_01.models.CertificatePermissions]
     :param storage: Permissions to storage accounts
     :type storage: list[str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.StoragePermissions]
+     ~azure.mgmt.keyvault.v2019_09_01.models.StoragePermissions]
     """
 
     _attribute_map = {
@@ -482,16 +482,16 @@ class PrivateEndpointConnection(Resource):
     :vartype tags: dict[str, str]
     :param private_endpoint: Properties of the private endpoint object.
     :type private_endpoint:
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpoint
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
     :param private_link_service_connection_state: Approval state of the
      private link connection.
     :type private_link_service_connection_state:
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
     :param provisioning_state: Provisioning state of the private endpoint
      connection. Possible values include: 'Succeeded', 'Creating', 'Updating',
      'Deleting', 'Failed', 'Disconnected'
     :type provisioning_state: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
@@ -525,16 +525,16 @@ class PrivateEndpointConnectionItem(Model):
 
     :param private_endpoint: Properties of the private endpoint object.
     :type private_endpoint:
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpoint
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
     :param private_link_service_connection_state: Approval state of the
      private link connection.
     :type private_link_service_connection_state:
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
     :param provisioning_state: Provisioning state of the private endpoint
      connection. Possible values include: 'Succeeded', 'Creating', 'Updating',
      'Deleting', 'Failed', 'Disconnected'
     :type provisioning_state: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
     """
 
     _attribute_map = {
@@ -608,7 +608,7 @@ class PrivateLinkResourceListResult(Model):
 
     :param value: Array of private link resources
     :type value:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkResource]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkResource]
     """
 
     _attribute_map = {
@@ -628,7 +628,7 @@ class PrivateLinkServiceConnectionState(Model):
      rejected or removed by the key vault owner. Possible values include:
      'Pending', 'Approved', 'Rejected', 'Disconnected'
     :type status: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointServiceConnectionStatus
+     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointServiceConnectionStatus
     :param description: The reason for approval or rejection.
     :type description: str
     :param action_required: A message indicating if changes on the service
@@ -654,7 +654,7 @@ class ServiceSpecification(Model):
 
     :param log_specifications: Log specifications of operation.
     :type log_specifications:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.LogSpecification]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.LogSpecification]
     """
 
     _attribute_map = {
@@ -679,7 +679,7 @@ class Sku(Model):
     :param name: Required. SKU name to specify whether the key vault is a
      standard vault or a premium vault. Possible values include: 'standard',
      'premium'
-    :type name: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuName
+    :type name: str or ~azure.mgmt.keyvault.v2019_09_01.models.SkuName
     """
 
     _validation = {
@@ -718,7 +718,7 @@ class Vault(Model):
     :param tags: Tags assigned to the key vault resource.
     :type tags: dict[str, str]
     :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.v2018_02_14.models.VaultProperties
+    :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.VaultProperties
     """
 
     _validation = {
@@ -765,7 +765,7 @@ class VaultAccessPolicyParameters(Model):
     :vartype location: str
     :param properties: Required. Properties of the access policy
     :type properties:
-     ~azure.mgmt.keyvault.v2018_02_14.models.VaultAccessPolicyProperties
+     ~azure.mgmt.keyvault.v2019_09_01.models.VaultAccessPolicyProperties
     """
 
     _validation = {
@@ -802,7 +802,7 @@ class VaultAccessPolicyProperties(Model):
      access to the key vault. All identities in the array must use the same
      tenant ID as the key vault's tenant ID.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
     """
 
     _validation = {
@@ -861,7 +861,7 @@ class VaultCreateOrUpdateParameters(Model):
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
     :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.v2018_02_14.models.VaultProperties
+    :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.VaultProperties
     """
 
     _validation = {
@@ -889,7 +889,7 @@ class VaultPatchParameters(Model):
     :type tags: dict[str, str]
     :param properties: Properties of the vault
     :type properties:
-     ~azure.mgmt.keyvault.v2018_02_14.models.VaultPatchProperties
+     ~azure.mgmt.keyvault.v2019_09_01.models.VaultPatchProperties
     """
 
     _attribute_map = {
@@ -910,12 +910,12 @@ class VaultPatchProperties(Model):
      for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: SKU details
-    :type sku: ~azure.mgmt.keyvault.v2018_02_14.models.Sku
+    :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -928,13 +928,13 @@ class VaultPatchProperties(Model):
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
     :param enable_soft_delete: Property to specify whether the 'soft delete'
-     functionality is enabled for this key vault. It does not accept false
-     value.
+     functionality is enabled for this key vault. If omitted, assume true as
+     default value. Once set to true, cannot be reverted to false.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
+     ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
      against purge is enabled for this vault. Setting this property to true
      activates protection against purge for this vault and its content - only
@@ -945,7 +945,7 @@ class VaultPatchProperties(Model):
     :type enable_purge_protection: bool
     :param network_acls: A collection of rules governing the accessibility of
      the vault from specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleSet
+    :type network_acls: ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleSet
     """
 
     _attribute_map = {
@@ -987,13 +987,13 @@ class VaultProperties(Model):
      should be used for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: Required. SKU details
-    :type sku: ~azure.mgmt.keyvault.v2018_02_14.models.Sku
+    :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID. When `createMode` is set to `recover`, access
      policies are not required. Otherwise, access policies are required.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
     :param vault_uri: The URI of the vault for performing operations on keys
      and secrets.
     :type vault_uri: str
@@ -1009,13 +1009,13 @@ class VaultProperties(Model):
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
     :param enable_soft_delete: Property to specify whether the 'soft delete'
-     functionality is enabled for this key vault. It does not accept false
-     value.
+     functionality is enabled for this key vault. If omitted, assume true as
+     default value. Once set to true, cannot be reverted to false.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
-     ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
+     ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
      against purge is enabled for this vault. Setting this property to true
      activates protection against purge for this vault and its content - only
@@ -1026,11 +1026,11 @@ class VaultProperties(Model):
     :type enable_purge_protection: bool
     :param network_acls: Rules governing the accessibility of the key vault
      from specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleSet
+    :type network_acls: ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleSet
     :ivar private_endpoint_connections: List of private endpoint connections
      associated with the key vault.
     :vartype private_endpoint_connections:
-     list[~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionItem]
+     list[~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionItem]
     """
 
     _validation = {
