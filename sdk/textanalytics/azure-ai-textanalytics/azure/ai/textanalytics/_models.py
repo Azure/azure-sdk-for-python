@@ -437,7 +437,7 @@ class AnalyzeSentimentResult(DictMixin):
     :param sentiment_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment class.
     :type sentiment_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentScorePerLabel
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
@@ -702,9 +702,9 @@ class SentenceSentiment(DictMixin):
         Possible values include: 'positive', 'neutral', 'negative'
     :type sentiment: str
     :param sentiment_scores: The sentiment confidence score between 0
-        and 1 for the sentence for all classes.
+        and 1 for the sentence for all labels.
     :type sentiment_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.SentimentScorePerLabel
     :param offset: The sentence offset from the start of the
         document.
     :type offset: int
@@ -725,7 +725,7 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment.value,
-            sentiment_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            sentiment_scores=SentimentScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             offset=sentence.offset,
             length=sentence.length,
             warnings=sentence.warnings,
@@ -736,9 +736,9 @@ class SentenceSentiment(DictMixin):
             .format(self.sentiment, repr(self.sentiment_scores), self.offset, self.length, self.warnings)[:1024]
 
 
-class SentimentConfidenceScorePerLabel(DictMixin):
+class SentimentScorePerLabel(DictMixin):
     """Represents the confidence scores between 0 and 1 across all sentiment
-    classes: positive, neutral, negative.
+    labels: positive, neutral, negative.
 
     :param positive: Positive score.
     :type positive: float
@@ -762,5 +762,5 @@ class SentimentConfidenceScorePerLabel(DictMixin):
         )
 
     def __repr__(self):
-        return "SentimentConfidenceScorePerLabel(positive={}, neutral={}, negative={})" \
+        return "SentimentScorePerLabel(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
