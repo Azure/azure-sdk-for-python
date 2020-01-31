@@ -226,8 +226,8 @@ class CategorizedEntity(DictMixin):
 
 
 class PiiEntity(DictMixin):
-    """PiiEntity contains information about a personally identifiable
-    information (PII) entity found in text.
+    """PiiEntity contains information about a Personally Identifiable
+    Information (PII) entity found in text.
 
     :param text: Entity text as appears in the request.
     :type text: str
