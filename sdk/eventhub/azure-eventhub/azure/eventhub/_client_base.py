@@ -161,7 +161,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         the session.
         """
         try:
-            token_type = self._credential.token_type
+            # ignore mypy's warning because token_type is Optional
+            token_type = self._credential.token_type    # type: ignore
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":

@@ -56,13 +56,14 @@ class SingleAnalyzeSentimentSampleAsync(object):
     async def analyze_sentiment_async(self):
         # [START single_analyze_sentiment_async]
         from azure.ai.textanalytics.aio import single_analyze_sentiment
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
 
         text = "I visited the restaurant last week. The portions were very generous. However, I did not like what " \
                "I ordered."
 
         result = await single_analyze_sentiment(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             language="en"
         )

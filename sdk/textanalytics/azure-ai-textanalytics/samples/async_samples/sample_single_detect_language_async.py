@@ -44,12 +44,13 @@ class SingleDetectLanguageSampleAsync(object):
     async def detect_language_async(self):
         # [START single_detect_language_async]
         from azure.ai.textanalytics.aio import single_detect_language
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
 
         text = "I need to take my cat to the veterinarian."
 
         result = await single_detect_language(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             country_hint="US",
             show_stats=True

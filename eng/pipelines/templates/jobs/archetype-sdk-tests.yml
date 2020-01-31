@@ -6,6 +6,8 @@ parameters:
   BuildTargetingString: 'azure-*'
   AdditionalTestArgs: ''
   TestMarkArgument: ''
+  InjectedPackages: ''
+  BuildDocs: true
   JobName: Test
   Matrix:
     Linux_Python35:
@@ -59,4 +61,6 @@ jobs:
           ToxTestEnv: "whl"
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          InjectedPackages: ${{ parameters.InjectedPackages }}
+          BuildDocs: ${{parameters.BuildDocs}}
   
