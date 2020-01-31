@@ -540,8 +540,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         else:
             mime_type = "application/json"
 
-        # FIXME should extract charset from content-type
-        return cls.deserialize_from_text(response.text(encoding="utf-8-sig"), mime_type, response=response)
+        # Rely on transport implementation to give me "text()" decoded correctly
+        return cls.deserialize_from_text(response.text(), mime_type, response=response)
 
     def on_response(self,
         request, # type: PipelineRequest[HTTPRequestType]
