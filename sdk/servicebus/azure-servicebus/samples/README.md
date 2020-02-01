@@ -8,23 +8,23 @@ products:
 urlFragment: servicebus-samples
 ---
 
-# Azure Event Hubs client library for Python Samples
+# Azure Service Bus client library for Python Samples
 
-These are code samples that show common scenario operations with the Azure ServiceBus client library.
+These are code samples that show common scenario operations with the Azure Service Bus client library.
 Both [sync version](./sync_sampes) and [async version](./async_samples) of samples are provided, async samples require Python 3.5 or later.
 
-- [topic_send.py](./sync_samples/topic_send.py) ([async version](./async_samples/topic_send_async.py)) - Examples to send messages on a servicebus topic:
+- [topic_send.py](./sync_samples/topic_send.py) ([async version](./async_samples/topic_send_async.py)) - Examples to send messages on a service bus topic:
     - From a connection string
     - Enabling Logging
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.
-- **Microsoft Azure Subscription:**  To use Azure services, including Azure ServiceBus, you'll need a subscription.
+- **Microsoft Azure Subscription:**  To use Azure services, including Azure Service Bus, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
 ## Setup
 
-1. Install the Azure Event Hubs client library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure Service Bus client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
 pip install azure-servicebus
 ```
@@ -45,4 +45,4 @@ pip install azure-identity
 ## Next steps
 
 Check out the [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-servicebus/azure.servicebus.receive_handler.sessionreceiver?view=azure-python) to learn more about
-what you can do with the Azure ServiceBus client library.
+what you can do with the Azure Service Bus client library.
