@@ -46,7 +46,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param bool debug: Whether to output AMQP network trace to the logger.
 
     Example:
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_servicebus_client]
             :end-before: [END create_servicebus_client]
             :language: python
@@ -80,7 +80,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :type conn_str: str
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START create_servicebus_client_connstr]
                 :end-before: [END create_servicebus_client_connstr]
                 :language: python
@@ -111,7 +111,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_queue_client]
                 :end-before: [END get_queue_client]
                 :language: python
@@ -139,7 +139,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_queues]
                 :end-before: [END list_queues]
                 :language: python
@@ -171,7 +171,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_topic_client]
                 :end-before: [END get_topic_client]
                 :language: python
@@ -198,7 +198,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_topics]
                 :end-before: [END list_topics]
                 :language: python
@@ -231,7 +231,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_subscription_client]
                 :end-before: [END get_subscription_client]
                 :language: python
@@ -261,7 +261,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_subscriptions]
                 :end-before: [END list_subscriptions]
                 :language: python
@@ -313,14 +313,14 @@ class SendClientMixin(object):
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START send_message_service_bus]
                 :end-before: [END send_message_service_bus]
                 :language: python
                 :dedent: 4
                 :caption: Send a message to current entity via a single use connection
 
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START send_message_service_bus_multiple]
                 :end-before: [END send_message_service_bus_multiple]
                 :language: python
@@ -362,7 +362,7 @@ class SendClientMixin(object):
         :rtype: ~azure.servicebus.send_handler.Sender
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_sender]
                 :end-before: [END get_sender]
                 :language: python
@@ -410,7 +410,7 @@ class ReceiveClientMixin(object):
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START peek_messages_service_bus]
                 :end-before: [END peek_messages_service_bus]
                 :language: python
@@ -447,7 +447,7 @@ class ReceiveClientMixin(object):
         :rtype: list[str]
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_sessions_service_bus]
                 :end-before: [END list_sessions_service_bus]
                 :language: python
@@ -486,7 +486,7 @@ class ReceiveClientMixin(object):
         :rtype: list[~azure.servicebus.common.message.Message]
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START receive_deferred_messages_service_bus]
                 :end-before: [END receive_deferred_messages_service_bus]
                 :language: python
@@ -522,7 +522,7 @@ class ReceiveClientMixin(object):
         :type messages: list[~azure.servicebus.common.message.DeferredMessage]
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START settle_deferred_messages_service_bus]
                 :end-before: [END settle_deferred_messages_service_bus]
                 :language: python
@@ -575,7 +575,7 @@ class ReceiveClientMixin(object):
          be raised.
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_receiver]
                 :end-before: [END get_receiver]
                 :language: python
@@ -641,7 +641,7 @@ class ReceiveClientMixin(object):
         :rtype: ~azure.servicebus.receive_handler.Receiver
 
         Example:
-            .. literalinclude:: ../samples/test_examples.py
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_dead_letter_receiver]
                 :end-before: [END get_dead_letter_receiver]
                 :language: python
@@ -695,7 +695,7 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, mixins.BaseClient):
     :type debug: bool
 
     Example:
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_queue_client_directly]
             :end-before: [END create_queue_client_directly]
             :language: python
@@ -731,7 +731,7 @@ class TopicClient(SendClientMixin, mixins.BaseClient):
     :type debug: bool
 
     Example:
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_topic_client_directly]
             :end-before: [END create_topic_client_directly]
             :language: python
@@ -767,7 +767,7 @@ class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
     :type debug: bool
 
     Example:
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_sub_client_directly]
             :end-before: [END create_sub_client_directly]
             :language: python

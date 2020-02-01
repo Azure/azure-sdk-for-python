@@ -22,14 +22,14 @@ class Message(message.Message):
     :type encoding: str
 
     Example:
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START send_complex_message]
             :end-before: [END send_complex_message]
             :language: python
             :dedent: 4
             :caption: Sending a message with additional properties
 
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START receive_complex_message]
             :end-before: [END receive_complex_message]
             :language: python

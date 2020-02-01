@@ -103,14 +103,14 @@ class AutoLockRenew(object):
     :type max_workers: int
 
     Example:
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START auto_lock_renew_message]
             :end-before: [END auto_lock_renew_message]
             :language: python
             :dedent: 4
             :caption: Automatically renew a message lock
 
-        .. literalinclude:: ../samples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START auto_lock_renew_session]
             :end-before: [END auto_lock_renew_session]
             :language: python
