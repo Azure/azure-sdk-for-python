@@ -50,7 +50,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
     :type debug: bool
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../samples/test_examples.py
             :start-after: [START create_sender_client]
             :end-before: [END create_sender_client]
             :language: python
@@ -87,7 +87,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to send.
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START send_message]
                 :end-before: [END send_message]
                 :language: python
@@ -118,7 +118,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :rtype: list[int]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START scheduling_messages]
                 :end-before: [END scheduling_messages]
                 :language: python
@@ -141,7 +141,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type sequence_numbers: int
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START cancel_scheduled_messages]
                 :end-before: [END cancel_scheduled_messages]
                 :language: python
@@ -168,7 +168,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START queue_and_send_messages]
                 :end-before: [END queue_and_send_messages]
                 :language: python
@@ -252,7 +252,7 @@ class SessionSender(Sender):
         :raises: ValueError if there is no session ID specified.
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START send_message]
                 :end-before: [END send_message]
                 :language: python
@@ -276,7 +276,7 @@ class SessionSender(Sender):
         :type message: ~azure.servicebus.Message
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START queue_and_send_session_messages]
                 :end-before: [END queue_and_send_session_messages]
                 :language: python
@@ -300,7 +300,7 @@ class SessionSender(Sender):
         :rtype: list[int]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START scheduling_messages]
                 :end-before: [END scheduling_messages]
                 :language: python

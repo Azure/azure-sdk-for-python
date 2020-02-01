@@ -27,14 +27,14 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     :type encoding: str
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../samples/test_examples.py
             :start-after: [START send_complex_message]
             :end-before: [END send_complex_message]
             :language: python
             :dedent: 4
             :caption: Sending a message with additional properties
 
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../samples/test_examples.py
             :start-after: [START receive_complex_message]
             :end-before: [END receive_complex_message]
             :language: python
@@ -399,7 +399,7 @@ class BatchMessage(Message):
     :type encoding: str
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../samples/test_examples.py
             :start-after: [START send_batch_message]
             :end-before: [END send_batch_message]
             :language: python

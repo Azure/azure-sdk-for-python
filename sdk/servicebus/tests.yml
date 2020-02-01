@@ -19,3 +19,4 @@ jobs:
         SERVICE_BUS_CONNECTION_STR_RO: $(python-sb-livetest-service-connection-str-ro)
         SERVICE_BUS_CONNECTION_STR_WO: $(python-sb-livetest-service-connection-str-wo)
         SERVICE_BUS_CONNECTION_STR_ENTITY: $(python-sb-livetest-service-connection-entity)
+        AZURE_TEST_RUN_LIVE: 'true'

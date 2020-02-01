@@ -404,7 +404,7 @@ class SenderMixin(object):  # pylint: disable=too-few-public-methods
         :type message: ~azure.servicebus.common.message.Message
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../samples/test_examples.py
                 :start-after: [START queue_and_send_messages]
                 :end-before: [END queue_and_send_messages]
                 :language: python

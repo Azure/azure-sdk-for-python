@@ -77,7 +77,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
          send.
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_context]
                 :end-before: [END open_close_sender_context]
                 :language: python
@@ -108,7 +108,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :rtype: list[int]
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START schedule_messages]
                 :end-before: [END schedule_messages]
                 :language: python
@@ -131,7 +131,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type sequence_numbers: int
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START cancel_schedule_messages]
                 :end-before: [END cancel_schedule_messages]
                 :language: python
@@ -158,7 +158,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START queue_sender_messages]
                 :end-before: [END queue_sender_messages]
                 :language: python
@@ -241,7 +241,7 @@ class SessionSender(Sender):
          send.
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_session_sender_context]
                 :end-before: [END open_close_session_sender_context]
                 :language: python
@@ -265,7 +265,7 @@ class SessionSender(Sender):
         :type message: ~azure.servicebus.aio.async_message.Message
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START queue_session_sender_messages]
                 :end-before: [END queue_session_sender_messages]
                 :language: python
@@ -290,7 +290,7 @@ class SessionSender(Sender):
         :rtype: list[int]
 
         Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START schedule_session_messages]
                 :end-before: [END schedule_session_messages]
                 :language: python
