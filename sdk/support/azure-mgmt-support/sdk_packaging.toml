@@ -1,6 +1,6 @@
 [packaging]
-package_name = "sdk/azure-mgmt-support"
-package_nspkg = "sdk/azure-mgmt-nspkg"
+package_name = "azure-mgmt-support"
+package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Support Management"
 package_doc_id = ""
 is_stable = false

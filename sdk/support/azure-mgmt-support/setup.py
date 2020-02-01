@@ -12,7 +12,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "sdk/azure-mgmt-support"
+PACKAGE_NAME = "azure-mgmt-support"
 PACKAGE_PPRINT_NAME = "Support Management"
 
 # a-b-c => a/b/c
@@ -74,8 +74,8 @@ setup(
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        'sdk/azure',
-        'sdk/azure.mgmt',
+        'azure',
+        'azure.mgmt',
     ]),
     install_requires=[
         'msrest>=0.5.0',
@@ -83,6 +83,6 @@ setup(
         'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['sdk/azure-mgmt-nspkg'],
+        ":python_version<'3.0'": ['azure-mgmt-nspkg'],
     }
 )
