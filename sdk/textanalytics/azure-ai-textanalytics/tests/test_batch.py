@@ -390,7 +390,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_key_phrases_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
-            response = text_analytics.recognize_linked_entities(
+            response = text_analytics.extract_key_phrases(
                 ["This is written in English."]
             )
 
@@ -398,7 +398,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_key_phrases_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            response = text_analytics.recognize_linked_entities(
+            response = text_analytics.extract_key_phrases(
                 ["This is written in English."]
             )
 
@@ -406,7 +406,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_key_phrases_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
-            response = text_analytics.recognize_linked_entities(
+            response = text_analytics.extract_key_phrases(
                 inputs=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
@@ -458,7 +458,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_analyze_sentiment_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
-            response = text_analytics.recognize_linked_entities(
+            response = text_analytics.analyze_sentiment(
                 ["This is written in English."]
             )
 
@@ -466,7 +466,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_analyze_sentiment_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            response = text_analytics.recognize_linked_entities(
+            response = text_analytics.analyze_sentiment(
                 ["This is written in English."]
             )
 
@@ -474,7 +474,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_analyze_sentiment_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
-            response = text_analytics.recognize_linked_entities(
+            response = text_analytics.analyze_sentiment(
                 inputs=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )

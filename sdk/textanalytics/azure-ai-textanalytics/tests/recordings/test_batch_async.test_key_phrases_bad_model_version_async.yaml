@@ -14,19 +14,19 @@ interactions:
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?model-version=old&showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?model-version=old&showStats=false
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
         is incorrect. Allowed values are latest,2019-10-01"}}'
     headers:
-      apim-request-id: 5ca1a28d-e408-4567-92ce-414609f65691
+      apim-request-id: 6e985bf8-4222-4cab-940f-5a9599d082ee
       content-type: application/json; charset=utf-8
-      date: Thu, 30 Jan 2020 01:11:11 GMT
+      date: Sat, 01 Feb 2020 00:20:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '14'
     status:
       code: 400
       message: Bad Request
@@ -35,7 +35,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - westus2.api.cognitive.microsoft.com
-        - //text/analytics/v3.0-preview.1/entities/linking
+        - //text/analytics/v3.0-preview.1/keyPhrases
         - model-version=old&showStats=false
         - ''
 version: 1
