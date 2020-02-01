@@ -226,10 +226,7 @@ class EventHubConsumer(
                         )
                         raise last_exception
 
-        if self._message_buffer:
-            # retrieve one message from the buffer and call on_event_received. So event processor will process events
-            # from all partitions alternately instead of processing all events of one partition at a time then another
-            # partition.
+        while self._message_buffer:
             event_data = EventData._from_message(self._message_buffer.pop())  # pylint: disable=protected-access
             trace_link_message(event_data)
             self._last_received_event = event_data
