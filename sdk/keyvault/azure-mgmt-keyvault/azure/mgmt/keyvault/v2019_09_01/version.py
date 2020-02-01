@@ -9,14 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._vaults_operations import VaultsOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
-from ._operations import Operations
+VERSION = "2019-09-01"
 
-__all__ = [
-    'VaultsOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'Operations',
-]
