@@ -437,6 +437,22 @@ class DocumentError(DictMixin):
         self.error = kwargs.get("error", None)
         self.is_error = True
 
+    def __getattr__(self, attr):
+        result_set = set()
+        result_set.update(
+            RecognizeEntitiesResult().keys() + RecognizePiiEntitiesResult().keys()
+            + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
+            + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
+        )
+        result_attrs = result_set.difference(DocumentError().keys())
+        if attr in result_attrs:
+            raise AttributeError(
+                "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
+                "Document Id: {}\nError: {} - {}\n".
+                format(attr, self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
+            )
+        raise AttributeError("'DocumentError' object has no attribute '{}'".format(attr))
+
     @classmethod
     def _from_generated(cls, doc_err):
         return cls(
