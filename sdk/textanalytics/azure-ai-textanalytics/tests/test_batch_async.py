@@ -1089,7 +1089,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
-            response = await text_analytics.detect_languages(docs)
+            response = await text_analytics.detect_language(docs)
         except HttpResponseError as err:
             self.assertEqual(err.error_code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.message)
@@ -1097,6 +1097,6 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         # Service bug returns invalidDocument here. Uncomment after v3.0-preview.2
         # docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
         #
-        # response = await text_analytics.detect_languages(docs)
+        # response = await text_analytics.detect_language(docs)
         # self.assertEqual(response[0].error.code, "invalidCountryHint")
         # self.assertIsNotNone(response[0].error.message)
