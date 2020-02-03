@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.6.0 (2020-01-31)
+++++++++++++++++++
+
+**Features**
+
+- Model Cluster has a new parameter state_reason
+- Model ReadWriteDatabase has a new parameter is_followed
+- Model EventHubDataConnection has a new parameter compression
+- Model ClusterUpdate has a new parameter state_reason
+- Added operation ClustersOperations.diagnose_virtual_network
+- Added operation group DatabasePrincipalAssignmentsOperations
+- Added operation group ClusterPrincipalAssignmentsOperations
+
 0.5.0 (2019-11-11)
 ++++++++++++++++++
 

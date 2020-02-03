@@ -11,13 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 9d5891b4-d9a9-11e9-939a-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:16:52 GMT
+      - Wed, 15 Jan 2020 23:54:24 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -25,20 +21,18 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:4fdbbc00-001a-0027-23b6-6d4430000000\nTime:2019-09-18T00:16:52.4684396Z</Message></Error>"
+        specified share does not exist.\nRequestId:2d262990-401a-0050-11ff-cbfd9d000000\nTime:2020-01-15T23:54:24.5288958Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '217'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Wed, 18 Sep 2019 00:16:52 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:54:24 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ShareNotFound
-      x-ms-request-id:
-      - 4fdbbc00-001a-0027-23b6-6d4430000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -54,13 +48,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 9d7222b4-d9a9-11e9-ad37-001a7dda7113
+      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 18 Sep 2019 00:16:52 GMT
+      - Wed, 15 Jan 2020 23:54:24 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -71,16 +61,16 @@ interactions:
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
         /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Wed, 18 Sep 2019 00:16:52 GMT
-      Server:
+      date:
+      - Wed, 15 Jan 2020 23:54:24 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - 4fdbbc02-001a-0027-24b6-6d4430000000
+      vary:
+      - Origin
       x-ms-version:
       - '2019-02-02'
     status:

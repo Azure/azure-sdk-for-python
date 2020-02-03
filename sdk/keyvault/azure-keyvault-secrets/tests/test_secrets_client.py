@@ -10,7 +10,7 @@ import os
 import logging
 import json
 
-from devtools_testutils import ResourceGroupPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from secrets_preparer import VaultClientPreparer
 from secrets_test_case import KeyVaultTestCase
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -26,10 +26,6 @@ class MockHandler(logging.Handler):
 
 
 class SecretClientTests(KeyVaultTestCase):
-
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "keyvault" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
         self.assertEqual(s1.vault_url, s2.vault_url)
@@ -64,7 +60,8 @@ class SecretClientTests(KeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_secret_crud_operations(self, vault_client, **kwargs):
 
@@ -132,11 +129,11 @@ class SecretClientTests(KeyVaultTestCase):
         updated = _update_secret(created)
 
         # delete secret
-        polling_interval = 0 if self.is_playback() else 2
-        deleted = client.begin_delete_secret(updated.name, _polling_interval=polling_interval).result()
+        deleted = client.begin_delete_secret(updated.name).result()
         self.assertIsNotNone(deleted)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_secret_list(self, vault_client, **kwargs):
 
@@ -159,7 +156,8 @@ class SecretClientTests(KeyVaultTestCase):
         result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_list_versions(self, vault_client, **kwargs):
 
@@ -188,8 +186,9 @@ class SecretClientTests(KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @VaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_list_deleted_secrets(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
@@ -203,9 +202,8 @@ class SecretClientTests(KeyVaultTestCase):
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete them
-        polling_interval = 0 if self.is_playback() else 2
         for secret_name in expected.keys():
-            client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
+            client.begin_delete_secret(secret_name).wait()
 
         # validate list deleted secrets with attributes
         for deleted_secret in client.list_deleted_secrets():
@@ -215,7 +213,8 @@ class SecretClientTests(KeyVaultTestCase):
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -231,15 +230,15 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        polling_interval = 0 if self.is_playback() else 2
-        client.begin_delete_secret(created_bundle.name, _polling_interval=polling_interval).wait()
+        client.begin_delete_secret(created_bundle.name).wait()
 
         # restore secret
         restored = client.restore_secret_backup(secret_backup)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @VaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
@@ -252,10 +251,9 @@ class SecretClientTests(KeyVaultTestCase):
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
-        polling_interval = 0 if self.is_playback() else 2
         # delete all secrets
         for secret_name in secrets.keys():
-            client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
+            client.begin_delete_secret(secret_name).wait()
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
@@ -263,15 +261,16 @@ class SecretClientTests(KeyVaultTestCase):
 
         # recover select secrets
         for secret_name in secrets.keys():
-            client.begin_recover_deleted_secret(secret_name, _polling_interval=polling_interval).wait()
+            client.begin_recover_deleted_secret(secret_name).wait()
 
         # validate the recovered secrets exist
         for secret_name in secrets.keys():
             secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @VaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
@@ -285,9 +284,8 @@ class SecretClientTests(KeyVaultTestCase):
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
-            client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
+            client.begin_delete_secret(secret_name).wait()
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
@@ -302,7 +300,8 @@ class SecretClientTests(KeyVaultTestCase):
         deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer(client_kwargs={'logging_enable': True})
     def test_logging_enabled(self, vault_client, **kwargs):
         client = vault_client.secrets
@@ -326,7 +325,8 @@ class SecretClientTests(KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_logging_disabled(self, vault_client, **kwargs):
         client = vault_client.secrets

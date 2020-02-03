@@ -3,6 +3,15 @@
 Release History
 ===============
 
+2.1.0 (2020-01-30)
+++++++++++++++++++
+
+**Features**
+
+- Model VaultProperties has a new parameter private_endpoint_connections
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group PrivateLinkResourcesOperations
+
 2.0.0 (2019-06-18)
 ++++++++++++++++++
 

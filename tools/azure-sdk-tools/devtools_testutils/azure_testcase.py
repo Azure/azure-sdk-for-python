@@ -63,7 +63,8 @@ class AzureTestCase(ReplayableTest):
     def __init__(self, method_name, config_file=None,
                  recording_dir=None, recording_name=None,
                  recording_processors=None, replay_processors=None,
-                 recording_patches=None, replay_patches=None):
+                 recording_patches=None, replay_patches=None,
+                 **kwargs):
         self.working_folder = os.path.dirname(__file__)
         self.qualified_test_name = get_qualified_method_name(self, method_name)
         self._fake_settings, self._real_settings = self._load_settings()
@@ -80,6 +81,7 @@ class AzureTestCase(ReplayableTest):
             replay_processors=replay_processors or self._get_replay_processors(),
             recording_patches=recording_patches,
             replay_patches=replay_patches,
+            **kwargs
         )
 
     @property
@@ -121,7 +123,11 @@ class AzureTestCase(ReplayableTest):
             raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
 
         if not key_value:
-            key_value = getattr(self.settings, key)
+            try:
+                key_value = getattr(self.settings, key)
+            except Exception:
+                print("Could not get {}".format(key))
+                raise
         return key_value
 
     def set_value_to_scrub(self, key, default_value):

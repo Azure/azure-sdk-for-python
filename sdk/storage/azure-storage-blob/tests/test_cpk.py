@@ -85,7 +85,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -130,7 +130,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -174,7 +174,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -214,7 +214,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -252,7 +252,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -323,7 +323,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -360,7 +360,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -416,7 +416,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -454,7 +454,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -496,7 +496,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -556,7 +556,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -621,7 +621,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -667,7 +667,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account.name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,

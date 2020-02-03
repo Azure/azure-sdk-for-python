@@ -26,6 +26,7 @@ _docs
 RECORD.txt
 build/
 *.egg-info/
+.tox_pip_cache/
 
 # Test results
 TestResults/
@@ -93,3 +94,6 @@ sdk/storage/azure-storage-file-share/tests/settings_real.py
 sdk/storage/azure-storage-file-datalake/tests/settings_real.py
 *.code-workspace
 sdk/cosmos/azure-cosmos/test/test_config.py
+
+# temp path to to run regression test
+.tmp_code_path/

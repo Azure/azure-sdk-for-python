@@ -12,8 +12,6 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_async_gen_data():
-    transport = AsyncioRequestsTransport()
-
     class AsyncGen:
         def __init__(self):
             self._range = iter([b"azerty"])
@@ -27,14 +25,14 @@ async def test_async_gen_data():
             except StopIteration:
                 raise StopAsyncIteration
 
-    req = HttpRequest('GET', 'http://httpbin.org/post', data=AsyncGen())
-
-    await transport.send(req)
+    async with AsyncioRequestsTransport() as transport:
+        req = HttpRequest('GET', 'http://httpbin.org/post', data=AsyncGen())
+        await transport.send(req)
 
 @pytest.mark.asyncio
 async def test_send_data():
-    transport = AsyncioRequestsTransport()
-    req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
-    response = await transport.send(req)
+    async with AsyncioRequestsTransport() as transport:
+        req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
+        response = await transport.send(req)
 
-    assert json.loads(response.text())['data'] == "azerty"
+        assert json.loads(response.text())['data'] == "azerty"

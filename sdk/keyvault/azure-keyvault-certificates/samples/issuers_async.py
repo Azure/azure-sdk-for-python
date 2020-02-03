@@ -57,7 +57,7 @@ async def run_sample():
         issuer1 = await client.get_issuer("issuer1")
 
         print(issuer1.name)
-        print(issuer1.properties.provider)
+        print(issuer1.provider)
         print(issuer1.account_id)
 
         for contact in issuer1.admin_contacts:

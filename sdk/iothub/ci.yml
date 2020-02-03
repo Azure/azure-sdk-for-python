@@ -15,7 +15,6 @@ trigger:
   branches:
     include:
     - master
-    - feature/*
     - hotfix/*
     - release/*
     - restapi*
@@ -43,8 +42,8 @@ stages:
     Artifacts:
     - name: azure_mgmt_iothub
       safeName: azuremgmtiothub
-    - name: azure_mgmt_iothubprovisioning
-      safeName: azuremgmtiothubprovisioning
+    - name: azure_mgmt_iothubprovisioningservices
+      safeName: azuremgmtiothubprovisioningservices
     - name: azure_mgmt_iotcentral
       safeName: azuremgmtiotcentral
       

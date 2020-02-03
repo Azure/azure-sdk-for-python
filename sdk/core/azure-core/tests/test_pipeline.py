@@ -50,13 +50,12 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
-    RetryPolicy
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
-    RequestsTransport
+    RequestsTransport,
 )
 
 from azure.core.exceptions import AzureError
@@ -108,6 +107,19 @@ class TestRequestsTransport(unittest.TestCase):
         assert pipeline._transport.session is None
         assert response.http_response.status_code == 200
 
+    def test_basic_options_requests(self):
+
+        request = HttpRequest("OPTIONS", "https://httpbin.org")
+        policies = [
+            UserAgentPolicy("myusergant"),
+            RedirectPolicy()
+        ]
+        with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+            response = pipeline.run(request)
+
+        assert pipeline._transport.session is None
+        assert response.http_response.status_code == 200
+
     def test_requests_socket_timeout(self):
         conf = Configuration()
         request = HttpRequest("GET", "https://bing.com")
@@ -120,14 +132,7 @@ class TestRequestsTransport(unittest.TestCase):
         # by the retry policy.
         with pytest.raises(AzureError):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-                response = pipeline.run(request, connection_timeout=0.000001)
-
-    def test_retry_code_class_variables(self):
-        retry_policy = RetryPolicy()
-        assert retry_policy._RETRY_CODES is not None
-        assert len(retry_policy._RETRY_CODES) == 498
-        assert 408 in retry_policy._RETRY_CODES
-        assert 501 not in retry_policy._RETRY_CODES
+                response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
 
     def test_basic_requests_separate_session(self):
 

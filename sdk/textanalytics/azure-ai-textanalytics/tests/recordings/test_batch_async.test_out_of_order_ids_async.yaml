@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "56", "text": ":)"}, {"id": "0", "text": ":("}, {"id":
+      "22", "text": ""}, {"id": "19", "text": ":P"}, {"id": "1", "text": ":D"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '151'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"56","sentiment":"positive","documentScores":{"positive":0.79595094919204712,"neutral":0.181293323636055,"negative":0.0227557774633169},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.79595094919204712,"neutral":0.181293323636055,"negative":0.0227557774633169},"offset":0,"length":2}]},{"id":"0","sentiment":"negative","documentScores":{"positive":0.0299581550061703,"neutral":0.20621491968631739,"negative":0.76382696628570557},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0299581550061703,"neutral":0.20621491968631739,"negative":0.76382696628570557},"offset":0,"length":2}]},{"id":"19","sentiment":"positive","documentScores":{"positive":0.46800261735916138,"neutral":0.46502783894538879,"negative":0.0669695809483528},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.46800261735916138,"neutral":0.46502783894538879,"negative":0.0669695809483528},"offset":0,"length":2}]},{"id":"1","sentiment":"positive","documentScores":{"positive":0.79595112800598145,"neutral":0.18129308521747589,"negative":0.0227557606995106},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.79595112800598145,"neutral":0.18129308521747589,"negative":0.0227557606995106},"offset":0,"length":2}]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"latest"}'
+    headers:
+      apim-request-id: 757eee39-aea9-4160-adc3-0576ac7ac47a
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
+      date: Thu, 14 Nov 2019 21:43:32 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-aml-ta-request-id: 441f43fb-717c-4fd1-a7be-0f24a814ef23
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '61'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - showStats=false
+        - ''
+version: 1

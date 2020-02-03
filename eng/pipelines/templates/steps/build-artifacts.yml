@@ -2,6 +2,7 @@ parameters:
   BeforePublishSteps: []
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
+  BuildDocs: true
 
 steps:
   - script: |
@@ -15,7 +16,7 @@ steps:
       versionSpec: '2.7'
 
   - script: |
-      pip install wheel setuptools packaging
+      pip install -r eng/ci_tools.txt
     displayName: 'Prep Py2 Environment'
     
   - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
@@ -37,7 +38,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - script: |
-      pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
+      pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
   - template: ../steps/set-dev-build.yml
@@ -57,6 +58,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
@@ -79,7 +81,7 @@ steps:
     artifact: packages 
 
   - task: PublishBuildArtifacts@1
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
     displayName: 'Publish Artifacts'
     inputs:
       artifactName: 'documentation'

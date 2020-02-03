@@ -5,10 +5,14 @@
 # -------------------------------------------------------------------------
 import time
 
+import azure.core
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest
+
+import pytest
 
 try:
     from unittest.mock import Mock
@@ -69,3 +73,31 @@ def test_bearer_policy_token_caching():
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
+
+
+def test_bearer_policy_enforces_tls():
+    credential = Mock()
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+    with pytest.raises(ServiceRequestError):
+        pipeline.run(HttpRequest("GET", "http://not.secure"))
+
+
+@pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
+def test_key_vault_regression():
+    """Test for regression affecting azure-keyvault-* 4.0.0. This test must pass, unmodified, for all 1.x versions."""
+
+    from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
+
+    credential = Mock()
+    policy = _BearerTokenCredentialPolicyBase(credential)
+    assert policy._credential is credential
+
+    headers = {}
+    token = "alphanums"
+    policy._update_headers(headers, token)
+    assert headers["Authorization"] == "Bearer " + token
+
+    assert policy._need_new_token
+    policy._token = AccessToken(token, time.time() + 3600)
+    assert not policy._need_new_token
+    assert policy._token.token == token

@@ -11,7 +11,7 @@ import logging
 import json
 
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import ResourceGroupPreparer
+from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from keys_async_preparer import AsyncVaultClientPreparer
 from keys_async_test_case import AsyncKeyVaultTestCase
 
@@ -29,10 +29,6 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 class KeyVaultKeyTest(AsyncKeyVaultTestCase):
-
-    # incorporate md5 hashing of run identifier into resource group name for uniqueness
-    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
-
     def _assert_jwks_equal(self, jwk1, jwk2):
         assert jwk1.kid == jwk2.kid
         assert jwk1.kty == jwk2.kty
@@ -166,8 +162,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, "RSA", key.key_ops)
         return imported_key
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_key_crud_operations(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -202,8 +199,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         await self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
-        polling_interval = 0 if self.is_playback() else 2
-        deleted_key = await client.delete_key(created_rsa_key.name, _polling_interval=polling_interval)
+        deleted_key = await client.delete_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
         self._assert_jwks_equal(created_rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
@@ -217,7 +213,8 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(deleted_key)
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_key_list(self, vault_client, **kwargs):
@@ -241,7 +238,8 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, vault_client, **kwargs):
@@ -267,8 +265,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_keys(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -282,9 +281,8 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             expected[key_name] = await client.create_key(key_name, key_type)
 
         # delete all keys
-        polling_interval = 0 if self.is_playback() else 2
         for key_name in expected.keys():
-            await client.delete_key(key_name, _polling_interval=polling_interval)
+            await client.delete_key(key_name)
 
         # validate list deleted keys with attributes
         async for deleted_key in client.list_deleted_keys():
@@ -300,7 +298,8 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -317,8 +316,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(key_backup, "key_backup")
 
         # delete key
-        polling_interval = 0 if self.is_playback() else 2
-        await client.delete_key(created_bundle.name, _polling_interval=polling_interval)
+        await client.delete_key(created_bundle.name)
         # can add test case to see if we do get_deleted should return error
 
         # restore key
@@ -326,8 +324,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -340,13 +339,12 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete them
-        polling_interval = 0 if self.is_playback() else 2
         for key_name in keys.keys():
-            await client.delete_key(key_name, _polling_interval=polling_interval)
+            await client.delete_key(key_name)
 
         # recover them
         for key_name in keys.keys():
-            recovered_key = await client.recover_deleted_key(key_name, _polling_interval=polling_interval)
+            recovered_key = await client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
@@ -358,8 +356,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -373,15 +372,15 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete them
-        polling_interval = 0 if self.is_playback() else 2
         for key_name in keys.keys():
-            await client.delete_key(key_name, _polling_interval=polling_interval)
+            await client.delete_key(key_name)
 
         # purge them
         for key_name in keys.keys():
             await client.purge_deleted_key(key_name)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, vault_client, **kwargs):
@@ -406,7 +405,8 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, vault_client, **kwargs):

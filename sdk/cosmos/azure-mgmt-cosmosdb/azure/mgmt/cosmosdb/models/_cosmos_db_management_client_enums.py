@@ -62,6 +62,20 @@ class IndexKind(str, Enum):
     spatial = "Spatial"
 
 
+class CompositePathSortOrder(str, Enum):
+
+    ascending = "Ascending"
+    descending = "Descending"
+
+
+class SpatialType(str, Enum):
+
+    point = "Point"
+    line_string = "LineString"
+    polygon = "Polygon"
+    multi_polygon = "MultiPolygon"
+
+
 class PartitionKind(str, Enum):
 
     hash = "Hash"

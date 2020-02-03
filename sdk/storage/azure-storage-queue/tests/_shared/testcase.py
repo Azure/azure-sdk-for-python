@@ -25,7 +25,13 @@ import string
 import random
 import re
 import logging
-from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, ResourceGroupPreparer, StorageAccountPreparer, FakeResource
+from devtools_testutils import (
+    AzureMgmtTestCase,
+    AzureMgmtPreparer,
+    ResourceGroupPreparer,
+    StorageAccountPreparer,
+    FakeResource,
+)
 from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
@@ -34,6 +40,7 @@ except ImportError:
 
 from azure.core.credentials import AccessToken
 from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
+from azure.mgmt.storage.models import StorageAccount, Endpoints
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -87,16 +94,19 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
                 "storagename"
             )
         else:
-            storage_account = FakeResource(
-                id=storage_account.id,
-                name="storagename"
-            )
+            name = "storagename"
+            storage_account.name = name
+            storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')
+            storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(name, 'queue')
+            storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
+            storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
 
         return {
             'location': 'westus',
             'resource_group': StorageTestCase._RESOURCE_GROUP,
             'storage_account': storage_account,
             'storage_account_key': StorageTestCase._STORAGE_KEY,
+            'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
@@ -134,13 +144,23 @@ class StorageTestCase(AzureMgmtTestCase):
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
-    def account_url(self, name, storage_type):
+    def account_url(self, storage_account, storage_type):
         """Return an url of storage account.
 
-        :param str name: Storage account name
+        :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        return 'https://{}.{}.core.windows.net'.format(name, storage_type)
+        try:
+            if storage_type == "blob":
+                return storage_account.primary_endpoints.blob.rstrip("/")
+            if storage_type == "queue":
+                return storage_account.primary_endpoints.queue.rstrip("/")
+            if storage_type == "file":
+                return storage_account.primary_endpoints.file.rstrip("/")
+            else:
+                raise ValueError("Unknown storage type {}".format(storage_type))
+        except AttributeError: # Didn't find "primary_endpoints"
+            return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
 
     def configure_logging(self):
         try:
@@ -344,36 +364,113 @@ class LogCaptured(object):
 @pytest.fixture(scope="session")
 def storage_account():
     test_case = AzureMgmtTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer()
-    storage_preparer = StorageAccountPreparer(name_prefix='pyacrstorage')
-
-    # Set what the decorator is supposed to set for us
-    for prep in [rg_preparer, storage_preparer]:
-        prep.live_test = False
-        prep.test_class_instance = test_case
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
+    storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
 
     # Create
-    rg_name = create_random_name("pystorage", 24)
-    storage_name = create_random_name("pyacrstorage", 24)
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
+    location = os.environ.get("AZURE_LOCATION", "westus")
+
+    existing_rg_name = os.environ.get("AZURE_RESOURCEGROUP_NAME")
+    existing_storage_name = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
+    existing_storage_key = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
+    storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+
+    i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
+    got_storage_info_from_env = existing_storage_name or storage_connection_string
+
     try:
-        rg = rg_preparer.create_resource(rg_name)
-        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
-        try:
-            storage_dict = storage_preparer.create_resource(
-                storage_name,
-                resource_group=rg['resource_group']
+        if i_need_to_create_rg:
+            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+            rg = rg_kwargs['resource_group']
+        else:
+            rg_name = existing_rg_name or "no_rg_needed"
+            rg = FakeResource(
+                name=rg_name,
+                id="/subscriptions/{}/resourceGroups/{}".format(subscription_id, rg_name)
             )
-            # Now the magic begins
-            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
-            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+        StorageTestCase._RESOURCE_GROUP = rg
+
+        try:
+            if got_storage_info_from_env:
+
+                if storage_connection_string:
+                    storage_connection_string_parts = dict([
+                        part.split('=', 1)
+                        for part in storage_connection_string.split(";")
+                    ])
+
+                storage_account = None
+                if existing_storage_name:
+                    storage_name = existing_storage_name
+                    storage_account = StorageAccount(
+                        location=location,
+                    )
+                    storage_account.name = storage_name
+                    storage_account.id = storage_name
+                    storage_account.primary_endpoints=Endpoints()
+                    storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
+                    storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
+                    storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
+                    storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
+                    storage_key = existing_storage_key
+
+                if not storage_connection_string:
+                    # It means I have received a storage name from env
+                    storage_connection_string=";".join([
+                        "DefaultEndpointsProtocol=https",
+                        "AccountName={}".format(storage_name),
+                        "AccountKey={}".format(storage_key),
+                        "BlobEndpoint={}".format(storage_account.primary_endpoints.blob),
+                        "TableEndpoint={}".format(storage_account.primary_endpoints.table),
+                        "QueueEndpoint={}".format(storage_account.primary_endpoints.queue),
+                        "FileEndpoint={}".format(storage_account.primary_endpoints.file),
+                    ])
+
+                if not storage_account:
+                    # It means I have received a connection string
+                    storage_name = storage_connection_string_parts["AccountName"]
+                    storage_account = StorageAccount(
+                        location=location,
+                    )
+
+                    def build_service_endpoint(service):
+                        return "{}://{}.{}.{}".format(
+                            storage_connection_string_parts.get("DefaultEndpointsProtocol", "https"),
+                            storage_connection_string_parts["AccountName"],
+                            service,
+                            storage_connection_string_parts["EndpointSuffix"], # Let it fail if we don't even have that
+                        )
+
+                    storage_account.name = storage_name
+                    storage_account.id = storage_name
+                    storage_account.primary_endpoints=Endpoints()
+                    storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", build_service_endpoint("blob"))
+                    storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", build_service_endpoint("queue"))
+                    storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", build_service_endpoint("file"))
+                    storage_account.secondary_endpoints=Endpoints()
+                    storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", build_service_endpoint("blob"))
+                    storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", build_service_endpoint("queue"))
+                    storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", build_service_endpoint("file"))
+                    storage_key = storage_connection_string_parts["AccountKey"]
+
+            else:
+                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                storage_account = storage_kwargs['storage_account']
+                storage_key = storage_kwargs['storage_account_key']
+                storage_connection_string = storage_kwargs['storage_account_cs']
+
+            StorageTestCase._STORAGE_ACCOUNT = storage_account
+            StorageTestCase._STORAGE_KEY = storage_key
+            StorageTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
             yield
         finally:
-            storage_preparer.remove_resource(
-                storage_name,
-                resource_group=rg['resource_group']
-            )
-            StorageTestCase._STORAGE_ACCOUNT = None
-            StorageTestCase._STORAGE_KEY = None
+            if not got_storage_info_from_env:
+                storage_preparer.remove_resource(
+                    storage_name,
+                    resource_group=rg
+                )
     finally:
-        rg_preparer.remove_resource(rg_name)
+        if i_need_to_create_rg:
+            rg_preparer.remove_resource(rg_name)
         StorageTestCase._RESOURCE_GROUP = None

@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.5.0 (2019-11-27)
+++++++++++++++++++
+
+**Features**
+
+- Model SqlVirtualMachine has a new parameter storage_configuration_settings
+- Added operation SqlVirtualMachinesOperations.list_by_sql_vm_group
+
 0.4.0 (2019-07-04)
 ++++++++++++++++++
 

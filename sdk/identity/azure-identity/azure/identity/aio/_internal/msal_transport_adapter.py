@@ -5,7 +5,6 @@
 """Adapter to substitute an async azure-core pipeline for Requests in MSAL application token acquisition methods."""
 
 import asyncio
-import atexit
 from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -15,10 +14,13 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    UserAgentPolicy,
 )
 from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
 
-from azure.identity._internal import MsalTransportResponse
+from ..._internal import MsalTransportResponse
+from ..._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -40,27 +42,26 @@ class MsalTransportAdapter:
 
         config = config or self._create_config(**kwargs)
         policies = policies or [
+            config.user_agent_policy,
+            config.proxy_policy,
             config.retry_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
         self._transport = transport or AioHttpTransport(configuration=config)
-        atexit.register(self._close_transport_session)  # prevent aiohttp warnings
         self._pipeline = AsyncPipeline(transport=self._transport, policies=policies)
 
-    def _close_transport_session(self) -> None:
-        """If transport has a 'close' method, invoke it."""
+    async def __aenter__(self):
+        await self._pipeline.__aenter__()
+        return self
 
-        close = getattr(self._transport, "close", None)
-        if not callable(close):
-            return
+    async def __aexit__(self, *args):
+        await self.close()
 
-        if asyncio.iscoroutinefunction(close):
-            # we expect no loop is running because this method should be called only when the interpreter is exiting
-            asyncio.new_event_loop().run_until_complete(close())
-        else:
-            close()
+    async def close(self):
+        """Close the adapter's transport session."""
+        await self._pipeline.__aexit__()
 
     def get(
         self,
@@ -113,6 +114,8 @@ class MsalTransportAdapter:
     @staticmethod
     def _create_config(**kwargs: "Any") -> Configuration:
         config = Configuration(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         return config

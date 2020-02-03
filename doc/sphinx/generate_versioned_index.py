@@ -87,12 +87,6 @@ LANDING_TEMPLATE = """
 
 LANDING_PAGE_LOCATION = "ref/{}.rst"
 
-PACKAGE_REDIRECTIONS = {
-    "azure-eventhubs": "azure-eventhub",
-    "azure-eventhubs-checkpointstoreblob-aio": "azure-eventhub-checkpointstoreblob-aio",
-    "azure-eventhubs-checkpointstoreblob": "azure-eventhub-checkpointstoreblob"
-}
-
 def read_config_file(config_path=CONFIG_FILE):
     with open(CONFIG_FILE, "r") as f:
         return json.load(f)
@@ -115,11 +109,6 @@ def get_repo_packages(base_dir):
     ]
 
     packages = [p for p in packages if check_package_against_omission(p)]
-
-    for redirection in PACKAGE_REDIRECTIONS:
-        if redirection in packages:
-            packages.remove(redirection)
-            packages.append(PACKAGE_REDIRECTIONS[redirection])
 
     return sorted(packages)
 
@@ -166,7 +155,7 @@ def write_toc_tree(categorized_menu_items):
 
 
 def get_categorized_menu_items(package_names):
-    categorized_menu_items = {}
+    categorized_menu_items = {"Other": {"Client":[], "Management":[], "Other": []}}
 
     for pkg in package_names:
         # add to the categorized menu items
@@ -182,18 +171,18 @@ def get_categorized_menu_items(package_names):
                 print(pkg_meta["category"])
                 print(pkg_meta["service_name"])
                 print(categorized_menu_items[pkg_meta["service_name"]])
-                
+
                 exit(1)
 
         else:
             categorized_menu_items["Other"]["Other"].append(pkg)
 
     return categorized_menu_items
-    
+
 def create_docs_folder():
     # delete existing
     shutil.rmtree(docs_folder, ignore_errors=True)
-    
+
     # recreate
     os.mkdir(docs_folder)
     os.mkdir(os.path.join(docs_folder, 'ref'))
@@ -231,7 +220,7 @@ if __name__ == "__main__":
 
     # write all the landing pages that will reach out to the appropriate location
     write_landing_pages(categorized_menu_items)
-    
+
     # write the ToC
     write_toc_tree(categorized_menu_items)
 

@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "I should take my cat to the veterinarian."},
+      {"id": "1", "text": "Este es un document escrito en Espa\u00f1ol."}, {"id":
+      "2", "text": "\u732b\u306f\u5e78\u305b"}, {"id": "3", "text": "Fahrt nach Stuttgart
+      und dann zum Hotel zu Fu."}, {"id": "4", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '295'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","innerError":{"code":"InvalidDocument","message":"Document
+        text is empty."},"message":"Invalid document in request."}}],"modelVersion":"latest"}'
+    headers:
+      apim-request-id:
+      - f24b4ed7-5c55-4e8f-a3b3-d135b3ad05ad
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=4
+      date:
+      - Thu, 14 Nov 2019 21:40:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 6ae69f7b-f39f-4854-ad72-11a9e2c33080
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '18'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-powerbidedicated"
+package_pprint_name = "PowerBIDedicated Management"
+package_doc_id = "powerbidedicated"
+is_stable = false
