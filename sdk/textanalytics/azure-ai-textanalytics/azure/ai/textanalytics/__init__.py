@@ -11,7 +11,7 @@ from ._models import (
     TextDocumentInput,
     DetectedLanguage,
     DocumentError,
-    NamedEntity,
+    CategorizedEntity,
     LinkedEntity,
     AnalyzeSentimentResult,
     RecognizeEntitiesResult,
@@ -25,7 +25,8 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScorePerLabel
+    SentimentScorePerLabel,
+    PiiEntity
 )
 from ._credential import TextAnalyticsApiKeyCredential
 
@@ -37,7 +38,7 @@ __all__ = [
     'RecognizeEntitiesResult',
     'RecognizePiiEntitiesResult',
     'DetectLanguageResult',
-    'NamedEntity',
+    'CategorizedEntity',
     'TextAnalyticsError',
     'InnerError',
     'ExtractKeyPhrasesResult',
@@ -49,8 +50,9 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScorePerLabel',
-    'TextAnalyticsApiKeyCredential'
+    'SentimentScorePerLabel',
+    'TextAnalyticsApiKeyCredential',
+    'PiiEntity'
 ]
 
 __version__ = VERSION

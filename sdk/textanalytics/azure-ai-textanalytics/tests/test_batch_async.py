@@ -47,7 +47,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await text_analytics.detect_languages(docs)
+        response = await text_analytics.detect_language(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -72,7 +72,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
     async def test_bad_input_to_method_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(TypeError):
-            response = await text_analytics.detect_languages("hello world")
+            response = await text_analytics.detect_language("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -84,7 +84,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await text_analytics.detect_languages(docs, show_stats=True)
+        response = await text_analytics.detect_language(docs, show_stats=True)
 
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
@@ -110,7 +110,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = await text_analytics.detect_languages(docs)
+        response = await text_analytics.detect_language(docs)
 
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -130,7 +130,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": text}]
 
-        response = await text_analytics.detect_languages(docs)
+        response = await text_analytics.detect_language(docs)
 
         for resp in response:
             self.assertTrue(resp.is_error)
@@ -140,7 +140,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
     async def test_language_detection_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
-            response = await text_analytics.detect_languages(
+            response = await text_analytics.detect_language(
                 ["This is written in English."]
             )
 
@@ -149,7 +149,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
     async def test_language_detection_bad_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            response = await text_analytics.detect_languages(
+            response = await text_analytics.detect_language(
                 ["This is written in English."]
             )
 
@@ -158,7 +158,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
     async def test_language_detection_bad_model_version_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
-            response = await text_analytics.detect_languages(
+            response = await text_analytics.detect_language(
                 inputs=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
@@ -251,17 +251,17 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
 
         response = await text_analytics.recognize_pii_entities(docs, show_stats=True)
         self.assertEqual(response[0].entities[0].text, "555-55-5555")
-        self.assertEqual(response[0].entities[0].type, "U.S. Social Security Number (SSN)")
+        self.assertEqual(response[0].entities[0].category, "U.S. Social Security Number (SSN)")
         self.assertEqual(response[1].entities[0].text, "111000025")
-        self.assertEqual(response[1].entities[0].type, "ABA Routing Number")
+        self.assertEqual(response[1].entities[0].category, "ABA Routing Number")
         self.assertEqual(response[2].entities[0].text, "998.214.865-68")
-        self.assertEqual(response[2].entities[0].type, "Brazil CPF Number")
+        self.assertEqual(response[2].entities[0].category, "Brazil CPF Number")
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.score)
@@ -477,7 +477,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.document_scores)
+            self.assertIsNotNone(doc.sentiment_scores)
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -548,7 +548,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             ""
         ]
 
-        response = await text_analytics.detect_languages(docs)
+        response = await text_analytics.detect_language(docs)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -567,7 +567,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
-        response = await text_analytics.detect_languages(docs)
+        response = await text_analytics.detect_language(docs)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -650,7 +650,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
 
         docs = ["hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = await text_analytics.detect_languages(docs)
+            response = await text_analytics.detect_language(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -668,7 +668,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -686,7 +686,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = await text_analytics.detect_languages(docs, country_hint="", response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -706,7 +706,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_languages(docs, response_hook=callback)
+        response = await text_analytics.detect_language(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -724,7 +724,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -740,7 +740,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -761,7 +761,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = await text_analytics.detect_languages(docs, country_hint="US", response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -780,7 +780,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -942,9 +942,9 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await text_analytics.detect_languages(docs, response_hook=callback)
-        response = await text_analytics.detect_languages(docs, country_hint="DE", response_hook=callback_2)
-        response = await text_analytics.detect_languages(docs, response_hook=callback)
+        response = await text_analytics.detect_language(docs, response_hook=callback)
+        response = await text_analytics.detect_language(docs, country_hint="DE", response_hook=callback_2)
+        response = await text_analytics.detect_language(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -1006,3 +1006,36 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_document_attribute_error_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        docs = [{"id": "1", "text": ""}]
+        response = await text_analytics.analyze_sentiment(docs)
+
+        # Attributes on DocumentError
+        self.assertTrue(response[0].is_error)
+        self.assertEqual(response[0].id, "1")
+        self.assertIsNotNone(response[0].error)
+
+        # Result attribute not on DocumentError, custom error message
+        try:
+            sentiment = response[0].sentiment
+        except AttributeError as custom_error:
+            self.assertEqual(
+                custom_error.args[0],
+                '\'DocumentError\' object has no attribute \'sentiment\'. '
+                'The service was unable to process this document:\nDocument Id: 1\nError: '
+                'invalidDocument - Document text is empty.\n'
+            )
+
+        # Attribute not found on DocumentError or result obj, default behavior/message
+        try:
+            sentiment = response[0].attribute_not_on_result_or_error
+        except AttributeError as default_behavior:
+            self.assertEqual(
+                default_behavior.args[0],
+                '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            )

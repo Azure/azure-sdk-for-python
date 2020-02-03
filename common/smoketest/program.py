@@ -5,11 +5,13 @@
 import logging
 logging.basicConfig()
 
-import smoke_test
+from smoke_test import execute_smoke_tests
+execute_smoke_tests()
 
 
 try:
-    import smoke_test_async
+    from smoke_test_async import execute_async_smoke_tests
+    execute_async_smoke_tests()
 except SyntaxError:
     print("\n===================")
     print(" Async not suported")
