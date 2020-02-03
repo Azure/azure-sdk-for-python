@@ -18,7 +18,7 @@ from azure.ai.textanalytics import (
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 
 
-class BatchTextAnalyticsTest(TextAnalyticsTest):
+class TestBatchTextAnalytics(TextAnalyticsTest):
 
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
@@ -32,6 +32,27 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
         response = text_analytics.detect_language(docs)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_empty_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(TypeError):
+            text_analytics = TextAnalyticsClient(text_analytics_account, "")
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_bad_type_for_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(TypeError):
+            text_analytics = TextAnalyticsClient(text_analytics_account, [])
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_none_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ValueError):
+            text_analytics = TextAnalyticsClient(text_analytics_account, None)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_bad_input_to_method(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(TypeError):
+            response = text_analytics.detect_language("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_successful_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -92,6 +113,31 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             self.assertTrue(resp.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_language_detection_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.detect_language(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_language_detection_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.detect_language(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_language_detection_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.detect_language(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_recognize_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
@@ -136,6 +182,31 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_entity_recognition_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_entity_recognition_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_entity_recognition_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.recognize_entities(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_successful_recognize_pii_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -187,6 +258,31 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_pii_entity_recognition_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_pii_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_pii_entity_recognition_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_pii_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_pii_entity_recognition_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.recognize_pii_entities(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_recognize_linked_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
@@ -229,6 +325,31 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_linked_entity_recognition_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_linked_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_linked_entity_recognition_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_linked_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_linked_entity_recognition_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.recognize_linked_entities(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_extract_key_phrases(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
@@ -264,6 +385,31 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         response = text_analytics.extract_key_phrases(docs)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_key_phrases_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.extract_key_phrases(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_key_phrases_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.extract_key_phrases(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_key_phrases_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.extract_key_phrases(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_successful_analyze_sentiment(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -307,6 +453,31 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_analyze_sentiment_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.analyze_sentiment(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_analyze_sentiment_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.analyze_sentiment(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_analyze_sentiment_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.analyze_sentiment(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_validate_input_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):

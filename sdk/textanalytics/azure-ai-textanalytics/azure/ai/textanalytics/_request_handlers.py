@@ -13,20 +13,6 @@ from ._models import (
 )
 
 
-def _validate_single_input(text, hint, hint_value):
-    """Validate text input is string. Let service handle
-    validity of hint and hint value.
-
-    :param str text: A single text document.
-    :param str hint: Could be country_hint or language
-    :param str hint_value: The user passed country_hint or language
-    :return: A DetectLanguageInput or TextDocumentInput
-    """
-    if isinstance(text, six.string_types):
-        return [{"id": "0", hint: hint_value, "text": text}]
-    raise TypeError("Input text parameter must be string.")
-
-
 def _validate_batch_input(documents, hint, whole_batch_hint):
     """Validate that batch input has either all string docs
     or dict/DetectLanguageInput/TextDocumentInput, not a mix of both.
