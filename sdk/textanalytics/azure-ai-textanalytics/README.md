@@ -134,12 +134,12 @@ It provides both synchronous and asynchronous operations to access a specific us
 A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
 The input for each operation is passed as a **list** of documents.
 
-Each document can be passed as a string, e.g.
+Each document can be passed as a string in the list, e.g.
 ```python
 docs = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
 ```
 
-or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a 
+or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a list of 
 [DetectLanguageInput](https://aka.ms/azsdk-python-textanalytics-detectlanguageinput) or
 [TextDocumentInput](https://aka.ms/azsdk-python-textanalytics-textdocumentinput),
 or a dict-like representation of the object:

@@ -52,7 +52,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_bad_input_to_method(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(TypeError):
-            response = text_analytics.detect_languages("hello world")
+            response = text_analytics.detect_language("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_successful_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -116,7 +116,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_language_detection_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
         with self.assertRaises(ClientAuthenticationError):
-            response = text_analytics.detect_languages(
+            response = text_analytics.detect_language(
                 ["This is written in English."]
             )
 
@@ -124,7 +124,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_language_detection_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            response = text_analytics.detect_languages(
+            response = text_analytics.detect_language(
                 ["This is written in English."]
             )
 
@@ -132,7 +132,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
     def test_language_detection_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         with self.assertRaises(HttpResponseError):
-            response = text_analytics.detect_languages(
+            response = text_analytics.detect_language(
                 inputs=["Microsoft was founded by Bill Gates."],
                 model_version="old"
             )
