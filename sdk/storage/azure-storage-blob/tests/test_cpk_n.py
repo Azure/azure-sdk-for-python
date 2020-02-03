@@ -660,7 +660,7 @@ class StorageCPKNTest(StorageTestCase):
         # providing encryption scope when upload the blob
         resp = blob_client.upload_blob(b'aaaa', BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_KEY_SCOPE)
         # Use the provided encryption scope on the blob
-        self.assertEqual(resp['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE.encryption_scope)
+        self.assertEqual(resp['encryption_scope'], TEST_ENCRYPTION_KEY_SCOPE)
 
         container_client.delete_container()
 
