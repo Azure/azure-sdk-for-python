@@ -24,7 +24,7 @@ from ._shared.base_client import (
     StorageAccountHostsMixin,
     parse_connection_str,
     parse_query,
-    check_parameter_api_version)
+    check_operation_api_version)
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
@@ -1964,7 +1964,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        prev_snapshot_url = kwargs.pop('managed_disk_diff', None)
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
@@ -1978,11 +1977,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None),
             'range': page_range}
-        if prev_snapshot_url:
-            options['prev_snapshot_url'] = prev_snapshot_url
         if previous_snapshot_diff:
-            if prev_snapshot_url:
-                raise ValueError("Cannot specify both 'previous_snapshot_diff' and 'managed_disk_diff'.")
             try:
                 options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
             except AttributeError:
@@ -1993,7 +1988,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
-    @check_parameter_api_version(managed_disk_diff='2019-04-19')
     @distributed_trace
     def get_page_ranges( # type: ignore
             self, offset=None, # type: Optional[int]
@@ -2023,10 +2017,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
-        :keyword str managed_disk_diff:
-            Specifies the URL of a managed disk snapshot. The response will only
-            contain pages that were changed between the target blob and its previous
-            snapshot. Introduced in API version '2019-04-19'.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2061,10 +2051,78 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             previous_snapshot_diff=previous_snapshot_diff,
             **kwargs)
         try:
-            if previous_snapshot_diff or 'prev_snapshot_url' in options:
+            if previous_snapshot_diff:
                 ranges = self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = self._client.page_blob.get_page_ranges(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return get_page_ranges_result(ranges)
+
+    @check_operation_api_version('2019-07-07')
+    @distributed_trace
+    def get_managed_disk_page_range_diff( # type: ignore
+            self, offset=None, # type: Optional[int]
+            length=None,  # type: Optional[int]
+            prev_snapshot_url=None,  # type: Optional[str]
+            **kwargs
+        ):
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        """Returns the list of valid page ranges for a managed disk or snapshot.
+        :param int offset:
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :param int length:
+            Number of bytes to use for getting valid page ranges.
+            If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :param prev_snapshot_url: This header is only supported in
+            service versions 2019-04-19 and after and specifies the URL of a
+            previous snapshot of the target blob. The response will only contain
+            pages that were changed between the target blob and its previous
+            snapshot.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled page ranges, the 2nd element is cleared page ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        """
+        options = self._get_page_ranges_options(
+            offset=offset,
+            length=length,
+            prev_snapshot_url=prev_snapshot_url,
+            **kwargs)
+        try:
+            ranges = self._client.page_blob.get_page_ranges_diff(**options)
         except StorageErrorException as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)

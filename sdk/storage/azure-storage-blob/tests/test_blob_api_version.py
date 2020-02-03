@@ -193,9 +193,9 @@ class StorageClientTest(StorageTestCase):
 
         # Act
         with pytest.raises(ValueError) as error:
-            blob.get_page_ranges(managed_disk_diff=snapshot_blob.url + '&' + sas_token1)
+            blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob.url + '&' + sas_token1)
         
         # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'managed_disk_diff'"))
+        self.assertTrue(str(error.value).startswith("The function 'get_managed_disk_page_range_diff' only supports API version '2019-07-07' or above."))
 
 # ------------------------------------------------------------------------------
