@@ -22,14 +22,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Language detected: English
-    Confidence score: 1.0
-
-    Document Statistics:
-    Text character count: 42
-    Transactions count: 1
 """
 
 import os
@@ -42,13 +34,13 @@ class SingleDetectLanguageSample(object):
 
     def detect_language(self):
         # [START single_detect_language]
-        from azure.ai.textanalytics import single_detect_language
+        from azure.ai.textanalytics import single_detect_language, TextAnalyticsApiKeyCredential
 
         text = "I need to take my cat to the veterinarian."
 
         result = single_detect_language(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             country_hint="US",
             show_stats=True

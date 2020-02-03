@@ -15,6 +15,7 @@ from azure.ai.textanalytics.aio import (
     single_analyze_sentiment,
     single_extract_key_phrases
 )
+from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
 
 from testcase import GlobalTextAnalyticsAccountPreparer
 from asynctestcase import AsyncTextAnalyticsTest
@@ -40,7 +41,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     async def test_successful_single_language_detection_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = await single_detect_language(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="This is written in English.",
             country_hint="US"
         )
@@ -51,18 +52,28 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_single_language_detection_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = await single_detect_language(
+                endpoint=text_analytics_account,
+                credential=TextAnalyticsApiKeyCredential(""),
+                input_text="This is written in English.",
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_bad_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_detect_language(
                 endpoint=text_analytics_account,
-                credential="xxxxxxxxxxxx",
+                credential=TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"),
                 input_text="This is written in English.",
             )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_language_detection_empty_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        with self.assertRaises(ClientAuthenticationError):
+        with self.assertRaises(TypeError):
             response = await single_detect_language(
                 endpoint=text_analytics_account,
                 credential="",
@@ -98,7 +109,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError) as err:
             response = await single_detect_language(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -108,7 +119,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_detect_language(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -118,7 +129,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await single_detect_language(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -128,7 +139,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_detect_language(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="This is written in English.",
                 country_hint="United States"
             )
@@ -139,7 +150,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_detect_language(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 country_hint="US",
                 model_version="old"
@@ -154,7 +165,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_detect_language(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             show_stats=True,
             model_version="latest",
@@ -171,7 +182,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_detect_language(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             country_hint="",
             response_hook=callback
@@ -187,7 +198,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_detect_language(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             country_hint="CA",
             response_hook=callback
@@ -203,7 +214,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_detect_language(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             response_hook=callback
         )
@@ -215,7 +226,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     async def test_successful_single_recognize_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = await single_recognize_entities(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
@@ -223,10 +234,20 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         self.assertEqual(response.entities[0].text, "Microsoft")
         self.assertEqual(response.entities[1].text, "Bill Gates")
         for entity in response.entities:
-            self.assertIsNotNone(entity.type)
+            self.assertIsNotNone(entity.category)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_single_recognize_entities_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = await single_recognize_entities(
+                endpoint=text_analytics_account,
+                credential=TextAnalyticsApiKeyCredential(""),
+                input_text="Microsoft was founded by Bill Gates.",
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -234,14 +255,14 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential="xxxxxxxxxxxx",
+                credential=TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_entities_empty_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        with self.assertRaises(ClientAuthenticationError):
+        with self.assertRaises(TypeError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
                 credential="",
@@ -277,7 +298,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -287,7 +308,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -297,7 +318,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -307,7 +328,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
@@ -318,7 +339,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -333,7 +354,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_recognize_entities(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
@@ -347,17 +368,27 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     async def test_successful_single_recognize_pii_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = await single_recognize_pii_entities(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="My SSN is 555-55-5555",
             language="en"
         )
 
         self.assertEqual(response.entities[0].text, "555-55-5555")
         for entity in response.entities:
-            self.assertIsNotNone(entity.type)
+            self.assertIsNotNone(entity.category)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_single_recognize_pii_entities_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = await single_recognize_pii_entities(
+                endpoint=text_analytics_account,
+                credential=TextAnalyticsApiKeyCredential(""),
+                input_text="My SSN is 555-55-5555",
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -365,14 +396,14 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential="xxxxxxxxxxxx",
+                credential=TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"),
                 input_text="My SSN is 555-55-5555",
             )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_pii_entities_empty_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        with self.assertRaises(ClientAuthenticationError):
+        with self.assertRaises(TypeError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
                 credential="",
@@ -408,7 +439,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -418,7 +449,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -428,7 +459,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -438,7 +469,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="My SSN is 555-55-5555",
                 language="English"
             )
@@ -449,7 +480,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_pii_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -464,7 +495,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_recognize_pii_entities(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="My SSN is 555-55-5555",
             show_stats=True,
             model_version="latest",
@@ -478,7 +509,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     async def test_successful_single_recognize_linked_entities_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = await single_recognize_linked_entities(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
@@ -494,18 +525,28 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_single_recognize_linked_entities_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = await single_recognize_linked_entities(
+                endpoint=text_analytics_account,
+                credential=TextAnalyticsApiKeyCredential(""),
+                input_text="Microsoft was founded by Bill Gates.",
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_bad_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential="xxxxxxxxxxxx",
+                credential=TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_recognize_linked_entities_empty_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        with self.assertRaises(ClientAuthenticationError):
+        with self.assertRaises(TypeError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
                 credential="",
@@ -541,7 +582,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -551,7 +592,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -561,7 +602,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -571,7 +612,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
@@ -582,7 +623,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_recognize_linked_entities(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -597,7 +638,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_recognize_linked_entities(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
@@ -611,7 +652,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     async def test_successful_single_extract_key_phrases_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = await single_extract_key_phrases(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             language="en"
         )
@@ -621,18 +662,28 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_single_extract_key_phrases_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = await single_extract_key_phrases(
+                endpoint=text_analytics_account,
+                credential=TextAnalyticsApiKeyCredential(""),
+                input_text="Microsoft was founded by Bill Gates.",
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_bad_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential="xxxxxxxxxxxx",
+                credential=TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"),
                 input_text="Microsoft was founded by Bill Gates.",
             )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_extract_key_phrases_empty_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        with self.assertRaises(ClientAuthenticationError):
+        with self.assertRaises(TypeError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
                 credential="",
@@ -668,7 +719,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -678,7 +729,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -688,7 +739,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -698,7 +749,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="English"
             )
@@ -709,7 +760,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_extract_key_phrases(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -724,7 +775,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_extract_key_phrases(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Microsoft was founded by Bill Gates.",
             show_stats=True,
             model_version="latest",
@@ -738,15 +789,25 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
     async def test_successful_single_analyze_sentiment_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         response = await single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="I was unhappy with the food at the restaurant.",
             language="en"
         )
 
         self.assertIsNotNone(response.id)
         self.assertEqual(response.sentiment, "negative")
-        self.assertIsNotNone(response.document_scores)
+        self.assertIsNotNone(response.sentiment_scores)
         self.assertIsNotNone(response.sentences)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_single_analyze_sentiment_empty_credential_class_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ClientAuthenticationError):
+            response = await single_analyze_sentiment(
+                endpoint=text_analytics_account,
+                credential=TextAnalyticsApiKeyCredential(""),
+                input_text="I was unhappy with the food at the restaurant.",
+            )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
@@ -754,14 +815,14 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential="xxxxxxxxxxxx",
+                credential=TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"),
                 input_text="I was unhappy with the food at the restaurant.",
             )
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_single_analyze_sentiment_empty_credentials_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        with self.assertRaises(ClientAuthenticationError):
+        with self.assertRaises(TypeError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
                 credential="",
@@ -797,7 +858,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text=text,
             )
 
@@ -807,7 +868,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="",
             )
 
@@ -817,7 +878,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text={"id": "1", "text": "hello world"}
             )
 
@@ -827,7 +888,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="I was unhappy with the food at the restaurant.",
                 language="English"
             )
@@ -838,7 +899,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = await single_analyze_sentiment(
                 endpoint=text_analytics_account,
-                credential=text_analytics_account_key,
+                credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
                 input_text="Microsoft was founded by Bill Gates.",
                 language="en",
                 model_version="old"
@@ -853,7 +914,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="I was unhappy with the food at the restaurant.",
             show_stats=True,
             model_version="latest",
@@ -870,7 +931,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             language="",
             response_hook=callback
@@ -886,7 +947,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             language="es",
             response_hook=callback
@@ -902,7 +963,7 @@ class SingleTextAnalyticsTestAsync(AsyncTextAnalyticsTest):
 
         response = await single_analyze_sentiment(
             endpoint=text_analytics_account,
-            credential=text_analytics_account_key,
+            credential=TextAnalyticsApiKeyCredential(text_analytics_account_key),
             input_text="Este es un document escrito en Español.",
             response_hook=callback
         )

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Optional  # pylint: disable=unused-import
+from typing import Any, Optional, Union, TYPE_CHECKING  # pylint: disable=unused-import
 from .._request_handlers import _validate_single_input
 from .._response_handlers import process_single_error
 from ._text_analytics_client_async import TextAnalyticsClient
@@ -16,6 +16,11 @@ from .._models import (
     ExtractKeyPhrasesResult,
     AnalyzeSentimentResult,
 )
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from .._credential import TextAnalyticsApiKeyCredential
+
 
 __all__ = [
     'TextAnalyticsClient',
@@ -30,7 +35,7 @@ __all__ = [
 
 async def single_detect_language(
         endpoint: str,
-        credential: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         country_hint: Optional[str] = "US",
         **kwargs: Any
@@ -44,10 +49,13 @@ async def single_detect_language(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to detect language from.
+        Limit text length to 5120 chars.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
         Defaults to "US". If you don't want to use a country hint,
@@ -74,7 +82,7 @@ async def single_detect_language(
     model_version = kwargs.pop("model_version", None)
     show_stats = kwargs.pop("show_stats", False)
     async with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
-        response = await client.detect_languages(
+        response = await client.detect_language(
             inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
@@ -87,7 +95,7 @@ async def single_detect_language(
 
 async def single_recognize_entities(
         endpoint: str,
-        credential: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -101,10 +109,13 @@ async def single_recognize_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -143,7 +154,7 @@ async def single_recognize_entities(
 
 async def single_recognize_pii_entities(
         endpoint: str,
-        credential: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -158,10 +169,13 @@ async def single_recognize_pii_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -200,7 +214,7 @@ async def single_recognize_pii_entities(
 
 async def single_recognize_linked_entities(
         endpoint: str,
-        credential: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -215,10 +229,13 @@ async def single_recognize_linked_entities(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -257,7 +274,7 @@ async def single_recognize_linked_entities(
 
 async def single_extract_key_phrases(
         endpoint: str,
-        credential: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -271,10 +288,13 @@ async def single_extract_key_phrases(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to extract key phrases from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -313,7 +333,7 @@ async def single_extract_key_phrases(
 
 async def single_analyze_sentiment(
         endpoint: str,
-        credential: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
         input_text: str,
         language: Optional[str] = "en",
         **kwargs: Any
@@ -328,10 +348,13 @@ async def single_analyze_sentiment(
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: str or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
+        ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to analyze sentiment from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.

@@ -61,7 +61,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         created = queue_client.create_queue()
 
@@ -71,7 +71,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_queue_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         created = queue_client.create_queue()
         with self.assertRaises(ResourceExistsError):
@@ -83,7 +83,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_queue_fail_on_exist_different_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        url = self.account_url(storage_account.name, "queue")
+        url = self.account_url(storage_account, "queue")
         qsc = QueueServiceClient(url, storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         created = queue_client.create_queue()
@@ -96,7 +96,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_queue_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        url = self.account_url(storage_account.name, "queue")
+        url = self.account_url(storage_account, "queue")
         qsc = QueueServiceClient(url, storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue(
@@ -112,7 +112,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_delete_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
 
         # Asserts
@@ -122,7 +122,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_delete_existing_queue_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
 
         created = queue_client.create_queue()
@@ -134,7 +134,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_list_queues(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queues = list(qsc.list_queues())
@@ -147,7 +147,7 @@ class StorageQueueTest(StorageTestCase):
     def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         prefix = 'listqueue'
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_list = []
         for i in range(0, 4):
             self._create_queue(qsc, prefix + str(i), queue_list)
@@ -179,7 +179,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_list_queues_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue = self._get_queue_reference(qsc)
         queue.create_queue()
         queue.set_queue_metadata(metadata={'val1': 'test', 'val2': 'blah'})
@@ -199,7 +199,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue = self._get_queue_reference(qsc)
         metadata = {'hello': 'world', 'number': '43'}
         queue.create_queue()
@@ -213,7 +213,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_queue_metadata_message_count(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -226,7 +226,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_queue_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue = self._get_queue_reference(qsc)
         queue.create_queue()
 
@@ -239,7 +239,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_queue_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue = qsc.get_queue_client(self.get_resource_name('missing'))
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -250,7 +250,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_message(self, resource_group, location, storage_account, storage_account_key):
         # Action.  No exception means pass. No asserts needed.
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -269,7 +269,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_message_large_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         # There should be no upper bound on a queue message's time to live
@@ -286,7 +286,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_put_message_infinite_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1', time_to_live=-1)
@@ -300,7 +300,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -324,7 +324,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -351,7 +351,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_peek_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -376,7 +376,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_peek_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -401,7 +401,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_clear_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -418,7 +418,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_delete_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -438,7 +438,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_update_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -472,7 +472,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_update_message_content(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -511,7 +511,7 @@ class StorageQueueTest(StorageTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -546,18 +546,18 @@ class StorageQueueTest(StorageTestCase):
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=token_credential)
+        service = QueueServiceClient(self.account_url(storage_account, "queue"), credential=token_credential)
         queues = service.get_service_properties()
         self.assertIsNotNone(queues)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=fake_credential)
+        service = QueueServiceClient(self.account_url(storage_account, "queue"), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
             list(service.list_queues())
 
         # Action 3: update token to make it working again
-        service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=token_credential)
+        service = QueueServiceClient(self.account_url(storage_account, "queue"), credential=token_credential)
         queues = list(service.list_queues())
         self.assertIsNotNone(queues)
 
@@ -567,7 +567,7 @@ class StorageQueueTest(StorageTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -601,7 +601,7 @@ class StorageQueueTest(StorageTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         token = generate_queue_sas(
@@ -629,7 +629,7 @@ class StorageQueueTest(StorageTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -665,7 +665,7 @@ class StorageQueueTest(StorageTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -702,7 +702,7 @@ class StorageQueueTest(StorageTestCase):
 
         identifiers = {'testid': access_policy}
 
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         resp = queue_client.set_queue_access_policy(identifiers)
@@ -734,7 +734,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -748,7 +748,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_queue_acl_iter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -764,7 +764,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_get_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
 
         # Act
@@ -776,7 +776,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -791,7 +791,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -806,7 +806,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_acl_with_empty_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -825,7 +825,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -847,7 +847,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
 
@@ -863,7 +863,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
 
         # Act
@@ -875,7 +875,7 @@ class StorageQueueTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_unicode_create_queue_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_name = u'啊齄丂狛狜'
 
         with self.assertRaises(HttpResponseError):
@@ -889,7 +889,7 @@ class StorageQueueTest(StorageTestCase):
     def test_unicode_get_messages_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
         pytest.skip("Uncomment after msrest fix")
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1㚈')
@@ -909,7 +909,7 @@ class StorageQueueTest(StorageTestCase):
     def test_unicode_update_message_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
         pytest.skip("Uncomment after msrest fix")
-        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
         queue_client.send_message(u'message1')
@@ -936,7 +936,7 @@ class StorageQueueTest(StorageTestCase):
         transport = RequestsTransport()
         prefix = TEST_QUEUE_PREFIX
         queue_name = self.get_resource_name(prefix)
-        with QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=storage_account_key, transport=transport) as qsc:
+        with QueueServiceClient(self.account_url(storage_account, "queue"), credential=storage_account_key, transport=transport) as qsc:
             qsc.get_service_properties()
             assert transport.session is not None
             with qsc.get_queue_client(queue_name) as qc:

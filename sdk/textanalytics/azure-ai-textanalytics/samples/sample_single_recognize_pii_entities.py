@@ -24,15 +24,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Entity: 111000025
-    Type: ABA Routing Number
-    Confidence Score: 0.75
-
-    Entity: 555-55-5555
-    Type: U.S. Social Security Number (SSN)
-    Confidence Score: 0.85
 """
 
 import os
@@ -45,20 +36,20 @@ class SingleRecognizePiiEntitiesSample(object):
 
     def recognize_pii_entities(self):
         # [START single_recognize_pii_entities]
-        from azure.ai.textanalytics import single_recognize_pii_entities
+        from azure.ai.textanalytics import single_recognize_pii_entities, TextAnalyticsApiKeyCredential
 
         text = "The employee's ABA number is 111000025 and his SSN is 555-55-5555."
 
         result = single_recognize_pii_entities(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             language="en"
         )
 
         for entity in result.entities:
             print("Entity: {}".format(entity.text))
-            print("Type: {}".format(entity.type))
+            print("Category: {}".format(entity.category))
             print("Confidence Score: {}\n".format(entity.score))
         # [END single_recognize_pii_entities]
 

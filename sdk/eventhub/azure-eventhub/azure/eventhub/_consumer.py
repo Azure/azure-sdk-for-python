@@ -6,7 +6,8 @@ from __future__ import unicode_literals
 
 import uuid
 import logging
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
+from collections import deque
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
 
 import uamqp
 from uamqp import types, errors, utils
@@ -119,6 +120,7 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
+        self._message_buffer = deque()  # type: Deque[uamqp.Message]
         self._last_received_event = None  # type: Optional[EventData]
 
     def _create_handler(self, auth):
@@ -165,10 +167,7 @@ class EventHubConsumer(
     def _message_received(self, message):
         # type: (uamqp.Message) -> None
         # pylint:disable=protected-access
-        event_data = EventData._from_message(message)
-        trace_link_message(event_data)
-        self._last_received_event = event_data
-        self._on_event_received(event_data)
+        self._message_buffer.appendleft(message)
 
     def _open(self):
         # type: () -> bool
@@ -197,32 +196,38 @@ class EventHubConsumer(
     def receive(self):
         # type: () -> None
         retried_times = 0
-        last_exception = None
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
 
-        while retried_times <= max_retries:
-            try:
-                if self._open():
-                    self._handler.do_work()  # type: ignore
-                return
-            except Exception as exception:  # pylint: disable=broad-except
-                if (
-                    isinstance(exception, uamqp.errors.LinkDetach)
-                    and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
-                ):
-                    raise self._handle_exception(exception)
-                if not self.running:  # exit by close
-                    return
-                if self._last_received_event:
-                    self._offset = self._last_received_event.offset
-                last_exception = self._handle_exception(exception)
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        self._name,
-                        last_exception,
-                    )
-                    raise last_exception
+        if not self._message_buffer:  # then fetch some messages into buffer
+            while retried_times <= max_retries:
+                try:
+                    if self._open():
+                        self._handler.do_work()  # type: ignore
+                    break
+                except Exception as exception:  # pylint: disable=broad-except
+                    if (
+                        isinstance(exception, uamqp.errors.LinkDetach)
+                        and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                    ):
+                        raise self._handle_exception(exception)
+                    if not self.running:  # exit by close
+                        return
+                    if self._last_received_event:
+                        self._offset = self._last_received_event.offset
+                    last_exception = self._handle_exception(exception)
+                    retried_times += 1
+                    if retried_times > max_retries:
+                        _LOGGER.info(
+                            "%r operation has exhausted retry. Last exception: %r.",
+                            self._name,
+                            last_exception,
+                        )
+                        raise last_exception
+
+        while self._message_buffer:
+            event_data = EventData._from_message(self._message_buffer.pop())  # pylint: disable=protected-access
+            trace_link_message(event_data)
+            self._last_received_event = event_data
+            self._on_event_received(event_data)

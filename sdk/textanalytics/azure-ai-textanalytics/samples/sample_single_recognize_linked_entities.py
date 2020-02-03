@@ -23,43 +23,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Entity: Easter Island
-    Url: https://en.wikipedia.org/wiki/Easter_Island
-    Data Source: Wikipedia
-
-    Where this entity appears in the text:
-    Match 1: Easter Island
-    Score: 0.272
-    Offset: 0
-    Length: 13
-
-    Match 2: Rapa Nui
-    Score: 0.054
-    Offset: 97
-    Length: 8
-
-    Entity: Polynesia
-    Url: https://en.wikipedia.org/wiki/Polynesia
-    Data Source: Wikipedia
-
-    Where this entity appears in the text:
-    Match 1: Polynesia
-    Score: 0.163
-    Offset: 67
-    Length: 9
-
-    Entity: Chile
-    Url: https://en.wikipedia.org/wiki/Chile
-    Data Source: Wikipedia
-
-    Where this entity appears in the text:
-    Match 1: Chilean
-    Score: 0.045
-    Offset: 17
-    Length: 7
-
 """
 
 import os
@@ -72,14 +35,14 @@ class SingleRecognizeLinkedEntitiesSample(object):
 
     def recognize_linked_entities(self):
         # [START single_recognize_linked_entities]
-        from azure.ai.textanalytics import single_recognize_linked_entities
+        from azure.ai.textanalytics import single_recognize_linked_entities, TextAnalyticsApiKeyCredential
 
         text = "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia. " \
                "Its native name is Rapa Nui."
 
         result = single_recognize_linked_entities(
             endpoint=self.endpoint,
-            credential=self.key,
+            credential=TextAnalyticsApiKeyCredential(self.key),
             input_text=text,
             language="en"
         )

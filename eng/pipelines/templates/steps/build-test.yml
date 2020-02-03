@@ -11,6 +11,7 @@ parameters:
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
+  InjectedPackages: ''
 
 steps:
   - pwsh: |
@@ -42,6 +43,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
+        --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 

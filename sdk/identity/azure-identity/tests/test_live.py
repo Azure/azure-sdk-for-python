@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-
 import pytest
 
 from azure.identity import (
@@ -13,11 +11,9 @@ from azure.identity import (
     DeviceCodeCredential,
     KnownAuthorities,
     InteractiveBrowserCredential,
-    ManagedIdentityCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
-from azure.identity._credentials.managed_identity import ImdsCredential, MsiCredential
+from azure.identity._constants import AZURE_CLI_CLIENT_ID
 from azure.identity._internal import ConfidentialClientCredential
 
 ARM_SCOPE = "https://management.azure.com/.default"
@@ -33,6 +29,16 @@ def get_token(credential):
 def test_certificate_credential(live_certificate):
     credential = CertificateCredential(
         live_certificate["tenant_id"], live_certificate["client_id"], live_certificate["cert_path"]
+    )
+    get_token(credential)
+
+
+def test_certificate_credential_with_password(live_certificate_with_password):
+    credential = CertificateCredential(
+        live_certificate_with_password["tenant_id"],
+        live_certificate_with_password["client_id"],
+        live_certificate_with_password["cert_path"],
+        password=live_certificate_with_password["password"],
     )
     get_token(credential)
 
@@ -59,33 +65,6 @@ def test_confidential_client_credential(live_service_principal):
         tenant_id=live_service_principal["tenant_id"],
     )
     get_token(credential)
-
-
-@pytest.mark.skipif("TEST_IMDS" not in os.environ, reason="To test IMDS authentication, set $TEST_IMDS with any value")
-def test_imds_credential(managed_identity_id):
-    get_token(ImdsCredential())
-    if managed_identity_id:
-        get_token(ImdsCredential(client_id=managed_identity_id))
-
-
-@pytest.mark.skipif(
-    EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET in os.environ,
-    reason="Legacy MSI unavailable",
-)
-def test_msi_legacy(managed_identity_id):
-    get_token(MsiCredential())
-    if managed_identity_id:
-        get_token(ImdsCredential(client_id=managed_identity_id))
-
-
-@pytest.mark.skipif(
-    EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET not in os.environ,
-    reason="App Service MSI unavailable",
-)
-def test_msi_app_service(managed_identity_id):
-    get_token(MsiCredential())
-    if managed_identity_id:
-        get_token(ImdsCredential(client_id=managed_identity_id))
 
 
 def test_username_password_auth(live_user_details):

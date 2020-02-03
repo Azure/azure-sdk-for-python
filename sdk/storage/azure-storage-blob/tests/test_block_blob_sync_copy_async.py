@@ -42,11 +42,11 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class StorageBlockBlobTestAsync(AsyncStorageTestCase):
-    async def _setup(self, name, key):
+    async def _setup(self, storage_account, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self.account_url(name, "blob"),
+            self.account_url(storage_account, "blob"),
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
@@ -84,7 +84,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_from_url_and_commit_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup(storage_account.name, storage_account_key)
+        await self._setup(storage_account, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -120,7 +120,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_from_url_and_vldte_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup(storage_account.name, storage_account_key)
+        await self._setup(storage_account, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
         src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
@@ -158,7 +158,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_sync_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup(storage_account.name, storage_account_key)
+        await self._setup(storage_account, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
