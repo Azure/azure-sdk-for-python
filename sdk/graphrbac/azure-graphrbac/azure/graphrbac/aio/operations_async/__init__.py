@@ -6,15 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._signed_in_user_operations import SignedInUserOperations
-from ._applications_operations import ApplicationsOperations
-from ._deleted_applications_operations import DeletedApplicationsOperations
-from ._groups_operations import GroupsOperations
-from ._service_principals_operations import ServicePrincipalsOperations
-from ._users_operations import UsersOperations
-from ._objects_operations import ObjectsOperations
-from ._domains_operations import DomainsOperations
-from ._oauth2_permission_grant_operations import OAuth2PermissionGrantOperations
+from ._signed_in_user_operations_async import SignedInUserOperations
+from ._applications_operations_async import ApplicationsOperations
+from ._deleted_applications_operations_async import DeletedApplicationsOperations
+from ._groups_operations_async import GroupsOperations
+from ._service_principals_operations_async import ServicePrincipalsOperations
+from ._users_operations_async import UsersOperations
+from ._objects_operations_async import ObjectsOperations
+from ._domains_operations_async import DomainsOperations
+from ._oauth2_permission_grant_operations_async import OAuth2PermissionGrantOperations
 
 __all__ = [
     'SignedInUserOperations',

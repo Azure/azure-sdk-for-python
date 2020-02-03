@@ -6,8 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._graph_rbac_management_client import GraphRbacManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
+from ._graph_rbac_management_client_async import GraphRbacManagementClient
 __all__ = ['GraphRbacManagementClient']
