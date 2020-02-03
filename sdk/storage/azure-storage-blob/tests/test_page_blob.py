@@ -1025,8 +1025,8 @@ class StoragePageBlobTest(StorageTestCase):
         blob.clear_page(offset=512, length=512)
 
         # Act
-        ranges1, cleared1 = blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob1.url + '&' + sas_token1)
-        ranges2, cleared2 = blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob2.url + '&' + sas_token2)
+        ranges1, cleared1 = blob.get_page_ranges(managed_disk_diff=snapshot_blob1.url + '&' + sas_token1)
+        ranges2, cleared2 = blob.get_page_ranges(managed_disk_diff=snapshot_blob2.url + '&' + sas_token2)
 
         # Assert
         self.assertIsNotNone(ranges1)
