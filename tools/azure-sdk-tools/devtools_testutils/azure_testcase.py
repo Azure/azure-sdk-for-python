@@ -198,7 +198,10 @@ class AzureTestCase(ReplayableTest):
                     secret=secret
                 )
         else:
-            credentials = self.settings.get_credentials()
+            if _is_autorest_v3(client_class):
+                credentials = self.settings.get_azure_core_credentials()
+            else:
+                credentials = self.settings.get_credentials()
 
         # Real client creation
         kwargs.setdefault("logging_enable", True)
