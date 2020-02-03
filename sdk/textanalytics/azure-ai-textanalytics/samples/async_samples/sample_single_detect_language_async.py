@@ -22,14 +22,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Language detected: English
-    Confidence score: 1.0
-
-    Document Statistics:
-    Text character count: 42
-    Transactions count: 1
 """
 
 import os

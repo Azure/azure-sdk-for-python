@@ -22,17 +22,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Key phrases found:
-
-    King County
-    United States
-    Washington
-    city
-    miles
-    Redmond
-    Seattle
 """
 
 import os
