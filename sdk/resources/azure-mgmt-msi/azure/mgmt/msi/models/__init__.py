@@ -10,23 +10,32 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .identity_py3 import Identity
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
+    from ._models_py3 import Identity
+    from ._models_py3 import IdentityPatch
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Resource
+    from ._models_py3 import SystemAssignedIdentity
 except (SyntaxError, ImportError):
-    from .identity import Identity
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-from .operation_paged import OperationPaged
-from .identity_paged import IdentityPaged
-from .managed_service_identity_client_enums import (
+    from ._models import Identity
+    from ._models import IdentityPatch
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Resource
+    from ._models import SystemAssignedIdentity
+from ._paged_models import IdentityPaged
+from ._paged_models import OperationPaged
+from ._managed_service_identity_client_enums import (
     UserAssignedIdentities,
 )
 
 __all__ = [
     'Identity',
-    'OperationDisplay',
+    'IdentityPatch',
     'Operation',
+    'OperationDisplay',
+    'Resource',
+    'SystemAssignedIdentity',
     'OperationPaged',
     'IdentityPaged',
     'UserAssignedIdentities',

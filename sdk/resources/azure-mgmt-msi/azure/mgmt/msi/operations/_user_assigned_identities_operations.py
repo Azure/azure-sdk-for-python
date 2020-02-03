@@ -19,6 +19,8 @@ from .. import models
 class UserAssignedIdentitiesOperations(object):
     """UserAssignedIdentitiesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -52,8 +54,7 @@ class UserAssignedIdentitiesOperations(object):
          ~azure.mgmt.msi.models.IdentityPaged[~azure.mgmt.msi.models.Identity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
@@ -82,6 +83,11 @@ class UserAssignedIdentitiesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -92,12 +98,10 @@ class UserAssignedIdentitiesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.IdentityPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.IdentityPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.IdentityPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ManagedIdentity/userAssignedIdentities'}
@@ -120,8 +124,7 @@ class UserAssignedIdentitiesOperations(object):
          ~azure.mgmt.msi.models.IdentityPaged[~azure.mgmt.msi.models.Identity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -151,6 +154,11 @@ class UserAssignedIdentitiesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -161,12 +169,10 @@ class UserAssignedIdentitiesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.IdentityPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.IdentityPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.IdentityPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities'}
@@ -181,7 +187,7 @@ class UserAssignedIdentitiesOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the identity resource.
         :type resource_name: str
-        :param location: The Azure region where the identity lives.
+        :param location: The Azure region where the resource lives.
         :type location: str
         :param tags: Resource tags
         :type tags: dict[str, str]
@@ -234,7 +240,6 @@ class UserAssignedIdentitiesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Identity', response)
         if response.status_code == 201:
@@ -256,7 +261,7 @@ class UserAssignedIdentitiesOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the identity resource.
         :type resource_name: str
-        :param location: The Azure region where the identity lives.
+        :param location: The Azure region where the resource lives.
         :type location: str
         :param tags: Resource tags
         :type tags: dict[str, str]
@@ -270,7 +275,7 @@ class UserAssignedIdentitiesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.Identity(location=location, tags=tags)
+        parameters = models.IdentityPatch(location=location, tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -297,7 +302,7 @@ class UserAssignedIdentitiesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Identity')
+        body_content = self._serialize.body(parameters, 'IdentityPatch')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -309,7 +314,6 @@ class UserAssignedIdentitiesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Identity', response)
 
@@ -372,7 +376,6 @@ class UserAssignedIdentitiesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Identity', response)
 
