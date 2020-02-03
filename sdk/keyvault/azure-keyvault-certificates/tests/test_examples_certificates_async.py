@@ -31,7 +31,6 @@ def test_create_certificate():
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
-
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
     @AsyncVaultClientPreparer()
@@ -56,9 +55,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
         cert_name = "cert-name"
 
-        certificate = await certificate_client.create_certificate(
-            certificate_name=cert_name, policy=cert_policy
-        )
+        certificate = await certificate_client.create_certificate(certificate_name=cert_name, policy=cert_policy)
 
         print(certificate.id)
         print(certificate.name)
@@ -124,15 +121,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             validity_in_months=24,
         )
 
-        polling_interval = 0 if self.is_playback() else None
-
         create_certificate_pollers = []
         for i in range(4):
             create_certificate_pollers.append(
-                certificate_client.create_certificate(
-                    certificate_name="certificate{}".format(i),
-                    policy=cert_policy,
-                    _polling_interval=polling_interval)
+                certificate_client.create_certificate(certificate_name="certificate{}".format(i), policy=cert_policy)
             )
 
         for poller in create_certificate_pollers:
@@ -197,11 +189,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        polling_interval = 0 if self.is_playback() else None
         create_certificate_poller = certificate_client.create_certificate(
-            certificate_name=cert_name,
-            policy=cert_policy,
-            _polling_interval=polling_interval
+            certificate_name=cert_name, policy=cert_policy
         )
 
         await create_certificate_poller
@@ -216,9 +205,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_certificate]
 
-        await certificate_client.delete_certificate(
-            certificate_name=cert_name, _polling_interval=polling_interval
-        )
+        await certificate_client.delete_certificate(certificate_name=cert_name)
 
         # [START restore_certificate]
 
@@ -251,17 +238,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        polling_interval = 0 if self.is_playback() else None
         create_certificate_poller = certificate_client.create_certificate(
-            certificate_name=cert_name,
-            policy=cert_policy,
-            _polling_interval=polling_interval
+            certificate_name=cert_name, policy=cert_policy
         )
         await create_certificate_poller
 
-        await certificate_client.delete_certificate(
-            certificate_name=cert_name, _polling_interval=polling_interval
-        )
+        await certificate_client.delete_certificate(certificate_name=cert_name)
 
         # [START get_deleted_certificate]
 
@@ -342,7 +324,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         ]
 
         issuer = await certificate_client.create_issuer(
-            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
+            issuer_name="issuer1",
+            provider="Test",
+            account_id="keyvaultuser",
+            admin_contacts=admin_contacts,
+            enabled=True,
         )
 
         print(issuer.name)
@@ -373,7 +359,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END get_issuer]
 
-        await certificate_client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
+        await certificate_client.create_issuer(
+            issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True
+        )
 
         # [START list_properties_of_issuers]
 

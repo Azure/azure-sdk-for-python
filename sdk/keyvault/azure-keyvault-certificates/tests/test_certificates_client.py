@@ -23,7 +23,7 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     WellKnownIssuerNames,
     CertificateIssuer,
-    IssuerProperties
+    IssuerProperties,
 )
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -44,6 +44,7 @@ class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
         self.messages = []
+
     def emit(self, record):
         self.messages.append(record)
 
@@ -80,13 +81,10 @@ class CertificateClientTests(KeyVaultTestCase):
             reuse_key=False,
             content_type="application/x-pkcs12",
             validity_in_months=12,
-            key_usage=["digitalSignature", "keyEncipherment"]
+            key_usage=["digitalSignature", "keyEncipherment"],
         )
         return client.import_certificate(
-            certificate_name=cert_name,
-            certificate_bytes=cert_content,
-            policy=cert_policy,
-            password=cert_password,
+            certificate_name=cert_name, certificate_bytes=cert_content, policy=cert_policy, password=cert_password
         )
 
     def _validate_certificate_operation(self, pending_cert_operation, vault, cert_name, original_cert_policy):
@@ -144,7 +142,9 @@ class CertificateClientTests(KeyVaultTestCase):
             if cert.id in a.keys():
                 del a[cert.id]
             else:
-                assert False, "Returned certificate with id {} not found in list of original certificates".format(cert.id)
+                assert False, "Returned certificate with id {} not found in list of original certificates".format(
+                    cert.id
+                )
         self.assertEqual(len(a), 0)
 
     def _validate_certificate_contacts(self, a, b):
@@ -155,12 +155,7 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(a_entry.phone, b_entry.phone)
 
     def _admin_contact_equal(self, a, b):
-        return (
-            a.first_name == b.first_name
-            and a.last_name == b.last_name
-            and a.email == b.email
-            and a.phone == b.phone
-        )
+        return a.first_name == b.first_name and a.last_name == b.last_name and a.email == b.email and a.phone == b.phone
 
     def _validate_certificate_issuer(self, a, b):
         self.assertEqual(a.provider, b.provider)
@@ -186,9 +181,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
-        lifetime_actions = [
-            LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)
-        ]
+        lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
         cert_policy = CertificatePolicy(
             issuer_name="Self",
             subject="CN=DefaultPolicy",
@@ -199,15 +192,11 @@ class CertificateClientTests(KeyVaultTestCase):
             content_type=CertificateContentType.pkcs12,
             lifetime_actions=lifetime_actions,
             validity_in_months=12,
-            key_usage=[KeyUsageType.digital_signature, KeyUsageType.key_encipherment]
+            key_usage=[KeyUsageType.digital_signature, KeyUsageType.key_encipherment],
         )
 
-        polling_interval = 0 if self.is_playback() else None
-
         # create certificate
-        certificate = client.begin_create_certificate(
-            cert_name, CertificatePolicy.get_default(), _polling_interval=polling_interval
-        ).result()
+        certificate = client.begin_create_certificate(cert_name, CertificatePolicy.get_default()).result()
 
         self._validate_certificate_bundle(cert=certificate, cert_name=cert_name, cert_policy=cert_policy)
 
@@ -219,18 +208,14 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # update certificate
         tags = {"tag1": "updated_value1"}
-        cert_bundle = client.update_certificate_properties(
-            cert_name, tags=tags
-        )
+        cert_bundle = client.update_certificate_properties(cert_name, tags=tags)
         self._validate_certificate_bundle(cert=cert_bundle, cert_name=cert_name, cert_policy=cert_policy)
         self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
         self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
 
         # delete certificate
-        delete_cert_poller = client.begin_delete_certificate(
-            cert_name, _polling_interval=polling_interval
-        )
+        delete_cert_poller = client.begin_delete_certificate(cert_name)
         deleted_cert_bundle = delete_cert_poller.result()
         self._validate_certificate_bundle(cert=deleted_cert_bundle, cert_name=cert_name, cert_policy=cert_policy)
         delete_cert_poller.wait()
@@ -291,15 +276,7 @@ class CertificateClientTests(KeyVaultTestCase):
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)
                 parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = (
-                    parsed_id.vault_url
-                    + "/"
-                    + parsed_id.collection
-                    + "/"
-                    + parsed_id.name
-                    + "/"
-                    + parsed_id.version
-                )
+                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
                 expected[cid.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
@@ -314,7 +291,7 @@ class CertificateClientTests(KeyVaultTestCase):
             expected,
             client.list_properties_of_certificate_versions(
                 certificate_name=cert_name, max_page_size=max_certificates - 1
-            )
+            ),
         )
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -367,12 +344,9 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name = self.get_resource_name("certprg{}".format(str(i)))
             certs[cert_name] = self._import_common_certificate(client=client, cert_name=cert_name)
 
-        polling_interval = 0 if self.is_playback() else None
         # delete all certificates
         for cert_name in certs.keys():
-            client.begin_delete_certificate(
-                certificate_name=cert_name, _polling_interval=polling_interval
-            ).wait()
+            client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # validate all our deleted certificates are returned by list_deleted_certificates
         deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
@@ -380,10 +354,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # recover select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]:
-            client.begin_recover_deleted_certificate(
-                certificate_name=certificate_name,
-                _polling_interval=polling_interval
-            ).wait()
+            client.begin_recover_deleted_certificate(certificate_name=certificate_name).wait()
 
         # purge select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certprg")]:
@@ -410,13 +381,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
         cert_name = "asyncCanceledDeletedCert"
         cert_policy = CertificatePolicy.get_default()
-        polling_interval = 0 if self.is_playback() else None
         # create certificate
-        create_certificate_poller = client.begin_create_certificate(
-            certificate_name=cert_name,
-            policy=cert_policy,
-            _polling_interval=polling_interval
-        )
+        create_certificate_poller = client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy)
 
         # cancel certificate operation
         cancel_operation = client.cancel_certificate_operation(certificate_name=cert_name)
@@ -475,26 +441,17 @@ class CertificateClientTests(KeyVaultTestCase):
             key_type=KeyType.rsa,
             key_size=2048,
             reuse_key=True,
-            enhanced_key_usage=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
+            enhanced_key_usage=["1.3.6.1.5.5.7.3.1", "1.3.6.1.5.5.7.3.2"],
             key_usage=[KeyUsageType.decipher_only],
             content_type=CertificateContentType.pkcs12,
             validity_in_months=12,
-            lifetime_actions=[LifetimeAction(
-                action=CertificatePolicyAction.email_contacts,
-                lifetime_percentage=98
-            )],
+            lifetime_actions=[LifetimeAction(action=CertificatePolicyAction.email_contacts, lifetime_percentage=98)],
             certificate_transparency=False,
-            san_dns_names=["sdk.azure-int.net"]
+            san_dns_names=["sdk.azure-int.net"],
         )
 
-        polling_interval = 0 if self.is_playback() else None
-
         # get certificate policy
-        client.begin_create_certificate(
-            certificate_name=cert_name,
-            policy=cert_policy,
-            _polling_interval=polling_interval
-        ).wait()
+        client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
         returned_policy = client.get_certificate_policy(cert_name)
 
@@ -516,13 +473,9 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = "unknownIssuerCert"
 
-        polling_interval = 0 if self.is_playback() else None
-
         # get pending certificate signing request
         certificate = client.begin_create_certificate(
-            certificate_name=cert_name,
-            policy=CertificatePolicy.get_default(),
-            _polling_interval=polling_interval
+            certificate_name=cert_name, policy=CertificatePolicy.get_default()
         ).wait()
         pending_version_csr = client.get_certificate_operation(certificate_name=cert_name).csr
         self.assertEqual(client.get_certificate_operation(certificate_name=cert_name).csr, pending_version_csr)
@@ -536,20 +489,15 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
-        polling_interval = 0 if self.is_playback() else None
         # create certificate
-        create_certificate_poller = client.begin_create_certificate(
-            certificate_name=cert_name,
-            policy=policy,
-            _polling_interval=polling_interval
-        )
+        create_certificate_poller = client.begin_create_certificate(certificate_name=cert_name, policy=policy)
         create_certificate_poller.wait()
 
         # create a backup
         certificate_backup = client.backup_certificate(certificate_name=cert_name)
 
         # delete the certificate
-        client.begin_delete_certificate(certificate_name=cert_name, _polling_interval=polling_interval).wait()
+        client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # restore certificate
         restored_certificate = client.restore_certificate_backup(backup=certificate_backup)
@@ -567,9 +515,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = "mergeCertificate"
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.unknown,
-            subject="CN=MyCert",
-            certificate_transparency=False
+            issuer_name=WellKnownIssuerNames.unknown, subject="CN=MyCert", certificate_transparency=False
         )
         dirname = os.path.dirname(os.path.abspath(__file__))
 
@@ -578,13 +524,7 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        polling_interval = 0 if self.is_playback() else None
-
-        client.begin_create_certificate(
-            certificate_name=cert_name,
-            policy=cert_policy,
-            _polling_interval=polling_interval
-        ).wait()
+        client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
         csr = (
             "-----BEGIN CERTIFICATE REQUEST-----\n"
@@ -689,22 +629,22 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer(client_kwargs={'logging_enable': True})
+    @VaultClientPreparer(client_kwargs={"logging_enable": True})
     def test_logging_enabled(self, vault_client, **kwargs):
         client = vault_client.certificates
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_issuer(issuer_name="cert-name", provider="Test")
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    if body['provider'] == 'Test':
+                    if body["provider"] == "Test":
                         return
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
@@ -719,14 +659,14 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_issuer(issuer_name="cert-name", provider="Test")
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
                     assert body["provider"] != "Test", "Client request body was logged"
