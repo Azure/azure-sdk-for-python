@@ -22,31 +22,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Entity: Microsoft
-    Category: Organization
-    Confidence Score: 1.000
-
-    Entity: Bill Gates
-    Category: Person
-    Confidence Score: 1.000
-
-    Entity: Paul Allen
-    Category: Person
-    Confidence Score: 0.999
-
-    Entity: April 4, 1975
-    Category: DateTime
-    Confidence Score: 0.800
-
-    Entity: Altair
-    Category: Organization
-    Confidence Score: 0.525
-
-    Entity: 8800
-    Category: Quantity
-    Confidence Score: 0.80
 """
 
 import os

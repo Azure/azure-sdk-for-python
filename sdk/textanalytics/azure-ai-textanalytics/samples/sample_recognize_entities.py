@@ -10,7 +10,7 @@
 FILE: sample_recognize_entities.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize categorized entities in a batch of documents.
+    This sample demonstrates how to recognize named entities in a batch of documents.
 
 USAGE:
     python sample_recognize_entities.py
@@ -18,20 +18,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Document text: Microsoft was founded by Bill Gates and Paul Allen.
-    Entity:          Microsoft      Category:    Organization   Confidence Score:        1.0
-    Entity:          Bill Gates     Category:    Person         Confidence Score:        1.0
-    Entity:          Paul Allen     Category:    Person         Confidence Score:        1.0
-
-    Document text: I had a wonderful trip to Seattle last week.
-    Entity:          Seattle        Category:    Location       Confidence Score:        0.806
-    Entity:          last week      Category:    DateTime       Confidence Score:        0.8
-
-    Document text: I visited the Space Needle 2 times.
-    Entity:          Space Needle   Category:    Organization   Confidence Score:        0.922
-    Entity:          2              Category:    Quantity       Confidence Score:        0.8
 """
 
 import os

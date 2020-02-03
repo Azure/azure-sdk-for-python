@@ -388,8 +388,7 @@ class ExtractKeyPhrasesResult(DictMixin):
 
 class RecognizeLinkedEntitiesResult(DictMixin):
     """RecognizeLinkedEntitiesResult is a result object which contains
-    the recognized entities in a particular document which also have
-    links from the web to a data source like Wikipedia or Bing.
+    links to a well-known knowledge base, like for example, Wikipedia or Bing.
 
     :param id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified

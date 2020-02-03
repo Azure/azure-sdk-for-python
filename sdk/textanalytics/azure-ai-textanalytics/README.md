@@ -2,7 +2,7 @@
 Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes six main functions:
 
 * Sentiment Analysis
-* Categorized Entity Recognition
+* Named Entity Recognition
 * Personally Identifiable Information (PII) Entity Recognition
 * Linked Entity Recognition
 * Language Detection
@@ -306,7 +306,7 @@ Please refer to the service documentation for a conceptual discussion of [entity
 and [supported types](https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general).
 
 ### Extract key phrases
-Extract key phrases in text to determine the main talking points.
+Extract key phrases in text to determine the main talking points. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
 
 ```python
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential

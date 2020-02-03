@@ -19,32 +19,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Document text: This is a document written in English.
-    Language detected: English
-    ISO6391 name: en
-    Confidence score: 1.0
-
-    Document text: Este es un document escrito en Español.
-    Language detected: Spanish
-    ISO6391 name: es
-    Confidence score: 1.0
-
-    Document text: 这是一个用中文写的文件
-    Language detected: Chinese_Simplified
-    ISO6391 name: zh_chs
-    Confidence score: 1.0
-
-    Document text: Dies ist ein Dokument in englischer Sprache.
-    Language detected: German
-    ISO6391 name: de
-    Confidence score: 1.0
-
-    Document text: Detta är ett dokument skrivet på engelska.
-    Language detected: Swedish
-    ISO6391 name: sv
-    Confidence score: 1.0
 """
 
 import os
