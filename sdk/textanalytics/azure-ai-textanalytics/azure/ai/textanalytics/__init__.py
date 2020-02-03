@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Optional  # pylint: disable=unused-import
+from typing import Any, Optional, Union, TYPE_CHECKING  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
 from ._request_handlers import _validate_single_input
 from ._response_handlers import process_single_error
@@ -14,7 +14,7 @@ from ._models import (
     TextDocumentInput,
     DetectedLanguage,
     DocumentError,
-    NamedEntity,
+    CategorizedEntity,
     LinkedEntity,
     AnalyzeSentimentResult,
     RecognizeEntitiesResult,
@@ -28,9 +28,13 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScorePerLabel
+    SentimentScorePerLabel,
+    PiiEntity
 )
 from ._credential import TextAnalyticsApiKeyCredential
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 __all__ = [
     'TextAnalyticsClient',
@@ -46,7 +50,7 @@ __all__ = [
     'RecognizeEntitiesResult',
     'RecognizePiiEntitiesResult',
     'DetectLanguageResult',
-    'NamedEntity',
+    'CategorizedEntity',
     'TextAnalyticsError',
     'InnerError',
     'ExtractKeyPhrasesResult',
@@ -58,8 +62,9 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScorePerLabel',
-    'TextAnalyticsApiKeyCredential'
+    'SentimentScorePerLabel',
+    'TextAnalyticsApiKeyCredential',
+    'PiiEntity'
 ]
 
 __version__ = VERSION
@@ -67,7 +72,7 @@ __version__ = VERSION
 
 def single_detect_language(
             endpoint,  # type: str
-            credential,  # type: Any
+            credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
             input_text,  # type: str
             country_hint="US",  # type: Optional[str]
             **kwargs  # type: Any
@@ -88,6 +93,7 @@ def single_detect_language(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to detect language from.
+        Limit text length to 5120 chars.
     :param str country_hint: The country hint for the text. Accepts two
         letter country codes specified by ISO 3166-1 alpha-2.
         Defaults to "US". If you don't want to use a country hint,
@@ -114,7 +120,7 @@ def single_detect_language(
     model_version = kwargs.pop("model_version", None)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
-        response = client.detect_languages(
+        response = client.detect_language(
             inputs=doc,
             model_version=model_version,
             show_stats=show_stats,
@@ -127,7 +133,7 @@ def single_detect_language(
 
 def single_recognize_entities(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -148,6 +154,7 @@ def single_recognize_entities(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -186,7 +193,7 @@ def single_recognize_entities(
 
 def single_recognize_pii_entities(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -208,6 +215,7 @@ def single_recognize_pii_entities(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -246,7 +254,7 @@ def single_recognize_pii_entities(
 
 def single_recognize_linked_entities(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -268,6 +276,7 @@ def single_recognize_linked_entities(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to recognize entities from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -306,7 +315,7 @@ def single_recognize_linked_entities(
 
 def single_extract_key_phrases(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -327,6 +336,7 @@ def single_extract_key_phrases(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to extract key phrases from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.
@@ -365,7 +375,7 @@ def single_extract_key_phrases(
 
 def single_analyze_sentiment(
         endpoint,  # type: str
-        credential,  # type: Any
+        credential,  # type: Union[TextAnalyticsApiKeyCredential, TokenCredential]
         input_text,  # type: str
         language="en",  # type: Optional[str]
         **kwargs  # type: Any
@@ -387,6 +397,7 @@ def single_analyze_sentiment(
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :param str input_text: The single string to analyze sentiment from.
+        Limit text length to 5120 chars.
     :param str language: This is the 2 letter ISO 639-1 representation
         of a language. For example, use "en" for English; "es" for Spanish etc. If
         not set, uses "en" for English as default.

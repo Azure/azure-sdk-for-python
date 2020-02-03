@@ -204,7 +204,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
         self.assertEqual(response.entities[0].text, "Microsoft")
         self.assertEqual(response.entities[1].text, "Bill Gates")
         for entity in response.entities:
-            self.assertIsNotNone(entity.type)
+            self.assertIsNotNone(entity.category)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
@@ -333,7 +333,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         self.assertEqual(response.entities[0].text, "555-55-5555")
         for entity in response.entities:
-            self.assertIsNotNone(entity.type)
+            self.assertIsNotNone(entity.category)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
             self.assertIsNotNone(entity.score)
@@ -718,7 +718,7 @@ class SingleTextAnalyticsTest(TextAnalyticsTest):
 
         self.assertIsNotNone(response.id)
         self.assertEqual(response.sentiment, "negative")
-        self.assertIsNotNone(response.document_scores)
+        self.assertIsNotNone(response.sentiment_scores)
         self.assertIsNotNone(response.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()

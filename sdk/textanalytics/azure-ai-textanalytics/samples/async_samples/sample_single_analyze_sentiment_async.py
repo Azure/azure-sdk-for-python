@@ -23,25 +23,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Overall sentiment: mixed
-    Overall scores: positive=0.338; neutral=0.432; negative=0.230
-
-    Sentence 1 sentiment: neutral
-    Offset: 0
-    Length: 35
-    Sentence score: positive=0.006; neutral=0.987; negative=0.007
-
-    Sentence 2 sentiment: positive
-    Offset: 36
-    Length: 32
-    Sentence score: positive=0.999; neutral=0.000; negative=0.001
-
-    Sentence 3 sentiment: negative
-    Offset: 69
-    Length: 39
-    Sentence score: positive=0.010; neutral=0.307; negative=0.683
 """
 
 import os
@@ -70,9 +51,9 @@ class SingleAnalyzeSentimentSampleAsync(object):
 
         print("Overall sentiment: {}".format(result.sentiment))
         print("Overall scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
-            result.document_scores.positive,
-            result.document_scores.neutral,
-            result.document_scores.negative,
+            result.sentiment_scores.positive,
+            result.sentiment_scores.neutral,
+            result.sentiment_scores.negative,
         ))
 
         for idx, sentence in enumerate(result.sentences):
@@ -80,9 +61,9 @@ class SingleAnalyzeSentimentSampleAsync(object):
             print("Offset: {}".format(sentence.offset))
             print("Length: {}".format(sentence.length))
             print("Sentence score: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
-                sentence.sentence_scores.positive,
-                sentence.sentence_scores.neutral,
-                sentence.sentence_scores.negative,
+                sentence.sentiment_scores.positive,
+                sentence.sentiment_scores.neutral,
+                sentence.sentiment_scores.negative,
             ))
         # [END single_analyze_sentiment_async]
 
