@@ -17,17 +17,23 @@ class GraphRbacManagementClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: azure.core.credentials.TokenCredential
     :param tenant_id: The tenant ID.
     :type tenant_id: str
     """
 
-    def __init__(self, tenant_id, **kwargs):
+    def __init__(self, credential, tenant_id, **kwargs):
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         if tenant_id is None:
             raise ValueError("Parameter 'tenant_id' must not be None.")
         super(GraphRbacManagementClientConfiguration, self).__init__(**kwargs)
 
+        self.credential = credential
         self.tenant_id = tenant_id
         self.api_version = "1.6"
+        self.credential_scopes = ['https://graph.windows.net/']
         self._configure(**kwargs)
         self.user_agent_policy.add_user_agent('azsdk-python-graphrbacmanagementclient/{}'.format(VERSION))
 
@@ -40,3 +46,5 @@ class GraphRbacManagementClientConfiguration(Configuration):
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

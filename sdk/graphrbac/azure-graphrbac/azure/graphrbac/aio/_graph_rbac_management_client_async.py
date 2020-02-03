@@ -43,15 +43,17 @@ class GraphRbacManagementClient(object):
     :vartype domains: azure.graphrbac.aio.operations_async.DomainsOperations
     :ivar oauth2_permission_grant: OAuth2PermissionGrantOperations operations
     :vartype oauth2_permission_grant: azure.graphrbac.aio.operations_async.OAuth2PermissionGrantOperations
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: azure.core.credentials.TokenCredential
     :param tenant_id: The tenant ID.
     :type tenant_id: str
     :param str base_url: Service URL
     """
 
-    def __init__(self, tenant_id, base_url=None, **kwargs):
+    def __init__(self, credential, tenant_id, base_url=None, **kwargs):
         if not base_url:
             base_url = 'https://graph.windows.net'
-        self._config = GraphRbacManagementClientConfiguration(tenant_id, **kwargs)
+        self._config = GraphRbacManagementClientConfiguration(credential, tenant_id, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
