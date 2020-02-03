@@ -5,7 +5,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from ._generated import KeyVaultClient
 from .challenge_auth_policy import ChallengeAuthPolicy
@@ -92,6 +92,7 @@ class KeyVaultClientBase(object):
             config.authentication_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
+            ContentDecodePolicy(),
             logging_policy,
         ]
 
