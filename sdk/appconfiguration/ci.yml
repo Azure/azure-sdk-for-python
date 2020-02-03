@@ -22,6 +22,8 @@ trigger:
     include:
     - sdk/appconfiguration/
     - sdk/core/
+    - tools/
+    - eng/
 
 pr:
   branches:
@@ -35,6 +37,8 @@ pr:
     include:
     - sdk/appconfiguration/
     - sdk/core/
+    - tools/
+    - eng/
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
