@@ -22,6 +22,7 @@ trigger:
     include:
     - sdk/keyvault/
     - sdk/core/
+    - tools/
 
 pr:
   branches:
@@ -35,6 +36,7 @@ pr:
     include:
     - sdk/keyvault/
     - sdk/core/
+    - tools/
 
 stages:
 - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
