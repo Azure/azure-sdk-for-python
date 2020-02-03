@@ -34,7 +34,7 @@ class KeyVaultSecrets:
 
     def delete_secret(self):
         print("Deleting a secret...")
-        deleted_secret = self.secret_client.delete_secret(self.secret_name)
+        deleted_secret = self.secret_client.begin_delete_secret(self.secret_name).result()
         print("\tdone: " + deleted_secret.name)
 
     def run(self):

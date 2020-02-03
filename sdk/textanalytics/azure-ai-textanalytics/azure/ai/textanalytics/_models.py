@@ -60,16 +60,17 @@ class DictMixin(object):
 
 
 class DetectedLanguage(DictMixin):
-    """DetectedLanguage.
+    """DetectedLanguage contains the predicted language found in text,
+    its confidence score, and ISO 639-1 representation.
 
     :param name: Long name of a detected language (e.g. English,
-     French).
+        French).
     :type name: str
     :param iso6391_name: A two letter representation of the detected
-     language according to the ISO 639-1 standard (e.g. en, fr).
+        language according to the ISO 639-1 standard (e.g. en, fr).
     :type iso6391_name: str
     :param score: A confidence score between 0 and 1. Scores close
-     to 1 indicate 100% certainty that the identified language is true.
+        to 1 indicate 100% certainty that the identified language is true.
     :type score: float
     """
 
@@ -90,19 +91,22 @@ class DetectedLanguage(DictMixin):
 
 
 class RecognizeEntitiesResult(DictMixin):
-    """RecognizeEntitiesResult.
+    """RecognizeEntitiesResult is a result object which contains
+    the recognized entities from a particular document.
 
-    :param id: Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
     :param entities: Recognized entities in the document.
     :type entities:
-     list[~azure.ai.textanalytics.NamedEntity]
+        list[~azure.ai.textanalytics.CategorizedEntity]
     :param statistics: If show_stats=true was specified in the request this
-     field will contain information about the document payload.
+        field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.TextDocumentStatistics
+        ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a RecognizeEntitiesResult.
+        results. Always False for an instance of a RecognizeEntitiesResult.
     """
 
     def __init__(self, **kwargs):
@@ -117,19 +121,23 @@ class RecognizeEntitiesResult(DictMixin):
 
 
 class RecognizePiiEntitiesResult(DictMixin):
-    """RecognizePiiEntitiesResult.
+    """RecognizePiiEntitiesResult is a result object which contains
+    the recognized Personally Identifiable Information (PII) entities
+    from a particular document.
 
-    :param id: Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
-    :param entities: Recognized entities in the document.
+    :param entities: Recognized PII entities in the document.
     :type entities:
-     list[~azure.ai.textanalytics.NamedEntity]
+        list[~azure.ai.textanalytics.PiiEntity]
     :param statistics: If show_stats=true was specified in the request this
-     field will contain information about the document payload.
+        field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.TextDocumentStatistics
+        ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a RecognizePiiEntitiesResult.
+        results. Always False for an instance of a RecognizePiiEntitiesResult.
     """
 
     def __init__(self, **kwargs):
@@ -144,60 +152,59 @@ class RecognizePiiEntitiesResult(DictMixin):
 
 
 class DetectLanguageResult(DictMixin):
-    """DetectLanguageResult.
+    """DetectLanguageResult is a result object which contains
+    the detected language of a particular document.
 
-    :param id: Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
-    :param detected_languages: A list of extracted languages.
-    :type detected_languages:
-     list[~azure.ai.textanalytics.DetectedLanguage]
     :param primary_language: The primary language detected in the document.
     :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
     :param statistics: If show_stats=true was specified in the request this
-     field will contain information about the document payload.
+        field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.TextDocumentStatistics
+        ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a DetectLanguageResult.
+        results. Always False for an instance of a DetectLanguageResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
-        self.detected_languages = kwargs.get("detected_languages", None)
         self.primary_language = kwargs.get("primary_language", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "DetectLanguageResult(id={}, detected_languages={}, primary_language={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.detected_languages), repr(self.primary_language), repr(self.statistics),
-                    self.is_error)[:1024]
+        return "DetectLanguageResult(id={}, primary_language={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.primary_language), repr(self.statistics), self.is_error)[:1024]
 
 
-class NamedEntity(DictMixin):
-    """NamedEntity.
+class CategorizedEntity(DictMixin):
+    """CategorizedEntity contains information about a particular
+    entity found in text.
 
     :param text: Entity text as appears in the request.
     :type text: str
-    :param type: Entity type, such as Person/Location/Org/SSN etc
-    :type type: str
-    :param subtype: Entity sub type, such as Age/Year/TimeRange etc
-    :type subtype: str
+    :param category: Entity category, such as Person/Location/Org/SSN etc
+    :type category: str
+    :param subcategory: Entity subcategory, such as Age/Year/TimeRange etc
+    :type subcategory: str
     :param offset: Start position (in Unicode characters) for the
-     entity text.
+        entity text.
     :type offset: int
     :param length: Length (in Unicode characters) for the entity
-     text.
+        text.
     :type length: int
     :param score: Confidence score between 0 and 1 of the extracted
-     entity.
+        entity.
     :type score: float
     """
 
     def __init__(self, **kwargs):
         self.text = kwargs.get('text', None)
-        self.type = kwargs.get('type', None)
-        self.subtype = kwargs.get('subtype', None)
+        self.category = kwargs.get('category', None)
+        self.subcategory = kwargs.get('subcategory', None)
         self.offset = kwargs.get('offset', None)
         self.length = kwargs.get('length', None)
         self.score = kwargs.get('score', None)
@@ -206,20 +213,69 @@ class NamedEntity(DictMixin):
     def _from_generated(cls, entity):
         return cls(
             text=entity.text,
-            type=entity.type,
-            subtype=entity.subtype,
+            category=entity.type,
+            subcategory=entity.subtype,
             offset=entity.offset,
             length=entity.length,
             score=entity.score,
         )
 
     def __repr__(self):
-        return "NamedEntity(text={}, type={}, subtype={}, offset={}, length={}, score={})" \
-            .format(self.text, self.type, self.subtype, self.offset, self.length, self.score)[:1024]
+        return "CategorizedEntity(text={}, category={}, subcategory={}, offset={}, length={}, score={})" \
+            .format(self.text, self.category, self.subcategory, self.offset, self.length, self.score)[:1024]
+
+
+class PiiEntity(DictMixin):
+    """PiiEntity contains information about a Personally Identifiable
+    Information (PII) entity found in text.
+
+    :param text: Entity text as appears in the request.
+    :type text: str
+    :param category: Entity category, such as Financial Account
+        Identification/Social Security Number/Phone Number, etc.
+    :type category: str
+    :param subcategory: Entity subcategory, such as Credit Card/EU
+        Phone number/ABA Routing Numbers, etc.
+    :type subcategory: str
+    :param offset: Start position (in Unicode characters) for the
+        entity text.
+    :type offset: int
+    :param length: Length (in Unicode characters) for the entity
+        text.
+    :type length: int
+    :param score: Confidence score between 0 and 1 of the extracted
+        entity.
+    :type score: float
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get('text', None)
+        self.category = kwargs.get('category', None)
+        self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
+        self.score = kwargs.get('score', None)
+
+    @classmethod
+    def _from_generated(cls, entity):
+        return cls(
+            text=entity.text,
+            category=entity.type,
+            subcategory=entity.subtype,
+            offset=entity.offset,
+            length=entity.length,
+            score=entity.score,
+        )
+
+    def __repr__(self):
+        return "PiiEntity(text={}, category={}, subcategory={}, offset={}, length={}, score={})" \
+            .format(self.text, self.category, self.subcategory, self.offset, self.length, self.score)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
-    """TextAnalyticsError.
+    """TextAnalyticsError contains the error code, message, and
+    other details that explain why the batch or individual document
+    failed to be processed by the service.
 
     :param code: Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
@@ -259,7 +315,8 @@ class TextAnalyticsError(DictMixin):
 
 
 class InnerError(DictMixin):
-    """InnerError.
+    """InnerError containing more specific information about the
+    error.
 
     :param code: Error code. Possible values include:
      'invalidParameterValue', 'invalidRequestBodyFormat', 'emptyRequest',
@@ -299,20 +356,23 @@ class InnerError(DictMixin):
 
 
 class ExtractKeyPhrasesResult(DictMixin):
-    """ExtractKeyPhrasesResult.
+    """ExtractKeyPhrasesResult is a result object which contains
+    the key phrases found in a particular document.
 
-    :param id: Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
     :param key_phrases: A list of representative words or phrases.
-     The number of key phrases returned is proportional to the number of words
-     in the input document.
+        The number of key phrases returned is proportional to the number of words
+        in the input document.
     :type key_phrases: list[str]
     :param statistics: If show_stats=true was specified in the request this
-     field will contain information about the document payload.
+        field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.TextDocumentStatistics
+        ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a ExtractKeyPhrasesResult.
+        results. Always False for an instance of a ExtractKeyPhrasesResult.
     """
 
     def __init__(self, **kwargs):
@@ -327,19 +387,22 @@ class ExtractKeyPhrasesResult(DictMixin):
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
-    """RecognizeLinkedEntitiesResult.
+    """RecognizeLinkedEntitiesResult is a result object which contains
+    links to a well-known knowledge base, like for example, Wikipedia or Bing.
 
-    :param id: Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
     :param entities: Recognized well-known entities in the document.
     :type entities:
-     list[~azure.ai.textanalytics.LinkedEntity]
+        list[~azure.ai.textanalytics.LinkedEntity]
     :param statistics: If show_stats=true was specified in the request this
-     field will contain information about the document payload.
+        field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.TextDocumentStatistics
+        ~azure.ai.textanalytics.TextDocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a RecognizeLinkedEntitiesResult.
+        results. Always False for an instance of a RecognizeLinkedEntitiesResult.
     """
 
     def __init__(self, **kwargs):
@@ -354,52 +417,56 @@ class RecognizeLinkedEntitiesResult(DictMixin):
 
 
 class AnalyzeSentimentResult(DictMixin):
-    """AnalyzeSentimentResult.
+    """AnalyzeSentimentResult is a result object which contains
+    the overall predicted sentiment and confidence scores for your document
+    and a per-sentence sentiment prediction with scores.
 
-    :param id: Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
     :param sentiment: Predicted sentiment for document (Negative,
-     Neutral, Positive, or Mixed). Possible values include: 'positive',
-     'neutral', 'negative', 'mixed'
+        Neutral, Positive, or Mixed). Possible values include: 'positive',
+        'neutral', 'negative', 'mixed'
     :type sentiment: str
     :param statistics: If show_stats=true was specified in the request this
-     field will contain information about the document payload.
+        field will contain information about the document payload.
     :type statistics:
-     ~azure.ai.textanalytics.TextDocumentStatistics
-    :param document_scores: Document level sentiment confidence
-     scores between 0 and 1 for each sentiment class.
-    :type document_scores:
-     ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+        ~azure.ai.textanalytics.TextDocumentStatistics
+    :param sentiment_scores: Document level sentiment confidence
+        scores between 0 and 1 for each sentiment class.
+    :type sentiment_scores:
+        ~azure.ai.textanalytics.SentimentScorePerLabel
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
-     list[~azure.ai.textanalytics.SentenceSentiment]
+        list[~azure.ai.textanalytics.SentenceSentiment]
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always False for an instance of a AnalyzeSentimentResult.
+        results. Always False for an instance of a AnalyzeSentimentResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.statistics = kwargs.get("statistics", None)
-        self.document_scores = kwargs.get("document_scores", None)
+        self.sentiment_scores = kwargs.get("sentiment_scores", None)
         self.sentences = kwargs.get("sentences", None)
         self.is_error = False
 
     def __repr__(self):
-        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, document_scores={}, sentences={}, " \
-               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.document_scores),
+        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, sentiment_scores={}, sentences={}, " \
+               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.sentiment_scores),
                                      repr(self.sentences), self.is_error)[:1024]
 
 
 class TextDocumentStatistics(DictMixin):
-    """If showStats=true was specified in the request this field will contain
-    information about the document payload.
+    """TextDocumentStatistics contains information about
+    the document payload.
 
     :param character_count: Number of text elements recognized in
-     the document.
+        the document.
     :type character_count: int
     :param transaction_count: Number of transactions for the
-     document.
+        document.
     :type transaction_count: int
     """
 
@@ -422,20 +489,39 @@ class TextDocumentStatistics(DictMixin):
 
 
 class DocumentError(DictMixin):
-    """DocumentError.
+    """DocumentError is an error object which represents an error on
+    the individual document.
 
-    :param id: Document Id.
+    :param id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
     :type id: str
-    :param error: Document Error.
+    :param error: The document error.
     :type error: ~azure.ai.textanalytics.TextAnalyticsError
     :param bool is_error: Boolean check for error item when iterating over list of
-     results. Always True for an instance of a DocumentError.
+        results. Always True for an instance of a DocumentError.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.error = kwargs.get("error", None)
         self.is_error = True
+
+    def __getattr__(self, attr):
+        result_set = set()
+        result_set.update(
+            RecognizeEntitiesResult().keys() + RecognizePiiEntitiesResult().keys()
+            + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
+            + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
+        )
+        result_attrs = result_set.difference(DocumentError().keys())
+        if attr in result_attrs:
+            raise AttributeError(
+                "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
+                "Document Id: {}\nError: {} - {}\n".
+                format(attr, self.id, self.error["inner_error"]["code"], self.error["inner_error"]["message"])
+            )
+        raise AttributeError("'DocumentError' object has no attribute '{}'".format(attr))
 
     @classmethod
     def _from_generated(cls, doc_err):
@@ -451,7 +537,7 @@ class DocumentError(DictMixin):
 
 
 class DetectLanguageInput(LanguageInput):
-    """Contains an input document to be analyzed for type of language.
+    """The input document to be analyzed for detecting language.
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
@@ -476,23 +562,25 @@ class DetectLanguageInput(LanguageInput):
 
 
 class LinkedEntity(DictMixin):
-    """LinkedEntity.
+    """LinkedEntity contains a link to the well-known recognized
+    entity in text. The link comes from a data source like Wikipedia
+    or Bing. It additionally includes all of the matches of this
+    entity found in the document.
 
     :param name: Entity Linking formal name.
     :type name: str
-    :param matches: List of instances this entity appears in the
-     text.
+    :param matches: List of instances this entity appears in the text.
     :type matches:
-     list[~azure.ai.textanalytics.LinkedEntityMatch]
+        list[~azure.ai.textanalytics.LinkedEntityMatch]
     :param language: Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data
-     source.
+        source.
     :type id: str
-    :param url: URL for the entity's page from the data source.
+    :param url: URL to the entity's page from the data source.
     :type url: str
     :param data_source: Data source used to extract entity linking,
-     such as Wiki/Bing etc.
+        such as Wiki/Bing etc.
     :type data_source: str
     """
 
@@ -516,24 +604,27 @@ class LinkedEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, data_source={})" \
-            .format(self.name, repr(self.matches), self.language, self.id, self.url, self.data_source)[:1024]
+        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, " \
+               "data_source={})".format(self.name, repr(self.matches), self.language, self.id, self.url,
+                                        self.data_source)[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
-    """LinkedEntityMatch.
+    """A match for the linked entity found in text. Provides
+    the confidence score of the prediction and where the entity
+    was found in the text.
 
     :param score: If a well-known item is recognized, a
-     decimal number denoting the confidence level between 0 and 1 will be
-     returned.
+        decimal number denoting the confidence level between 0 and 1 will be
+        returned.
     :type score: float
     :param text: Entity text as appears in the request.
     :type text: str
     :param offset: Start position (in Unicode characters) for the
-     entity match text.
+        entity match text.
     :type offset: int
     :param length: Length (in Unicode characters) for the entity
-     match text.
+        match text.
     :type length: int
     """
 
@@ -555,7 +646,7 @@ class LinkedEntityMatch(DictMixin):
 
 
 class TextDocumentInput(MultiLanguageInput):
-    """Contains an input document to be analyzed by the service.
+    """The input document to be analyzed by the service.
 
     :param id: Required. A unique, non-empty document identifier.
     :type id: str
@@ -579,17 +670,17 @@ class TextDocumentInput(MultiLanguageInput):
 
 
 class TextDocumentBatchStatistics(DictMixin):
-    """If show_stats=true was specified in the request this field will contain
-    information about the request payload. Note: This object is not returned
+    """TextDocumentBatchStatistics contains information about the
+    request payload. Note: This object is not returned
     in the response and needs to be retrieved by a response hook.
 
     :param document_count: Number of documents submitted in the request.
     :type document_count: int
     :param valid_document_count: Number of valid documents. This
-     excludes empty, over-size limit or non-supported languages documents.
+        excludes empty, over-size limit or non-supported languages documents.
     :type valid_document_count: int
     :param erroneous_document_count: Number of invalid documents.
-     This includes empty, over-size limit or non-supported languages documents.
+        This includes empty, over-size limit or non-supported languages documents.
     :type erroneous_document_count: int
     :param transaction_count: Number of transactions for the request.
     :type transaction_count: long
@@ -619,17 +710,18 @@ class TextDocumentBatchStatistics(DictMixin):
 
 
 class SentenceSentiment(DictMixin):
-    """SentenceSentiment.
+    """SentenceSentiment contains the predicted sentiment and
+    confidence scores for each individual sentence in the document.
 
     :param sentiment: The predicted Sentiment for the sentence.
-     Possible values include: 'positive', 'neutral', 'negative'
+        Possible values include: 'positive', 'neutral', 'negative'
     :type sentiment: str
-    :param sentence_scores: The sentiment confidence score between 0
-     and 1 for the sentence for all classes.
-    :type sentence_scores:
-     ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
+    :param sentiment_scores: The sentiment confidence score between 0
+        and 1 for the sentence for all labels.
+    :type sentiment_scores:
+        ~azure.ai.textanalytics.SentimentScorePerLabel
     :param offset: The sentence offset from the start of the
-     document.
+        document.
     :type offset: int
     :param length: The length of the sentence by Unicode standard.
     :type length: int
@@ -639,7 +731,7 @@ class SentenceSentiment(DictMixin):
 
     def __init__(self, **kwargs):
         self.sentiment = kwargs.get("sentiment", None)
-        self.sentence_scores = kwargs.get("sentence_scores", None)
+        self.sentiment_scores = kwargs.get("sentiment_scores", None)
         self.offset = kwargs.get("offset", None)
         self.length = kwargs.get("length", None)
         self.warnings = kwargs.get("warnings", None)
@@ -648,20 +740,20 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment.value,
-            sentence_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            sentiment_scores=SentimentScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             offset=sentence.offset,
             length=sentence.length,
             warnings=sentence.warnings,
         )
 
     def __repr__(self):
-        return "SentenceSentiment(sentiment={}, sentence_scores={}, offset={}, length={}, warnings={})" \
-            .format(self.sentiment, repr(self.sentence_scores), self.offset, self.length, self.warnings)[:1024]
+        return "SentenceSentiment(sentiment={}, sentiment_scores={}, offset={}, length={}, warnings={})" \
+            .format(self.sentiment, repr(self.sentiment_scores), self.offset, self.length, self.warnings)[:1024]
 
 
-class SentimentConfidenceScorePerLabel(DictMixin):
+class SentimentScorePerLabel(DictMixin):
     """Represents the confidence scores between 0 and 1 across all sentiment
-    classes: positive, neutral, negative.
+    labels: positive, neutral, negative.
 
     :param positive: Positive score.
     :type positive: float
@@ -685,5 +777,5 @@ class SentimentConfidenceScorePerLabel(DictMixin):
         )
 
     def __repr__(self):
-        return "SentimentConfidenceScorePerLabel(positive={}, neutral={}, negative={})" \
+        return "SentimentScorePerLabel(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
