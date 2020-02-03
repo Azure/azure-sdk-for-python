@@ -451,6 +451,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
 
         await client.close()
+        assert transport.__aenter__.call_count == 1
         assert transport.__aexit__.call_count == 1
 
 

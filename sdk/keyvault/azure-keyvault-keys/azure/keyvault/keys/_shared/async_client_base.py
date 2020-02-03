@@ -39,7 +39,7 @@ class AsyncKeyVaultClientBase(object):
         elif api_version == V2016_10_01_VERSION:
             from ._generated.v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
         else:
-            raise NotImplementedError("API version {} is not available".format(api_version))
+            raise NotImplementedError("API version {} is not supported by this package".format(api_version))
         return ImplConfig
 
     @staticmethod
@@ -72,17 +72,25 @@ class AsyncKeyVaultClientBase(object):
 
         return config
 
-    @staticmethod
     def _create_client(
-        credential: "AsyncTokenCredential", pipeline: AsyncPipeline, api_version: str
+        self, credential: "AsyncTokenCredential", pipeline: AsyncPipeline, api_version: str
     ) -> "KeyVaultClient":
         if api_version == V7_0_VERSION:
             from ._generated.v7_0.aio import KeyVaultClient as ImplClient
         elif api_version == V2016_10_01_VERSION:
             from ._generated.v2016_10_01.aio import KeyVaultClient as ImplClient
         else:
-            raise NotImplementedError("API version {} is not available".format(api_version))
+            raise NotImplementedError("API version {} is not supported by this package".format(api_version))
         return ImplClient(credentials=credential, pipeline=pipeline)
+
+    def _import_models(self, api_version: str):
+        if api_version == V7_0_VERSION:
+            from ._generated.v7_0 import models as impl_models
+        elif api_version == V2016_10_01_VERSION:
+            from ._generated.v2016_10_01 import models as impl_models
+        else:
+            raise NotImplementedError("API version {} is not supported by this package".format(api_version))
+        return impl_models
 
     def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         if not credential:
@@ -96,7 +104,7 @@ class AsyncKeyVaultClientBase(object):
         self._vault_url = vault_url.strip(" /")
         api_version = kwargs.pop('api_version', None) or DEFAULT_API_VERSION
         self._api_version = api_version
-
+        self._models = self._import_models(api_version)
         client = kwargs.get("generated_client")
         if client:
             # caller provided a configured client -> nothing left to initialize
@@ -134,20 +142,6 @@ class AsyncKeyVaultClientBase(object):
     @property
     def vault_url(self) -> str:
         return self._vault_url
-
-    @property
-    def _models(self):
-        """Module depends on the API version:
-            * 2016-10-01: :mod:`v2016_10_01.models<azure.keyvault._generated.v2016_10_01.models>`
-            * 7.0: :mod:`v7_0.models<azure.keyvault._generated.v7_0.models>`
-        """
-        if self._api_version == V7_0_VERSION:
-            from ._generated.v7_0 import models as impl_models
-        elif self._api_version == V2016_10_01_VERSION:
-            from ._generated.v2016_10_01 import models as impl_models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self._api_version))
-        return impl_models
 
     async def __aenter__(self) -> "AsyncKeyVaultClientBase":
         await self._client.__aenter__()

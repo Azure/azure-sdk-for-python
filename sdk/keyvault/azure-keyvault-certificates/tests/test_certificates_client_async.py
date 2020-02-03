@@ -805,3 +805,4 @@ class CertificateClientTests(KeyVaultTestCase):
         async with client:
             pass
         assert transport.__aexit__.call_count == 1
+        assert transport.__aenter__.call_count == 1
