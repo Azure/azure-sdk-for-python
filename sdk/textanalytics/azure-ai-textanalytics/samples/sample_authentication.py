@@ -45,7 +45,7 @@ class AuthenticationSample(object):
         # [END create_ta_client_with_key]
 
         doc = ["I need to take my cat to the veterinarian."]
-        result = text_analytics_client.detect_languages(doc)
+        result = text_analytics_client.detect_language(doc)
 
         print("Language detected: {}".format(result[0].primary_language.name))
         print("Confidence score: {}".format(result[0].primary_language.score))
@@ -65,7 +65,7 @@ class AuthenticationSample(object):
         # [END create_ta_client_with_aad]
 
         doc = ["I need to take my cat to the veterinarian."]
-        result = text_analytics_client.detect_languages(doc)
+        result = text_analytics_client.detect_language(doc)
 
         print("Language detected: {}".format(result[0].primary_language.name))
         print("Confidence score: {}".format(result[0].primary_language.score))
