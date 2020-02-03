@@ -383,29 +383,50 @@ class AmlComputeNodeInformation(Model):
 
     :ivar node_id: Node ID. ID of the compute node.
     :vartype node_id: str
-    :ivar ip_address: IP address. Public IP address of the compute node.
-    :vartype ip_address: str
+    :ivar private_ip_address: Private IP address. Private IP address of the
+     compute node.
+    :vartype private_ip_address: str
+    :ivar public_ip_address: Public IP address. Public IP address of the
+     compute node.
+    :vartype public_ip_address: str
     :ivar port: Port. SSH port number of the node.
     :vartype port: float
+    :ivar node_state: State of the compute node. Values are idle, running,
+     preparing, unusable, leaving and preempted. Possible values include:
+     'idle', 'running', 'preparing', 'unusable', 'leaving', 'preempted'
+    :vartype node_state: str or
+     ~azure.mgmt.machinelearningservices.models.NodeState
+    :ivar run_id: Run ID. ID of the Experiment running on the node, if any
+     else null.
+    :vartype run_id: str
     """
 
     _validation = {
         'node_id': {'readonly': True},
-        'ip_address': {'readonly': True},
+        'private_ip_address': {'readonly': True},
+        'public_ip_address': {'readonly': True},
         'port': {'readonly': True},
+        'node_state': {'readonly': True},
+        'run_id': {'readonly': True},
     }
 
     _attribute_map = {
         'node_id': {'key': 'nodeId', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
+        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
         'port': {'key': 'port', 'type': 'float'},
+        'node_state': {'key': 'nodeState', 'type': 'str'},
+        'run_id': {'key': 'runId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AmlComputeNodeInformation, self).__init__(**kwargs)
         self.node_id = None
-        self.ip_address = None
+        self.private_ip_address = None
+        self.public_ip_address = None
         self.port = None
+        self.node_state = None
+        self.run_id = None
 
 
 class ComputeNodesInformation(Model):
@@ -503,6 +524,17 @@ class AmlComputeProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
+    :param remote_login_port_public_access: Close remote Login Access Port.
+     State of the public SSH port. Possible values are: Disabled - Indicates
+     that the public ssh port is closed on all nodes of the cluster. Enabled -
+     Indicates that the public ssh port is open on all nodes of the cluster.
+     NotSpecified - Indicates that the public ssh port is closed on all nodes
+     of the cluster if VNet is defined, else is open all public nodes. It can
+     be default only during cluster creation time, after creation it will be
+     either enabled or disabled. Possible values include: 'Enabled',
+     'Disabled', 'NotSpecified'. Default value: "NotSpecified" .
+    :type remote_login_port_public_access: str or
+     ~azure.mgmt.machinelearningservices.models.RemoteLoginPortPublicAccess
     :ivar allocation_state: Allocation state. Allocation state of the compute.
      Possible values are: steady - Indicates that the compute is not resizing.
      There are no changes to the number of compute nodes in the compute in
@@ -550,6 +582,7 @@ class AmlComputeProperties(Model):
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
+        'remote_login_port_public_access': {'key': 'remoteLoginPortPublicAccess', 'type': 'str'},
         'allocation_state': {'key': 'allocationState', 'type': 'str'},
         'allocation_state_transition_time': {'key': 'allocationStateTransitionTime', 'type': 'iso-8601'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
@@ -565,12 +598,37 @@ class AmlComputeProperties(Model):
         self.scale_settings = kwargs.get('scale_settings', None)
         self.user_account_credentials = kwargs.get('user_account_credentials', None)
         self.subnet = kwargs.get('subnet', None)
+        self.remote_login_port_public_access = kwargs.get('remote_login_port_public_access', "NotSpecified")
         self.allocation_state = None
         self.allocation_state_transition_time = None
         self.errors = None
         self.current_node_count = None
         self.target_node_count = None
         self.node_state_counts = None
+
+
+class AmlUserFeature(Model):
+    """Features enabled for a workspace.
+
+    :param id: Specifies the feature ID
+    :type id: str
+    :param display_name: Specifies the feature name
+    :type display_name: str
+    :param description: Describes the feature for user experience
+    :type description: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AmlUserFeature, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
 
 
 class CloudError(Model):
@@ -617,6 +675,8 @@ class Resource(Model):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     """
 
     _validation = {
@@ -633,6 +693,7 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, **kwargs):
@@ -643,6 +704,7 @@ class Resource(Model):
         self.location = kwargs.get('location', None)
         self.type = None
         self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
 
 
 class ComputeResource(Resource):
@@ -663,6 +725,8 @@ class ComputeResource(Resource):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     :param properties: Compute properties
     :type properties: ~azure.mgmt.machinelearningservices.models.Compute
     """
@@ -681,6 +745,7 @@ class ComputeResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'properties': {'key': 'properties', 'type': 'Compute'},
     }
 
@@ -940,6 +1005,36 @@ class DataLakeAnalyticsProperties(Model):
         self.data_lake_store_account_name = kwargs.get('data_lake_store_account_name', None)
 
 
+class EncryptionProperty(Model):
+    """EncryptionProperty.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. Indicates whether or not the encryption is
+     enabled for the workspace. Possible values include: 'Enabled', 'Disabled'
+    :type status: str or
+     ~azure.mgmt.machinelearningservices.models.EncryptionStatus
+    :param key_vault_properties: Required. Customer Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.machinelearningservices.models.KeyVaultProperties
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'key_vault_properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
 class ErrorDetail(Model):
     """Error detail information.
 
@@ -999,6 +1094,18 @@ class ErrorResponse(Model):
         self.code = None
         self.message = None
         self.details = None
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class HDInsight(Compute):
@@ -1125,6 +1232,40 @@ class Identity(Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = kwargs.get('type', None)
+
+
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_vault_arm_id: Required. The ArmId of the keyVault where the
+     customer owned encryption key is present.
+    :type key_vault_arm_id: str
+    :param key_identifier: Required. Key vault uri to access the encryption
+     key.
+    :type key_identifier: str
+    :param identity_client_id: For future use - The client id of the identity
+     which will be used to access key vault.
+    :type identity_client_id: str
+    """
+
+    _validation = {
+        'key_vault_arm_id': {'required': True},
+        'key_identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_vault_arm_id': {'key': 'keyVaultArmId', 'type': 'str'},
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_vault_arm_id = kwargs.get('key_vault_arm_id', None)
+        self.key_identifier = kwargs.get('key_identifier', None)
+        self.identity_client_id = kwargs.get('identity_client_id', None)
 
 
 class ListWorkspaceKeysResult(Model):
@@ -1332,6 +1473,244 @@ class Password(Model):
         self.value = None
 
 
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar name: Specifies the name of the resource.
+    :vartype name: str
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param location: Specifies the location of the resource.
+    :type location: str
+    :ivar type: Specifies the type of the resource.
+    :vartype type: str
+    :param tags: Contains resource tags defined as key/value pairs.
+    :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint:
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
+    :param provisioning_state: The provisioning state of the private endpoint
+     connection resource. Possible values include: 'Succeeded', 'Creating',
+     'Deleting', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'identity': {'readonly': True},
+        'type': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar name: Specifies the name of the resource.
+    :vartype name: str
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param location: Specifies the location of the resource.
+    :type location: str
+    :ivar type: Specifies the type of the resource.
+    :vartype type: str
+    :param tags: Contains resource tags defined as key/value pairs.
+    :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'identity': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkResourceListResult(Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources
+    :type value:
+     list[~azure.mgmt.machinelearningservices.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """A collection of information about the state of the connection between
+    service consumer and provider.
+
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected'
+    :type status: str or
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param action_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type action_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.action_required = kwargs.get('action_required', None)
+
+
+class QuotaBaseProperties(Model):
+    """The properties for Quota update or retrieval.
+
+    :param id: Specifies the resource ID.
+    :type id: str
+    :param type: Specifies the resource type.
+    :type type: str
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
+    :param unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :type unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaBaseProperties, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
+        self.limit = kwargs.get('limit', None)
+        self.unit = kwargs.get('unit', None)
+
+
+class QuotaUpdateParameters(Model):
+    """Quota update parameters.
+
+    :param value: The list for update quota.
+    :type value:
+     list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaUpdateParameters, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class RegistryListCredentialsResult(Model):
     """RegistryListCredentialsResult.
 
@@ -1385,6 +1764,181 @@ class ResourceId(Model):
     def __init__(self, **kwargs):
         super(ResourceId, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+
+
+class ResourceName(Model):
+    """The Resource Name.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The name of the resource.
+    :vartype value: str
+    :ivar localized_value: The localized name of the resource.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceName, self).__init__(**kwargs)
+        self.value = None
+        self.localized_value = None
+
+
+class ResourceQuota(Model):
+    """The quota assigned to a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar type: Specifies the resource type.
+    :vartype type: str
+    :ivar name: Name of the resource.
+    :vartype name: ~azure.mgmt.machinelearningservices.models.ResourceName
+    :ivar limit: Limit. The maximum permitted quota of the resource.
+    :vartype limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+        'limit': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'ResourceName'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceQuota, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.limit = None
+        self.unit = None
+
+
+class ResourceSkuLocationInfo(Model):
+    """ResourceSkuLocationInfo.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar location: Location of the SKU
+    :vartype location: str
+    :ivar zones: List of availability zones where the SKU is supported.
+    :vartype zones: list[str]
+    :ivar zone_details: Details of capabilities available to a SKU in specific
+     zones.
+    :vartype zone_details:
+     list[~azure.mgmt.machinelearningservices.models.ResourceSkuZoneDetails]
+    """
+
+    _validation = {
+        'location': {'readonly': True},
+        'zones': {'readonly': True},
+        'zone_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'zone_details': {'key': 'zoneDetails', 'type': '[ResourceSkuZoneDetails]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
+        self.location = None
+        self.zones = None
+        self.zone_details = None
+
+
+class ResourceSkuZoneDetails(Model):
+    """Describes The zonal capabilities of a SKU.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The set of zones that the SKU is available in with the
+     specified capabilities.
+    :vartype name: list[str]
+    :ivar capabilities: A list of capabilities that are available for the SKU
+     in the specified list of zones.
+    :vartype capabilities:
+     list[~azure.mgmt.machinelearningservices.models.SKUCapability]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceSkuZoneDetails, self).__init__(**kwargs)
+        self.name = None
+        self.capabilities = None
+
+
+class Restriction(Model):
+    """The restriction because of which SKU cannot be used.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The type of restrictions. As of now only possible value for
+     this is location.
+    :vartype type: str
+    :ivar values: The value of restrictions. If the restriction type is set to
+     location. This would be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :param reason_code: The reason for the restriction. Possible values
+     include: 'NotSpecified', 'NotAvailableForRegion',
+     'NotAvailableForSubscription'
+    :type reason_code: str or
+     ~azure.mgmt.machinelearningservices.models.ReasonCode
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'values': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Restriction, self).__init__(**kwargs)
+        self.type = None
+        self.values = None
+        self.reason_code = kwargs.get('reason_code', None)
 
 
 class ScaleSettings(Model):
@@ -1443,6 +1997,46 @@ class ServicePrincipalCredentials(Model):
         super(ServicePrincipalCredentials, self).__init__(**kwargs)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
+
+
+class Sku(Model):
+    """Sku of the resource.
+
+    :param name: Name of the sku
+    :type name: str
+    :param tier: Tier of the sku like Basic or Enterprise
+    :type tier: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+
+
+class SKUCapability(Model):
+    """Features/user capabilities associated with the sku.
+
+    :param name: Capability/Feature ID
+    :type name: str
+    :param value: Details about the feature/capability
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SKUCapability, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
 
 
 class SslConfiguration(Model):
@@ -1505,6 +2099,83 @@ class SystemService(Model):
         self.system_service_type = None
         self.public_ip_address = None
         self.version = None
+
+
+class UpdateWorkspaceQuotas(Model):
+    """The properties for update Quota response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar type: Specifies the resource type.
+    :vartype type: str
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    :param status: Update Workspace Quota Status. Status of update workspace
+     quota. Possible values include: 'Undefined', 'Success', 'Failure',
+     'InvalidQuotaBelowClusterMinimum', 'InvalidQuotaExceedsSubscriptionLimit',
+     'InvalidVMFamilyName', 'OperationNotSupportedForSku',
+     'OperationNotEnabledForRegion'
+    :type status: str or ~azure.mgmt.machinelearningservices.models.Status
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdateWorkspaceQuotas, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.limit = kwargs.get('limit', None)
+        self.unit = None
+        self.status = kwargs.get('status', None)
+
+
+class UpdateWorkspaceQuotasResult(Model):
+    """The result of update workspace quota.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of workspace quota update result.
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotas]
+    :ivar next_link: The URI to fetch the next page of workspace quota update
+     result. Call ListNext() with this to fetch the next page of Workspace
+     Quota update result.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[UpdateWorkspaceQuotas]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdateWorkspaceQuotasResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class Usage(Model):
@@ -1755,6 +2426,9 @@ class VirtualMachineSize(Model):
     :ivar v_cp_us: Number of vPUs. The number of vCPUs supported by the
      virtual machine size.
     :vartype v_cp_us: int
+    :ivar gpus: Number of gPUs. The number of gPUs supported by the virtual
+     machine size.
+    :vartype gpus: int
     :ivar os_vhd_size_mb: OS VHD Disk size. The OS VHD disk size, in MB,
      allowed by the virtual machine size.
     :vartype os_vhd_size_mb: int
@@ -1776,6 +2450,7 @@ class VirtualMachineSize(Model):
         'name': {'readonly': True},
         'family': {'readonly': True},
         'v_cp_us': {'readonly': True},
+        'gpus': {'readonly': True},
         'os_vhd_size_mb': {'readonly': True},
         'max_resource_volume_mb': {'readonly': True},
         'memory_gb': {'readonly': True},
@@ -1787,6 +2462,7 @@ class VirtualMachineSize(Model):
         'name': {'key': 'name', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
         'v_cp_us': {'key': 'vCPUs', 'type': 'int'},
+        'gpus': {'key': 'gpus', 'type': 'int'},
         'os_vhd_size_mb': {'key': 'osVhdSizeMB', 'type': 'int'},
         'max_resource_volume_mb': {'key': 'maxResourceVolumeMB', 'type': 'int'},
         'memory_gb': {'key': 'memoryGB', 'type': 'float'},
@@ -1799,6 +2475,7 @@ class VirtualMachineSize(Model):
         self.name = None
         self.family = None
         self.v_cp_us = None
+        self.gpus = None
         self.os_vhd_size_mb = None
         self.max_resource_volume_mb = None
         self.memory_gb = None
@@ -1870,6 +2547,8 @@ class Workspace(Resource):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     :ivar workspace_id: The immutable id associated with this workspace.
     :vartype workspace_id: str
     :param description: The description of this workspace.
@@ -1903,6 +2582,16 @@ class Workspace(Resource):
      'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
+    :param encryption: The encryption settings of Azure ML workspace.
+    :type encryption:
+     ~azure.mgmt.machinelearningservices.models.EncryptionProperty
+    :param hbi_workspace: The flag to signal HBI data in the workspace and
+     reduce diagnostic data collected by the service. Default value: False .
+    :type hbi_workspace: bool
+    :ivar service_provisioned_resource_group: The name of the managed resource
+     group created by workspace RP in customer subscription if the workspace is
+     CMK workspace
+    :vartype service_provisioned_resource_group: str
     """
 
     _validation = {
@@ -1913,6 +2602,7 @@ class Workspace(Resource):
         'workspace_id': {'readonly': True},
         'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'service_provisioned_resource_group': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1922,6 +2612,7 @@ class Workspace(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -1932,6 +2623,9 @@ class Workspace(Resource):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
         'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
+        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1946,6 +2640,69 @@ class Workspace(Resource):
         self.storage_account = kwargs.get('storage_account', None)
         self.discovery_url = kwargs.get('discovery_url', None)
         self.provisioning_state = None
+        self.encryption = kwargs.get('encryption', None)
+        self.hbi_workspace = kwargs.get('hbi_workspace', False)
+        self.service_provisioned_resource_group = None
+
+
+class WorkspaceSku(Model):
+    """Describes Workspace Sku details and features.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar locations: The set of locations that the SKU is available. This will
+     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     Southeast Asia, etc.).
+    :vartype locations: list[str]
+    :ivar location_info: A list of locations and availability zones in those
+     locations where the SKU is available.
+    :vartype location_info:
+     list[~azure.mgmt.machinelearningservices.models.ResourceSkuLocationInfo]
+    :ivar tier: Sku Tier like Basic or Enterprise
+    :vartype tier: str
+    :ivar resource_type:
+    :vartype resource_type: str
+    :ivar name:
+    :vartype name: str
+    :ivar capabilities: List of features/user capabilities associated with the
+     sku
+    :vartype capabilities:
+     list[~azure.mgmt.machinelearningservices.models.SKUCapability]
+    :param restrictions: The restrictions because of which SKU cannot be used.
+     This is empty if there are no restrictions.
+    :type restrictions:
+     list[~azure.mgmt.machinelearningservices.models.Restriction]
+    """
+
+    _validation = {
+        'locations': {'readonly': True},
+        'location_info': {'readonly': True},
+        'tier': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'location_info': {'key': 'locationInfo', 'type': '[ResourceSkuLocationInfo]'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkspaceSku, self).__init__(**kwargs)
+        self.locations = None
+        self.location_info = None
+        self.tier = None
+        self.resource_type = None
+        self.name = None
+        self.capabilities = None
+        self.restrictions = kwargs.get('restrictions', None)
 
 
 class WorkspaceUpdateParameters(Model):
@@ -1953,6 +2710,8 @@ class WorkspaceUpdateParameters(Model):
 
     :param tags: The resource tags for the machine learning workspace.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
     :param description: The description of this workspace.
     :type description: str
     :param friendly_name: The friendly name for this workspace.
@@ -1961,6 +2720,7 @@ class WorkspaceUpdateParameters(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
     }
@@ -1968,5 +2728,6 @@ class WorkspaceUpdateParameters(Model):
     def __init__(self, **kwargs):
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
         self.description = kwargs.get('description', None)
         self.friendly_name = kwargs.get('friendly_name', None)
