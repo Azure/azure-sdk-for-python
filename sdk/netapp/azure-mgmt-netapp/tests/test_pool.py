@@ -12,7 +12,7 @@ pools = [TEST_POOL_1, TEST_POOL_2]
 
 def create_pool(client, rg=TEST_RG, acc_name=TEST_ACC_1, pool_name=TEST_POOL_1, location=LOCATION, pool_only=False):
     if not pool_only:
-        create_account(client, rg, acc_name)
+        create_account(client, rg, acc_name, location)
 
     pool_body = CapacityPool(service_level=SERVICE_LEVEL, size=DEFAULT_SIZE, location=location)
     pool = client.pools.create_or_update(
@@ -62,7 +62,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_create_delete_pool(self):
-        raise unittest.SkipTest("Skipping Pool test")
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
         self.assertEqual(pool.size, DEFAULT_SIZE)
         self.assertEqual(pool.name, TEST_ACC_1 + '/' + TEST_POOL_1)
@@ -78,7 +77,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_list_pools(self):
-        raise unittest.SkipTest("Skipping Pool test")
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, LOCATION, pool_only=True)
 
@@ -96,7 +94,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_get_pool_by_name(self):
-        raise unittest.SkipTest("Skipping Pool test")
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
 
         pool = self.client.pools.get(TEST_RG, TEST_ACC_1, TEST_POOL_1)
@@ -107,7 +104,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_update_pool(self):
-        raise unittest.SkipTest("Skipping Pool test")
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
         self.assertEqual(pool.service_level, "Premium")
 
@@ -126,7 +122,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_patch_pool(self):
-        raise unittest.SkipTest("Skipping Pool test")
         create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
 
         tag = {'Tag2': 'Value1'}

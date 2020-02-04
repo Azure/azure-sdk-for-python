@@ -13,7 +13,7 @@ from azure.core.exceptions import (
 )
 from ._models import (
     RecognizeEntitiesResult,
-    NamedEntity,
+    CategorizedEntity,
     TextDocumentStatistics,
     RecognizeLinkedEntitiesResult,
     RecognizePiiEntitiesResult,
@@ -24,23 +24,10 @@ from ._models import (
     DetectLanguageResult,
     DetectedLanguage,
     DocumentError,
-    SentimentConfidenceScorePerLabel,
-    TextAnalyticsError
+    SentimentScorePerLabel,
+    TextAnalyticsError,
+    PiiEntity
 )
-
-
-def process_single_error(error):
-    """Configure and raise a DocumentError for single text operation errors.
-    """
-    try:
-        error_message = error.error["inner_error"]["message"]
-        error_code = error.error["inner_error"]["code"]
-        error_message += "\nErrorCode:{}".format(error_code)
-    except KeyError:
-        raise HttpResponseError(message="There was an unknown error with the request.")
-    error = HttpResponseError(message=error_message)
-    error.error_code = error_code
-    raise error
 
 
 def process_batch_error(error):
@@ -110,7 +97,6 @@ def prepare_result(func):
 def language_result(language):
     return DetectLanguageResult(
         id=language.id,
-        detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],  # pylint: disable=protected-access
         primary_language=DetectedLanguage._from_generated(language.detected_languages[0]),  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
     )
@@ -120,7 +106,7 @@ def language_result(language):
 def entities_result(entity):
     return RecognizeEntitiesResult(
         id=entity.id,
-        entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
@@ -129,7 +115,7 @@ def entities_result(entity):
 def pii_entities_result(entity):
     return RecognizePiiEntitiesResult(
         id=entity.id,
-        entities=[NamedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
@@ -158,6 +144,6 @@ def sentiment_result(sentiment):
         id=sentiment.id,
         sentiment=sentiment.sentiment.value,
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
-        document_scores=SentimentConfidenceScorePerLabel._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
+        sentiment_scores=SentimentScorePerLabel._from_generated(sentiment.document_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
     )

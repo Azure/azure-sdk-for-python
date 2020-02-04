@@ -13,24 +13,23 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-azure-ai-textanalytics/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=true
   response:
     body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.0145784495398402,"neutral":0.97402292490005493,"negative":0.0113986236974597},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0145784495398402,"neutral":0.97402292490005493,"negative":0.0113986236974597},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.0160302110016346,"neutral":0.21421422064304349,"negative":0.76975554227828979},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0317745991051197,"neutral":0.42806893587112432,"negative":0.54015642404556274},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0002858212974388,"neutral":0.0003595057642087,"negative":0.99935466051101685},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.99577021598815918,"neutral":0.0020832826849073,"negative":0.002146489918232},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":0.99423426389694214,"neutral":0.0028649389278144,"negative":0.0029007606208324},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.99730610847473145,"neutral":0.0013016263255849,"negative":0.0013922193320468},"offset":37,"length":23}]}],"errors":[],"modelVersion":"latest"}'
+      string: '{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","sentiment":"neutral","statistics":{"charactersCount":51,"transactionsCount":1},"documentScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","statistics":{"charactersCount":60,"transactionsCount":1},"documentScores":{"positive":0.01,"neutral":0.21,"negative":0.78},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","statistics":{"charactersCount":60,"transactionsCount":1},"documentScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: ebcbb4b5-b675-4896-8ec1-0310d9262553
+      apim-request-id: 424e0173-1bb5-4177-bda9-fafdddc99556
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 14 Nov 2019 21:44:09 GMT
+      date: Thu, 30 Jan 2020 01:12:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
-      x-aml-ta-request-id: 1b3a72db-f946-400c-8583-493c76d68117
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '76'
+      x-envoy-upstream-service-time: '75'
     status:
       code: 200
       message: OK
@@ -40,6 +39,6 @@ interactions:
         - https
         - westus2.api.cognitive.microsoft.com
         - //text/analytics/v3.0-preview.1/sentiment
-        - showStats=false
+        - showStats=true
         - ''
 version: 1

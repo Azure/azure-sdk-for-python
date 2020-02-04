@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -20,13 +22,18 @@ if TYPE_CHECKING:
 
 
 class VaultClient(KeyVaultClientBase):
-    def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
+    def __init__(self, vault_url, credential, transport=None, api_version=None, is_live=True, **kwargs):
         # type: (str, TokenCredential, Optional[HttpTransport], Optional[str], **Any) -> None
-        super(VaultClient, self).__init__(
-            vault_url, credential, transport=transport, api_version=api_version, **kwargs
-        )
+        super(VaultClient, self).__init__(vault_url, credential, transport=transport, api_version=api_version, **kwargs)
         self._credential = credential
         self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+        if not is_live:
+            # ensure pollers don't sleep during playback
+            for attr in dir(self._keys):
+                if attr.startswith("begin_"):
+                    fn = getattr(self._keys, attr)
+                    wrapper = functools.partial(fn, _polling_interval=0)
+                    setattr(self._keys, attr, wrapper)
 
     def get_cryptography_client(self, key):
         return CryptographyClient(key, self._credential)
