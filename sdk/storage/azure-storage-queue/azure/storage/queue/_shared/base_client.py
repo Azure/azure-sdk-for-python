@@ -16,7 +16,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 import logging
-import functools
 
 try:
     from urllib.parse import parse_qs, quote
