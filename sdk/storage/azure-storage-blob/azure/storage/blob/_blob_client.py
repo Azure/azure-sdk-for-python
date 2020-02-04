@@ -1986,7 +1986,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        prev_snapshot_url = kwargs.pop('managed_disk_diff', None)
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
@@ -2000,11 +1999,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None),
             'range': page_range}
-        if prev_snapshot_url:
-            options['prev_snapshot_url'] = prev_snapshot_url
         if previous_snapshot_diff:
-            if prev_snapshot_url:
-                raise ValueError("Cannot specify both 'previous_snapshot_diff' and 'managed_disk_diff'.")
+            if kwargs.get('prev_snapshot_url'):
+                raise ValueError("Cannot specify both 'previous_snapshot_diff' and 'prev_snapshot_url'.")
             try:
                 options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
             except AttributeError:
@@ -2044,10 +2041,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
-        :keyword str managed_disk_diff:
-            Specifies the URL of a managed disk snapshot. The response will only
-            contain pages that were changed between the target blob and its previous
-            snapshot. Introduced in API version '2019-04-19'.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.

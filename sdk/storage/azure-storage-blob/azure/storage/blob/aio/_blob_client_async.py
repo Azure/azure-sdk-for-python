@@ -1319,10 +1319,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous blob snapshot to be compared
             against a more recent snapshot or the current blob.
-        :keyword str managed_disk_diff:
-            Specifies the URL of a managed disk snapshot. The response will only
-            contain pages that were changed between the target blob and its previous
-            snapshot. Introduced in API version '2019-04-19'.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
