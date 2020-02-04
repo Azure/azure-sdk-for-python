@@ -180,34 +180,4 @@ class StorageClientTest(StorageTestCase):
         copy_file = file_client.download_file().readall()
         self.assertEqual(copy_file, self.short_byte_data)
 
-    @GlobalStorageAccountPreparer()
-    def test_new_api_copy_file_fails(self, resource_group, location, storage_account, storage_account_key):
-        fsc = ShareServiceClient(
-            self.account_url(storage_account, "file"),
-            credential=storage_account_key,
-            max_range_size=4 * 1024,
-            api_version=self.api_version_1
-        )
-        share = self._create_share(fsc)
-        file_name = self._get_file_reference()
-
-        source_client = share.get_file_client(file_name)
-        source_client.upload_file(self.short_byte_data)
-        source_prop = source_client.get_file_properties()
-
-        file_client = ShareFileClient(
-            self.account_url(storage_account, "file"),
-            share_name=share.share_name,
-            file_path='file1copy',
-            credential=storage_account_key,
-            api_version=self.api_version_1)
-
-        # Act
-        with pytest.raises(ValueError) as error:
-            file_client.start_copy_from_url(source_client.url, file_permission_copy_mode="override")
-
-        # Assert
-        self.assertTrue(str(error.value).startswith("The current API version '2019-02-02' does not support the following parameters:\n'file_permission_copy_mode'"))
-
-
 # ------------------------------------------------------------------------------

@@ -153,43 +153,4 @@ class StorageClientTest(AsyncStorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_new_api_get_page_ranges_fails_async(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key,
-            api_version=self.api_version_1)
-        container = await self._create_container(bsc)
-        blob_name = self._get_blob_reference()
-
-        blob = container.get_blob_client(blob_name)
-        await blob.create_page_blob(1536)
-        data = self.get_random_bytes(1536)
-
-        snapshot = await blob.create_snapshot()
-        snapshot_blob = BlobClient.from_blob_url(
-            blob.url,
-            credential=storage_account_key,
-            snapshot=snapshot['snapshot'],
-            api_version=self.api_version_1)
-
-        sas_token1 = generate_blob_sas(
-            snapshot_blob.account_name,
-            snapshot_blob.container_name,
-            snapshot_blob.blob_name,
-            snapshot=snapshot_blob.snapshot,
-            account_key=snapshot_blob.credential.account_key,
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-        )
-        await blob.upload_page(data, offset=0, length=1536)
-
-        # Act
-        with pytest.raises(ValueError) as error:
-            await blob.get_managed_disk_page_range_diff(prev_snapshot_url=snapshot_blob.url + '&' + sas_token1)
-        
-        # Assert
-        self.assertTrue(str(error.value).startswith("The function 'get_managed_disk_page_range_diff' only supports API version '2019-07-07' or above."))
-
 # ------------------------------------------------------------------------------
