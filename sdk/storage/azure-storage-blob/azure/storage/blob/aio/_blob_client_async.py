@@ -13,7 +13,6 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.base_client import check_operation_api_version
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import get_page_ranges_result
@@ -1351,7 +1350,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
-    @check_operation_api_version('2019-07-07')
     @distributed_trace_async
     async def get_managed_disk_page_range_diff( # type: ignore
             self, offset=None, # type: Optional[int]

@@ -20,11 +20,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import encode_base64
-from ._shared.base_client import (
-    StorageAccountHostsMixin,
-    parse_connection_str,
-    parse_query,
-    check_operation_api_version)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
@@ -2059,7 +2055,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
-    @check_operation_api_version('2019-07-07')
     @distributed_trace
     def get_managed_disk_page_range_diff( # type: ignore
             self, offset=None, # type: Optional[int]

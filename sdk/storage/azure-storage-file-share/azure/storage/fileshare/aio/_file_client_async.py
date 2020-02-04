@@ -22,7 +22,6 @@ from .._generated.version import VERSION
 from .._generated.models import StorageErrorException, FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
 from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
-from .._shared.base_client import check_parameter_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -389,11 +388,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             **kwargs
         )
 
-    @check_parameter_api_version(
-        file_permission_copy_mode='2019-07-07',
-        file_permission='2019-07-07',
-        file_permission_key='2019-07-07',
-        copy_file_smb_info='2019-07-07')
     @distributed_trace_async
     async def start_copy_from_url(self, source_url, **kwargs):
         # type: (str, Any) -> Any
