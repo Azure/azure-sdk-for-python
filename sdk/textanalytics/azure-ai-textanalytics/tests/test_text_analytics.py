@@ -57,32 +57,10 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             is_error=False
         )
 
-        inner_error = _models.InnerError(
-            code="invalidParameterValue",
-            message="The parameter is invalid",
-            details={"parameter": "invalid"},
-            target="parameter",
-            inner_error=_models.InnerError(
-                code="invalidParameterValue2",
-                message="The parameter is invalid2",
-                details={"parameter2": "invalid2"},
-                target="parameter2",
-                inner_error=None
-            )
-        )
-
         text_analytics_error = _models.TextAnalyticsError(
             code="invalidRequest",
             message="The request is invalid",
             target="request",
-            inner_error=inner_error,
-            details=[_models.TextAnalyticsError(
-                code="invalidRequest2",
-                message="The request is invalid2",
-                target="request2",
-                inner_error=None,
-                details=None
-            )]
         )
 
         extract_key_phrases_result = \
@@ -156,17 +134,8 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
                          "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(detect_language_result))
-        self.assertEqual("InnerError(code=invalidParameterValue, message=The parameter is invalid, "
-                         "details={'parameter': 'invalid'}, target=parameter, inner_error=InnerError(code="
-                         "invalidParameterValue2, message=The parameter is invalid2, "
-                         "details={'parameter2': 'invalid2'}, target=parameter2, inner_error=None))", repr(inner_error))
-        self.assertEqual("TextAnalyticsError(code=invalidRequest, message=The request is invalid, target=request, "
-                         "inner_error=InnerError(code=invalidParameterValue, message=The parameter is invalid, "
-                         "details={'parameter': 'invalid'}, target=parameter, inner_error=InnerError(code="
-                         "invalidParameterValue2, message=The parameter is invalid2, "
-                         "details={'parameter2': 'invalid2'}, target=parameter2, inner_error=None)), details=["
-                         "TextAnalyticsError(code=invalidRequest2, message=The request is invalid2, target=request2, "
-                         "inner_error=None, details=None)])", repr(text_analytics_error))
+        self.assertEqual("TextAnalyticsError(code=invalidRequest, message=The request is invalid, target=request)",
+                         repr(text_analytics_error))
         self.assertEqual("ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], statistics="
                          "TextDocumentStatistics(character_count=14, transaction_count=18), is_error=False)",
                          repr(extract_key_phrases_result))
@@ -193,13 +162,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "offset=0, length=10, warnings=['sentence was too short to find sentiment'])], is_error=False)",
                          repr(analyze_sentiment_result))
         self.assertEqual("DocumentError(id=1, error=TextAnalyticsError(code=invalidRequest, "
-                         "message=The request is invalid, target=request, "
-                         "inner_error=InnerError(code=invalidParameterValue, message=The parameter is invalid, "
-                         "details={'parameter': 'invalid'}, target=parameter, inner_error=InnerError(code="
-                         "invalidParameterValue2, message=The parameter is invalid2, "
-                         "details={'parameter2': 'invalid2'}, target=parameter2, inner_error=None)), details=["
-                         "TextAnalyticsError(code=invalidRequest2, message=The request is invalid2, target=request2, "
-                         "inner_error=None, details=None)]), is_error=True)", repr(document_error))
+                         "message=The request is invalid, target=request), is_error=True)", repr(document_error))
         self.assertEqual("DetectLanguageInput(id=1, text=hello world, country_hint=US)", repr(detect_language_input))
         self.assertEqual("TextDocumentInput(id=1, text=hello world, language=en)", repr(text_document_input))
         self.assertEqual("TextDocumentBatchStatistics(document_count=1, valid_document_count=2, "
