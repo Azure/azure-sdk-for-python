@@ -65,7 +65,7 @@ async def test_scope():
             raise ValueError("unexpected request")
 
         async def get_token(*scopes):
-            assert len(scopes) is 1
+            assert len(scopes) == 1
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
 
