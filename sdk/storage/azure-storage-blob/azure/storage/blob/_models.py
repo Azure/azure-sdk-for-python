@@ -343,7 +343,7 @@ class ContainerProperties(DictMixin):
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
-        props.encryption_scope_info = ContainerCpkScopeInfo._from_generated(generated)
+        props.encryption_scope_info = ContainerCpkScopeInfo._from_generated(generated)  #pylint: disable=protected-access
         return props
 
 
