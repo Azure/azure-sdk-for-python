@@ -90,7 +90,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         kwargs.pop('_hosts', None)
         self._container_client = ContainerClient(self._blob_account_url, file_system_name,
                                                  credential=credential,
-                                                 _hosts=self._container_client._hosts,
+                                                 _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
@@ -250,8 +250,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting properties on the file system.
         """
         container_properties = await self._container_client.get_container_properties(**kwargs)
-        return FileSystemProperties._convert_from_container_props(
-            container_properties)  # pylint: disable=protected-access
+        return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
     async def set_file_system_metadata(  # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]

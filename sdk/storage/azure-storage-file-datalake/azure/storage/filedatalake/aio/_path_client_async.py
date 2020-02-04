@@ -3,13 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-try:
-    from urllib.parse import urlparse, quote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
-
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
@@ -43,7 +36,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                          **kwargs)
 
         kwargs.pop('_hosts', None)
-        self._blob_client = BlobClient(self._blob_account_url, file_system_name, path_name,
+        self._blob_client = BlobClient(self._blob_account_url, file_system_name, blob_name=path_name,
                                        credential=credential, _hosts=self._blob_client._hosts, **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)

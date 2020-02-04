@@ -60,7 +60,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name,
+        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
                                                       credential=credential, **kwargs)
 
     async def create_directory(self, content_settings=None,  # type: Optional[ContentSettings]
@@ -268,9 +268,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
-        await new_directory_client._rename_path('/' + self.file_system_name + '/' + self.path_name,
-                                          # pylint: disable=protected-access
-                                          **kwargs)
+        await new_directory_client._rename_path('/' + self.file_system_name + '/' + self.path_name,  # pylint: disable=protected-access
+                                                **kwargs)
         return new_directory_client
 
     async def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]

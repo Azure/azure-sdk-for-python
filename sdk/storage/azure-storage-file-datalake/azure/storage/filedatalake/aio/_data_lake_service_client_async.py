@@ -3,11 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-
 from azure.core.paging import ItemPaged
 
 from azure.storage.blob.aio import BlobServiceClient
