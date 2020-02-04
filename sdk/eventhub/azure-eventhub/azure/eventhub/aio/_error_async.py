@@ -37,7 +37,7 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
         await cast("ConsumerProducerMixin", closable)._close_connection_async()
         raise error
     elif isinstance(exception, EventHubError):
-        await cast("ConsumerProducerMixin", closable)._close_connection_async()
+        await cast("ConsumerProducerMixin", closable)._close_handler_async()
         raise error
     elif isinstance(
         exception,
@@ -67,11 +67,7 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
                 await closable._close_connection_async()
             elif isinstance(exception, errors.MessageHandlerError):
                 await cast("ConsumerProducerMixin", closable)._close_handler_async()
-            elif isinstance(exception, errors.AMQPConnectionError):
-                await closable._close_connection_async()
-            elif isinstance(exception, compat.TimeoutException):
-                await closable._close_connection_async()
-            else:
+            else:  # errors.AMQPConnectionError, compat.TimeoutException, and any other errors
                 await closable._close_connection_async()
         except AttributeError:
             pass

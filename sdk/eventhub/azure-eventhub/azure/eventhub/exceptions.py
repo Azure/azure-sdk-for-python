@@ -164,7 +164,7 @@ def _handle_exception(
         closable._close_connection()  # pylint:disable=protected-access
         raise exception
     elif isinstance(exception, EventHubError):
-        closable._close_connection()  # pylint:disable=protected-access
+        closable._close_handler()  # pylint:disable=protected-access
         raise exception
     elif isinstance(
         exception,
@@ -197,12 +197,7 @@ def _handle_exception(
         elif isinstance(exception, errors.MessageHandlerError):
             if hasattr(closable, "_close_handler"):
                 closable._close_handler()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.AMQPConnectionError):
-            if hasattr(closable, "_close_connection"):
-                closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, compat.TimeoutException):
-            closable._close_connection()  # pylint:disable=protected-access
-        else:
+        else:  # errors.AMQPConnectionError, compat.TimeoutException
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
         return _create_eventhub_exception(exception)
