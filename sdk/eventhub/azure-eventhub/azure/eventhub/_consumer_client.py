@@ -36,8 +36,8 @@ class EventHubConsumerClient(ClientBase):
     The main goal of `EventHubConsumerClient` is to receive events from all partitions of an EventHub with
     load-balancing and checkpointing.
 
-    When multiple `EventHubConsumerClient` instances are running against the same event hub, consumer group and checkpointing
-    location, the partitions will be evenly distributed among them.
+    When multiple `EventHubConsumerClient` instances are running against the same event hub, consumer group and
+    checkpointing location, the partitions will be evenly distributed among them.
 
     To enable load-balancing and persisted checkpoints, checkpoint_store must be set when creating the
     `EventHubConsumerClient`.
