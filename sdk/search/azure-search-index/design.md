@@ -28,6 +28,9 @@ In the generated Python API this is reflected in separate methods pairs such as 
   client.get_search_results(search_text="...", mode="full")     # POST
   ```
 
+***NOTE: Response from Bruce on this matter: "always use POST"***
+
+
 ### `SearchApiKeyCredential` API
 
 The Azure Search service uses an HTTP header `"api-key"` to authenticate. This class abstracts the credential to provide room to support other methods of authentication that may become available in the future.
@@ -48,13 +51,13 @@ Azure Search Service affords the ability to batch CRUD-type operations, returnin
 ```python
 azure.search.IndexOperationBatch()
 
-IndexOperationBatch.add_upload_documents(documents: List[dict])
+def IndexOperationBatch.add_upload_documents(documents: List[dict])
 
-IndexOperationBatch.add_delete_documents(documents: List[dict])
+def IndexOperationBatch.add_delete_documents(documents: List[dict])
 
-IndexOperationBatch.add_merge_documents(documents: List[dict])
+def IndexOperationBatch.add_merge_documents(documents: List[dict])
 
-IndexOperationBatch.add_merge_or_upload_documents(documents: List[dict])
+def IndexOperationBatch.add_merge_or_upload_documents(documents: List[dict])
 ```
 
 ### `SearchIndexClient` API
@@ -68,64 +71,192 @@ azure.search.SearchIndexClient(
     credential: SearchApiKeyCredential
 )
 
+class SearchIndexClient:
 
-SearchIndexClient.get_document_count() -> int
+    def SearchIndexClient.get_document_count(self) -> int:
 
-
-SearchIndexClient.get_document(
-    key: str,
-    selected_fields: List[str] = None
-) -> dict
-
-
-SearchIndexClient.get_search_results(
-    search_text: str,
-    **kwargs
-) -> List[dict]
+    def SearchIndexClient.get_document(
+        self,
+        key: str,
+        selected_fields: List[str] = None
+    ) -> dict:
 
 
-SearchIndexClient.get_suggestions(
-    search_text: str,
-    suggester_name: str,
-    **kwargs
-) -> List[dict]
+    def SearchIndexClient.get_search_results(
+        self,
+        search_text: str,
+        **kwargs
+    ) -> List[dict]:
 
 
-SearchIndexClient.get_autocompletions(
-    search_text: str,
-    suggester_name: str,
-    **kwargs
-) -> List[dict]
+    def SearchIndexClient.get_suggestions(
+        self,
+        search_text: str,
+        suggester_name: str,
+        **kwargs
+    ) -> List[dict]:
 
 
-SearchIndexClient.upload_documents(
-    documents: List[dict],
-    **kwargs
-) ->  List[IndexingResult]
+    def SearchIndexClient.get_autocompletions(
+        self,
+        search_text: str,
+        suggester_name: str,
+        **kwargs
+    ) -> List[dict]:
 
 
-SearchIndexClient.delete_documents(
-    documents: List[dict],
-    **kwargs
-) -> List[IndexingResult]
+    def SearchIndexClient.upload_documents(
+        self,
+        documents: List[dict],
+        **kwargs
+    ) -> List[IndexingResult]:
 
 
-SearchIndexClient.merge_documents(
-    documents: List[dict],
-    **kwargs
-) ->  List[IndexingResult]
+    def SearchIndexClient.delete_documents(
+        self,
+        documents: List[dict],
+        **kwargs
+    ) -> List[IndexingResult]:
 
 
-SearchIndexClient.merge_or_upload_documents(
-    documents: List[dict],
-    **kwargs
-) ->  List[IndexingResult]
+    def SearchIndexClient.merge_documents(
+        self,
+        documents: List[dict],
+        **kwargs
+    ) -> List[IndexingResult]:
 
-SearchIndexClient.batch_update(
-    batch: IndexOperationBatch,
-    **kwargs
-) ->  List[IndexingResult]
 
+    def SearchIndexClient.merge_or_upload_documents(
+        self,
+        documents: List[dict],
+        **kwargs
+    ) -> List[IndexingResult]:
+
+    def SearchIndexClient.batch_update(
+        self,
+        batch: IndexOperationBatch,
+        **kwargs
+    ) -> List[IndexingResult]:
+```
+
+### Query Building
+
+In addition to simple text searches, Azure Search supports more sophisticated
+search requests. These include ODATA queries for filtering, selecting, and
+ordering result and Lucene queries for search.
+
+#### Lucene Search Queries
+
+The search field of the service accepts Lucene query strings, which may of two
+formats: simple or full.
+
+#### Simple Lucene Query Syntax
+
+Propose that simple mode search queries, e.g. ``"wifi AND parking NOT luxury"``
+simply be supplied as-is by users. In this context an API is more likely to
+get in the way, rather than provide useful structure for users to rely on.
+
+#### Full Lucene Query Syntax
+
+TBD
+
+#### ODATA fields
+
+The API below is intended to allow users to build up complicated ODATA string
+expressions without having to construct the ODATA strings manually. These are
+building block components to be used to pass expressions to a ``SearchQuery``
+object. Examples after the API list demonstrate the functionality, as a
+reference.
+
+```python
+
+# Low level operations
+
+def NOT(x) -> str:
+def AND(*args) -> str:
+def OR(*args) -> str:
+def EQ(x, y) -> str:
+def NEQ(x, y) -> str:
+def GT(x, y) -> str:
+def GE(x, y) -> str:
+def LT(x, y) -> str:
+def LE(x, y) -> str:
+
+def ALL(path: str, expression: Union[str, callable]) -> str:
+def ANY(path: str, expression: Union[str, callable, None] = None) -> str:
+
+# supports comparisons
+class VAR(object):
+
+# ODATA operators
+
+def asc(sorter) -> str:
+def desc(sorter) -> str:
+
+def search_score() -> str
+
+class orderby:
+
+class geo_distance:
+class POINT:
+
+class geo_intersection:
+class POLYGON:
+
+class search_in:
+class search_ismatch:
+class search_ismatchscoring:
+
+class select:
+```
+
+##### Examples of ODATA string generation
+
+The focus of the API above may be better illustrated with examples. Each of the
+the expressions below can be passed to configure a ``SearchQuery``, which can
+then use them to resolve to the correct ODATA strings.
+
+```python
+>>> ob = orderby("Rating desc", "BaseRate", asc("stars"), asc(search_score()))
+>>> print(ob)
+$orderby=Rating desc,BaseRate,stars asc,search.score() asc
+
+>>> geo_distance("FOO", POINT(10, 20)
+>>> print(gd)
+geo.distance(FOO, geography'POINT(10 20)')
+
+>>> print(gd >= 10)
+geo.distance(FOO, geography'POINT(10 20)') ge 10
+
+>>> s = select("HotelId", "HotelName", "Rating", "Address/City")
+>>> print(s)
+$select=HotelId,HotelName,Rating,Address/City
+
+>>> si = search_in("FOO", "a", "b", "c", delimiter="|")
+>>> print(si)
+search.in(FOO, 'a|b|c', '|')
+
+>>> AND("Address/City eq 'Vancouver'",  "Address/Country eq 'US'", geo_distance("FOO", POINT(10, 20)) < 10)
+"(Address/City eq 'Vancouver' and Address/Country eq 'US' and geo.distance(FOO, geography'POINT(10 20)') lt 10)"
+
+>>> ALL("tags", lambda t: t == 'wifi')
+"tags/all(t: t eq 'wifi')"
+
+>>> ALL("locations", lambda loc: geo_intersects(loc, POLYGON(POINT(1,2), "3 4", POINT(5, 6), "1 2")))
+"locations/all(loc: geo.intersects(loc, geography'POLYGON((1 2, 3 4, 5 6, 1 2))'))"
+```
+
+These operations can be used to pass expressions to the ``SearchQuery`` object
+below.
+
+#### ``SearchQuery`` API
+
+```python
+azure.search.SearchQuery(**kwargs)
+
+def IndexOperationBatch.filter(*expressions: List[]) -> None:
+def IndexOperationBatch.orderby(*fields: List[]) -> None:
+def IndexOperationBatch.select(*fields: List[]) -> None:
 ```
 
 ## Scenarios
@@ -160,7 +291,7 @@ result = client.get_document(key="10")
 print(result)
 ```
 
-### 3. Search for documents in an Azure search index
+### 3. Search for documents in an Azure search index with simple text
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -179,7 +310,34 @@ for doc in results:
     print(doc['BaseRate'])
 ```
 
-### 4. Get a list of search suggestions
+### 3. Filter results Azure search index
+
+```python
+from azure.search import SearchApiKeyCredential, SearchIndexClient, SearchQuery
+
+client = SearchIndexClient(
+    search_service_name="my-search-service",
+    index_name="hotels-sample-index",
+    credential=SearchApiKeyCredential(api_key="xxxxxxxxx")
+)
+
+query = SearchQuery(
+    search_text="WiFi",
+    highlightPreTag="<em>",
+    highlightPostTag="</em>")
+query.fiter(AND("Address/City eq 'Portland'",  "Address/Country eq 'US'"))
+query.orderby(desc("Rating"), asc(geo_distance("location", POINT(10, 20))))
+query.select("HotelId", "HotelName", "Rating")
+
+results = client.get_search_results(search_query=query)
+
+for doc in results:
+    print(doc['HotelName'])
+    print(doc['Rating'])
+
+```
+
+### 5. Get a list of search suggestions
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -190,13 +348,13 @@ client = SearchIndexClient(
     credential=SearchApiKeyCredential(api_key="xxxxxxxxx")
 )
 
-results = service.documents.get_suggestions(search_text="cof", suggester_name="sg")
+results = client.get_suggestions(search_text="cof", suggester_name="sg")
 
 for result in results:
     print(result['text'])
 ```
 
-### 5. Get a list of search auto-completions
+### 6. Get a list of search auto-completions
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -207,14 +365,14 @@ client = SearchIndexClient(
     credential=SearchApiKeyCredential(api_key="xxxxxxxxx")
 )
 
-results = service.documents.get_autocompletions(search_text="cof", suggester_name="sg")
+results = client.get_autocompletions(search_text="cof", suggester_name="sg")
 
 for result in results:
     print(result['text'])
     print(result['query_plus_text'])
 ```
 
-### 6. Upload documents to an Azure Search index
+### 7. Upload documents to an Azure Search index
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -230,13 +388,13 @@ documents = [
     { "id": "11", "description": "another new item" },
 ]
 
-results = service.documents.upload_documents(documents)
+results = client.upload_documents(documents)
 
 for result in results:
     print(result.status_code)
 ```
 
-### 7. Delete documents from an Azure Search index
+### 8. Delete documents from an Azure Search index
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -252,13 +410,13 @@ documents = [
     { "id": "11" },
 ]
 
-results = service.documents.delete_documents(documents)
+results = client.delete_documents(documents)
 
 for result in results:
     print(result.status_code)
 ```
 
-### 8. Merge new fields in an existing document
+### 9. Merge new fields in an existing document
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -274,13 +432,13 @@ documents = [
     { "id": "11", "description": "new item description" },
 ]
 
-results = service.documents.merge_documents(documents)
+results = client.merge_documents(documents)
 
 for result in results:
     print(result.status_code)
 ```
 
-### 9. Merge or upload a document in an Azure Search index
+### 10. Merge or upload a document in an Azure Search index
 
 ```python
 from azure.search import SearchApiKeyCredential, SearchIndexClient
@@ -296,13 +454,13 @@ documents = [
     { "id": "12", "description": "new item description" },
 ]
 
-results = service.documents.merge_documents(documents)
+results = client.merge_documents(documents)
 
 for result in results:
     print(result.status_code)
 ```
 
-### 10. Batch CRUD operations on documents
+### 11. Batch CRUD operations on documents
 
 ```python
 from azure.search import IndexOperationBatch, SearchApiKeyCredential, SearchIndexClient
@@ -318,7 +476,7 @@ batch.add_upload_document([{ "id": "10", "description": "new item" }])
 batch.add_delete_document([{ "id": "8"}, { "id": "9" }])
 batch.add_merge_document([{ "id": "10", None }])
 
-results = service.documents.batch_update(work)
+results = client.batch_update(work)
 
 for result in results:
     print(result.status_code)
