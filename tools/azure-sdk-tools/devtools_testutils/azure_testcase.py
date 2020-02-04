@@ -204,11 +204,11 @@ class AzureTestCase(ReplayableTest):
                 credentials = self.settings.get_credentials()
 
         # Real client creation
-        kwargs.setdefault("logging_enable", True)
         # FIXME decide what is the final argument for that
         # if self.is_playback():
         #     kwargs.setdefault("polling_interval", 0)
         if _is_autorest_v3(client_class):
+            kwargs.setdefault("logging_enable", True)
             client = client_class(
                 credential=credentials,
                 **kwargs
