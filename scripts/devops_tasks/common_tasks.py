@@ -54,7 +54,7 @@ REGRESSION_EXCLUDED_PACKAGES = [
 
 omit_regression = (
     lambda x: "nspkg" not in x
-    and len([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]) == 0
+    and not any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS])
     and os.path.basename(x) not in META_PACKAGES
     and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
 )
