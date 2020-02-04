@@ -252,7 +252,11 @@ class RegressionTest:
         logging.info("Searching for packages in :{}".format(site_packages))
         installed_pkgs = list(freeze.freeze(paths=site_packages))
         logging.info("Installed packages: {}".format(installed_pkgs))
-        return "{0}=={1}".format(package, version) in installed_pkgs
+        # Verify installed package version
+        # Search for exact version or dev build version of current version.
+        pkg_search_string = "{0}=={1}".format(package, version)
+        dev_build_search_string = "{0}=={1}.dev".format(package, version)
+        return any(p == pkg_search_string or p.startswith(dev_build_search_string) for p in installed_pkgs)
 
 
 # This method identifies package dependency map for all packages in azure sdk
