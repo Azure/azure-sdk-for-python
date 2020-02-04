@@ -41,7 +41,12 @@ class TagsOperations(object):
 
     def delete_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Deletes a tag value.
+        """Deletes a predefined tag value for a predefined tag name.
+
+        This operation allows deleting a value from the list of predefined
+        values for an existing predefined tag name. The value being deleted
+        must not be in use as a tag value for the given tag name for any
+        resource.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -94,7 +99,11 @@ class TagsOperations(object):
 
     def create_or_update_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Creates a tag value. The name of the tag must already exist.
+        """Creates a predefined value for a predefined tag name.
+
+        This operation allows adding a value to the list of predefined values
+        for an existing predefined tag name. A tag value can have a maximum of
+        256 characters.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -157,11 +166,13 @@ class TagsOperations(object):
 
     def create_or_update(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Creates a tag in the subscription.
+        """Creates a predefined tag name.
 
-        The tag name can have a maximum of 512 characters and is case
-        insensitive. Tag names created by Azure have prefixes of microsoft,
-        azure, or windows. You cannot create tags with one of these prefixes.
+        This operation allows adding a name to the list of predefined tag names
+        for the given subscription. A tag name can have a maximum of 512
+        characters and is case-insensitive. Tag names cannot have the following
+        prefixes which are reserved for Azure use: 'microsoft', 'azure',
+        'windows'.
 
         :param tag_name: The name of the tag to create.
         :type tag_name: str
@@ -221,10 +232,12 @@ class TagsOperations(object):
 
     def delete(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a tag from the subscription.
+        """Deletes a predefined tag name.
 
-        You must remove all values from a resource tag before you can delete
-        it.
+        This operation allows deleting a name from the list of predefined tag
+        names for the given subscription. The name being deleted must not be in
+        use as a tag name for any resource. All predefined values for the given
+        name must have already been deleted.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -274,8 +287,13 @@ class TagsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the names and values of all resource tags that are defined in a
-        subscription.
+        """Gets a summary of tag usage under the subscription.
+
+        This operation performs a union of predefined tags, resource tags,
+        resource group tags and subscription tags, and returns a summary of
+        usage for each tag name and value under the given subscription. In case
+        of a large number of tags, this operation may return a previously
+        cached result.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -339,15 +357,20 @@ class TagsOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames'}
 
-    def resource_create(
-            self, scope, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or Replace existing tags with passing in tags.
+    def create_or_update_at_scope(
+            self, scope, properties, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates the entire set of tags on a resource or
+        subscription.
+
+        This operation allows adding or replacing the entire set of tags on the
+        specified resource or subscription. The specified entity can have a
+        maximum of 50 tags.
 
         :param scope: The resource scope.
         :type scope: str
-        :param parameters: Parameters for creating multiple tags.
-        :type parameters:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
+        :param properties: The set of tags.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -358,8 +381,10 @@ class TagsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.TagsResource(properties=properties)
+
         # Construct URL
-        url = self.resource_create.metadata['url']
+        url = self.create_or_update_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str')
         }
@@ -401,20 +426,27 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    resource_create.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
+    create_or_update_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
-    def resource_update(
+    def update_at_scope(
             self, scope, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Update multiple tags: if the tagKey exists, update tagValue with the
-        new value; if not, insert the new record.
+        """Selectively updates the set of tags on a resource or subscription.
+
+        This operation allows replacing, merging or selectively deleting tags
+        on the specified resource or subscription. The specified entity can
+        have a maximum of 50 tags at the end of the operation. The 'replace'
+        option replaces the entire set of existing tags with a new set. The
+        'merge' option allows adding tags with new names and updating the
+        values of tags with existing names. The 'delete' option allows
+        selectively deleting tags based on given names or name/value pairs.
 
         :param scope: The resource scope.
         :type scope: str
-        :param operation: The operation type for the patch api. Possible
+        :param operation: The operation type for the patch API. Possible
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
          ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-        :param properties: tags object passing in the request.
+        :param properties: The set of tags.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
@@ -427,10 +459,10 @@ class TagsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TagPatchRequest(operation=operation, properties=properties)
+        parameters = models.TagsPatchResource(operation=operation, properties=properties)
 
         # Construct URL
-        url = self.resource_update.metadata['url']
+        url = self.update_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str')
         }
@@ -452,7 +484,7 @@ class TagsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'TagPatchRequest')
+        body_content = self._serialize.body(parameters, 'TagsPatchResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -472,11 +504,11 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    resource_update.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
+    update_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
-    def resource_get(
+    def get_at_scope(
             self, scope, custom_headers=None, raw=False, **operation_config):
-        """Gets all the tags for the resource.
+        """Gets the entire set of tags on a resource or subscription.
 
         :param scope: The resource scope.
         :type scope: str
@@ -491,7 +523,7 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.resource_get.metadata['url']
+        url = self.get_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str')
         }
@@ -529,11 +561,11 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    resource_get.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
+    get_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
-    def resource_delete(
+    def delete_at_scope(
             self, scope, custom_headers=None, raw=False, **operation_config):
-        """Deletes all the tags for the resource.
+        """Deletes the entire set of tags on a resource or subscription.
 
         :param scope: The resource scope.
         :type scope: str
@@ -547,7 +579,7 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.resource_delete.metadata['url']
+        url = self.delete_at_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str')
         }
@@ -578,4 +610,4 @@ class TagsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resource_delete.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
+    delete_at_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}

@@ -1519,7 +1519,7 @@ class TagDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The tag ID.
+    :ivar id: The tag name ID.
     :vartype id: str
     :param tag_name: The tag name.
     :type tag_name: str
@@ -1551,30 +1551,8 @@ class TagDetails(Model):
         self.values = kwargs.get('values', None)
 
 
-class TagPatchRequest(Model):
-    """Tag Request for Patch operation.
-
-    :param operation: The operation type for the patch api. Possible values
-     include: 'Replace', 'Merge', 'Delete'
-    :type operation: str or
-     ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-    :param properties: tags object passing in the request.
-    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
-    """
-
-    _attribute_map = {
-        'operation': {'key': 'operation', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Tags'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TagPatchRequest, self).__init__(**kwargs)
-        self.operation = kwargs.get('operation', None)
-        self.properties = kwargs.get('properties', None)
-
-
 class Tags(Model):
-    """key and value pairs for tags.
+    """A dictionary of name and value pairs.
 
     :param tags:
     :type tags: dict[str, str]
@@ -1589,25 +1567,43 @@ class Tags(Model):
         self.tags = kwargs.get('tags', None)
 
 
-class TagsResource(Resource):
-    """Tags for the resource.
+class TagsPatchResource(Model):
+    """Wrapper resource for tags patch API request only.
+
+    :param operation: The operation type for the patch API. Possible values
+     include: 'Replace', 'Merge', 'Delete'
+    :type operation: str or
+     ~azure.mgmt.resource.resources.v2019_10_01.models.enum
+    :param properties: The set of tags.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
+    """
+
+    _attribute_map = {
+        'operation': {'key': 'operation', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'Tags'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TagsPatchResource, self).__init__(**kwargs)
+        self.operation = kwargs.get('operation', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class TagsResource(Model):
+    """Wrapper resource for tags API requests and responses.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID
+    :ivar id: The ID of the tags wrapper resource.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the tags wrapper resource.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the tags wrapper resource.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param properties: Required. tags property.
+    :param properties: Required. The set of tags.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
 
@@ -1622,13 +1618,14 @@ class TagsResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'Tags'},
     }
 
     def __init__(self, **kwargs):
         super(TagsResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.properties = kwargs.get('properties', None)
 
 
@@ -1638,7 +1635,7 @@ class TagValue(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The tag ID.
+    :ivar id: The tag value ID.
     :vartype id: str
     :param tag_value: The tag value.
     :type tag_value: str
