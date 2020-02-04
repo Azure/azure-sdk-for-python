@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class CheckNameAvailabilityReason(str, Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
 class ServerConnectionType(str, Enum):
 
     default = "Default"
@@ -331,11 +325,6 @@ class OperationOrigin(str, Enum):
     system = "system"
 
 
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
 class SyncAgentState(str, Enum):
 
     online = "Online"
@@ -504,6 +493,15 @@ class RestorePointType(str, Enum):
     discrete = "DISCRETE"
 
 
+class SensitivityLabelRank(str, Enum):
+
+    none = "None"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+    critical = "Critical"
+
+
 class ManagementOperationState(str, Enum):
 
     pending = "Pending"
@@ -617,6 +615,11 @@ class InstancePoolLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+
+
 class ManagedServerCreateMode(str, Enum):
 
     default = "Default"
@@ -653,6 +656,34 @@ class ManagedDatabaseCreateMode(str, Enum):
     restore_external_backup = "RestoreExternalBackup"
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
+
+
+class PrivateLinkServiceConnectionStateStatus(str, Enum):
+
+    approved = "Approved"
+    pending = "Pending"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
+
+    none = "None"
+
+
+class PrivateEndpointProvisioningState(str, Enum):
+
+    approving = "Approving"
+    ready = "Ready"
+    dropping = "Dropping"
+    failed = "Failed"
+    rejecting = "Rejecting"
+
+
+class CheckNameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class MaxSizeUnit(str, Enum):

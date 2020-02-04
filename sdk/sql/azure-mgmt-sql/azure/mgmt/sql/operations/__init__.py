@@ -11,7 +11,6 @@
 
 from ._recoverable_databases_operations import RecoverableDatabasesOperations
 from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
-from ._servers_operations import ServersOperations
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
 from ._database_threat_detection_policies_operations import DatabaseThreatDetectionPoliciesOperations
 from ._data_masking_policies_operations import DataMaskingPoliciesOperations
@@ -93,6 +92,7 @@ from ._managed_database_restore_details_operations import ManagedDatabaseRestore
 from ._managed_databases_operations import ManagedDatabasesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._servers_operations import ServersOperations
 from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from ._capabilities_operations import CapabilitiesOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
@@ -101,7 +101,6 @@ from ._workload_classifiers_operations import WorkloadClassifiersOperations
 __all__ = [
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
-    'ServersOperations',
     'ServerConnectionPoliciesOperations',
     'DatabaseThreatDetectionPoliciesOperations',
     'DataMaskingPoliciesOperations',
@@ -183,6 +182,7 @@ __all__ = [
     'ManagedDatabasesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'ServersOperations',
     'ServerAzureADAdministratorsOperations',
     'CapabilitiesOperations',
     'WorkloadGroupsOperations',

@@ -115,6 +115,7 @@ try:
     from ._models_py3 import PartnerRegionInfo
     from ._models_py3 import PerformanceLevelCapability
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionProperties
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceProperties
@@ -143,6 +144,7 @@ try:
     from ._models_py3 import ServerDnsAlias
     from ._models_py3 import ServerDnsAliasAcquisition
     from ._models_py3 import ServerKey
+    from ._models_py3 import ServerPrivateEndpointConnection
     from ._models_py3 import ServerSecurityAlertPolicy
     from ._models_py3 import ServerUpdate
     from ._models_py3 import ServerUsage
@@ -287,6 +289,7 @@ except (SyntaxError, ImportError):
     from ._models import PartnerRegionInfo
     from ._models import PerformanceLevelCapability
     from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionProperties
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkResourceProperties
@@ -315,6 +318,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerDnsAlias
     from ._models import ServerDnsAliasAcquisition
     from ._models import ServerKey
+    from ._models import ServerPrivateEndpointConnection
     from ._models import ServerSecurityAlertPolicy
     from ._models import ServerUpdate
     from ._models import ServerUsage
@@ -428,7 +432,6 @@ from ._paged_models import VulnerabilityAssessmentScanRecordPaged
 from ._paged_models import WorkloadClassifierPaged
 from ._paged_models import WorkloadGroupPaged
 from ._sql_management_client_enums import (
-    CheckNameAvailabilityReason,
     ServerConnectionType,
     SecurityAlertPolicyState,
     SecurityAlertPolicyEmailAccountAdmins,
@@ -461,7 +464,6 @@ from ._sql_management_client_enums import (
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
     OperationOrigin,
-    IdentityType,
     SyncAgentState,
     SyncMemberDbType,
     SyncGroupLogType,
@@ -483,6 +485,7 @@ from ._sql_management_client_enums import (
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
+    SensitivityLabelRank,
     ManagementOperationState,
     CreateMode,
     SampleName,
@@ -496,11 +499,16 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     InstancePoolLicenseType,
+    IdentityType,
     ManagedServerCreateMode,
     ManagedInstanceLicenseType,
     ManagedInstanceProxyOverride,
     ManagedDatabaseStatus,
     ManagedDatabaseCreateMode,
+    PrivateLinkServiceConnectionStateStatus,
+    PrivateLinkServiceConnectionStateActionsRequire,
+    PrivateEndpointProvisioningState,
+    CheckNameAvailabilityReason,
     MaxSizeUnit,
     LogSizeUnit,
     CapabilityStatus,
@@ -619,6 +627,7 @@ __all__ = [
     'PartnerRegionInfo',
     'PerformanceLevelCapability',
     'PrivateEndpointConnection',
+    'PrivateEndpointConnectionProperties',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
@@ -647,6 +656,7 @@ __all__ = [
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'ServerKey',
+    'ServerPrivateEndpointConnection',
     'ServerSecurityAlertPolicy',
     'ServerUpdate',
     'ServerUsage',
@@ -687,7 +697,6 @@ __all__ = [
     'WorkloadGroup',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
-    'ServerPaged',
     'DataMaskingRulePaged',
     'FirewallRulePaged',
     'GeoBackupPolicyPaged',
@@ -756,10 +765,10 @@ __all__ = [
     'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
+    'ServerPaged',
     'ServerAzureADAdministratorPaged',
     'WorkloadGroupPaged',
     'WorkloadClassifierPaged',
-    'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
@@ -792,7 +801,6 @@ __all__ = [
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
     'OperationOrigin',
-    'IdentityType',
     'SyncAgentState',
     'SyncMemberDbType',
     'SyncGroupLogType',
@@ -814,6 +822,7 @@ __all__ = [
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
+    'SensitivityLabelRank',
     'ManagementOperationState',
     'CreateMode',
     'SampleName',
@@ -827,11 +836,16 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'InstancePoolLicenseType',
+    'IdentityType',
     'ManagedServerCreateMode',
     'ManagedInstanceLicenseType',
     'ManagedInstanceProxyOverride',
     'ManagedDatabaseStatus',
     'ManagedDatabaseCreateMode',
+    'PrivateLinkServiceConnectionStateStatus',
+    'PrivateLinkServiceConnectionStateActionsRequire',
+    'PrivateEndpointProvisioningState',
+    'CheckNameAvailabilityReason',
     'MaxSizeUnit',
     'LogSizeUnit',
     'CapabilityStatus',
