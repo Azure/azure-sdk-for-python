@@ -17,6 +17,7 @@ AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID = "AZURE_IDENTITY_TEST_MANAGED_ID
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "cloudshell: test requires a Cloud Shell environment")
+    config.addinivalue_line("markers", "appservice: test requires a App Service environment")
 
 
 @pytest.fixture()
@@ -47,6 +48,19 @@ def cloud_shell():
 
     if EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET in os.environ:
         pytest.skip("Cloud Shell MSI unavailable")
+        return
+
+    try:
+        return {"vault_url": os.environ[AZURE_IDENTITY_TEST_VAULT_URL]}
+    except KeyError:
+        pytest.skip("this test requires a Key Vault URL in $" + AZURE_IDENTITY_TEST_VAULT_URL)
+
+@pytest.fixture()
+def app_service():
+    """App Service MSI is distinguished by values for MSI_ENDPOINT and MSI_SECRET."""
+
+    if EnvironmentVariables.MSI_ENDPOINT not in os.environ or EnvironmentVariables.MSI_SECRET not in os.environ:
+        pytest.skip("App Service MSI unavailable")
         return
 
     try:
