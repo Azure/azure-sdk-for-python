@@ -557,7 +557,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         options = request.context.options
         response_encoding = options.pop("response_encoding", self._response_encoding)
         if response_encoding:
-            request.context.setdefault("response_encoding", response_encoding)
+            request.context["response_encoding"] = response_encoding
 
     def on_response(self,
         request, # type: PipelineRequest[HTTPRequestType]
