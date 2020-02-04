@@ -61,7 +61,7 @@ omit_regression = (
     and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
 )
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
-omit_build = lambda x: x # Dummy lambda to match ommit type
+omit_build = lambda x: x # Dummy lambda to match omit type
 # dict of filter type and filter function
 omit_funct_dict = {
     "Build": omit_build,
