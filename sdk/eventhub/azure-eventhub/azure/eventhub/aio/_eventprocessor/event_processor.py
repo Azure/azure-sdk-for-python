@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import random
 from typing import (
     Dict,
     Callable,
@@ -310,6 +311,8 @@ class EventProcessor(
         if not self._running:
             self._running = True
             while self._running:
+                random_jitter = self._load_balancing_interval * random.random() * 0.2
+                load_balancing_interval = self._load_balancing_interval + random_jitter
                 try:
                     claimed_partition_ids = (
                         await self._ownership_manager.claim_ownership()
@@ -355,11 +358,11 @@ class EventProcessor(
                         self._eventhub_name,
                         self._consumer_group,
                         err,
-                        self._load_balancing_interval
+                        load_balancing_interval
                     )
                     await self._process_error(None, err)  # type: ignore
 
-                await asyncio.sleep(self._load_balancing_interval, loop=self._loop)
+                await asyncio.sleep(load_balancing_interval, loop=self._loop)
 
     async def stop(self) -> None:
         """Stop the EventProcessor.
