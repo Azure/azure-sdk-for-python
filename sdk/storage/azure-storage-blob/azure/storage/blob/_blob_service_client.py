@@ -430,11 +430,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param public_access:
             Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
-        :keyword str or Tuple(str, bool) default_encryption_scope:
+        :keyword dict or ~azure.storage.blob.ContainerCpkScopeInfo encryption_scope:
             Specifies the default encryption scope to set on the container and use for
-            all future writes. If specified as a string, this will not allow overrides on an
-            individual blob. To allow overrides, specify as a tuple of two values, the scope name
-            and a boolean: ("scope", True). Introduced in API version '2019-07-07'.
+            all future writes. Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient

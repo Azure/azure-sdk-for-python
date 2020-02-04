@@ -7,11 +7,11 @@
 
 from azure.core import MatchConditions
 
+from ._models import ContainerCpkScopeInfo
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
-    CpkScopeInfo,
-    ContainerCpkScopeInfo
+    CpkScopeInfo
 )
 
 
@@ -71,19 +71,7 @@ def get_cpk_scope_info(kwargs):
 
 def get_container_cpk_scope_info(kwargs):
     # type: (Dict[str, Any]) -> ContainerCpkScopeInfo
-    try:
-        scope, deny_override = kwargs['default_encryption_scope']
-    except ValueError:
-        return ContainerCpkScopeInfo(
-            default_encryption_scope=kwargs.pop('default_encryption_scope'),
-            deny_encryption_scope_override=False
-        )
-    except KeyError:
-        pass
-    else:
-        del kwargs['default_encryption_scope']
-        return ContainerCpkScopeInfo(
-            default_encryption_scope=scope,
-            deny_encryption_scope_override=deny_override
-        )
-    return None
+    encryption_scope = kwargs.pop('encryption_scope', None)
+    if encryption_scope and isinstance(encryption_scope, dict):
+        return ContainerCpkScopeInfo(**encryption_scope)
+    return encryption_scope

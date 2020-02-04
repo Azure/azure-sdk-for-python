@@ -14,6 +14,7 @@ from azure.storage.blob import (
     BlobType,
     BlobBlock,
     BlobSasPermissions,
+    ContainerCpkScopeInfo,
     generate_blob_sas
 )
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
@@ -22,7 +23,12 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 # The encryption scope are pre-created using management plane tool ArmClient.
 # So we can directly use the scope in the test.
 TEST_ENCRYPTION_KEY_SCOPE = "antjoscope1"
-TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = "containerscope"
+TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = ContainerCpkScopeInfo(
+    default_encryption_scope="containerscope")
+TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE = {
+    "default_encryption_scope": "containerscope",
+    "deny_encryption_scope_override": True
+}
 
 # ------------------------------------------------------------------------------
 
@@ -653,7 +659,7 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         container_client = bsc.create_container('cpkcontainer',
-                                                default_encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
+                                                encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
 
         blob_client = container_client.get_blob_client("appendblob")
 
@@ -678,7 +684,7 @@ class StorageCPKNTest(StorageTestCase):
             max_page_size=1024)
         container_client = bsc.create_container(
             'cpkcontainerwithdenyoverride',
-            default_encryption_scope=(TEST_CONTAINER_ENCRYPTION_KEY_SCOPE, True)
+            encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE
         )
 
         blob_client = container_client.get_blob_client("appendblob")
@@ -689,7 +695,7 @@ class StorageCPKNTest(StorageTestCase):
 
         resp = blob_client.upload_blob(b'aaaa', BlobType.AppendBlob)
 
-        self.assertEqual(resp['encryption_scope'], TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
+        self.assertEqual(resp['encryption_scope'], TEST_CONTAINER_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
 
         container_client.delete_container()
 # ------------------------------------------------------------------------------
