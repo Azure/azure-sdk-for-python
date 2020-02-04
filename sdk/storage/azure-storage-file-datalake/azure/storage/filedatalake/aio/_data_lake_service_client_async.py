@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.storage.filedatalake._generated.aio import DataLakeStorageClient
-
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -13,6 +11,7 @@ except ImportError:
 from azure.core.paging import ItemPaged
 
 from azure.storage.blob.aio import BlobServiceClient
+from .._generated.aio import DataLakeStorageClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from ._file_system_client_async import FileSystemClient
 from .._data_lake_service_client import DataLakeServiceClient as DataLakeServiceClientBase

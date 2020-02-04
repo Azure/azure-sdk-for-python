@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import uuid
-
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any,
     TypeVar, TYPE_CHECKING
@@ -14,9 +12,7 @@ from azure.storage.blob.aio import BlobLeaseClient
 from .._data_lake_lease import DataLakeLeaseClient as DataLakeLeaseClientBase
 
 
-
 if TYPE_CHECKING:
-    from datetime import datetime
     FileSystemClient = TypeVar("FileSystemClient")
     DataLakeDirectoryClient = TypeVar("DataLakeDirectoryClient")
     DataLakeFileClient = TypeVar("DataLakeFileClient")

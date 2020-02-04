@@ -10,8 +10,6 @@ except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
-
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
