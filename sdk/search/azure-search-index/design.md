@@ -40,6 +40,8 @@ azure.search.SearchApiKeyCredential(api_key)
 
 # read only property
 SearchAPIKeyCredential.api_key: str
+
+def SearchAPIKeyCredential.update_key(key: str) -> None:
 ```
 
 ### `IndexOperationBatch` API
@@ -51,13 +53,13 @@ Azure Search Service affords the ability to batch CRUD-type operations, returnin
 ```python
 azure.search.IndexOperationBatch()
 
-def IndexOperationBatch.add_upload_documents(documents: List[dict])
+def IndexOperationBatch.add_upload_documents(self, documents: List[dict]) -> None:
 
-def IndexOperationBatch.add_delete_documents(documents: List[dict])
+def IndexOperationBatch.add_delete_documents(self, documents: List[dict]) -> None:
 
-def IndexOperationBatch.add_merge_documents(documents: List[dict])
+def IndexOperationBatch.add_merge_documents(self, documents: List[dict]) -> None:
 
-def IndexOperationBatch.add_merge_or_upload_documents(documents: List[dict])
+def IndexOperationBatch.add_merge_or_upload_documents(self, documents: List[dict]) -> None:
 ```
 
 ### `SearchIndexClient` API
@@ -334,7 +336,6 @@ results = client.get_search_results(search_query=query)
 for doc in results:
     print(doc['HotelName'])
     print(doc['Rating'])
-
 ```
 
 ### 5. Get a list of search suggestions
