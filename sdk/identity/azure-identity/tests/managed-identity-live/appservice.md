@@ -1,6 +1,6 @@
 # Testing azure-identity in Azure App Service
 
-# prerequisite tools
+# Prerequisite tools
 - Azure CLI
 - Docker CLI
   - https://hub.docker.com/search?q=&type=edition&offering=community
@@ -15,7 +15,7 @@ This test requires instances of these Azure resources:
 
 The rest of this section is a walkthrough of deploying these resources.
 
-## set environment variables to simplify copy-pasting
+## Set environment variables to simplify copy-pasting
 - RESOURCE_GROUP
   - name of an Azure resource group
   - must be unique in the Azure subscription
@@ -36,27 +36,27 @@ The rest of this section is a walkthrough of deploying these resources.
 - WEB_APP_SYSTEM_ASSIGNED
 - WEB_APP_USER_ASSIGNED
 
-## resource group
+## Resource group
 ```sh
 az group create -n $RESOURCE_GROUP -l westus2
 ```
 
-## container registry
+## Container registry
 ```sh
 az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
 ```
 
-## key vault
+## Key vault
 ```sh
 az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard
 ```
 
-## app service plan
+## App service plan
 ```sh
 az appservice plan create -g $RESOURCE_GROUP -n $APP_SERVICE_PLAN -l westus2 --sku B1 --is-linux
 ```
 
-## web app: system-assigned identity
+## Web app: system-assigned identity
 ```sh
 az webapp create -n $WEB_APP_SYSTEM_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
 ```
@@ -79,7 +79,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME -g $RESOURCE_GROUP \
     --secret-permissions set delete
 ```
 
-## managed identity
+## Managed identity
 Create the identity:
 ```sh
 az identity create -n $MANAGED_IDENTITY_NAME -g $RESOURCE_GROUP -l westus2
@@ -92,7 +92,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME \
     --secret-permissions set delete
 ```
 
-## web app: user-assigned identity
+## Web app: user-assigned identity
 ```sh
 az webapp create -n $WEB_APP_USER_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
 ```
@@ -109,27 +109,27 @@ At the time of writing, attaching user-assigned identities is impossible through
 Use the Azure Portal to attached the managed identity created above to the Web App (see
 [App Service documentation](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=dotnet#adding-a-user-assigned-identity)).
 
-# build the Docker image
+# Build the Docker image
 The test are deployed as a container. The following command lines assume this working directory:
 > `azure-sdk-for-python/sdk/identity/azure-identity/tests`
 
-### authenticate to ACR
+### Authenticate to ACR
 ```sh
 az acr login -n $ACR_NAME
 ```
 
-### set a variable for the image name
+### Set a variable for the image name
 ```sh
 export IMAGE_NAME=$(az acr show -n $ACR_NAME --query loginServer -o tsv)/webapp-managed-id-test \
     PYTHON_VERSION=2.7
 ```
 
-### build the image
+### Build the image
 ```sh
 docker build --no-cache --build-arg PYTHON_TAG=$PYTHON_VERSION -t $IMAGE_NAME:$PYTHON_VERSION ./managed-identity-live
 ```
 
-### push it to the registry
+### Push it to the registry
 ```sh
 docker push $IMAGE_NAME:$PYTHON_VERSION
 ```
@@ -138,7 +138,7 @@ Then set `PYTHON_VERSION` to the latest 3.x and run the above `docker build`
 and `docker push` commands again. (It's safe--and faster--to omit
 `--no-cache` from `docker build` the second time.)
 
-# deploy test code
+# Deploy test code
 Configure the Web Apps to use the image. For example, for the app using system-assigned identity:
 ```sh
 az webapp config container set -g $RESOURCE_GROUP -n $WEB_APP_SYSTEM_ASSIGNED \
@@ -149,7 +149,7 @@ az webapp config container set -g $RESOURCE_GROUP -n $WEB_APP_SYSTEM_ASSIGNED \
 ```
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
-# run tests
+# Run tests
 For each Web App, get the tests' invocation URLs, and browse to each. For example, for the app using system-assigned identity:
 ```sh
 curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
