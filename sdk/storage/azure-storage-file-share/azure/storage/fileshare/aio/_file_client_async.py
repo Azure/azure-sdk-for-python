@@ -108,6 +108,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
@@ -132,6 +135,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
@@ -385,16 +389,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         )
 
     @distributed_trace_async
-    async def start_copy_from_url(
-        self,
-        source_url,  # type: str
-        file_permission_copy_mode=None,  # type: Optional[str]
-        file_permission=None,  # type: Optional[str]
-        file_permission_key=None,  # type: Optional[str]
-        copy_file_smb_info=None,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Any
+    async def start_copy_from_url(self, source_url, **kwargs):
+        # type: (str, Any) -> Any
         """Initiates the copying of data from a source URL into the file
         referenced by the client.
 
@@ -443,10 +439,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
+        file_permission = kwargs.pop('file_permission', None)
+        file_permission_key = kwargs.pop('file_permission_key', None)
+        file_permission_copy_mode = kwargs.pop('file_permission_copy_mode', None)
         file_permission = _get_file_permission(file_permission, file_permission_key, None)
         validate_copy_mode(file_permission_copy_mode, file_permission, file_permission_key)
 
-        copy_file_smb_info = copy_file_smb_info or CopyFileSmbInfo()
+        copy_file_smb_info = kwargs.pop('copy_file_smb_info', None) or CopyFileSmbInfo()
         copy_file_smb_info.file_permission_copy_mode = file_permission_copy_mode
 
         try:
