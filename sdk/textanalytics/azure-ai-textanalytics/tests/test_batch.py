@@ -956,3 +956,62 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 default_behavior.args[0],
                 '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
             )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_text_analytics_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text = ""
+        for _ in range(5121):
+            text += "x"
+
+        docs = [{"id": "1", "text": ""},
+                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": text}]
+
+        # Bad model version
+        try:
+            result = text_analytics.analyze_sentiment(docs, model_version="bad")
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidRequest")
+            self.assertIsNotNone(err.message)
+
+        # DocumentErrors
+        doc_errors = text_analytics.analyze_sentiment(docs)
+        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertIsNotNone(doc_errors[0].error.message)
+        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertIsNotNone(doc_errors[1].error.message)
+        self.assertEqual(doc_errors[2].error.code, "invalidDocument")
+        self.assertIsNotNone(doc_errors[2].error.message)
+
+        # Missing input records
+        docs = []
+        try:
+            result = text_analytics.analyze_sentiment(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "MissingInputRecords")
+            self.assertIsNotNone(err.message)
+
+        # Duplicate Ids
+        docs = [{"id": "1", "text": "hello world"},
+                {"id": "1", "text": "I did not like the hotel we stayed it."}]
+        try:
+            result = text_analytics.analyze_sentiment(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidDocument")
+            self.assertIsNotNone(err.message)
+
+        # Batch size over limit
+        docs = [u"hello world"] * 1001
+        try:
+            response = text_analytics.detect_language(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.message)
+
+        # Service bug returns invalidDocument here. Uncomment after v3.0-preview.2
+        # docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
+        #
+        # response = text_analytics.detect_language(docs)
+        # self.assertEqual(response[0].error.code, "invalidCountryHint")
+        # self.assertIsNotNone(response[0].error.message)
