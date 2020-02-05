@@ -14,15 +14,15 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.models import (
     StorageErrorException)
-from .._lease import ShareFileLeaseClient as LeaseClientBase
+from .._lease import FileShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime
     ShareFileClient = TypeVar("ShareFileClient")
 
 
-class ShareFileLeaseClient(LeaseClientBase):
-    """Creates a new ShareFileLeaseClient.
+class FileShareLeaseClient(LeaseClientBase):
+    """Creates a new FileShareLeaseClient.
 
     This client provides lease operations on a ShareFileClient.
 
