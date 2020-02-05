@@ -337,10 +337,18 @@ class LongRunningOperation(object):
             self.resource = None
 
     def set_async_url_if_present(self, response):
+        """Read headers Operation-Location, Azure-AsyncOperation and Location.
+
+        If both Operation-Location, Azure-AsyncOperation are present the later is read.
+        """
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
+        async_url = get_header_url(response, 'operation-location')
+        if async_url:
+            self.async_url = async_url
         async_url = get_header_url(response, 'azure-asyncoperation')
         if async_url:
             self.async_url = async_url
+
         location_url = get_header_url(response, 'location')
         if location_url:
             self.location_url = location_url
