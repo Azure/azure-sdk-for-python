@@ -126,12 +126,12 @@ export IMAGE_NAME=$(az acr show -n $ACR_NAME --query loginServer -o tsv)/webapp-
 
 ### build the image
 ```sh
-docker build --no-cache --build-arg PYTHON_TAG=$PYTHON_VERSION -t $REPOSITORY/$IMAGE_NAME:$PYTHON_VERSION ./managed-identity-live
+docker build --no-cache --build-arg PYTHON_TAG=$PYTHON_VERSION -t $IMAGE_NAME:$PYTHON_VERSION ./managed-identity-live
 ```
 
 ### push it to the registry
 ```sh
-docker push $REPOSITORY/$IMAGE_NAME:$PYTHON_VERSION
+docker push $IMAGE_NAME:$PYTHON_VERSION
 ```
 
 Then set `PYTHON_VERSION` to the latest 3.x and run the above `docker build`

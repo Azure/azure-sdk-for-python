@@ -6,7 +6,7 @@ ARG PYTHON_VERSION=2.7
 
 # docker can't tell when the repo has changed and will therefore cache this layer
 FROM alpine/git as repo
-RUN git clone https://github.com/Azure/azure-sdk-for-python/ --branch identity_app_service_msi_tests --single-branch --depth 1
+RUN git clone https://github.com/Azure/azure-sdk-for-python/ --branch identity_app_service_msi_tests --single-branch /azure-sdk-for-python
 
 
 FROM python:${PYTHON_VERSION}-slim
