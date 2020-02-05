@@ -3,7 +3,7 @@
 ## 12.0.0b7 (Unreleased)
 
 **Fixes**
-- Response are always decoded as UTF8
+- Responses are always decoded as UTF8
 
 ## 12.0.0b6 (2019-12-04)
 - `StorageErrorException` is parsed into more detailed error.

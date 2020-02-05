@@ -3,7 +3,7 @@
 ## 12.0.1 (Unreleased)
 
 **Fixes**
-- Response are always decoded as UTF8
+- Responses are always decoded as UTF8
 
 ## 12.0.0
 
