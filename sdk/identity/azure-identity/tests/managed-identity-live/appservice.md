@@ -152,7 +152,7 @@ Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTE
 # run tests
 For each Web App, get the tests' invocation URLs, and browse to each. For example, for the app using system-assigned identity:
 ```sh
-func azure functionapp list-functions $WEB_APP_SYSTEM_ASSIGNED --show-keys
+curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
 ```
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
