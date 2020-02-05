@@ -93,7 +93,7 @@ class AsyncStorageAccountHostsMixin(object):
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            ContentDecodePolicy(),
+            ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
             config.retry_policy,
