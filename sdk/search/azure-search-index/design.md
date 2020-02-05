@@ -62,13 +62,11 @@ Azure Search Service affords the ability to batch CRUD-type operations, returnin
 ```python
 azure.search.IndexOperationBatch()
 
-def IndexOperationBatch.add_upload_documents(self, documents: List[dict]) -> None:
-
-def IndexOperationBatch.add_delete_documents(self, documents: List[dict]) -> None:
-
-def IndexOperationBatch.add_merge_documents(self, documents: List[dict]) -> None:
-
-def IndexOperationBatch.add_merge_or_upload_documents(self, documents: List[dict]) -> None:
+class IndexOperationBatch:
+    def add_upload_documents(self, documents: List[dict]) -> None:
+    def add_delete_documents(self, documents: List[dict]) -> None:
+    def add_merge_documents(self, documents: List[dict]) -> None:
+    def add_merge_or_upload_documents(self, documents: List[dict]) -> None:
 ```
 
 ### `SearchIndexClient` API
@@ -84,23 +82,23 @@ azure.search.SearchIndexClient(
 
 class SearchIndexClient:
 
-    def SearchIndexClient.get_document_count(self) -> int:
+    def get_document_count(self) -> int:
 
-    def SearchIndexClient.get_document(
+    def get_document(
         self,
         key: str,
         selected_fields: List[str] = None
     ) -> dict:
 
 
-    def SearchIndexClient.get_search_results(
+    def get_search_results(
         self,
         search_text: str,
         **kwargs
     ) -> Iterable[dict]:
 
 
-    def SearchIndexClient.get_suggestions(
+    def get_suggestions(
         self,
         search_text: str,
         suggester_name: str,
@@ -108,7 +106,7 @@ class SearchIndexClient:
     ) -> List[dict]:
 
 
-    def SearchIndexClient.get_autocompletions(
+    def get_autocompletions(
         self,
         search_text: str,
         suggester_name: str,
@@ -116,34 +114,34 @@ class SearchIndexClient:
     ) -> List[dict]:
 
 
-    def SearchIndexClient.upload_documents(
+    def upload_documents(
         self,
         documents: List[dict],
         **kwargs
     ) -> List[IndexingResult]:
 
 
-    def SearchIndexClient.delete_documents(
+    def delete_documents(
         self,
         documents: List[dict],
         **kwargs
     ) -> List[IndexingResult]:
 
 
-    def SearchIndexClient.merge_documents(
+    def merge_documents(
         self,
         documents: List[dict],
         **kwargs
     ) -> List[IndexingResult]:
 
 
-    def SearchIndexClient.merge_or_upload_documents(
+    def merge_or_upload_documents(
         self,
         documents: List[dict],
         **kwargs
     ) -> List[IndexingResult]:
 
-    def SearchIndexClient.batch_update(
+    def batch_update(
         self,
         batch: IndexOperationBatch,
         **kwargs
@@ -265,9 +263,10 @@ below.
 ```python
 azure.search.SearchQuery(**kwargs)
 
-def IndexOperationBatch.filter(*expressions: List[]) -> None:
-def IndexOperationBatch.orderby(*fields: List[]) -> None:
-def IndexOperationBatch.select(*fields: List[]) -> None:
+class SearchQuery:
+    def filter(*expressions: List[]) -> None:
+    def orderby(*fields: List[]) -> None:
+    def select(*fields: List[]) -> None:
 ```
 
 ## Scenarios
