@@ -67,8 +67,29 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         return self.internal_response.content
 
     def text(self, encoding=None):
+        # type: (Optional[str]) -> str
+        """Return the whole body as a string.
+
+        If encoding is not provided, mostly rely on requests auto-detection, except
+        for BOM, that requests ignores. If we see a UTF8 BOM, we assumes UTF8 unlike requests.
+
+        :param str encoding: The encoding to apply.
+        """
+        if not encoding:
+            # There is a few situation where "requests" magic doesn't fit us:
+            # - https://github.com/psf/requests/issues/654
+            # - https://github.com/psf/requests/issues/1737
+            # - https://github.com/psf/requests/issues/2086
+            from codecs import BOM_UTF8
+            if self.internal_response.content[:3] == BOM_UTF8:
+                encoding = "utf-8-sig"
+
         if encoding:
+            if encoding == "utf-8":
+                encoding = "utf-8-sig"
+
             self.internal_response.encoding = encoding
+
         return self.internal_response.text
 
 
