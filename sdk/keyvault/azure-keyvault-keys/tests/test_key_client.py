@@ -13,11 +13,14 @@ import sys
 import json
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.keyvault.keys import JsonWebKey
-from keys_preparer import VaultClientPreparer
-from keys_test_case import KeyVaultTestCase
+from azure.keyvault.keys import JsonWebKey, KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
+from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case import KeyVaultTestCase
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -137,11 +140,10 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_key_crud_operations(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_key_crud_operations(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
 
         # create ec key
         self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
@@ -188,11 +190,10 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
-    @VaultClientPreparer()
-    def test_backup_restore(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_backup_restore(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("keybak")
         key_type = "RSA"
 
@@ -213,11 +214,10 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_key_list(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_key_list(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
         expected = {}
@@ -238,11 +238,10 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_list_versions(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_list_versions(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("testKey")
 
         max_keys = self.list_test_size
@@ -265,10 +264,9 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_list_deleted_keys(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    def test_list_deleted_keys(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         expected = {}
 
@@ -297,10 +295,9 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_recover(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    def test_recover(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         # create keys
         keys = {}
@@ -324,10 +321,9 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_purge(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    def test_purge(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         # create keys
         key_names = ["key{}".format(i) for i in range(self.list_test_size)]
@@ -356,9 +352,8 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer(client_kwargs={'logging_enable': True})
-    def test_logging_enabled(self, vault_client, **kwargs):
-        client = vault_client.keys
+    @KeyVaultClientPreparer(client_kwargs={'logging_enable': True})
+    def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger('azure')
@@ -381,9 +376,8 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_logging_disabled(self, vault_client, **kwargs):
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger('azure')
