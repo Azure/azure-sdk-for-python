@@ -4,8 +4,7 @@
 
 **Bugfixes**
 
-  - correct SKU set
-
+  - Correct SKU set
 
 ## 0.12.0 (2019-11-20)
 
