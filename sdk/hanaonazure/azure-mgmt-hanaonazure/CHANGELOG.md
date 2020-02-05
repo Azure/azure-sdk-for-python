@@ -1,5 +1,12 @@
 # Release History
 
+## 0.12.1 (2020-02-05)
+
+**Bugfixes**
+
+  - correct SKU set
+
+
 ## 0.12.0 (2019-11-20)
 
 **Features**
