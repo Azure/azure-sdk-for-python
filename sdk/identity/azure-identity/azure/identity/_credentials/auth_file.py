@@ -33,6 +33,16 @@ class AuthFileCredential(object):
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
+        """Request an access token for ``scopes``.
+
+        The first time this method is called, the credential will instantiate a :class:`~azure.identity.ClientSecretCredential` 
+        as its inner credential with credential values from an auth file before requesting an access token with the inner credential.
+
+        :param str scopes: desired scopes for the access token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        """
+
         self._ensure_credential()
         return self._credential.get_token(*scopes, **kwargs)
 
