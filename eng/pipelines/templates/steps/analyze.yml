@@ -16,7 +16,7 @@ steps:
   - pwsh: |
       mkdir "$(Build.ArtifactStagingDirectory)/reports"
       Copy-Item -Path "$(Build.SourcesDirectory)/eng/common/InterdependencyGraph.html" -Destination "$(Build.ArtifactStagingDirectory)/reports/InterdependencyGraph.html"
-    displayName: 'Create Reports Staging Folder'
+    displayName: 'Populate Reports Staging Folder'
 
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
