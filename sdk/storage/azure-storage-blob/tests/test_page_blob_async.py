@@ -399,7 +399,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -436,7 +437,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -479,7 +481,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -524,7 +527,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -569,7 +573,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -610,7 +615,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -649,7 +655,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -694,7 +701,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -738,7 +746,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
         destination_blob_properties = await destination_blob_client.get_blob_properties()
@@ -779,7 +788,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE)
 
@@ -823,7 +833,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE, sequence_number=start_sequence)
 
@@ -865,7 +876,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE, sequence_number=start_sequence)
 
@@ -907,7 +919,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = await self._create_blob(bsc, SOURCE_BLOB_SIZE, sequence_number=start_sequence)
 
@@ -1040,6 +1053,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             account_key=snapshot_blob1.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         await blob.upload_page(data, offset=0, length=1536)
 
@@ -1053,6 +1067,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             account_key=snapshot_blob2.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         await blob.clear_page(offset=512, length=512)
 
@@ -1592,6 +1607,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             account_key=snapshot_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token)
 

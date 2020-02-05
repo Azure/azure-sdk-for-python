@@ -234,6 +234,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -285,6 +286,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -327,6 +329,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -374,6 +377,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -422,6 +426,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -469,6 +474,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -515,6 +521,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_name = self._get_blob_reference()
@@ -565,6 +572,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -611,6 +619,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -656,6 +665,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -702,6 +712,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)
@@ -749,6 +760,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         destination_blob_client = await self._create_blob(bsc)

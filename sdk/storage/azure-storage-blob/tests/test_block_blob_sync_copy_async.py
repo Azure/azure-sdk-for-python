@@ -77,6 +77,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 

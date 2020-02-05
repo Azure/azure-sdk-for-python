@@ -58,6 +58,7 @@ class StorageLoggingTest(StorageTestCase):
             account_key=source_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
@@ -92,6 +93,7 @@ class StorageLoggingTest(StorageTestCase):
             account_key=container.credential.account_key,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         # parse out the signed signature
         token_components = parse_qs(token)

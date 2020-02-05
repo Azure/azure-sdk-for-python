@@ -191,7 +191,7 @@ class StorageTestCase(AzureMgmtTestCase):
 
     def get_client_kwargs(self):
         if self.is_live:
-            return {'base_headers': {'x-ms-version': self.live_api_version}}
+            return {'api_version': self.live_api_version}
         return {}
 
     def get_random_bytes(self, size):
@@ -297,7 +297,8 @@ class StorageTestCase(AzureMgmtTestCase):
             resource_types = ResourceTypes(object=True),
             permission = AccountSasPermissions(read=True,list=True),
             start = datetime.now() - timedelta(hours = 24),
-            expiry = datetime.now() + timedelta(days = 8)
+            expiry = datetime.now() + timedelta(days = 8),
+            api_version=self.live_api_version
         )
 
     def generate_fake_token(self):

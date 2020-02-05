@@ -1218,6 +1218,7 @@ class StorageContainerTest(StorageTestCase):
             account_key=container.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
+            api_version=self.live_api_version
         )
         blob = BlobClient.from_blob_url(blob.url, credential=token)
 
@@ -1282,7 +1283,8 @@ class StorageContainerTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerSasPermissions(read=True),
             user_delegation_key=user_delegation_key,
-            account_name='emilydevtest'
+            account_name='emilydevtest',
+            api_version=self.live_api_version
         )
 
         blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))

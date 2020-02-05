@@ -47,6 +47,7 @@ class RetryRequestTransport(RequestsTransport):
 class StorageRetryTest(StorageTestCase):
 
     def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
+        kwargs.update(self.get_client_kwargs())
         if connection_string:
             service = service_class.from_connection_string(connection_string, **kwargs)
         else:

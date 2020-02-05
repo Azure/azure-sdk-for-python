@@ -282,7 +282,8 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
@@ -391,7 +392,8 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
@@ -527,7 +529,8 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 

@@ -9,7 +9,6 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.storage.blob._shared import sign_string, url_quote
-from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.models import Services
 from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
@@ -36,7 +35,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     '''
 
-    def __init__(self, account_name, account_key=None, user_delegation_key=None):
+    def __init__(self, account_name, account_key=None, user_delegation_key=None, **kwargs):
         '''
         :param str account_name:
             The storage account name used to generate the shared access signatures.
@@ -47,7 +46,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key on any Blob service object.
         '''
-        super(BlobSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
+        super(BlobSharedAccessSignature, self).__init__(account_name, account_key, **kwargs)
         self.user_delegation_key = user_delegation_key
 
     def generate_blob(self, container_name, blob_name, snapshot=None, permission=None,
@@ -340,7 +339,7 @@ def generate_account_sas(
             :dedent: 8
             :caption: Generating a shared access signature.
     """
-    sas = SharedAccessSignature(account_name, account_key)
+    sas = SharedAccessSignature(account_name, account_key, x_ms_version=kwargs.pop('api_version', None))
     return sas.generate_account(
         services=Services(blob=True),
         resource_types=resource_types,
@@ -448,9 +447,17 @@ def generate_container_sas(
         raise ValueError("Either user_delegation_key or account_key must be provided.")
 
     if user_delegation_key:
-        sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
+        sas = BlobSharedAccessSignature(
+            account_name,
+            user_delegation_key=user_delegation_key,
+            x_ms_version=kwargs.pop('api_version', None)
+        )
     else:
-        sas = BlobSharedAccessSignature(account_name, account_key=account_key)
+        sas = BlobSharedAccessSignature(
+            account_name,
+            account_key=account_key,
+            x_ms_version=kwargs.pop('api_version', None)
+        )
     return sas.generate_container(
         container_name,
         permission=permission,
@@ -555,9 +562,17 @@ def generate_blob_sas(
         raise ValueError("Either user_delegation_key or account_key must be provided.")
 
     if user_delegation_key:
-        sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
+        sas = BlobSharedAccessSignature(
+            account_name,
+            user_delegation_key=user_delegation_key,
+            x_ms_version=kwargs.pop('api_version', None)
+        )
     else:
-        sas = BlobSharedAccessSignature(account_name, account_key=account_key)
+        sas = BlobSharedAccessSignature(
+            account_name,
+            account_key=account_key,
+            x_ms_version=kwargs.pop('api_version', None)
+        )
     return sas.generate_blob(
         container_name,
         blob_name,

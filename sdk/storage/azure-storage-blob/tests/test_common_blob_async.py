@@ -1139,6 +1139,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
@@ -1455,6 +1456,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1491,7 +1493,8 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             blob.blob_name,
             snapshot=blob.snapshot,
             account_key=blob.credential.account_key,
-            policy_id='testid')
+            policy_id='testid',
+            api_version=self.live_api_version)
 
         # Act
         service = BlobClient.from_blob_url(blob.url, credential=token)
@@ -1517,6 +1520,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             ResourceTypes(container=True, object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1576,6 +1580,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1611,6 +1616,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             content_encoding='utf-8',
             content_language='fr',
             content_type='text',
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
@@ -1646,6 +1652,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
@@ -1678,6 +1685,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
@@ -1745,6 +1753,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=container.credential.account_key,
             permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_container = ContainerClient.from_container_url(container.url, credential=token)
 
@@ -1774,6 +1783,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
@@ -1803,6 +1813,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=source_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         FILE_PATH = '_to_file_with_sas.async.{}.dat'.format(str(uuid.uuid4()))
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
@@ -1940,6 +1951,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 

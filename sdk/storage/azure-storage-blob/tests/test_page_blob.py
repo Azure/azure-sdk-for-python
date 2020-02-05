@@ -371,7 +371,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -409,7 +410,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -452,7 +454,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -497,7 +500,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -541,7 +545,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -586,7 +591,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -631,7 +637,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -675,7 +682,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
         destination_blob_properties = destination_blob_client.get_blob_properties()
@@ -719,7 +727,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
         destination_blob_properties = destination_blob_client.get_blob_properties()
@@ -759,7 +768,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
 
@@ -805,7 +815,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE, sequence_number=start_sequence)
 
@@ -848,7 +859,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE, sequence_number=start_sequence)
 
@@ -891,7 +903,8 @@ class StoragePageBlobTest(StorageTestCase):
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE, sequence_number=start_sequence)
 
@@ -1007,6 +1020,7 @@ class StoragePageBlobTest(StorageTestCase):
             account_key=snapshot_blob1.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         blob.upload_page(data, offset=0, length=1536)
 
@@ -1020,6 +1034,7 @@ class StoragePageBlobTest(StorageTestCase):
             account_key=snapshot_blob2.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         blob.clear_page(offset=512, length=512)
@@ -1535,6 +1550,7 @@ class StoragePageBlobTest(StorageTestCase):
             account_key=snapshot_blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         sas_blob = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token)
 
