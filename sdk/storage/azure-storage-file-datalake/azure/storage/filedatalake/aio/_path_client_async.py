@@ -30,7 +30,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
 
-        super(PathClient, self).__init__(account_url, file_system_name, path_name, # type: ignore # pylint: disable=protected-access
+        super(PathClient, self).__init__(account_url, file_system_name, path_name, # type: ignore # pylint: disable=specify-parameter-names-in-call
                                          credential=credential,
                                          **kwargs)
 
