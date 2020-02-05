@@ -1,16 +1,14 @@
 # Azure Search Index Client Python SDK
 
-## Design
-
 Azure Cognitive Search is a fully managed cloud search service that provides a rich search experience to custom applications. The service provides a REST API with operations that create and manage indexes, load data, implement search features, execute queries, and handle results.
 
 This document descibes a Python SDK for Azure Search. The API provides a primary `SearchIndexClient` that implments all of the support REST operations of the service. Since the data in the index may not have a schema, documents and results are represented at simple (JSON) dicts. CRUD operations may be batched using an `IndexOperationBatch` class.
 
 *NOTE: This document borrows heavily from the existing work for the [Java Track 2 API for Azure Search](https://apiview.dev/Assemblies/Review/2abf935de65e4187964bea5b817872d6#com.azure.search.SearchIndexClient)*
 
-### Considerations
+## Implementation Considerations
 
-#### POST/GET Variants
+### POST/GET Variants
 
 Some of the service calls offer GET vs POST variants, with guidance similar to the following:
 
@@ -30,15 +28,23 @@ In the generated Python API this is reflected in separate methods pairs such as 
 
 *NOTE: Response from Bruce on this matter: "always use POST"*
 
-#### Control Information Leakage
+### Control Information Leakage
 
-Bruce notes that there is
+There is a codegen bug:
 
-> a codegen bug whereby a property defined alongside "additionalProperties" in the Swagger was nevertheless ending up in the dictionary (it's called @search.score) during deserialization.
+> whereby a property defined alongside "additionalProperties" in the Swagger was nevertheless ending up in the dictionary (it's called @search.score) during deserialization.
 >
 > In general we need to be careful that no control information (represented as OData annotations starting with @) ends up in the dict that represents the document itself.
 
 API methods that return document dicts must take care to filter these keys/values out before returning to users.
+
+Bruce notes that `SeachIndexClient` operations should set a header
+```
+"Accept": "application/json;odata.metadata=none"
+```
+to suppress these values being returned in the first place.
+
+## Design
 
 ### `SearchApiKeyCredential` API
 
