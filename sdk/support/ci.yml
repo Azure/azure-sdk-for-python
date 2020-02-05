@@ -42,5 +42,3 @@ stages:
     Artifacts:
     - name: azure_mgmt_support
       safeName: azuremgmtsupport
-    - name: support
-      safeName: support
