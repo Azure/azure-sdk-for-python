@@ -28,8 +28,17 @@ In the generated Python API this is reflected in separate methods pairs such as 
   client.get_search_results(search_text="...", mode="full")     # POST
   ```
 
-***NOTE: Response from Bruce on this matter: "always use POST"***
+*NOTE: Response from Bruce on this matter: "always use POST"*
 
+#### Control Information Leakage
+
+Bruce notes that there is
+
+> a codegen bug whereby a property defined alongside "additionalProperties" in the Swagger was nevertheless ending up in the dictionary (it's called @search.score) during deserialization.
+>
+> In general we need to be careful that no control information (represented as OData annotations starting with @) ends up in the dict that represents the document itself.
+
+API methods that return document dicts must take care to filter these keys/values out before returning to users.
 
 ### `SearchApiKeyCredential` API
 
