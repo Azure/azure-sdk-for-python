@@ -156,6 +156,35 @@ curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
 ```
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
+## Inspect output
+
+### Download the log file
+```sh
+az webapp log download -g $RESOURCE_GROUP -n $WEB_APP_SYSTEM_ASSIGNED
+```
+
+### Unzip it
+```sh
+unzip webapp_logs.zip
+```
+
+check the logs in the file that ends with "default_docker.log"
+
+Success looks like this:
+```
+============================= test session starts ==============================
+platform linux -- Python 3.8.1, pytest-5.3.2, py-1.8.1, pluggy-0.13.1 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /azure-sdk-for-python, inifile: setup.cfg
+plugins: asyncio-0.10.0
+collecting ... collected 2 items
+test_app_service.py::test_app_service_live PASSED
+test_cloud_shell.py::test_cloud_shell_live SKIPPED
+test_managed_identity_live.py::test_managed_identity_live PASSED
+============================= 2 passed in 0.43s ================================
+```
+`test_managed_identity_live` must pass. Other test cases may be skipped. No test case may fail.
+
 # Delete Azure resources
 ```sh
 az group delete -n $RESOURCE_GROUP -y --no-wait
