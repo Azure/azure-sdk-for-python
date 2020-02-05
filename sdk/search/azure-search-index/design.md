@@ -86,7 +86,7 @@ class SearchIndexClient:
         self,
         search_text: str,
         **kwargs
-    ) -> List[dict]:
+    ) -> Iterable[dict]:
 
 
     def SearchIndexClient.get_suggestions(
@@ -325,7 +325,7 @@ query = SearchQuery(
     search_text="WiFi",
     highlightPreTag="<em>",
     highlightPostTag="</em>")
-query.fiter(AND("Address/City eq 'Portland'",  "Address/Country eq 'US'"))
+query.filter(AND("Address/City eq 'Portland'",  "Address/Country eq 'US'"))
 query.orderby(desc("Rating"), asc(geo_distance("location", POINT(10, 20))))
 query.select("HotelId", "HotelName", "Rating")
 
