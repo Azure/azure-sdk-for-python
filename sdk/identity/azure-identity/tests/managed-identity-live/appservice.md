@@ -178,7 +178,6 @@ cachedir: .pytest_cache
 rootdir: /azure-sdk-for-python, inifile: setup.cfg
 plugins: asyncio-0.10.0
 collecting ... collected 2 items
-test_app_service.py::test_app_service_live PASSED
 test_cloud_shell.py::test_cloud_shell_live SKIPPED
 test_managed_identity_live.py::test_managed_identity_live PASSED
 ============================= 2 passed in 0.43s ================================
