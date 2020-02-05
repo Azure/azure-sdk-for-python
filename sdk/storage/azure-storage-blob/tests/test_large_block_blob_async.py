@@ -65,7 +65,7 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
             max_block_size=2 * 1024 * 1024,
             min_large_block_upload_threshold=1 * 1024 * 1024,
             retry_total=0,
-            transport=AiohttpTestTransport())
+            transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:

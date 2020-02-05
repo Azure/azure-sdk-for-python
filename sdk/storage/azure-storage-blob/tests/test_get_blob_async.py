@@ -58,7 +58,7 @@ class StorageGetBlobTestAsync(AsyncStorageTestCase):
             credential=key,
             max_single_get_size=32 * 1024,
             max_chunk_get_size=4 * 1024,
-            transport=AiohttpTestTransport())
+            transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_blob = self.get_resource_name('byteblob')

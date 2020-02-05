@@ -50,7 +50,7 @@ class ServiceStatsTest(StorageTestCase):
     def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "blob")
-        bs = BlobServiceClient(url, credential=storage_account_key)
+        bs = BlobServiceClient(url, credential=storage_account_key, **self.get_client_kwargs())
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
 
@@ -62,7 +62,7 @@ class ServiceStatsTest(StorageTestCase):
     def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "blob")
-        bs = BlobServiceClient(url, credential=storage_account_key)
+        bs = BlobServiceClient(url, credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

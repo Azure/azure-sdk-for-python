@@ -34,7 +34,7 @@ class StorageBlockBlobTest(StorageTestCase):
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
-            max_block_size=4 * 1024)
+            max_block_size=4 * 1024, **self.get_client_kwargs())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 

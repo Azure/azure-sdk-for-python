@@ -75,7 +75,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, storage_account, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key, transport=AiohttpTestTransport())
+        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:
@@ -86,7 +86,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
                 pass
 
     async def _setup_remote(self, storage_account, key):
-        self.bsc2 = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
+        self.bsc2 = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key, **self.get_client_kwargs())
         self.remote_container_name = 'rmt'
 
     def _teardown(self, FILE_PATH):
@@ -1521,9 +1521,9 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
 
         # Act
         blob = BlobClient(
-            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token, **self.get_client_kwargs())
         container = ContainerClient(
-            self.bsc.url, container_name=self.container_name, credential=token)
+            self.bsc.url, container_name=self.container_name, credential=token, **self.get_client_kwargs())
         await container.get_container_properties()
         blob_response = requests.get(blob.url)
         container_response = requests.get(container.url, params={'restype': 'container'})
@@ -1542,18 +1542,18 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=fake_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=fake_credential, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         with self.assertRaises(ClientAuthenticationError):
             await service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
@@ -2071,7 +2071,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
     async def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
         container_name = self.get_resource_name('utcontainerasync')
         transport = AioHttpTransport()
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=transport, **self.get_client_kwargs())
         blob_name = self._get_blob_reference()
         async with bsc:
             await bsc.get_service_properties()

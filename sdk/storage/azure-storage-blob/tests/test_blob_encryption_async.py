@@ -84,7 +84,7 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
             max_block_size=4 * 1024,
             max_page_size=4 * 1024,
             max_single_get_size=4 * 1024,
-            transport=AiohttpTestTransport())
+            transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)

@@ -74,7 +74,7 @@ class StorageBlobRetryTestAsync(AsyncStorageTestCase):
 
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
-                                retry_policy=self.retry, transport=AiohttpTestTransport())
+                                retry_policy=self.retry, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
@@ -108,7 +108,7 @@ class StorageBlobRetryTestAsync(AsyncStorageTestCase):
                                                                   storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
-                                retry_policy=self.retry, transport=AiohttpTestTransport())
+                                retry_policy=self.retry, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
@@ -143,7 +143,7 @@ class StorageBlobRetryTestAsync(AsyncStorageTestCase):
                                                                        storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
-                                retry_policy=self.retry, transport=AiohttpTestTransport())
+                                retry_policy=self.retry, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)

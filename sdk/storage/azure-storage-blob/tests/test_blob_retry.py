@@ -59,7 +59,7 @@ class StorageBlobRetryTest(StorageTestCase):
     def test_retry_put_block_with_seekable_stream(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
-                                retry_policy=self.retry)
+                                retry_policy=self.retry, **self.get_client_kwargs())
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
@@ -92,7 +92,7 @@ class StorageBlobRetryTest(StorageTestCase):
                                                       storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
-                                retry_policy=self.retry)
+                                retry_policy=self.retry, **self.get_client_kwargs())
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
@@ -126,7 +126,7 @@ class StorageBlobRetryTest(StorageTestCase):
                                                            storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
-                                retry_policy=self.retry)
+                                retry_policy=self.retry, **self.get_client_kwargs())
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)

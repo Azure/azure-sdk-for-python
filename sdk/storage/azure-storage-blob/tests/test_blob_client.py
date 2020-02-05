@@ -441,7 +441,7 @@ class StorageClientTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_request_callback_signed_header(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, **self.get_client_kwargs())
         name = self.get_resource_name('cont')
 
         # Act
@@ -460,7 +460,7 @@ class StorageClientTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_response_callback(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, **self.get_client_kwargs())
         name = self.get_resource_name('cont')
         container = service.get_container_client(name)
 
@@ -481,7 +481,7 @@ class StorageClientTest(StorageTestCase):
 
         # Arrange
         request_id_header_name = 'x-ms-client-request-id'
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, **self.get_client_kwargs())
 
         # Act make the client request ID slightly different
         def callback(response):
@@ -502,7 +502,7 @@ class StorageClientTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -519,7 +519,7 @@ class StorageClientTest(StorageTestCase):
     def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = BlobServiceClient(
-            self.account_url(storage_account, "blob"), credential=storage_account_key, user_agent=custom_app)
+            self.account_url(storage_account, "blob"), credential=storage_account_key, user_agent=custom_app, **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -545,7 +545,7 @@ class StorageClientTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)

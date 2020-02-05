@@ -99,7 +99,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         self.container_name = self.get_resource_name('utcontainer')
         blob_client, _ = await self._create_block_blob(bsc)
@@ -144,7 +144,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         #  to force the in-memory chunks to be used
         self.config.use_byte_buffer = True
@@ -191,7 +191,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             max_block_size=1024,
             max_page_size=1024,
             retry_total=0,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         #  to force the in-memory chunks to be used
         self.config.use_byte_buffer = True
@@ -231,7 +231,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         data = b'AAABBBCCC'
         # create_blob_from_bytes forces the in-memory chunks to be used
@@ -269,7 +269,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         # create source blob and get source blob url
         source_blob_name = self.get_resource_name("sourceblob")
@@ -341,7 +341,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_client = await self._create_append_blob(bsc, cpk=TEST_ENCRYPTION_KEY)
 
@@ -379,7 +379,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
@@ -435,7 +435,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_client = await self._create_append_blob(bsc, cpk=TEST_ENCRYPTION_KEY)
 
@@ -473,7 +473,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_client = await self._create_page_blob(bsc, cpk=TEST_ENCRYPTION_KEY)
 
@@ -515,7 +515,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
@@ -574,7 +574,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
 
         # Act
@@ -614,7 +614,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_client, _ = await self._create_block_blob(bsc, data=b'AAABBBCCC', cpk=TEST_ENCRYPTION_KEY)
 
@@ -660,7 +660,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+            transport=AiohttpTestTransport(connection_data_block_size=1024), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_client, _ = await self._create_block_blob(bsc, data=b'AAABBBCCC', cpk=TEST_ENCRYPTION_KEY)
 

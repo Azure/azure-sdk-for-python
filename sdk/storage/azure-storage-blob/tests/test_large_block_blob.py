@@ -46,7 +46,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             credential=key,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
-            min_large_block_upload_threshold=1 * 1024 * 1024)
+            min_large_block_upload_threshold=1 * 1024 * 1024, **self.get_client_kwargs())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 

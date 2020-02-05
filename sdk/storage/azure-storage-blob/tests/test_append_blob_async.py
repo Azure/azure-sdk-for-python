@@ -113,7 +113,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
 
@@ -132,7 +132,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_create_blob_with_lease_id_async(self, resource_group, location, storage_account,
                                                    storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -151,7 +151,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_create_blob_with_metadata_async(self, resource_group, location, storage_account,
                                                    storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         blob_name = self._get_blob_reference()
@@ -168,7 +168,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -187,7 +187,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_unicode_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -204,7 +204,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_block_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -222,7 +222,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -272,7 +272,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_and_validate_content_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -314,7 +314,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_source_if_modified_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -361,7 +361,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_source_if_unmodified_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -409,7 +409,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_source_if_match_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -456,7 +456,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_source_if_none_match_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -503,7 +503,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_if_match_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -553,7 +553,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_if_none_match_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -599,7 +599,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_maxsize_condition_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -644,7 +644,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_appendpos_condition_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -689,7 +689,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_if_modified_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -736,7 +736,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_block_from_url_with_if_unmodified_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -783,7 +783,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_create_append_blob_with_no_overwrite_async(self, resource_group, location, storage_account,
                                                               storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
@@ -821,7 +821,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_create_append_blob_with_overwrite_async(self, resource_group, location, storage_account,
                                                            storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
@@ -856,7 +856,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_bytes_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -874,7 +874,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_0_bytes_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -893,7 +893,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_bytes_with_progress_async(self, resource_group, location, storage_account,
                                                               storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = b'abcdefghijklmnopqrstuvwxyz'
@@ -917,7 +917,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_bytes_with_index_async(self, resource_group, location, storage_account,
                                                            storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -933,7 +933,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_bytes_with_index_and_count_async(self, resource_group, location, storage_account,
                                                                      storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -949,7 +949,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_bytes_chunked_upload_async(self, resource_group, location, storage_account,
                                                                storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -968,7 +968,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_app_blob_from_bytes_progress_chnked_upload_async(self, resource_group, location,
                                                                              storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -999,7 +999,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
                                                                                     storage_account,
                                                                                     storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1017,7 +1017,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_path_chunked_upload_async(self, resource_group, location, storage_account,
                                                               storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1042,7 +1042,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_path_with_progress_chunked_upload_async(self, resource_group, location,
                                                                             storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1079,7 +1079,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_stream_chunked_upload_async(self, resource_group, location, storage_account,
                                                                 storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1104,7 +1104,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
                                                                                         storage_account,
                                                                                         storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1128,7 +1128,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
                                                                                           location, storage_account,
                                                                                           storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1150,7 +1150,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_stream_with_multiple_appends_async(self, resource_group, location, storage_account,
                                                                        storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1176,7 +1176,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_stream_chunked_upload_with_count_async(self, resource_group, location,
                                                                            storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1201,7 +1201,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
                                                                                     storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1225,7 +1225,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_from_text_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1245,7 +1245,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_text_with_encoding_async(self, resource_group, location, storage_account,
                                                              storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1262,7 +1262,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_text_with_encoding_and_progress_async(self, resource_group, location,
                                                                           storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1286,7 +1286,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     async def test_append_blob_from_text_chunked_upload_async(self, resource_group, location, storage_account,
                                                               storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_text_data(LARGE_BLOB_SIZE)
@@ -1302,7 +1302,7 @@ class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_append_blob_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
+                                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = b'hello world'

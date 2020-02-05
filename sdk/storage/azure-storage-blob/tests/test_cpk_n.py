@@ -92,7 +92,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client, _ = self._create_block_blob(bsc)
         blob_client.stage_block('1', b'AAA', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
@@ -134,7 +134,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         # Arrange
         #  to force the in-memory chunks to be used
@@ -174,7 +174,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
 
         # Act
@@ -210,7 +210,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         data = b'AAABBBCCC'
         # create_blob_from_bytes forces the in-memory chunks to be used
@@ -243,7 +243,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         # create source blob and get source blob url
         source_blob_name = self.get_resource_name("sourceblob")
@@ -313,7 +313,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client = self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
@@ -346,7 +346,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
@@ -398,7 +398,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client = self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
@@ -433,7 +433,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client = self._create_page_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
@@ -471,7 +471,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
@@ -526,7 +526,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client = bsc.get_blob_client(self.container_name, self._get_blob_reference())
         page_blob_prop = blob_client.upload_blob(self.byte_data,
@@ -561,7 +561,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client, _ = self._create_block_blob(bsc, data=b'AAABBBCCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
@@ -604,7 +604,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client, _ = self._create_block_blob(bsc, data=b'AAABBBCCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
 
@@ -630,7 +630,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         self._setup(bsc)
         blob_client, _ = self._create_block_blob(bsc, blob_name="blockblob", data=b'AAABBBCCC', cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
         self._create_append_blob(bsc, cpk_scope_info=TEST_ENCRYPTION_KEY_SCOPE)
@@ -656,7 +656,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         container_client = bsc.create_container('cpkcontainer',
                                                 container_cpk_scope_info=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
 
@@ -680,7 +680,7 @@ class StorageCPKNTest(StorageTestCase):
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
-            max_page_size=1024)
+            max_page_size=1024, **self.get_client_kwargs())
         container_client = bsc.create_container('cpkcontainerwithdenyoverride',
                                                 container_cpk_scope_info=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE)
 

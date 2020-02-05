@@ -67,7 +67,7 @@ class ServiceStatsTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bs = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        bs = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         # Act
         stats = await bs.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
 
@@ -79,7 +79,7 @@ class ServiceStatsTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bs = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        bs = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         # Act
         stats = await bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

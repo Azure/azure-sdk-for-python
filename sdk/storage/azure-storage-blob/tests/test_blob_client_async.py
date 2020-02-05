@@ -453,7 +453,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_request_callback_signed_header_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         name = self.get_resource_name('cont')
 
         # Act
@@ -473,7 +473,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_response_callback_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         name = self.get_resource_name('cont')
         container = service.get_container_client(name)
 
@@ -489,7 +489,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -507,7 +507,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = BlobServiceClient(
-            self.account_url(storage_account, "blob"), credential=storage_account_key, user_agent=custom_app, transport=AiohttpTestTransport())
+            self.account_url(storage_account, "blob"), credential=storage_account_key, user_agent=custom_app, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -534,7 +534,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_append_async(self, resource_group, location, storage_account, storage_account_key):
-        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)

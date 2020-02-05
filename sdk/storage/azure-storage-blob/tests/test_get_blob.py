@@ -37,7 +37,7 @@ class StorageGetBlobTest(StorageTestCase):
             self.account_url(storage_account, "blob"),
             credential=key,
             max_single_get_size=1024,
-            max_chunk_get_size=1024)
+            max_chunk_get_size=1024, **self.get_client_kwargs())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
