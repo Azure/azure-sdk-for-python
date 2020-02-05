@@ -9,64 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from . import models
+from .. import models
 
 
-class CustomVisionPredictionClientConfiguration(Configuration):
-    """Configuration for CustomVisionPredictionClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param api_key: API key.
-    :type api_key: str
-    :param endpoint: Supported Cognitive Services endpoints.
-    :type endpoint: str
-    """
-
-    def __init__(
-            self, api_key, endpoint):
-
-        if api_key is None:
-            raise ValueError("Parameter 'api_key' must not be None.")
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        base_url = '{Endpoint}/customvision/v3.0/prediction'
-
-        super(CustomVisionPredictionClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-vision-customvision/{}'.format(VERSION))
-
-        self.api_key = api_key
-        self.endpoint = endpoint
-
-
-class CustomVisionPredictionClient(SDKClient):
-    """CustomVisionPredictionClient
-
-    :ivar config: Configuration for client.
-    :vartype config: CustomVisionPredictionClientConfiguration
-
-    :param api_key: API key.
-    :type api_key: str
-    :param endpoint: Supported Cognitive Services endpoints.
-    :type endpoint: str
-    """
-
-    def __init__(
-            self, api_key, endpoint):
-
-        self.config = CustomVisionPredictionClientConfiguration(api_key, endpoint)
-        super(CustomVisionPredictionClient, self).__init__(None, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '3.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class CustomVisionPredictionClientOperationsMixin(object):
 
     def classify_image_url(
             self, project_id, published_name, url, application=None, custom_headers=None, raw=False, **operation_config):
@@ -116,7 +63,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(image_url, 'ImageUrl')
@@ -129,7 +75,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -187,7 +132,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct form data
         form_data_content = {
@@ -202,7 +146,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -261,7 +204,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(image_url, 'ImageUrl')
@@ -274,7 +216,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -332,7 +273,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct form data
         form_data_content = {
@@ -347,7 +287,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -406,7 +345,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(image_url, 'ImageUrl')
@@ -419,7 +357,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -477,7 +414,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct form data
         form_data_content = {
@@ -492,7 +428,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -551,7 +486,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(image_url, 'ImageUrl')
@@ -564,7 +498,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
@@ -622,7 +555,6 @@ class CustomVisionPredictionClient(SDKClient):
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
         # Construct form data
         form_data_content = {
@@ -637,7 +569,6 @@ class CustomVisionPredictionClient(SDKClient):
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImagePrediction', response)
 
