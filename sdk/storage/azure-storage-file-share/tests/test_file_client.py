@@ -345,7 +345,7 @@ class StorageFileClientTest(StorageTestCase):
 
         self._setup(storage_account, storage_account_key)
         request_id_header_name = 'x-ms-client-request-id'
-        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, **self.get_client_kwargs())
 
         # Act make the client request ID slightly different
         def callback(response):
@@ -367,7 +367,7 @@ class StorageFileClientTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -385,7 +385,7 @@ class StorageFileClientTest(StorageTestCase):
         self._setup(storage_account, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
-            self.account_url(storage_account, "file"), credential=self.account_key, user_agent=custom_app)
+            self.account_url(storage_account, "file"), credential=self.account_key, user_agent=custom_app, **self.get_client_kwargs())
 
         def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -412,7 +412,7 @@ class StorageFileClientTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)

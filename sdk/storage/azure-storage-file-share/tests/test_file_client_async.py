@@ -350,7 +350,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, transport=AiohttpTestTransport())
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -369,7 +369,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
         self._setup(storage_account, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
-            self.account_url(storage_account, "file"), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
+            self.account_url(storage_account, "file"), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -397,7 +397,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_user_agent_append_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, transport=AiohttpTestTransport())
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)

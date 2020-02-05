@@ -44,7 +44,7 @@ class StorageHandleTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
         file_url = self.account_url(storage_account, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.test_shares = []
 
     # --Helpers-----------------------------------------------------------------

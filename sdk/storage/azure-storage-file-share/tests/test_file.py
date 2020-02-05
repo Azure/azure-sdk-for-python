@@ -58,7 +58,7 @@ class StorageFileTest(StorageTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024)
+        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024, **self.get_client_kwargs())
         self.share_name = self.get_resource_name('utshare')
         if self.is_live:
             self.fsc.create_share(self.share_name)
@@ -69,7 +69,7 @@ class StorageFileTest(StorageTestCase):
         remote_credential = rmt_key
         
         if rmt_account:
-            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
+            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, **self.get_client_kwargs())
             self.remote_share_name = None
 
     def _teardown(self, FILE_PATH):
@@ -179,7 +179,7 @@ class StorageFileTest(StorageTestCase):
     def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         url = self.account_url(storage_account, "file").replace('https', 'http')
-        fsc = ShareServiceClient(url, credential=storage_account_key)
+        fsc = ShareServiceClient(url, credential=storage_account_key, **self.get_client_kwargs())
         share = fsc.get_share_client("vhds")
         file_client = share.get_file_client("vhd_dir/my.vhd")
 
@@ -198,7 +198,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name="vhds",
             file_path="vhd_dir/my.vhd",
-            credential=sas
+            credential=sas, **self.get_client_kwargs()
         )
 
         # Act
@@ -216,7 +216,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         resp = file_client.create_file(1024, file_attributes="hidden")
@@ -236,7 +236,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         resp = file_client.create_file(1024, metadata=metadata)
@@ -335,7 +335,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path="missingdir/" + file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -357,7 +357,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         props = snapshot_client.get_file_properties()
 
         # Assert
@@ -377,7 +377,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         with self.assertRaises(ResourceNotFoundError):
@@ -508,7 +508,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         snapshot_props = snapshot_client.get_file_properties()
 
         # Assert
@@ -531,7 +531,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         metadata2 = {"test100": "foo100", "test200": "bar200"}
         file_client.set_file_metadata(metadata2)
@@ -552,7 +552,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -642,7 +642,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -871,7 +871,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(1024)
 
         # Act
@@ -889,7 +889,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(1024)
 
         file_client.acquire_lease()
@@ -913,7 +913,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
@@ -939,7 +939,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(1024)
         
         share_client = self.fsc.get_share_client(self.share_name)
@@ -949,7 +949,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         file_client.delete_file()
 
@@ -968,7 +968,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
         resp1 = file_client.upload_range(data, offset=0, length=512)
@@ -981,7 +981,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         file_client.delete_file()
 
@@ -1004,7 +1004,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         copy = file_client.start_copy_from_url(source_client.url)
@@ -1025,7 +1025,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(1024)
         lease = file_client.acquire_lease()
 
@@ -1054,7 +1054,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         file_creation_time = "2017-05-10T17:52:33.9551860Z"
         file_attributes = "Temporary|NoScrubData"
@@ -1092,7 +1092,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         copy = file_client.start_copy_from_url(source_client.url,
@@ -1123,7 +1123,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         with self.assertRaises(HttpResponseError) as e:
             file_client.start_copy_from_url(source_file.url)
 
@@ -1153,7 +1153,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         copy_resp = file_client.start_copy_from_url(source_url)
 
         # Assert
@@ -1186,7 +1186,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         copy_resp = file_client.start_copy_from_url(source_url)
         self.assertEqual(copy_resp['copy_status'], 'pending')
         file_client.abort_copy(copy_resp)
@@ -1207,7 +1207,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         copy_resp = file_client.start_copy_from_url(source_file.url)
 
         with self.assertRaises(HttpResponseError):
@@ -1224,7 +1224,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.upload_file(b'hello world')
 
         # Act
@@ -1241,7 +1241,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.create_file(1024)
         lease = file_client.acquire_lease()
         with self.assertRaises(HttpResponseError):
@@ -1267,7 +1267,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Act
         data = u'hello world啊齄丂狛狜'.encode('utf-8')
@@ -1303,7 +1303,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         file_client.upload_file(binary_data)
 
         # Act
@@ -1326,7 +1326,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         progress = []
@@ -1359,7 +1359,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         response = file_client.upload_file(data[index:], max_concurrency=2)
@@ -1386,7 +1386,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         response = file_client.upload_file(data[index:], length=count, max_concurrency=2)
@@ -1413,7 +1413,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         with open(INPUT_FILE_PATH, 'rb') as stream:
@@ -1442,7 +1442,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         progress = []
@@ -1482,7 +1482,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_size = len(data)
@@ -1512,7 +1512,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_size = len(data)
@@ -1540,7 +1540,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         progress = []
@@ -1578,7 +1578,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_size = len(data) - 512
@@ -1605,7 +1605,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         progress = []
@@ -1639,7 +1639,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_client.upload_file(text)
@@ -1658,7 +1658,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_client.upload_file(text, encoding='UTF-16')
@@ -1681,7 +1681,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_client.upload_file(data)
@@ -1699,7 +1699,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_client.upload_file(data, validate_content=True)
@@ -1720,7 +1720,7 @@ class StorageFileTest(StorageTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024, **self.get_client_kwargs())
 
         # Act
         file_client.upload_file(data, validate_content=True, max_concurrency=2)
@@ -1750,7 +1750,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
         content = file_client.download_file().readall()
 
         # Assert
@@ -1811,7 +1811,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
 
         response = requests.get(file_client.url)
 
@@ -1841,7 +1841,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
         response = requests.get(file_client.url)
 
         # Assert
@@ -1875,7 +1875,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
         response = requests.get(file_client.url)
 
         # Assert
@@ -1907,7 +1907,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_client_admin.file_name,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
 
         # Act
         headers = {'x-ms-range': 'bytes=0-16', 'x-ms-write': 'update'}
@@ -1938,7 +1938,7 @@ class StorageFileTest(StorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=file_client_admin.file_name,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
 
         # Act
         response = requests.delete(file_client.url)

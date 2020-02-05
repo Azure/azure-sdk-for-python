@@ -39,7 +39,7 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
-from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
+from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 
 try:
@@ -137,6 +137,8 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
 
 class StorageTestCase(AzureMgmtTestCase):
 
+    live_api_version = '2019-02-02'
+
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
@@ -186,6 +188,11 @@ class StorageTestCase(AzureMgmtTestCase):
     def sleep(self, seconds):
         if self.is_live:
             time.sleep(seconds)
+
+    def get_client_kwargs(self):
+        if self.is_live:
+            return {'api_version': self.live_api_version}
+        return {}
 
     def get_random_bytes(self, size):
         # recordings don't like random stuff. making this more

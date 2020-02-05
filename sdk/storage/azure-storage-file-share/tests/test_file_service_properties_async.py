@@ -41,7 +41,7 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
         url = self.account_url(storage_account, "file")
         credential = storage_account_key
-        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):

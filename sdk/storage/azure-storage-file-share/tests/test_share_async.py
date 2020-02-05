@@ -60,7 +60,7 @@ class StorageShareTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
         file_url = self.account_url(storage_account, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -137,7 +137,7 @@ class StorageShareTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key, **self.get_client_kwargs()
         )
         snapshot_props = await snapshot_client.get_share_properties()
         # Assert
@@ -182,7 +182,7 @@ class StorageShareTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key, **self.get_client_kwargs()
         )
 
         deleted = await snapshot_client.delete_share()
@@ -861,7 +861,7 @@ class StorageShareTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=share.share_name,
             file_path=dir_name + '/' + file_name,
-            credential=token,
+            credential=token, **self.get_client_kwargs()
         )
 
         # Act
@@ -903,7 +903,7 @@ class StorageShareTest(AsyncStorageTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        async with ShareServiceClient(url, credential=credential, transport=transport, **self.get_client_kwargs()) as fsc:
             await fsc.get_service_properties()
             assert transport.session is not None
             async with fsc.get_share_client(share_name) as fc:

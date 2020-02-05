@@ -40,7 +40,7 @@ class StorageDirectoryTest(AsyncStorageTestCase):
     async def _setup(self, storage_account, storage_account_key):
         url = self.account_url(storage_account, "file")
         credential = storage_account_key
-        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.share_name = self.get_resource_name('utshare')
         if not self.is_playback():
             try:

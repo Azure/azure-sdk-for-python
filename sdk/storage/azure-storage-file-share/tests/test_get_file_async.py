@@ -60,7 +60,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             url, credential=credential,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
-            transport=AiohttpTestTransport())
+            transport=AiohttpTestTransport(), **self.get_client_kwargs())
 
         self.share_name = self.get_resource_name('utshare')
         self.directory_name = self.get_resource_name('utdir')
@@ -77,7 +77,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 self.account_url(storage_account, "file"),
                 share_name=self.share_name,
                 file_path=byte_file,
-                credential=storage_account_key
+                credential=storage_account_key, **self.get_client_kwargs()
             )
             try:
                 await file_client.upload_file(self.byte_data)
@@ -119,7 +119,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 file_path=self.directory_name + '/' + file_name,
                 credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         # Act
@@ -144,7 +144,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 file_path=self.directory_name + '/' + file_name,
                 credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(binary_data)
 
         # Act
@@ -168,7 +168,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
-                transport=AiohttpTestTransport())
+                transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         # Act
@@ -194,7 +194,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         file_output = await file_client.download_file(max_concurrency=2)
@@ -218,7 +218,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -250,7 +250,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -284,7 +284,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         progress = []
@@ -321,7 +321,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -351,7 +351,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -379,7 +379,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -416,7 +416,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -455,7 +455,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         progress = []
@@ -498,7 +498,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -508,7 +508,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             snapshot=share_snapshot,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -538,7 +538,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -548,7 +548,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             snapshot=share_snapshot,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -586,7 +586,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -596,7 +596,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             snapshot=share_snapshot,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -633,7 +633,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         # Create a snapshot of the share and delete the file
@@ -648,7 +648,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             snapshot=share_snapshot,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -689,7 +689,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         start = 4
@@ -720,7 +720,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
@@ -750,7 +750,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
-            transport=AiohttpTestTransport())
+            transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         # Act
@@ -778,7 +778,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         progress = []
         def callback(response):
@@ -821,7 +821,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -846,7 +846,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -878,7 +878,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         # Act
@@ -909,7 +909,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         # Act
@@ -943,7 +943,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + text_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(text_data)
 
         # Act
@@ -970,7 +970,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + text_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(text_data)
 
         progress = []
@@ -1006,7 +1006,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + text_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(text_data)
 
         progress = []
@@ -1042,7 +1042,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(file_data)
 
         progress = []
@@ -1078,7 +1078,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(data)
 
         # Act
@@ -1102,7 +1102,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(data)
 
         # Act
@@ -1135,7 +1135,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -1165,7 +1165,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -1190,7 +1190,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -1200,7 +1200,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             snapshot=share_snapshot,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -1231,7 +1231,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.account_url(storage_account, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -1241,7 +1241,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             snapshot=share_snapshot,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -1265,7 +1265,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(byte_data)
 
         progress = []
@@ -1304,7 +1304,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
         await file_client.upload_file(byte_data)
 
         progress = []
@@ -1341,7 +1341,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         file_content = await file_client.download_file(validate_content=True)
@@ -1364,7 +1364,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         file_content = await file_client.download_file(offset=0, length=1024, validate_content=True)
 
@@ -1394,7 +1394,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         file_content = await file_client.download_file(offset=0, length=1024, validate_content=True)
@@ -1414,7 +1414,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + self.byte_file,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE, **self.get_client_kwargs())
 
         # Act
         props = await file_client.get_file_properties()

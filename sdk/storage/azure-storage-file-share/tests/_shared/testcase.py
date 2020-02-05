@@ -137,6 +137,8 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
 
 class StorageTestCase(AzureMgmtTestCase):
 
+    live_api_version = '2019-02-02'
+
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
@@ -152,11 +154,11 @@ class StorageTestCase(AzureMgmtTestCase):
         """
         try:
             if storage_type == "blob":
-                return storage_account.primary_endpoints.blob
+                return storage_account.primary_endpoints.blob.rstrip("/")
             if storage_type == "queue":
-                return storage_account.primary_endpoints.queue
+                return storage_account.primary_endpoints.queue.rstrip("/")
             if storage_type == "file":
-                return storage_account.primary_endpoints.file
+                return storage_account.primary_endpoints.file.rstrip("/")
             else:
                 raise ValueError("Unknown storage type {}".format(storage_type))
         except AttributeError: # Didn't find "primary_endpoints"
@@ -186,6 +188,11 @@ class StorageTestCase(AzureMgmtTestCase):
     def sleep(self, seconds):
         if self.is_live:
             time.sleep(seconds)
+
+    def get_client_kwargs(self):
+        if self.is_live:
+            return {'api_version': self.live_api_version}
+        return {}
 
     def get_random_bytes(self, size):
         # recordings don't like random stuff. making this more
