@@ -29,8 +29,10 @@ class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
         self.messages = []
+
     def emit(self, record):
         self.messages.append(record)
+
 
 class KeyVaultKeyTest(KeyVaultTestCase):
     def _assert_jwks_equal(self, jwk1, jwk2):
@@ -378,22 +380,22 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
     @KeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         await client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    if body['kty'] == 'RSA':
+                    if body["kty"] == "RSA":
                         return
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
@@ -408,14 +410,14 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         await client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
                     assert body["kty"] != "RSA", "Client request body was logged"

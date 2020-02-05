@@ -18,6 +18,7 @@ from _shared.test_case import KeyVaultTestCase
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
 
+
 def print(*args):
     assert all(arg is not None for arg in args)
 
@@ -38,7 +39,6 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()

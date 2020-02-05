@@ -27,11 +27,12 @@ class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
         self.messages = []
+
     def emit(self, record):
         self.messages.append(record)
 
-class KeyClientTests(KeyVaultTestCase):
 
+class KeyClientTests(KeyVaultTestCase):
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -48,7 +49,9 @@ class KeyClientTests(KeyVaultTestCase):
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = client.create_rsa_key(key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags)
+        created_key = client.create_rsa_key(
+            key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags
+        )
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
         kty = "RSA-HSM" if hsm else "RSA"
@@ -76,7 +79,8 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
         )
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
@@ -88,7 +92,8 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
         )
 
     def _update_key_properties(self, client, key):
@@ -352,21 +357,21 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    if body['kty'] == 'RSA':
+                    if body["kty"] == "RSA":
                         return
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
@@ -380,14 +385,14 @@ class KeyClientTests(KeyVaultTestCase):
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
                     assert body["kty"] != "RSA", "Client request body was logged"

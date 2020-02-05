@@ -184,7 +184,6 @@ class CryptoClientTests(KeyVaultTestCase):
     def test_rsa_verify_local(self, key_client, credential, **kwargs):
         """Sign with Key Vault, verify locally"""
 
-
         for size in (2048, 3072, 4096):
             key = key_client.create_rsa_key("rsa-verify-{}".format(size), size=size)
             crypto_client = CryptographyClient(key, credential)
@@ -209,7 +208,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @CryptoClientPreparer()
     def test_ec_verify_local(self, key_client, credential, **kwargs):
         """Sign with Key Vault, verify locally"""
-
 
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
