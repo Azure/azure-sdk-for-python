@@ -2,6 +2,9 @@
 
 ## 12.0.0b7 (Unreleased)
 
+**Fixes**
+- Response are always decoded as UTF8
+
 ## 12.0.0b6 (2019-12-04)
 - `StorageErrorException` is parsed into more detailed error.
 - `etag` and `match_condition` parameters are added as an option('if_match' and 'if_none_match' are still supported).
@@ -17,7 +20,7 @@
 - Support for DataLakeDirectoryClient: create, delete, rename, get properties, get access control, set metadata, set properties, set access control, create file, delete file, create sub-directory, delete sub-directory
 - Support for DataLakeFileClient: create, delete, rename, get properties, get access control, set metadata, set properties, set access control, append, flush, read
 
-This package's 
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/README.md) 
-and 
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples) 
+This package's
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/README.md)
+and
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)

@@ -2,6 +2,9 @@
 
 ## 12.1.1 (Unreleased)
 
+**Fixes**
+- Response are always decoded as UTF8
+
 ## 12.1.0 (2019-12-04)
 
 **New features**
