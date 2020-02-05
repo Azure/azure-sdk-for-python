@@ -6,7 +6,7 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING, Union, cast
 
-from uamqp import errors, compat
+from uamqp import errors
 
 from ..exceptions import (
     _create_eventhub_exception,
