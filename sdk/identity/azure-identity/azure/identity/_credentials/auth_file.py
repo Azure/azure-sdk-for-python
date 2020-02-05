@@ -18,11 +18,13 @@ def _parse_credentials_file(file_path):
 class AuthFileCredential(object):
 
     def __init__(self, file_path, **kwargs):
+        # type: (str, **Any) -> None
         self._credential = None
         self._file_path = file_path
         self._kwargs = kwargs.copy()
 
     def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
         self._ensure_credential()
         return self._credential.get_token(*scopes, **kwargs)
 
@@ -42,7 +44,7 @@ class AuthFileCredential(object):
         active_directory_endpoint_url = auth_data.get('activeDirectoryEndpointUrl')
 
         if any(x is None for x in (client_id, client_secret, tenant_id, active_directory_endpoint_url)):
-            raise ClientAuthenticationError("Malformed Azure SDK Auth file. The file should contain \
-                'clientId', 'clientSecret', 'tenantId' and 'activeDirectoryEndpointUrl' values.")
+            raise ClientAuthenticationError("Malformed Azure SDK Auth file. The file should contain "
+                "'clientId', 'clientSecret', 'tenantId' and 'activeDirectoryEndpointUrl' values.")
         
         return ClientSecretCredential(tenant_id, client_id, client_secret, authority=active_directory_endpoint_url, **self._kwargs)
