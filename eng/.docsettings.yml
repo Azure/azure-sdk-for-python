@@ -7,7 +7,7 @@ omitted_paths:
   - sdk/keyvault/azure-keyvault/*
   - doc/*
   - sdk/**/samples/*
-  - "sdk/identity/azure-identity/tests/*"
+  - sdk/identity/azure-identity/tests/*
 language: python
 root_check_enabled: True
 required_readme_sections:
