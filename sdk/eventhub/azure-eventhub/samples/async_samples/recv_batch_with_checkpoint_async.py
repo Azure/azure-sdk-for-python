@@ -27,7 +27,7 @@ async def on_event_batch(partition_context, event_batch):
         print("Received events from partition: {}.".format(partition_context.partition_id))
         # Put your code here.
 
-        await partition_context.update_checkpoint(event_batch[-1])
+        await partition_context.update_checkpoint()
     else:
         # this is a heartbeat.
         pass
@@ -41,9 +41,9 @@ async def receive(client):
     """
     await client.receive_batch(
         on_event=on_event_batch,
-        max_batch_size=100,
-        max_wait_time=3,
-        starting_position="-1",  # "-1" is from the beginning of the partition.
+        max_batch_size=300,  # optional
+        max_wait_time=3,  # optional
+        starting_position="-1",  # optional, "-1" is from the beginning of the partition.
     )
     # With specified partition_id, load-balance will be disabled, for example:
     # await client.receive_batch(on_event_batch=on_event_batch, max_batch_size=100, max_wait_time=3, partition_id='0'))
