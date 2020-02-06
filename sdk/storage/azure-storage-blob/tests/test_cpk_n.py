@@ -14,7 +14,7 @@ from azure.storage.blob import (
     BlobType,
     BlobBlock,
     BlobSasPermissions,
-    ContainerCpkScopeInfo,
+    ContainerEncryptionScope,
     generate_blob_sas
 )
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
@@ -23,11 +23,11 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 # The encryption scope are pre-created using management plane tool ArmClient.
 # So we can directly use the scope in the test.
 TEST_ENCRYPTION_KEY_SCOPE = "antjoscope1"
-TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = ContainerCpkScopeInfo(
+TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = ContainerEncryptionScope(
     default_encryption_scope="containerscope")
 TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE = {
     "default_encryption_scope": "containerscope",
-    "deny_encryption_scope_override": True
+    "prevent_encryption_scope_override": True
 }
 
 # ------------------------------------------------------------------------------
@@ -659,7 +659,7 @@ class StorageCPKNTest(StorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         container_client = bsc.create_container('cpkcontainer',
-                                                encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
+                                                container_encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
 
         blob_client = container_client.get_blob_client("appendblob")
 
@@ -684,7 +684,7 @@ class StorageCPKNTest(StorageTestCase):
             max_page_size=1024)
         container_client = bsc.create_container(
             'cpkcontainerwithdenyoverride',
-            encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE
+            container_encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE
         )
 
         blob_client = container_client.get_blob_client("appendblob")

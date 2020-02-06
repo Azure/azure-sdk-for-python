@@ -7,11 +7,12 @@
 
 from azure.core import MatchConditions
 
-from ._models import ContainerCpkScopeInfo
+from ._models import ContainerEncryptionScope
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
-    CpkScopeInfo
+    CpkScopeInfo,
+    ContainerCpkScopeInfo
 )
 
 
@@ -71,7 +72,18 @@ def get_cpk_scope_info(kwargs):
 
 def get_container_cpk_scope_info(kwargs):
     # type: (Dict[str, Any]) -> ContainerCpkScopeInfo
-    encryption_scope = kwargs.pop('encryption_scope', None)
-    if encryption_scope and isinstance(encryption_scope, dict):
-        return ContainerCpkScopeInfo(**encryption_scope)
-    return encryption_scope
+    encryption_scope = kwargs.pop('container_encryption_scope', None)
+    if encryption_scope:
+        if isinstance(encryption_scope, ContainerEncryptionScope):
+            return ContainerCpkScopeInfo(
+                default_encryption_scope=encryption_scope.default_encryption_scope,
+                deny_encryption_scope_override=encryption_scope.prevent_encryption_scope_override
+            )
+        if isinstance(encryption_scope, dict):
+            return ContainerCpkScopeInfo(
+                default_encryption_scope=encryption_scope['default_encryption_scope'],
+                deny_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
+            )
+        else:
+            raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
+    return None
