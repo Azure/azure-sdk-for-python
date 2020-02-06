@@ -43,8 +43,7 @@ TEST_SHARE_PREFIX = 'share'
 class StorageShareTest(StorageTestCase):
     def _setup(self, storage_account, storage_account_key):
         file_url = self.account_url(storage_account, "file")
-        credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, **self.get_client_kwargs())
+        self.fsc = ShareServiceClient(account_url=file_url, credential=storage_account_key, **self.get_client_kwargs())
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -304,7 +303,8 @@ class StorageShareTest(StorageTestCase):
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_list_shares_no_options_for_premium_account(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+        credential = {'account_name': storage_account.name, 'account_key': storage_account_key}
+        self._setup(storage_account, credential)
         share = self._create_share()
 
         # Act
@@ -468,7 +468,8 @@ class StorageShareTest(StorageTestCase):
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_get_share_properties_for_premium_account(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+        credential = {'account_name': storage_account.name, 'account_key': storage_account_key}
+        self._setup(storage_account, credential)
         share = self._create_share()
 
         # Act
