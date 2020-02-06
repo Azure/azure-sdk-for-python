@@ -30,7 +30,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._generated import AzureBlobStorage
+from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
@@ -87,6 +87,9 @@ class ContainerClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -142,6 +145,7 @@ class ContainerClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -1293,7 +1297,7 @@ class ContainerClient(StorageAccountHostsMixin):
         )
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
-            credential=self.credential, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

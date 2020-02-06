@@ -57,6 +57,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
@@ -83,6 +86,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             loop=loop,
             **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
@@ -105,7 +109,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
@@ -136,7 +140,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         )
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async

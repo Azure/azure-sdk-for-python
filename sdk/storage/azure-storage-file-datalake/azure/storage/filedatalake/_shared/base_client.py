@@ -115,6 +115,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._client.__exit__(*args)
 
     def close(self):
+        """ This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
         self._client.close()
 
     @property
@@ -186,6 +189,14 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
+    @property
+    def api_version(self):
+        """The version of the Storage API used for requests.
+
+        :type: str
+        """
+        return self._client._config.version  # pylint: disable=protected-access
+
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
         if snapshot:
@@ -247,7 +258,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         request = self._client._client.post(  # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+                'x-ms-version': self.api_version
             }
         )
 
