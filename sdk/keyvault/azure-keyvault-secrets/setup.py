@@ -44,14 +44,14 @@ if not VERSION:
 
 with open("README.md", encoding="utf-8") as f:
     README = f.read()
-with open("HISTORY.md", encoding="utf-8") as f:
-    HISTORY = f.read()
+with open("CHANGELOG.md", encoding="utf-8") as f:
+    CHANGELOG = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=README + "\n\n" + HISTORY,
+    long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
