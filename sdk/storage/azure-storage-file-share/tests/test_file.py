@@ -710,6 +710,7 @@ class StorageFileTest(StorageTestCase):
             source_file_client.share_name,
             source_file_client.file_path,
             source_file_client.credential.account_key,
+            api_version=self.live_api_version
         )
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
@@ -737,7 +738,8 @@ class StorageFileTest(StorageTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
         # Act
@@ -773,7 +775,8 @@ class StorageFileTest(StorageTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
         # Act
@@ -816,7 +819,8 @@ class StorageFileTest(StorageTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version)
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 
@@ -1144,6 +1148,7 @@ class StorageFileTest(StorageTestCase):
             source_file.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         source_url = source_file.url + '?' + sas_token
 
@@ -1177,6 +1182,7 @@ class StorageFileTest(StorageTestCase):
             source_file.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         source_url = source_file.url + '?' + sas_token
 
@@ -1743,6 +1749,7 @@ class StorageFileTest(StorageTestCase):
             file_client.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1778,12 +1785,13 @@ class StorageFileTest(StorageTestCase):
             file_client.share_name,
             file_client.file_path,
             file_client.credential.account_key,
-            policy_id='testid')
+            policy_id='testid',
+            api_version=self.live_api_version)
 
         # Act
         sas_file = ShareFileClient.from_file_url(
             file_client.url,
-            credential=token)
+            credential=token, **self.get_client_kwargs())
 
         content = file_client.download_file().readall()
 
@@ -1804,6 +1812,7 @@ class StorageFileTest(StorageTestCase):
             ResourceTypes(object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1834,6 +1843,7 @@ class StorageFileTest(StorageTestCase):
             file_client.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1868,6 +1878,7 @@ class StorageFileTest(StorageTestCase):
             content_encoding='utf-8',
             content_language='fr',
             content_type='text',
+            api_version=self.live_api_version
         )
 
         # Act
@@ -1902,6 +1913,7 @@ class StorageFileTest(StorageTestCase):
             file_client_admin.credential.account_key,
             permission=FileSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         file_client = ShareFileClient(
             self.account_url(storage_account, "file"),
@@ -1933,6 +1945,7 @@ class StorageFileTest(StorageTestCase):
             file_client_admin.credential.account_key,
             permission=FileSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.live_api_version
         )
         file_client = ShareFileClient(
             self.account_url(storage_account, "file"),

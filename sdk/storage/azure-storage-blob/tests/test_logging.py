@@ -99,7 +99,7 @@ class StorageLoggingTest(StorageTestCase):
         token_components = parse_qs(token)
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
-        sas_service = ContainerClient.from_container_url(container.url, credential=token)
+        sas_service = ContainerClient.from_container_url(container.url, credential=token, **self.get_client_kwargs())
 
         # Act
         with LogCaptured(self) as log_captured:

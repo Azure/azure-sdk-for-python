@@ -1460,7 +1460,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         )
 
         # Act
-        service = BlobClient.from_blob_url(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token, **self.get_client_kwargs())
         # self._set_test_proxy(service, self.settings)
         content = await (await service.download_blob()).readall()
 
@@ -1497,7 +1497,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             api_version=self.live_api_version)
 
         # Act
-        service = BlobClient.from_blob_url(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token, **self.get_client_kwargs())
         # self._set_test_proxy(service, self.settings)
         result = await (await service.download_blob()).readall()
 
@@ -1755,7 +1755,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             api_version=self.live_api_version
         )
-        sas_container = ContainerClient.from_container_url(container.url, credential=token)
+        sas_container = ContainerClient.from_container_url(container.url, credential=token, **self.get_client_kwargs())
 
         # Act
         info = await sas_container.get_account_information()
@@ -1785,7 +1785,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             api_version=self.live_api_version
         )
-        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token, **self.get_client_kwargs())
 
         # Act
         info = await sas_blob.get_account_information()

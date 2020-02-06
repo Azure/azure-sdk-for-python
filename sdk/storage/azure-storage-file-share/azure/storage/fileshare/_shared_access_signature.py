@@ -9,7 +9,6 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from ._shared import sign_string
-from ._shared.constants import X_MS_VERSION
 from ._shared.models import Services
 from ._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, QueryStringConstants
 from ._shared.parser import _str
@@ -31,14 +30,14 @@ class FileSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     '''
 
-    def __init__(self, account_name, account_key):
+    def __init__(self, account_name, account_key, **kwargs):
         '''
         :param str account_name:
             The storage account name used to generate the shared access signatures.
         :param str account_key:
             The access key to generate the shares access signatures.
         '''
-        super(FileSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
+        super(FileSharedAccessSignature, self).__init__(account_name, account_key, **kwargs)
 
     def generate_file(self, share_name, directory_name=None, file_name=None,
                       permission=None, expiry=None, start=None, policy_id=None,
@@ -297,7 +296,7 @@ def generate_account_sas(
             :dedent: 8
             :caption: Generate a sas token.
     """
-    sas = SharedAccessSignature(account_name, account_key)
+    sas = SharedAccessSignature(account_name, account_key, x_ms_version=kwargs.pop('api_version', None))
     return sas.generate_account(
         services=Services(fileshare=True),
         resource_types=resource_types,
@@ -383,7 +382,7 @@ def generate_share_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    sas = FileSharedAccessSignature(account_name, account_key)
+    sas = FileSharedAccessSignature(account_name, account_key, x_ms_version=kwargs.pop('api_version', None))
     return sas.generate_share(
         share_name=share_name,
         permission=permission,
@@ -473,7 +472,7 @@ def generate_file_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    sas = FileSharedAccessSignature(account_name, account_key)
+    sas = FileSharedAccessSignature(account_name, account_key, x_ms_version=kwargs.pop('api_version', None))
     if len(file_path) > 1:
         dir_path = '/'.join(file_path[:-1])
     else:

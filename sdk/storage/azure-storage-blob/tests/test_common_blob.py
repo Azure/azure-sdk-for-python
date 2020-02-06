@@ -1298,7 +1298,7 @@ class StorageCommonBlobTest(StorageTestCase):
         )
 
         # Act
-        service = BlobClient.from_blob_url(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token, **self.get_client_kwargs())
         #self._set_test_proxy(service, self.settings)
         content = service.download_blob().readall()
 
@@ -1327,7 +1327,7 @@ class StorageCommonBlobTest(StorageTestCase):
             api_version=self.live_api_version
         )
 
-        service = BlobClient.from_blob_url(blob_snapshot_client.url, credential=token)
+        service = BlobClient.from_blob_url(blob_snapshot_client.url, credential=token, **self.get_client_kwargs())
 
         # Act
         snapshot_content = service.download_blob().readall()
@@ -1370,7 +1370,7 @@ class StorageCommonBlobTest(StorageTestCase):
             api_version=self.live_api_version)
 
         # Act
-        service = BlobClient.from_blob_url(blob.url, credential=token)
+        service = BlobClient.from_blob_url(blob.url, credential=token, **self.get_client_kwargs())
         #self._set_test_proxy(service, self.settings)
         result = service.download_blob().readall()
 
@@ -1678,7 +1678,7 @@ class StorageCommonBlobTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             api_version=self.live_api_version
         )
-        sas_container = ContainerClient.from_container_url(container.url, credential=token)
+        sas_container = ContainerClient.from_container_url(container.url, credential=token, **self.get_client_kwargs())
 
         # Act
         info = sas_container.get_account_information()
@@ -1706,7 +1706,7 @@ class StorageCommonBlobTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             api_version=self.live_api_version
         )
-        sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
+        sas_blob = BlobClient.from_blob_url(blob.url, credential=token, **self.get_client_kwargs())
 
         # Act
         info = sas_blob.get_account_information()

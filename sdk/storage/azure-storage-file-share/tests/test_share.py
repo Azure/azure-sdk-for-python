@@ -769,6 +769,7 @@ class StorageShareTest(StorageTestCase):
             share.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ShareSasPermissions(read=True),
+            api_version=self.live_api_version
         )
         sas_client = ShareFileClient(
             self.account_url(storage_account, "file"),
