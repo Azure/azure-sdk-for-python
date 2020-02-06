@@ -26,7 +26,7 @@ class FileSystemTest(StorageTestCase):
     def setUp(self):
         super(FileSystemTest, self).setUp()
         url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, **self.get_client_kwargs())
         self.config = self.dsc._config
         self.test_file_systems = []
 

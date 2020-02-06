@@ -34,7 +34,7 @@ class FileTest(StorageTestCase):
     def setUp(self):
         super(FileTest, self).setUp()
         url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, **self.get_client_kwargs())
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')
@@ -107,7 +107,7 @@ class FileTest(StorageTestCase):
 
         # Create a directory to put the file under that
         file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name,
-                                         credential=token_credential)
+                                         credential=token_credential, **self.get_client_kwargs())
 
         response = file_client.create_file()
 
@@ -250,7 +250,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        service_client = DataLakeServiceClient(self._get_oauth_account_url(), credential=token_credential, **self.get_client_kwargs())
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -261,13 +261,14 @@ class FileTest(StorageTestCase):
                                       user_delegation_key=user_delegation_key,
                                       permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
                                       expiry=datetime.utcnow() + timedelta(hours=1),
+                                      api_version=self.settings.LIVE_API_VERSION
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
         new_file_client = DataLakeFileClient(self._get_account_url(),
                                              file_client.file_system_name,
                                              file_client.path_name,
-                                             credential=sas_token)
+                                             credential=sas_token, **self.get_client_kwargs())
         downloaded_data = new_file_client.read_file()
         self.assertEqual(data, downloaded_data)
 
@@ -323,10 +324,11 @@ class FileTest(StorageTestCase):
             ResourceTypes(file_system=True, object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
+            api_version=self.settings.LIVE_API_VERSION
         )
 
         # read the created file which is under root directory
-        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=token)
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=token, **self.get_client_kwargs())
         properties = file_client.get_file_properties()
 
         # make sure we can read the file properties
@@ -355,11 +357,12 @@ class FileTest(StorageTestCase):
             account_key=self.dsc.credential.account_key,
             permission=FileSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.settings.LIVE_API_VERSION
         )
 
         # read the created file which is under root directory
         file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, directory_name+'/'+file_name,
-                                         credential=token)
+                                         credential=token, **self.get_client_kwargs())
         properties = file_client.get_file_properties()
 
         # make sure we can read the file properties
@@ -370,13 +373,13 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
         # the token is for file level, so users are not supposed to have access to file system level operations
-        file_system_client = FileSystemClient(self.dsc.url, self.file_system_name, credential=token)
+        file_system_client = FileSystemClient(self.dsc.url, self.file_system_name, credential=token, **self.get_client_kwargs())
         with self.assertRaises(ClientAuthenticationError):
             file_system_client.get_file_system_properties()
 
         # the token is for file level, so users are not supposed to have access to directory level operations
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token)
+                                                   credential=token, **self.get_client_kwargs())
         with self.assertRaises(ClientAuthenticationError):
             directory_client.get_directory_properties()
 

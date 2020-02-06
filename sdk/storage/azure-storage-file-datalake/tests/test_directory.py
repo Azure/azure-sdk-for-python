@@ -30,7 +30,7 @@ class DirectoryTest(StorageTestCase):
     def setUp(self):
         super(DirectoryTest, self).setUp()
         url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
+        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, **self.get_client_kwargs())
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')
@@ -90,7 +90,7 @@ class DirectoryTest(StorageTestCase):
         directory_name = self._get_directory_reference()
         token_credential = self.generate_oauth_token()
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token_credential)
+                                                   credential=token_credential, **self.get_client_kwargs())
         response = directory_client.create_directory()
         self.assertIsNotNone(response)
 
@@ -433,10 +433,11 @@ class DirectoryTest(StorageTestCase):
             account_key=self.dsc.credential.account_key,
             permission=DirectorySasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.settings.LIVE_API_VERSION
         )
 
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token)
+                                                   credential=token, **self.get_client_kwargs())
         access_control = directory_client.get_access_control()
 
         self.assertIsNotNone(access_control)
@@ -456,9 +457,10 @@ class DirectoryTest(StorageTestCase):
             account_key=self.dsc.credential.account_key,
             permission=DirectorySasPermissions(create=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
+            api_version=self.settings.LIVE_API_VERSION
         )
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token)
+                                                   credential=token, **self.get_client_kwargs())
         response = directory_client.create_directory()
         self.assertIsNotNone(response)
 

@@ -86,6 +86,7 @@ class StorageTestCase(unittest.TestCase):
 
         if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
             self.settings = self.fake_settings
+        self.settings.LIVE_API_VERSION = self.fake_settings.LIVE_API_VERSION
 
         # example of qualified test name:
         # test_mgmt_network.test_public_ip_addresses
@@ -122,6 +123,11 @@ class StorageTestCase(unittest.TestCase):
 
     def is_playback(self):
         return self.test_mode == TestMode.playback
+
+    def get_client_kwargs(self):
+        if not self.is_playback():
+            return {'api_version': self.settings.LIVE_API_VERSION}
+        return {}
 
     def get_resource_name(self, prefix=''):
         # Append a suffix to the name, based on the fully qualified test name
