@@ -103,7 +103,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         digest = md.digest()
 
         imported_key = await self._import_test_key(key_client, key_name)
-        crypto_client = vault_client.get_cryptography_client(imported_key)
+        crypto_client = vault_client.get_cryptography_client(imported_key.id)
 
         result = await crypto_client.sign(SignatureAlgorithm.rs256, digest)
         self.assertEqual(result.key_id, imported_key.id)

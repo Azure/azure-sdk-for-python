@@ -6,7 +6,9 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
+from azure.core.pipeline.policies import(
+    ContentDecodePolicy, UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
+)
 from azure.core.pipeline.transport import AsyncHttpTransport
 from ._generated.v7_0.version import VERSION as V7_0_VERSION
 from ._generated.v2016_10_01.version import VERSION as V2016_10_01_VERSION
@@ -124,6 +126,7 @@ class AsyncKeyVaultClientBase(object):
             config.headers_policy,
             config.user_agent_policy,
             config.proxy_policy,
+            ContentDecodePolicy(),
             config.redirect_policy,
             config.retry_policy,
             config.authentication_policy,

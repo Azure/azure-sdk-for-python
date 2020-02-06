@@ -30,20 +30,6 @@ from ._models import (
 )
 
 
-def process_single_error(error):
-    """Configure and raise a DocumentError for single text operation errors.
-    """
-    try:
-        error_message = error.error["inner_error"]["message"]
-        error_code = error.error["inner_error"]["code"]
-        error_message += "\nErrorCode:{}".format(error_code)
-    except KeyError:
-        raise HttpResponseError(message="There was an unknown error with the request.")
-    error = HttpResponseError(message=error_message)
-    error.error_code = error_code
-    raise error
-
-
 def process_batch_error(error):
     """Raise detailed error message for HttpResponseErrors
     """
@@ -52,7 +38,7 @@ def process_batch_error(error):
         raise_error = ClientAuthenticationError
     error_message = error.message
     error_code = error.status_code
-    error_body = None
+    error_body, error_target = None, None
 
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
@@ -67,12 +53,17 @@ def process_batch_error(error):
 
             error_message = error_resp["message"]
             error_code = error_resp["code"]
-            error_message += "\nErrorCode:{}".format(error_code)
+            error_target = error_resp.get("target", None)
+            if error_target:
+                error_message += "\nErrorCode:{}\nTarget:{}".format(error_code, error_target)
+            else:
+                error_message += "\nErrorCode:{}".format(error_code)
     except KeyError:
         raise HttpResponseError(message="There was an unknown error with the request.")
 
     error = raise_error(message=error_message, response=error.response)
     error.error_code = error_code
+    error.target = error_target
     raise error
 
 

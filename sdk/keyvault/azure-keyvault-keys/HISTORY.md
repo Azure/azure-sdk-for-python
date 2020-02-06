@@ -7,6 +7,8 @@
 - Updated `msrest` requirement to >=0.6.0
 - Challenge authentication policy requires TLS
 ([#9457](https://github.com/Azure/azure-sdk-for-python/pull/9457))
+- Fix `AttributeError` in async CryptographyClient when verifying signatures remotely
+([#9734](https://github.com/Azure/azure-sdk-for-python/pull/9734))
 
 
 ## 2019-10-31 4.0.0

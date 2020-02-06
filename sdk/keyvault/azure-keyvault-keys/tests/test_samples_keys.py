@@ -196,9 +196,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        polling_interval = 0 if self.is_playback() else 2
-
-        key_client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
+        key_client.begin_delete_key(key_name).wait()
 
         # [START restore_key_backup]
 
@@ -215,8 +213,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
-        polling_interval = 0 if self.is_playback() else 2
-        key_client.begin_delete_key(created_key.name, _polling_interval=polling_interval).wait()
+        key_client.begin_delete_key(created_key.name).wait()
         # [START get_deleted_key]
 
         # get a deleted key (requires soft-delete enabled for the vault)

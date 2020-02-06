@@ -5,7 +5,9 @@
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
+from azure.core.pipeline.policies import(
+    ContentDecodePolicy, UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
+)
 from azure.core.pipeline.transport import RequestsTransport
 from ._generated.v7_0.version import VERSION as V7_0_VERSION
 from ._generated.v2016_10_01.version import VERSION as V2016_10_01_VERSION
@@ -123,6 +125,7 @@ class KeyVaultClientBase(object):
             config.headers_policy,
             config.user_agent_policy,
             config.proxy_policy,
+            ContentDecodePolicy(),
             config.redirect_policy,
             config.retry_policy,
             config.authentication_policy,
