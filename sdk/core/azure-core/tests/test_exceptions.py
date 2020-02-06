@@ -36,28 +36,9 @@ except ImportError:
     from mock import Mock
 
 # module under test
-from azure.core.exceptions import HttpResponseError, ODataV4Error
+from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase
-
-
-class FakeErrorOne(object):
-
-    def __init__(self):
-        self.error = Mock(message="A fake error", code="FakeErrorOne")
-
-
-class FakeErrorTwo(object):
-
-    def __init__(self):
-        self.message = "A different fake error"
-
-
-class FakeHttpResponse(HttpResponseError):
-
-    def __init__(self, error, *args, **kwargs):
-        self.error = error
-        super(FakeHttpResponse, self).__init__(self, *args, **kwargs)
 
 
 def _build_response(json_body):
@@ -76,6 +57,26 @@ def _build_response(json_body):
             return self._body
 
     return MockResponse()
+
+
+class FakeErrorOne(object):
+
+    def __init__(self):
+        self.error = Mock(message="A fake error", code="FakeErrorOne")
+
+
+class FakeErrorTwo(object):
+
+    def __init__(self):
+        self.message = "A different fake error"
+
+
+class FakeHttpResponse(HttpResponseError):
+
+    def __init__(self, response, error, *args, **kwargs):
+        self.error = error
+        super(FakeHttpResponse, self).__init__(self, response=response, *args, **kwargs)
+
 
 class TestExceptions(object):
 
@@ -98,19 +99,36 @@ class TestExceptions(object):
         assert error.status_code is None
 
     def test_deserialized_httpresponse_error_code(self):
-        error = FakeHttpResponse(FakeErrorOne())
+        message = {
+            "error": {
+                "code": "FakeErrorOne",
+                "message": "A fake error",
+            }
+        }
+        response = _build_response(json.dumps(message).encode("utf-8"))
+        error = FakeHttpResponse(response, FakeErrorOne())
         assert error.message == "(FakeErrorOne) A fake error"
-        assert error.response is None
-        assert error.reason is None
-        assert error.status_code is None
-        assert isinstance(error.error, FakeErrorOne)
+        assert str(error.error) == "(FakeErrorOne) A fake error"
+        assert error.error.code == "FakeErrorOne"
+        assert error.error.message == "A fake error"
+        assert error.response is response
+        assert error.reason == "Bad Request"
+        assert error.status_code == 400
+        assert isinstance(error.model, FakeErrorOne)
+        assert isinstance(error.error, ODataV4Format)
 
+    @pytest.mark.skip("This is not supported format, this test was written without any track2 using that format, keeping it here for PR review only")
     def test_deserialized_httpresponse_error_message(self):
-        error = FakeHttpResponse(FakeErrorTwo())
+        message = {
+            "code": "FakeErrorOne",
+            "message": "A fake error",
+        }
+        response = _build_response(json.dumps(message).encode("utf-8"))
+        error = FakeHttpResponse(response, FakeErrorTwo())
         assert error.message == "A different fake error"
-        assert error.response is None
-        assert error.reason is None
-        assert error.status_code is None
+        assert error.response is response
+        assert error.reason == "Bad Request"
+        assert error.status_code == 400
         assert isinstance(error.error, FakeErrorTwo)
 
     def test_httpresponse_error_with_response(self):
