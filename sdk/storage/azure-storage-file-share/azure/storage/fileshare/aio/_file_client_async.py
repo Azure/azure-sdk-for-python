@@ -31,7 +31,7 @@ from .._deserialize import deserialize_file_properties, deserialize_file_stream
 from .._serialize import get_access_conditions
 from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
-from ._lease_async import FileShareLeaseClient
+from ._lease_async import ShareLeaseClient
 from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
@@ -152,8 +152,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             in the correct format.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A FileShareLeaseClient object.
-        :rtype: ~azure.storage.fileshare.FileShareLeaseClient
+        :returns: A ShareLeaseClient object.
+        :rtype: ~azure.storage.fileshare.ShareLeaseClient
 
         .. admonition:: Example:
 
@@ -164,7 +164,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :dedent: 8
                 :caption: Acquiring a lease on a blob.
         """
-        lease = FileShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         await lease.acquire(**kwargs)
         return lease
 
@@ -215,9 +215,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -329,9 +329,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -417,9 +417,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: dict(str, Any)
@@ -477,9 +477,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             instance of FileProperties.
         :type copy_id: str or ~azure.storage.fileshare.FileProperties
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -528,9 +528,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             will not be used, because computing the MD5 hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A iterable data generator (stream)
@@ -578,9 +578,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         later deleted during garbage collection.
 
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -608,9 +608,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         system properties for the file.
 
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: FileProperties
@@ -672,9 +672,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             x-ms-file-permission-key should be specified.
         :type permission_key: str
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -723,9 +723,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -770,9 +770,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             will already validate. Note that this MD5 hash is not stored with the
             file.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:
@@ -834,9 +834,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (length-offset).
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -867,9 +867,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param int length:
             Number of bytes to use over which to get ranges.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
@@ -917,9 +917,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Number of bytes to use for clearing a section of the file.
             The range can be up to 4 MB in size.
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -957,9 +957,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :param int size:
             Size to resize file to (in bytes)
         :keyword lease:
-            Required if the file has an active lease. Value can be a FileShareLeaseClient object
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.FileShareLeaseClient or str
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).

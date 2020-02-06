@@ -9,7 +9,7 @@ from ._file_client import ShareFileClient
 from ._directory_client import ShareDirectoryClient
 from ._share_client import ShareClient
 from ._share_service_client import ShareServiceClient
-from ._lease import FileShareLeaseClient
+from ._lease import ShareLeaseClient
 from ._shared_access_signature import generate_account_sas, generate_share_sas, generate_file_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import (
@@ -43,7 +43,7 @@ __all__ = [
     'ShareDirectoryClient',
     'ShareClient',
     'ShareServiceClient',
-    'FileShareLeaseClient',
+    'ShareLeaseClient',
     'ExponentialRetry',
     'LinearRetry',
     'LocationMode',

@@ -62,7 +62,7 @@ def validate_copy_mode(copy_mode, permission, permission_key):
 
 
 def get_access_conditions(lease):
-    # type: (Optional[Union[FileShareLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    # type: (Optional[Union[ShareLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:

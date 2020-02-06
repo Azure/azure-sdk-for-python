@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     ShareFileClient = TypeVar("ShareFileClient")
 
 
-class FileShareLeaseClient(object):
-    """Creates a new FileShareLeaseClient.
+class ShareLeaseClient(object):
+    """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareFileClient.
 
