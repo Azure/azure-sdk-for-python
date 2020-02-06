@@ -8,6 +8,7 @@
 - Fixed a bug that sends None as request_id #9545
 - Enable mypy for customers #9572
 - Handle TypeError in deep copy #9620
+- Fix text/plain content-type in decoder #9589
 
 ## 1.2.1 (2020-01-14)
 
