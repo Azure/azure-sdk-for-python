@@ -220,6 +220,7 @@ class HttpResponseError(AzureError):
         except Exception:  #pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass
+        return None
 
 
 class DecodeError(HttpResponseError):
