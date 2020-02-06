@@ -14,15 +14,15 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.models import (
     StorageErrorException)
-from .._lease import ShareFileLeaseClient as LeaseClientBase
+from .._lease import ShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime
     ShareFileClient = TypeVar("ShareFileClient")
 
 
-class ShareFileLeaseClient(LeaseClientBase):
-    """Creates a new ShareFileLeaseClient.
+class ShareLeaseClient(LeaseClientBase):
+    """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareFileClient.
 
@@ -38,7 +38,7 @@ class ShareFileLeaseClient(LeaseClientBase):
 
     :param client:
         The client of the file to lease.
-    :type client: ~azure.storage.fileshare.ShareFileClient
+    :type client: ~azure.storage.fileshare.aio.ShareFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
