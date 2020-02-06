@@ -81,8 +81,6 @@ class ShareFileLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        if not response:
-            raise ValueError("Empty lease response: {}".format(response))
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
         self.etag = response.get('etag')  # type: str

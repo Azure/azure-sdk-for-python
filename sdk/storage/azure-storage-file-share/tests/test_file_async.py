@@ -1129,6 +1129,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         content = await copy_file.readall()
         self.assertEqual(content, self.short_byte_data)
 
+    @pytest.mark.xfail  # pending new API version
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_file_with_specifying_acl_copy_behavior_attributes_async(self, resource_group, location, storage_account, storage_account_key):
