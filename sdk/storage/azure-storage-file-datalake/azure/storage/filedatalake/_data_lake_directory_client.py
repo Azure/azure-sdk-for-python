@@ -490,7 +490,7 @@ class DataLakeDirectoryClient(PathClient):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, api_version=self.api_version)
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
@@ -525,4 +525,4 @@ class DataLakeDirectoryClient(PathClient):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, api_version=self.api_version)

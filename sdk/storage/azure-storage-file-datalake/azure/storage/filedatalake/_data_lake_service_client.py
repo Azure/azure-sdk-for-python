@@ -292,7 +292,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return FileSystemClient(self.url, file_system, credential=self._raw_credential, _configuration=self._config,
                                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                                key_resolver_function=self.key_resolver_function)
+                                key_resolver_function=self.key_resolver_function, api_version=self.api_version)
 
     def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
                              directory  # type: Union[DirectoryProperties, str]
@@ -328,7 +328,8 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                                        _location_mode=self._location_mode, _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
+                                       key_resolver_function=self.key_resolver_function,
+                                       api_version=self.api_version
                                        )
 
     def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
@@ -369,4 +370,4 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, api_version=self.api_version)

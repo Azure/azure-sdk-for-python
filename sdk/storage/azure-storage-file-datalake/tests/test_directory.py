@@ -433,7 +433,7 @@ class DirectoryTest(StorageTestCase):
             account_key=self.dsc.credential.account_key,
             permission=DirectorySasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
-            api_version=self.settings.LIVE_API_VERSION
+            api_version=self.live_api_version
         )
 
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
@@ -457,7 +457,7 @@ class DirectoryTest(StorageTestCase):
             account_key=self.dsc.credential.account_key,
             permission=DirectorySasPermissions(create=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
-            api_version=self.settings.LIVE_API_VERSION
+            api_version=self.live_api_version
         )
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
                                                    credential=token, **self.get_client_kwargs())

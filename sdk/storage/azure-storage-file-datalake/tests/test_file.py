@@ -261,7 +261,7 @@ class FileTest(StorageTestCase):
                                       user_delegation_key=user_delegation_key,
                                       permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
                                       expiry=datetime.utcnow() + timedelta(hours=1),
-                                      api_version=self.settings.LIVE_API_VERSION
+                                      api_version=self.live_api_version
                                       )
 
         # doanload the data and make sure it is the same as uploaded data
@@ -324,7 +324,7 @@ class FileTest(StorageTestCase):
             ResourceTypes(file_system=True, object=True),
             AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
-            api_version=self.settings.LIVE_API_VERSION
+            api_version=self.live_api_version
         )
 
         # read the created file which is under root directory
@@ -357,7 +357,7 @@ class FileTest(StorageTestCase):
             account_key=self.dsc.credential.account_key,
             permission=FileSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
-            api_version=self.settings.LIVE_API_VERSION
+            api_version=self.live_api_version
         )
 
         # read the created file which is under root directory

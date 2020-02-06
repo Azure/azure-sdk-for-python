@@ -614,7 +614,8 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        _location_mode=self._location_mode, _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
+                                       key_resolver_function=self.key_resolver_function,
+                                       api_version=self.api_version
                                        )
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
@@ -650,4 +651,4 @@ class FileSystemClient(StorageAccountHostsMixin):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, api_version=self.api_version)
