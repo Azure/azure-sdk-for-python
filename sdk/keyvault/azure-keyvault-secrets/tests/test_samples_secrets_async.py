@@ -4,6 +4,7 @@
 # -------------------------------------
 import hashlib
 import os
+import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -13,7 +14,6 @@ from secrets_async_test_case import AsyncKeyVaultTestCase
 
 def print(*args):
     assert all(arg is not None for arg in args)
-
 
 def test_create_secret_client():
     vault_url = "vault_url"
@@ -27,7 +27,7 @@ def test_create_secret_client():
     credentials = DefaultAzureCredential()
     secret_client = SecretClient(vault_url, credentials)
 
-    # [END create_secret_client]
+    # [END create_secret_client
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
@@ -97,7 +97,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_secret.recovery_id)
 
         # [END delete_secret]
-        await secret_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -147,7 +146,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(secret.deleted_date)
 
         # [END list_deleted_secrets]
-        await secret_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -177,7 +175,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(restored_secret.version)
 
         # [END restore_secret_backup]
-        await secret_client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -202,4 +199,3 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(recovered_secret.name)
 
         # [END recover_deleted_secret]
-        await secret_client.close()

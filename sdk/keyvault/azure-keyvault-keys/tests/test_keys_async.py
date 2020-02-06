@@ -9,7 +9,6 @@ import hashlib
 import os
 import logging
 import json
-import pytest
 
 from azure.identity.aio import EnvironmentCredential
 from azure.keyvault.keys.aio import KeyClient
@@ -215,7 +214,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         deleted_key = await client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
         self.assertEqual(created_rsa_key.id, deleted_key.id)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -241,7 +239,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key)
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -269,7 +266,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 del expected[key.id]
                 self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -303,7 +299,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -330,7 +325,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         restored = await client.restore_key_backup(key_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -363,7 +357,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             actual[k] = await client.get_key(k)
 
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -387,7 +380,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         # purge them
         for key_name in keys.keys():
             await client.purge_deleted_key(key_name)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -414,7 +406,6 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                     pass
 
         assert False, "Expected request body wasn't logged"
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -438,23 +429,20 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
-        await client.close()
 
-    @pytest.mark.asyncio
-    async def test_async_client_close(self):
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_async_client_close(self, vault_client, **kwargs):
         transport = AsyncMockTransport()
         client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
-
         await client.close()
-        assert transport.__aenter__.call_count == 1
         assert transport.__aexit__.call_count == 1
 
 
-    @pytest.mark.asyncio
-    async def test_async_client_context_manager(self):
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_async_client_context_manager(self, vault_client, **kwargs):
         transport = AsyncMockTransport()
         client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
 
         async with client:
-            pass
+            assert transport.__aenter__.call_count == 1
         assert transport.__aexit__.call_count == 1

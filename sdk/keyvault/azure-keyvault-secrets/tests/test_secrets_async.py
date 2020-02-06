@@ -7,8 +7,6 @@ import hashlib
 import os
 import logging
 import json
-import pytest
-
 from azure.keyvault.secrets.aio import SecretClient
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceNotFoundError
@@ -130,7 +128,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # delete secret
         deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -155,7 +152,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # list secrets
         result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -184,7 +180,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             self.assertIsNotNone(deleted_secret.recovery_id)
             expected_secret = expected[deleted_secret.name]
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -216,7 +211,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 del expected[secret.id]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -242,7 +236,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         restored = await client.restore_secret_backup(secret_backup)
         self.assertEqual(created_bundle.id, restored.id)
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -276,7 +269,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         await self._poll_until_no_exception(
             client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
         )
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -305,7 +297,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # purge secrets
         for secret_name in secrets.keys():
             await client.purge_deleted_secret(secret_name)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -332,7 +323,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                     pass
 
         assert False, "Expected request body wasn't logged"
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -356,23 +346,20 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
-        await client.close()
 
-    @pytest.mark.asyncio
-    async def test_async_client_close(self):
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_async_client_close(self, vault_client, **kwargs):
         transport = AsyncMockTransport()
         client = SecretClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
-
         await client.close()
         assert transport.__aexit__.call_count == 1
 
 
-    @pytest.mark.asyncio
-    async def test_async_client_context_manager(self):
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_async_client_context_manager(self, vault_client, **kwargs):
         transport = AsyncMockTransport()
         client = SecretClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
 
         async with client:
-            pass
+            assert transport.__aenter__.call_count == 1
         assert transport.__aexit__.call_count == 1
-        assert transport.__aenter__.call_count == 1

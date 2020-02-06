@@ -9,11 +9,13 @@ from typing import TYPE_CHECKING
 
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Any, Callable, Union
 
 logger = logging.getLogger(__name__)
+
 
 class RecoverDeletedAsyncPollingMethod(AsyncPollingMethod):
     def __init__(self, initial_status, finished_status, interval=2):

@@ -6,7 +6,6 @@ import asyncio
 import itertools
 import hashlib
 import os
-import pytest
 import logging
 import json
 import pytest
@@ -226,7 +225,6 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -259,7 +257,6 @@ class CertificateClientTests(KeyVaultTestCase):
         # list certificates
         returned_certificates = client.list_properties_of_certificates(max_page_size=max_certificates - 1)
         await self._validate_certificate_list(expected, returned_certificates)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -298,7 +295,6 @@ class CertificateClientTests(KeyVaultTestCase):
                 )
             ),
         )
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -332,7 +328,6 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=True)
@@ -388,7 +383,6 @@ class CertificateClientTests(KeyVaultTestCase):
         for k in expected.keys():
             actual[k] = await client.get_certificate_version(certificate_name=k, version="")
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
-        await client.close()
 
     @pytest.mark.skip("Skipping because service doesn't allow cancellation of certificates with issuer 'Unknown'")
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -453,7 +447,6 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # delete cancelled certificate
         await client.delete_certificate(cert_name)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -493,7 +486,6 @@ class CertificateClientTests(KeyVaultTestCase):
         returned_policy = await client.update_certificate_policy(certificate_name=cert_name, policy=cert_policy)
 
         self._validate_certificate_policy(cert_policy, returned_policy)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -509,7 +501,6 @@ class CertificateClientTests(KeyVaultTestCase):
         operation = await client.get_certificate_operation(certificate_name=cert_name)
         pending_version_csr = operation.csr
         self.assertEqual((await client.get_certificate_operation(certificate_name=cert_name)).csr, pending_version_csr)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -534,7 +525,6 @@ class CertificateClientTests(KeyVaultTestCase):
         # restore certificate
         restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(cert=restored_certificate, cert_name=cert_name, cert_policy=policy)
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -584,7 +574,6 @@ class CertificateClientTests(KeyVaultTestCase):
         signed_certificate_bytes = signed_certificate_bytes.rstrip("-----END CERTIFICATE-----")
 
         await client.merge_certificate(cert_name, [signed_certificate_bytes.encode()])
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -667,7 +656,6 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -694,7 +682,6 @@ class CertificateClientTests(KeyVaultTestCase):
                     pass
 
         assert False, "Expected request body wasn't logged"
-        await client.close()
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -718,22 +705,19 @@ class CertificateClientTests(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
-        await client.close()
 
-    @pytest.mark.asyncio
-    async def test_async_client_close(self):
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_async_client_close(self, vault_client, **kwargs):
         transport = AsyncMockTransport()
-        client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
-
+        client = CertificateClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
         await client.close()
         assert transport.__aexit__.call_count == 1
 
-    @pytest.mark.asyncio
-    async def test_async_client_context_manager(self):
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_async_client_context_manager(self, vault_client, **kwargs):
         transport = AsyncMockTransport()
-        client = KeyClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
+        client = CertificateClient(vault_url="http://not_a_key_vault.com", credential=object(), transport=transport)
 
         async with client:
-            pass
+            assert transport.__aenter__.call_count == 1
         assert transport.__aexit__.call_count == 1
-        assert transport.__aenter__.call_count == 1
