@@ -8,6 +8,8 @@ import pkgutil
 import re
 import sys
 import shutil
+import json
+from collections import defaultdict
 from pathlib import Path
 
 from typing import List, Tuple, Any, Union
@@ -79,26 +81,14 @@ def resolve_package_directory(package_name, sdk_root=None):
 
     return str(packages[0].relative_to(sdk_root))
 
+def get_paths_to_versions(path_to_package: str) -> List[str]:
 
-def get_versioned_modules(
-    package_name: str, module_name: str, sdk_root: Path = None
-) -> List[Tuple[str, Any]]:
-    """Get (label, submodule) where label starts with "v20" and submodule is the corresponding imported module.
-    """
-    if not sdk_root:
-        sdk_root = Path(__file__).parents[1]
-
-    path_to_package = resolve_package_directory(package_name, sdk_root)
-    azure.__path__.append(str((sdk_root / path_to_package / "azure").resolve()))
-
-    # Doesn't work with namespace package
-    # sys.path.append(str((sdk_root / package_name).resolve()))
-    module_to_generate = importlib.import_module(module_name)
-    return {
-        label: importlib.import_module("." + label, module_to_generate.__name__)
-        for (_, label, ispkg) in pkgutil.iter_modules(module_to_generate.__path__)
-        if label.startswith("v20") and ispkg
-    }
+    paths_to_versions = []
+    for child in [x for x in path_to_package.iterdir() if x.is_dir()]:
+        child_dir = (path_to_package / child).resolve()
+        if Path(child_dir / '_metadata.json') in [x for x in child_dir.iterdir()]:
+            paths_to_versions.append(child_dir)
+    return paths_to_versions
 
 
 class ApiVersionExtractor(ast.NodeVisitor):
@@ -138,7 +128,7 @@ def get_client_class_name_from_module(module):
     return module.__all__[0]
 
 
-def build_operation_meta(versioned_modules):
+def build_operation_meta(paths_to_versions):
     """Introspect the client:
 
     version_dict => {
@@ -148,89 +138,21 @@ def build_operation_meta(versioned_modules):
     }
     mod_to_api_version => {'v2018_05_01': '2018-05-01'}
     """
-
-    version_dict = {}
-    mod_to_api_version = {}
-    for versionned_label, versionned_mod in versioned_modules.items():
-        extracted_api_versions = set()
-        client_doc = versionned_mod.__dict__[
-            get_client_class_name_from_module(versionned_mod)
-        ].__doc__
-        operations = list(
-            re.finditer(
-                r":ivar (?P<attr>[a-z_0-9]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n",
-                client_doc,
-            )
-        )
-        for operation in operations:
-            attr, clsname = operation.groups()
-            _LOGGER.debug("Class name: %s", clsname)
-            version_dict.setdefault(attr, []).append((versionned_label, clsname))
-
-            # Create a fake operation group to extract easily the real api version
-            extracted_api_version = None
-            try:
-                extracted_api_version = versionned_mod.operations.__dict__[clsname](
-                    None, None, None, None
-                ).api_version
-                _LOGGER.debug("Found an obvious API version: %s", extracted_api_version)
-                if extracted_api_version:
-                    extracted_api_versions.add(extracted_api_version)
-            except Exception:
-                _LOGGER.debug(
-                    "Should not happen. I guess it mixed operation groups like VMSS Network..."
-                )
-                for func_name, function in versionned_mod.operations.__dict__[
-                    clsname
-                ].__dict__.items():
-                    if not func_name.startswith("__"):
-                        _LOGGER.debug("Try to extract API version from: %s", func_name)
-                        extracted_api_version = extract_api_version_from_code(function)
-                        _LOGGER.debug(
-                            "Extracted API version: %s", extracted_api_version
-                        )
-                        if extracted_api_version:
-                            extracted_api_versions.add(extracted_api_version)
-
-        if not extracted_api_versions:
-            sys.exit(
-                "Was not able to extract api_version of {}".format(versionned_label)
-            )
-        if len(extracted_api_versions) >= 2:
-            # Mixed operation group, try to figure out what we want to use
-            final_api_version = None
-            _LOGGER.warning(
-                "Found too much API version: {} in label {}".format(
-                    extracted_api_versions, versionned_label
-                )
-            )
-            for candidate_api_version in extracted_api_versions:
-                if (
-                    "v{}".format(candidate_api_version.replace("-", "_"))
-                    == versionned_label
-                ):
-                    final_api_version = candidate_api_version
-                    _LOGGER.warning(
-                        "Guessing you want {} based on label {}".format(
-                            final_api_version, versionned_label
-                        )
-                    )
-                    break
-            else:
-                sys.exit(
-                    "Unble to match {} to label {}".format(
-                        extracted_api_versions, versionned_label
-                    )
-                )
-            extracted_api_versions = {final_api_version}
-        mod_to_api_version[versionned_label] = extracted_api_versions.pop()
-
-    # latest: api_version=mod_to_api_version[versions[-1][0]]
-
-    return version_dict, mod_to_api_version
+    mod_to_api_version = defaultdict(str)
+    versioned_operations_dict = defaultdict(list)
+    for version_path in paths_to_versions:
+        with open(version_path / "_metadata.json") as f:
+            metadata_json = json.load(f)
+        operation_groups = metadata_json['operation_groups']
+        version = metadata_json['version']
+        mod_to_api_version[version_path.name] = version
+        for operation_group, operation_group_class_name in operation_groups.items():
+            versioned_operations_dict[operation_group].append((version_path.name, operation_group_class_name))
+    # raise ValueError(versioned_operations_dict)
+    return versioned_operations_dict, mod_to_api_version
 
 
-def build_operation_mixin_meta(versioned_modules):
+def build_operation_mixin_meta(paths_to_versions):
     """Introspect the client:
 
     version_dict => {
@@ -245,35 +167,20 @@ def build_operation_mixin_meta(versioned_modules):
     }
     """
     mixin_operations = {}
-
-    for versionned_label, versionned_mod in sorted(versioned_modules.items()):
-
-        client_name = get_client_class_name_from_module(versionned_mod)
-        client_class = versionned_mod.__dict__[client_name]
-
-        # Detect if this client is using an operation mixin (Network)
-        # Operation mixins are available since Autorest.Python 4.x
-        operations_mixin = next(
-            (c for c in client_class.__mro__ if "OperationsMixin" in c.__name__), None
-        )
-        if not operations_mixin:
+    for version_path in paths_to_versions:
+        with open(version_path / "_metadata.json") as f:
+            metadata_json = json.load(f)
+        if not metadata_json.get('operation_mixin_functions'):
             continue
-
-        for func_name, func in operations_mixin.__dict__.items():
-            # Work only on functions
+        for func_name, func in metadata_json['operation_mixin_functions'].items():
             if func_name.startswith("_"):
                 continue
-
-            signature = inspect.signature(func)
             mixin_operations.setdefault(func_name, {}).setdefault(
                 "available_apis", []
-            ).append(versionned_label)
-            mixin_operations[func_name]["doc"] = func.__doc__
-            mixin_operations[func_name]["signature"] = str(signature)
-            mixin_operations[func_name]["call"] = ", ".join(
-                list(signature.parameters)[1:-1]
-            )
-
+            ).append(version_path.name)
+            mixin_operations[func_name]['doc'] = func['doc']
+            mixin_operations[func_name]['signature'] = func['signature']
+            mixin_operations[func_name][call] = func['call']
     return mixin_operations
 
 
@@ -309,6 +216,7 @@ def build_last_rt_list(
         return False
 
     last_rt_list = {}
+
     # Operation groups
     versioned_dict = {
         operation_name: [meta[0] for meta in operation_metadata]
@@ -321,7 +229,6 @@ def build_last_rt_list(
             for operation_name, operation_metadata in mixin_operations.items()
         }
     )
-
     for operation, api_versions_list in versioned_dict.items():
         local_last_api_version = get_floating_latest(api_versions_list, preview_mode)
         if local_last_api_version == last_api_version:
@@ -335,7 +242,6 @@ def build_last_rt_list(
         ):
             continue
         last_rt_list[operation] = local_last_api_version
-
     return last_rt_list
 
 
@@ -395,10 +301,6 @@ def patch_import(file_path: Union[str, Path]) -> None:
         write_fd.write(conf_bytes)
 
 
-def has_subscription_id(client_class):
-    return "subscription_id" in inspect.signature(client_class).parameters
-
-
 def main(input_str, default_api=None):
 
     # If True, means the auto-profile will consider preview versions.
@@ -409,12 +311,17 @@ def main(input_str, default_api=None):
     is_multi_client_package = "#" in input_str
 
     package_name, module_name = parse_input(input_str)
-    versioned_modules = get_versioned_modules(package_name, module_name)
+    sdk_root = Path(__file__).parents[1]
+
+    path_to_package = (
+        sdk_root / resolve_package_directory(package_name, sdk_root) /
+        "azure" / "mgmt" / "storage"
+    ).resolve()
+    paths_to_versions = get_paths_to_versions(path_to_package)
     versioned_operations_dict, mod_to_api_version = build_operation_meta(
-        versioned_modules
+        paths_to_versions
     )
 
-    client_folder = find_module_folder(package_name, module_name)
     last_api_version = get_floating_latest(mod_to_api_version.keys(), preview_mode)
 
     # I need default_api to be v2019_06_07_preview shaped if it exists, let's be smart
@@ -427,35 +334,35 @@ def main(input_str, default_api=None):
         ][0]
         _LOGGER.info("Default API version will be: %s", last_api_version)
 
-    last_api_path = client_folder / last_api_version
+    last_api_path = path_to_package / last_api_version
 
     # In case we are transitioning from a single api generation, clean old folders
-    shutil.rmtree(str(client_folder / "operations"), ignore_errors=True)
-    shutil.rmtree(str(client_folder / "models"), ignore_errors=True)
+    shutil.rmtree(str(path_to_package / "operations"), ignore_errors=True)
+    shutil.rmtree(str(path_to_package / "models"), ignore_errors=True)
 
     shutil.copy(
-        str(client_folder / last_api_version / "_configuration.py"),
-        str(client_folder / "_configuration.py"),
+        str(path_to_package / last_api_version / "_configuration.py"),
+        str(path_to_package / "_configuration.py"),
     )
     shutil.copy(
-        str(client_folder / last_api_version / "__init__.py"),
-        str(client_folder / "__init__.py"),
+        str(path_to_package / last_api_version / "__init__.py"),
+        str(path_to_package / "__init__.py"),
     )
     if is_multi_client_package:
         _LOGGER.warning("Patching multi-api client basic files")
-        patch_import(client_folder / "_configuration.py")
-        patch_import(client_folder / "__init__.py")
+        patch_import(path_to_package / "_configuration.py")
+        patch_import(path_to_package / "__init__.py")
 
-    versionned_mod = versioned_modules[last_api_version]
-    client_name = get_client_class_name_from_module(versionned_mod)
-    client_class = versionned_mod.__dict__[client_name]
+
 
     # Detect if this client is using an operation mixin (Network)
     # Operation mixins are available since Autorest.Python 4.x
-    mixin_operations = build_operation_mixin_meta(versioned_modules)
+    mixin_operations = build_operation_mixin_meta(paths_to_versions)
 
-    # If we get a StopIteration here, means the API version folder is broken
-    client_file_name = next(last_api_path.glob("*_client.py")).name
+    # get client name from latest api version
+    with open(paths_to_versions[-1] / "_metadata.json") as f:
+        metadata_json = json.load(f)
+
 
     # versioned_operations_dict => {
     #     'application_gateways': [
@@ -482,14 +389,14 @@ def main(input_str, default_api=None):
     )
 
     conf = {
-        "client_name": client_name,
-        "has_subscription_id": has_subscription_id(client_class),
+        "client_name": metadata_json["client"]["name"],
+        "has_subscription_id": metadata_json["client"]["has_subscription_id"],
         "module_name": module_name,
         "operations": versioned_operations_dict,
         "mixin_operations": mixin_operations,
         "mod_to_api_version": mod_to_api_version,
         "last_api_version": mod_to_api_version[last_api_version],
-        "client_doc": client_class.__doc__.split("\n")[0],
+        "client_doc": metadata_json["client"]["description"],
         "last_rt_list": last_rt_list,
         "default_models": sorted(
             {last_api_version} | {versions for _, versions in last_rt_list.items()}
@@ -508,11 +415,11 @@ def main(input_str, default_api=None):
 
         # Some file doesn't use the template name
         if template_name == "_multiapi_client.py":
-            output_filename = client_file_name
+            output_filename = metadata_json["client"]["filename"]
         else:
             output_filename = template_name
 
-        future_filepath = client_folder / output_filename
+        future_filepath = path_to_package / output_filename
 
         template = env.get_template(template_name)
         result = template.render(**conf)

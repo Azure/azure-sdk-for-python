@@ -1,0 +1,18 @@
+{
+    "version": "2018-07-01",
+    "client": {
+        "name": "StorageManagementClient",
+        "filename": "_storage_management_client.py",
+        "description": "The Azure Storage Management API.",
+        "has_subscription_id": true
+    },
+    "operation_groups": {
+        "blob_containers": "BlobContainersOperations",
+        "blob_services": "BlobServicesOperations",
+        "management_policies": "ManagementPoliciesOperations",
+        "operations": "Operations",
+        "skus": "SkusOperations",
+        "storage_accounts": "StorageAccountsOperations",
+        "usages": "UsagesOperations"
+    }
+}

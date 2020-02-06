@@ -1,0 +1,22 @@
+{
+    "version": "2019-06-01",
+    "client": {
+        "name": "StorageManagementClient",
+        "filename": "_storage_management_client.py",
+        "description": "The Azure Storage Management API.",
+        "has_subscription_id": true
+    },
+    "operation_groups": {
+        "blob_containers": "BlobContainersOperations",
+        "blob_services": "BlobServicesOperations",
+        "file_services": "FileServicesOperations",
+        "file_shares": "FileSharesOperations",
+        "management_policies": "ManagementPoliciesOperations",
+        "operations": "Operations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "skus": "SkusOperations",
+        "storage_accounts": "StorageAccountsOperations",
+        "usages": "UsagesOperations"
+    }
+}

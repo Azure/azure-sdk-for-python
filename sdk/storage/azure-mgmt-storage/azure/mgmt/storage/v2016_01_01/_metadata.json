@@ -1,0 +1,13 @@
+{
+    "version": "2016-01-01",
+    "client": {
+        "name": "StorageManagementClient",
+        "filename": "_storage_management_client.py",
+        "description": "The Azure Storage Management API.",
+        "has_subscription_id": true
+    },
+    "operation_groups": {
+        "storage_accounts": "StorageAccountsOperations",
+        "usage": "UsageOperations"
+    }
+}
