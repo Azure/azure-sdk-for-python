@@ -47,21 +47,19 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "nspkg",
     "azure-keyvault",
 ]
-NON_MANAGEMENT_CODE_5_ALLOWED = ["azure-keyvault"]
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
 REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
-    "azure-servicefabric",
 ]
 
 omit_regression = (
     lambda x: "nspkg" not in x
-    and "mgmt" not in x
+    and not any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS])
     and os.path.basename(x) not in META_PACKAGES
     and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
 )
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
-omit_build = lambda x: os.path.basename(x) not in META_PACKAGES
+omit_build = lambda x: x # Dummy lambda to match omit type
 # dict of filter type and filter function
 omit_funct_dict = {
     "Build": omit_build,
@@ -311,7 +309,7 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
                 [target_pkg],
             )
         )
-        or pkg_name in NON_MANAGEMENT_CODE_5_ALLOWED
+        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
     ):
         return True
     else:
@@ -335,7 +333,7 @@ def install_package_from_whl(
         exit(1)
 
     logging.info("Searching whl for package {}".format(package_name))
-    whl_name = "{0}-{1}-*.whl".format(package_name.replace("-", "_"), version)
+    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), version)
     paths = glob.glob(os.path.join(whl_directory, whl_name))
     if not paths:
         logging.error(
