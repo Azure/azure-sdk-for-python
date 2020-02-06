@@ -148,7 +148,6 @@ def build_operation_meta(paths_to_versions):
         mod_to_api_version[version_path.name] = version
         for operation_group, operation_group_class_name in operation_groups.items():
             versioned_operations_dict[operation_group].append((version_path.name, operation_group_class_name))
-    # raise ValueError(versioned_operations_dict)
     return versioned_operations_dict, mod_to_api_version
 
 
@@ -312,10 +311,9 @@ def main(input_str, default_api=None):
 
     package_name, module_name = parse_input(input_str)
     sdk_root = Path(__file__).parents[1]
-
     path_to_package = (
         sdk_root / resolve_package_directory(package_name, sdk_root) /
-        "azure" / "mgmt" / "storage"
+        Path(*(module_name.split(".")))
     ).resolve()
     paths_to_versions = get_paths_to_versions(path_to_package)
     versioned_operations_dict, mod_to_api_version = build_operation_meta(
