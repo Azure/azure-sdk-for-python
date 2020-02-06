@@ -34,7 +34,7 @@ setup(
     name='azure-cognitiveservices-nspkg',
     version='3.0.1',
     description='Microsoft Azure Cognitive Services Namespace Package [Internal]',
-    long_description=open('README.rst', 'r').read(),
+    long_description=open('README.md', 'r').read(),
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',

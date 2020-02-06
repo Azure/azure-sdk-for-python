@@ -28,7 +28,7 @@ setup(
     name='azure-storage-nspkg',
     version='3.1.0',
     description='Microsoft Azure Storage Namespace Package [Internal]',
-    long_description=open('README.rst', 'r').read(),
+    long_description=open('README.md', 'r').read(),
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
