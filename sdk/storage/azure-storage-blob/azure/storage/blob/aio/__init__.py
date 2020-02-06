@@ -60,7 +60,8 @@ async def upload_blob_to_url(
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    api_version = kwargs.pop('api_version', None)
+    async with BlobClient.from_blob_url(blob_url, credential=credential, api_version=api_version) as client:
         return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
 
 
@@ -114,7 +115,8 @@ async def download_blob_from_url(
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    api_version = kwargs.pop('api_version', None)
+    async with BlobClient.from_blob_url(blob_url, credential=credential, api_version=api_version) as client:
         if hasattr(output, 'write'):
             await _download_to_stream(client, output, **kwargs)
         else:

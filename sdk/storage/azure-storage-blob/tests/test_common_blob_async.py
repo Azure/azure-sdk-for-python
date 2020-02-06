@@ -1430,7 +1430,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         blob = await container.upload_blob(blob_name, data)
 
         # Act
-        service = BlobClient.from_blob_url(blob.url)
+        service = BlobClient.from_blob_url(blob.url, , **self.get_client_kwargs())
         # self._set_test_proxy(service, self.settings)
         content = await (await service.download_blob()).readall()
 
@@ -1819,7 +1819,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
 
         # Act
-        await download_blob_from_url(blob.url, FILE_PATH)
+        await download_blob_from_url(blob.url, FILE_PATH, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1843,7 +1843,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         await download_blob_from_url(
             source_blob.url, FILE_PATH,
             max_concurrency=2,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1868,7 +1868,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
             await download_blob_from_url(
                 source_blob.url, stream,
                 max_concurrency=2,
-                credential=rmt_key)
+                credential=rmt_key, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1891,10 +1891,10 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # Act
         await download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         with self.assertRaises(ValueError):
-            await download_blob_from_url(source_blob.url, FILE_PATH)
+            await download_blob_from_url(source_blob.url, FILE_PATH, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1917,13 +1917,13 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # Act
         await download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         data2 = b'ABCDEFGH' * 1024 * 1024
         source_blob = await self._create_remote_block_blob(blob_data=data2)
         await download_blob_from_url(
             source_blob.url, FILE_PATH, overwrite=True,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1956,7 +1956,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        uploaded = await upload_blob_to_url(sas_blob.url, data)
+        uploaded = await upload_blob_to_url(sas_blob.url, data, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -1977,7 +1977,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
 
         # Act
         uploaded = await upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -2000,7 +2000,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # Act
         with self.assertRaises(ResourceExistsError):
             await upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+                blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         content = await (await blob.download_blob()).readall()
@@ -2023,7 +2023,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         uploaded = await upload_blob_to_url(
             blob.url, data,
             overwrite=True,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -2044,7 +2044,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
 
         # Act
         uploaded = await upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -2070,7 +2070,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         # Act
         with open(FILE_PATH, 'rb'):
             uploaded = await upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+                blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)

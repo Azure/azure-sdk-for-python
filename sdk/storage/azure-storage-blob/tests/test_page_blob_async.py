@@ -1038,13 +1038,15 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_managed_disk_diff(self, resource_group, location, storage_account, storage_account_key):
+        if self.is_live:
+            pytest.skip("Pending new API version")
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(1536)
 
         snapshot1 = await blob.create_snapshot()
-        snapshot_blob1 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot1['snapshot'])
+        snapshot_blob1 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot1['snapshot'], **self.get_client_kwargs())
         sas_token1 = generate_blob_sas(
             snapshot_blob1.account_name,
             snapshot_blob1.container_name,
@@ -1058,7 +1060,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await blob.upload_page(data, offset=0, length=1536)
 
         snapshot2 = await blob.create_snapshot()
-        snapshot_blob2 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot2['snapshot'])
+        snapshot_blob2 = BlobClient.from_blob_url(blob.url, credential=storage_account_key, snapshot=snapshot2['snapshot'], **self.get_client_kwargs())
         sas_token2 = generate_blob_sas(
             snapshot_blob2.account_name,
             snapshot_blob2.container_name,
@@ -1598,7 +1600,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         source_snapshot_blob = await source_blob.create_snapshot()
 
         snapshot_blob = BlobClient.from_blob_url(
-            source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
+            source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob, **self.get_client_kwargs())
         sas_token = generate_blob_sas(
             snapshot_blob.account_name,
             snapshot_blob.container_name,

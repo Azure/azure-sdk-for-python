@@ -1270,7 +1270,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = container.upload_blob(blob_name, data, overwrite=True)
 
         # Act
-        service = BlobClient.from_blob_url(blob.url)
+        service = BlobClient.from_blob_url(blob.url, **self.get_client_kwargs())
         #self._set_test_proxy(service, self.settings)
         content = service.download_blob().readall()
 
@@ -1738,7 +1738,7 @@ class StorageCommonBlobTest(StorageTestCase):
         FILE_PATH = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(blob.url, FILE_PATH)
+        download_blob_from_url(blob.url, FILE_PATH, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1760,7 +1760,7 @@ class StorageCommonBlobTest(StorageTestCase):
         download_blob_from_url(
             source_blob.url, FILE_PATH,
             max_concurrency=2,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
         # Assert
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
@@ -1782,7 +1782,7 @@ class StorageCommonBlobTest(StorageTestCase):
             download_blob_from_url(
                 source_blob.url, stream,
                 max_concurrency=2,
-                credential=rmt_key)
+                credential=rmt_key, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1803,10 +1803,10 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         with self.assertRaises(ValueError):
-            download_blob_from_url(source_blob.url, FILE_PATH)
+            download_blob_from_url(source_blob.url, FILE_PATH, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1827,13 +1827,13 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         download_blob_from_url(
             source_blob.url, FILE_PATH,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         data2 = b'ABCDEFGH' * 1024 * 1024
         source_blob = self._create_remote_block_blob(blob_data=data2)
         download_blob_from_url(
             source_blob.url, FILE_PATH, overwrite=True,
-            credential=rmt_key)
+            credential=rmt_key, **self.get_client_kwargs())
 
         # Assert
         with open(FILE_PATH, 'rb') as stream:
@@ -1864,7 +1864,7 @@ class StorageCommonBlobTest(StorageTestCase):
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        uploaded = upload_blob_to_url(sas_blob.url, data)
+        uploaded = upload_blob_to_url(sas_blob.url, data, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -1883,7 +1883,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         uploaded = upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -1904,7 +1904,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         with self.assertRaises(ResourceExistsError):
             upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+                blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         content = blob.download_blob().readall()
@@ -1925,7 +1925,7 @@ class StorageCommonBlobTest(StorageTestCase):
         uploaded = upload_blob_to_url(
             blob.url, data,
             overwrite=True,
-            credential=storage_account_key)
+            credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -1944,7 +1944,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         uploaded = upload_blob_to_url(
-            blob.url, data, credential=storage_account_key)
+            blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
@@ -1968,7 +1968,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         with open(FILE_PATH, 'rb'):
             uploaded = upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+                blob.url, data, credential=storage_account_key, **self.get_client_kwargs())
 
         # Assert
         self.assertIsNotNone(uploaded)
