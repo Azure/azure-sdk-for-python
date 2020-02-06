@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.1 (2020-02-07)
+
+**Bugfixes**
+
+- Fixed multi-API client issues
+
 ## 2.1.0 (2020-01-30)
 
 **Features**
