@@ -59,7 +59,8 @@ class AiohttpTestTransport(AioHttpTransport):
 class StorageShareTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
         file_url = self.account_url(storage_account, "file")
-        self.fsc = ShareServiceClient(account_url=file_url, credential=storage_account_key, transport=AiohttpTestTransport(), **self.get_client_kwargs())
+        credentials = storage_account_key
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport(), **self.get_client_kwargs())
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -341,8 +342,7 @@ class StorageShareTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_no_options_for_premium_account_async(self, resource_group, location, storage_account, storage_account_key):
         # TODO: add recordings to this test
-        credential = {'account_name': storage_account.name, 'account_key': storage_account_key}
-        self._setup(storage_account, credential)
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
 
         # Act
@@ -528,8 +528,7 @@ class StorageShareTest(AsyncStorageTestCase):
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_properties_for_premium_account_async(self, resource_group, location, storage_account, storage_account_key):
-        credential = {'account_name': storage_account.name, 'account_key': storage_account_key}
-        self._setup(storage_account, credential)
+        self._setup(storage_account, storage_account_key)
         share = await self._create_share()
 
         # Act
