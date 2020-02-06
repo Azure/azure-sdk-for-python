@@ -1430,7 +1430,7 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         blob = await container.upload_blob(blob_name, data)
 
         # Act
-        service = BlobClient.from_blob_url(blob.url, , **self.get_client_kwargs())
+        service = BlobClient.from_blob_url(blob.url, **self.get_client_kwargs())
         # self._set_test_proxy(service, self.settings)
         content = await (await service.download_blob()).readall()
 

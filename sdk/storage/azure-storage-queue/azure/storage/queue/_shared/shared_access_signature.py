@@ -79,7 +79,7 @@ class SharedAccessSignature(object):
     generate_*_shared_access_signature method directly.
     '''
 
-    def __init__(self, account_name, account_key, x_ms_version=X_MS_VERSION):
+    def __init__(self, account_name, account_key, x_ms_version=None):
         '''
         :param str account_name:
             The storage account name used to generate the shared access signatures.
@@ -90,7 +90,7 @@ class SharedAccessSignature(object):
         '''
         self.account_name = account_name
         self.account_key = account_key
-        self.x_ms_version = x_ms_version
+        self.x_ms_version = x_ms_version or X_MS_VERSION
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
                          ip=None, protocol=None):

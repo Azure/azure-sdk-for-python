@@ -135,7 +135,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = kwargs.get('api_version') or VERSION  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async

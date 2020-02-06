@@ -109,7 +109,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = kwargs.get('api_version') or VERSION  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
