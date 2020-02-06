@@ -39,11 +39,12 @@ class ActivityLogsOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, select=None, custom_headers=None, raw=False, **operation_config):
+            self, filter, select=None, custom_headers=None, raw=False, **operation_config):
         """Provides the list of records from the activity logs.
 
-        :param filter: Reduces the set of data collected.<br>The **$filter**
-         argument is very restricted and allows only the following
+        :param filter: Reduces the set of data collected.<br>This argument is
+         required and it also requires at least the start date/time.<br>The
+         **$filter** argument is very restricted and allows only the following
          patterns.<br>- *List events for a resource group*:
          $filter=eventTimestamp ge '2014-07-16T04:36:37.6407898Z' and
          eventTimestamp le '2014-07-20T04:36:37.6407898Z' and resourceGroupName
@@ -93,8 +94,7 @@ class ActivityLogsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
 
