@@ -38,7 +38,7 @@ class ShareLeaseClient(LeaseClientBase):
 
     :param client:
         The client of the file to lease.
-    :type client: ~azure.storage.fileshare.ShareFileClient
+    :type client: ~azure.storage.fileshare.aio.ShareFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
