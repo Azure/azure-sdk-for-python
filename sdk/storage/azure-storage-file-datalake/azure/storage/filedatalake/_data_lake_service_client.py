@@ -79,6 +79,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
+        self._client = self._blob_service_client._client  # pylint: disable=protected-access
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
