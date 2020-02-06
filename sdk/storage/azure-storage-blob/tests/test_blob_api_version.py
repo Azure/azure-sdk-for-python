@@ -15,8 +15,6 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    CpkScopeInfo,
-    ContainerCpkScopeInfo,
     BlobSasPermissions
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -24,10 +22,6 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-TEST_ENCRYPTION_KEY_SCOPE = CpkScopeInfo(encryption_scope="antjoscope1")
-TEST_CONTAINER_ENCRYPTION_KEY_SCOPE = ContainerCpkScopeInfo(default_encryption_scope="containerscope")
-TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE = ContainerCpkScopeInfo(default_encryption_scope="containerscope",
-                                                                          deny_encryption_scope_override=True)
 
 
 class StorageClientTest(StorageTestCase):

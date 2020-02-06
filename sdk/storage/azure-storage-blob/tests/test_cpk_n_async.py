@@ -684,8 +684,19 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         container_client = await bsc.create_container(
-            'cpkcontainer',
+            'asynccpkcontainer',
             container_encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE)
+
+        container_props = await container_client.get_container_properties()
+        self.assertEqual(
+            container_props.encryption_scope.default_encryption_scope,
+            TEST_CONTAINER_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+        self.assertEqual(container_props.encryption_scope.prevent_encryption_scope_override, False)
+        async for container in bsc.list_containers(name_starts_with='asynccpkcontainer'):
+            self.assertEqual(
+                container_props.encryption_scope.default_encryption_scope,
+                TEST_CONTAINER_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+            self.assertEqual(container_props.encryption_scope.prevent_encryption_scope_override, False)
 
         blob_client = container_client.get_blob_client("appendblob")
 
@@ -711,10 +722,20 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
             max_block_size=1024,
             max_page_size=1024)
         container_client = await bsc.create_container(
-            'cpkcontainerwithdenyoverride',
+            'asyncdenyoverridecpkcontainer',
             container_encryption_scope=TEST_CONTAINER_ENCRYPTION_KEY_SCOPE_DENY_OVERRIDE
         )
 
+        container_props = await container_client.get_container_properties()
+        self.assertEqual(
+            container_props.encryption_scope.default_encryption_scope,
+            TEST_CONTAINER_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+        self.assertEqual(container_props.encryption_scope.prevent_encryption_scope_override, True)
+        async for container in bsc.list_containers(name_starts_with='asyncdenyoverridecpkcontainer'):
+            self.assertEqual(
+                container_props.encryption_scope.default_encryption_scope,
+                TEST_CONTAINER_ENCRYPTION_KEY_SCOPE.default_encryption_scope)
+            self.assertEqual(container_props.encryption_scope.prevent_encryption_scope_override, True)
         blob_client = container_client.get_blob_client("appendblob")
 
         # It's not allowed to set encryption scope on the blob when the container denies encryption scope override.
