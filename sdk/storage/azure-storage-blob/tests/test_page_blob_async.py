@@ -1057,8 +1057,8 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         await blob.clear_page(offset=512, length=512)
 
         # Act
-        ranges1, cleared1 = await blob.get_page_ranges(prev_snapshot_url=snapshot_blob1.url + '&' + sas_token1)
-        ranges2, cleared2 = await blob.get_page_ranges(prev_snapshot_url=snapshot_blob2.url + '&' + sas_token2)
+        ranges1, cleared1 = await blob.get_page_ranges(previous_snapshot_diff=snapshot_blob1.url + '&' + sas_token1)
+        ranges2, cleared2 = await blob.get_page_ranges(previous_snapshot_diff=snapshot_blob2.url + '&' + sas_token2)
 
         # Assert
         self.assertIsNotNone(ranges1)

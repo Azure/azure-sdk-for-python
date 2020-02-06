@@ -1977,6 +1977,26 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _parse_snapshot_value(self, snapshot):
+        # type (Union[str, Dict[str, Any], BlobClient, BlobProperties]) -> Dict[str,str]
+        if not snapshot:
+            return {}
+        try:
+            result = urlparse(snapshot)
+            if all([result.scheme, result.netloc, result.path]):
+                return {'prev_snapshot_url': snapshot}
+        except:
+            pass
+        try:
+            return {'prevsnapshot': snapshot.snapshot}  # type: ignore
+        except AttributeError:
+            pass
+        try:
+            return {'prevsnapshot': snapshot['snapshot']}  # type: ignore
+        except TypeError:
+            pass
+        return {'prevsnapshot': snapshot}
+
     def _get_page_ranges_options( # type: ignore
             self, offset=None, # type: Optional[int]
             length=None, # type: Optional[int]
@@ -1999,16 +2019,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None),
             'range': page_range}
-        if previous_snapshot_diff:
-            if kwargs.get('prev_snapshot_url'):
-                raise ValueError("Cannot specify both 'previous_snapshot_diff' and 'prev_snapshot_url'.")
-            try:
-                options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
-                except TypeError:
-                    options['prevsnapshot'] = previous_snapshot_diff
+        options.update(self._parse_snapshot_value(previous_snapshot_diff))
         options.update(kwargs)
         return options
 
