@@ -89,7 +89,7 @@ class AzureError(Exception):
     :keyword error: The original exception if any
     :paramtype error: Exception
 
-    :ivar inner_exception: The exception passes with the 'error' kwarg
+    :ivar inner_exception: The exception passed with the 'error' kwarg
     :type inner_exception: Exception
     :ivar exc_type: The exc_type from sys.exc_info()
     :ivar exc_value: The exc_value from sys.exc_info()
