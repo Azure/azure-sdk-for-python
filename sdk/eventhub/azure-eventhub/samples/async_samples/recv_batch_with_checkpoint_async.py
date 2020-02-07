@@ -59,7 +59,7 @@ async def on_event_batch_with_empty(partition_context, event_batch):
         log.info(f"<check> batch process pid:{partition_context.partition_id} last sq None")  # just heartbeating
 
 # process individually and batch checkpoint
-async def on_event_batch_(partition_context, event_batch):
+async def on_event_batch_process_async_batch_checkpoint(partition_context, event_batch):
     log.info(f"<check> batch process pid:{partition_context.partition_id} last sq {event_batch[-1].sequence_number}")
     tasks = tuple(upload_doc(event.body_as_str) for event in event_batch)
     await asyncio.gather(*tasks)

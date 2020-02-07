@@ -33,7 +33,7 @@ def reduce_task_count(fut):
 async def schedule_task(coro):
     global upload_doc_task_count
     while upload_doc_task_count >= MAX_UPLOAD_DOC_TASK_COUNT:
-        await asyncio.sleep(0.2)  # check every 0.2 second
+        await asyncio.sleep(0.2)
     else:
         asyncio.create_task(coro).add_done_callback(
             reduce_task_count
