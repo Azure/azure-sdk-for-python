@@ -42,17 +42,17 @@ def update_requires(setup_py_path, requires_dict):
 def is_required_version_on_pypi(package_name, spec):
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
-    return len(versions) > 0
+    return versions
 
 
-def get_dev_version(pkg_name):
+def get_version(pkg_name):
     # find version for the package from source. This logic should be revisited to find version from devops feed
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
     paths = glob.glob(glob_path)
     if paths:
         setup_py_path = paths[0]
         _, version, _ = parse_setup(setup_py_path)
-        return "{}.dev".format(version)
+        return version
     else:
         logging.error("setyp.py is not found for package {} to identify current version".format(pkg_name))
         exit(1)
@@ -72,15 +72,16 @@ def process_requires(setup_py_path):
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
         if not is_required_version_on_pypi(pkg_name, spec):
             old_req = str(req)
-            requirement_to_update[old_req] = "{0}>={1}".format(
-                pkg_name, get_dev_version(pkg_name)
-            )
-    if len(requirement_to_update) == 0:
-        print("All required packages are available on PyPI")
+            version = get_version(pkg_name)
+            new_req = old_req.replace(version, "{}.dev".format(version))
+            requirement_to_update[old_req] = new_req
+
+    if not requirement_to_update:
+        logging.info("All required packages are available on PyPI")
     else:
-        print("Packages not available on PyPI:{}".format(requirement_to_update))
+        logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        print("Package requirement is updated in setup.py")
+        logging.info("Package requirement is updated in setup.py")
 
 
 if __name__ == "__main__":
@@ -96,7 +97,7 @@ if __name__ == "__main__":
     # get target package name from target package path
     setup_py_path = os.path.abspath(os.path.join(args.target, "setup.py"))
     if not os.path.exists(setup_py_path):
-        print("setup.py is not found in {}".format(args.target))
+        logging.error("setup.py is not found in {}".format(args.target))
         exit(1)
     else:
         process_requires(setup_py_path)
