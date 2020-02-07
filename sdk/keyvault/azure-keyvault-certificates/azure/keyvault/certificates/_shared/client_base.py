@@ -162,3 +162,7 @@ class KeyVaultClientBase(object):
 
     def __exit__(self, *exc_details):
         self._client.__exit__(*exc_details)
+
+    def close(self):
+        """Closes sockets opened by the client."""
+        await self._client.__exit__()
