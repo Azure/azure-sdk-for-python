@@ -1,11 +1,5 @@
 # Release History
 
-## 0.3.1 (2020-02-07)
-
-**Features**
-
-  - Re-generate integration test
-
 ## 0.3.0 (2019-11-08)
 
 **Features**
