@@ -93,7 +93,9 @@ class SecretClient(AsyncKeyVaultClientBase):
             )
         else:
             attributes = None
-        bundle = await self._client.set_secret(self.vault_url, name, value, secret_attributes=attributes, **kwargs)
+        bundle = await self._client.set_secret(
+            self.vault_url, name, value, secret_attributes=attributes, error_map=_error_map, **kwargs
+        )
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
@@ -340,7 +342,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 await secret_client.purge_deleted_secret("secret-name")
 
         """
-        await self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
+        await self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "Any") -> SecretProperties:
@@ -367,7 +369,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_secret = SecretProperties._from_secret_bundle(
-            await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
+            await self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         )
         command = partial(self.get_secret, name=name, **kwargs)
 

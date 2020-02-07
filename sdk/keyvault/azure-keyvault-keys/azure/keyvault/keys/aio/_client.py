@@ -92,6 +92,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_size=kwargs.pop("size", None),
             key_attributes=attributes,
             key_ops=kwargs.pop("key_operations", None),
+            error_map=_error_map,
             **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -265,6 +266,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs,
         )
 
@@ -287,6 +289,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs,
         )
 
@@ -311,6 +314,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs,
         )
 
@@ -338,7 +342,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 await key_client.purge_deleted_key("key-name")
 
         """
-        await self._client.purge_deleted_key(self.vault_url, name, **kwargs)
+        await self._client.purge_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
@@ -365,7 +369,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_key = KeyVaultKey._from_key_bundle(
-            await self._client.recover_deleted_key(self.vault_url, name, **kwargs)
+            await self._client.recover_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
         )
         command = partial(self.get_key, name=name, **kwargs)
 
@@ -502,6 +506,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
+            error_map=_error_map,
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
