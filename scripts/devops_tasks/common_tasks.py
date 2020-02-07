@@ -28,6 +28,8 @@ from pkg_resources import parse_version, parse_requirements, Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
+import pkginfo
+from pypi_tools.pypi import PyPIClient
 from pip._internal.operations import freeze
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -67,6 +69,7 @@ omit_funct_dict = {
     "Regression": omit_regression,
 }
 
+lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
 
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
@@ -323,11 +326,7 @@ def parse_require(req):
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
     return [pkg_name, spec]
 
-
-# This method installs package from a pre-built whl
-def install_package_from_whl(
-    package_name, version, whl_directory, working_dir, python_sym_link=sys.executable
-):
+def find_whl(package_name, version, whl_directory):
     if not os.path.exists(whl_directory):
         logging.error("Whl directory is incorrect")
         exit(1)
@@ -343,10 +342,15 @@ def install_package_from_whl(
         )
         exit(1)
 
-    package_whl_path = paths[0]
+    return paths[0]
+
+# This method installs package from a pre-built whl
+def install_package_from_whl(
+    package_whl_path, working_dir, python_sym_link=sys.executable
+):
     commands = [python_sym_link, "-m", "pip", "install", package_whl_path]
     run_check_call(commands, working_dir)
-    logging.info("Installed package {}".format(package_name))
+    logging.info("Installed package from {}".format(package_whl_path))
 
 
 def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
@@ -374,4 +378,25 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
         dev_req_file.writelines(requirements)
 
     return new_dev_req_path
-    
+
+def is_required_version_on_pypi(package_name, spec):
+    client = PyPIClient()
+    versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
+    return versions
+
+def find_packages_missing_on_pypi(path):
+    requires = []
+    client = PyPIClient()
+    if path.endswith(".whl"):
+        requires = [ r for r in pkginfo.get_metadata(path).requires_dist if r.startswith('azure') and "-nspkg" not in r]
+    else:
+        _, _, _, requires = parse_setup(path)
+
+    # parse pkg name and spec
+    pkg_spec_dict = dict(parse_require(req) for req in requires)
+    # find if version is available on pypi
+    missing_packages = ["{0}{1}".format(pkg, pkg_spec_dict[pkg]) for pkg in pkg_spec_dict.keys() if not is_required_version_on_pypi(pkg, pkg_spec_dict[pkg])]
+    if missing_packages:
+        logging.error("Packages not found on PyPI: {}".format(missing_packages))
+    return missing_packages
+

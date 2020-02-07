@@ -19,7 +19,9 @@ from common_tasks import (
     run_check_call,
     parse_require,
     install_package_from_whl,
-    filter_dev_requirements
+    filter_dev_requirements,
+    find_packages_missing_on_pypi,
+    find_wheel
 )
 from git_helper import get_release_tag, checkout_code_repo, clone_repo
 from pip._internal.operations import freeze
@@ -171,10 +173,13 @@ class RegressionTest:
                 self.context.package_root_path,
             )
             # Install pre-built whl for current package
+            whl_path = find_wheel(self.context.package_name, self.context.pkg_version, self.context.whl_directory)
+            if find_packages_missing_on_pypi(whl_path):
+                logging.error("Required packages are not available on PyPI. Skipping test for current package")
+                return
+
             install_package_from_whl(
-                self.context.package_name,
-                self.context.pkg_version,
-                self.context.whl_directory,
+                whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
