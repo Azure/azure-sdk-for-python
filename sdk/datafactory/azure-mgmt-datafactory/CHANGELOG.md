@@ -105,6 +105,17 @@
 - Added operation group DataFlowDebugSessionOperations
 - Added operation group DataFlowsOperations
 
+**General Breaking changes**
+
+This version uses a next-generation code generator that might introduce breaking changes for some imports. In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- DataFactoryManagementClient cannot be imported from azure.mgmt.datafactory.datafactory_management_client anymore (import from azure.mgmt.datafactory works like before)
+- DataFactoryManagementClientConfiguration import has been moved from azure.mgmt.datafactory.datafactory_management_client to azure.mgmt.datafactory
+- A model MyClass from a "models" sub-module cannot be imported anymore using azure.mgmt.datafactory.models.my_class (import from azure.mgmt.datafactory.models works like before)
+- An operation class MyClassOperations from an operations sub-module cannot be imported anymore using azure.mgmt.datafactory.operations.my_class_operations (import from azure.mgmt.datafactory.operations works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 ## 0.8.0 (2019-08-30)
 
 **Features**
