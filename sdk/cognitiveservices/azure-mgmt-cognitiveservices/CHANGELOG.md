@@ -1,5 +1,24 @@
 # Release History
 
+## 6.0.0 (2020-02-07)
+
+**Features**
+
+- Model CognitiveServicesAccount has a new parameter properties
+- Added operation CognitiveServicesManagementClientOperationsMixin.check_sku_availability
+
+**Breaking changes**
+
+- Operation AccountsOperations.create has a new signature
+- Model CognitiveServicesAccount no longer has parameter network_acls
+- Model CognitiveServicesAccount no longer has parameter provisioning_state
+- Model CognitiveServicesAccount no longer has parameter internal_id
+- Model CognitiveServicesAccount no longer has parameter custom_sub_domain_name
+- Model CognitiveServicesAccount no longer has parameter endpoint
+- Model NetworkRuleSet no longer has parameter bypass
+- Operation AccountsOperations.update has a new signature
+- Removed operation group CheckSkuAvailabilityOperations
+
 ## 5.0.0 (2019-06-21)
 
 **Features**
