@@ -35,7 +35,7 @@ def test_create_certificate_client():
 class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_certificate_crud_operations(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
@@ -113,7 +113,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
@@ -179,7 +179,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_certificates]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
@@ -228,7 +228,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_certificate_recover(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates

@@ -15,6 +15,8 @@ import pytest
 from helpers import mock_response, Request
 from helpers_async import async_validating_transport
 
+MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
+
 
 @pytest.mark.asyncio
 async def test_cloud_shell():
@@ -127,6 +129,61 @@ async def test_app_service():
     ):
         token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_app_service_2017_09_01():
+    """test parsing of App Service MSI 2017-09-01's eccentric platform-dependent expires_on strings"""
+
+    access_token = "****"
+    expires_on = 42
+    expected_token = AccessToken(access_token, expires_on)
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                url,
+                method="GET",
+                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
+            )
+        ]
+        * 2,
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
+        clear=True,
+    ):
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio

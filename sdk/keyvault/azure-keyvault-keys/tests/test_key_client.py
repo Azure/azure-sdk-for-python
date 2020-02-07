@@ -136,7 +136,7 @@ class KeyClientTests(KeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_key_crud_operations(self, vault_client, **kwargs):
 
@@ -187,7 +187,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
 
@@ -264,7 +264,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_list_deleted_keys(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -296,7 +296,7 @@ class KeyClientTests(KeyVaultTestCase):
                 del expected[key.name]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -323,7 +323,7 @@ class KeyClientTests(KeyVaultTestCase):
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
