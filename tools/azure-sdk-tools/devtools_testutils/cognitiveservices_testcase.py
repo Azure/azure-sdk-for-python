@@ -57,7 +57,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             cogsci_account = self.client.accounts.create(
                 group.name,
                 name,
-                parameters=
+                account=
                 {
                     'sku': {'name': self.sku},
                     'location': self.location,
@@ -75,12 +75,12 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
 
         if self.legacy:
             return {
-                self.parameter_name: self.resource.endpoint,
+                self.parameter_name: self.resource.properties.endpoint,
                 '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
             }
         else:
             return {
-                self.parameter_name: self.resource.endpoint,
+                self.parameter_name: self.resource.properties.endpoint,
                 '{}_key'.format(self.parameter_name): self.cogsci_key,
             }
 
