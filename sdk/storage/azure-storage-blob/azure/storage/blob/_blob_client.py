@@ -1989,7 +1989,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             result = urlparse(snapshot)
             if all([result.scheme, result.netloc, result.path]):
                 return {'prev_snapshot_url': snapshot}
-        except:
+        except:  # pylint: disable=bare-except
             pass
         try:
             return {'prevsnapshot': snapshot.snapshot}  # type: ignore

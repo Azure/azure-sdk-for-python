@@ -84,6 +84,5 @@ def get_container_cpk_scope_info(kwargs):
                 default_encryption_scope=encryption_scope['default_encryption_scope'],
                 deny_encryption_scope_override=encryption_scope.get('prevent_encryption_scope_override')
             )
-        else:
-            raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
+        raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
     return None
