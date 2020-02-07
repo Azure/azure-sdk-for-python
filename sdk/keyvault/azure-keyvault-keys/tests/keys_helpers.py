@@ -36,12 +36,12 @@ class Request:
             assert request.body.get(field) == expected_value
 
 
-def mock_response(status_code=200, headers={}, json_payload=None):
-    response = mock.Mock(status_code=status_code, headers=headers)
+def mock_response(status_code=200, headers=None, json_payload=None):
+    response = mock.Mock(status_code=status_code, headers=headers or {})
     if json_payload is not None:
         response.text = lambda encoding=None: json.dumps(json_payload)
         response.headers["content-type"] = "application/json"
-        response.content_type = ["application/json"]
+        response.content_type = "application/json"
     return response
 
 
