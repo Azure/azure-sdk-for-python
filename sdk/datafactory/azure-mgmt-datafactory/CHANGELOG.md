@@ -1,5 +1,110 @@
 # Release History
 
+## 1.0.0 (2020-02-07)
+
+**Features**
+
+- Model BlobEventsTrigger has a new parameter ignore_empty_blobs
+- Model MongoDbV2Source has a new parameter query_timeout
+- Model DynamicsCrmLinkedService has a new parameter service_principal_credential_type
+- Model DynamicsCrmLinkedService has a new parameter service_principal_id
+- Model DynamicsCrmLinkedService has a new parameter service_principal_credential
+- Model Office365Source has a new parameter output_columns
+- Model DynamicsLinkedService has a new parameter service_principal_credential_type
+- Model DynamicsLinkedService has a new parameter service_principal_id
+- Model DynamicsLinkedService has a new parameter service_principal_credential
+- Model AzureMySqlTableDataset has a new parameter table
+- Model HubspotSource has a new parameter query_timeout
+- Model TriggerRun has a new parameter dependency_status
+- Model TriggerRun has a new parameter run_dimension
+- Model DynamicsAXSource has a new parameter query_timeout
+- Model DocumentDbCollectionSource has a new parameter query_timeout
+- Model AzureSqlSource has a new parameter query_timeout
+- Model SapTableSource has a new parameter query_timeout
+- Model SybaseSource has a new parameter query_timeout
+- Model CommonDataServiceForAppsLinkedService has a new parameter service_principal_credential_type
+- Model CommonDataServiceForAppsLinkedService has a new parameter service_principal_id
+- Model CommonDataServiceForAppsLinkedService has a new parameter service_principal_credential
+- Model HiveSource has a new parameter query_timeout
+- Model SapEccSource has a new parameter query_timeout
+- Model MySqlSource has a new parameter query_timeout
+- Model AzureMySqlSource has a new parameter query_timeout
+- Model SparkSource has a new parameter query_timeout
+- Model TeradataSource has a new parameter query_timeout
+- Model Db2Source has a new parameter query_timeout
+- Model AzurePostgreSqlSource has a new parameter query_timeout
+- Model DynamicsCrmSink has a new parameter alternate_key_name
+- Model MariaDBSource has a new parameter query_timeout
+- Model IntegrationRuntimeVNetProperties has a new parameter public_ips
+- Model CommonDataServiceForAppsSink has a new parameter alternate_key_name
+- Model EloquaSource has a new parameter query_timeout
+- Model VerticaSource has a new parameter query_timeout
+- Model PhoenixSource has a new parameter query_timeout
+- Model PaypalSource has a new parameter query_timeout
+- Model PipelineResource has a new parameter run_dimensions
+- Model WebActivity has a new parameter connect_via
+- Model NetezzaSource has a new parameter query_timeout
+- Model XeroSource has a new parameter query_timeout
+- Model DrillSource has a new parameter query_timeout
+- Model GoogleAdWordsSource has a new parameter query_timeout
+- Model ImpalaSource has a new parameter query_timeout
+- Model SqlDWSink has a new parameter allow_copy_command
+- Model SqlDWSink has a new parameter copy_command_settings
+- Model CouchbaseSource has a new parameter query_timeout
+- Model DynamicsSink has a new parameter alternate_key_name
+- Model Db2LinkedService has a new parameter package_collection
+- Model Db2LinkedService has a new parameter certificate_common_name
+- Model WebHookActivity has a new parameter report_status_on_call_back
+- Model HBaseSource has a new parameter query_timeout
+- Model PostgreSqlSource has a new parameter query_timeout
+- Model IntegrationRuntimeComputeProperties has a new parameter data_flow_properties
+- Model CosmosDbMongoDbApiSource has a new parameter query_timeout
+- Model JiraSource has a new parameter query_timeout
+- Model AmazonRedshiftSource has a new parameter query_timeout
+- Model SqlServerSource has a new parameter query_timeout
+- Model SapOpenHubSource has a new parameter query_timeout
+- Model MagentoSource has a new parameter query_timeout
+- Model CassandraSource has a new parameter query_timeout
+- Model SquareSource has a new parameter query_timeout
+- Model IntegrationRuntimeSsisProperties has a new parameter express_custom_setup_properties
+- Model ShopifySource has a new parameter query_timeout
+- Model ResponsysSource has a new parameter query_timeout
+- Model MarketoSource has a new parameter query_timeout
+- Model SalesforceSource has a new parameter query_timeout
+- Model AzureDatabricksLinkedService has a new parameter instance_pool_id
+- Model SqlDWSource has a new parameter query_timeout
+- Model SalesforceMarketingCloudSource has a new parameter query_timeout
+- Model SapCloudForCustomerSource has a new parameter query_timeout
+- Model SSISPackageLocation has a new parameter package_last_modified_date
+- Model SSISPackageLocation has a new parameter package_content
+- Model SSISPackageLocation has a new parameter package_name
+- Model SSISPackageLocation has a new parameter child_packages
+- Model SapHanaSource has a new parameter partition_settings
+- Model SapHanaSource has a new parameter partition_option
+- Model SapHanaSource has a new parameter query_timeout
+- Model SqlSource has a new parameter query_timeout
+- Model PrestoSource has a new parameter query_timeout
+- Model ConcurSource has a new parameter query_timeout
+- Model GoogleBigQuerySource has a new parameter query_timeout
+- Model ServiceNowSource has a new parameter query_timeout
+- Model InformixSource has a new parameter query_timeout
+- Model AzureTableSource has a new parameter query_timeout
+- Model ZohoSource has a new parameter query_timeout
+- Model QuickBooksSource has a new parameter query_timeout
+- Model OdbcSource has a new parameter query_timeout
+- Model AmazonMWSSource has a new parameter query_timeout
+- Model OracleServiceCloudSource has a new parameter query_timeout
+- Model SqlMISource has a new parameter query_timeout
+- Model PipelineRun has a new parameter run_dimensions
+- Model SapBwSource has a new parameter query_timeout
+- Model GreenplumSource has a new parameter query_timeout
+- Model CosmosDbLinkedService has a new parameter database
+- Model CosmosDbLinkedService has a new parameter account_endpoint
+- Model AzureMariaDBSource has a new parameter query_timeout
+- Model AzureBlobStorageReadSettings has a new parameter prefix
+- Added operation group DataFlowDebugSessionOperations
+- Added operation group DataFlowsOperations
+
 ## 0.8.0 (2019-08-30)
 
 **Features**
