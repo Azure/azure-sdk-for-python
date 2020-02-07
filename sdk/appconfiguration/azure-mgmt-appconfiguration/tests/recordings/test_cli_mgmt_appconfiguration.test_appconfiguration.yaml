@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.4.34 azure-mgmt-appconfiguration/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -22,18 +22,18 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1?api-version=2019-10-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2019-11-08T05:37:39.8431822+00:00","endpoint":"https://contoso1.azconfig.io"},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1","name":"contoso1","location":"westus","tags":{}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-02-07T01:13:45.2342886+00:00","endpoint":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1","name":"contoso1","location":"westus","tags":{}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/6ae12d30-79c9-1705-2ca3-4d959dc640bc?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/e6aeb2ea-8c6c-b6ea-9ee2-0b99a031bb67?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
-      - '456'
+      - '430'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 08 Nov 2019 05:37:40 GMT
+      - Fri, 07 Feb 2020 01:13:46 GMT
       expires:
       - '-1'
       pragma:
@@ -59,16 +59,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.4.34 azure-mgmt-appconfiguration/0.3.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/6ae12d30-79c9-1705-2ca3-4d959dc640bc?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/e6aeb2ea-8c6c-b6ea-9ee2-0b99a031bb67?api-version=2019-10-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/6ae12d30-79c9-1705-2ca3-4d959dc640bc","name":"6ae12d30-79c9-1705-2ca3-4d959dc640bc","status":"Succeeded","error":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/e6aeb2ea-8c6c-b6ea-9ee2-0b99a031bb67","name":"e6aeb2ea-8c6c-b6ea-9ee2-0b99a031bb67","status":"Succeeded","error":null}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/6ae12d30-79c9-1705-2ca3-4d959dc640bc?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/e6aeb2ea-8c6c-b6ea-9ee2-0b99a031bb67?api-version=2019-10-01
       cache-control:
       - no-cache
       content-length:
@@ -76,7 +76,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 08 Nov 2019 05:37:51 GMT
+      - Fri, 07 Feb 2020 01:13:56 GMT
       expires:
       - '-1'
       pragma:
@@ -104,13 +104,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.4.34 azure-mgmt-appconfiguration/0.3.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1?api-version=2019-10-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2019-11-08T05:37:41+00:00","endpoint":"https://contoso1.azconfig.io"},"sku":{"name":"free"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1","name":"contoso1","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-02-07T01:13:46+00:00","endpoint":"https://contoso1.azconfig.io"},"sku":{"name":"free"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1","name":"contoso1","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control:
       - no-cache
@@ -119,9 +119,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 08 Nov 2019 05:37:52 GMT
+      - Fri, 07 Feb 2020 01:13:57 GMT
       etag:
-      - W/"1000e0dc-0000-0700-0000-5dc4ff250000"
+      - W/"1d0042ba-0000-0700-0000-5e3cb9ca0000"
       expires:
       - '-1'
       pragma:
@@ -149,7 +149,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.4.34 azure-mgmt-appconfiguration/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -157,7 +157,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1?api-version=2019-10-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2019-11-08T05:37:41+00:00","endpoint":"https://contoso1.azconfig.io"},"sku":{"name":"free"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1","name":"contoso1","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-02-07T01:13:46+00:00","endpoint":"https://contoso1.azconfig.io"},"sku":{"name":"free"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/contoso1","name":"contoso1","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control:
       - no-cache
@@ -166,9 +166,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 08 Nov 2019 05:37:52 GMT
+      - Fri, 07 Feb 2020 01:13:58 GMT
       etag:
-      - W/"1000e0dc-0000-0700-0000-5dc4ff250000"
+      - W/"1d0042ba-0000-0700-0000-5e3cb9ca0000"
       expires:
       - '-1'
       pragma:
@@ -200,7 +200,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.4.34 azure-mgmt-appconfiguration/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -218,7 +218,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 08 Nov 2019 05:37:53 GMT
+      - Fri, 07 Feb 2020 01:13:59 GMT
       expires:
       - '-1'
       pragma:
