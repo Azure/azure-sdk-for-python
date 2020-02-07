@@ -4,9 +4,10 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive_batch(
             self, on_event_batch: Callable[[PartitionContext, List[EventData]], Awaitable[None]],
-            max_batch_size: int,
-            max_wait_time: float,
             *,
+            max_batch_size: int=...,
+            max_wait_time: float=...,
+            callback_without_event: bool=...,
             partition_id: Optional[str]=...,
             owner_level: Optional[int]=...,
             prefetch: int=...,
