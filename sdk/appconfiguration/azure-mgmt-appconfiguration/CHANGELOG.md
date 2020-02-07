@@ -1,5 +1,18 @@
 # Release History
 
+## 0.4.0 (2020-02-07)
+
+**Features**
+
+- Model ConfigurationStoreUpdateParameters has a new parameter encryption
+- Model ConfigurationStore has a new parameter encryption
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group PrivateLinkResourcesOperations
+
+**Breaking changes**
+
+- Model ConfigurationStoreUpdateParameters no longer has parameter properties
+
 ## 0.3.0 (2019-11-08)
 
 **Features**
