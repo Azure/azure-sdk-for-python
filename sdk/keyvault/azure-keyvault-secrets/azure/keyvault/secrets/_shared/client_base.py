@@ -88,7 +88,7 @@ def _create_client(credential, pipeline, api_version):
         )
     return ImplClient(credentials=credential, pipeline=pipeline)
 
-def _import_models(api_version: str):
+def _import_models(api_version):
     if api_version == V7_0_VERSION:
         from ._generated.v7_0 import models as impl_models
     elif api_version == V2016_10_01_VERSION:
