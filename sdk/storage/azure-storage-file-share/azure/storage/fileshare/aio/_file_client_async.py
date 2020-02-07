@@ -430,7 +430,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
-        kwargs.update(get_smb_properties(kwargs.pop('file_smb_properties'), **kwargs))
+        kwargs.update(get_smb_properties(kwargs))
         try:
             return await self._client.file.start_copy(
                 source_url,

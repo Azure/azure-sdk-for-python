@@ -1058,14 +1058,17 @@ class StorageFileTest(StorageTestCase):
 
         file_creation_time = "2017-05-10T17:52:33.9551860Z"
         file_attributes = "Temporary|NoScrubData"
-        smb_info = CopyFileSmbInfo(ignore_read_only=True,
-                                   file_attributes=file_attributes,
-                                   file_creation_time=file_creation_time)
+        smb_info = FileSmbProperties(
+            file_permission=user_given_permission,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time
+        )
         # Act
-        copy = file_client.start_copy_from_url(source_client.url,
-                                               file_permission=user_given_permission,
-                                               file_permission_copy_mode="override",
-                                               copy_file_smb_info=smb_info)
+        copy = file_client.start_copy_from_url(
+            source_client.url,
+            ignore_read_only=True,
+            file_smb_properties=smb_info
+        )
 
         # Assert
         dest_prop = file_client.get_file_properties()
@@ -1095,8 +1098,10 @@ class StorageFileTest(StorageTestCase):
             credential=storage_account_key)
 
         # Act
-        copy = file_client.start_copy_from_url(source_client.url,
-                                               file_permission_copy_mode="source")
+        copy = file_client.start_copy_from_url(
+            source_client.url,
+            file_smb_properties={'file_permission_key': 'source'}
+        )
 
         # Assert
         dest_prop = file_client.get_file_properties()

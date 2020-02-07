@@ -56,28 +56,26 @@ def get_access_conditions(lease):
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
-def get_smb_properties(file_smb_properties, **kwargs):
+def get_smb_properties(kwargs):
     # type: (Optional[Union[Dict, FileSmbProperties]]) -> Dict[str, Any]
-    if not file_smb_properties:
+    ignore_read_only = kwargs.pop('ignore_read_only', None)
+    set_archive_attribute = kwargs.pop('set_archive_attribute', None)
+    file_smb_properties = kwargs.pop('file_smb_properties', None)
+    if not any([ignore_read_only, set_archive_attribute, file_smb_properties]):
         return {}
-    
-    ignore_read_only = kwargs.get('ignore_read_only')
-    set_archive_attribute = kwargs.get('set_archive_attribute')
-    if isinstance(file_smb_properties, dict):
-        file_permission = file_smb_properties.get('file_permission')
-        file_permission_key = file_smb_properties.get('file_permission_key')
-        file_attributes = file_smb_properties.get('file_attributes')
-        file_creation_time = file_smb_properties.get('file_creation_time', "")
-        file_last_write_time = file_smb_properties.get('file_last_write_time', "")
-    else:
-        file_permission = file_smb_properties.file_permission
-        file_permission_key = file_smb_properties.file_permission_key
-        file_attributes = file_smb_properties.file_attributes
-        file_creation_time = file_smb_properties.file_creation_time or ""
-        file_last_write_time = file_smb_properties.file_last_write_time or ""
+    try:
+        smb_props = file_smb_properties.__dict__  # FileSmbProperties object
+    except AttributeError:
+        smb_props = file_smb_properties  # Dictionary
 
+    file_permission = smb_props.get('file_permission')
+    file_permission_key = smb_props.get('file_permission_key')
+    file_attributes = smb_props.get('file_attributes')
+    file_creation_time = smb_props.get('file_creation_time') or ""
+    file_last_write_time = smb_props.get('file_last_write_time') or ""
     file_permission_copy_mode = None
     file_permission = _get_file_permission(file_permission, file_permission_key, "inherit")
+
     if file_permission:
         if file_permission.lower() == "source":
             file_permission = None
