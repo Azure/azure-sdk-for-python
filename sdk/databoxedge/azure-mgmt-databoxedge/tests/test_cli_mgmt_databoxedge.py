@@ -9,10 +9,10 @@
 
 # TEST SCENARIO COVERAGE
 # ----------------------
-# Methods Total   : 59
-# Methods Covered : 59
-# Examples Total  : 59
-# Examples Tested : 59
+# Methods Total   : 49
+# Methods Covered : 49
+# Examples Total  : 49
+# Examples Tested : 49
 # Coverage %      : 100
 # ----------------------
 
@@ -51,7 +51,7 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         ALERT_NAME = "alertname"
         JOB_NAME = "jobname"
         SECURITY_SETTING_NAME = "securitysettingname"
-        
+
         # DataBoxEdgeDevicePut[put]
         BODY = {
           "location": "eastus",
@@ -62,107 +62,99 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.devices.create_or_update(DATA_BOX_EDGE_DEVICE_NAME, BODY, resource_group.name)
         result = result.result()
+
         """
         # UserPut[put]
         BODY = {
-          "properties": {
-            "encrypted_password": {
-              "value": "Password@1",
-              "encryption_algorithm": "None",
-              "encryption_cert_thumbprint": "blah"
-            },
-            "share_access_rights": [],
-            "user_type": "Share"
-          }
+          "encrypted_password": {
+            "value": "Password@1",
+            "encryption_algorithm": "None",
+            "encryption_cert_thumbprint": "blah"
+          },
+          "share_access_rights": []
         }
-        result = self.mgmt_client.users.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, USER_NAME, BODY)
+        result = self.mgmt_client.users.create_or_update(DATA_BOX_EDGE_DEVICE_NAME, USER_NAME, BODY, resource_group.name)
         result = result.result()
 
         # RolePut[put]
         BODY = {
           "kind": "IOT",
-          "properties": {
-            "host_platform": "Linux",
-            "io_tdevice_details": {
-              "device_id": "iotdevice",
-              "io_thost_hub": "iothub.azure-devices.net",
-              "authentication": {
-                "symmetric_key": {
-                  "connection_string": {
-                    "value": "Encrypted<<HostName=iothub.azure-devices.net;DeviceId=iotDevice;SharedAccessKey=2C750FscEas3JmQ8Bnui5yQWZPyml0/UiRt1bQwd8=>>",
-                    "encryption_cert_thumbprint": "348586569999244",
-                    "encryption_algorithm": "AES256"
-                  }
+          "host_platform": "Linux",
+          "io_tdevice_details": {
+            "device_id": "iotdevice",
+            "io_thost_hub": "iothub.azure-devices.net",
+            "authentication": {
+              "symmetric_key": {
+                "connection_string": {
+                  "value": "Encrypted<<HostName=iothub.azure-devices.net;DeviceId=iotDevice;SharedAccessKey=2C750FscEas3JmQ8Bnui5yQWZPyml0/UiRt1bQwd8=>>",
+                  "encryption_cert_thumbprint": "348586569999244",
+                  "encryption_algorithm": "AES256"
                 }
               }
-            },
-            "io_tedge_device_details": {
-              "device_id": "iotEdge",
-              "io_thost_hub": "iothub.azure-devices.net",
-              "authentication": {
-                "symmetric_key": {
-                  "connection_string": {
-                    "value": "Encrypted<<HostName=iothub.azure-devices.net;DeviceId=iotEdge;SharedAccessKey=2C750FscEas3JmQ8Bnui5yQWZPyml0/UiRt1bQwd8=>>",
-                    "encryption_cert_thumbprint": "1245475856069999244",
-                    "encryption_algorithm": "AES256"
-                  }
+            }
+          },
+          "io_tedge_device_details": {
+            "device_id": "iotEdge",
+            "io_thost_hub": "iothub.azure-devices.net",
+            "authentication": {
+              "symmetric_key": {
+                "connection_string": {
+                  "value": "Encrypted<<HostName=iothub.azure-devices.net;DeviceId=iotEdge;SharedAccessKey=2C750FscEas3JmQ8Bnui5yQWZPyml0/UiRt1bQwd8=>>",
+                  "encryption_cert_thumbprint": "1245475856069999244",
+                  "encryption_algorithm": "AES256"
                 }
               }
-            },
-            "share_mappings": [],
-            "role_status": "Enabled"
-          }
+            }
+          },
+          "share_mappings": [],
+          "role_status": "Enabled"
         }
-        result = self.mgmt_client.roles.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, ROLE_NAME, BODY)
+        result = self.mgmt_client.roles.create_or_update(DATA_BOX_EDGE_DEVICE_NAME, ROLE_NAME, BODY, resource_group.name)
         result = result.result()
 
         # SharePut[put]
         BODY = {
-          "properties": {
-            "description": "",
-            "share_status": "Online",
-            "monitoring_status": "Enabled",
-            "azure_container_info": {
-              "storage_account_credential_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/storageAccountCredentials/" + STORAGE_ACCOUNT_CREDENTIAL_NAME + "",
-              "container_name": "testContainerSMB",
-              "data_format": "BlockBlob"
-            },
-            "access_protocol": "SMB",
-            "user_access_rights": [
-              {
-                "user_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/users/" + USER_NAME + "",
-                "access_type": "Change"
-              }
-            ],
-            "data_policy": "Cloud"
-          }
+          "description": "",
+          "share_status": "Online",
+          "monitoring_status": "Enabled",
+          "azure_container_info": {
+            "storage_account_credential_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/storageAccountCredentials/" + STORAGE_ACCOUNT_CREDENTIAL_NAME + "",
+            "container_name": "testContainerSMB",
+            "data_format": "BlockBlob"
+          },
+          "access_protocol": "SMB",
+          "user_access_rights": [
+            {
+              "user_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/users/" + USER_NAME + "",
+              "access_type": "Change"
+            }
+          ],
+          "data_policy": "Cloud"
         }
         result = self.mgmt_client.shares.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, SHARE_NAME, BODY)
         result = result.result()
 
         # OrderPut[put]
         BODY = {
-          "properties": {
-            "contact_information": {
-              "contact_person": "John Mcclane",
-              "company_name": "Microsoft",
-              "phone": "(800) 426-9400",
-              "email_list": [
-                "john@microsoft.com"
-              ]
-            },
-            "shipping_address": {
-              "address_line1": "Microsoft Corporation",
-              "address_line2": "One Microsoft Way",
-              "address_line3": "Redmond",
-              "postal_code": "98052",
-              "city": "WA",
-              "state": "WA",
-              "country": "USA"
-            }
+          "contact_information": {
+            "contact_person": "John Mcclane",
+            "company_name": "Microsoft",
+            "phone": "(800) 426-9400",
+            "email_list": [
+              "john@microsoft.com"
+            ]
+          },
+          "shipping_address": {
+            "address_line1": "Microsoft Corporation",
+            "address_line2": "One Microsoft Way",
+            "address_line3": "Redmond",
+            "postal_code": "98052",
+            "city": "WA",
+            "state": "WA",
+            "country": "USA"
           }
         }
-        result = self.mgmt_client.orders.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, ORDER_NAME, BODY)
+        result = self.mgmt_client.orders.create_or_update(DATA_BOX_EDGE_DEVICE_NAME, BODY, resource_group.name)
         result = result.result()
 
         # TriggerPut[put]
@@ -170,10 +162,10 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
           "properties": {
             "custom_context_tag": "CustomContextTags-1235346475",
             "source_info": {
-              "share_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/shares/" + SHARE_NAME + ""
+              "share_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/shares/" + SHARE_NAME + ""
             },
             "sink_info": {
-              "role_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/roles/" + ROLE_NAME + ""
+              "role_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/roles/" + ROLE_NAME + ""
             }
           },
           "kind": "FileEvent"
@@ -181,31 +173,17 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         result = self.mgmt_client.triggers.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, TRIGGER_NAME, BODY)
         result = result.result()
 
-        # StorageAccountPut[put]
-        BODY = {
-          "properties": {
-            "description": "It's an awesome storage account",
-            "storage_account_status": "OK",
-            "data_policy": "Cloud",
-            "storage_account_credential_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/" + DATA_BOX_EDGE_DEVICE_NAME + "/storageAccountCredentials/" + STORAGE_ACCOUNT_CREDENTIAL_NAME + ""
-          }
-        }
-        result = self.mgmt_client.storage_accounts.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME, BODY)
-        result = result.result()
-
         # BandwidthSchedulePut[put]
         BODY = {
-          "properties": {
-            "start": "0:0:0",
-            "stop": "13:59:0",
-            "rate_in_mbps": "100",
-            "days": [
-              "Sunday",
-              "Monday"
-            ]
-          }
+          "start": "0:0:0",
+          "stop": "13:59:0",
+          "rate_in_mbps": "100",
+          "days": [
+            "Sunday",
+            "Monday"
+          ]
         }
-        result = self.mgmt_client.bandwidth_schedules.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, BANDWIDTH_SCHEDULE_NAME, BODY)
+        result = self.mgmt_client.bandwidth_schedules.create_or_update(DATA_BOX_EDGE_DEVICE_NAME, BANDWIDTH_SCHEDULE_NAME, BODY, resource_group.name)
         result = result.result()
 
         # SACPut[put]
@@ -225,32 +203,14 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         result = self.mgmt_client.storage_account_credentials.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_CREDENTIAL_NAME, BODY)
         result = result.result()
 
-        # ContainerPut[put]
-        BODY = {
-          "properties": {
-            "data_format": "BlockBlob"
-          }
-        }
-        result = self.mgmt_client.containers.create_or_update(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY)
-        result = result.result()
-
-        # ContainerGet[get]
-        result = self.mgmt_client.containers.get(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
-
         # SACGet[get]
-        result = self.mgmt_client.storage_account_credentials.get(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_CREDENTIAL_NAME)
-
-        # ContainerListAllInDevice[get]
-        result = self.mgmt_client.containers.list_by_storage_account(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME)
+        result = self.mgmt_client.storage_account_credentials.get(DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_CREDENTIAL_NAME, resource_group.name)
 
         # BandwidthScheduleGet[get]
         result = self.mgmt_client.bandwidth_schedules.get(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, BANDWIDTH_SCHEDULE_NAME)
 
         # OperationsStatusGet[get]
         result = self.mgmt_client.operations_status.get(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, OPERATIONS_STATUS_NAME)
-
-        # StorageAccountGet[get]
-        result = self.mgmt_client.storage_accounts.get(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME)
 
         # NetworkSettingsGet[get]
         result = self.mgmt_client.devices.get_network_settings(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, NETWORK_SETTING_NAME)
@@ -285,9 +245,6 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         # BandwidthScheduleGetAllInDevice[get]
         result = self.mgmt_client.bandwidth_schedules.list_by_data_box_edge_device(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
 
-        # StorageAccountGetAllInDevice[get]
-        result = self.mgmt_client.storage_accounts.list_by_data_box_edge_device(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
-
         # TriggerGetAllInDevice[get]
         result = self.mgmt_client.triggers.list_by_data_box_edge_device(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
 
@@ -306,9 +263,6 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         # RoleGetAllInDevice[get]
         result = self.mgmt_client.roles.list_by_data_box_edge_device(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
 
-        # UserGetAllInDevice[get]
-        result = self.mgmt_client.users.list_by_data_box_edge_device(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
-
         # DataBoxEdgeDeviceGetByName[get]
         result = self.mgmt_client.devices.get(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
 
@@ -318,15 +272,8 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         # DataBoxEdgeDeviceGetBySubscription[get]
         result = self.mgmt_client.devices.list_by_subscription()
 
-        # ListSkus[get]
-        result = self.mgmt_client.skus.list()
-
         # OperationsGet[get]
         result = self.mgmt_client.operations.list()
-
-        # ContainerRefresh[post]
-        result = self.mgmt_client.containers.refresh(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
-        result = result.result()
 
         # CreateOrUpdateSecuritySettings[post]
         BODY = {
@@ -367,6 +314,7 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         # InstallUpdatesPost[post]
         result = self.mgmt_client.devices.install_updates(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME)
         result = result.result()
+        """
 
         # DataBoxEdgeDevicePatch[patch]
         BODY = {
@@ -377,20 +325,13 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.devices.update(DATA_BOX_EDGE_DEVICE_NAME, BODY, resource_group.name)
 
-        # ContainerDelete[delete]
-        result = self.mgmt_client.containers.delete(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
-        result = result.result()
-
+        """
         # SACDelete[delete]
         result = self.mgmt_client.storage_account_credentials.delete(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_CREDENTIAL_NAME)
         result = result.result()
 
         # BandwidthScheduleDelete[delete]
         result = self.mgmt_client.bandwidth_schedules.delete(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, BANDWIDTH_SCHEDULE_NAME)
-        result = result.result()
-
-        # StorageAccountDelete[delete]
-        result = self.mgmt_client.storage_accounts.delete(resource_group.name, DATA_BOX_EDGE_DEVICE_NAME, STORAGE_ACCOUNT_NAME)
         result = result.result()
 
         # TriggerDelete[delete]
