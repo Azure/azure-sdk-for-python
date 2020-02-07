@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-from azure.core.exceptions import ClientAuthenticationError
 
+from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal.aad_client import AadClient
@@ -23,6 +23,12 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
+
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+        defines authorities for other clouds.
+    :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
+        tokens for multiple identities.
     """
 
     async def __aenter__(self):
@@ -40,22 +46,19 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
         If no access token is cached, attempt to acquire one using a cached refresh token.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: when the cache is unavailable or no access token
-            can be acquired from it
-
-        :keyword str authority: Authority of an Azure Active Directory endpoint, for example
-              'login.microsoftonline.com', the authority for Azure Public Cloud (which is the default).
-              :class:`~azure.identity.KnownAuthorities` defines authorities for other clouds.
+        :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
+            information
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed
         """
 
         if not self._client:
-            raise ClientAuthenticationError(message="Shared token cache unavailable")
+            raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         account = self._get_account(self._username, self._tenant_id)
 
@@ -64,8 +67,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
             token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes)
             return token
 
-        raise ClientAuthenticationError(message=NO_TOKEN.format(account.get("username")))
+        raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
-    @staticmethod
-    def _get_auth_client(**kwargs: "Any") -> "AadClientBase":
+    def _get_auth_client(self, **kwargs: "Any") -> "AadClientBase":
         return AadClient(tenant_id="common", client_id=AZURE_CLI_CLIENT_ID, **kwargs)

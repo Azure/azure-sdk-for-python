@@ -4,6 +4,10 @@
 
 - Correctly parse token expiration time on Windows App Service
 ([#9393](https://github.com/Azure/azure-sdk-for-python/issues/9393))
+- Credentials raise `CredentialUnavailableError` when they can't attempt to
+authenticate due to missing data or state
+([#9372](https://github.com/Azure/azure-sdk-for-python/pull/9372))
+
 
 ## 1.2.0 (2020-01-14)
 
