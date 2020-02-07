@@ -1,12 +1,12 @@
 # Testing azure-identity in Azure App Service
 
-# Prerequisite tools
+## Prerequisite tools
 
 - Azure CLI
 - Docker CLI
   - https://hub.docker.com/search?q=&type=edition&offering=community
 
-# Azure resources
+## Azure resources
 
 This test requires instances of these Azure resources:
 
@@ -18,7 +18,7 @@ This test requires instances of these Azure resources:
 
 The rest of this section is a walkthrough of deploying these resources.
 
-## Set environment variables to simplify copy-pasting
+### Set environment variables to simplify copy-pasting
 
 - RESOURCE_GROUP
   - name of an Azure resource group
@@ -40,31 +40,31 @@ The rest of this section is a walkthrough of deploying these resources.
 - WEB_APP_SYSTEM_ASSIGNED
 - WEB_APP_USER_ASSIGNED
 
-## Resource group
+### Resource group
 
 ```sh
 az group create -n $RESOURCE_GROUP -l westus2
 ```
 
-## Container registry
+### Container registry
 
 ```sh
 az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
 ```
 
-## Key vault
+### Key vault
 
 ```sh
 az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard
 ```
 
-## App service plan
+### App service plan
 
 ```sh
 az appservice plan create -g $RESOURCE_GROUP -n $APP_SERVICE_PLAN -l westus2 --sku B1 --is-linux
 ```
 
-## Web app: system-assigned identity
+### Web app: system-assigned identity
 
 ```sh
 az webapp create -n $WEB_APP_SYSTEM_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
@@ -91,7 +91,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME -g $RESOURCE_GROUP \
     --secret-permissions set delete
 ```
 
-## Managed identity
+### Managed identity
 Create the identity:
 
 ```sh
@@ -106,7 +106,7 @@ az keyvault set-policy -n $KEY_VAULT_NAME \
     --secret-permissions set delete
 ```
 
-## Web app: user-assigned identity
+### Web app: user-assigned identity
 
 ```sh
 az webapp create -n $WEB_APP_USER_ASSIGNED -g $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --runtime "python|3.6"
@@ -125,10 +125,12 @@ At the time of writing, attaching user-assigned identities is impossible through
 Use the Azure Portal to attached the managed identity created above to the Web App (see
 [App Service documentation](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=dotnet#adding-a-user-assigned-identity)).
 
-# Build the Docker image
+## Build the Docker image
 
 The test are deployed as a container. The following command lines assume this working directory:
 > `azure-sdk-for-python/sdk/identity/azure-identity/tests`
+
+Two images are needed because the test must run on Python 2 and 3.
 
 ### Authenticate to ACR
 
@@ -139,8 +141,8 @@ az acr login -n $ACR_NAME
 ### Set a variable for the image name
 
 ```sh
-export IMAGE_NAME=$(az acr show -n $ACR_NAME --query loginServer -o tsv)/webapp-managed-id-test \
-    PYTHON_VERSION=2.7
+export IMAGE_NAME=$(az acr show -n $ACR_NAME --query loginServer -o tsv)/webapp-managed-id-test  \
+        PYTHON_VERSION=2.7 
 ```
 
 ### Build the image
@@ -159,7 +161,11 @@ Then set `PYTHON_VERSION` to the latest 3.x and run the above `docker build`
 and `docker push` commands again. (It's safe--and faster--to omit
 `--no-cache` from `docker build` the second time.)
 
-# Deploy test code
+## Run tests
+
+Run these commands twice, once with `PYTHON_VERSION=2.7` and again with the latest 3.x.
+
+### Deploy test code
 
 Configure the Web Apps to use the image. For example, for the app using system-assigned identity:
 
@@ -173,7 +179,7 @@ az webapp config container set -g $RESOURCE_GROUP -n $WEB_APP_SYSTEM_ASSIGNED \
 
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
-# Run tests
+### Start the tests
 
 We can start the test run by sending a request to the webapp.
 
@@ -185,17 +191,15 @@ curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
 
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
-**Deploy and run the tests again with the 3.x image. So totally four runs are required.**
+### Inspect output
 
-## Inspect output
-
-### Download the log file
+#### Download the log file
 
 ```sh
 az webapp log download -g $RESOURCE_GROUP -n $WEB_APP_SYSTEM_ASSIGNED
 ```
 
-### Unzip it
+#### Unzip it
 
 ```sh
 unzip webapp_logs.zip
@@ -218,7 +222,7 @@ test_managed_identity_live.py::test_managed_identity_live PASSED
 
 `test_managed_identity_live` must pass. Other test cases may be skipped. No test case may fail.
 
-# Delete Azure resources
+## Delete Azure resources
 
 ```sh
 az group delete -n $RESOURCE_GROUP -y --no-wait
