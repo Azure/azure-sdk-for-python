@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from collections import defaultdict
 import functools
 from typing import TYPE_CHECKING
 
@@ -36,19 +37,19 @@ _default = functools.partial(_get_exception_for_key_vault_error, HttpResponseErr
 _code_to_core_error = {404: ResourceNotFoundError, 409: ResourceExistsError}
 
 
-class _ErrorMap(dict):
+class _ErrorMap(defaultdict):
     """A dict whose 'get' method returns a default value.
 
     defaultdict would be preferable but defaultdict.get returns None for keys having no value
     (azure.core.exceptions.map_error calls error_map.get)
     """
 
-    def get(self, key):
-        return super(_ErrorMap, self).get(key) or _default
+    def get(self, key, value=None):  # pylint:disable=unused-argument
+        return self[key]
 
 
 # map status codes to callables returning appropriate azure-core errors
-error_map = _ErrorMap(
+error_map = _ErrorMap(lambda: _default,
     {
         status_code: functools.partial(_get_exception_for_key_vault_error, cls)
         for status_code, cls in _code_to_core_error.items()
