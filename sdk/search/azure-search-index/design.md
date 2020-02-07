@@ -44,6 +44,15 @@ Bruce notes that `SeachIndexClient` operations should set a header
 ```
 to suppress these values being returned in the first place.
 
+### Lucene Search Query Text
+
+The ``search_text`` field of the service accepts Lucene query strings, which may of two
+formats: simple or full.
+
+Propose that all search query text, e.g. ``"wifi AND parking NOT luxury"``
+simply be supplied as-is by users. In this context an API is more likely to
+get in the way, rather than provide useful structure for users to rely on.
+
 ## Design
 
 ### `SearchApiKeyCredential` API
@@ -154,125 +163,19 @@ class SearchIndexClient:
     ) -> List[IndexingResult]:
 ```
 
-### Query Building
+### `SearchQuery` API
 
 In addition to simple text searches, Azure Search supports more sophisticated
 search requests. These include ODATA queries for filtering, selecting, and
 ordering result and Lucene queries for search.
 
-#### Lucene Search Queries
-
-The search field of the service accepts Lucene query strings, which may of two
-formats: simple or full.
-
-#### Simple Lucene Query Syntax
-
-Propose that simple mode search queries, e.g. ``"wifi AND parking NOT luxury"``
-simply be supplied as-is by users. In this context an API is more likely to
-get in the way, rather than provide useful structure for users to rely on.
-
-#### Full Lucene Query Syntax
-
-TBD
-
-#### ODATA fields
-
-The API below is intended to allow users to build up complicated ODATA string
-expressions without having to construct the ODATA strings manually. These are
-building block components to be used to pass expressions to a ``SearchQuery``
-object. Examples after the API list demonstrate the functionality, as a
-reference.
-
 ```python
-
-# Low level operations
-
-def NOT(x) -> str:
-def AND(*args) -> str:
-def OR(*args) -> str:
-def EQ(x, y) -> str:
-def NEQ(x, y) -> str:
-def GT(x, y) -> str:
-def GE(x, y) -> str:
-def LT(x, y) -> str:
-def LE(x, y) -> str:
-
-def ALL(path: str, expression: Union[str, callable]) -> str:
-def ANY(path: str, expression: Union[str, callable, None] = None) -> str:
-
-# supports comparisons
-class VAR(object):
-
-# ODATA operators
-
-def asc(sorter) -> str:
-def desc(sorter) -> str:
-
-def search_score() -> str
-
-class orderby:
-
-class geo_distance:
-class POINT:
-
-class geo_intersection:
-class POLYGON:
-
-class search_in:
-class search_ismatch:
-class search_ismatchscoring:
-
-class select:
-```
-
-##### Examples of ODATA string generation
-
-The focus of the API above may be better illustrated with examples. Each of the
-the expressions below can be passed to configure a ``SearchQuery``, which can
-then use them to resolve to the correct ODATA strings.
-
-```python
->>> ob = orderby("Rating desc", "BaseRate", asc("stars"), asc(search_score()))
->>> print(ob)
-$orderby=Rating desc,BaseRate,stars asc,search.score() asc
-
->>> geo_distance("FOO", POINT(10, 20)
->>> print(gd)
-geo.distance(FOO, geography'POINT(10 20)')
-
->>> print(gd >= 10)
-geo.distance(FOO, geography'POINT(10 20)') ge 10
-
->>> s = select("HotelId", "HotelName", "Rating", "Address/City")
->>> print(s)
-$select=HotelId,HotelName,Rating,Address/City
-
->>> si = search_in("FOO", "a", "b", "c", delimiter="|")
->>> print(si)
-search.in(FOO, 'a|b|c', '|')
-
->>> AND("Address/City eq 'Vancouver'",  "Address/Country eq 'US'", geo_distance("FOO", POINT(10, 20)) < 10)
-"(Address/City eq 'Vancouver' and Address/Country eq 'US' and geo.distance(FOO, geography'POINT(10 20)') lt 10)"
-
->>> ALL("tags", lambda t: t == 'wifi')
-"tags/all(t: t eq 'wifi')"
-
->>> ALL("locations", lambda loc: geo_intersects(loc, POLYGON(POINT(1,2), "3 4", POINT(5, 6), "1 2")))
-"locations/all(loc: geo.intersects(loc, geography'POLYGON((1 2, 3 4, 5 6, 1 2))'))"
-```
-
-These operations can be used to pass expressions to the ``SearchQuery`` object
-below.
-
-#### ``SearchQuery`` API
-
-```python
-azure.search.SearchQuery(**kwargs)
+azure.search.SearchQuery(search_text: str, **kwargs)
 
 class SearchQuery:
-    def filter(*expressions: List[]) -> None:
-    def orderby(*fields: List[]) -> None:
-    def select(*fields: List[]) -> None:
+    def filter(expression:str) -> None:
+    def orderby(*fields: List[str]) -> None:
+    def select(*fields: List[str]) -> None:
 ```
 
 ## Scenarios
@@ -341,8 +244,10 @@ query = SearchQuery(
     search_text="WiFi",
     highlightPreTag="<em>",
     highlightPostTag="</em>")
-query.filter(AND("Address/City eq 'Portland'",  "Address/Country eq 'US'"))
-query.orderby(desc("Rating"), asc(geo_distance("location", POINT(10, 20))))
+
+# Base API accepts strings, templating/substitution TBD
+query.filter("Address/City eq 'Portland and Address/Country eq 'US'"))
+query.orderby("Rating desc", "geo.distance(FOO, geography'POINT(10 20)') asc")
 query.select("HotelId", "HotelName", "Rating")
 
 results = client.get_search_results(search_query=query)
