@@ -1,30 +1,21 @@
-## Microsoft Azure SDK for Python
+# Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Cognitive Services Management Client
-Library.
+This is the Microsoft Azure Cognitive Services Management Client Library.
+This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
+For a more complete view of Azure libraries, see the [Github repo](https://github.com/Azure/azure-sdk-for-python/sdk)
 
-Azure Resource Manager (ARM) is the next generation of management APIs
-that replace the old Azure Service Management (ASM).
 
-This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
+# Usage
 
-For the older Azure Service Management (ASM) libraries, see
-[azure-servicemanagement-legacy](https://pypi.python.org/pypi/azure-servicemanagement-legacy)
-library.
-
-For a more complete set of Azure libraries, see the
-[azure](https://pypi.python.org/pypi/azure) bundle package.
-
-## Usage
-
-For code examples, see [Cognitive Services
-Management](https://docs.microsoft.com/python/api/overview/azure/cognitive-services)
+For code examples, see [Cognitive Services Management](https://docs.microsoft.com/python/api/overview/azure/cognitive-services)
 on docs.microsoft.com.
 
-## Provide Feedback
 
-If you encounter any bugs or have suggestions, please file an issue in
-the [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
+# Provide Feedback
+
+If you encounter any bugs or have suggestions, please file an issue in the
+[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project.
 
-![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-cognitiveservices%2FREADME.png)
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-cognitiveservices%2FREADME.png)
