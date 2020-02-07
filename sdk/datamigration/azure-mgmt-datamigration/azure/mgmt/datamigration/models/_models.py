@@ -384,7 +384,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'Migrate.Ssis': 'MigrateSsisTaskProperties', 'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.AzureDbForPostgreSql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
+        'task_type': {'Migrate.Ssis': 'MigrateSsisTaskProperties', 'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.AzureDbForPostgreSql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
     }
 
     def __init__(self, **kwargs):
@@ -4223,7 +4223,9 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel(MigrateMySqlAzureDb
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -4802,7 +4804,9 @@ class MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel(MigrateOracleAzu
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -5257,7 +5261,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel(MigratePo
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -5403,6 +5409,20 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
     :vartype target_server_version: str
     :ivar target_server: Target server name
     :vartype target_server: str
+    :ivar source_server_type: Source server type. Possible values include:
+     'Access', 'DB2', 'MySQL', 'Oracle', 'SQL', 'Sybase', 'PostgreSQL',
+     'MongoDB', 'SQLRDS', 'MySQLRDS', 'PostgreSQLRDS'
+    :vartype source_server_type: str or
+     ~azure.mgmt.datamigration.models.ScenarioSource
+    :ivar target_server_type: Target server type. Possible values include:
+     'SQLServer', 'SQLDB', 'SQLDW', 'SQLMI', 'AzureDBForMySql',
+     'AzureDBForPostgresSQL', 'MongoDB'
+    :vartype target_server_type: str or
+     ~azure.mgmt.datamigration.models.ScenarioTarget
+    :ivar state: Migration status. Possible values include: 'UNDEFINED',
+     'VALIDATING', 'PENDING', 'COMPLETE', 'ACTION_REQUIRED', 'FAILED'
+    :vartype state: str or
+     ~azure.mgmt.datamigration.models.ReplicateMigrationState
     """
 
     _validation = {
@@ -5414,6 +5434,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
         'source_server': {'readonly': True},
         'target_server_version': {'readonly': True},
         'target_server': {'readonly': True},
+        'source_server_type': {'readonly': True},
+        'target_server_type': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5425,6 +5448,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
         'source_server': {'key': 'sourceServer', 'type': 'str'},
         'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
         'target_server': {'key': 'targetServer', 'type': 'str'},
+        'source_server_type': {'key': 'sourceServerType', 'type': 'str'},
+        'target_server_type': {'key': 'targetServerType', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -5435,6 +5461,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
         self.source_server = None
         self.target_server_version = None
         self.target_server = None
+        self.source_server_type = None
+        self.target_server_type = None
+        self.state = None
         self.result_type = 'MigrationLevelOutput'
 
 
@@ -5588,7 +5617,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskPropert
         super(MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties, self).__init__(**kwargs)
         self.input = kwargs.get('input', None)
         self.output = None
-        self.task_type = 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync'
+        self.task_type = 'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2'
 
 
 class MigrateSchemaSqlServerSqlDbDatabaseInput(Model):
@@ -6229,7 +6258,9 @@ class MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel(MigrateSqlServerSqlDbSync
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -8967,6 +8998,10 @@ class MongoDbCollectionInfo(MongoDbObjectInfo):
 class MongoDbProgress(Model):
     """Base class for MongoDB migration outputs.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MongoDbCollectionProgress, MongoDbDatabaseProgress,
+    MongoDbMigrationProgress
+
     All required parameters must be populated in order to send to Azure.
 
     :param bytes_copied: Required. The number of document bytes copied during
@@ -9001,9 +9036,6 @@ class MongoDbProgress(Model):
      collection, this is the database-qualified name. For a database, this is
      the database name. For the overall migration, this is null.
     :type qualified_name: str
-    :param result_type: Required. The type of progress object. Possible values
-     include: 'Migration', 'Database', 'Collection'
-    :type result_type: str or ~azure.mgmt.datamigration.models.enum
     :param state: Required. Possible values include: 'NotStarted',
      'ValidatingInput', 'Initializing', 'Restarting', 'Copying',
      'InitialReplay', 'Replaying', 'Finalizing', 'Complete', 'Canceled',
@@ -9017,6 +9049,8 @@ class MongoDbProgress(Model):
      source at the beginning of the Copying stage, or -1 if the total count was
      unknown
     :type total_documents: long
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
     """
 
     _validation = {
@@ -9026,10 +9060,10 @@ class MongoDbProgress(Model):
         'errors': {'required': True},
         'events_pending': {'required': True},
         'events_replayed': {'required': True},
-        'result_type': {'required': True},
         'state': {'required': True},
         'total_bytes': {'required': True},
         'total_documents': {'required': True},
+        'result_type': {'required': True},
     }
 
     _attribute_map = {
@@ -9043,10 +9077,14 @@ class MongoDbProgress(Model):
         'last_replay_time': {'key': 'lastReplayTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'qualified_name': {'key': 'qualifiedName', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
         'total_documents': {'key': 'totalDocuments', 'type': 'long'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'result_type': {'Collection': 'MongoDbCollectionProgress', 'Database': 'MongoDbDatabaseProgress', 'Migration': 'MongoDbMigrationProgress'}
     }
 
     def __init__(self, **kwargs):
@@ -9061,10 +9099,10 @@ class MongoDbProgress(Model):
         self.last_replay_time = kwargs.get('last_replay_time', None)
         self.name = kwargs.get('name', None)
         self.qualified_name = kwargs.get('qualified_name', None)
-        self.result_type = kwargs.get('result_type', None)
         self.state = kwargs.get('state', None)
         self.total_bytes = kwargs.get('total_bytes', None)
         self.total_documents = kwargs.get('total_documents', None)
+        self.result_type = None
 
 
 class MongoDbCollectionProgress(MongoDbProgress):
@@ -9104,9 +9142,6 @@ class MongoDbCollectionProgress(MongoDbProgress):
      collection, this is the database-qualified name. For a database, this is
      the database name. For the overall migration, this is null.
     :type qualified_name: str
-    :param result_type: Required. The type of progress object. Possible values
-     include: 'Migration', 'Database', 'Collection'
-    :type result_type: str or ~azure.mgmt.datamigration.models.enum
     :param state: Required. Possible values include: 'NotStarted',
      'ValidatingInput', 'Initializing', 'Restarting', 'Copying',
      'InitialReplay', 'Replaying', 'Finalizing', 'Complete', 'Canceled',
@@ -9120,6 +9155,8 @@ class MongoDbCollectionProgress(MongoDbProgress):
      source at the beginning of the Copying stage, or -1 if the total count was
      unknown
     :type total_documents: long
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
     """
 
     _validation = {
@@ -9129,10 +9166,10 @@ class MongoDbCollectionProgress(MongoDbProgress):
         'errors': {'required': True},
         'events_pending': {'required': True},
         'events_replayed': {'required': True},
-        'result_type': {'required': True},
         'state': {'required': True},
         'total_bytes': {'required': True},
         'total_documents': {'required': True},
+        'result_type': {'required': True},
     }
 
     _attribute_map = {
@@ -9146,14 +9183,15 @@ class MongoDbCollectionProgress(MongoDbProgress):
         'last_replay_time': {'key': 'lastReplayTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'qualified_name': {'key': 'qualifiedName', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
         'total_documents': {'key': 'totalDocuments', 'type': 'long'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(MongoDbCollectionProgress, self).__init__(**kwargs)
+        self.result_type = 'Collection'
 
 
 class MongoDbCollectionSettings(Model):
@@ -9327,9 +9365,6 @@ class MongoDbDatabaseProgress(MongoDbProgress):
      collection, this is the database-qualified name. For a database, this is
      the database name. For the overall migration, this is null.
     :type qualified_name: str
-    :param result_type: Required. The type of progress object. Possible values
-     include: 'Migration', 'Database', 'Collection'
-    :type result_type: str or ~azure.mgmt.datamigration.models.enum
     :param state: Required. Possible values include: 'NotStarted',
      'ValidatingInput', 'Initializing', 'Restarting', 'Copying',
      'InitialReplay', 'Replaying', 'Finalizing', 'Complete', 'Canceled',
@@ -9343,6 +9378,8 @@ class MongoDbDatabaseProgress(MongoDbProgress):
      source at the beginning of the Copying stage, or -1 if the total count was
      unknown
     :type total_documents: long
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
     :param collections: The progress of the collections in the database. The
      keys are the unqualified names of the collections
     :type collections: dict[str,
@@ -9356,10 +9393,10 @@ class MongoDbDatabaseProgress(MongoDbProgress):
         'errors': {'required': True},
         'events_pending': {'required': True},
         'events_replayed': {'required': True},
-        'result_type': {'required': True},
         'state': {'required': True},
         'total_bytes': {'required': True},
         'total_documents': {'required': True},
+        'result_type': {'required': True},
     }
 
     _attribute_map = {
@@ -9373,16 +9410,17 @@ class MongoDbDatabaseProgress(MongoDbProgress):
         'last_replay_time': {'key': 'lastReplayTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'qualified_name': {'key': 'qualifiedName', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
         'total_documents': {'key': 'totalDocuments', 'type': 'long'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
         'collections': {'key': 'collections', 'type': '{MongoDbCollectionProgress}'},
     }
 
     def __init__(self, **kwargs):
         super(MongoDbDatabaseProgress, self).__init__(**kwargs)
         self.collections = kwargs.get('collections', None)
+        self.result_type = 'Database'
 
 
 class MongoDbDatabaseSettings(Model):
@@ -9551,9 +9589,6 @@ class MongoDbMigrationProgress(MongoDbProgress):
      collection, this is the database-qualified name. For a database, this is
      the database name. For the overall migration, this is null.
     :type qualified_name: str
-    :param result_type: Required. The type of progress object. Possible values
-     include: 'Migration', 'Database', 'Collection'
-    :type result_type: str or ~azure.mgmt.datamigration.models.enum
     :param state: Required. Possible values include: 'NotStarted',
      'ValidatingInput', 'Initializing', 'Restarting', 'Copying',
      'InitialReplay', 'Replaying', 'Finalizing', 'Complete', 'Canceled',
@@ -9567,6 +9602,8 @@ class MongoDbMigrationProgress(MongoDbProgress):
      source at the beginning of the Copying stage, or -1 if the total count was
      unknown
     :type total_documents: long
+    :param result_type: Required. Constant filled by server.
+    :type result_type: str
     :param databases: The progress of the databases in the migration. The keys
      are the names of the databases
     :type databases: dict[str,
@@ -9580,10 +9617,10 @@ class MongoDbMigrationProgress(MongoDbProgress):
         'errors': {'required': True},
         'events_pending': {'required': True},
         'events_replayed': {'required': True},
-        'result_type': {'required': True},
         'state': {'required': True},
         'total_bytes': {'required': True},
         'total_documents': {'required': True},
+        'result_type': {'required': True},
     }
 
     _attribute_map = {
@@ -9597,16 +9634,17 @@ class MongoDbMigrationProgress(MongoDbProgress):
         'last_replay_time': {'key': 'lastReplayTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'qualified_name': {'key': 'qualifiedName', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
         'total_documents': {'key': 'totalDocuments', 'type': 'long'},
+        'result_type': {'key': 'resultType', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{MongoDbDatabaseProgress}'},
     }
 
     def __init__(self, **kwargs):
         super(MongoDbMigrationProgress, self).__init__(**kwargs)
         self.databases = kwargs.get('databases', None)
+        self.result_type = 'Migration'
 
 
 class MongoDbMigrationSettings(Model):
@@ -10226,6 +10264,12 @@ class PostgreSqlConnectionInfo(ConnectionInfo):
     :type database_name: str
     :param port: Required. Port for Server
     :type port: int
+    :param encrypt_connection: Whether to encrypt the connection. Default
+     value: True .
+    :type encrypt_connection: bool
+    :param trust_server_certificate: Whether to trust the server certificate.
+     Default value: False .
+    :type trust_server_certificate: bool
     """
 
     _validation = {
@@ -10241,6 +10285,8 @@ class PostgreSqlConnectionInfo(ConnectionInfo):
         'server_name': {'key': 'serverName', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
         'port': {'key': 'port', 'type': 'int'},
+        'encrypt_connection': {'key': 'encryptConnection', 'type': 'bool'},
+        'trust_server_certificate': {'key': 'trustServerCertificate', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -10248,6 +10294,8 @@ class PostgreSqlConnectionInfo(ConnectionInfo):
         self.server_name = kwargs.get('server_name', None)
         self.database_name = kwargs.get('database_name', None)
         self.port = kwargs.get('port', None)
+        self.encrypt_connection = kwargs.get('encrypt_connection', True)
+        self.trust_server_certificate = kwargs.get('trust_server_certificate', False)
         self.type = 'PostgreSqlConnectionInfo'
 
 
