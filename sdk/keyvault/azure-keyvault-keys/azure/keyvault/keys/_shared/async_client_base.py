@@ -165,7 +165,7 @@ class AsyncKeyVaultClientBase(object):
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.close(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self):
         """Closes sockets opened by the client."""
