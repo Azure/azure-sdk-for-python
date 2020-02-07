@@ -41,7 +41,10 @@ def _get_configuration_class(api_version):
     elif api_version == V2016_10_01_VERSION:
         from ._generated.v2016_10_01._configuration import KeyVaultClientConfiguration as ImplConfig
     else:
-        raise NotImplementedError("API version {} is not supported by this package".format(api_version))
+        raise NotImplementedError(
+            "API version {} is not supported by this package. ".format(api_version)
+            + "Supported versions are {} and {}".format(V7_0_VERSION, V2016_10_01_VERSION)
+        )
     return ImplConfig
 
 def _create_config(credential, api_version=DEFAULT_API_VERSION, **kwargs):
@@ -79,7 +82,10 @@ def _create_client(credential, pipeline, api_version):
     elif api_version == V2016_10_01_VERSION:
         from ._generated.v2016_10_01 import KeyVaultClient as ImplClient
     else:
-        raise NotImplementedError("API version {} is not supported by this package".format(api_version))
+        raise NotImplementedError(
+            "API version {} is not supported by this package. ".format(api_version)
+            + "Supported versions are {} and {}".format(V7_0_VERSION, V2016_10_01_VERSION)
+        )
     return ImplClient(credentials=credential, pipeline=pipeline)
 
 def _import_models(api_version: str):
@@ -88,7 +94,10 @@ def _import_models(api_version: str):
     elif api_version == V2016_10_01_VERSION:
         from ._generated.v2016_10_01 import models as impl_models
     else:
-        raise NotImplementedError("API version {} is not supported by this package".format(api_version))
+        raise NotImplementedError(
+            "API version {} is not supported by this package. ".format(api_version)
+            + "Supported versions are {} and {}".format(V7_0_VERSION, V2016_10_01_VERSION)
+        )
     return impl_models
 
 
@@ -147,10 +156,9 @@ class KeyVaultClientBase(object):
         # type: () -> str
         return self._vault_url
 
-    def __enter__(self, *args, **kwargs):
-        self._client.__enter__(*args, **kwargs)
+    def __enter__(self):
+        self._client.__enter__()
         return self
 
-    def __exit__(self, *args, **kwargs):
-        self._client.__exit__(*args, **kwargs)
-        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

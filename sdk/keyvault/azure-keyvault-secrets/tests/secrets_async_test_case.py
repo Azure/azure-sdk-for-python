@@ -9,6 +9,11 @@ import sys
 from unittest import mock
 from secrets_test_case import KeyVaultTestCase
 
+def _get_completed_future(result=None):
+    future = asyncio.Future()
+    future.set_result(result)
+    return future
+
 class AsyncMockTransport(mock.MagicMock):
     """Mock with do-nothing aenter/exit for mocking async transport.
     This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
@@ -18,8 +23,8 @@ class AsyncMockTransport(mock.MagicMock):
         super().__init__(*args, **kwargs)
 
         if sys.version_info < (3, 8):
-            self.__aenter__ = mock.Mock(return_value=AsyncKeyVaultTestCase.get_completed_future())
-            self.__aexit__ = mock.Mock(return_value=AsyncKeyVaultTestCase.get_completed_future())
+            self.__aenter__ = mock.Mock(return_value=_get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=_get_completed_future())
 
 
 class AsyncKeyVaultTestCase(KeyVaultTestCase):

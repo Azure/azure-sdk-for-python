@@ -4,7 +4,6 @@
 # -------------------------------------
 import hashlib
 import os
-import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -27,7 +26,7 @@ def test_create_secret_client():
     credentials = DefaultAzureCredential()
     secret_client = SecretClient(vault_url, credentials)
 
-    # [END create_secret_client
+    # [END create_secret_client]
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):

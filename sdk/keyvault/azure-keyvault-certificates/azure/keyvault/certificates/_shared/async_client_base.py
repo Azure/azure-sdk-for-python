@@ -44,8 +44,8 @@ def _get_configuration_class(api_version: str) -> Configuration:
         from ._generated.v2016_10_01.aio._configuration_async import KeyVaultClientConfiguration as ImplConfig
     else:
         raise NotImplementedError(
-            f"API version {api_version} is not supported by this package. "
-            + f"We currently support versions {V7_0_VERSION} and {V2016_10_01_VERSION}"
+            "API version {} is not supported by this package. ".format(api_version)
+            + "Supported versions are {} and {}".format(V7_0_VERSION, V2016_10_01_VERSION)
         )
     return ImplConfig
 
@@ -86,7 +86,10 @@ def _create_client(
     elif api_version == V2016_10_01_VERSION:
         from ._generated.v2016_10_01.aio import KeyVaultClient as ImplClient
     else:
-        raise NotImplementedError("API version {} is not supported by this package".format(api_version))
+        raise NotImplementedError(
+            "API version {} is not supported by this package. ".format(api_version)
+            + "Supported versions are {} and {}".format(V7_0_VERSION, V2016_10_01_VERSION)
+        )
     return ImplClient(credentials=credential, pipeline=pipeline)
 
 def _import_models(api_version: str):
@@ -95,7 +98,10 @@ def _import_models(api_version: str):
     elif api_version == V2016_10_01_VERSION:
         from ._generated.v2016_10_01 import models as impl_models
     else:
-        raise NotImplementedError("API version {} is not supported by this package".format(api_version))
+        raise NotImplementedError(
+            "API version {} is not supported by this package. ".format(api_version)
+            + "Supported versions are {} and {}".format(V7_0_VERSION, V2016_10_01_VERSION)
+        )
     return impl_models
 
 
