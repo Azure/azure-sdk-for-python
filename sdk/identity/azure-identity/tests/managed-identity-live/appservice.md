@@ -175,7 +175,9 @@ Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTE
 
 # Run tests
 
-For each Web App, get the tests' invocation URLs, and browse to each. For example, for the app using system-assigned identity:
+We can start the test run by sending a request to the webapp.
+
+e.g. for the app using system-assigned identity:
 
 ```sh
 curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
@@ -183,7 +185,7 @@ curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
 
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
-**Deploy and run the tests again for the 3.x image. So totally four runs are required.**
+**Deploy and run the tests again with the 3.x image. So totally four runs are required.**
 
 ## Inspect output
 
