@@ -522,6 +522,12 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword file_smb_properties:
             Additional parameters for the operation
         :paramtype file_smb_properties: ~azure.storage.fileshare.FileSmbProperties or dict
+        :keyword bool ignore_read_only:
+            Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
+        :keyword bool set_archive_attribute:
+            Specifies the option to set archive attribute on a target file.
+            True means archive attribute will be set on the target file despite attribute
+            overrides or the source file state.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
