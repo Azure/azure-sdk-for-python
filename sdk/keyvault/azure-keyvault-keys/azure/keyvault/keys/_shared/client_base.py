@@ -165,4 +165,4 @@ class KeyVaultClientBase(object):
 
     def close(self):
         """Closes sockets opened by the client."""
-        await self._client.__exit__()
+        self._client.__exit__()
