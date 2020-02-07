@@ -32,9 +32,9 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
-from ._serialize import get_source_conditions, get_access_conditions, validate_copy_mode
+from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
-from ._models import HandlesPaged, NTFSAttributes, CopyFileSmbInfo  # pylint: disable=unused-import
+from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
 
 if TYPE_CHECKING:
@@ -519,21 +519,9 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :param str source_url:
             Specifies the URL of the source file.
-        :param file_permission_copy_mode: Specifies the option to copy file
-            security descriptor from source file or to set it using the value which is
-            defined by the value of file_permission or file_permission_key.
-            Possible values include: 'source', 'override'. Introduced in API version '2019-07-07'.
-        :param str file_permission: If specified the permission (security
-            descriptor) shall be set for the directory/file. This setting can be
-            used if Permission size is <= 8KB, otherwise file_permission_key
-            shall be used. Default value: Inherit. If SDDL is specified as
-            input, it must have owner, group and dacl. Note: Only one of the
-            file_permission or file_permission_key should be specified.
-        :param str file_permission_key: Key of the permission to be set for the
-            directory/file. Note: Only one of the file_permission or
-            file_permission_key should be specified.
-        :param ~azure.storage.fileshare.CopyFileSmbInfo copy_file_smb_info:
+        :keyword file_smb_properties:
             Additional parameters for the operation
+        :paramtype file_smb_properties: ~azure.storage.fileshare.FileSmbProperties or dict
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
         :type metadata: dict(str, str)
@@ -559,22 +547,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
-
-        file_permission = kwargs.pop('file_permission', None)
-        file_permission_key = kwargs.pop('file_permission_key', None)
-        file_permission_copy_mode = kwargs.pop('file_permission_copy_mode', None)
-        file_permission = _get_file_permission(file_permission, file_permission_key, None)
-        validate_copy_mode(file_permission_copy_mode, file_permission, file_permission_key)
-
-        copy_file_smb_info = kwargs.pop('copy_file_smb_info', None) or CopyFileSmbInfo()
-        copy_file_smb_info.file_permission_copy_mode = file_permission_copy_mode
-
+        kwargs.update(get_smb_properties(kwargs.pop('file_smb_properties'), **kwargs))
         try:
             return self._client.file.start_copy(
                 source_url,
-                file_permission=file_permission,
-                file_permission_key=file_permission_key,
-                copy_file_smb_info=copy_file_smb_info,
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
                 headers=headers,

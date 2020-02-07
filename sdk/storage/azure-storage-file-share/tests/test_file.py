@@ -29,7 +29,7 @@ from azure.storage.fileshare import (
     AccountSasPermissions,
     StorageErrorCode,
     NTFSAttributes,
-    CopyFileSmbInfo)
+    FileSmbProperties)
 from azure.storage.fileshare._parser import _datetime_to_str
 from _shared.testcase import (
     StorageTestCase,

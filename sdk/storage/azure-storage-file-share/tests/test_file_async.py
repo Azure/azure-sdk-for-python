@@ -27,7 +27,7 @@ from azure.storage.fileshare import (
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode,
-    CopyFileSmbInfo)
+    FileSmbProperties)
 from azure.storage.fileshare._parser import _datetime_to_str
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare.aio import (

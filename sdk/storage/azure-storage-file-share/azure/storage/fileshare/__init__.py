@@ -30,7 +30,7 @@ from ._models import (
     ShareSasPermissions,
     ContentSettings,
     NTFSAttributes,
-    CopyFileSmbInfo)
+    FileSmbProperties)
 from ._generated.models import (
     HandleItem
 )
@@ -61,7 +61,7 @@ __all__ = [
     'FileProperties',
     'ContentSettings',
     'Handle',
-    'CopyFileSmbInfo',
+    'FileSmbProperties',
     'NTFSAttributes',
     'HandleItem',
     'generate_account_sas',

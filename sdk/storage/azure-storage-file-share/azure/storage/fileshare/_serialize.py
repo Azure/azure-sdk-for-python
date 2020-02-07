@@ -7,7 +7,8 @@
 
 from azure.core import MatchConditions
 
-from ._generated.models import SourceModifiedAccessConditions, LeaseAccessConditions
+from ._parser import _datetime_to_str, _get_file_permission
+from ._generated.models import SourceModifiedAccessConditions, LeaseAccessConditions, CopyFileSmbInfo
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
@@ -46,21 +47,6 @@ def get_source_conditions(kwargs):
         source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
     )
 
-
-def validate_copy_mode(copy_mode, permission, permission_key):
-    if copy_mode == "source":
-        if permission or permission_key:
-            raise ValueError("Copy mode should be 'override' if permission/permission_key is specified")
-    elif copy_mode == "override":
-        if not (permission or permission_key):
-            raise ValueError("permission/permission_key should be specified with 'override' mode")
-    elif not copy_mode:
-        if permission_key or permission_key:
-            raise ValueError("permission/permission_key shouldn't be specified without copy mode")
-    else:
-        raise ValueError("Invalid copy mode")
-
-
 def get_access_conditions(lease):
     # type: (Optional[Union[ShareLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:
@@ -68,3 +54,53 @@ def get_access_conditions(lease):
     except AttributeError:
         lease_id = lease # type: ignore
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+
+def get_smb_properties(file_smb_properties, **kwargs):
+    # type: (Optional[Union[Dict, FileSmbProperties]]) -> Dict[str, Any]
+    if not file_smb_properties:
+        return {}
+    
+    ignore_read_only = kwargs.get('ignore_read_only')
+    set_archive_attribute = kwargs.get('set_archive_attribute')
+    if isinstance(file_smb_properties, dict):
+        file_permission = file_smb_properties.get('file_permission')
+        file_permission_key = file_smb_properties.get('file_permission_key')
+        file_attributes = file_smb_properties.get('file_attributes')
+        file_creation_time = file_smb_properties.get('file_creation_time', "")
+        file_last_write_time = file_smb_properties.get('file_last_write_time', "")
+    else:
+        file_permission = file_smb_properties.file_permission
+        file_permission_key = file_smb_properties.file_permission_key
+        file_attributes = file_smb_properties.file_attributes
+        file_creation_time = file_smb_properties.file_creation_time or ""
+        file_last_write_time = file_smb_properties.file_last_write_time or ""
+
+    file_permission_copy_mode = None
+    file_permission = _get_file_permission(file_permission, file_permission_key, "inherit")
+    if file_permission:
+        if file_permission.lower() == "source":
+            file_permission = None
+            file_permission_copy_mode = "source"
+        else:
+            file_permission_copy_mode = "override"
+    elif file_permission_key:
+        if file_permission_key.lower() == "source":
+            file_permission_key = None
+            file_permission_copy_mode = "source"
+        else:
+            file_permission_copy_mode = "override"
+
+    return {
+        'file_permission': file_permission,
+        'file_permission_key': file_permission_key,
+        'copy_file_smb_info': CopyFileSmbInfo(
+            file_permission_copy_mode=file_permission_copy_mode,
+            ignore_read_only=ignore_read_only,
+            file_attributes=file_attributes,
+            file_creation_time=_datetime_to_str(file_creation_time),
+            file_last_write_time=_datetime_to_str(file_last_write_time),
+            set_archive_attribute=set_archive_attribute
+        )
+
+    }
