@@ -183,7 +183,7 @@ curl https://$WEB_APP_SYSTEM_ASSIGNED.azurewebsites.net
 
 Do this again for the app using a user-assigned identity (replace `WEB_APP_SYSTEM_ASSIGNED` with `WEB_APP_USER_ASSIGNED`).
 
-We need to test system- and user-assigned identity on 2.7 and latest 3.x. So, four runs required.
+**Deploy and run the tests again for the 3.x image. So totally four runs are required.**
 
 ## Inspect output
 
