@@ -394,6 +394,7 @@ def find_packages_missing_on_pypi(path):
 
     # parse pkg name and spec
     pkg_spec_dict = dict(parse_require(req) for req in requires)
+    logging.info("Package requirement: {}".format(pkg_spec_dict))
     # find if version is available on pypi
     missing_packages = ["{0}{1}".format(pkg, pkg_spec_dict[pkg]) for pkg in pkg_spec_dict.keys() if not is_required_version_on_pypi(pkg, pkg_spec_dict[pkg])]
     if missing_packages:

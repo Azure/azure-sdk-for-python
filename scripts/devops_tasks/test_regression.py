@@ -21,7 +21,7 @@ from common_tasks import (
     install_package_from_whl,
     filter_dev_requirements,
     find_packages_missing_on_pypi,
-    find_wheel
+    find_whl
 )
 from git_helper import get_release_tag, checkout_code_repo, clone_repo
 from pip._internal.operations import freeze
@@ -116,12 +116,14 @@ class RegressionTest:
     def run(self):
         pkg_name = self.context.package_name
         if pkg_name in self.package_dependency_dict:
-            dep_packages = self.package_dependency_dict[pkg_name]
             logging.info("Running regression test for {}".format(pkg_name))
-            logging.info(
-                "Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages)
-            )
+            self.whl_path = find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory)
+            if find_packages_missing_on_pypi(self.whl_path):
+                logging.error("Required packages are not available on PyPI. Skipping regression test")
+                exit(0)
 
+            dep_packages = self.package_dependency_dict[pkg_name]
+            logging.info("Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages))
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
                 logging.info(
@@ -173,13 +175,8 @@ class RegressionTest:
                 self.context.package_root_path,
             )
             # Install pre-built whl for current package
-            whl_path = find_wheel(self.context.package_name, self.context.pkg_version, self.context.whl_directory)
-            if find_packages_missing_on_pypi(whl_path):
-                logging.error("Required packages are not available on PyPI. Skipping test for current package")
-                return
-
             install_package_from_whl(
-                whl_path,
+                self.whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
