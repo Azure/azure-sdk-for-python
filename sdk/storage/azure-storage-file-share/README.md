@@ -286,8 +286,40 @@ the client level to enable it for all requests.
 
 
 ## Troubleshooting
+### General
 Storage File clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 All File service operations will throw a `StorageErrorException` on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/file-service-error-codes).
+
+### Logging
+This library uses the standard
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
+```python
+from azure.storage.fileshare import ShareServiceClient
+import sys
+import logging
+
+# Create a logger for the 'azure.storage.fileshare' SDK
+logger = logging.getLogger('azure.storage.fileshare')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+service_client = ShareServiceClient.from_connection_string("your_connection_string", logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+service_client.get_service_properties(logging_enable=True)
+```
 
 ## Next steps
 
