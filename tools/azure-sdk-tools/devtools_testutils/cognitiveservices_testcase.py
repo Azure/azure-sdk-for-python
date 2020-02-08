@@ -80,7 +80,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             }
         else:
             return {
-                self.parameter_name: self.resource.properties.endpoint,
+                self.parameter_name: self.resource.endpoint,
                 '{}_key'.format(self.parameter_name): self.cogsci_key,
             }
 
