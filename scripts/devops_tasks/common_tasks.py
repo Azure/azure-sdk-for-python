@@ -388,7 +388,7 @@ def find_packages_missing_on_pypi(path):
     requires = []
     client = PyPIClient()
     if path.endswith(".whl"):
-        requires = [ r for r in pkginfo.get_metadata(path).requires_dist if r.startswith('azure') and "-nspkg" not in r]
+        requires = list(filter(lambda_filter_azure_pkg, pkginfo.get_metadata(path).requires_dist))
     else:
         _, _, _, requires = parse_setup(path)
 
