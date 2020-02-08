@@ -74,10 +74,16 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
 
         if self.legacy:
-            return {
-                self.parameter_name: self.resource.properties.endpoint,
-                '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
-            }
+            try:
+                return {
+                    self.parameter_name: self.resource.properties.endpoint,
+                    '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
+                }
+            except AttributeError:
+                return {
+                    self.parameter_name: self.resource.endpoint,
+                    '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
+                }
         else:
             try:
                 return {
