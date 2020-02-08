@@ -73,7 +73,6 @@ async def receive_batch(client):
         on_event=on_event_batch,
         max_batch_size=10,  # optional
         max_wait_time=3,  # optional
-        callback_without_event=True,
         starting_position="-1",  # optional, "-1" is from the beginning of the partition.
     )
 
