@@ -13,10 +13,7 @@ try:
     from ._models_py3 import CacheExpirationActionParameters
     from ._models_py3 import CacheKeyQueryStringActionParameters
     from ._models_py3 import CdnCertificateSourceParameters
-    from ._models_py3 import CdnEndpoint
     from ._models_py3 import CdnManagedHttpsParameters
-    from ._models_py3 import CdnWebApplicationFirewallPolicy
-    from ._models_py3 import CdnWebApplicationFirewallPolicyPatchParameters
     from ._models_py3 import CheckNameAvailabilityInput
     from ._models_py3 import CheckNameAvailabilityOutput
     from ._models_py3 import CidrIpAddress
@@ -24,8 +21,6 @@ try:
     from ._models_py3 import CustomDomain
     from ._models_py3 import CustomDomainHttpsParameters
     from ._models_py3 import CustomDomainParameters
-    from ._models_py3 import CustomRule
-    from ._models_py3 import CustomRuleList
     from ._models_py3 import DeepCreatedOrigin
     from ._models_py3 import DeliveryRule
     from ._models_py3 import DeliveryRuleAction
@@ -51,7 +46,6 @@ try:
     from ._models_py3 import EdgeNode
     from ._models_py3 import Endpoint
     from ._models_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
-    from ._models_py3 import EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     from ._models_py3 import EndpointUpdateParameters
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import GeoFilter
@@ -61,27 +55,16 @@ try:
     from ._models_py3 import IsDeviceMatchConditionParameters
     from ._models_py3 import KeyVaultCertificateSourceParameters
     from ._models_py3 import LoadParameters
-    from ._models_py3 import ManagedRuleDefinition
-    from ._models_py3 import ManagedRuleGroupDefinition
-    from ._models_py3 import ManagedRuleGroupOverride
-    from ._models_py3 import ManagedRuleOverride
-    from ._models_py3 import ManagedRuleSet
-    from ._models_py3 import ManagedRuleSetDefinition
-    from ._models_py3 import ManagedRuleSetList
-    from ._models_py3 import MatchCondition
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Origin
     from ._models_py3 import OriginUpdateParameters
-    from ._models_py3 import PolicySettings
     from ._models_py3 import PostArgsMatchConditionParameters
     from ._models_py3 import Profile
     from ._models_py3 import ProfileUpdateParameters
     from ._models_py3 import ProxyResource
     from ._models_py3 import PurgeParameters
     from ._models_py3 import QueryStringMatchConditionParameters
-    from ._models_py3 import RateLimitRule
-    from ._models_py3 import RateLimitRuleList
     from ._models_py3 import RemoteAddressMatchConditionParameters
     from ._models_py3 import RequestBodyMatchConditionParameters
     from ._models_py3 import RequestHeaderMatchConditionParameters
@@ -110,10 +93,7 @@ except (SyntaxError, ImportError):
     from ._models import CacheExpirationActionParameters
     from ._models import CacheKeyQueryStringActionParameters
     from ._models import CdnCertificateSourceParameters
-    from ._models import CdnEndpoint
     from ._models import CdnManagedHttpsParameters
-    from ._models import CdnWebApplicationFirewallPolicy
-    from ._models import CdnWebApplicationFirewallPolicyPatchParameters
     from ._models import CheckNameAvailabilityInput
     from ._models import CheckNameAvailabilityOutput
     from ._models import CidrIpAddress
@@ -121,8 +101,6 @@ except (SyntaxError, ImportError):
     from ._models import CustomDomain
     from ._models import CustomDomainHttpsParameters
     from ._models import CustomDomainParameters
-    from ._models import CustomRule
-    from ._models import CustomRuleList
     from ._models import DeepCreatedOrigin
     from ._models import DeliveryRule
     from ._models import DeliveryRuleAction
@@ -148,7 +126,6 @@ except (SyntaxError, ImportError):
     from ._models import EdgeNode
     from ._models import Endpoint
     from ._models import EndpointPropertiesUpdateParametersDeliveryPolicy
-    from ._models import EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     from ._models import EndpointUpdateParameters
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import GeoFilter
@@ -158,27 +135,16 @@ except (SyntaxError, ImportError):
     from ._models import IsDeviceMatchConditionParameters
     from ._models import KeyVaultCertificateSourceParameters
     from ._models import LoadParameters
-    from ._models import ManagedRuleDefinition
-    from ._models import ManagedRuleGroupDefinition
-    from ._models import ManagedRuleGroupOverride
-    from ._models import ManagedRuleOverride
-    from ._models import ManagedRuleSet
-    from ._models import ManagedRuleSetDefinition
-    from ._models import ManagedRuleSetList
-    from ._models import MatchCondition
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Origin
     from ._models import OriginUpdateParameters
-    from ._models import PolicySettings
     from ._models import PostArgsMatchConditionParameters
     from ._models import Profile
     from ._models import ProfileUpdateParameters
     from ._models import ProxyResource
     from ._models import PurgeParameters
     from ._models import QueryStringMatchConditionParameters
-    from ._models import RateLimitRule
-    from ._models import RateLimitRuleList
     from ._models import RemoteAddressMatchConditionParameters
     from ._models import RequestBodyMatchConditionParameters
     from ._models import RequestHeaderMatchConditionParameters
@@ -203,11 +169,9 @@ except (SyntaxError, ImportError):
     from ._models import ValidateCustomDomainOutput
     from ._models import ValidateProbeInput
     from ._models import ValidateProbeOutput
-from ._paged_models import CdnWebApplicationFirewallPolicyPaged
 from ._paged_models import CustomDomainPaged
 from ._paged_models import EdgeNodePaged
 from ._paged_models import EndpointPaged
-from ._paged_models import ManagedRuleSetDefinitionPaged
 from ._paged_models import OperationPaged
 from ._paged_models import OriginPaged
 from ._paged_models import ProfilePaged
@@ -243,26 +207,13 @@ from ._cdn_management_client_enums import (
     MinimumTlsVersion,
     CertificateType,
     ResourceType,
-    PolicyEnabledState,
-    PolicyMode,
-    CustomRuleEnabledState,
-    MatchVariable,
-    Operator,
-    TransformType,
-    ActionType,
-    ManagedRuleEnabledState,
-    ProvisioningState,
-    PolicyResourceState,
 )
 
 __all__ = [
     'CacheExpirationActionParameters',
     'CacheKeyQueryStringActionParameters',
     'CdnCertificateSourceParameters',
-    'CdnEndpoint',
     'CdnManagedHttpsParameters',
-    'CdnWebApplicationFirewallPolicy',
-    'CdnWebApplicationFirewallPolicyPatchParameters',
     'CheckNameAvailabilityInput',
     'CheckNameAvailabilityOutput',
     'CidrIpAddress',
@@ -270,8 +221,6 @@ __all__ = [
     'CustomDomain',
     'CustomDomainHttpsParameters',
     'CustomDomainParameters',
-    'CustomRule',
-    'CustomRuleList',
     'DeepCreatedOrigin',
     'DeliveryRule',
     'DeliveryRuleAction',
@@ -297,7 +246,6 @@ __all__ = [
     'EdgeNode',
     'Endpoint',
     'EndpointPropertiesUpdateParametersDeliveryPolicy',
-    'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink',
     'EndpointUpdateParameters',
     'ErrorResponse', 'ErrorResponseException',
     'GeoFilter',
@@ -307,27 +255,16 @@ __all__ = [
     'IsDeviceMatchConditionParameters',
     'KeyVaultCertificateSourceParameters',
     'LoadParameters',
-    'ManagedRuleDefinition',
-    'ManagedRuleGroupDefinition',
-    'ManagedRuleGroupOverride',
-    'ManagedRuleOverride',
-    'ManagedRuleSet',
-    'ManagedRuleSetDefinition',
-    'ManagedRuleSetList',
-    'MatchCondition',
     'Operation',
     'OperationDisplay',
     'Origin',
     'OriginUpdateParameters',
-    'PolicySettings',
     'PostArgsMatchConditionParameters',
     'Profile',
     'ProfileUpdateParameters',
     'ProxyResource',
     'PurgeParameters',
     'QueryStringMatchConditionParameters',
-    'RateLimitRule',
-    'RateLimitRuleList',
     'RemoteAddressMatchConditionParameters',
     'RequestBodyMatchConditionParameters',
     'RequestHeaderMatchConditionParameters',
@@ -359,8 +296,6 @@ __all__ = [
     'CustomDomainPaged',
     'OperationPaged',
     'EdgeNodePaged',
-    'CdnWebApplicationFirewallPolicyPaged',
-    'ManagedRuleSetDefinitionPaged',
     'SkuName',
     'ProfileResourceState',
     'OptimizationType',
@@ -391,14 +326,4 @@ __all__ = [
     'MinimumTlsVersion',
     'CertificateType',
     'ResourceType',
-    'PolicyEnabledState',
-    'PolicyMode',
-    'CustomRuleEnabledState',
-    'MatchVariable',
-    'Operator',
-    'TransformType',
-    'ActionType',
-    'ManagedRuleEnabledState',
-    'ProvisioningState',
-    'PolicyResourceState',
 ]

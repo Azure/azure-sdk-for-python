@@ -16,8 +16,6 @@ from ._custom_domains_operations import CustomDomainsOperations
 from ._resource_usage_operations import ResourceUsageOperations
 from ._operations import Operations
 from ._edge_nodes_operations import EdgeNodesOperations
-from ._policies_operations import PoliciesOperations
-from ._managed_rule_sets_operations import ManagedRuleSetsOperations
 from ._cdn_management_client_operations import CdnManagementClientOperationsMixin
 
 __all__ = [
@@ -28,7 +26,5 @@ __all__ = [
     'ResourceUsageOperations',
     'Operations',
     'EdgeNodesOperations',
-    'PoliciesOperations',
-    'ManagedRuleSetsOperations',
     'CdnManagementClientOperationsMixin',
 ]
