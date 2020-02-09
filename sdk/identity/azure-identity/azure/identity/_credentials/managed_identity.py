@@ -40,9 +40,7 @@ class ManagedIdentityCredential(object):
 
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
-    
-    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
-    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
+
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self._credential = None
@@ -50,7 +48,9 @@ class ManagedIdentityCredential(object):
             self._credential = MsiCredential(**kwargs)
         self._credential = ImdsCredential(**kwargs)
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
+    def get_token(
+        self, *scopes, **kwargs
+    ):  # pylint:disable=unused-argument,no-self-use
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -61,7 +61,9 @@ class ManagedIdentityCredential(object):
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         if not self._credential:
-            raise CredentialUnavailableError(message="managed identity isn't available in the hosting environment")
+            raise CredentialUnavailableError(
+                message="managed identity isn't available in the hosting environment"
+            )
         return self._credential.get_token(*scopes, **kwargs)
 
 
@@ -81,7 +83,9 @@ class _ManagedIdentityBase(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        self._client = client_cls(endpoint=endpoint, config=config, policies=policies, **kwargs)
+        self._client = client_cls(
+            endpoint=endpoint, config=config, policies=policies, **kwargs
+        )
 
     @staticmethod
     def _create_config(**kwargs):
@@ -93,12 +97,16 @@ class _ManagedIdentityBase(object):
 
         # retry is the only IO policy, so its class is a kwarg to increase async code sharing
         retry_policy = kwargs.pop("retry_policy", RetryPolicy)  # type: ignore
-        args = kwargs.copy()  # combine kwargs and default retry settings in a Python 2-compatible way
+        args = (
+            kwargs.copy()
+        )  # combine kwargs and default retry settings in a Python 2-compatible way
         args.update(_ManagedIdentityBase._retry_settings)  # type: ignore
         config.retry_policy = retry_policy(**args)  # type: ignore
 
         # Metadata header is required by IMDS and in Cloud Shell; App Service ignores it
-        config.headers_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
+        config.headers_policy = HeadersPolicy(
+            base_headers={"Metadata": "true"}, **kwargs
+        )
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
@@ -124,7 +132,9 @@ class ImdsCredential(_ManagedIdentityBase):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, **kwargs)
+        super(ImdsCredential, self).__init__(
+            endpoint=Endpoints.IMDS, client_cls=AuthnClient, **kwargs
+        )
         self._endpoint_available = None  # type: Optional[bool]
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -140,7 +150,9 @@ class ImdsCredential(_ManagedIdentityBase):
             # we send a request it would immediately reject (missing a required header),
             # setting a short timeout.
             try:
-                self._client.request_token(scopes, method="GET", connection_timeout=0.3, retry_total=0)
+                self._client.request_token(
+                    scopes, method="GET", connection_timeout=0.3, retry_total=0
+                )
                 self._endpoint_available = True
             except HttpResponseError:
                 # received a response, choked on it
@@ -177,7 +189,9 @@ class MsiCredential(_ManagedIdentityBase):
         # type: (**Any) -> None
         self._endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         if self._endpoint:
-            super(MsiCredential, self).__init__(endpoint=self._endpoint, client_cls=AuthnClient, **kwargs)
+            super(MsiCredential, self).__init__(
+                endpoint=self._endpoint, client_cls=AuthnClient, **kwargs
+            )
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
@@ -202,7 +216,9 @@ class MsiCredential(_ManagedIdentityBase):
             secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
             if secret:
                 # MSI_ENDPOINT and MSI_SECRET set -> App Service
-                token = self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
+                token = self._request_app_service_token(
+                    scopes=scopes, resource=resource, secret=secret
+                )
             else:
                 # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
                 token = self._request_legacy_token(scopes=scopes, resource=resource)
@@ -212,7 +228,9 @@ class MsiCredential(_ManagedIdentityBase):
         params = {"api-version": "2017-09-01", "resource": resource}
         if self._client_id:
             params["clientid"] = self._client_id
-        return self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
+        return self._client.request_token(
+            scopes, method="GET", headers={"secret": secret}, params=params
+        )
 
     def _request_legacy_token(self, scopes, resource):
         form_data = {"resource": resource}
