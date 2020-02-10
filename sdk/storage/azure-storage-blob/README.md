@@ -345,16 +345,16 @@ All Blob service operations will throw a `StorageErrorException` on failure with
 
 ### Logging
 This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+[logging](https://docs.python.org/3/library/logging.html) library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
 ```python
-from azure.storage.blob import BlobServiceClient
 import sys
 import logging
+from azure.storage.blob import BlobServiceClient
 
 # Create a logger for the 'azure.storage.blob' SDK
 logger = logging.getLogger('azure.storage.blob')

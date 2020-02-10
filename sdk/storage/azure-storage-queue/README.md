@@ -308,16 +308,16 @@ All Queue service operations will throw a `StorageErrorException` on failure wit
 
 ### Logging
 This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+[logging](https://docs.python.org/3/library/logging.html) library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
 ```python
-from azure.storage.queue import QueueServiceClient
 import sys
 import logging
+from azure.storage.queue import QueueServiceClient
 
 # Create a logger for the 'azure.storage.queue' SDK
 logger = logging.getLogger('azure.storage.queue')
