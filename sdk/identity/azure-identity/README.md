@@ -187,7 +187,7 @@ credential = CertificateCredential(tenant_id, client_id, cert_path, password="ce
 client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
-## Chaining credentials:
+## Chaining credentials
 [ChainedTokenCredential][chain_cred_ref] links multiple credential instances
 to be tried sequentially when authenticating. It will try each chained
 credential in turn until one provides a token or fails to authenticate due to
@@ -307,7 +307,7 @@ For more information, see the
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any
 additional questions or comments.
 
-[azure_eventhubs]: ../../eventhub/azure-eventhub
+[azure_eventhub]: ../../eventhub/azure-eventhub
 [azure_keyvault_keys]: ../../keyvault/azure-keyvault-keys
 [azure_keyvault_secrets]: ../../keyvault/azure-keyvault-secrets
 [azure_storage_blob]: ../../storage/azure-storage-blob
