@@ -14,7 +14,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_list_mount_target(self):
-        raise unittest.SkipTest("Skipping Mount Target test")
         volume = create_volume(self. client,TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
         self.assertEqual(volume.name, TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1)
 

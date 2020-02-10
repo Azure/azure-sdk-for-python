@@ -5,11 +5,31 @@ jobs:
   - job:
     strategy:
       matrix:
-        Python_37:
-          PythonVersion: '3.7'
-        Python_27:
+        Python_27_Linux:
           PythonVersion: '2.7'
           InstallAsyncRequirements: false
+          OSVmImage: ubuntu-18.04
+        Python_37_Linux:
+          PythonVersion: '3.7'
+          OSVmImage: ubuntu-18.04
+        Python_38_Linux:
+          PythonVersion: '3.8'
+          OSVmImage: ubuntu-18.04
+        Python_37_Windows:
+          PythonVersion: '3.7'
+          OSVmImage: windows-2019
+        Python_38_Windows:
+          PythonVersion: '3.8'
+          OSVmImage: windows-2019
+        Python_37_Mac:
+          PythonVersion: '3.7'
+          OSVmImage: macOS-10.14
+        Python_38_Mac:
+          PythonVersion: '3.8'
+          OSVmImage: macOS-10.14
+
+    pool:
+      vmImage: $(OSVmImage)
 
     steps:
       - task: UsePythonVersion@0
@@ -17,12 +37,17 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
+      - script: pip --version
+        displayName: pip --version
+
+      - script: pip install packaging
+        displayName: Install packaging requirements
+
       - script: pip install -r ./common/smoketest/requirements.txt
         displayName: "Install requirements.txt"
 
-      - script: pip install -r ./common/smoketest/requirements_async.txt
-        displayName: "Install requirements_async.txt"
-        condition: eq(variables['InstallAsyncRequirements'], true)
+      - script: python ./eng/tox/install_dev_build_dependency.py -r ./common/smoketest/requirements.txt
+        displayName: "Install dev dependencies from feed"
 
       - script: python ./common/smoketest/program.py
         displayName: "Run Smoke Test"

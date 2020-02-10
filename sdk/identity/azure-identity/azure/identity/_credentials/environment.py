@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 
-from azure.core.exceptions import ClientAuthenticationError
+from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .client_credential import CertificateCredential, ClientSecretCredential
 from .user import UsernamePasswordCredential
@@ -22,7 +22,27 @@ if TYPE_CHECKING:
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
 
-class EnvironmentCredential:
+def get_credential_unavailable_message():
+    # type: () -> str
+    message = (
+        "Incomplete environment configuration. See "
+        + "https://aka.ms/python-sdk-identity#environment-variables for expected environment variables"
+    )
+
+    all_variables = {
+        _
+        for _ in EnvironmentVariables.CLIENT_SECRET_VARS
+        + EnvironmentVariables.CERT_VARS
+        + EnvironmentVariables.USERNAME_PASSWORD_VARS
+    }
+    set_variables = ", ".join(v for v in all_variables if v in os.environ)
+    if set_variables:
+        message += ". Currently set variables: {}".format(set_variables)
+
+    return message
+
+
+class EnvironmentCredential(object):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -51,6 +71,7 @@ class EnvironmentCredential:
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
         self._credential = None  # type: Optional[EnvironmentCredentialTypes]
+        self._unavailable_message = ""
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -75,6 +96,9 @@ class EnvironmentCredential:
                 **kwargs
             )
 
+        if not self._credential:
+            self._unavailable_message = get_credential_unavailable_message()
+
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -83,8 +107,8 @@ class EnvironmentCredential:
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
-            raise ClientAuthenticationError(message="Incomplete environment configuration")
+            raise CredentialUnavailableError(message=self._unavailable_message)
         return self._credential.get_token(*scopes, **kwargs)

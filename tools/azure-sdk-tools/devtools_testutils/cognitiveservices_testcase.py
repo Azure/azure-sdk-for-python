@@ -57,7 +57,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             cogsci_account = self.client.accounts.create(
                 group.name,
                 name,
-                parameters=
+                account=
                 {
                     'sku': {'name': self.sku},
                     'location': self.location,
@@ -74,15 +74,27 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
 
         if self.legacy:
-            return {
-                self.parameter_name: self.resource.endpoint,
-                '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
-            }
+            try:
+                return {
+                    self.parameter_name: self.resource.properties.endpoint,
+                    '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
+                }
+            except AttributeError:
+                return {
+                    self.parameter_name: self.resource.endpoint,
+                    '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
+                }
         else:
-            return {
-                self.parameter_name: self.resource.endpoint,
-                '{}_key'.format(self.parameter_name): self.cogsci_key,
-            }
+            try:
+                return {
+                    self.parameter_name: self.resource.properties.endpoint,
+                    '{}_key'.format(self.parameter_name): self.cogsci_key,
+                }
+            except AttributeError:
+                return {
+                    self.parameter_name: self.resource.endpoint,
+                    '{}_key'.format(self.parameter_name): self.cogsci_key,
+                }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:

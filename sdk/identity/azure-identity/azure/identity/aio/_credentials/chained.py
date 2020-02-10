@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from .base import AsyncCredentialBase
+from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
 
 if TYPE_CHECKING:
@@ -44,15 +45,19 @@ class ChainedTokenCredential(AsyncCredentialBase):
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         history = []
         for credential in self.credentials:
             try:
                 return await credential.get_token(*scopes, **kwargs)
-            except ClientAuthenticationError as ex:
+            except CredentialUnavailableError as ex:
+                # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
+                # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
+                break
+
         error_message = _get_error_message(history)
         raise ClientAuthenticationError(message=error_message)

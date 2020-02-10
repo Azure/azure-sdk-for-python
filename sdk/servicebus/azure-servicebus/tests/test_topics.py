@@ -11,11 +11,13 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+
 from azure.servicebus import ServiceBusClient, TopicClient
 from azure.servicebus.common.message import Message, PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import ServiceBusError
-
+from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusTopicPreparer
 
 def get_logger(level):
     azure_logger = logging.getLogger("azure")
@@ -33,47 +35,65 @@ def get_logger(level):
 
 _logger = get_logger(logging.DEBUG)
 
-@pytest.mark.liveTest
-def test_topic_by_topic_client_conn_str_send_basic(live_servicebus_config, standard_topic):
 
-    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=False)
-    with topic_client.get_sender() as sender:
-        message = Message(b"Sample topic message")
-        sender.send(message)
-    message = Message(b"Another sample topic message")
-    topic_client.send(message)
+class ServiceBusTopicsTests(AzureMgmtTestCase):
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    def test_topic_by_topic_client_conn_str_send_basic(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
 
-@pytest.mark.liveTest
-def test_topic_by_servicebus_client_conn_str_send_basic(live_servicebus_config, standard_topic):
+        topic_client = TopicClient.from_connection_string(servicebus_namespace_connection_string, name=servicebus_topic.name, debug=False)
+        with topic_client.get_sender() as sender:
+            message = Message(b"Sample topic message")
+            sender.send(message)
+        message = Message(b"Another sample topic message")
+        topic_client.send(message)
 
-    client = ServiceBusClient(
-        service_namespace=live_servicebus_config['hostname'],
-        shared_access_key_name=live_servicebus_config['key_name'],
-        shared_access_key_value=live_servicebus_config['access_key'],
-        debug=False)
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    def test_topic_by_servicebus_client_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):
 
-    topic_client = client.get_topic(standard_topic)
-    with topic_client.get_sender() as sender:
-        message = Message(b"Sample topic message")
-        sender.send(message)
-    message = Message(b"Another sample topic message")
-    topic_client.send(message)
+        client = ServiceBusClient(
+            service_namespace=servicebus_namespace.name,
+            shared_access_key_name=servicebus_namespace_key_name,
+            shared_access_key_value=servicebus_namespace_primary_key,
+            debug=False)
 
-@pytest.mark.liveTest
-def test_topic_by_servicebus_client_list_topics(live_servicebus_config, standard_topic):
+        topic_client = client.get_topic(servicebus_topic.name)
+        with topic_client.get_sender() as sender:
+            message = Message(b"Sample topic message")
+            sender.send(message)
+        message = Message(b"Another sample topic message")
+        topic_client.send(message)
 
-    client = ServiceBusClient(
-        service_namespace=live_servicebus_config['hostname'],
-        shared_access_key_name=live_servicebus_config['key_name'],
-        shared_access_key_value=live_servicebus_config['access_key'],
-        debug=False)
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    def test_topic_by_servicebus_client_list_topics(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):
 
-    topics = client.list_topics()
-    assert len(topics) >= 1
-    assert all(isinstance(t, TopicClient) for t in topics)
+        client = ServiceBusClient(
+            service_namespace=servicebus_namespace.name,
+            shared_access_key_name=servicebus_namespace_key_name,
+            shared_access_key_value=servicebus_namespace_primary_key,
+            debug=False)
 
-@pytest.mark.liveTest
-def test_topic_by_topic_client_conn_str_receive_fail(live_servicebus_config, standard_topic):
-    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=False)
-    with pytest.raises(AttributeError):
-        topic_client.get_receiver()
+        topics = client.list_topics()
+        assert len(topics) >= 1
+        assert all(isinstance(t, TopicClient) for t in topics)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @RandomNameResourceGroupPreparer()
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    def test_topic_by_topic_client_conn_str_receive_fail(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
+        topic_client = TopicClient.from_connection_string(servicebus_namespace_connection_string, name=servicebus_topic.name, debug=False)
+        with pytest.raises(AttributeError):
+            topic_client.get_receiver()

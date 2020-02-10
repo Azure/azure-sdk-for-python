@@ -13,20 +13,6 @@ from ._models import (
 )
 
 
-def _validate_single_input(text, hint, hint_value):
-    """Validate text input is string. Let service handle
-    validity of hint and hint value.
-
-    :param str text: A single text document.
-    :param str hint: Could be country_hint or language
-    :param str hint_value: The user passed country_hint or language
-    :return: A DetectLanguageInput or TextDocumentInput
-    """
-    if isinstance(text, six.string_types):
-        return [{"id": "0", hint: hint_value, "text": text}]
-    raise TypeError("Text parameter must be string.")
-
-
 def _validate_batch_input(documents, hint, whole_batch_hint):
     """Validate that batch input has either all string docs
     or dict/DetectLanguageInput/TextDocumentInput, not a mix of both.
@@ -36,12 +22,12 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
     :param list documents: The input documents.
     :return: A list of DetectLanguageInput or TextDocumentInput
     """
-    if not isinstance(documents, list):
-        raise TypeError("Documents parameter must be a list.")
+    if isinstance(documents, six.string_types):
+        raise TypeError("Input documents cannot be a string.")
 
     if not all(isinstance(x, six.string_types) for x in documents):
         if not all(isinstance(x, (dict, TextDocumentInput, DetectLanguageInput)) for x in documents):
-            raise TypeError("Mixing string and dictionary/object input unsupported.")
+            raise TypeError("Mixing string and dictionary/object document input unsupported.")
 
     request_batch = []
     for idx, doc in enumerate(documents):

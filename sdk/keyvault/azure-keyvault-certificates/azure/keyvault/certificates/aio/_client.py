@@ -96,6 +96,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
             tags=tags,
+            error_map=_error_map,
             **kwargs
         )
 
@@ -144,7 +145,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def get_certificate_version(
         self, certificate_name: str, version: str, **kwargs: "Any"
-        ) -> KeyVaultCertificate:
+    ) -> KeyVaultCertificate:
         """Gets a specific version of a certificate without returning its management policy.
 
         Requires certificates/get permission. To get the latest version of the certificate,
@@ -257,7 +258,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         await self._client.purge_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
 
     @distributed_trace_async
@@ -285,7 +286,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_cert_bundle = await self._client.recover_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
         command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
@@ -337,6 +338,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             password=password,
             certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy),
             certificate_attributes=attributes,
+            error_map=_error_map,
             **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -353,7 +355,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = await self._client.get_certificate_policy(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
@@ -376,6 +378,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             certificate_policy=policy._to_certificate_policy_bundle(),
+            error_map=_error_map,
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -416,6 +419,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             certificate_name=certificate_name,
             certificate_version=version or "",
             certificate_attributes=attributes,
+            error_map=_error_map,
             **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -471,7 +475,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_certificate(
-            vault_base_url=self.vault_url, certificate_bundle_backup=backup, **kwargs
+            vault_base_url=self.vault_url, certificate_bundle_backup=backup, error_map=_error_map, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -569,9 +573,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def set_contacts(
-        self, contacts: Iterable[CertificateContact], **kwargs: "Any"
-    ) -> List[CertificateContact]:
+    async def set_contacts(self, contacts: Iterable[CertificateContact], **kwargs: "Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscriptable-object because of pylint bug referenced here:
@@ -595,6 +597,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         contacts = await self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
             contact_list=[c._to_certificate_contacts_item() for c in contacts],
+            error_map=_error_map,
             **kwargs
         )
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
@@ -619,7 +622,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Get contacts
                 :dedent: 8
         """
-        contacts = await self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
+        contacts = await self._client.get_certificate_contacts(
+            vault_base_url=self._vault_url, error_map=_error_map, **kwargs
+        )
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
@@ -642,7 +647,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Delete contacts
                 :dedent: 8
         """
-        contacts = await self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
+        contacts = await self._client.delete_certificate_contacts(
+            vault_base_url=self.vault_url, error_map=_error_map, **kwargs
+        )
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
@@ -690,7 +697,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = await self._client.update_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, cancellation_requested=True, **kwargs
+            vault_base_url=self.vault_url,
+            certificate_name=certificate_name,
+            cancellation_requested=True,
+            error_map=_error_map,
+            **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -728,6 +739,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             certificate_name=certificate_name,
             x509_certificates=x509_certificates,
             certificate_attributes=attributes,
+            error_map=_error_map,
             **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -757,9 +769,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
-    async def create_issuer(
-        self, issuer_name: str, provider: str, **kwargs: "Any"
-    ) -> CertificateIssuer:
+    async def create_issuer(self, issuer_name: str, provider: str, **kwargs: "Any") -> CertificateIssuer:
         """Sets the specified certificate issuer. Requires certificates/setissuers permission.
 
         :param str issuer_name: The name of the issuer.
@@ -823,6 +833,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             credentials=issuer_credentials,
             organization_details=organization_details,
             attributes=issuer_attributes,
+            error_map=_error_map,
             **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -885,6 +896,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             credentials=issuer_credentials,
             organization_details=organization_details,
             attributes=issuer_attributes,
+            error_map=_error_map,
             **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -909,7 +921,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = await self._client.delete_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=issuer_name, **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 

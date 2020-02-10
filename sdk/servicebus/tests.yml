@@ -19,3 +19,20 @@ jobs:
         SERVICE_BUS_CONNECTION_STR_RO: $(python-sb-livetest-service-connection-str-ro)
         SERVICE_BUS_CONNECTION_STR_WO: $(python-sb-livetest-service-connection-str-wo)
         SERVICE_BUS_CONNECTION_STR_ENTITY: $(python-sb-livetest-service-connection-entity)
+      Matrix:
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        MacOs_Python37:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.14'
+          PythonVersion: '3.7'
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'windows-2019'
+          PythonVersion: '2.7'
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.8'

@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import json
-import os
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
@@ -15,10 +13,7 @@ import pytest
 
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport
-from test_certificate_credential import validate_jwt
-
-
-CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
+from test_certificate_credential import BOTH_CERTS, CERT_PATH, validate_jwt
 
 
 @pytest.mark.asyncio
@@ -72,28 +67,32 @@ async def test_user_agent():
 
 
 @pytest.mark.asyncio
-async def test_request_url():
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+async def test_request_url(cert_path, cert_password):
     authority = "authority.com"
     tenant_id = "expected_tenant"
     access_token = "***"
 
     def validate_url(url):
-        scheme, netloc, path, _, _, _ = urlparse(url)
-        assert scheme == "https"
-        assert netloc == authority
-        assert path.startswith("/" + tenant_id)
+        parsed = urlparse(url)
+        assert parsed.scheme == "https"
+        assert parsed.netloc == authority
+        assert parsed.path.startswith("/" + tenant_id)
 
     async def mock_send(request, **kwargs):
         validate_url(request.url)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
-    cred = CertificateCredential(tenant_id, "client_id", CERT_PATH, transport=Mock(send=mock_send), authority=authority)
+    cred = CertificateCredential(
+        tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
+    )
     token = await cred.get_token("scope")
     assert token.token == access_token
 
 
 @pytest.mark.asyncio
-async def test_request_body():
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+async def test_request_body(cert_path, cert_password):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -104,12 +103,14 @@ async def test_request_body():
         assert request.body["grant_type"] == "client_credentials"
         assert request.body["scope"] == expected_scope
 
-        with open(CERT_PATH, "rb") as cert_file:
+        with open(cert_path, "rb") as cert_file:
             validate_jwt(request, client_id, cert_file.read())
 
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
-    cred = CertificateCredential(tenant_id, client_id, CERT_PATH, transport=Mock(send=mock_send), authority=authority)
+    cred = CertificateCredential(
+        tenant_id, client_id, cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
+    )
     token = await cred.get_token("scope")
 
     assert token.token == access_token

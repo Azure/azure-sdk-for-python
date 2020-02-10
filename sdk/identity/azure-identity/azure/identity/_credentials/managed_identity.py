@@ -6,7 +6,7 @@ import os
 
 from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
@@ -17,6 +17,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
+from .. import CredentialUnavailableError
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
 from .._internal.user_agent import USER_AGENT
@@ -59,7 +60,7 @@ class ManagedIdentityCredential(object):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         return AccessToken()
 
@@ -132,7 +133,7 @@ class ImdsCredential(_ManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: the IMDS endpoint is unreachable
         """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
@@ -149,7 +150,7 @@ class ImdsCredential(_ManagedIdentityBase):
                 self._endpoint_available = False
 
         if not self._endpoint_available:
-            raise ClientAuthenticationError(message="IMDS endpoint unavailable")
+            raise CredentialUnavailableError(message="IMDS endpoint unavailable")
 
         if len(scopes) != 1:
             raise ValueError("this credential supports one scope per request")
@@ -184,11 +185,11 @@ class MsiCredential(_ManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
 
         if not self._endpoint:
-            raise ClientAuthenticationError(message="MSI endpoint unavailable")
+            raise CredentialUnavailableError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
             raise ValueError("this credential supports only one scope per request")

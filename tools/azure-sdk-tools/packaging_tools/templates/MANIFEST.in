@@ -1,5 +1,5 @@
 recursive-include tests *.py *.yaml
-include *.rst
+include *.md
 {%- for init_name in init_names %}
 include {{ init_name }}
 {%- endfor %}
