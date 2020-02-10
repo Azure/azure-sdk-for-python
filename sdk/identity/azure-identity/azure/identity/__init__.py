@@ -4,6 +4,7 @@
 # ------------------------------------
 """Credentials for Azure SDK clients."""
 
+from ._exceptions import CredentialUnavailableError
 from ._constants import KnownAuthorities
 from ._credentials import (
     AuthorizationCodeCredential,
@@ -25,6 +26,7 @@ __all__ = [
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
+    "CredentialUnavailableError",
     "DefaultAzureCredential",
     "DeviceCodeCredential",
     "EnvironmentCredential",
@@ -36,4 +38,5 @@ __all__ = [
 ]
 
 from ._version import VERSION
+
 __version__ = VERSION

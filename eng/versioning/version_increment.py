@@ -11,7 +11,7 @@ import os
 import argparse
 from packaging.version import parse
 
-from version_shared import get_packages, set_version_py, set_dev_classifier
+from version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
 
 def increment_version(old_version):
     parsed_version = parse(old_version)
@@ -19,9 +19,9 @@ def increment_version(old_version):
 
     if parsed_version.is_prerelease:
         prerelease_version = parsed_version.pre[1]
-        return f'{release[0]}.{release[1]}.{release[2]}b{prerelease_version + 1}'
+        return '{0}.{1}.{2}b{3}'.format(release[0], release[1], release[2], prerelease_version + 1)
 
-    return f'{release[0]}.{release[1]}.{release[2] + 1}'
+    return '{0}.{1}.{2}'.format(release[0], release[1], release[2] + 1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
@@ -49,7 +49,8 @@ if __name__ == '__main__':
     target_package = package_map[package_name]
 
     new_version = increment_version(target_package[1][1])
-    print(f'{package_name}: {target_package[1][1]} -> {new_version}')
+    print('{0}: {1} -> {2}'.format(package_name,target_package[1][1], new_version))
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
+    update_change_log(target_package[0], new_version, True, False)

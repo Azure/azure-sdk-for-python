@@ -86,7 +86,8 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
     def __init__(self,  # pylint: disable=too-many-arguments
                  method_name, config_file=None, recording_dir=None, recording_name=None, recording_processors=None,
-                 replay_processors=None, recording_patches=None, replay_patches=None):
+                 replay_processors=None, recording_patches=None, replay_patches=None, match_body=False,
+                 custom_request_matchers=None):
         super(ReplayableTest, self).__init__(method_name)
 
         self.recording_processors = recording_processors or []
@@ -112,6 +113,11 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
             filter_headers=self.FILTER_HEADERS
         )
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
+        if match_body:
+            self.vcr.match_on += ('body',)
+        for matcher in custom_request_matchers or []:
+            self.vcr.register_matcher(matcher.__name__, matcher)
+            self.vcr.match_on += (matcher.__name__,)
 
         self.recording_file = os.path.join(
             recording_dir,

@@ -125,8 +125,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         updated = await _update_secret(created)
 
         # delete secret
-        polling_interval = 0 if self.is_playback() else 2
-        deleted = await client.delete_secret(updated.name, _polling_interval=polling_interval)
+        deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -154,7 +153,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_secrets(self, vault_client, **kwargs):
@@ -168,10 +167,10 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_name = "secret{}".format(i)
             secret_value = "value{}".format(i)
             expected[secret_name] = await client.set_secret(secret_name, secret_value)
-        polling_interval = 0 if self.is_playback() else 2
+
         # delete them
         for secret_name in expected.keys():
-            await client.delete_secret(secret_name, _polling_interval=polling_interval)
+            await client.delete_secret(secret_name)
 
         # validate list deleted secrets with attributes
         async for deleted_secret in client.list_deleted_secrets():
@@ -213,7 +212,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -230,8 +229,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        polling_interval = 0 if self.is_playback() else 2
-        await client.delete_secret(created_bundle.name, _polling_interval=polling_interval)
+        await client.delete_secret(created_bundle.name)
 
         # restore secret
         restored = await client.restore_secret_backup(secret_backup)
@@ -239,7 +237,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
@@ -255,9 +253,8 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
-            await client.delete_secret(secret_name, _polling_interval=polling_interval)
+            await client.delete_secret(secret_name)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
@@ -265,7 +262,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # recover select secrets
         for secret_name in secrets.keys():
-            await client.recover_deleted_secret(secret_name, _polling_interval=polling_interval)
+            await client.recover_deleted_secret(secret_name)
 
         # validate the recovered secrets exist
         await self._poll_until_no_exception(
@@ -273,7 +270,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         )
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):
@@ -289,9 +286,8 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
-            await client.delete_secret(secret_name, _polling_interval=polling_interval)
+            await client.delete_secret(secret_name)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():

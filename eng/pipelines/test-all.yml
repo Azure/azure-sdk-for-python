@@ -18,6 +18,7 @@ stages:
       parameters:
         ToxEnvParallel: '--tenvparallel'
         InjectedPackages: $(InjectedPackages)
+        BuildTargetingString: $(BuildTargetingString)
         BuildDocs: false
         TestTimeoutInMinutes: 300
         TestMarkArgument: not cosmosEmulator

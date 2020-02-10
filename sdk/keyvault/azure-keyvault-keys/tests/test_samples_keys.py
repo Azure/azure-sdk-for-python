@@ -35,7 +35,7 @@ def test_create_key_client():
 class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_key_crud_operations(self, vault_client, **kwargs):
         from dateutil import parser as date_parse
@@ -133,7 +133,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_key]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -180,7 +180,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_keys]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @VaultClientPreparer()
     def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
@@ -196,9 +196,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        polling_interval = 0 if self.is_playback() else 2
-
-        key_client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
+        key_client.begin_delete_key(key_name).wait()
 
         # [START restore_key_backup]
 
@@ -210,13 +208,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_key_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
-        polling_interval = 0 if self.is_playback() else 2
-        key_client.begin_delete_key(created_key.name, _polling_interval=polling_interval).wait()
+        key_client.begin_delete_key(created_key.name).wait()
         # [START get_deleted_key]
 
         # get a deleted key (requires soft-delete enabled for the vault)
