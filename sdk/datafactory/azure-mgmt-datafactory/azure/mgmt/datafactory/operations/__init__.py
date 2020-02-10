@@ -22,7 +22,6 @@ from ._pipeline_runs_operations import PipelineRunsOperations
 from ._activity_runs_operations import ActivityRunsOperations
 from ._triggers_operations import TriggersOperations
 from ._trigger_runs_operations import TriggerRunsOperations
-from ._rerun_triggers_operations import RerunTriggersOperations
 from ._data_flows_operations import DataFlowsOperations
 from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 
@@ -40,7 +39,6 @@ __all__ = [
     'ActivityRunsOperations',
     'TriggersOperations',
     'TriggerRunsOperations',
-    'RerunTriggersOperations',
     'DataFlowsOperations',
     'DataFlowDebugSessionOperations',
 ]

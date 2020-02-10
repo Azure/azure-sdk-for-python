@@ -26,7 +26,6 @@ from .operations import PipelineRunsOperations
 from .operations import ActivityRunsOperations
 from .operations import TriggersOperations
 from .operations import TriggerRunsOperations
-from .operations import RerunTriggersOperations
 from .operations import DataFlowsOperations
 from .operations import DataFlowDebugSessionOperations
 from . import models
@@ -64,8 +63,6 @@ class DataFactoryManagementClient(SDKClient):
     :vartype triggers: azure.mgmt.datafactory.operations.TriggersOperations
     :ivar trigger_runs: TriggerRuns operations
     :vartype trigger_runs: azure.mgmt.datafactory.operations.TriggerRunsOperations
-    :ivar rerun_triggers: RerunTriggers operations
-    :vartype rerun_triggers: azure.mgmt.datafactory.operations.RerunTriggersOperations
     :ivar data_flows: DataFlows operations
     :vartype data_flows: azure.mgmt.datafactory.operations.DataFlowsOperations
     :ivar data_flow_debug_session: DataFlowDebugSession operations
@@ -115,8 +112,6 @@ class DataFactoryManagementClient(SDKClient):
         self.triggers = TriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.trigger_runs = TriggerRunsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.rerun_triggers = RerunTriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_flows = DataFlowsOperations(
             self._client, self.config, self._serialize, self._deserialize)

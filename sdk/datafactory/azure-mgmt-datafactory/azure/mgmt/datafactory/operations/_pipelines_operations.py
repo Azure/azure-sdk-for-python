@@ -314,7 +314,7 @@ class PipelinesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelines/{pipelineName}'}
 
     def create_run(
-            self, resource_group_name, factory_name, pipeline_name, reference_pipeline_run_id=None, is_recovery=None, start_activity_name=None, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, pipeline_name, reference_pipeline_run_id=None, is_recovery=None, start_activity_name=None, start_from_failure=None, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Creates a run of a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -334,6 +334,10 @@ class PipelinesOperations(object):
         :param start_activity_name: In recovery mode, the rerun will start
          from this activity. If not specified, all activities will run.
         :type start_activity_name: str
+        :param start_from_failure: In recovery mode, if set to true, the rerun
+         will start from failed activities. The property will be used only if
+         startActivityName is not specified.
+        :type start_from_failure: bool
         :param parameters: Parameters of the pipeline run. These parameters
          will be used only if the runId is not specified.
         :type parameters: dict[str, object]
@@ -366,6 +370,8 @@ class PipelinesOperations(object):
             query_parameters['isRecovery'] = self._serialize.query("is_recovery", is_recovery, 'bool')
         if start_activity_name is not None:
             query_parameters['startActivityName'] = self._serialize.query("start_activity_name", start_activity_name, 'str')
+        if start_from_failure is not None:
+            query_parameters['startFromFailure'] = self._serialize.query("start_from_failure", start_from_failure, 'bool')
 
         # Construct headers
         header_parameters = {}

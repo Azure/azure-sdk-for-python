@@ -6458,7 +6458,7 @@ class Trigger(Model):
     pipeline run.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RerunTumblingWindowTrigger, ChainingTrigger,
+    sub-classes are: ChainingTrigger, RerunTumblingWindowTrigger,
     TumblingWindowTrigger, MultiplePipelineTrigger
 
     Variables are only populated by the server, and will be ignored when
@@ -6497,7 +6497,7 @@ class Trigger(Model):
     }
 
     _subtype_map = {
-        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'ChainingTrigger': 'ChainingTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
+        'type': {'ChainingTrigger': 'ChainingTrigger', 'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
     def __init__(self, **kwargs):
@@ -23584,48 +23584,6 @@ class RelationalTableDataset(Dataset):
         self.type = 'RelationalTable'
 
 
-class RerunTriggerResource(SubResource):
-    """RerunTrigger resource type.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    :param properties: Required. Properties of the rerun trigger.
-    :type properties:
-     ~azure.mgmt.datafactory.models.RerunTumblingWindowTrigger
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'properties': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'RerunTumblingWindowTrigger'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RerunTriggerResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
 class RerunTumblingWindowTrigger(Trigger):
     """Trigger that schedules pipeline reruns for all fixed time interval windows
     from a requested start time to requested end time.
@@ -23650,7 +23608,7 @@ class RerunTumblingWindowTrigger(Trigger):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param parent_trigger: The parent trigger reference.
+    :param parent_trigger: Required. The parent trigger reference.
     :type parent_trigger: object
     :param requested_start_time: Required. The start time for the time period
      for which restatement is initiated. Only UTC time is currently supported.
@@ -23658,17 +23616,18 @@ class RerunTumblingWindowTrigger(Trigger):
     :param requested_end_time: Required. The end time for the time period for
      which restatement is initiated. Only UTC time is currently supported.
     :type requested_end_time: datetime
-    :param max_concurrency: Required. The max number of parallel time windows
-     (ready for execution) for which a rerun is triggered.
-    :type max_concurrency: int
+    :param rerun_concurrency: Required. The max number of parallel time
+     windows (ready for execution) for which a rerun is triggered.
+    :type rerun_concurrency: int
     """
 
     _validation = {
         'runtime_state': {'readonly': True},
         'type': {'required': True},
+        'parent_trigger': {'required': True},
         'requested_start_time': {'required': True},
         'requested_end_time': {'required': True},
-        'max_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
+        'rerun_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -23680,7 +23639,7 @@ class RerunTumblingWindowTrigger(Trigger):
         'parent_trigger': {'key': 'typeProperties.parentTrigger', 'type': 'object'},
         'requested_start_time': {'key': 'typeProperties.requestedStartTime', 'type': 'iso-8601'},
         'requested_end_time': {'key': 'typeProperties.requestedEndTime', 'type': 'iso-8601'},
-        'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
+        'rerun_concurrency': {'key': 'typeProperties.rerunConcurrency', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -23688,43 +23647,8 @@ class RerunTumblingWindowTrigger(Trigger):
         self.parent_trigger = kwargs.get('parent_trigger', None)
         self.requested_start_time = kwargs.get('requested_start_time', None)
         self.requested_end_time = kwargs.get('requested_end_time', None)
-        self.max_concurrency = kwargs.get('max_concurrency', None)
+        self.rerun_concurrency = kwargs.get('rerun_concurrency', None)
         self.type = 'RerunTumblingWindowTrigger'
-
-
-class RerunTumblingWindowTriggerActionParameters(Model):
-    """Rerun tumbling window trigger Parameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param start_time: Required. The start time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
-    :type start_time: datetime
-    :param end_time: Required. The end time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
-    :type end_time: datetime
-    :param max_concurrency: Required. The max number of parallel time windows
-     (ready for execution) for which a rerun is triggered.
-    :type max_concurrency: int
-    """
-
-    _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'max_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RerunTumblingWindowTriggerActionParameters, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.max_concurrency = kwargs.get('max_concurrency', None)
 
 
 class ResponsysLinkedService(LinkedService):
@@ -30053,6 +29977,28 @@ class TriggerDependencyReference(DependencyReference):
         self.type = 'TriggerDependencyReference'
 
 
+class TriggerFilterParameters(Model):
+    """Query parameters for triggers.
+
+    :param continuation_token: The continuation token for getting the next
+     page of results. Null for first page.
+    :type continuation_token: str
+    :param parent_trigger_name: The name of the parent TumblingWindowTrigger
+     to get the child rerun triggers
+    :type parent_trigger_name: str
+    """
+
+    _attribute_map = {
+        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
+        'parent_trigger_name': {'key': 'parentTriggerName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TriggerFilterParameters, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.parent_trigger_name = kwargs.get('parent_trigger_name', None)
+
+
 class TriggerPipelineReference(Model):
     """Pipeline that needs to be triggered with the given parameters.
 
@@ -30071,6 +30017,33 @@ class TriggerPipelineReference(Model):
         super(TriggerPipelineReference, self).__init__(**kwargs)
         self.pipeline_reference = kwargs.get('pipeline_reference', None)
         self.parameters = kwargs.get('parameters', None)
+
+
+class TriggerQueryResponse(Model):
+    """A query of triggers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of triggers.
+    :type value: list[~azure.mgmt.datafactory.models.TriggerResource]
+    :param continuation_token: The continuation token for getting the next
+     page of results, if any remaining results exist, null otherwise.
+    :type continuation_token: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[TriggerResource]'},
+        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TriggerQueryResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.continuation_token = kwargs.get('continuation_token', None)
 
 
 class TriggerReference(Model):
