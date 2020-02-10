@@ -54,7 +54,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
 
         if not self._client:
