@@ -3,24 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-
 from azure.core.paging import ItemPaged
 
-from azure.storage.blob import BlobServiceClient
-from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
-from ._file_system_client import FileSystemClient
-from ._data_lake_directory_client import DataLakeDirectoryClient
-from ._data_lake_file_client import DataLakeFileClient
-from ._models import UserDelegationKey, FileSystemPropertiesPaged
-from ._serialize import convert_dfs_url_to_blob_url
+from azure.storage.blob.aio import BlobServiceClient
+from .._generated.aio import DataLakeStorageClient
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from ._file_system_client_async import FileSystemClient
+from .._data_lake_service_client import DataLakeServiceClient as DataLakeServiceClientBase
+from .._shared.policies_async import ExponentialRetry
+from ._data_lake_directory_client_async import DataLakeDirectoryClient
+from ._data_lake_file_client_async import DataLakeFileClient
+from ._models import FileSystemPropertiesPaged
+from .._models import UserDelegationKey
 
 
-class DataLakeServiceClient(StorageAccountHostsMixin):
+class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClientBase):
     """A client to interact with the DataLake Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -68,61 +65,20 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        super(DataLakeServiceClient, self).__init__(
+            account_url,
+            credential=credential,
+            **kwargs
+        )
+        self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
+        self._client = DataLakeStorageClient(self.url, None, None, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
-        blob_account_url = convert_dfs_url_to_blob_url(account_url)
-        self._blob_account_url = blob_account_url
-        self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
-
-        _, sas_token = parse_query(parsed_url.query)
-        self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
-        super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
-                                                    credential=self._raw_credential, **kwargs)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        formated_url = "{}://{}/{}".format(self.scheme, hostname, self._query_str)
-        return formated_url
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeServiceClient
-        """
-        Create DataLakeServiceClient from a Connection String.
-
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
-        :return a DataLakeServiceClient
-        :rtype ~azure.storage.filedatalake.DataLakeServiceClient
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)
-
-    def get_user_delegation_key(self, key_start_time,  # type: datetime
-                                key_expiry_time,  # type: datetime
-                                **kwargs  # type: Any
-                                ):
+    async def get_user_delegation_key(self, key_start_time,  # type: datetime
+                                      key_expiry_time,  # type: datetime
+                                      **kwargs  # type: Any
+                                      ):
         # type: (...) -> UserDelegationKey
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
@@ -137,9 +93,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :return: The user delegation key.
         :rtype: ~azure.storage.filedatalake.UserDelegationKey
         """
-        delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
-                                                                           key_expiry_time=key_expiry_time,
-                                                                           **kwargs)  # pylint: disable=protected-access
+        delegation_key = await self._blob_service_client.get_user_delegation_key(
+            key_start_time=key_start_time,
+            key_expiry_time=key_expiry_time,
+            **kwargs)  # pylint: disable=protected-access
         delegation_key._class_ = UserDelegationKey  # pylint: disable=protected-access
         return delegation_key
 
@@ -181,10 +138,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
-    def create_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
-                           metadata=None,  # type: Optional[Dict[str, str]]
-                           public_access=None,  # type: Optional[PublicAccess]
-                           **kwargs):
+    async def create_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
+                                 metadata=None,  # type: Optional[Dict[str, str]]
+                                 public_access=None,  # type: Optional[PublicAccess]
+                                 **kwargs):
         # type: (...) -> FileSystemClient
         """Creates a new file system under the specified account.
 
@@ -214,11 +171,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :caption: Creating a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
-        file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
+        await file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
 
-    def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
-                           **kwargs):
+    async def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
+                                 **kwargs):
         # type: (...) -> FileSystemClient
         """Marks the specified file system for deletion.
 
@@ -264,7 +221,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :caption: Deleting a file system in the datalake service.
         """
         file_system_client = self.get_file_system_client(file_system)
-        file_system_client.delete_file_system(**kwargs)
+        await file_system_client.delete_file_system(**kwargs)
         return file_system_client
 
     def get_file_system_client(self, file_system  # type: Union[FileSystemProperties, str]
