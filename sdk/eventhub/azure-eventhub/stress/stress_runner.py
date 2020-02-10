@@ -156,6 +156,12 @@ def generate_command_send_config(send_config, proxy_config):
             )
         )
     partial_command += (" --transport_type {}".format(send_config["transport_type"]))
+    if send_config["retry_total"]:
+        partial_command += (" --retry_total {}".format(send_config["retry_total"]))
+    if send_config["retry_backoff_factor"]:
+        partial_command += (" --retry_backoff_factor {}".format(send_config["retry_backoff_factor"]))
+    if send_config["retry_backoff_max"]:
+        partial_command += (" --retry_backoff_max {}".format(send_config["retry_backoff_max"]))
     return partial_command
 
 
