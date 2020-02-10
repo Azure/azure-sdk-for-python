@@ -37,19 +37,19 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    'AzureError',
-    'ServiceRequestError',
-    'ServiceResponseError',
-    'HttpResponseError',
-    'DecodeError',
-    'ResourceExistsError',
-    'ResourceNotFoundError',
-    'ClientAuthenticationError',
-    'ResourceModifiedError',
-    'ResourceNotModifiedError',
-    'TooManyRedirectsError',
-    'ODataV4Format',
-    'ODataV4Error',
+    "AzureError",
+    "ServiceRequestError",
+    "ServiceResponseError",
+    "HttpResponseError",
+    "DecodeError",
+    "ResourceExistsError",
+    "ResourceNotFoundError",
+    "ClientAuthenticationError",
+    "ResourceModifiedError",
+    "ResourceNotModifiedError",
+    "TooManyRedirectsError",
+    "ODataV4Format",
+    "ODataV4Error",
 ]
 
 
@@ -62,7 +62,7 @@ def raise_with_traceback(exception, *args, **kwargs):
     :param args: Any additional args to be included with exception.
     :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
-    message = kwargs.pop('message', '')
+    message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside a "except", exc_type will be None. Assume it will not happen
     exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)  # type: ignore
@@ -72,6 +72,7 @@ def raise_with_traceback(exception, *args, **kwargs):
     except AttributeError:
         error.__traceback__ = exc_traceback
         raise error
+
 
 def map_error(status_code, response, error_map):
     if not error_map:
@@ -119,9 +120,10 @@ class ODataV4Format(object):
     @property
     def error(self):
         import warnings
+
         warnings.warn(
             "error.error from azure exceptions is deprecated, just simply use 'error' once",
-             DeprecationWarning
+            DeprecationWarning,
         )
         return self
 
@@ -154,9 +156,11 @@ class AzureError(Exception):
     """Base exception for all errors."""
 
     def __init__(self, message, *args, **kwargs):
-        self.inner_exception = kwargs.get('error')
+        self.inner_exception = kwargs.get("error")
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
-        self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
+        self.exc_type = (
+            self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
+        )
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
         self.message = str(message)
         super(AzureError, self).__init__(self.message, *args)
@@ -207,10 +211,12 @@ class HttpResponseError(AzureError):
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
         model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
-        if model is not None: # autorest v5
+        if model is not None:  # autorest v5
             self.model = model
-        else: # autorest azure-core, for KV 1.0, Storage 12.0, etc.
-            self.model = getattr(self, 'error', None)  # type: Optional[msrest.serialization.Model]
+        else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
+            self.model = getattr(
+                self, "error", None
+            )  # type: Optional[msrest.serialization.Model]
         self.error = self._parse_odata_body(response)  # type: Optional[ODataV4Format]
 
         # By priority, message is:
@@ -220,7 +226,9 @@ class HttpResponseError(AzureError):
         if self.error:
             message = str(self.error)
         else:
-            message = message or "Operation returned an invalid status '{}'".format(self.reason)
+            message = message or "Operation returned an invalid status '{}'".format(
+                self.reason
+            )
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
@@ -238,7 +246,7 @@ class HttpResponseError(AzureError):
             else:
                 raise ValueError("Body is not JSON with a 'error' node")
             return self._ERROR_FORMAT(error_node)
-        except Exception:  #pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass
         return None
@@ -267,9 +275,11 @@ class ResourceModifiedError(HttpResponseError):
     """An error response with status code 4xx, typically 412 Conflict.
     This will not be raised directly by the Azure core pipeline."""
 
+
 class ResourceNotModifiedError(HttpResponseError):
     """An error response with status code 304.
     This will not be raised directly by the Azure core pipeline."""
+
 
 class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts."""
@@ -278,7 +288,6 @@ class TooManyRedirectsError(HttpResponseError):
         self.history = history
         message = "Reached maximum redirect attempts."
         super(TooManyRedirectsError, self).__init__(message, *args, **kwargs)
-
 
 
 class ODataV4Error(HttpResponseError):
@@ -308,7 +317,7 @@ class ODataV4Error(HttpResponseError):
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
-        except Exception:  #pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             odata_message = None
 
@@ -335,9 +344,11 @@ class ODataV4Error(HttpResponseError):
                         if v is not None
                     }
                 )
-            except Exception:  #pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
-                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
+                self._error_format = "JSON was invalid for format " + str(
+                    self._ERROR_FORMAT
+                )
 
     def __str__(self):
         if self._error_format:
