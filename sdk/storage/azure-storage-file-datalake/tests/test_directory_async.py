@@ -7,6 +7,7 @@
 import pytest
 import unittest
 import asyncio
+import time
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
@@ -388,6 +389,7 @@ class DirectoryTest(StorageTestCase):
         old_file_system_name = "oldfilesystem"
         old_dir_name = "olddir"
         old_client = self.dsc.get_file_system_client(old_file_system_name)
+        time.sleep(30)
         await old_client.create_file_system()
         await old_client.create_directory(old_dir_name)
 
@@ -413,6 +415,7 @@ class DirectoryTest(StorageTestCase):
         destination_file_system_name = "destfilesystem"
         destination_dir_name = "destdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
+        time.sleep(30)
         await fs_client.create_file_system()
         destination_directory_client = await fs_client.create_directory(destination_dir_name)
 
