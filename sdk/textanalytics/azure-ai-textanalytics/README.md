@@ -358,7 +358,44 @@ The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.
 describes available configurations for retries, logging, transport protocols, and more.
 
 ## Troubleshooting
+
+### General
 The Text Analytics client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+
+### Logging
+This library uses the standard
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` keyword argument:
+```python
+import sys
+import logging
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = DefaultAzureCredential()
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+text_analytics_client = TextAnalyticsClient(endpoint, credential, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```python
+result = text_analytics_client.analyze_sentiment(documents, logging_enable=True)
+```
 
 ## Next steps
 
