@@ -40,7 +40,7 @@ class AuthorizationCodeCredential(object):
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        """Request an access token for ``scopes``.
+        """Request an access token for `scopes`.
 
         The first time this method is called, the credential will redeem its authorization code. On subsequent calls
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
