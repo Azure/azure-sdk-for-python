@@ -1,11 +1,14 @@
 # Release History
 
-## 4.1.0b1 (Unreleased)
+## 4.0.1 (2019-02-11)
+- `azure.keyvault.secrets` defines `__version__`
 - Challenge authentication policy preserves request options
 ([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
 - Updated `msrest` requirement to >=0.6.0
 - Challenge authentication policy requires TLS
 ([#9457](https://github.com/Azure/azure-sdk-for-python/pull/9457))
+- Methods no longer raise the internal error `KeyVaultErrorException`
+([#9690](https://github.com/Azure/azure-sdk-for-python/issues/9690))
 
 ## 4.0.0 (2019-10-31)
 ### Breaking changes:
