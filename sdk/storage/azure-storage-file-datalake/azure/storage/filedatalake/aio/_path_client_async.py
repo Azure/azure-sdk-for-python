@@ -13,7 +13,6 @@ from .._generated.models import StorageErrorException
 from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 
-
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
@@ -45,9 +44,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """
         Create directory or file
 
-        :param resource_type: Required for Create File and Create Directory.
-         The value must be "file" or "directory". Possible values include:
-         'directory', 'file'
+        :param resource_type:
+            Required for Create File and Create Directory.
+            The value must be "file" or "directory". Possible values include:
+            'directory', 'file'
         :type resource_type: str
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
@@ -58,19 +58,21 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :keyword str umask:
+            Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
-        :keyword permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+        :keyword permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :type permissions: str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -140,32 +142,36 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             process_storage_error(error)
 
     async def set_access_control(self, owner=None,  # type: Optional[str]
-                           group=None,  # type: Optional[str]
-                           permissions=None,  # type: Optional[str]
-                           acl=None,  # type: Optional[str]
-                           **kwargs):
+                                 group=None,  # type: Optional[str]
+                                 permissions=None,  # type: Optional[str]
+                                 acl=None,  # type: Optional[str]
+                                 **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Set the owner, group, permissions, or access control list for a path.
 
-        :param owner: Optional. The owner of the file or directory.
+        :param owner:
+            Optional. The owner of the file or directory.
         :type owner: str
-        :param group: Optional. The owning group of the file or directory.
+        :param group:
+            Optional. The owning group of the file or directory.
         :type group: str
-        :param permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
-         permissions and acl are mutually exclusive.
+        :param permissions:
+            Optional and only valid if Hierarchical Namespace
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
+            permissions and acl are mutually exclusive.
         :type permissions: str
-        :param acl: Sets POSIX access control rights on files and directories.
-         The value is a comma-separated list of access control entries. Each
-         access control entry (ACE) consists of a scope, a type, a user or
-         group identifier, and permissions in the format
-         "[scope:][type]:[id]:[permissions]".
-         permissions and acl are mutually exclusive.
+        :param acl:
+            Sets POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, a user or
+            group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+            permissions and acl are mutually exclusive.
         :type acl: str
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
@@ -199,17 +205,20 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             process_storage_error(error)
 
     async def get_access_control(self, upn=None,  # type: Optional[bool]
-                           **kwargs):
+                                 **kwargs):
         # type: (...) -> Dict[str, Any]
         """
-        :param upn: Optional. Valid only when Hierarchical Namespace is
-         enabled for the account. If "true", the user identity values returned
-         in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-         transformed from Azure Active Directory Object IDs to User Principal
-         Names.  If "false", the values will be returned as Azure Active
-         Directory Object IDs. The default value is false. Note that group and
-         application Object IDs are not translated because they do not have
-         unique friendly names.
+        Get the owner, group, permissions, or access control list for a path.
+
+        :param upn:
+            Optional. Valid only when Hierarchical Namespace is
+            enabled for the account. If "true", the user identity values returned
+            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+            transformed from Azure Active Directory Object IDs to User Principal
+            Names.  If "false", the values will be returned as Azure Active
+            Directory Object IDs. The default value is false. Note that group and
+            application Object IDs are not translated because they do not have
+            unique friendly names.
         :type upn: bool
         :keyword lease:
             Required if the file/directory has an active lease. Value can be a LeaseClient object
@@ -243,7 +252,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             process_storage_error(error)
 
     async def _rename_path(self, rename_source,
-                     **kwargs):
+                           **kwargs):
         # type: (**Any) -> Dict[str, Any]
         """
         Rename directory or file
@@ -251,8 +260,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :param rename_source: The value must have the following format: "/{filesystem}/{path}".
         :type rename_source: str
         :param source_lease: A lease ID for the source path. If specified,
-         the source path must have an active lease and the leaase ID must
-         match.
+            the source path must have an active lease and the leaase ID must
+            match.
         :type source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
@@ -268,11 +277,11 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
         :param permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :type permissions: str
         :param ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -364,7 +373,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         return path_properties
 
     async def set_metadata(self, metadata=None,  # type: Optional[Dict[str, str]]
-                     **kwargs):
+                           **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets one or more user-defined name-value pairs for the specified
         file system. Each call to this operation replaces all existing metadata
@@ -411,7 +420,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
     async def set_http_headers(self, content_settings=None,  # type: Optional[ContentSettings]
-                         **kwargs):
+                               **kwargs):
         # type: (...) -> Dict[str, Any]
         """Sets system properties on the file or directory.
 
@@ -447,8 +456,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         return await self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
     async def acquire_lease(self, lease_duration=-1,  # type: Optional[int]
-                      lease_id=None,  # type: Optional[str]
-                      **kwargs):
+                            lease_id=None,  # type: Optional[str]
+                            **kwargs):
         # type: (...) -> DataLakeLeaseClient
         """
         Requests a new lease. If the file or directory does not have an active lease,

@@ -9,8 +9,8 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.storage.blob.aio._models import ContainerPropertiesPaged
 
 from .._deserialize import return_headers_and_deserialized_path_list, process_storage_error
-from .._generated.models import StorageErrorException
-from .._models import PathPropertiesPaged as PathPropertiesPagedBase
+from .._generated.models import StorageErrorException, Path
+from .._models import PathProperties
 
 from .._models import FileSystemProperties
 
@@ -47,7 +47,7 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
         return FileSystemProperties._from_generated(item)  # pylint: disable=protected-access
 
 
-class PathPropertiesPaged(AsyncPageIterator, PathPropertiesPagedBase):
+class PathPropertiesPaged(AsyncPageIterator):
     """An Iterable of Path properties.
 
     :ivar str path: Filters the results to return only paths under the specified path.
@@ -99,3 +99,12 @@ class PathPropertiesPaged(AsyncPageIterator, PathPropertiesPagedBase):
         self.current_page = [self._build_item(item) for item in self.path_list]
 
         return self._response['continuation'] or None, self.current_page
+
+    @staticmethod
+    def _build_item(item):
+        if isinstance(item, PathProperties):
+            return item
+        if isinstance(item, Path):
+            path = PathProperties._from_generated(item)  # pylint: disable=protected-access
+            return path
+        return item
