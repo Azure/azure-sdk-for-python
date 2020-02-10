@@ -122,6 +122,11 @@ class TestExceptions(object):
         assert isinstance(error.model, FakeErrorOne)
         assert isinstance(error.error, ODataV4Format)
 
+        # Could test if we see a deprecation warning
+        assert error.error.error.code == "FakeErrorOne"
+        assert error.error.error.message == "A fake error"
+
+
     def test_deserialized_httpresponse_error_message(self):
         """This is backward compat support for weird responses, adn even if it's likely
         just the autorest testserver, should be fine parsing.
