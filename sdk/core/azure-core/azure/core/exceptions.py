@@ -73,13 +73,13 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
-def map_error(status_code, response, error_map):
+def map_error(status_code, response, error_map, **kwargs):
     if not error_map:
         return
     error_type = error_map.get(status_code)
     if not error_type:
         return
-    error = error_type(response=response)
+    error = error_type(response=response, **kwargs)
     raise error
 
 
@@ -197,9 +197,9 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        model  = kwargs.pop("model", None)
+        model = kwargs.pop("model", None)
         if model is not None: # autorest v5
-            self.model = model 
+            self.model = model
         else: # autorest azure-core, for KV 1.0, Storage 12.0, etc.
             self.model = getattr(self, 'error', None)  # type: Optional[msrest.serialization.Model]
         self.error = self._parse_odata_body(response)  # type: Optional[ODataV4Format]
