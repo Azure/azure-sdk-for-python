@@ -63,8 +63,9 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
 
         :param str scopes: desired scopes for the access token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
-
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         :keyword ~concurrent.futures.Executor executor: An Executor instance used to execute asynchronous calls
         :keyword loop: An event loop on which to schedule network I/O. If not provided, the currently running
             loop will be used.

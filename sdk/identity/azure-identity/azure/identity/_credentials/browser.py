@@ -62,7 +62,9 @@ class InteractiveBrowserCredential(PublicClientCredential):
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the credential is unable to start an HTTP server on
           localhost, or is unable to open a browser
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
         return self._get_token_from_cache(scopes, **kwargs) or self._get_token_by_auth_code(scopes, **kwargs)
 
