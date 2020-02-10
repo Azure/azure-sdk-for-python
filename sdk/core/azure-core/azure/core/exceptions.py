@@ -197,7 +197,11 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        self.model = getattr(self, 'error', None)  # type: Optional[msrest.serialization.Model]
+        model  = kwargs.pop("model", None)
+        if model is not None: # autorest v5
+            self.model = model 
+        else: # autorest azure-core, for KV 1.0, Storage 12.0, etc.
+            self.model = getattr(self, 'error', None)  # type: Optional[msrest.serialization.Model]
         self.error = self._parse_odata_body(response)  # type: Optional[ODataV4Format]
 
         # By priority, message is:
