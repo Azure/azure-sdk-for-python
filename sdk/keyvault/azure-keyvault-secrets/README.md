@@ -193,7 +193,7 @@ print(secret.value)
 
 ### Update Secret metadata
 [update_secret_properites](https://aka.ms/azsdk-python-keyvault-secrets-update-secret-ref) updates a secret's metadata. It cannot change the secret's
-value; use [set_secret](#create-a-secret) to set a secret's value.
+value; use [set_secret](#set-a-secret) to set a secret's value.
 
 ```python
 from azure.identity import DefaultAzureCredential
