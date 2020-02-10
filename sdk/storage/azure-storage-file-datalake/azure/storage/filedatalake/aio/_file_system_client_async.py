@@ -1,151 +1,105 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import functools
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, Dict, TYPE_CHECKING
+)
 
-try:
-    from urllib.parse import urlparse, quote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
+from azure.core.async_paging import AsyncItemPaged
 
-import six
-from azure.core.paging import ItemPaged
-from azure.storage.blob import ContainerClient
-from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
-from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PathPropertiesPaged
-from ._data_lake_file_client import DataLakeFileClient
-from ._data_lake_directory_client import DataLakeDirectoryClient
-from ._data_lake_lease import DataLakeLeaseClient
-from ._generated import DataLakeStorageClient
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.storage.blob.aio import ContainerClient
+
+from ._data_lake_file_client_async import DataLakeFileClient
+from ._data_lake_directory_client_async import DataLakeDirectoryClient
+from ._models import PathPropertiesPaged
+from ._data_lake_lease_async import DataLakeLeaseClient
+from .._file_system_client import FileSystemClient as FileSystemClientBase
+from .._generated.aio import DataLakeStorageClient
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.policies_async import ExponentialRetry
+from .._models import FileSystemProperties
+
+if TYPE_CHECKING:
+    from .._models import PublicAccess
+    from datetime import datetime
+    from .._models import (  # pylint: disable=unused-import
+        ContentSettings)
 
 
-class FileSystemClient(StorageAccountHostsMixin):
+class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     """A client to interact with a specific file system, even if that file system
-    may not yet exist.
+     may not yet exist.
 
-    For operations relating to a specific directory or file within this file system, a directory client or file client
-    can be retrieved using the :func:`~get_directory_client` or :func:`~get_file_client` functions.
+     For operations relating to a specific directory or file within this file system, a directory client or file client
+     can be retrieved using the :func:`~get_directory_client` or :func:`~get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the file system, including SAS token if used.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :param str account_url:
-        The URI to the storage account.
-    :param file_system_name:
-        The file system for the directory or files.
-    :type file_system_name: str
-    :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+     :ivar str url:
+         The full endpoint URL to the file system, including SAS token if used.
+     :ivar str primary_endpoint:
+         The full primary endpoint URL.
+     :ivar str primary_hostname:
+         The hostname of the primary endpoint.
+     :param str account_url:
+         The URI to the storage account.
+     :param file_system_name:
+         The file system for the directory or files.
+     :type file_system_name: str
+     :param credential:
+         The credentials with which to authenticate. This is optional if the
+         account URL already has a SAS token. The value can be a SAS token string, and account
+         shared access key, or an instance of a TokenCredentials class from azure.identity.
+         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
-    .. admonition:: Example:
+     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/test_file_system_samples.py
-            :start-after: [START create_file_system_client_from_service]
-            :end-before: [END create_file_system_client_from_service]
-            :language: python
-            :dedent: 8
-            :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
+         .. literalinclude:: ../samples/test_file_system_samples.py
+             :start-after: [START create_file_system_client_from_service]
+             :end-before: [END create_file_system_client_from_service]
+             :language: python
+             :dedent: 8
+             :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
 
-        .. literalinclude:: ../samples/test_file_system_samples.py
-            :start-after: [START create_file_system_client_sasurl]
-            :end-before: [END create_file_system_client_sasurl]
-            :language: python
-            :dedent: 8
-            :caption: Creating the FileSystemClient client directly.
-    """
+         .. literalinclude:: ../samples/test_file_system_samples.py
+             :start-after: [START create_file_system_client_sasurl]
+             :end-before: [END create_file_system_client_sasurl]
+             :language: python
+             :dedent: 8
+             :caption: Creating the FileSystemClient client directly.
+     """
+
     def __init__(
-        self, account_url,  # type: str
-        file_system_name,  # type: str
-        credential=None,  # type: Optional[Any]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not file_system_name:
-            raise ValueError("Please specify a file system name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-
-        blob_account_url = convert_dfs_url_to_blob_url(account_url)
-        # TODO: add self.account_url to base_client and remove _blob_account_url
-        self._blob_account_url = blob_account_url
-
-        datalake_hosts = kwargs.pop('_hosts', None)
-        blob_hosts = None
-        if datalake_hosts:
-            blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
-            blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
-            blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
-                          LocationMode.SECONDARY: blob_secondary_account_url}
-        self._container_client = ContainerClient(blob_account_url, file_system_name,
-                                                 credential=credential, _hosts=blob_hosts, **kwargs)
-
-        _, sas_token = parse_query(parsed_url.query)
-        self.file_system_name = file_system_name
-        self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
-        super(FileSystemClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential,
-                                               _hosts=datalake_hosts, **kwargs)
-        self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
-
-    def _format_url(self, hostname):
-        file_system_name = self.file_system_name
-        if isinstance(file_system_name, six.text_type):
-            file_system_name = file_system_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(file_system_name),
-            self._query_str)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
+            self, account_url,  # type: str
             file_system_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> FileSystemClient
-        """
-        Create FileSystemClient from a Connection String.
+    ):
+        # type: (...) -> None
+        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        super(FileSystemClient, self).__init__(
+            account_url,
+            file_system_name=file_system_name,
+            credential=credential,
+            **kwargs)
+        # to override the class field _container_client sync version
+        kwargs.pop('_hosts', None)
+        self._container_client = ContainerClient(self._blob_account_url, file_system_name,
+                                                 credential=credential,
+                                                 _hosts=self._container_client._hosts,# pylint: disable=protected-access
+                                                 **kwargs)  # type: ignore # pylint: disable=protected-access
+        self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._loop = kwargs.get('loop', None)
 
-        :param str conn_str:
-            A connection string to an Azure Storage account.
-        :param file_system_name: The name of file system to interact with.
-        :type file_system_name: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-            Credentials provided here will take precedence over those in the connection string.
-        :return a FileSystemClient
-        :rtype ~azure.storage.filedatalake.FileSystemClient
-        """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(
-            account_url, file_system_name=file_system_name, credential=credential, **kwargs)
-
-    def acquire_lease(
-        self, lease_duration=-1,  # type: int
-        lease_id=None,  # type: Optional[str]
-        **kwargs
+    @distributed_trace_async
+    async def acquire_lease(
+            self, lease_duration=-1,  # type: int
+            lease_id=None,  # type: Optional[str]
+            **kwargs
     ):
         # type: (...) -> DataLakeLeaseClient
         """
@@ -196,9 +150,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
-    def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
-                           public_access=None,  # type: Optional[PublicAccess]
-                           **kwargs):
+    async def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
+                                 public_access=None,  # type: Optional[PublicAccess]
+                                 **kwargs):
         # type: (...) ->  Dict[str, Union[str, datetime]]
         """Creates a new file system under the specified account.
 
@@ -226,11 +180,11 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Creating a file system in the datalake service.
         """
-        return self._container_client.create_container(metadata=metadata,
-                                                       public_access=public_access,
-                                                       **kwargs)
+        return await self._container_client.create_container(metadata=metadata,
+                                                             public_access=public_access,
+                                                             **kwargs)
 
-    def delete_file_system(self, **kwargs):
+    async def delete_file_system(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file system for deletion.
 
@@ -271,9 +225,9 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Deleting a file system in the datalake service.
         """
-        self._container_client.delete_container(**kwargs)
+        await self._container_client.delete_container(**kwargs)
 
-    def get_file_system_properties(self, **kwargs):
+    async def get_file_system_properties(self, **kwargs):
         # type: (Any) -> FileSystemProperties
         """Returns all user-defined metadata and system properties for the specified
         file system. The data returned does not include the file system's list of paths.
@@ -295,12 +249,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting properties on the file system.
         """
-        container_properties = self._container_client.get_container_properties(**kwargs)
+        container_properties = await self._container_client.get_container_properties(**kwargs)
         return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
-    def set_file_system_metadata(  # type: ignore
-        self, metadata=None,  # type: Optional[Dict[str, str]]
-        **kwargs
+    async def set_file_system_metadata(  # type: ignore
+            self, metadata=None,  # type: Optional[Dict[str, str]]
+            **kwargs
     ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets one or more user-defined name-value pairs for the specified
@@ -345,12 +299,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Setting metadata on the container.
         """
-        return self._container_client.set_container_metadata(metadata=metadata, **kwargs)
+        return await self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
-    def get_paths(self, path=None, # type: Optional[str]
-                  recursive=True,  # type: Optional[bool]
-                  max_results=None,  # type: Optional[int]
-                  **kwargs):
+    def get_paths(self, path=None,  # type: Optional[str]
+                        recursive=True,  # type: Optional[bool]
+                        max_results=None,  # type: Optional[int]
+                        **kwargs):
         # type: (...) -> ItemPaged[PathProperties]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
@@ -390,14 +344,14 @@ class FileSystemClient(StorageAccountHostsMixin):
             path=path,
             timeout=timeout,
             **kwargs)
-        return ItemPaged(
+        return AsyncItemPaged(
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
-    def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
-                         content_settings=None,  # type: Optional[ContentSettings]
-                         metadata=None,  # type: Optional[Dict[str, str]]
-                         **kwargs):
+    async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
+                               content_settings=None,  # type: Optional[ContentSettings]
+                               metadata=None,  # type: Optional[Dict[str, str]]
+                               **kwargs):
         # type: (...) -> DataLakeDirectoryClient
         """
         Create directory
@@ -449,11 +403,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: DataLakeDirectoryClient
         """
         directory_client = self.get_directory_client(directory)
-        directory_client.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
+        await directory_client.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
         return directory_client
 
-    def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
-                         **kwargs):
+    async def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
+                               **kwargs):
         # type: (...) -> DataLakeDirectoryClient
         """
         Marks the specified path for deletion.
@@ -488,11 +442,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: DataLakeDirectoryClient
         """
         directory_client = self.get_directory_client(directory)
-        directory_client.delete_directory(**kwargs)
+        await directory_client.delete_directory(**kwargs)
         return directory_client
 
-    def create_file(self, file,  # type: Union[FileProperties, str]
-                    **kwargs):
+    async def create_file(self, file,  # type: Union[FileProperties, str]
+                          **kwargs):
         # type: (...) -> DataLakeFileClient
         """
         Create file
@@ -544,12 +498,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: DataLakeFileClient
         """
         file_client = self.get_file_client(file)
-        file_client.create_file(**kwargs)
+        await file_client.create_file(**kwargs)
         return file_client
 
-    def delete_file(self, file,  # type: Union[FileProperties, str]
-                    lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
-                    **kwargs):
+    async def delete_file(self, file,  # type: Union[FileProperties, str]
+                          lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
+                          **kwargs):
         # type: (...) -> DataLakeFileClient
         """
         Marks the specified file for deletion.
@@ -584,7 +538,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: DataLakeFileClient
         """
         file_client = self.get_file_client(file)
-        file_client.delete_file(lease=lease, **kwargs)
+        await file_client.delete_file(lease=lease, **kwargs)
         return file_client
 
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
@@ -616,7 +570,8 @@ class FileSystemClient(StorageAccountHostsMixin):
                                        _location_mode=self._location_mode, _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
+                                       key_resolver_function=self.key_resolver_function,
+                                       loop=self._loop
                                        )
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
@@ -652,4 +607,4 @@ class FileSystemClient(StorageAccountHostsMixin):
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            key_resolver_function=self.key_resolver_function, loop=self._loop)
