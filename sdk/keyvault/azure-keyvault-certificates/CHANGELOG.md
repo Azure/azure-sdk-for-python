@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.1 (2019-02-11)
+## 4.0.1 (2020-02-11)
 - `azure.keyvault.certificates` defines `__version__`
 - Updated `msrest` requirement to >=0.6.0
 - Challenge authentication policy requires TLS

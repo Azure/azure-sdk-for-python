@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.1 (2019-02-11)
+## 4.0.1 (2020-02-11)
 - `azure.keyvault.keys` defines `__version__`
 - Challenge authentication policy preserves request options
 ([#8999](https://github.com/Azure/azure-sdk-for-python/pull/8999))
