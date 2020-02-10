@@ -68,6 +68,7 @@ class FakeErrorOne(object):
 class FakeErrorTwo(object):
 
     def __init__(self):
+        self.code = "FakeErrorTwo"
         self.message = "A different fake error"
 
 
@@ -99,6 +100,10 @@ class TestExceptions(object):
         assert error.status_code is None
 
     def test_deserialized_httpresponse_error_code(self):
+        """This is backward compat support of autorest azure-core (KV 4.0.0, Storage 12.0.0).
+
+        Do NOT adapt this test unless you know what you're doing.
+        """
         message = {
             "error": {
                 "code": "FakeErrorOne",
@@ -117,19 +122,27 @@ class TestExceptions(object):
         assert isinstance(error.model, FakeErrorOne)
         assert isinstance(error.error, ODataV4Format)
 
-    @pytest.mark.skip("This is not supported format, this test was written without any track2 using that format, keeping it here for PR review only")
     def test_deserialized_httpresponse_error_message(self):
+        """This is backward compat support for weird responses, adn even if it's likely
+        just the autorest testserver, should be fine parsing.
+
+        Do NOT adapt this test unless you know what you're doing.
+        """
         message = {
-            "code": "FakeErrorOne",
-            "message": "A fake error",
+            "code": "FakeErrorTwo",
+            "message": "A different fake error",
         }
         response = _build_response(json.dumps(message).encode("utf-8"))
         error = FakeHttpResponse(response, FakeErrorTwo())
-        assert error.message == "A different fake error"
+        assert error.message == "(FakeErrorTwo) A different fake error"
+        assert str(error.error) == "(FakeErrorTwo) A different fake error"
+        assert error.error.code == "FakeErrorTwo"
+        assert error.error.message == "A different fake error"
         assert error.response is response
         assert error.reason == "Bad Request"
         assert error.status_code == 400
-        assert isinstance(error.error, FakeErrorTwo)
+        assert isinstance(error.model, FakeErrorTwo)
+        assert isinstance(error.error, ODataV4Format)
 
     def test_httpresponse_error_with_response(self):
         response = requests.get("https://bing.com")

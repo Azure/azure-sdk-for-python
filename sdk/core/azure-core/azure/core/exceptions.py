@@ -116,6 +116,15 @@ class ODataV4Format(object):
 
         self.innererror = json_object.get("innererror", {})  # type: Dict[str, Any]
 
+    @property
+    def error(self):
+        import warnings
+        warnings.warn(
+            "error.error from azure exceptions is deprecated, just simply use 'error' once",
+             DeprecationWarning
+        )
+        return self
+
     def __str__(self):
         return "({}) {}".format(self.code, self.message)
 
@@ -197,9 +206,9 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        model  = kwargs.pop("model", None)
+        model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
         if model is not None: # autorest v5
-            self.model = model 
+            self.model = model
         else: # autorest azure-core, for KV 1.0, Storage 12.0, etc.
             self.model = getattr(self, 'error', None)  # type: Optional[msrest.serialization.Model]
         self.error = self._parse_odata_body(response)  # type: Optional[ODataV4Format]
@@ -219,7 +228,15 @@ class HttpResponseError(AzureError):
         # type: (_HttpResponseBase) -> Optional[ODataV4Format]
         try:
             odata_json = json.loads(response.text())
-            error_node = odata_json["error"]
+            # ODataV4 correct format is supposed to start with "error"
+            if "error" in odata_json:
+                error_node = odata_json["error"]
+            # In the unlikely scenario where code/message is right here, parse it too (better tham dying)
+            elif "code" in odata_json or "message" in odata_json:
+                error_node = odata_json
+            # Well, that's sounds far from being any close to ODataV4
+            else:
+                raise ValueError("Body is not JSON with a 'error' node")
             return self._ERROR_FORMAT(error_node)
         except Exception:  #pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
