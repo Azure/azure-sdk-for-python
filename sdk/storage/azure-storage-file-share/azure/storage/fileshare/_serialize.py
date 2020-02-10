@@ -62,7 +62,7 @@ def get_smb_properties(kwargs):
     set_archive_attribute = kwargs.pop('set_archive_attribute', None)
     file_smb_properties = kwargs.pop('file_smb_properties', None)
     if not any([ignore_read_only, set_archive_attribute, file_smb_properties]):
-        return {}
+        return {'file_permission': None}
     try:
         smb_props = file_smb_properties.__dict__  # FileSmbProperties object
     except AttributeError:
@@ -74,7 +74,7 @@ def get_smb_properties(kwargs):
     file_creation_time = smb_props.get('file_creation_time') or ""
     file_last_write_time = smb_props.get('file_last_write_time') or ""
     file_permission_copy_mode = None
-    file_permission = _get_file_permission(file_permission, file_permission_key, "inherit")
+    file_permission = _get_file_permission(file_permission, file_permission_key, None)
 
     if file_permission:
         if file_permission.lower() == "source":
@@ -88,7 +88,6 @@ def get_smb_properties(kwargs):
             file_permission_copy_mode = "source"
         else:
             file_permission_copy_mode = "override"
-
     return {
         'file_permission': file_permission,
         'file_permission_key': file_permission_key,
