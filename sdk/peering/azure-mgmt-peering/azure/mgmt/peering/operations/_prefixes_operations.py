@@ -24,7 +24,7 @@ class PrefixesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-09-01-preview".
+    :ivar api_version: The client API version. Constant value: "2020-01-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class PrefixesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-09-01-preview"
+        self.api_version = "2020-01-01-preview"
 
         self.config = config
 
@@ -107,7 +107,7 @@ class PrefixesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}/prefixes/{prefixName}'}
 
     def create_or_update(
-            self, resource_group_name, peering_service_name, prefix_name, prefix=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, peering_service_name, prefix_name, prefix=None, peering_service_prefix_key=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new prefix with the specified name under the given
         subscription, resource group and peering service.
 
@@ -119,6 +119,8 @@ class PrefixesOperations(object):
         :type prefix_name: str
         :param prefix: The prefix from which your traffic originates.
         :type prefix: str
+        :param peering_service_prefix_key: The peering service prefix key
+        :type peering_service_prefix_key: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -130,7 +132,7 @@ class PrefixesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
-        peering_service_prefix = models.PeeringServicePrefix(prefix=prefix)
+        peering_service_prefix = models.PeeringServicePrefix(prefix=prefix, peering_service_prefix_key=peering_service_prefix_key)
 
         # Construct URL
         url = self.create_or_update.metadata['url']

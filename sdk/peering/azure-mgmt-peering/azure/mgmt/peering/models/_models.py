@@ -96,9 +96,11 @@ class BgpSession(Model):
 class CheckServiceProviderAvailabilityInput(Model):
     """Class for CheckServiceProviderAvailabilityInput.
 
-    :param peering_service_location: Gets or sets the PeeringServiceLocation
+    :param peering_service_location: Gets or sets the peering service
+     location.
     :type peering_service_location: str
-    :param peering_service_provider: Gets or sets the PeeringServiceProvider
+    :param peering_service_provider: Gets or sets the peering service
+     provider.
     :type peering_service_provider: str
     """
 
@@ -121,23 +123,28 @@ class CloudError(Model):
     }
 
 
-class ContactInfo(Model):
-    """The contact information of the peer.
+class ContactDetail(Model):
+    """The contact detail class.
 
-    :param emails: The list of email addresses.
-    :type emails: list[str]
-    :param phone: The list of contact numbers.
-    :type phone: list[str]
+    :param role: The role of the contact. Possible values include: 'Noc',
+     'Policy', 'Technical', 'Service', 'Other'
+    :type role: str or ~azure.mgmt.peering.models.Role
+    :param email: The e-mail address of the contact.
+    :type email: str
+    :param phone: The phone number of the contact.
+    :type phone: str
     """
 
     _attribute_map = {
-        'emails': {'key': 'emails', 'type': '[str]'},
-        'phone': {'key': 'phone', 'type': '[str]'},
+        'role': {'key': 'role', 'type': 'str'},
+        'email': {'key': 'email', 'type': 'str'},
+        'phone': {'key': 'phone', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ContactInfo, self).__init__(**kwargs)
-        self.emails = kwargs.get('emails', None)
+        super(ContactDetail, self).__init__(**kwargs)
+        self.role = kwargs.get('role', None)
+        self.email = kwargs.get('email', None)
         self.phone = kwargs.get('phone', None)
 
 
@@ -215,7 +222,7 @@ class DirectPeeringFacility(Model):
     :param address: The address of the direct peering facility.
     :type address: str
     :param direct_peering_type: The type of the direct peering. Possible
-     values include: 'Edge', 'Transit', 'Cdn', 'Internal'
+     values include: 'Edge', 'Transit', 'Cdn', 'Internal', 'Ix', 'IxRs'
     :type direct_peering_type: str or
      ~azure.mgmt.peering.models.DirectPeeringType
     :param peering_db_facility_id: The PeeringDB.com ID of the facility.
@@ -493,8 +500,8 @@ class PeerAsn(Resource):
     :vartype type: str
     :param peer_asn: The Autonomous System Number (ASN) of the peer.
     :type peer_asn: int
-    :param peer_contact_info: The contact information of the peer.
-    :type peer_contact_info: ~azure.mgmt.peering.models.ContactInfo
+    :param peer_contact_detail: The contact details of the peer.
+    :type peer_contact_detail: list[~azure.mgmt.peering.models.ContactDetail]
     :param peer_name: The name of the peer.
     :type peer_name: str
     :param validation_state: The validation state of the ASN associated with
@@ -516,7 +523,7 @@ class PeerAsn(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'peer_asn': {'key': 'properties.peerAsn', 'type': 'int'},
-        'peer_contact_info': {'key': 'properties.peerContactInfo', 'type': 'ContactInfo'},
+        'peer_contact_detail': {'key': 'properties.peerContactDetail', 'type': '[ContactDetail]'},
         'peer_name': {'key': 'properties.peerName', 'type': 'str'},
         'validation_state': {'key': 'properties.validationState', 'type': 'str'},
         'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
@@ -525,7 +532,7 @@ class PeerAsn(Resource):
     def __init__(self, **kwargs):
         super(PeerAsn, self).__init__(**kwargs)
         self.peer_asn = kwargs.get('peer_asn', None)
-        self.peer_contact_info = kwargs.get('peer_contact_info', None)
+        self.peer_contact_detail = kwargs.get('peer_contact_detail', None)
         self.peer_name = kwargs.get('peer_name', None)
         self.validation_state = kwargs.get('validation_state', None)
         self.error_message = None
@@ -739,7 +746,7 @@ class PeeringPropertiesDirect(Model):
     :param peer_asn: The reference of the peer ASN.
     :type peer_asn: ~azure.mgmt.peering.models.SubResource
     :param direct_peering_type: The type of direct peering. Possible values
-     include: 'Edge', 'Transit', 'Cdn', 'Internal'
+     include: 'Edge', 'Transit', 'Cdn', 'Internal', 'Ix', 'IxRs'
     :type direct_peering_type: str or
      ~azure.mgmt.peering.models.DirectPeeringType
     """
@@ -784,6 +791,114 @@ class PeeringPropertiesExchange(Model):
         self.peer_asn = kwargs.get('peer_asn', None)
 
 
+class PeeringRegisteredAsn(Resource):
+    """The customer's ASN that is registered by the peering service provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param asn: The customer's ASN from which traffic originates.
+    :type asn: int
+    :ivar peering_service_prefix_key: The peering service prefix key that is
+     to be shared with the customer.
+    :vartype peering_service_prefix_key: str
+    :ivar provisioning_state: The provisioning state of the resource. Possible
+     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.peering.models.ProvisioningState
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'peering_service_prefix_key': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'asn': {'key': 'properties.asn', 'type': 'int'},
+        'peering_service_prefix_key': {'key': 'properties.peeringServicePrefixKey', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PeeringRegisteredAsn, self).__init__(**kwargs)
+        self.asn = kwargs.get('asn', None)
+        self.peering_service_prefix_key = None
+        self.provisioning_state = None
+
+
+class PeeringRegisteredPrefix(Resource):
+    """The customer's prefix that is registered by the peering service provider.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param prefix: The customer's prefix from which traffic originates.
+    :type prefix: str
+    :ivar prefix_validation_state: The prefix validation state. Possible
+     values include: 'None', 'Invalid', 'Verified', 'Failed', 'Pending',
+     'Warning', 'Unknown'
+    :vartype prefix_validation_state: str or
+     ~azure.mgmt.peering.models.PrefixValidationState
+    :ivar peering_service_prefix_key: The peering service prefix key that is
+     to be shared with the customer.
+    :vartype peering_service_prefix_key: str
+    :ivar error_message: The error message associated with the validation
+     state, if any.
+    :vartype error_message: str
+    :ivar provisioning_state: The provisioning state of the resource. Possible
+     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.peering.models.ProvisioningState
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'prefix_validation_state': {'readonly': True},
+        'peering_service_prefix_key': {'readonly': True},
+        'error_message': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'prefix': {'key': 'properties.prefix', 'type': 'str'},
+        'prefix_validation_state': {'key': 'properties.prefixValidationState', 'type': 'str'},
+        'peering_service_prefix_key': {'key': 'properties.peeringServicePrefixKey', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PeeringRegisteredPrefix, self).__init__(**kwargs)
+        self.prefix = kwargs.get('prefix', None)
+        self.prefix_validation_state = None
+        self.peering_service_prefix_key = None
+        self.error_message = None
+        self.provisioning_state = None
+
+
 class PeeringService(Resource):
     """Peering Service.
 
@@ -798,6 +913,8 @@ class PeeringService(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param sku: The SKU that defines the type of the peering service.
+    :type sku: ~azure.mgmt.peering.models.PeeringServiceSku
     :param peering_service_location: The PeeringServiceLocation of the
      Customer.
     :type peering_service_location: str
@@ -825,6 +942,7 @@ class PeeringService(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'PeeringServiceSku'},
         'peering_service_location': {'key': 'properties.peeringServiceLocation', 'type': 'str'},
         'peering_service_provider': {'key': 'properties.peeringServiceProvider', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -834,6 +952,7 @@ class PeeringService(Resource):
 
     def __init__(self, **kwargs):
         super(PeeringService, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.peering_service_location = kwargs.get('peering_service_location', None)
         self.peering_service_provider = kwargs.get('peering_service_provider', None)
         self.provisioning_state = None
@@ -841,8 +960,38 @@ class PeeringService(Resource):
         self.tags = kwargs.get('tags', None)
 
 
+class PeeringServiceCountry(Resource):
+    """The peering service country.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PeeringServiceCountry, self).__init__(**kwargs)
+
+
 class PeeringServiceLocation(Resource):
-    """PeeringService location.
+    """The peering service location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -910,6 +1059,8 @@ class PeeringServicePrefix(Resource):
     :ivar events: The list of events for peering service prefix
     :vartype events:
      list[~azure.mgmt.peering.models.PeeringServicePrefixEvent]
+    :param peering_service_prefix_key: The peering service prefix key
+    :type peering_service_prefix_key: str
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
@@ -936,6 +1087,7 @@ class PeeringServicePrefix(Resource):
         'learned_type': {'key': 'properties.learnedType', 'type': 'str'},
         'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
         'events': {'key': 'properties.events', 'type': '[PeeringServicePrefixEvent]'},
+        'peering_service_prefix_key': {'key': 'properties.peeringServicePrefixKey', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -946,6 +1098,7 @@ class PeeringServicePrefix(Resource):
         self.learned_type = None
         self.error_message = None
         self.events = None
+        self.peering_service_prefix_key = kwargs.get('peering_service_prefix_key', None)
         self.provisioning_state = None
 
 
@@ -1028,14 +1181,27 @@ class PeeringServiceProvider(Resource):
         self.service_provider_name = kwargs.get('service_provider_name', None)
 
 
+class PeeringServiceSku(Model):
+    """The SKU that defines the type of the peering service.
+
+    :param name: The name of the peering service SKU.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PeeringServiceSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
 class PeeringSku(Model):
     """The SKU that defines the tier and kind of the peering.
 
-    :param name: The name of the peering SKU. Possible values include:
-     'Basic_Exchange_Free', 'Basic_Direct_Free', 'Premium_Direct_Free',
-     'Premium_Exchange_Metered', 'Premium_Direct_Metered',
-     'Premium_Direct_Unlimited'
-    :type name: str or ~azure.mgmt.peering.models.Name
+    :param name: The name of the peering SKU.
+    :type name: str
     :param tier: The tier of the peering SKU. Possible values include:
      'Basic', 'Premium'
     :type tier: str or ~azure.mgmt.peering.models.Tier
