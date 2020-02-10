@@ -524,16 +524,16 @@ class ShareFileClient(StorageAccountHostsMixin):
             This value can be set to "source" to copy the security descriptor from the source file.
             Otherwise if set, this value will be used to override the source value. If not set, permission value
             is inherited from the parent directory of the target file. This setting can be
-            used if Permission size is <= 8KB, otherwise file_permission_key shall be used.
+            used if Permission size is <= 8KB, otherwise permission_key shall be used.
             If SDDL is specified as input, it must have owner, group and dacl.
-            Note: Only one of the file_permission or file_permission_key should be specified.
+            Note: Only one of the file_permission or permission_key should be specified.
             Introduced in API version '2019-07-07'.
-        :keyword str file_permission_key:
+        :keyword str permission_key:
             Key of the permission to be set for the directory/file.
             This value can be set to "source" to copy the security descriptor from the source file.
             Otherwise if set, this value will be used to override the source value. If not set, permission value
             is inherited from the parent directory of the target file.
-            Note: Only one of the file_permission or file_permission_key should be specified.
+            Note: Only one of the file_permission or permission_key should be specified.
         :keyword file_attributes:
             This value can be set to "source" to copy file attributes from the source file to the target file,
             or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes

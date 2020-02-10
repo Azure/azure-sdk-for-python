@@ -61,7 +61,7 @@ def get_smb_properties(kwargs):
     ignore_read_only = kwargs.pop('ignore_read_only', None)
     set_archive_attribute = kwargs.pop('set_archive_attribute', None)
     file_permission = kwargs.pop('file_permission', None)
-    file_permission_key = kwargs.pop('file_permission_key', None)
+    file_permission_key = kwargs.pop('permission_key', None)
     file_attributes = kwargs.pop('file_attributes', None)
     file_creation_time = kwargs.pop('file_creation_time', None) or ""
     file_last_write_time = kwargs.pop('file_last_write_time', None) or ""
