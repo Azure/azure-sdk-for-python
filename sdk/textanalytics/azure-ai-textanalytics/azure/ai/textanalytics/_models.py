@@ -296,10 +296,16 @@ class TextAnalyticsError(DictMixin):
 
     @classmethod
     def _from_generated(cls, err):
+        if err.inner_error:
+            return cls(
+                code=err.inner_error.code.value,
+                message=err.inner_error.message,
+                target=err.inner_error.target
+            )
         return cls(
-            code=err.inner_error.code.value or err.code.value,
-            message=err.inner_error.message or err.message,
-            target=err.inner_error.target or err.target,
+            code=err.code.value,
+            message=err.message,
+            target=err.target
         )
 
     def __repr__(self):
