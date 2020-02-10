@@ -1,5 +1,13 @@
 # Release History
 
+## 7.2.0 (2020-02-10)
+
+**Features**
+
+  - Model BlobServiceProperties has a new parameter restore_policy
+  - Model StorageAccount has a new parameter blob_restore_status
+  - Added operation StorageAccountsOperations.restore_blob_ranges
+
 ## 7.1.0 (2020-01-09)
 
 **Features**
