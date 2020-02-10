@@ -28,8 +28,7 @@ from azure.storage.fileshare import (
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode,
-    NTFSAttributes,
-    FileSmbProperties)
+    NTFSAttributes)
 from azure.storage.fileshare._parser import _datetime_to_str
 from _shared.testcase import (
     StorageTestCase,
@@ -1058,16 +1057,14 @@ class StorageFileTest(StorageTestCase):
 
         file_creation_time = "2017-05-10T17:52:33.9551860Z"
         file_attributes = "Temporary|NoScrubData"
-        smb_info = FileSmbProperties(
-            file_permission=user_given_permission,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time
-        )
+
         # Act
         copy = file_client.start_copy_from_url(
             source_client.url,
             ignore_read_only=True,
-            file_smb_properties=smb_info
+            file_permission=user_given_permission,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time
         )
 
         # Assert
@@ -1100,7 +1097,7 @@ class StorageFileTest(StorageTestCase):
         # Act
         copy = file_client.start_copy_from_url(
             source_client.url,
-            file_smb_properties={'file_permission_key': 'source'}
+            file_permission_key='source'
         )
 
         # Assert

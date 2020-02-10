@@ -184,50 +184,6 @@ class AccessPolicy(GenAccessPolicy):
         self.permission = permission
 
 
-class FileSmbProperties(object):
-    """Additional parameters for start_copy operation.
-
-    :param str file_permission:
-        If specified the permission (security descriptor) shall be set for the directory/file.
-        This value can be set to "source" to copy the security descriptor from the source file.
-        Otherwise if set, this value will be used to override the source value. If not set, permission value
-        is inherited from the parent directory of the target file. This setting can be
-        used if Permission size is <= 8KB, otherwise file_permission_key shall be used.
-        If SDDL is specified as input, it must have owner, group and dacl.
-        Note: Only one of the file_permission or file_permission_key should be specified.
-        Introduced in API version '2019-07-07'.
-    :param str file_permission_key:
-        Key of the permission to be set for the directory/file.
-        This value can be set to "source" to copy the security descriptor from the source file.
-        Otherwise if set, this value will be used to override the source value. If not set, permission value
-        is inherited from the parent directory of the target file.
-        Note: Only one of the file_permission or file_permission_key should be specified.
-    :param file_attributes:
-        This value can be set to "source" to copy file attributes from the source file to the target file,
-        or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
-        to set on the target file. If this is not set, the default value is "Archive".
-    :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
-    :param file_creation_time:
-        This value can be set to "source" to copy the creation time from the source file to the target file,
-        or a datetime to set as creation time on the target file. This could also be a string in ISO 8601 format.
-        If this is not set, creation time will be set to the date time value of the creation
-        (or when it was overwritten) of the target file by copy engine.
-    :paramtype file_creation_time: str or ~datetime.datetime
-    :param file_last_write_time:
-        This value can be set to "source" to copy the last write time from the source file to the target file, or
-        a datetime to set as the last write time on the target file. This could also be a string in ISO 8601 format.
-        If this is not set, value will be the last write time to the file by the copy engine.
-    :paramtype file_last_write_time: str or ~datetime.datetime
-    """
-
-    def __init__(self, **kwargs):
-        self.file_permission = kwargs.get("file_permission")
-        self.file_permission_key = kwargs.get("file_permission_key")
-        self.file_attributes = kwargs.get('file_attributes')
-        self.file_creation_time = kwargs.get("file_creation_time")
-        self.file_last_write_time = kwargs.get("file_last_write_time")
-
-
 class ContentSettings(DictMixin):
     """Used to store the content settings of a file.
 

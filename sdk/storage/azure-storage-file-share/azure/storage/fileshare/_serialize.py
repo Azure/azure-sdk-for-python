@@ -57,22 +57,15 @@ def get_access_conditions(lease):
 
 
 def get_smb_properties(kwargs):
-    # type: (Optional[Union[Dict, FileSmbProperties]]) -> Dict[str, Any]
+    # type: (Dict[str, Any]) -> Dict[str, Any]
     ignore_read_only = kwargs.pop('ignore_read_only', None)
     set_archive_attribute = kwargs.pop('set_archive_attribute', None)
-    file_smb_properties = kwargs.pop('file_smb_properties', None)
-    if not any([ignore_read_only, set_archive_attribute, file_smb_properties]):
-        return {'file_permission': None}
-    try:
-        smb_props = file_smb_properties.__dict__  # FileSmbProperties object
-    except AttributeError:
-        smb_props = file_smb_properties  # Dictionary
+    file_permission = kwargs.pop('file_permission', None)
+    file_permission_key = kwargs.pop('file_permission_key', None)
+    file_attributes = kwargs.pop('file_attributes', None)
+    file_creation_time = kwargs.pop('file_creation_time', None) or ""
+    file_last_write_time = kwargs.pop('file_last_write_time', None) or ""
 
-    file_permission = smb_props.get('file_permission')
-    file_permission_key = smb_props.get('file_permission_key')
-    file_attributes = smb_props.get('file_attributes')
-    file_creation_time = smb_props.get('file_creation_time') or ""
-    file_last_write_time = smb_props.get('file_last_write_time') or ""
     file_permission_copy_mode = None
     file_permission = _get_file_permission(file_permission, file_permission_key, None)
 

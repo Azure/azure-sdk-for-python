@@ -397,9 +397,37 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param str source_url:
             Specifies the URL of the source file.
-        :keyword file_smb_properties:
-            Additional parameters for the operation
-        :paramtype file_smb_properties: ~azure.storage.fileshare.FileSmbProperties or dict
+        :keyword str file_permission:
+            If specified the permission (security descriptor) shall be set for the directory/file.
+            This value can be set to "source" to copy the security descriptor from the source file.
+            Otherwise if set, this value will be used to override the source value. If not set, permission value
+            is inherited from the parent directory of the target file. This setting can be
+            used if Permission size is <= 8KB, otherwise file_permission_key shall be used.
+            If SDDL is specified as input, it must have owner, group and dacl.
+            Note: Only one of the file_permission or file_permission_key should be specified.
+            Introduced in API version '2019-07-07'.
+        :keyword str file_permission_key:
+            Key of the permission to be set for the directory/file.
+            This value can be set to "source" to copy the security descriptor from the source file.
+            Otherwise if set, this value will be used to override the source value. If not set, permission value
+            is inherited from the parent directory of the target file.
+            Note: Only one of the file_permission or file_permission_key should be specified.
+        :keyword file_attributes:
+            This value can be set to "source" to copy file attributes from the source file to the target file,
+            or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
+            to set on the target file. If this is not set, the default value is "Archive".
+        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :keyword file_creation_time:
+            This value can be set to "source" to copy the creation time from the source file to the target file,
+            or a datetime to set as creation time on the target file. This could also be a string in ISO 8601 format.
+            If this is not set, creation time will be set to the date time value of the creation
+            (or when it was overwritten) of the target file by copy engine.
+        :paramtype file_creation_time: str or ~datetime.datetime
+        :keyword file_last_write_time:
+            This value can be set to "source" to copy the last write time from the source file to the target file, or
+            a datetime to set as the last write time on the target file. This could also be a string in ISO 8601 format.
+            If this is not set, value will be the last write time to the file by the copy engine.
+        :paramtype file_last_write_time: str or ~datetime.datetime
         :keyword bool ignore_read_only:
             Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
         :keyword bool set_archive_attribute:
