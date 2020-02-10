@@ -395,6 +395,7 @@ class DirectoryTest(StorageTestCase):
 
         # create a dir2 under file system2
         new_name = "newname"
+        time.sleep(5)
         new_directory_client = await self._create_directory_and_get_directory_client(directory_name=new_name)
         new_directory_client = await new_directory_client.create_sub_directory("newsub")
 
