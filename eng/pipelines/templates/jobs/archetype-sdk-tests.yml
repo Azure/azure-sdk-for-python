@@ -57,7 +57,7 @@ jobs:
           az login --service-principal -u $(provisioner-aad-id) -p $(provisioner-aad-secret) --tenant $(provisioner-aad-tenant)
           az account set --subscription $(provisioner-subscription)
 
-          az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId=$(Build.BuildId) BuildJob=$(Agent.JobName) BuildNumber=$(Build.BuildNumber) BuildReason=$(Build.Reason)
+          az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId='$(Build.BuildId)' BuildJob='$(Agent.JobName)' BuildNumber='$(Build.BuildNumber)' BuildReason='$(Build.Reason)'
           az group wait --created --resource-group $RgName
         displayName: Create resource group and environment variable for tests
 
