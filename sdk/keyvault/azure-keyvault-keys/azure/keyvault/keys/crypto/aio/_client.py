@@ -361,7 +361,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/verify' permission")
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
-            result = await self._client.verify(
+            operation = await self._client.verify(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
@@ -369,5 +369,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 digest=digest,
                 signature=signature,
                 **kwargs
-            ).value
+            )
+            result = operation.value
+
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=result)

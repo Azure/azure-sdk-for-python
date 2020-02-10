@@ -223,6 +223,9 @@ class StorageFileTest(StorageTestCase):
         # Assert
         props = file_client.get_file_properties()
         self.assertIsNotNone(props)
+        self.assertIsNotNone(props.lease)
+        self.assertIsNotNone(props.lease.state)
+        self.assertIsNotNone(props.lease.status)
         self.assertEqual(props.etag, resp['etag'])
         self.assertEqual(props.last_modified, resp['last_modified'])
 

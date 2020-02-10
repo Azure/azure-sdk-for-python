@@ -339,8 +339,40 @@ the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 ## Troubleshooting
+### General
 Storage Blob clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 All Blob service operations will throw a `StorageErrorException` on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes).
+
+### Logging
+This library uses the standard
+[logging](https://docs.python.org/3/library/logging.html) library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
+```python
+import sys
+import logging
+from azure.storage.blob import BlobServiceClient
+
+# Create a logger for the 'azure.storage.blob' SDK
+logger = logging.getLogger('azure.storage.blob')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+service_client = BlobServiceClient.from_connection_string("your_connection_string", logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+service_client.get_service_stats(logging_enable=True)
+```
 
 ## Next steps
 

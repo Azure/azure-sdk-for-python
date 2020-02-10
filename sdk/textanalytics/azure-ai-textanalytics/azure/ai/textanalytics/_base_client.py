@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
@@ -21,6 +20,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
+from ._credential import TextAnalyticsApiKeyCredential
 from ._user_agent import USER_AGENT
 
 
@@ -36,10 +36,11 @@ class TextAnalyticsClientBase(object):
             credential_policy = BearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credential, six.string_types):
+        elif isinstance(credential, TextAnalyticsApiKeyCredential):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
+                            "or a token credential from azure.identity".format(type(credential)))
 
         config = self._create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore

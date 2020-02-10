@@ -34,6 +34,20 @@ ENABLE_LOGGING = True
 # Read for details of this file:
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
 
+def get_azure_core_credentials(**kwargs):
+    # return ClientSecretCredential(
+    #     client_id = '<AAD App client id>',
+    #     client_secret = '<secret for the aad app>',
+    #     tenant = '<microsoft aad tenant id>'
+    # )
+    # Needed to play recorded tests
+    from azure.core.credentials import AccessToken
+    class FakeCredential(object):
+        def get_token(self, *scopes, **kwargs):
+            return AccessToken('fake_token', 2527537086)
+    return FakeCredential()
+
+
 def get_credentials(**kwargs):
     # Put your credentials here in the "real" file
     #return UserPassCredentials(

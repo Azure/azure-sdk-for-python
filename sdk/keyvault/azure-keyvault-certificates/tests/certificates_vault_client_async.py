@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 from typing import Any, TYPE_CHECKING
 from azure.core.pipeline.transport import HttpTransport
 
@@ -25,12 +26,23 @@ class VaultClient(AsyncKeyVaultClientBase):
         credential: "TokenCredential",
         transport: HttpTransport = None,
         api_version: str = None,
+        is_live: bool = True,
         **kwargs: Any
     ) -> None:
-        super(VaultClient, self).__init__(
-            vault_url, credential, transport=transport, api_version=api_version, **kwargs
-        )
+        super(VaultClient, self).__init__(vault_url, credential, transport=transport, api_version=api_version, **kwargs)
         self._certificates = CertificateClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+
+        if not is_live:
+            # ensure pollers don't sleep during playback
+            self._certificates.create_certificate = functools.partial(
+                self._certificates.create_certificate, _polling_interval=0
+            )
+            self._certificates.delete_certificate = functools.partial(
+                self._certificates.delete_certificate, _polling_interval=0
+            )
+            self._certificates.recover_deleted_certificate = functools.partial(
+                self._certificates.recover_deleted_certificate, _polling_interval=0
+            )
 
     @property
     def certificates(self):

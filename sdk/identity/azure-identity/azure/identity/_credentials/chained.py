@@ -4,6 +4,8 @@
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
 
+from .. import CredentialUnavailableError
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -51,15 +53,19 @@ class ChainedTokenCredential(object):
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
-        :raises ~azure.core.exceptions.ClientAuthenticationError: when no credential in the chain provides a token
+        :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         history = []
         for credential in self.credentials:
             try:
                 return credential.get_token(*scopes, **kwargs)
-            except ClientAuthenticationError as ex:
+            except CredentialUnavailableError as ex:
+                # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
+                # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
+                break
+
         error_message = _get_error_message(history)
         raise ClientAuthenticationError(message=error_message)

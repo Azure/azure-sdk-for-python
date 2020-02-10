@@ -276,6 +276,18 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
         return self._body
 
+    def text(self, encoding: Optional[str] = None) -> str:
+        """Return the whole body as a string.
+
+        If encoding is not provided, rely on aiohttp auto-detection.
+
+        :param str encoding: The encoding to apply.
+        """
+        if not encoding:
+            encoding = self.internal_response.get_encoding()
+
+        return super().text(encoding)
+
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()

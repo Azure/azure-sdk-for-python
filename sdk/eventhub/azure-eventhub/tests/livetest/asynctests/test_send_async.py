@@ -130,15 +130,14 @@ async def test_send_over_websocket_async(connstr_receivers):
                                                            transport_type=TransportType.AmqpOverWebsocket)
 
     async with client:
-        batch = await client.create_batch()
+        batch = await client.create_batch(partition_id="0")
         for i in range(5):
             batch.add(EventData("Event Number {}".format(i)))
         await client.send_batch(batch)
 
     time.sleep(1)
     received = []
-    for r in receivers:
-        received.extend(r.receive_message_batch(timeout=6000))
+    received.extend(receivers[0].receive_message_batch(max_batch_size=5, timeout=10000))
     assert len(received) == 5
 
 

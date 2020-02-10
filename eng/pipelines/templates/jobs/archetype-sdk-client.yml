@@ -114,7 +114,7 @@ jobs:
     - pwsh: |
         $toxenvvar = "whl,sdist"
         if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
-          $toxenvvar = "whl,sdist"
+          $toxenvvar = "whl,sdist,depends"
         }
 
         if ('$(Run.ImportTest)' -eq 'true') {
@@ -183,3 +183,21 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunRegression'
+    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
+    displayName: 'Run Regression'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/test_regression.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}

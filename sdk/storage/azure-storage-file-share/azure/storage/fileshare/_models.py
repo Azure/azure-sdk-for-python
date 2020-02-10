@@ -184,6 +184,31 @@ class AccessPolicy(GenAccessPolicy):
         self.permission = permission
 
 
+class LeaseProperties(DictMixin):
+    """File Lease Properties.
+
+    :ivar str status:
+        The lease status of the file. Possible values: locked|unlocked
+    :ivar str state:
+        Lease state of the file. Possible values: available|leased|expired|breaking|broken
+    :ivar str duration:
+        When a file is leased, specifies whether the lease is of infinite or fixed duration.
+    """
+
+    def __init__(self, **kwargs):
+        self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
+        self.state = get_enum_value(kwargs.get('x-ms-lease-state'))
+        self.duration = get_enum_value(kwargs.get('x-ms-lease-duration'))
+
+    @classmethod
+    def _from_generated(cls, generated):
+        lease = cls()
+        lease.status = get_enum_value(generated.properties.lease_status)
+        lease.state = get_enum_value(generated.properties.lease_state)
+        lease.duration = get_enum_value(generated.properties.lease_duration)
+        return lease
+
+
 class ContentSettings(DictMixin):
     """Used to store the content settings of a file.
 
@@ -593,6 +618,7 @@ class FileProperties(DictMixin):
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
+        self.lease = LeaseProperties(**kwargs)
         self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
@@ -607,6 +633,7 @@ class FileProperties(DictMixin):
         props.name = generated.name
         props.content_length = generated.properties.content_length
         props.metadata = generated.properties.metadata
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
 
 
