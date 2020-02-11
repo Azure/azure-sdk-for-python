@@ -191,6 +191,8 @@ class ApplicationResource(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :param identity: Describes the managed identities for an Azure resource.
+    :type identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
     :param type_version: The version of the application type as defined in the
      application manifest.
     :type type_version: str
@@ -220,6 +222,10 @@ class ApplicationResource(ProxyResource):
     :param metrics: List of application capacity metric description.
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :param managed_identities: List of user assigned identities for the
+     application, each mapped to a friendly name.
+    :type managed_identities:
+     list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
@@ -245,6 +251,7 @@ class ApplicationResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
@@ -252,12 +259,14 @@ class ApplicationResource(ProxyResource):
         'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
         'remove_application_capacity': {'key': 'properties.removeApplicationCapacity', 'type': 'bool'},
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
+        'managed_identities': {'key': 'properties.managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'type_name': {'key': 'properties.typeName', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, type_name: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, identity=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, managed_identities=None, type_name: str=None, **kwargs) -> None:
         super(ApplicationResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy
@@ -265,6 +274,7 @@ class ApplicationResource(ProxyResource):
         self.maximum_nodes = maximum_nodes
         self.remove_application_capacity = remove_application_capacity
         self.metrics = metrics
+        self.managed_identities = managed_identities
         self.provisioning_state = None
         self.type_name = type_name
 
@@ -345,6 +355,10 @@ class ApplicationResourceUpdate(ProxyResource):
     :param metrics: List of application capacity metric description.
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :param managed_identities: List of user assigned identities for the
+     application, each mapped to a friendly name.
+    :type managed_identities:
+     list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     """
 
     _validation = {
@@ -370,9 +384,10 @@ class ApplicationResourceUpdate(ProxyResource):
         'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
         'remove_application_capacity': {'key': 'properties.removeApplicationCapacity', 'type': 'bool'},
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
+        'managed_identities': {'key': 'properties.managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, managed_identities=None, **kwargs) -> None:
         super(ApplicationResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
         self.type_version = type_version
         self.parameters = parameters
@@ -381,6 +396,7 @@ class ApplicationResourceUpdate(ProxyResource):
         self.maximum_nodes = maximum_nodes
         self.remove_application_capacity = remove_application_capacity
         self.metrics = metrics
+        self.managed_identities = managed_identities
 
 
 class ApplicationTypeResource(ProxyResource):
@@ -587,6 +603,33 @@ class ApplicationUpgradePolicy(Model):
         self.force_restart = force_restart
         self.rolling_upgrade_monitoring_policy = rolling_upgrade_monitoring_policy
         self.application_health_policy = application_health_policy
+
+
+class ApplicationUserAssignedIdentity(Model):
+    """ApplicationUserAssignedIdentity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The friendly name of user assigned identity.
+    :type name: str
+    :param principal_id: Required. The principal id of user assigned identity.
+    :type principal_id: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'principal_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, principal_id: str, **kwargs) -> None:
+        super(ApplicationUserAssignedIdentity, self).__init__(**kwargs)
+        self.name = name
+        self.principal_id = principal_id
 
 
 class ArmApplicationHealthPolicy(Model):
@@ -1053,7 +1096,7 @@ class Cluster(Resource):
      ~azure.mgmt.servicefabric.models.ProvisioningState
     :param reliability_level: The reliability level sets the replica set size
      of system services. Learn about
-     [ReliabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [ReliabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - None - Run the System services with a target replica set count of 1.
      This should only be used for test clusters.
      - Bronze - Run the System services with a target replica set count of 3.
@@ -1345,7 +1388,7 @@ class ClusterUpdateParameters(Model):
      list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
     :param reliability_level: The reliability level sets the replica set size
      of system services. Learn about
-     [ReliabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [ReliabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - None - Run the System services with a target replica set count of 1.
      This should only be used for test clusters.
      - Bronze - Run the System services with a target replica set count of 3.
@@ -1587,6 +1630,9 @@ class DiagnosticsStorageAccountConfig(Model):
     :param protected_account_key_name: Required. The protected diagnostics
      storage key name.
     :type protected_account_key_name: str
+    :param protected_account_key_name2: The secondary protected diagnostics
+     storage key name.
+    :type protected_account_key_name2: str
     :param blob_endpoint: Required. The blob endpoint of the azure storage
      account.
     :type blob_endpoint: str
@@ -1609,15 +1655,17 @@ class DiagnosticsStorageAccountConfig(Model):
     _attribute_map = {
         'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
         'protected_account_key_name': {'key': 'protectedAccountKeyName', 'type': 'str'},
+        'protected_account_key_name2': {'key': 'protectedAccountKeyName2', 'type': 'str'},
         'blob_endpoint': {'key': 'blobEndpoint', 'type': 'str'},
         'queue_endpoint': {'key': 'queueEndpoint', 'type': 'str'},
         'table_endpoint': {'key': 'tableEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_name: str, protected_account_key_name: str, blob_endpoint: str, queue_endpoint: str, table_endpoint: str, **kwargs) -> None:
+    def __init__(self, *, storage_account_name: str, protected_account_key_name: str, blob_endpoint: str, queue_endpoint: str, table_endpoint: str, protected_account_key_name2: str=None, **kwargs) -> None:
         super(DiagnosticsStorageAccountConfig, self).__init__(**kwargs)
         self.storage_account_name = storage_account_name
         self.protected_account_key_name = protected_account_key_name
+        self.protected_account_key_name2 = protected_account_key_name2
         self.blob_endpoint = blob_endpoint
         self.queue_endpoint = queue_endpoint
         self.table_endpoint = table_endpoint
@@ -1696,6 +1744,50 @@ class ErrorModelError(Model):
         super(ErrorModelError, self).__init__(**kwargs)
         self.code = code
         self.message = message
+
+
+class ManagedIdentity(Model):
+    """Describes the managed identities for an Azure resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal id of the managed identity. This
+     property will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the managed identity. This property will
+     only be provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: The type of managed identity for the resource. Possible
+     values include: 'SystemAssigned', 'UserAssigned', 'SystemAssigned,
+     UserAssigned', 'None'
+    :type type: str or ~azure.mgmt.servicefabric.models.ManagedIdentityType
+    :param user_assigned_identities: The list of user identities associated
+     with the resource. The user identity dictionary key references will be ARM
+     resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.servicefabric.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ManagedIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(ManagedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class PartitionSchemeDescription(Model):
@@ -1786,7 +1878,7 @@ class NodeTypeDescription(Model):
     :type http_gateway_endpoint_port: int
     :param durability_level: The durability level of the node type. Learn
      about
-     [DurabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [DurabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - Bronze - No privileges. This is the default.
      - Silver - The infrastructure jobs can be paused for a duration of 10
      minutes per UD.
@@ -2885,3 +2977,31 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         self.low_key = low_key
         self.high_key = high_key
         self.partition_scheme = 'UniformInt64Range'
+
+
+class UserAssignedIdentity(Model):
+    """UserAssignedIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
