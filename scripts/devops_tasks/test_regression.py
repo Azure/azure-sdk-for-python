@@ -151,7 +151,7 @@ class RegressionTest:
         dep_pkg_name, version, _, _ = parse_setup(dep_pkg_path)
         release_tag = get_release_tag(dep_pkg_name, self.context.is_latest_depend_test)
         if not release_tag:
-            logging.error("Release tag is not avaiable. Skipping package {} from test".format(dep_pkg_name))
+            logging.error("Release tag is not available. Skipping package {} from test".format(dep_pkg_name))
             return
 
         test_branch_name = "{0}_tests".format(release_tag)

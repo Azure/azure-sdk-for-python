@@ -62,14 +62,14 @@ omit_regression = (
 )
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
 omit_build = lambda x: x # Dummy lambda to match omit type
+lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
+
 # dict of filter type and filter function
 omit_funct_dict = {
     "Build": omit_build,
     "Docs": omit_docs,
     "Regression": omit_regression,
 }
-
-lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
 
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
