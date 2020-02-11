@@ -30,24 +30,25 @@ class ManagedIdentityCredential(object):
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __new__(cls, *args, **kwargs):
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            return MsiCredential(*args, **kwargs)
-        return ImdsCredential(*args, **kwargs)
-
-    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
-    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
     def __init__(self, **kwargs: "Any") -> None:
-        pass
+        self._credential = None
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            self._credential = MsiCredential(**kwargs)
+        else:
+            self._credential = ImdsCredential(**kwargs)
 
     async def __aenter__(self):
-        pass
+        if self._credential:
+            await self._credential.__aenter__()
+        return self
 
     async def __aexit__(self, *args):
         pass
 
     async def close(self):
         """Close the credential's transport session."""
+        if self._credential:
+            await self._credential.__aexit__()
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
@@ -58,7 +59,9 @@ class ManagedIdentityCredential(object):
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
-        return AccessToken()
+        if not self._credential:
+            raise CredentialUnavailableError(message="No managed identity endpoints found")
+        return self._credential.get_token()
 
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
