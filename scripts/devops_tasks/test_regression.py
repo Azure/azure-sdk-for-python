@@ -23,7 +23,7 @@ from common_tasks import (
     find_packages_missing_on_pypi,
     find_whl
 )
-from git_helper import get_release_tag, checkout_code_repo, clone_repo
+from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 from pip._internal.operations import freeze
 
 AZURE_GLOB_STRING = "azure*"
@@ -148,18 +148,19 @@ class RegressionTest:
         self.context.initialize(dep_pkg_path)
 
         # find GA released tags for package and run test using that code base
-        dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
+        dep_pkg_name, version, _, _ = parse_setup(dep_pkg_path)
         release_tag = get_release_tag(dep_pkg_name, self.context.is_latest_depend_test)
         if not release_tag:
-            logging.error(
-                "Release tag is not avaiable. Skipping package {} from test".format(
-                    dep_pkg_name
-                )
-            )
+            logging.error("Release tag is not avaiable. Skipping package {} from test".format(dep_pkg_name))
             return
 
-        # Get code repo with released tag of dependent package
-        checkout_code_repo(release_tag, dep_pkg_path)
+        test_branch_name = "{0}_tests".format(release_tag)
+        try:
+            git_checkout_branch(test_branch_name, dep_pkg_path)
+        except:
+            # If git checkout failed for "tests" branch then checkout branch with release tag
+            logging.info("Failed to checkout branch {}. Checking out release tagged git repo".format(test_branch_name))            
+            git_checkout_tag(release_tag, dep_pkg_path)
 
         try:
             # install packages required to run tests
@@ -325,7 +326,7 @@ def run_main(args):
         )
 
     # find package dependency map for azure sdk
-    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root)
+    pkg_dependency = find_package_dependency('azure-identity', code_repo_root)
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(
