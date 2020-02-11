@@ -164,7 +164,7 @@ These results/errors are index-matched with the order of the provided documents.
 A **result**, such as [AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), 
 is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
 
-The **error** object, [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterro), indicates that the service had trouble processing the document and contains 
+The **error** object, [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterror), indicates that the service had trouble processing the document and contains 
 the reason it was unsuccessful.
 
 ### Document Error Handling
