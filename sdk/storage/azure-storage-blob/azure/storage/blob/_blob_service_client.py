@@ -436,7 +436,10 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :type public_access: str or ~azure.storage.blob.PublicAccess
         :keyword dict or ~azure.storage.blob.ContainerEncryptionScope container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
-            all future writes. Introduced in API version '2019-07-07'.
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient

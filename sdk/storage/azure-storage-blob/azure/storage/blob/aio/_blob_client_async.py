@@ -222,7 +222,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -570,7 +572,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -640,7 +644,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -699,7 +705,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -761,7 +769,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1085,7 +1095,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1139,7 +1151,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1247,7 +1261,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1380,7 +1396,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             This operation is only available for managed disk accounts.
 
         .. versionadded:: 12.2.0
-            This operation was introduced in API version '2019-07-07'.
+            This operation is unsupported in earlier API versions.
 
         :param previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
@@ -1604,7 +1620,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -1709,7 +1727,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -1852,7 +1872,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -1947,7 +1969,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """

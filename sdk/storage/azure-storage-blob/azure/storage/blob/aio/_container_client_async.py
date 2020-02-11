@@ -136,7 +136,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Possible values include: 'container', 'blob'.
         :keyword dict or ~azure.storage.blob.ContainerEncryptionScope container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
-            all future writes. Introduced in API version '2019-07-07'.
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -684,7 +687,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
