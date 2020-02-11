@@ -217,10 +217,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -563,10 +565,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -631,10 +635,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -688,10 +694,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -748,10 +756,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1070,10 +1080,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1122,10 +1134,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1228,10 +1242,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1351,14 +1367,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return get_page_ranges_result(ranges)
 
     @distributed_trace_async
-    async def get_managed_disk_page_range_diff( # type: ignore
-            self, offset=None, # type: Optional[int]
+    async def get_page_range_diff_for_managed_disk(
+            self, previous_snapshot_url,  # type: str
+            offset=None, # type: Optional[int]
             length=None,  # type: Optional[int]
-            prev_snapshot_url=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """Returns the list of valid page ranges for a managed disk or snapshot.
+
+        .. note::
+            This operation is only available for managed disk accounts.
+
+        .. versionadded:: 12.2.0
+            This operation was introduced in API version '2019-07-07'.
+
+        :param previous_snapshot_url:
+            Specifies the URL of a previous snapshot of the managed disk.
+            The response will only contain pages that were changed between the target blob and
+            its previous snapshot.
         :param int offset:
             Start of byte range to use for getting valid page ranges.
             If no length is given, all bytes after the offset will be searched.
@@ -1373,11 +1400,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the length must be a modulus of
             512.
-        :param prev_snapshot_url: This header is only supported in
-            service versions 2019-04-19 and after and specifies the URL of a
-            previous snapshot of the target blob. The response will only contain
-            pages that were changed between the target blob and its previous
-            snapshot.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1409,7 +1431,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._get_page_ranges_options(
             offset=offset,
             length=length,
-            prev_snapshot_url=prev_snapshot_url,
+            prev_snapshot_url=previous_snapshot_url,
             **kwargs)
         try:
             ranges = await self._client.page_blob.get_page_ranges_diff(**options)
@@ -1502,10 +1524,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1581,10 +1599,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -1684,10 +1704,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -1825,10 +1847,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -1918,10 +1942,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword ~azure.storage.blob.ContainerCpkScopeInfo cpk_scope_info:
-            A predefined encryption scope used to encrypts the data on the service-side.
-            The encryption scope is defined on control plane, while the scope could be
-            directly referenced from data plane.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+            Introduced in API version '2019-07-07'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """

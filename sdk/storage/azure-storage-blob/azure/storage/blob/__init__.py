@@ -49,8 +49,7 @@ from ._models import (
     ContainerSasPermissions,
     BlobSasPermissions,
     CustomerProvidedEncryptionKey,
-    CpkScopeInfo,
-    ContainerCpkScopeInfo
+    ContainerEncryptionScope
 )
 
 __version__ = VERSION
@@ -202,11 +201,10 @@ __all__ = [
     'AccountSasPermissions',
     'StorageStreamDownloader',
     'CustomerProvidedEncryptionKey',
-    'CpkScopeInfo',
-    'ContainerCpkScopeInfo',
     'RehydratePriority',
     'generate_account_sas',
     'generate_container_sas',
     'generate_blob_sas',
-    'PartialBatchErrorException'
+    'PartialBatchErrorException',
+    'ContainerEncryptionScope'
 ]

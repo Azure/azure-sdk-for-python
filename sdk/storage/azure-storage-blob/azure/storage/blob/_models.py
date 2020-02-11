@@ -22,8 +22,6 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
 from ._generated.models import BlobItem
-from ._generated.models import CpkScopeInfo as CpkScopeInfoGen
-from ._generated.models import ContainerCpkScopeInfo as ContainerCpkScopeInfoGen
 
 
 class BlobType(str, Enum):
@@ -325,6 +323,13 @@ class ContainerProperties(DictMixin):
         self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
+        self.encryption_scope = None
+        default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
+        if default_encryption_scope:
+            self.encryption_scope = ContainerEncryptionScope(
+                default_encryption_scope=default_encryption_scope,
+                prevent_encryption_scope_override=kwargs.get('x-ms-deny-encryption-scope-override', False)
+            )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -337,6 +342,7 @@ class ContainerProperties(DictMixin):
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
+        props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
         return props
 
 
@@ -1018,42 +1024,6 @@ class BlobSasPermissions(object):
         return parsed
 
 
-class ContainerCpkScopeInfo(ContainerCpkScopeInfoGen):
-    """This scope is then used implicitly for all future writes within the container,
-    but can be overridden per-request via explicit request headers.
-
-    :param default_encryption_scope: Optional. Version 2019-07-07 and later.
-        Specifies the default encryption scope to set on the container and use for
-        all future writes.
-    :type default_encryption_scope: str
-    :param deny_encryption_scope_override: Optional. Version 2019-07-07 and
-        newer.  If true, prevents any request from specifying a different
-        encryption scope than the scope set on the container.
-    :type deny_encryption_scope_override: bool
-    """
-
-    def __init__(self, **kwargs):
-        super(ContainerCpkScopeInfo, self).__init__(**kwargs)
-        self.default_encryption_scope = kwargs.get('default_encryption_scope', None)
-        self.deny_encryption_scope_override = kwargs.get('deny_encryption_scope_override', False)
-
-
-class CpkScopeInfo(CpkScopeInfoGen):
-    """This indicates the encryption scope that should be used to encrypt the application data
-
-    :param encryption_scope: Optional. Version 2019-07-07 and later.
-         Specifies the name of the encryption scope to use to encrypt the data
-         provided in the request. If not specified, encryption is performed with
-         the default account encryption scope.  For more information, see
-         Encryption at Rest for Azure Storage Services.
-    :type encryption_scope: str
-    """
-
-    def __init__(self, **kwargs):
-        super(CpkScopeInfo, self).__init__(**kwargs)
-        self.encryption_scope = kwargs.get('encryption_scope', None)
-
-
 class CustomerProvidedEncryptionKey(object):
     """
     All data in Azure Storage is encrypted at-rest using an account-level encryption key.
@@ -1080,3 +1050,32 @@ class CustomerProvidedEncryptionKey(object):
         self.key_value = key_value
         self.key_hash = key_hash
         self.algorithm = 'AES256'
+
+
+class ContainerEncryptionScope(object):
+    """This scope is then used implicitly for all future writes within the container,
+    but can be overridden per blob operation.
+
+    :param default_encryption_scope: Optional. Version 2019-07-07 and later.
+        Specifies the default encryption scope to set on the container and use for
+        all future writes.
+    :type default_encryption_scope: str
+    :param prevent_encryption_scope_override: Optional. Version 2019-07-07 and
+        newer.  If true, prevents any request from specifying a different
+        encryption scope than the scope set on the container.
+    :type prevent_encryption_scope_override: bool
+    """
+
+    def __init__(self, default_encryption_scope, **kwargs):
+        self.default_encryption_scope = default_encryption_scope
+        self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', False)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if generated.properties.default_encryption_scope:
+            scope = cls(
+                generated.properties.default_encryption_scope,
+                prevent_encryption_scope_override=generated.properties.deny_encryption_scope_override or False
+            )
+            return scope
+        return None
