@@ -326,7 +326,7 @@ def run_main(args):
         )
 
     # find package dependency map for azure sdk
-    pkg_dependency = find_package_dependency('azure-identity', code_repo_root)
+    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root)
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(
