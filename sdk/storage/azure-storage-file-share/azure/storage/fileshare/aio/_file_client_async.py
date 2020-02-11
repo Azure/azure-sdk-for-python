@@ -25,10 +25,8 @@ from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterS
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._serialize import validate_copy_mode
-from .._models import CopyFileSmbInfo
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
-from .._serialize import get_access_conditions
+from .._serialize import get_access_conditions, get_smb_properties
 from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
 from ._lease_async import ShareLeaseClient
@@ -399,21 +397,43 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :param str source_url:
             Specifies the URL of the source file.
-        :param file_permission_copy_mode: Specifies the option to copy file
-            security descriptor from source file or to set it using the value which is
-            defined by the header value of x-ms-file-permission or
-            x-ms-file-permission-key. Possible values include: 'source', 'override'
-        :param str file_permission: If specified the permission (security
-            descriptor) shall be set for the directory/file. This header can be
-            used if Permission size is <= 8KB, else x-ms-file-permission-key
-            header shall be used. Default value: Inherit. If SDDL is specified as
-            input, it must have owner, group and dacl. Note: Only one of the
-            x-ms-file-permission or x-ms-file-permission-key should be specified.
-        :param str file_permission_key: Key of the permission to be set for the
-            directory/file. Note: Only one of the x-ms-file-permission or
-            x-ms-file-permission-key should be specified.
-        :param ~azure.storage.fileshare.CopyFileSmbInfo copy_file_smb_info:
-            Additional parameters for the operation
+        :keyword str file_permission:
+            If specified the permission (security descriptor) shall be set for the directory/file.
+            This value can be set to "source" to copy the security descriptor from the source file.
+            Otherwise if set, this value will be used to override the source value. If not set, permission value
+            is inherited from the parent directory of the target file. This setting can be
+            used if Permission size is <= 8KB, otherwise permission_key shall be used.
+            If SDDL is specified as input, it must have owner, group and dacl.
+            Note: Only one of the file_permission or permission_key should be specified.
+            Introduced in API version '2019-07-07'.
+        :keyword str permission_key:
+            Key of the permission to be set for the directory/file.
+            This value can be set to "source" to copy the security descriptor from the source file.
+            Otherwise if set, this value will be used to override the source value. If not set, permission value
+            is inherited from the parent directory of the target file.
+            Note: Only one of the file_permission or permission_key should be specified.
+        :keyword file_attributes:
+            This value can be set to "source" to copy file attributes from the source file to the target file,
+            or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
+            to set on the target file. If this is not set, the default value is "Archive".
+        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :keyword file_creation_time:
+            This value can be set to "source" to copy the creation time from the source file to the target file,
+            or a datetime to set as creation time on the target file. This could also be a string in ISO 8601 format.
+            If this is not set, creation time will be set to the date time value of the creation
+            (or when it was overwritten) of the target file by copy engine.
+        :paramtype file_creation_time: str or ~datetime.datetime
+        :keyword file_last_write_time:
+            This value can be set to "source" to copy the last write time from the source file to the target file, or
+            a datetime to set as the last write time on the target file. This could also be a string in ISO 8601 format.
+            If this is not set, value will be the last write time to the file by the copy engine.
+        :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword bool ignore_read_only:
+            Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
+        :keyword bool set_archive_attribute:
+            Specifies the option to set the archive attribute on the target file.
+            True means the archive attribute will be set on the target file despite attribute
+            overrides or the source file state.
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword lease:
@@ -438,22 +458,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
-
-        file_permission = kwargs.pop('file_permission', None)
-        file_permission_key = kwargs.pop('file_permission_key', None)
-        file_permission_copy_mode = kwargs.pop('file_permission_copy_mode', None)
-        file_permission = _get_file_permission(file_permission, file_permission_key, None)
-        validate_copy_mode(file_permission_copy_mode, file_permission, file_permission_key)
-
-        copy_file_smb_info = kwargs.pop('copy_file_smb_info', None) or CopyFileSmbInfo()
-        copy_file_smb_info.file_permission_copy_mode = file_permission_copy_mode
-
+        kwargs.update(get_smb_properties(kwargs))
         try:
             return await self._client.file.start_copy(
                 source_url,
-                file_permission=file_permission,
-                file_permission_key=file_permission_key,
-                copy_file_smb_info=copy_file_smb_info,
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
                 headers=headers,

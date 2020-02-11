@@ -338,7 +338,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_no_options_for_premium_account_async(self, resource_group, location, storage_account, storage_account_key):
         # TODO: add recordings to this test
@@ -525,7 +525,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
+    @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_share_properties_for_premium_account_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)

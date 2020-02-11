@@ -26,8 +26,7 @@ from azure.storage.fileshare import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode,
-    CopyFileSmbInfo)
+    StorageErrorCode)
 from azure.storage.fileshare._parser import _datetime_to_str
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare.aio import (
@@ -1142,16 +1141,15 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         file_creation_time = "2017-05-10T17:52:33.9551860Z"
         file_attributes = "Temporary|NoScrubData"
-        smb_info = CopyFileSmbInfo(ignore_read_only=True,
-                                   file_attributes=file_attributes,
-                                   file_creation_time=file_creation_time)
 
         # Act
-        copy = await file_client.start_copy_from_url(source_client.url,
-                                                     file_permission=user_given_permission,
-                                                     file_permission_copy_mode="override",
-                                                     copy_file_smb_info=smb_info
-                                                     )
+        copy = await file_client.start_copy_from_url(
+            source_client.url,
+            ignore_read_only=True,
+            file_permission=user_given_permission,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time
+        )
 
         # Assert
         dest_prop = await file_client.get_file_properties()
@@ -1183,8 +1181,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             transport=AiohttpTestTransport())
 
         # Act
-        copy = await file_client.start_copy_from_url(source_client.url,
-                                                     file_permission_copy_mode="source")
+        copy = await file_client.start_copy_from_url(
+            source_client.url,
+            permission_key='source'
+        )
 
         # Assert
         dest_prop = await file_client.get_file_properties()
