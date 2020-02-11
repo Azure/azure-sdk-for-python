@@ -33,6 +33,14 @@ class CustomSearchClient(SDKClient):
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
+    
+    Ex : 
+    from azure.cognitiveservices.search.customsearch import CustomSearchClient
+    from msrest.authentication import CognitiveServicesCredentials
+    
+    sub_key = "your subscription key"
+    client = CustomSearchClient('https://sampleurl.cognitiveservices.azure.com/bingcustomsearch/v7.0', CognitiveServicesCredentials(sub_key)) 
+    
     """
 
     def __init__(
