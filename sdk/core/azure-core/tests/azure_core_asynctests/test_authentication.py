@@ -90,8 +90,29 @@ async def test_bearer_policy_token_caching():
 
 
 @pytest.mark.asyncio
-async def test_bearer_policy_enforces_tls():
-    credential = Mock()
-    pipeline = AsyncPipeline(transport=Mock(), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")])
+async def test_bearer_policy_optionally_enforces_https():
+    """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
+
+    async def assert_option_popped(request, **kwargs):
+        assert "enforce_https" not in kwargs, "AsyncBearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
+
+    get_token = asyncio.Future()
+    get_token.set_result(AccessToken("***", 42))
+    credential = Mock(get_token=lambda *_, **__: get_token)
+    pipeline = AsyncPipeline(
+        transport=Mock(send=assert_option_popped), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")]
+    )
+
+    # by default and when enforce_https=True, the policy should raise when given an insecure request
     with pytest.raises(ServiceRequestError):
         await pipeline.run(HttpRequest("GET", "http://not.secure"))
+    with pytest.raises(ServiceRequestError):
+        await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=True)
+
+    # when enforce_https=False, an insecure request should pass
+    await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+
+    # https requests should always pass
+    await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
+    await pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
+    await pipeline.run(HttpRequest("GET", "https://secure"))

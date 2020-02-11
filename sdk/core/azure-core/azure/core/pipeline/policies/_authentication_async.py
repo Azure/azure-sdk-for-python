@@ -30,7 +30,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
-        self._enforce_tls(request)
+        self._enforce_https(request)
 
         with self._lock:
             if self._need_new_token:
