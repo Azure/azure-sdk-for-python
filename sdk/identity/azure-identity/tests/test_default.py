@@ -11,7 +11,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
 )
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.managed_identity import ImdsCredential, MsiCredential
+from azure.identity._credentials.managed_identity import ImdsCredential, MsiCredential, ManagedIdentityCredential
 from six.moves.urllib_parse import urlparse
 
 from helpers import mock_response, Request, validating_transport
