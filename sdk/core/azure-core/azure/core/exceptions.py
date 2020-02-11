@@ -239,8 +239,8 @@ class HttpResponseError(AzureError):
             # ODataV4 correct format is supposed to start with "error"
             if "error" in odata_json:
                 error_node = odata_json["error"]
-            # In the unlikely scenario where code/message is right here, parse it too (better tham dying)
-            elif "code" in odata_json or "message" in odata_json:
+            # In the unlikely scenario where code/message is right here, parse it too (better than dying)
+            elif odata_json.get("code") or odata_json.get("message"):
                 error_node = odata_json
             # Well, that's sounds far from being any close to ODataV4
             else:
