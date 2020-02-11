@@ -87,6 +87,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.

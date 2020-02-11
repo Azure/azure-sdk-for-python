@@ -72,6 +72,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -134,12 +137,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :type metadata: dict[str, str]
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: 'container', 'blob'.
-        :keyword dict or ~azure.storage.blob.ContainerEncryptionScope container_encryption_scope:
+        :keyword container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
             all future writes.
 
             .. versionadded:: 12.2.0
 
+        :paramtype: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
