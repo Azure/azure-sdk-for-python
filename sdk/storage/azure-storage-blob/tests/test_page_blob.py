@@ -990,6 +990,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_get_page_managed_disk_diff(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)

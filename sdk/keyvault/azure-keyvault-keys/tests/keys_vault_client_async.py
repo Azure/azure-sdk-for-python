@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 from typing import Any, Callable, Mapping, TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
@@ -30,13 +31,16 @@ class VaultClient(AsyncKeyVaultClientBase):
         credential: "TokenCredential",
         transport: HttpTransport = None,
         api_version: str = None,
+        is_live: bool = True,
         **kwargs: Any
     ) -> None:
-        super(VaultClient, self).__init__(
-            vault_url, credential, transport=transport, api_version=api_version, **kwargs
-        )
+        super(VaultClient, self).__init__(vault_url, credential, transport=transport, api_version=api_version, **kwargs)
         self._credential = credential
         self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+        if not is_live:
+            # ensure pollers don't sleep during playback
+            self._keys.delete_key = functools.partial(self._keys.delete_key, _polling_interval=0)
+            self._keys.recover_deleted_key = functools.partial(self._keys.recover_deleted_key, _polling_interval=0)
 
     def get_cryptography_client(self, key):
         return CryptographyClient(key, self._credential)

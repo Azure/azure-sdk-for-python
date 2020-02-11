@@ -5,18 +5,20 @@
 # ------------------------------------
 
 import pytest
+from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 import platform
 from azure.core.exceptions import HttpResponseError
 from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsClient,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    TextAnalyticsApiKeyCredential
 )
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 
 
-class BatchTextAnalyticsTest(TextAnalyticsTest):
+class TestBatchTextAnalytics(TextAnalyticsTest):
 
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
@@ -29,18 +31,39 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_empty_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(TypeError):
+            text_analytics = TextAnalyticsClient(text_analytics_account, "")
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_bad_type_for_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(TypeError):
+            text_analytics = TextAnalyticsClient(text_analytics_account, [])
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_none_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        with self.assertRaises(ValueError):
+            text_analytics = TextAnalyticsClient(text_analytics_account, None)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_bad_input_to_method(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(TypeError):
+            response = text_analytics.detect_language("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_successful_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
                 {"id": "3", "text": "猫は幸せ"},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs, show_stats=True)
+        response = text_analytics.detect_language(docs, show_stats=True)
 
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
@@ -58,14 +81,14 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_some_errors_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
                 {"id": "3", "text": ""},
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
 
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -74,7 +97,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors_detect_language(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         text = ""
         for _ in range(5121):
             text += "x"
@@ -84,14 +107,39 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": ""},
                 {"id": "4", "text": text}]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
 
         for resp in response:
             self.assertTrue(resp.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_language_detection_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.detect_language(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_language_detection_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.detect_language(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_language_detection_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.detect_language(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_recognize_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
@@ -104,14 +152,14 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_some_errors_recognize_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
@@ -124,7 +172,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors_recognize_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
@@ -136,8 +184,33 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_entity_recognition_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_entity_recognition_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_entity_recognition_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.recognize_entities(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_recognize_pii_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": "My SSN is 555-55-5555."},
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
@@ -145,24 +218,24 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
         response = text_analytics.recognize_pii_entities(docs, show_stats=True)
         self.assertEqual(response[0].entities[0].text, "555-55-5555")
-        self.assertEqual(response[0].entities[0].type, "U.S. Social Security Number (SSN)")
+        self.assertEqual(response[0].entities[0].category, "U.S. Social Security Number (SSN)")
         self.assertEqual(response[1].entities[0].text, "111000025")
-        self.assertEqual(response[1].entities[0].type, "ABA Routing Number")
+        # self.assertEqual(response[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
         self.assertEqual(response[2].entities[0].text, "998.214.865-68")
-        self.assertEqual(response[2].entities[0].type, "Brazil CPF Number")
+        self.assertEqual(response[2].entities[0].category, "Brazil CPF Number")
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.type)
+                self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.score)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_some_errors_recognize_pii_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "es", "text": "hola"},
                 {"id": "2", "text": ""},
@@ -175,7 +248,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors_recognize_pii_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "es", "text": "hola"},
                 {"id": "2", "text": ""}]
@@ -185,8 +258,33 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_pii_entity_recognition_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_pii_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_pii_entity_recognition_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_pii_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_pii_entity_recognition_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.recognize_pii_entities(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_recognize_linked_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -206,7 +304,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_some_errors_recognize_linked_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -217,7 +315,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors_recognize_linked_entities(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -227,8 +325,33 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_linked_entity_recognition_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_linked_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_linked_entity_recognition_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.recognize_linked_entities(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_linked_entity_recognition_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.recognize_linked_entities(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_extract_key_phrases(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -243,7 +366,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_some_errors_extract_key_phrases(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
@@ -254,7 +377,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors_extract_key_phrases(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": ""}]
@@ -264,8 +387,33 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_key_phrases_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.extract_key_phrases(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_key_phrases_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.extract_key_phrases(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_key_phrases_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.extract_key_phrases(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_successful_analyze_sentiment(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed it. It was too expensive."},
@@ -278,12 +426,12 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.document_scores)
+            self.assertIsNotNone(doc.sentiment_scores)
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_some_errors_analyze_sentiment(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it. It was too expensive."},
@@ -295,7 +443,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors_analyze_sentiment(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it. It was too expensive."},
@@ -307,8 +455,33 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_analyze_sentiment_empty_credential_class(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(""))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.analyze_sentiment(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_analyze_sentiment_bad_credentials(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential("xxxxxxxxxxxx"))
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.analyze_sentiment(
+                ["This is written in English."]
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_analyze_sentiment_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.analyze_sentiment(
+                inputs=["Microsoft was founded by Bill Gates."],
+                model_version="old"
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_validate_input_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [
             u"I should take my cat to the veterinarian.",
@@ -318,7 +491,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             u""
         ]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -327,7 +500,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_validate_language_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [
             DetectLanguageInput(id="1", text="I should take my cat to the veterinarian."),
@@ -336,7 +509,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
         ]
 
-        response = text_analytics.detect_languages(docs)
+        response = text_analytics.detect_language(docs)
         self.assertEqual(response[0].primary_language.name, "English")
         self.assertEqual(response[1].primary_language.name, "Spanish")
         self.assertEqual(response[2].primary_language.name, "Japanese")
@@ -344,7 +517,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_validate_multilanguage_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
@@ -359,7 +532,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_mixing_inputs(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
@@ -370,7 +543,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_out_of_order_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -385,7 +558,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_show_stats_and_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(response):
             self.assertIsNotNone(response.model_version)
@@ -410,15 +583,15 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
-            response = text_analytics.detect_languages(docs)
+            response = text_analytics.detect_language(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -431,11 +604,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -448,11 +621,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_per_item_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"\""
@@ -467,11 +640,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -484,11 +657,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -499,11 +672,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -519,11 +692,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.detect_languages(docs, country_hint="US", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -537,11 +710,11 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"fr\""
@@ -558,7 +731,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -575,7 +748,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_per_item_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"\""
@@ -594,7 +767,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"de\""
@@ -611,7 +784,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -626,7 +799,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -646,7 +819,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -665,7 +838,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_bad_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = "This is the wrong type"
 
@@ -674,7 +847,7 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_client_passed_default_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key, default_country_hint="CA")
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="CA")
 
         def callback(resp):
             country_str = "\"countryHint\": \"CA\""
@@ -690,13 +863,13 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_languages(docs, response_hook=callback)
-        response = text_analytics.detect_languages(docs, country_hint="DE", response_hook=callback_2)
-        response = text_analytics.detect_languages(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="DE", response_hook=callback_2)
+        response = text_analytics.detect_language(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_client_passed_default_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key, default_language="es")
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_language="es")
 
         def callback(resp):
             language_str = "\"language\": \"es\""
@@ -717,8 +890,28 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        credential = TextAnalyticsApiKeyCredential(text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, credential)
+
+        docs = [{"id": "1", "text": "I will go to the park."},
+                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": "The restaurant had really good food."}]
+
+        response = text_analytics.analyze_sentiment(docs)
+        self.assertIsNotNone(response)
+
+        credential.update_key("xxx")  # Make authentication fail
+        with self.assertRaises(ClientAuthenticationError):
+            response = text_analytics.analyze_sentiment(docs)
+
+        credential.update_key(text_analytics_account_key)  # Authenticate successfully again
+        response = text_analytics.analyze_sentiment(docs)
+        self.assertIsNotNone(response)
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_user_agent(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, text_analytics_account_key)
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(resp):
             self.assertIn("azsdk-python-azure-ai-textanalytics/{} Python/{} ({})".format(
@@ -731,3 +924,94 @@ class BatchTextAnalyticsTest(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_document_attribute_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        docs = [{"id": "1", "text": ""}]
+        response = text_analytics.analyze_sentiment(docs)
+
+        # Attributes on DocumentError
+        self.assertTrue(response[0].is_error)
+        self.assertEqual(response[0].id, "1")
+        self.assertIsNotNone(response[0].error)
+
+        # Result attribute not on DocumentError, custom error message
+        try:
+            sentiment = response[0].sentiment
+        except AttributeError as custom_error:
+            self.assertEqual(
+                custom_error.args[0],
+                '\'DocumentError\' object has no attribute \'sentiment\'. '
+                'The service was unable to process this document:\nDocument Id: 1\nError: '
+                'invalidDocument - Document text is empty.\n'
+            )
+
+        # Attribute not found on DocumentError or result obj, default behavior/message
+        try:
+            sentiment = response[0].attribute_not_on_result_or_error
+        except AttributeError as default_behavior:
+            self.assertEqual(
+                default_behavior.args[0],
+                '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_text_analytics_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+        text = ""
+        for _ in range(5121):
+            text += "x"
+
+        docs = [{"id": "1", "text": ""},
+                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "text": text}]
+
+        # Bad model version
+        try:
+            result = text_analytics.analyze_sentiment(docs, model_version="bad")
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidRequest")
+            self.assertIsNotNone(err.message)
+
+        # DocumentErrors
+        doc_errors = text_analytics.analyze_sentiment(docs)
+        self.assertEqual(doc_errors[0].error.code, "invalidDocument")
+        self.assertIsNotNone(doc_errors[0].error.message)
+        self.assertEqual(doc_errors[1].error.code, "unsupportedLanguageCode")
+        self.assertIsNotNone(doc_errors[1].error.message)
+        self.assertEqual(doc_errors[2].error.code, "invalidDocument")
+        self.assertIsNotNone(doc_errors[2].error.message)
+
+        # Missing input records
+        docs = []
+        try:
+            result = text_analytics.analyze_sentiment(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "MissingInputRecords")
+            self.assertIsNotNone(err.message)
+
+        # Duplicate Ids
+        docs = [{"id": "1", "text": "hello world"},
+                {"id": "1", "text": "I did not like the hotel we stayed it."}]
+        try:
+            result = text_analytics.analyze_sentiment(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidDocument")
+            self.assertIsNotNone(err.message)
+
+        # Batch size over limit
+        docs = [u"hello world"] * 1001
+        try:
+            response = text_analytics.detect_language(docs)
+        except HttpResponseError as err:
+            self.assertEqual(err.error_code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.message)
+
+        # Service bug returns invalidDocument here. Uncomment after v3.0-preview.2
+        # docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
+        #
+        # response = text_analytics.detect_language(docs)
+        # self.assertEqual(response[0].error.code, "invalidCountryHint")
+        # self.assertIsNotNone(response[0].error.message)

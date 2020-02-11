@@ -478,6 +478,90 @@ class PolicyAssignmentsOperations(object):
         return deserialized
     list_for_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyAssignments'}
 
+    def list_for_management_group(
+            self, management_group_id, filter, custom_headers=None, raw=False, **operation_config):
+        """Retrieves all policy assignments that apply to a management group.
+
+        This operation retrieves the list of all policy assignments applicable
+        to the management group that match the given $filter. Valid values for
+        $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. If
+        $filter=atScope() is provided, the returned list includes all policy
+        assignments that are assigned to the management group or the management
+        group's ancestors. If $filter=policyDefinitionId eq '{value}' is
+        provided, the returned list includes all policy assignments of the
+        policy definition whose id is {value} that apply to the management
+        group.
+
+        :param management_group_id: The ID of the management group.
+        :type management_group_id: str
+        :param filter: The filter to apply on the operation. Valid values for
+         $filter are: 'atScope()' or 'policyDefinitionId eq '{value}''. A
+         filter is required when listing policy assignments at management group
+         scope.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of PolicyAssignment
+        :rtype:
+         ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignmentPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicyAssignment]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_for_management_group.metadata['url']
+                path_format_arguments = {
+                    'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.PolicyAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_for_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyAssignments'}
+
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves all policy assignments that apply to a subscription.

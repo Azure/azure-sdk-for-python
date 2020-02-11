@@ -438,12 +438,19 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
+
+    :param response_encoding: The encoding to use if known for this service (will disable auto-detection)
+    :type response_encoding: str
     """
     # Accept "text" because we're open minded people...
     JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
 
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
+
+    def __init__(self, response_encoding=None, **kwargs):  # pylint: disable=unused-argument
+        # type: (Optional[str], Any) -> None
+        self._response_encoding = response_encoding
 
     @classmethod
     def deserialize_from_text(
@@ -478,7 +485,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             data_as_str = cast(str, data)
 
         if mime_type is None:
-            return data
+            return data_as_str
 
         if cls.JSON_REGEXP.match(mime_type):
             try:
@@ -513,18 +520,22 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise_with_traceback(DecodeError, message="XML is invalid", response=response)
+        elif mime_type.startswith("text/"):
+            return data_as_str
         raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
 
     @classmethod
     def deserialize_from_http_generics(
         cls,  # type: Type[ContentDecodePolicyType]
-        response  # Union[HttpResponse, AsyncHttpResponse]
+        response,  # Union[HttpResponse, AsyncHttpResponse]
+        encoding=None,  # Optional[str]
     ):
         """Deserialize from HTTP response.
 
         Headers will tested for "content-type"
 
         :param response: The HTTP response
+        :param encoding: The encoding to use if known for this service (will disable auto-detection)
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict or XML tree, depending of the mime-type
         """
@@ -538,7 +549,15 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         else:
             mime_type = "application/json"
 
-        return cls.deserialize_from_text(response.text(), mime_type, response=response)
+        # Rely on transport implementation to give me "text()" decoded correctly
+        return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        options = request.context.options
+        response_encoding = options.pop("response_encoding", self._response_encoding)
+        if response_encoding:
+            request.context["response_encoding"] = response_encoding
 
     def on_response(self,
         request, # type: PipelineRequest[HTTPRequestType]
@@ -565,7 +584,12 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if response.context.options.get("stream", True):
             return
 
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
+        response_encoding = request.context.get('response_encoding')
+
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
+            response.http_response,
+            response_encoding
+        )
 
 
 class ProxyPolicy(SansIOHTTPPolicy):

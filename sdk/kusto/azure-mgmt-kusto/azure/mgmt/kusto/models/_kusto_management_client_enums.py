@@ -78,7 +78,7 @@ class PrincipalsModificationKind(str, Enum):
     none = "None"
 
 
-class DataFormat(str, Enum):
+class EventHubDataFormat(str, Enum):
 
     multijson = "MULTIJSON"
     json = "JSON"
@@ -92,6 +92,50 @@ class DataFormat(str, Enum):
     singlejson = "SINGLEJSON"
     avro = "AVRO"
     tsve = "TSVE"
+    parquet = "PARQUET"
+    orc = "ORC"
+
+
+class Compression(str, Enum):
+
+    none = "None"
+    gzip = "GZip"
+
+
+class IotHubDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+    parquet = "PARQUET"
+    orc = "ORC"
+
+
+class EventGridDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+    parquet = "PARQUET"
+    orc = "ORC"
 
 
 class IdentityType(str, Enum):
@@ -115,6 +159,19 @@ class DatabasePrincipalType(str, Enum):
     app = "App"
     group = "Group"
     user = "User"
+
+
+class PrincipalType(str, Enum):
+
+    app = "App"
+    group = "Group"
+    user = "User"
+
+
+class ClusterPrincipalRole(str, Enum):
+
+    all_databases_admin = "AllDatabasesAdmin"
+    all_databases_viewer = "AllDatabasesViewer"
 
 
 class Type(str, Enum):
