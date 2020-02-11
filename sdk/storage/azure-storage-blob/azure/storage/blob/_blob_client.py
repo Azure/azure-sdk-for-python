@@ -2095,7 +2095,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """Returns the list of valid page ranges for a managed disk or snapshot.
 
-        This operation was introduced in API version 2019-07-07.
+        .. note::
+            This operation is only available for managed disk accounts.
+
+        .. versionadded:: 12.2.0
+            This operation was introduced in API version '2019-07-07'.
 
         :param previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
@@ -2405,7 +2409,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+                This parameter was introduced in API version '2019-07-07'.
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:

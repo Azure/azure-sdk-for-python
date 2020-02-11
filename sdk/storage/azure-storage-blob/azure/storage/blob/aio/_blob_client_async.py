@@ -1376,7 +1376,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
         """Returns the list of valid page ranges for a managed disk or snapshot.
 
-        This operation was introduced in API version 2019-07-07.
+        .. note::
+            This operation is only available for managed disk accounts.
+
+        .. versionadded:: 12.2.0
+            This operation was introduced in API version '2019-07-07'.
 
         :param previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
@@ -1434,7 +1438,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
-    
+
     @distributed_trace_async
     async def set_sequence_number( # type: ignore
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
