@@ -29,8 +29,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 import pkginfo
-from pypi_tools.pypi import PyPIClient
-from pip._internal.operations import freeze
+
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
@@ -380,13 +379,13 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
     return new_dev_req_path
 
 def is_required_version_on_pypi(package_name, spec):
+    from pypi_tools.pypi import PyPIClient
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
     return versions
 
 def find_packages_missing_on_pypi(path):
     requires = []
-    client = PyPIClient()
     if path.endswith(".whl"):
         requires = list(filter(lambda_filter_azure_pkg, pkginfo.get_metadata(path).requires_dist))
     else:
