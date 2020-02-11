@@ -67,14 +67,25 @@ def get_release_tag(dep_pkg_name, isLatest):
 
 
 # This method checkouts a given tag of sdk repo
-def checkout_code_repo(tag_name, working_dir):
+def git_checkout_tag(tag_name, working_dir):
     # fetch tags
-    run_check_call(["git", "fetch", "--all", "--tags"], working_dir)
+    run_check_call(["git", "fetch", "origin", "tag", tag_name], working_dir)
 
     logging.info("checkout git repo with tag {}".format(tag_name))
     commands = ["git", "checkout", "tags/{}".format(tag_name)]
     run_check_call(commands, working_dir)
     logging.info("Code with tag {} is checked out successfully".format(tag_name))
+
+
+# This method checkouts a given tag of sdk repo
+def git_checkout_branch(branch_name, working_dir):
+    # fetch tags
+    run_check_call(["git", "fetch", "origin", branch_name], working_dir)
+    run_check_call(["git", "branch", branch_name, "FETCH_HEAD"], working_dir)
+    logging.info("checkout git repo with branch {}".format(branch_name))
+    commands = ["git", "checkout", branch_name]
+    run_check_call(commands, working_dir)
+    logging.info("Repo with branch name {} is checked out successfully".format(branch_name))
 
 
 def clone_repo(dest_dir, repo_url):

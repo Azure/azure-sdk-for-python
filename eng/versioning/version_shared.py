@@ -119,7 +119,7 @@ def set_dev_classifier(setup_py_location, version):
 
 def update_change_log(setup_py_location, version, is_unreleased, replace_version):
     script = os.path.join(root_dir, "eng", "common", "Update-Change-Log.ps1")
-    pkg_root = os.path.join(setup_py_location, "..")
+    pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))
     commands = [
         "pwsh",
         script,
