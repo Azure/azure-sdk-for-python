@@ -96,12 +96,12 @@ def test_exclude_options():
     # with no environment variables set, ManagedIdentityCredential = ImdsCredential
     with patch("os.environ", {}):
         credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ImdsCredential, MsiCredential)
+        assert_credentials_not_present(credential, ManagedIdentityCredential)
 
     # with $MSI_ENDPOINT set, ManagedIdentityCredential = MsiCredential
     with patch("os.environ", {"MSI_ENDPOINT": "spam"}):
         credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ImdsCredential, MsiCredential)
+        assert_credentials_not_present(credential, ManagedIdentityCredential)
 
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
