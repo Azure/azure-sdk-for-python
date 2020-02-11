@@ -12,18 +12,22 @@ import re
 import sys
 import textwrap
 
+# Todo: This should use a common omit logic once ci scripts are refactored into ci_tools
 skip_pkgs = [
     'azure-mgmt-documentdb',         # deprecated
     'azure-sdk-for-python',          # top-level package
     'azure-sdk-tools',               # internal tooling for automation
-    'azure-servicemanagement-legacy' # legacy (not officially deprecated)
+    'azure-servicemanagement-legacy', # legacy (not officially deprecated)
+    'azure-common',
+    'azure',
+    'azure-keyvault'
 ]
 
 def report_should_skip_lib(lib_name):
     return lib_name in skip_pkgs or lib_name.endswith('-nspkg')
 
 def dump_should_skip_lib(lib_name):
-    return lib_name in skip_pkgs or '-mgmt' in lib_name
+    return report_should_skip_lib(lib_name) or '-mgmt' in lib_name or not lib_name.startswith('azure')
 
 def locate_libs(base_dir):
     packages = [os.path.dirname(p) for p in (glob.glob(os.path.join(base_dir, 'azure*', 'setup.py')) + glob.glob(os.path.join(base_dir, 'sdk/*/azure*', 'setup.py')))]
@@ -166,16 +170,27 @@ def render_report(output_path, report_context):
     with io.open(output_path, 'w', encoding='utf-8') as output:
         output.write(template.render(report_context))
 
+def get_dependent_packages(data_pkgs):
+    # Get unique set of Azure SDK packages that are added as required package
+    deps = []
+    for v in data_pkgs.values():
+        deps.extend([dep['name'] for dep in v['deps'] if not dump_should_skip_lib(dep['name'])])
+    return set(deps)
+
 def dump_packages(data_pkgs):
     dump_data = {}
+    unique_dependent_packages = get_dependent_packages(data_pkgs)
     for p_name, p_data in data_pkgs.items():
         p_id = p_name + ':' + p_data['version']
-        dump_data[p_id] = {
-            'name': p_name,
-            'version': p_data['version'],
-            'type': 'internal',
-            'deps': p_data['deps']
-        }
+        dep = [p for p in p_data['deps'] if not dump_should_skip_lib(p['name'])]
+        # Add package if it requires other azure sdk package or if it is added as required by other sdk package
+        if len(dep) > 0 or p_name in unique_dependent_packages:
+            dump_data[p_id] = {
+                'name': p_name,
+                'version': p_data['version'],
+                'type': 'internal',
+                'deps': dep
+            }
 
     return dump_data
 

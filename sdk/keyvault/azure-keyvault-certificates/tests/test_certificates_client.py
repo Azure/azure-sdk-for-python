@@ -327,7 +327,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_recover_and_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -481,7 +481,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(client.get_certificate_operation(certificate_name=cert_name).csr, pending_version_csr)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         policy = CertificatePolicy.get_default()

@@ -163,7 +163,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_key_crud_operations(self, vault_client, **kwargs):
@@ -266,7 +266,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_list_deleted_keys(self, vault_client, **kwargs):
@@ -299,7 +299,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
@@ -325,7 +325,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_recover(self, vault_client, **kwargs):
@@ -357,7 +357,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_purge(self, vault_client, **kwargs):

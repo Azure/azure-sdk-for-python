@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-from azure.core.exceptions import ClientAuthenticationError
+from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
 from .._internal import AadClient, wrap_exceptions
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
@@ -45,13 +44,15 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises:
-            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
-            can be acquired from it
+        :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
+            information
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
 
         if not self._client:
-            raise ClientAuthenticationError(message="Shared token cache unavailable")
+            raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         account = self._get_account(self._username, self._tenant_id)
 
@@ -60,7 +61,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             token = self._client.obtain_token_by_refresh_token(refresh_token, scopes)
             return token
 
-        raise ClientAuthenticationError(message=NO_TOKEN.format(account.get("username")))
+        raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase

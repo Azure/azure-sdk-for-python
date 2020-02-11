@@ -123,6 +123,13 @@ class GeoReplicationStatus(str, Enum):
     unavailable = "Unavailable"
 
 
+class BlobRestoreProgressStatus(str, Enum):
+
+    in_progress = "InProgress"
+    complete = "Complete"
+    failed = "Failed"
+
+
 class ProvisioningState(str, Enum):
 
     creating = "Creating"
@@ -252,6 +259,7 @@ class ImmutabilityPolicyUpdateType(str, Enum):
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"
+    blob_restore_status = "blobRestoreStatus"
 
 
 class ListKeyExpand(str, Enum):

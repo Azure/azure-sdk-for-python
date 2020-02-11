@@ -227,7 +227,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            ContentDecodePolicy(),
+            ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,

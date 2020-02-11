@@ -340,6 +340,105 @@ class BlobContainer(AzureEntityResource):
         self.has_immutability_policy = None
 
 
+class BlobRestoreParameters(Model):
+    """Blob restore parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_to_restore: Required. Restore blob to the specified time.
+    :type time_to_restore: datetime
+    :param blob_ranges: Required. Blob ranges to restore.
+    :type blob_ranges:
+     list[~azure.mgmt.storage.v2019_06_01.models.BlobRestoreRange]
+    """
+
+    _validation = {
+        'time_to_restore': {'required': True},
+        'blob_ranges': {'required': True},
+    }
+
+    _attribute_map = {
+        'time_to_restore': {'key': 'timeToRestore', 'type': 'iso-8601'},
+        'blob_ranges': {'key': 'blobRanges', 'type': '[BlobRestoreRange]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BlobRestoreParameters, self).__init__(**kwargs)
+        self.time_to_restore = kwargs.get('time_to_restore', None)
+        self.blob_ranges = kwargs.get('blob_ranges', None)
+
+
+class BlobRestoreRange(Model):
+    """Blob range.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_range: Required. Blob start range. Empty means account start.
+    :type start_range: str
+    :param end_range: Required. Blob end range. Empty means account end.
+    :type end_range: str
+    """
+
+    _validation = {
+        'start_range': {'required': True},
+        'end_range': {'required': True},
+    }
+
+    _attribute_map = {
+        'start_range': {'key': 'startRange', 'type': 'str'},
+        'end_range': {'key': 'endRange', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BlobRestoreRange, self).__init__(**kwargs)
+        self.start_range = kwargs.get('start_range', None)
+        self.end_range = kwargs.get('end_range', None)
+
+
+class BlobRestoreStatus(Model):
+    """Blob restore status.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: The status of blob restore progress. Possible values are: -
+     InProgress: Indicates that blob restore is ongoing. - Complete: Indicates
+     that blob restore has been completed successfully. - Failed: Indicates
+     that blob restore is failed. Possible values include: 'InProgress',
+     'Complete', 'Failed'
+    :vartype status: str or
+     ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreProgressStatus
+    :ivar failure_reason: Failure reason when blob restore is failed.
+    :vartype failure_reason: str
+    :ivar restore_id: Id for tracking blob restore request.
+    :vartype restore_id: str
+    :ivar parameters: Blob restore request parameters.
+    :vartype parameters:
+     ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreParameters
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'failure_reason': {'readonly': True},
+        'restore_id': {'readonly': True},
+        'parameters': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'restore_id': {'key': 'restoreId', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'BlobRestoreParameters'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BlobRestoreStatus, self).__init__(**kwargs)
+        self.status = None
+        self.failure_reason = None
+        self.restore_id = None
+        self.parameters = None
+
+
 class BlobServiceProperties(Resource):
     """The properties of a storage account’s Blob service.
 
@@ -373,6 +472,10 @@ class BlobServiceProperties(Resource):
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
+    :param restore_policy: The blob service properties for blob restore
+     policy.
+    :type restore_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.RestorePolicyProperties
     :ivar sku: Sku name and tier.
     :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     """
@@ -393,6 +496,7 @@ class BlobServiceProperties(Resource):
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
+        'restore_policy': {'key': 'properties.restorePolicy', 'type': 'RestorePolicyProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
@@ -403,6 +507,7 @@ class BlobServiceProperties(Resource):
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
         self.change_feed = kwargs.get('change_feed', None)
+        self.restore_policy = kwargs.get('restore_policy', None)
         self.sku = None
 
 
@@ -2204,6 +2309,34 @@ class ProxyResource(Resource):
         super(ProxyResource, self).__init__(**kwargs)
 
 
+class RestorePolicyProperties(Model):
+    """The blob service properties for blob restore policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Blob restore is enabled if set to true.
+    :type enabled: bool
+    :param days: how long this blob can be restored. It should be great than
+     zero and less than DeleteRetentionPolicy.days.
+    :type days: int
+    """
+
+    _validation = {
+        'enabled': {'required': True},
+        'days': {'maximum': 365, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'days': {'key': 'days', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RestorePolicyProperties, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.days = kwargs.get('days', None)
+
+
 class Restriction(Model):
     """The restriction because of which SKU cannot be used.
 
@@ -2679,6 +2812,9 @@ class StorageAccount(TrackedResource):
      choice opted by the user for data transfer
     :type routing_preference:
      ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
+    :ivar blob_restore_status: Blob restore status
+    :vartype blob_restore_status:
+     ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreStatus
     """
 
     _validation = {
@@ -2704,6 +2840,7 @@ class StorageAccount(TrackedResource):
         'geo_replication_stats': {'readonly': True},
         'failover_in_progress': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'blob_restore_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2736,6 +2873,7 @@ class StorageAccount(TrackedResource):
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
+        'blob_restore_status': {'key': 'properties.blobRestoreStatus', 'type': 'BlobRestoreStatus'},
     }
 
     def __init__(self, **kwargs):
@@ -2764,6 +2902,7 @@ class StorageAccount(TrackedResource):
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.private_endpoint_connections = None
         self.routing_preference = kwargs.get('routing_preference', None)
+        self.blob_restore_status = None
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):

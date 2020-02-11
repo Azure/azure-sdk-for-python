@@ -13,11 +13,16 @@ steps:
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
     displayName: 'Verify Readmes'
 
+  - pwsh: |
+      mkdir "$(Build.ArtifactStagingDirectory)/reports"
+      Copy-Item -Path "$(Build.SourcesDirectory)/eng/common/InterdependencyGraph.html" -Destination "$(Build.ArtifactStagingDirectory)/reports/InterdependencyGraph.html"
+    displayName: 'Populate Reports Staging Folder'
+
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
     inputs:
      scriptPath: 'scripts/analyze_deps.py'
-     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports/data.js"'
 
   - task: PythonScript@0
     displayName: 'Verify Change Log'
@@ -50,6 +55,7 @@ steps:
     displayName: 'Publish Report Artifacts'
     inputs:
      artifactName: reports
+     pathtoPublish: $(Build.ArtifactStagingDirectory)/reports
 
   - task: PythonScript@0
     displayName: 'Verify sdist'

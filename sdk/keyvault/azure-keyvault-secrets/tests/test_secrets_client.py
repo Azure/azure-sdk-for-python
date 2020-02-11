@@ -187,7 +187,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_list_deleted_secrets(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -214,7 +214,7 @@ class SecretClientTests(KeyVaultTestCase):
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=False)
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -237,7 +237,7 @@ class SecretClientTests(KeyVaultTestCase):
         self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -269,7 +269,7 @@ class SecretClientTests(KeyVaultTestCase):
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     @VaultClientPreparer()
     def test_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)

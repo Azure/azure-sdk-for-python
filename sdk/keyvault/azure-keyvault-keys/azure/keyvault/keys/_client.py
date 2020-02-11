@@ -93,6 +93,7 @@ class KeyClient(KeyVaultClientBase):
             key_size=kwargs.pop("size", None),
             key_attributes=attributes,
             key_ops=kwargs.pop("key_operations", None),
+            error_map=_error_map,
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -205,7 +206,7 @@ class KeyClient(KeyVaultClientBase):
             initial_status="deleting",
             finished_status="deleted",
             sd_disabled=sd_disabled,
-            interval=polling_interval
+            interval=polling_interval,
         )
         return KeyVaultOperationPoller(delete_key_polling_method)
 
@@ -230,9 +231,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(
-            self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs
-        )
+        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -280,6 +279,7 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs
         )
 
@@ -303,6 +303,7 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs
         )
 
@@ -328,6 +329,7 @@ class KeyClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
+            error_map=_error_map,
             **kwargs
         )
 
@@ -357,7 +359,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
+        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_key(self, name, **kwargs):
@@ -390,7 +392,9 @@ class KeyClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_key = KeyVaultKey._from_key_bundle(
-            self._client.recover_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
+            self._client.recover_deleted_key(
+                vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs
+            )
         )
         command = partial(self.get_key, name=name, **kwargs)
         recover_key_polling_method = RecoverDeletedPollingMethod(
@@ -398,7 +402,7 @@ class KeyClient(KeyVaultClientBase):
             final_resource=recovered_key,
             initial_status="recovering",
             finished_status="recovered",
-            interval=polling_interval
+            interval=polling_interval,
         )
         return KeyVaultOperationPoller(recover_key_polling_method)
 
@@ -534,6 +538,7 @@ class KeyClient(KeyVaultClientBase):
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
+            error_map=_error_map,
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)

@@ -78,6 +78,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             raise ValueError("Invalid URL: {}".format(account_url))
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
+        self._blob_account_url = blob_account_url
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
 
         _, sas_token = parse_query(parsed_url.query)
