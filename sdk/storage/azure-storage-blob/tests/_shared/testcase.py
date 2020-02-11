@@ -96,10 +96,10 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
         else:
             name = "storagename"
             storage_account.name = name
-            storage_account.primary_endpoints.blob = 'http://{}.{}.core.windows.net'.format(name, 'blob')
-            storage_account.primary_endpoints.queue = 'http://{}.{}.core.windows.net'.format(name, 'queue')
-            storage_account.primary_endpoints.table = 'http://{}.{}.core.windows.net'.format(name, 'table')
-            storage_account.primary_endpoints.file = 'http://{}.{}.core.windows.net'.format(name, 'file')
+            storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')
+            storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(name, 'queue')
+            storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
+            storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
 
         return {
             'location': 'westus',
@@ -415,10 +415,10 @@ def storage_account():
                     storage_account.name = storage_name
                     storage_account.id = storage_name
                     storage_account.primary_endpoints=Endpoints()
-                    storage_account.primary_endpoints.blob = 'http://{}.{}.core.windows.net'.format(storage_name, 'blob')
-                    storage_account.primary_endpoints.queue = 'http://{}.{}.core.windows.net'.format(storage_name, 'queue')
-                    storage_account.primary_endpoints.table = 'http://{}.{}.core.windows.net'.format(storage_name, 'table')
-                    storage_account.primary_endpoints.file = 'http://{}.{}.core.windows.net'.format(storage_name, 'file')
+                    storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
+                    storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
+                    storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
+                    storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
                     storage_key = existing_storage_key
 
                 if not storage_connection_string:

@@ -4,6 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from time import sleep
+
 import pytest
 import unittest
 from datetime import datetime, timedelta
@@ -322,6 +324,7 @@ class DirectoryTest(StorageTestCase):
         destination_file_system_name = "destfilesystem"
         destination_dir_name = "destdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
+        sleep(30)
         fs_client.create_file_system()
         destination_directory_client = fs_client.create_directory(destination_dir_name)
 
