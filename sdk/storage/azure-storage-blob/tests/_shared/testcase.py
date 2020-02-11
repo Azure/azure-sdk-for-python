@@ -96,10 +96,10 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
         else:
             name = "storagename"
             storage_account.name = name
-            storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')
-            storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(name, 'queue')
-            storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
-            storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(name, 'file')
+            storage_account.primary_endpoints.blob = 'http://{}.{}.core.windows.net'.format(name, 'blob')
+            storage_account.primary_endpoints.queue = 'http://{}.{}.core.windows.net'.format(name, 'queue')
+            storage_account.primary_endpoints.table = 'http://{}.{}.core.windows.net'.format(name, 'table')
+            storage_account.primary_endpoints.file = 'http://{}.{}.core.windows.net'.format(name, 'file')
 
         return {
             'location': 'westus',
@@ -140,6 +140,9 @@ class StorageTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
+        self.logger = logging.getLogger('azure.storage')
+        # enable logging if desired
+        self.configure_logging()
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
@@ -174,7 +177,7 @@ class StorageTestCase(AzureMgmtTestCase):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = True
         self.logger.disabled = False
 
@@ -412,10 +415,10 @@ def storage_account():
                     storage_account.name = storage_name
                     storage_account.id = storage_name
                     storage_account.primary_endpoints=Endpoints()
-                    storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
-                    storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
-                    storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
-                    storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
+                    storage_account.primary_endpoints.blob = 'http://{}.{}.core.windows.net'.format(storage_name, 'blob')
+                    storage_account.primary_endpoints.queue = 'http://{}.{}.core.windows.net'.format(storage_name, 'queue')
+                    storage_account.primary_endpoints.table = 'http://{}.{}.core.windows.net'.format(storage_name, 'table')
+                    storage_account.primary_endpoints.file = 'http://{}.{}.core.windows.net'.format(storage_name, 'file')
                     storage_key = existing_storage_key
 
                 if not storage_connection_string:
@@ -468,12 +471,6 @@ def storage_account():
             StorageTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
             yield
         finally:
-            if not got_storage_info_from_env:
-                storage_preparer.remove_resource(
-                    storage_name,
-                    resource_group=rg
-                )
+            pass
     finally:
-        if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
-        StorageTestCase._RESOURCE_GROUP = None
+        pass
