@@ -28,9 +28,11 @@ pip install azure-ai-textanalytics --pre
 Text Analytics supports both [multi-service and single-service access](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows). 
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
 
-You can create either resource using the
-[Azure Portal](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#create-a-new-azure-cognitive-services-resource)
-or [Azure CLI](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows).
+You can create the resource using
+
+**Option 1:** [Azure Portal](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics)
+
+**Option 2:** [Azure CLI](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows).
 Below is an example of how you can create a Text Analytics resource using the CLI:
 
 ```bash
@@ -152,11 +154,18 @@ inputs = [
 ]
 ```
 
-### Operation Result
-An operation result, such as [AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), 
+See [service limitations](https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits) for the input, including document length limits, maximum batch size, and supported text encoding.
+
+### Return Value
+The return value for a single document can be a result or error object. 
+A heterogeneous list containing a collection of result and error objects is returned from each operation. 
+These results/errors are index-matched with the order of the provided documents. 
+
+A **result**, such as [AnalyzeSentimentResult](https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult), 
 is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
-With a batching operation, a heterogeneous list is returned containing a collection of result and error objects. 
-These results/errors will be index-matched with the order of the provided documents. 
+
+The **error** object, [DocumentError](https://aka.ms/azsdk-python-textanalytics-documenterro), indicates that the service had trouble processing the document and contains 
+the reason it was unsuccessful.
 
 ### Document Error Handling
 You can filter for a result or error object in the list by using the `is_error` attribute. For a result object this is always `False` and for a 

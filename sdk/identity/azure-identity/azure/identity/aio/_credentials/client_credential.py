@@ -45,7 +45,9 @@ class ClientSecretCredential(ClientSecretCredentialBase, AsyncCredentialBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -85,7 +87,9 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          ``response`` attribute.
         """
         token = self._client.get_cached_token(scopes)
         if not token:

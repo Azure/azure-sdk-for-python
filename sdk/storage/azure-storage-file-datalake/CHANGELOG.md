@@ -1,6 +1,8 @@
 # Release History
 
 ## 12.0.0b7 (Unreleased)
+**New Feature**
+- Async APIs are supported.
 
 **Fixes**
 - Responses are always decoded as UTF8

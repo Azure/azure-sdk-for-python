@@ -1,12 +1,14 @@
 # Release History
 
-## 1.2.1b1 (Unreleased)
+## 1.3.0 (2020-02-11)
 
 - Correctly parse token expiration time on Windows App Service
 ([#9393](https://github.com/Azure/azure-sdk-for-python/issues/9393))
 - Credentials raise `CredentialUnavailableError` when they can't attempt to
 authenticate due to missing data or state
 ([#9372](https://github.com/Azure/azure-sdk-for-python/pull/9372))
+- `CertificateCredential` supports password-protected private keys
+([#9434](https://github.com/Azure/azure-sdk-for-python/pull/9434))
 
 
 ## 1.2.0 (2020-01-14)
@@ -15,8 +17,6 @@ authenticate due to missing data or state
 ([#8945](https://github.com/Azure/azure-sdk-for-python/pull/8945))
 - Async credentials are async context managers and have an async `close` method
 ([#9090](https://github.com/Azure/azure-sdk-for-python/pull/9090))
-- `CertificateCredential` supports password-protected private keys
-([#9434](https://github.com/Azure/azure-sdk-for-python/pull/9434))
 
 
 ## 1.1.0 (2019-11-27)
