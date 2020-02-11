@@ -80,8 +80,7 @@ def git_checkout_tag(tag_name, working_dir):
 # This method checkouts a given tag of sdk repo
 def git_checkout_branch(branch_name, working_dir):
     # fetch tags
-    run_check_call(["git", "fetch", "origin", "'{0}':'{1}'".format(branch_name, branch_name)], working_dir)
-
+    run_check_call(["git", "fetch", "origin", branch_name], working_dir)
     logging.info("checkout git repo with branch {}".format(branch_name))
     commands = ["git", "checkout", branch_name]
     run_check_call(commands, working_dir)
