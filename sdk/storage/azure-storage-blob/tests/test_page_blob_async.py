@@ -1022,6 +1022,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_managed_disk_diff(self, resource_group, location, storage_account, storage_account_key):
