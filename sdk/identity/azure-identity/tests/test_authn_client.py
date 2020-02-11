@@ -30,14 +30,14 @@ def test_authn_client_deserialization():
     mock_send = Mock(return_value=mock_response)
 
     # response with expires_on only
-    mock_response.text = lambda: json.dumps(
+    mock_response.text = lambda encoding=None : json.dumps(
         {"access_token": access_token, "expires_on": expires_on, "token_type": "Bearer", "resource": scope}
     )
     token = AuthnClient(endpoint="http://foo", transport=Mock(send=mock_send)).request_token(scope)
     assert token == expected_access_token
 
     # response with expires_on only and it's a datetime string (App Service MSI)
-    mock_response.text = lambda: json.dumps(
+    mock_response.text = lambda encoding=None: json.dumps(
         {
             "access_token": access_token,
             "expires_on": "01/01/1970 00:00:{} +00:00".format(now + expires_in),
@@ -49,7 +49,7 @@ def test_authn_client_deserialization():
     assert token == expected_access_token
 
     # response with string expires_in and expires_on (IMDS, Cloud Shell)
-    mock_response.text = lambda: json.dumps(
+    mock_response.text = lambda encoding=None: json.dumps(
         {
             "access_token": access_token,
             "expires_in": str(expires_in),
@@ -62,7 +62,7 @@ def test_authn_client_deserialization():
     assert token == expected_access_token
 
     # response with int expires_in (AAD)
-    mock_response.text = lambda: json.dumps(
+    mock_response.text = lambda encoding=None: json.dumps(
         {"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer", "ext_expires_in": expires_in}
     )
     with patch("azure.identity._authn_client.time.time") as mock_time:
@@ -81,7 +81,7 @@ def test_caching_when_only_expires_in_set():
     expected_token = AccessToken(access_token, expires_on)
 
     mock_response = Mock(
-        text=lambda: json.dumps({"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}),
+        text=lambda encoding=None: json.dumps({"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}),
         headers={"content-type": "application/json"},
         status_code=200,
         content_type="application/json",
@@ -105,7 +105,7 @@ def test_expires_in_strings():
     mock_response = Mock(headers={"content-type": "application/json"}, status_code=200, content_type="application/json")
     mock_send = Mock(return_value=mock_response)
 
-    mock_response.text = lambda: json.dumps(
+    mock_response.text = lambda encoding=None: json.dumps(
         {"access_token": expected_token, "expires_in": "42", "ext_expires_in": "42", "token_type": "Bearer"}
     )
 
@@ -125,7 +125,7 @@ def test_cache_expiry():
     expected_token = AccessToken(access_token, expires_on)
     token_payload = {"access_token": access_token, "expires_in": expires_in, "token_type": "Bearer"}
     mock_response = Mock(
-        text=lambda: json.dumps(token_payload),
+        text=lambda encoding=None: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
         content_type="application/json",
