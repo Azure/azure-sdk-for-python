@@ -17,25 +17,15 @@ The client libraries are supported on Python 2.7 and 3.5.3 or later.
 ## Packages available
 
 Each service might have a number of libraries available from each of the following categories:
-* [Client - November 2019 Releases](#Client-November-2019-Releases)
+* [Client - New Releases](#Client-New-Releases)
 * [Client - Previous Versions](#Client-Previous-Versions)
 * [Management](#Management)
 
-### Client: November 2019 Releases
+### Client: New Releases
 
 New wave of packages that we are announcing as **GA** and several that are currently releasing in **preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](./sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azure.github.io/azure-sdk/python_introduction.html).
 
-The libraries released in the November 2019 GA release:
-- [azure-keyvault-keys](./sdk/keyvault/azure-keyvault-keys)
-- [azure-keyvault-secrets](./sdk/keyvault/azure-keyvault-secrets)
-- [azure-identity](./sdk/identity/azure-identity)
-- [azure-storage-blob](./sdk/storage/azure-storage-blob)
-- [azure-storage-queue](./sdk/storage/azure-storage-queue)
-
-The libraries released in the November 2019 preview:
-- [azure-cosmos](./sdk/cosmos/azure-cosmos)
-- [azure-eventhub](./sdk/eventhub/azure-eventhub)
-- [azure-storage-file-share](./sdk/storage/azure-storage-file-share)
+You can find the [most up to date list of all of the new packages on our page](https://azure.github.io/azure-sdk/releases/latest/index.html#python-packages)
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
