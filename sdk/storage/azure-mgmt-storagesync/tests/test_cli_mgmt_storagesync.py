@@ -45,10 +45,10 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         STORAGE_SYNC_SERVICE_NAME = "ssservicename"
         SYNC_GROUP_NAME = "groupname"
         REGISTERED_SERVER_NAME = "rservicename"
-        STORAGE_ACCOUNT_NAME = "accountname"
+        STORAGE_ACCOUNT_NAME = "accountnamexyz"
         CLOUD_ENDPOINT_NAME = "cendpointname"
         SERVER_ENDPOINT_NAME = "sendpointname"
-
+        LOCATION_NAME = AZURE_LOCATION
 
         # StorageSyncServices_Create[put]
         BODY = {
@@ -57,47 +57,41 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.storage_sync_services.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, BODY)
 
-        """
         # SyncGroups_Create[put]
         BODY = {}
         result = self.mgmt_client.sync_groups.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, BODY)
 
+        """
         # RegisteredServers_Create[put]
         BODY = {
-          "properties": {
-            "server_role": "Standalone",
-            "server_certificate": "\"MIIDFjCCAf6gAwIBAgIQQS+DS8uhc4VNzUkTw7wbRjANBgkqhkiG9w0BAQ0FADAzMTEwLwYDVQQDEyhhbmt1c2hiLXByb2QzLnJlZG1vbmQuY29ycC5taWNyb3NvZnQuY29tMB4XDTE3MDgwMzE3MDQyNFoXDTE4MDgwNDE3MDQyNFowMzExMC8GA1UEAxMoYW5rdXNoYi1wcm9kMy5yZWRtb25kLmNvcnAubWljcm9zb2Z0LmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALDRvV4gmsIy6jGDPiHsXmvgVP749NNP7DopdlbHaNhjFmYINHl0uWylyaZmgJrROt2mnxN/zEyJtGnqYHlzUr4xvGq/qV5pqgdB9tag/sw9i22gfe9PRZ0FmSOZnXMbLYgLiDFqLtut5gHcOuWMj03YnkfoBEKlFBxWbagvW2yxz/Sxi9OVSJOKCaXra0RpcIHrO/KFl6ho2eE1/7Ykmfa8hZvSdoPd5gHdLiQcMB/pxq+mWp1fI6c8vFZoDu7Atn+NXTzYPKUxKzaisF12TsaKpohUsJpbB3Wocb0F5frn614D2pg14ERB5otjAMWw1m65csQWPI6dP8KIYe0+QPkCAwEAAaMmMCQwIgYDVR0lAQH/BBgwFgYIKwYBBQUHAwIGCisGAQQBgjcKAwwwDQYJKoZIhvcNAQENBQADggEBAA4RhVIBkw34M1RwakJgHvtjsOFxF1tVQA941NtLokx1l2Z8+GFQkcG4xpZSt+UN6wLerdCbnNhtkCErWUDeaT0jxk4g71Ofex7iM04crT4iHJr8mi96/XnhnkTUs+GDk12VgdeeNEczMZz+8Mxw9dJ5NCnYgTwO0SzGlclRsDvjzkLo8rh2ZG6n/jKrEyNXXo+hOqhupij0QbRP2Tvexdfw201kgN1jdZify8XzJ8Oi0bTS0KpJf2pNPOlooK2bjMUei9ANtEdXwwfVZGWvVh6tJjdv6k14wWWJ1L7zhA1IIVb1J+sQUzJji5iX0DrezjTz1Fg+gAzITaA/WsuujlM=\"",
-            "last_heart_beat": "\"2017-08-08T18:29:06.470652Z\"",
-            "server_osversion": "10.0.14393.0",
-            "agent_version": "1.0.277.0"
-          }
+          "server_role": "Standalone",
+          "server_certificate": "\"MIIDFjCCAf6gAwIBAgIQQS+DS8uhc4VNzUkTw7wbRjANBgkqhkiG9w0BAQ0FADAzMTEwLwYDVQQDEyhhbmt1c2hiLXByb2QzLnJlZG1vbmQuY29ycC5taWNyb3NvZnQuY29tMB4XDTE3MDgwMzE3MDQyNFoXDTE4MDgwNDE3MDQyNFowMzExMC8GA1UEAxMoYW5rdXNoYi1wcm9kMy5yZWRtb25kLmNvcnAubWljcm9zb2Z0LmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALDRvV4gmsIy6jGDPiHsXmvgVP749NNP7DopdlbHaNhjFmYINHl0uWylyaZmgJrROt2mnxN/zEyJtGnqYHlzUr4xvGq/qV5pqgdB9tag/sw9i22gfe9PRZ0FmSOZnXMbLYgLiDFqLtut5gHcOuWMj03YnkfoBEKlFBxWbagvW2yxz/Sxi9OVSJOKCaXra0RpcIHrO/KFl6ho2eE1/7Ykmfa8hZvSdoPd5gHdLiQcMB/pxq+mWp1fI6c8vFZoDu7Atn+NXTzYPKUxKzaisF12TsaKpohUsJpbB3Wocb0F5frn614D2pg14ERB5otjAMWw1m65csQWPI6dP8KIYe0+QPkCAwEAAaMmMCQwIgYDVR0lAQH/BBgwFgYIKwYBBQUHAwIGCisGAQQBgjcKAwwwDQYJKoZIhvcNAQENBQADggEBAA4RhVIBkw34M1RwakJgHvtjsOFxF1tVQA941NtLokx1l2Z8+GFQkcG4xpZSt+UN6wLerdCbnNhtkCErWUDeaT0jxk4g71Ofex7iM04crT4iHJr8mi96/XnhnkTUs+GDk12VgdeeNEczMZz+8Mxw9dJ5NCnYgTwO0SzGlclRsDvjzkLo8rh2ZG6n/jKrEyNXXo+hOqhupij0QbRP2Tvexdfw201kgN1jdZify8XzJ8Oi0bTS0KpJf2pNPOlooK2bjMUei9ANtEdXwwfVZGWvVh6tJjdv6k14wWWJ1L7zhA1IIVb1J+sQUzJji5iX0DrezjTz1Fg+gAzITaA/WsuujlM=\"",
+          "last_heart_beat": "\"2017-08-08T18:29:06.470652Z\"",
+          "server_osversion": "10.0.14393.0",
+          "agent_version": "1.0.277.0"
         }
         result = self.mgmt_client.registered_servers.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, REGISTERED_SERVER_NAME, BODY)
         result = result.result()
 
         # CloudEndpoints_Create[put]
         BODY = {
-          "properties": {
-            "storage_account_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
-            "azure_file_share_name": "cvcloud-afscv-0719-058-a94a1354-a1fd-4e9a-9a50-919fad8c4ba4",
-            "storage_account_tenant_id": "\"72f988bf-86f1-41af-91ab-2d7cd011db47\"",
-            "friendly_name": "ankushbsubscriptionmgmtmab"
-          }
+          "storage_account_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
+          "azure_file_share_name": "cvcloud-afscv-0719-058-a94a1354-a1fd-4e9a-9a50-919fad8c4ba4",
+          "storage_account_tenant_id": "\"72f988bf-86f1-41af-91ab-2d7cd011db47\"",
+          "friendly_name": "ankushbsubscriptionmgmtmab"
         }
         result = self.mgmt_client.cloud_endpoints.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, CLOUD_ENDPOINT_NAME, BODY)
         result = result.result()
 
         # ServerEndpoints_Create[put]
         BODY = {
-          "properties": {
-            "server_local_path": "D:\\SampleServerEndpoint_1",
-            "server_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.StorageSync/storageSyncServices/" + STORAGE_SYNC_SERVICE_NAME + "/registeredServers/" + REGISTERED_SERVER_NAME + "",
-            "cloud_tiering": "off",
-            "volume_free_space_percent": "100",
-            "tier_files_older_than_days": "0",
-            "offline_data_transfer": "on",
-            "offline_data_transfer_share_name": "myfileshare"
-          }
+          "server_local_path": "D:\\SampleServerEndpoint_1",
+          "server_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.StorageSync/storageSyncServices/" + STORAGE_SYNC_SERVICE_NAME + "/registeredServers/" + REGISTERED_SERVER_NAME + "",
+          "cloud_tiering": "off",
+          "volume_free_space_percent": "100",
+          "tier_files_older_than_days": "0",
+          "offline_data_transfer": "on",
+          "offline_data_transfer_share_name": "myfileshare"
         }
         result = self.mgmt_client.server_endpoints.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, SERVER_ENDPOINT_NAME, BODY)
         result = result.result()
@@ -119,15 +113,18 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
 
         # Workflows_Get[get]
         result = self.mgmt_client.workflows.get(resource_group.name, STORAGE_SYNC_SERVICE_NAME, WORKFLOW_NAME)
+        """
 
         # SyncGroups_Get[get]
         result = self.mgmt_client.sync_groups.get(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME)
 
+        """
         # Workflows_Get[get]
         result = self.mgmt_client.workflows.get(resource_group.name, STORAGE_SYNC_SERVICE_NAME, WORKFLOW_NAME)
 
         # RegisteredServers_ListByStorageSyncService[get]
         result = self.mgmt_client.registered_servers.list_by_storage_sync_service(resource_group.name, STORAGE_SYNC_SERVICE_NAME)
+        """
 
         # SyncGroups_ListByStorageSyncService[get]
         result = self.mgmt_client.sync_groups.list_by_storage_sync_service(resource_group.name, STORAGE_SYNC_SERVICE_NAME)
@@ -147,6 +144,7 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         # Operations_List[get]
         result = self.mgmt_client.operations.list()
 
+        """
         # CloudEndpoints_TriggerChangeDetection[post]
         BODY = {
           "directory_path": "NewDirectory",
@@ -234,12 +232,10 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
 
         # ServerEndpoints_Update[patch]
         BODY = {
-          "properties": {
-            "cloud_tiering": "off",
-            "volume_free_space_percent": "100",
-            "tier_files_older_than_days": "0",
-            "offline_data_transfer": "off"
-          }
+          "cloud_tiering": "off",
+          "volume_free_space_percent": "100",
+          "tier_files_older_than_days": "0",
+          "offline_data_transfer": "off"
         }
         result = self.mgmt_client.server_endpoints.update(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, SERVER_ENDPOINT_NAME, BODY)
         result = result.result()
@@ -253,6 +249,7 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
 
         # Workflows_Abort[post]
         result = self.mgmt_client.workflows.abort(resource_group.name, STORAGE_SYNC_SERVICE_NAME, WORKFLOW_NAME)
+        """
 
         # StorageSyncServices_Update[patch]
         BODY = {
@@ -277,6 +274,7 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.storage_sync_services.check_name_availability(LOCATION_NAME, BODY)
 
+        """
         # ServerEndpoints_Delete[delete]
         result = self.mgmt_client.server_endpoints.delete(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, SERVER_ENDPOINT_NAME)
         result = result.result()
@@ -288,10 +286,10 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         # RegisteredServers_Delete[delete]
         result = self.mgmt_client.registered_servers.delete(resource_group.name, STORAGE_SYNC_SERVICE_NAME, REGISTERED_SERVER_NAME)
         result = result.result()
+        """
 
         # SyncGroups_Delete[delete]
         result = self.mgmt_client.sync_groups.delete(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME)
-        """
 
         # StorageSyncServices_Delete[delete]
         result = self.mgmt_client.storage_sync_services.delete(resource_group.name, STORAGE_SYNC_SERVICE_NAME)
