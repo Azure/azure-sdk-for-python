@@ -56,6 +56,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.1.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.

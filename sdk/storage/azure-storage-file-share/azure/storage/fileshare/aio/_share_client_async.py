@@ -55,6 +55,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.1.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
