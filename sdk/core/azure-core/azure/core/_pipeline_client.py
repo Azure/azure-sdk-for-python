@@ -104,7 +104,7 @@ class PipelineClient(PipelineClientBase):
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(),
+                ContentDecodePolicy(**kwargs),
                 config.redirect_policy,
                 config.retry_policy,
                 config.authentication_policy,
