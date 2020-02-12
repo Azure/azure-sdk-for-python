@@ -116,7 +116,7 @@ class CryptographyClient(KeyVaultClientBase):
         return self._key
 
     def _get_local_key(self, **kwargs):
-        # type: () -> Optional[_Key]
+        # type: (**Any) -> Optional[_Key]
         """Gets an object implementing local operations. Will be ``None``, if the client was instantiated with a key
         id and lacks keys/get permission."""
 

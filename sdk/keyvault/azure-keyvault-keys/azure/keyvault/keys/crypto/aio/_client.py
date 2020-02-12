@@ -18,7 +18,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from .._internal import Key as _Key
 
@@ -57,7 +57,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
     """
 
-    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         if isinstance(key, KeyVaultKey):
             self._key = key
             self._key_id = parse_vault_id(key.id)
