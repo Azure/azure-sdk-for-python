@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, List, Union, TYPE_CHECKING
+from typing import Callable, Any, Dict, Optional, List, Union, Type, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -100,22 +100,34 @@ class ODataV4Format(object):
     :ivar dict innererror: An object. The contents of this object are service-defined.
      Usually this object contains information that will help debug the service.
     """
+    CODE_LABEL = "code"
+    MESSAGE_LABEL = "message"
+    TARGET_LABEL = "target"
+    DETAILS_LABEL = "details"
+    INNERERROR_LABEL = "innererror"
 
     def __init__(self, json_object):
+        if "error" in json_object:
+            json_object = json_object["error"]
+        cls = self.__class__  # type: Type[ODataV4Format]
+
         # Required fields, but assume they could be missing still to be robust
-        self.code = json_object.get("code")  # type: Optional[str]
-        self.message = json_object.get("message")  # type: Optional[str]
+        self.code = json_object.get(cls.CODE_LABEL)  # type: Optional[str]
+        self.message = json_object.get(cls.MESSAGE_LABEL)  # type: Optional[str]
+
+        if not (self.code or self.message):
+            raise ValueError("Impossible to extract code/message from received JSON:\n"+json.dumps(json_object))
 
         # Optional fields
-        self.target = json_object.get("target", None)  # type: Optional[str]
+        self.target = json_object.get(cls.TARGET_LABEL, None)  # type: Optional[str]
 
         # details is recursive of this very format
         self.details = [
             self.__class__(detail_node)
-            for detail_node in json_object.get("details", [])
+            for detail_node in json_object.get(cls.DETAILS_LABEL, [])
         ]  # type: List[ODataV4Format]
 
-        self.innererror = json_object.get("innererror", {})  # type: Dict[str, Any]
+        self.innererror = json_object.get(cls.INNERERROR_LABEL, {})  # type: Dict[str, Any]
 
     @property
     def error(self):
@@ -198,9 +210,10 @@ class HttpResponseError(AzureError):
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
     """
 
-    _ERROR_FORMAT = ODataV4Format
-
     def __init__(self, message=None, response=None, **kwargs):
+        # Don't want to document this one yet.
+        error_format = kwargs.get("error_format", ODataV4Format)
+
         self.reason = None
         self.status_code = None
         self.response = response
@@ -217,7 +230,7 @@ class HttpResponseError(AzureError):
             self.model = getattr(
                 self, "error", None
             )  # type: Optional[msrest.serialization.Model]
-        self.error = self._parse_odata_body(response)  # type: Optional[ODataV4Format]
+        self.error = self._parse_odata_body(error_format, response)  # type: Optional[ODataV4Format]
 
         # By priority, message is:
         # - odatav4 message, OR
@@ -232,20 +245,11 @@ class HttpResponseError(AzureError):
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
-    def _parse_odata_body(self, response):
-        # type: (_HttpResponseBase) -> Optional[ODataV4Format]
+    def _parse_odata_body(self, error_format, response):
+        # type: (Type[ODataV4Format], _HttpResponseBase) -> Optional[ODataV4Format]
         try:
             odata_json = json.loads(response.text())
-            # ODataV4 correct format is supposed to start with "error"
-            if "error" in odata_json:
-                error_node = odata_json["error"]
-            # In the unlikely scenario where code/message is right here, parse it too (better than dying)
-            elif odata_json.get("code") or odata_json.get("message"):
-                error_node = odata_json
-            # Well, that's sounds far from being any close to ODataV4
-            else:
-                raise ValueError("Body is not JSON with a 'error' node")
-            return self._ERROR_FORMAT(error_node)
+            return error_format(odata_json)
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass
