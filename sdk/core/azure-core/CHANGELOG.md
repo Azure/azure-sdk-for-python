@@ -1,6 +1,12 @@
 
 # Release History
 
+## 1.2.3 [Unreleased] (2020-02-12)
+
+### Bug fixes
+
+- Appended RequestIdPolicy to the default pipeline
+
 ## 1.2.2 (2020-02-10)
 
 ### Bug fixes
