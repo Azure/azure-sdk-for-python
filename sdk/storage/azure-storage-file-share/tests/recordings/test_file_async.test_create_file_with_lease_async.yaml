@@ -3,11 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - d03194b0-1d44-11ea-ad20-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 01:06:37 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -16,22 +14,11 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 01:06:51 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F68BD738C1D"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 01:06:52 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 16cd1ae1-b01a-0003-6f51-b1735f000000
+      content-length: '0'
+      date: Wed, 12 Feb 2020 19:23:16 GMT
+      etag: '"0x8D7AFF102DA416D"'
+      last-modified: Wed, 12 Feb 2020 19:23:16 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-07-07'
     status:
       code: 201
@@ -39,8 +26,8 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
-        - emilystageaccount.file.core.windows.net
+        - https
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utsharef38e13fe
         - restype=share
         - ''
@@ -48,13 +35,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - d949bf94-1d44-11ea-a173-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 13 Dec 2019 01:06:52 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -73,29 +58,18 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 01:06:52 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F68BD92652D"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 01:06:53 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '0'
+      date: Wed, 12 Feb 2020 19:23:16 GMT
+      etag: '"0x8D7AFF102FECFC1"'
+      last-modified: Wed, 12 Feb 2020 19:23:16 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-12-13T01:06:53.0028845Z'
-      x-ms-file-creation-time: '2019-12-13T01:06:53.0028845Z'
+      x-ms-file-change-time: '2020-02-12T19:23:16.8447425Z'
+      x-ms-file-creation-time: '2020-02-12T19:23:16.8447425Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-12-13T01:06:53.0028845Z'
+      x-ms-file-last-write-time: '2020-02-12T19:23:16.8447425Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 16864655153240182536*4804112389554988934
-      x-ms-request-id: 5b4f513f-601a-002f-2651-b19ff0000000
+      x-ms-file-permission-key: 4485082972441276519*10853357836431137001
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-07-07'
     status:
@@ -104,8 +78,8 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
-        - emilystageaccount.file.core.windows.net
+        - https
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utsharef38e13fe/filef38e13fe
         - ''
         - ''
@@ -113,17 +87,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - d96779b6-1d44-11ea-b192-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 01:06:53 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 32812479-e866-42ca-8f1c-ef88ae7d4a6b
+      - db44d04d-8f92-43ed-9509-e26747c07ffb
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -132,23 +104,12 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 01:06:52 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F68BD92652D"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 01:06:53 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._multidict.istr
-      - Transfer-Encoding
-      : chunked
-      x-ms-lease-id: 32812479-e866-42ca-8f1c-ef88ae7d4a6b
-      x-ms-request-id: 5b4f5142-601a-002f-2751-b19ff0000000
+      date: Wed, 12 Feb 2020 19:23:16 GMT
+      etag: '"0x8D7AFF102FECFC1"'
+      last-modified: Wed, 12 Feb 2020 19:23:16 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-lease-id: db44d04d-8f92-43ed-9509-e26747c07ffb
       x-ms-version: '2019-07-07'
     status:
       code: 201
@@ -156,8 +117,8 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
-        - emilystageaccount.file.core.windows.net
+        - https
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utsharef38e13fe/filef38e13fe
         - comp=lease
         - ''
@@ -165,13 +126,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - d979ed88-1d44-11ea-96a3-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Fri, 13 Dec 2019 01:06:53 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -181,7 +140,7 @@ interactions:
       x-ms-file-permission:
       - Inherit
       x-ms-lease-id:
-      - 32812479-e866-42ca-8f1c-ef88ae7d4a6b
+      - db44d04d-8f92-43ed-9509-e26747c07ffb
       x-ms-type:
       - file
       x-ms-version:
@@ -192,29 +151,18 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 01:06:52 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D77F68BDB29722"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Fri, 13 Dec 2019 01:06:53 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '0'
+      date: Wed, 12 Feb 2020 19:23:16 GMT
+      etag: '"0x8D7AFF1030C66CE"'
+      last-modified: Wed, 12 Feb 2020 19:23:16 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-12-13T01:06:53.2138786Z'
-      x-ms-file-creation-time: '2019-12-13T01:06:53.2138786Z'
+      x-ms-file-change-time: '2020-02-12T19:23:16.9338062Z'
+      x-ms-file-creation-time: '2020-02-12T19:23:16.9338062Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-12-13T01:06:53.2138786Z'
+      x-ms-file-last-write-time: '2020-02-12T19:23:16.9338062Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 16864655153240182536*4804112389554988934
-      x-ms-request-id: 5b4f5143-601a-002f-2851-b19ff0000000
+      x-ms-file-permission-key: 4485082972441276519*10853357836431137001
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-07-07'
     status:
@@ -223,8 +171,8 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
-        - emilystageaccount.file.core.windows.net
+        - https
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utsharef38e13fe/filef38e13fe
         - ''
         - ''
@@ -232,11 +180,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - d9877b14-1d44-11ea-9fe0-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 01:06:53 GMT
+      - Wed, 12 Feb 2020 19:23:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -244,22 +190,13 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
-        is currently a lease on the file and no lease ID was specified in the request.\nRequestId:5b4f5144-601a-002f-2951-b19ff0000000\nTime:2019-12-13T01:06:53.3069066Z</Message></Error>"
+        is currently a lease on the file and no lease ID was specified in the request.\nRequestId:273b67ea-c01a-0026-2ed9-e11d83000000\nTime:2020-02-12T19:23:16.9675774Z</Message></Error>"
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '267'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 01:06:52 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '267'
+      content-type: application/xml
+      date: Wed, 12 Feb 2020 19:23:16 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: LeaseIdMissing
-      x-ms-request-id: 5b4f5144-601a-002f-2951-b19ff0000000
       x-ms-version: '2019-07-07'
     status:
       code: 412
@@ -268,8 +205,8 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
-        - emilystageaccount.file.core.windows.net
+        - https
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utsharef38e13fe/filef38e13fe
         - ''
         - ''
@@ -277,13 +214,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - d9947b48-1d44-11ea-8a94-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 13 Dec 2019 01:06:53 GMT
+      - Wed, 12 Feb 2020 19:23:17 GMT
       x-ms-lease-id:
-      - 32812479-e866-42ca-8f1c-ef88ae7d4a6b
+      - db44d04d-8f92-43ed-9509-e26747c07ffb
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -292,16 +227,9 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Fri, 13 Dec 2019 01:06:52 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 5b4f5145-601a-002f-2a51-b19ff0000000
+      content-length: '0'
+      date: Wed, 12 Feb 2020 19:23:16 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-07-07'
     status:
       code: 202
@@ -309,8 +237,8 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
-        - emilystageaccount.file.core.windows.net
+        - https
+        - pyacrstorageepk37kc36v76.file.core.windows.net
         - /utsharef38e13fe/filef38e13fe
         - ''
         - ''
