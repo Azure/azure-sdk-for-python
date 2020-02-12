@@ -342,6 +342,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -453,6 +456,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -592,6 +598,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -638,6 +647,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -688,6 +700,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -735,6 +750,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -765,6 +783,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -828,6 +849,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -878,6 +902,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -927,6 +954,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -1044,6 +1074,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -1076,6 +1109,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -1124,6 +1160,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -1163,6 +1202,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
