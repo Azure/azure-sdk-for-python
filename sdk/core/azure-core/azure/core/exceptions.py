@@ -245,7 +245,8 @@ class HttpResponseError(AzureError):
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
-    def _parse_odata_body(self, error_format, response):
+    @staticmethod
+    def _parse_odata_body(error_format, response):
         # type: (Type[ODataV4Format], _HttpResponseBase) -> Optional[ODataV4Format]
         try:
             odata_json = json.loads(response.text())
