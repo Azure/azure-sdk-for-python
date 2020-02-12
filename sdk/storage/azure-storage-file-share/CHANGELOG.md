@@ -3,7 +3,7 @@
 ## 12.1.0
 
 **New features**
-- Added support for the 2019-07-07 service version.
+- Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
 - `ShareLeaseClient` was introduced to both sync and async versions of the SDK, which allows users to perform operations on file leases.
 - `failed_handles_count` info was included in `close_handle` and `close_all_handles` result.
 - Added support for obtaining premium file properties in `list_shares` and `get_share_properties`.
