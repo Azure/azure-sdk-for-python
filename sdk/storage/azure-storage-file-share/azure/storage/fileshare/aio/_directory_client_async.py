@@ -25,6 +25,7 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_directory_properties
+from .._serialize import get_api_version
 from .._directory_client import ShareDirectoryClient as ShareDirectoryClientBase
 from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
@@ -57,6 +58,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.1.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
@@ -83,6 +90,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             loop=loop,
             **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
@@ -105,7 +113,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         )
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
@@ -136,7 +144,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         )
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     @distributed_trace_async
@@ -287,6 +295,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             )
             return {
                 'closed_handles_count': response.get('number_of_handles_closed', 0),
+                'failed_handles_count': response.get('number_of_handles_failed', 0)
             }
         except StorageErrorException as error:
             process_storage_error(error)
@@ -313,6 +322,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         try_close = True
         continuation_token = None
         total_closed = 0
+        total_failed = 0
         while try_close:
             try:
                 response = await self._client.directory.force_close_handles(
@@ -329,10 +339,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             continuation_token = response.get('marker')
             try_close = bool(continuation_token)
             total_closed += response.get('number_of_handles_closed', 0)
+            total_failed += response.get('number_of_handles_failed', 0)
             if timeout:
                 timeout = max(0, timeout - (time.time() - start_time))
         return {
             'closed_handles_count': total_closed,
+            'failed_handles_count': total_failed
         }
 
     @distributed_trace_async

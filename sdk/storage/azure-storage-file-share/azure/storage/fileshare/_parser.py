@@ -14,21 +14,15 @@ _FILE_PERMISSION_TOO_LONG = 'Size of file_permission is too large. file_permissi
 def _get_file_permission(file_permission, file_permission_key, default_permission):
     # if file_permission and file_permission_key are both empty, then use the default_permission
     # value as file permission, file_permission size should be <= 8KB, else file permission_key should be used
-    empty_file_permission = not file_permission
-    empty_file_permission_key = not file_permission_key
-    file_permission_size_too_big = False if file_permission is None \
-        else len(str(file_permission).encode('utf-8')) > 8 * 1024
-
-    if file_permission_size_too_big:
+    if file_permission and len(str(file_permission).encode('utf-8')) > 8 * 1024:
         raise ValueError(_FILE_PERMISSION_TOO_LONG)
 
-    if empty_file_permission:
-        if empty_file_permission_key:
+    if not file_permission:
+        if not file_permission_key:
             return default_permission
-
         return None
 
-    if empty_file_permission_key:
+    if not file_permission_key:
         return file_permission
 
     raise ValueError(_ERROR_TOO_MANY_FILE_PERMISSIONS)

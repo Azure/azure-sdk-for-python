@@ -37,7 +37,7 @@ class BlockBlobOperations(object):
         self._config = config
         self.x_ms_blob_type = "BlockBlob"
 
-    def upload(self, body, content_length, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def upload(self, body, content_length, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Upload Block Blob operation updates the content of an existing
         block blob. Updating an existing block blob overwrites any existing
         metadata on the blob. Partial updates are not supported with Put Blob;
@@ -83,6 +83,8 @@ class BlockBlobOperations(object):
          ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -125,6 +127,9 @@ class BlockBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -184,6 +189,8 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -215,12 +222,13 @@ class BlockBlobOperations(object):
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     upload.metadata = {'url': '/{containerName}/{blob}'}
 
-    def stage_block(self, block_id, content_length, body, transactional_content_md5=None, transactional_content_crc64=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, cls=None, **kwargs):
+    def stage_block(self, block_id, content_length, body, transactional_content_md5=None, transactional_content_crc64=None, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, cls=None, **kwargs):
         """The Stage Block operation creates a new block to be committed as part
         of a blob.
 
@@ -254,6 +262,8 @@ class BlockBlobOperations(object):
          ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -274,6 +284,9 @@ class BlockBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
 
         comp = "block"
 
@@ -310,6 +323,8 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
 
         # Construct body
 
@@ -332,12 +347,13 @@ class BlockBlobOperations(object):
                 'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     stage_block.metadata = {'url': '/{containerName}/{blob}'}
 
-    def stage_block_from_url(self, block_id, content_length, source_url, source_range=None, source_content_md5=None, source_contentcrc64=None, timeout=None, request_id=None, cpk_info=None, lease_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
+    def stage_block_from_url(self, block_id, content_length, source_url, source_range=None, source_content_md5=None, source_contentcrc64=None, timeout=None, request_id=None, cpk_info=None, cpk_scope_info=None, lease_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
         """The Stage Block operation creates a new block to be committed as part
         of a blob where the contents are read from a URL.
 
@@ -369,6 +385,8 @@ class BlockBlobOperations(object):
         :type request_id: str
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -394,6 +412,9 @@ class BlockBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -445,6 +466,8 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         if source_if_modified_since is not None:
@@ -475,12 +498,13 @@ class BlockBlobOperations(object):
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     stage_block_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    def commit_block_list(self, blocks, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def commit_block_list(self, blocks, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob. In order to be written as part of a
         blob, a block must have been successfully written to the server in a
@@ -530,6 +554,8 @@ class BlockBlobOperations(object):
          ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Additional parameters for the operation
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
+        :param cpk_scope_info: Additional parameters for the operation
+        :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -572,6 +598,9 @@ class BlockBlobOperations(object):
         encryption_algorithm = None
         if cpk_info is not None:
             encryption_algorithm = cpk_info.encryption_algorithm
+        encryption_scope = None
+        if cpk_scope_info is not None:
+            encryption_scope = cpk_scope_info.encryption_scope
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -634,6 +663,8 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
         if encryption_algorithm is not None:
             header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
+        if encryption_scope is not None:
+            header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", encryption_scope, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -667,6 +698,7 @@ class BlockBlobOperations(object):
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

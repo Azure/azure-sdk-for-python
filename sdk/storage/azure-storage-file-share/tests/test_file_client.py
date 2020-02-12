@@ -15,8 +15,8 @@ from azure.storage.fileshare import (
     ShareDirectoryClient,
     ShareFileClient)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
-    FileTestCase,
+from _shared.testcase import (
+    StorageTestCase,
     LogCaptured,
     GlobalStorageAccountPreparer
 )
@@ -34,7 +34,7 @@ _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 
-class StorageFileClientTest(FileTestCase):
+class StorageFileClientTest(StorageTestCase):
     def _setup(self, storage_account, storage_account_key):
         self.account_name = storage_account.name
         self.account_key = storage_account_key
@@ -65,7 +65,7 @@ class StorageFileClientTest(FileTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.get_file_url(storage_account.name), credential=self.account_key,
+                self.account_url(storage_account, "file"), credential=self.account_key,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -79,7 +79,7 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.get_file_url(storage_account.name), credential=self.sas_token,
+                self.account_url(storage_account, "file"), credential=self.sas_token,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -96,13 +96,13 @@ class StorageFileClientTest(FileTestCase):
             # token credential is not available for FileService
             token_credential = self.generate_oauth_token()
             with self.assertRaises(ValueError):
-                service_type(self.get_file_url(storage_account.name), credential=token_credential,
+                service_type(self.account_url(storage_account, "file"), credential=token_credential,
                              share_name='foo', directory_path='bar', file_path='baz')
 
     @GlobalStorageAccountPreparer()
     def test_create_service_china(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        url = self.get_file_url(storage_account.name).replace('core.windows.net', 'core.chinacloudapi.cn')
+        url = self.account_url(storage_account, "file").replace('core.windows.net', 'core.chinacloudapi.cn')
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
@@ -122,7 +122,7 @@ class StorageFileClientTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     def test_create_service_protocol(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        url = self.get_file_url(storage_account.name).replace('https', 'http')
+        url = self.account_url(storage_account, "file").replace('https', 'http')
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
@@ -141,7 +141,7 @@ class StorageFileClientTest(FileTestCase):
             # Passing an empty key to create account should fail.
             with self.assertRaises(ValueError) as e:
                 service_type(
-                    self.get_file_url(storage_account.name), share_name='foo', directory_path='bar', file_path='baz')
+                    self.account_url(storage_account, "file"), share_name='foo', directory_path='bar', file_path='baz')
 
             self.assertEqual(
                 str(e.exception),
@@ -154,10 +154,10 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.get_file_url(storage_account.name), credential=self.account_key,
+                self.account_url(storage_account, "file"), credential=self.account_key,
                 share_name='foo', directory_path='bar', file_path='baz')
             service = service_type[0](
-                self.get_file_url(storage_account.name), credential=self.account_key, connection_timeout=22,
+                self.account_url(storage_account, "file"), credential=self.account_key, connection_timeout=22,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -345,7 +345,7 @@ class StorageFileClientTest(FileTestCase):
 
         self._setup(storage_account, storage_account_key)
         request_id_header_name = 'x-ms-client-request-id'
-        service = ShareServiceClient(self.get_file_url(storage_account.name), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key)
 
         # Act make the client request ID slightly different
         def callback(response):
@@ -367,7 +367,7 @@ class StorageFileClientTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        service = ShareServiceClient(self.get_file_url(storage_account.name), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -385,7 +385,7 @@ class StorageFileClientTest(FileTestCase):
         self._setup(storage_account, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
-            self.get_file_url(storage_account.name), credential=self.account_key, user_agent=custom_app)
+            self.account_url(storage_account, "file"), credential=self.account_key, user_agent=custom_app)
 
         def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -412,7 +412,7 @@ class StorageFileClientTest(FileTestCase):
     @GlobalStorageAccountPreparer()
     def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        service = ShareServiceClient(self.get_file_url(storage_account.name), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account, "file"), credential=self.account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -450,7 +450,7 @@ class StorageFileClientTest(FileTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.get_file_url(storage_account.name), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                self.account_url(storage_account, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             with service:
@@ -464,6 +464,6 @@ class StorageFileClientTest(FileTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.get_file_url(storage_account.name), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                self.account_url(storage_account, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
             service.close()
 
