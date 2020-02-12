@@ -102,7 +102,7 @@ class AsyncPipelineClient(PipelineClientBase):
 
         if policies is None:  # [] is a valid policy list
             policies = [
-                RequestIdPolicy(),
+                RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
