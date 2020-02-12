@@ -43,9 +43,6 @@ class ManagedIdentityCredential(object):
         return self
 
     async def __aexit__(self, *args):
-        pass
-
-    async def close(self):
         """Close the credential's transport session."""
         if self._credential:
             await self._credential.__aexit__()
