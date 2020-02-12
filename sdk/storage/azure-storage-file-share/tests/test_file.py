@@ -57,7 +57,7 @@ class StorageFileTest(StorageTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024)
+        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024, logging_enable=True)
         self.share_name = self.get_resource_name('utshare')
         if self.is_live:
             self.fsc.create_share(self.share_name)
@@ -68,7 +68,7 @@ class StorageFileTest(StorageTestCase):
         remote_credential = rmt_key
         
         if rmt_account:
-            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
+            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, logging_enable=True)
             self.remote_share_name = None
 
     def _teardown(self, FILE_PATH):

@@ -69,14 +69,14 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024, transport=AiohttpTestTransport(), logging_enable=True)
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
 
         remote_url = self.account_url(rmt_account, "file")
         remote_credential = rmt_key
         if rmt_account:
-            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
+            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport(), logging_enable=True)
             self.remote_share_name = None
 
     def _teardown(self, FILE_PATH):

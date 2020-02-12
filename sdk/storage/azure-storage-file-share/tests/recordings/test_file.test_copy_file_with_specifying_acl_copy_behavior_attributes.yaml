@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 28 Jan 2020 05:13:21 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharedd3c1c70?restype=share
+    uri: https://127.0.0.1:8888/utsharedd3c1c70?restype=share
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       etag:
-      - '"0x8D7A3B0CBA8DB56"'
+      - '"0x8D7AF50E5EADE50"'
       last-modified:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -67,7 +67,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
+    uri: https://127.0.0.1:8888/utsharedd3c1c70/filedd3c1c70
   response:
     body:
       string: ''
@@ -75,27 +75,27 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       etag:
-      - '"0x8D7A3B0CBBF041D"'
+      - '"0x8D7AF50E5F4E50F"'
       last-modified:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2020-01-28T05:13:22.4079389Z'
+      - '2020-02-12T00:17:08.6490895Z'
       x-ms-file-creation-time:
-      - '2020-01-28T05:13:22.4079389Z'
+      - '2020-02-12T00:17:08.6490895Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2020-01-28T05:13:22.4079389Z'
+      - '2020-02-12T00:17:08.6490895Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 16864655153240182536*4804112389554988934
+      - 12683769973713055916*1775867235089471522
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -119,7 +119,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -127,7 +127,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharedd3c1c70/filedd3c1c70?comp=range
+    uri: https://127.0.0.1:8888/utsharedd3c1c70/filedd3c1c70?comp=range
   response:
     body:
       string: ''
@@ -137,11 +137,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       etag:
-      - '"0x8D7A3B0CBD74C93"'
+      - '"0x8D7AF50E5FE5CA4"'
       last-modified:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -165,9 +165,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-source:
-      - https://emilystageaccount.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
+      - https://pyacrstorage34v64655tyji.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
       x-ms-date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       x-ms-file-attributes:
       - Temporary|NoScrubData
       x-ms-file-copy-ignore-read-only:
@@ -183,7 +183,7 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharedd3c1c70/file1copy
+    uri: https://127.0.0.1:8888/utsharedd3c1c70/file1copy
   response:
     body:
       string: ''
@@ -191,15 +191,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       etag:
-      - '"0x8D7A3B0CC3DEE93"'
+      - '"0x8D7AF50E62AA4BE"'
       last-modified:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:09 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - 58e63231-58eb-4f5e-8fbe-8774948ffbc2
+      - b6be9a84-5bb3-411d-b762-73f9bbc8d78f
       x-ms-copy-status:
       - success
       x-ms-version:
@@ -219,11 +219,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: https://storagename.file.core.windows.net/utsharedd3c1c70/file1copy
+    uri: https://127.0.0.1:8888/utsharedd3c1c70/file1copy
   response:
     body:
       string: ''
@@ -233,37 +233,37 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 28 Jan 2020 05:13:22 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       etag:
-      - '"0x8D7A3B0CC3DEE93"'
+      - '"0x8D7AF50E62AA4BE"'
       last-modified:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:09 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-completion-time:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       x-ms-copy-id:
-      - 58e63231-58eb-4f5e-8fbe-8774948ffbc2
+      - b6be9a84-5bb3-411d-b762-73f9bbc8d78f
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
-      - https://emilystageaccount.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
+      - https://pyacrstorage34v64655tyji.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
       x-ms-copy-status:
       - success
       x-ms-file-attributes:
       - Archive | Temporary | NoScrubData
       x-ms-file-change-time:
-      - '2020-01-28T05:13:23.2396947Z'
+      - '2020-02-12T00:17:09.0013374Z'
       x-ms-file-creation-time:
       - '2017-05-10T17:52:33.9551860Z'
       x-ms-file-id:
       - '13835093239654252544'
       x-ms-file-last-write-time:
-      - '2020-01-28T05:13:23.2396947Z'
+      - '2020-02-12T00:17:09.0013374Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 11567002431961314099*4804112389554988934
+      - 18052881939812781207*1775867235089471522
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -289,13 +289,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:09 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://storagename.file.core.windows.net/utsharedd3c1c70/file1copy
+    uri: https://127.0.0.1:8888/utsharedd3c1c70/file1copy
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -309,37 +309,37 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:09 GMT
       etag:
-      - '"0x8D7A3B0CC3DEE93"'
+      - '"0x8D7AF50E62AA4BE"'
       last-modified:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:09 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-completion-time:
-      - Tue, 28 Jan 2020 05:13:23 GMT
+      - Wed, 12 Feb 2020 00:17:08 GMT
       x-ms-copy-id:
-      - 58e63231-58eb-4f5e-8fbe-8774948ffbc2
+      - b6be9a84-5bb3-411d-b762-73f9bbc8d78f
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
-      - https://emilystageaccount.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
+      - https://pyacrstorage34v64655tyji.file.core.windows.net/utsharedd3c1c70/filedd3c1c70
       x-ms-copy-status:
       - success
       x-ms-file-attributes:
       - Archive | Temporary | NoScrubData
       x-ms-file-change-time:
-      - '2020-01-28T05:13:23.2396947Z'
+      - '2020-02-12T00:17:09.0013374Z'
       x-ms-file-creation-time:
       - '2017-05-10T17:52:33.9551860Z'
       x-ms-file-id:
       - '13835093239654252544'
       x-ms-file-last-write-time:
-      - '2020-01-28T05:13:23.2396947Z'
+      - '2020-02-12T00:17:09.0013374Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 11567002431961314099*4804112389554988934
+      - 18052881939812781207*1775867235089471522
       x-ms-lease-state:
       - available
       x-ms-lease-status:

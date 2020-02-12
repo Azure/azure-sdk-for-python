@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 15 Jan 2020 23:47:22 GMT
+      - Wed, 12 Feb 2020 00:17:27 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utshared07b1833?restype=share
+    uri: https://127.0.0.1:8888/utshared07b1833?restype=share
   response:
     body:
       string: ''
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 15 Jan 2020 23:47:21 GMT
+      - Wed, 12 Feb 2020 00:17:27 GMT
       etag:
-      - '"0x8D79A154450DE36"'
+      - '"0x8D7AF50F18A468F"'
       last-modified:
-      - Wed, 15 Jan 2020 23:47:22 GMT
+      - Wed, 12 Feb 2020 00:17:28 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 201
       message: Created

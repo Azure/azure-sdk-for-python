@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 15 Jan 2020 23:47:51 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharebca00c24?restype=share
+    uri: https://127.0.0.1:8888/utsharebca00c24?restype=share
   response:
     body:
       string: ''
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 15 Jan 2020 23:47:51 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       etag:
-      - '"0x8D79A1555DF0FF8"'
+      - '"0x8D7AF50FF917D31"'
       last-modified:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 201
       message: Created
@@ -49,11 +49,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -65,9 +65,9 @@ interactions:
       x-ms-type:
       - file
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharebca00c24/filebca00c24
+    uri: https://127.0.0.1:8888/utsharebca00c24/filebca00c24
   response:
     body:
       string: ''
@@ -75,31 +75,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 15 Jan 2020 23:47:51 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       etag:
-      - '"0x8D79A1555EEEC87"'
+      - '"0x8D7AF50FF9B9875"'
       last-modified:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2020-01-15T23:47:52.2926727Z'
+      - '2020-02-12T00:17:51.6846197Z'
       x-ms-file-creation-time:
-      - '2020-01-15T23:47:52.2926727Z'
+      - '2020-02-12T00:17:51.6846197Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2020-01-15T23:47:52.2926727Z'
+      - '2020-02-12T00:17:51.6846197Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 5724850820508509333*16704459309046467611
+      - 12683769973713055916*1775867235089471522
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 201
       message: Created
@@ -117,17 +117,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
       x-ms-write:
       - update
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharebca00c24/filebca00c24?comp=range
+    uri: https://127.0.0.1:8888/utsharebca00c24/filebca00c24?comp=range
   response:
     body:
       string: ''
@@ -137,17 +137,17 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       etag:
-      - '"0x8D79A155602ED1D"'
+      - '"0x8D7AF50FFA58552"'
       last-modified:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 201
       message: Created
@@ -161,15 +161,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     method: GET
-    uri: https://storagename.file.core.windows.net/utsharebca00c24/filebca00c24?se=2020-01-16T00%3A47%3A52Z&sp=r&sv=2019-02-02&sr=f&sig=16D0L7RhiUFIRP5pF1Awto5Bsz4/kkx86VqmYylJZfo%3D
+    uri: https://127.0.0.1:8888/utsharebca00c24/filebca00c24?se=2020-02-12T01%3A17%3A51Z&sp=r&sv=2019-07-07&sr=f&sig=czOpGJS%2BvTowG%2BoFXmG4my8UV5jzMWW4Q2khqKLc/TY%3D
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -183,27 +183,27 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       etag:
-      - '"0x8D79A155602ED1D"'
+      - '"0x8D7AF50FFA58552"'
       last-modified:
-      - Wed, 15 Jan 2020 23:47:52 GMT
+      - Wed, 12 Feb 2020 00:17:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2020-01-15T23:47:52.2926727Z'
+      - '2020-02-12T00:17:51.6846197Z'
       x-ms-file-creation-time:
-      - '2020-01-15T23:47:52.2926727Z'
+      - '2020-02-12T00:17:51.6846197Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2020-01-15T23:47:52.2926727Z'
+      - '2020-02-12T00:17:51.6846197Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 5724850820508509333*16704459309046467611
+      - 12683769973713055916*1775867235089471522
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -213,7 +213,7 @@ interactions:
       x-ms-type:
       - File
       x-ms-version:
-      - '2019-02-02'
+      - '2019-07-07'
     status:
       code: 206
       message: Partial Content

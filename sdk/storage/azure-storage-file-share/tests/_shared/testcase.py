@@ -140,6 +140,9 @@ class StorageTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
+        self.logger = logging.getLogger('azure.storage')
+        # enable logging if desired
+        self.configure_logging()
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
@@ -174,7 +177,7 @@ class StorageTestCase(AzureMgmtTestCase):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = True
         self.logger.disabled = False
 
@@ -468,12 +471,6 @@ def storage_account():
             StorageTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
             yield
         finally:
-            if not got_storage_info_from_env:
-                storage_preparer.remove_resource(
-                    storage_name,
-                    resource_group=rg
-                )
+            pass
     finally:
-        if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
-        StorageTestCase._RESOURCE_GROUP = None
+        pass
