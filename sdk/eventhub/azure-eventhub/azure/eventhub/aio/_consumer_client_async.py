@@ -152,6 +152,10 @@ class EventHubConsumerClient(ClientBaseAsync):
             self,
             source_url,
             on_event_received=on_event_received,
+            batch=kwargs.get("batch"),
+            max_batch_size=kwargs.get("max_batch_size"),
+            max_wait_time=kwargs.get("max_wait_time"),
+            enable_callback_when_no_event=kwargs.get("enable_callback_when_no_event"),
             event_position=event_position,
             event_position_inclusive=event_position_inclusive,
             owner_level=owner_level,
@@ -241,10 +245,101 @@ class EventHubConsumerClient(ClientBaseAsync):
         )
         return cls(**constructor_args)
 
+    async def _receive(
+            self,
+            on_event,
+            batch=False,
+            *,
+            max_batch_size: int = None,
+            max_wait_time: float = 3,
+            enable_callback_when_no_event: bool = False,
+            partition_id: Optional[str] = None,
+            owner_level: Optional[int] = None,
+            prefetch: int = 300,
+            track_last_enqueued_event_properties: bool = False,
+            starting_position: Optional[
+                Union[str, int, datetime.datetime, Dict[str, Any]]
+            ] = None,
+            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+            on_error: Optional[
+                Callable[["PartitionContext", Exception], Awaitable[None]]
+            ] = None,
+            on_partition_initialize: Optional[
+                Callable[["PartitionContext"], Awaitable[None]]
+            ] = None,
+            on_partition_close: Optional[
+                Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
+            ] = None
+    ):
+        async with self._lock:
+            error = None
+            if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
+                error = (
+                    "This consumer client is already receiving events "
+                    "from all partitions for consumer group {}. ".format(
+                        self._consumer_group
+                    )
+                )
+            elif partition_id is None and any(
+                    x[0] == self._consumer_group for x in self._event_processors
+            ):
+                error = (
+                    "This consumer client is already receiving events "
+                    "for consumer group {}. ".format(self._consumer_group)
+                )
+            elif (self._consumer_group, partition_id) in self._event_processors:
+                error = (
+                    "This consumer client is already receiving events "
+                    "from partition {} for consumer group {}. ".format(
+                        partition_id, self._consumer_group
+                    )
+                )
+            if error:
+                _LOGGER.warning(error)
+                raise ValueError(error)
+
+            event_processor = EventProcessor(
+                self,
+                self._consumer_group,
+                on_event,
+                batch=batch,
+                max_batch_size=max_batch_size,
+                max_wait_time=max_wait_time,
+                enable_callback_when_no_event=enable_callback_when_no_event,
+                partition_id=partition_id,
+                checkpoint_store=self._checkpoint_store,
+                error_handler=on_error,
+                partition_initialize_handler=on_partition_initialize,
+                partition_close_handler=on_partition_close,
+                load_balancing_interval=self._load_balancing_interval,
+                initial_event_position=starting_position if starting_position is not None else "@latest",
+                initial_event_position_inclusive=starting_position_inclusive or False,
+                owner_level=owner_level,
+                prefetch=prefetch,
+                track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+                loop=self._loop,
+            )
+            self._event_processors[
+                (self._consumer_group, partition_id or ALL_PARTITIONS)
+            ] = event_processor
+        try:
+            await event_processor.start()
+        finally:
+            await event_processor.stop()
+            async with self._lock:
+                try:
+                    del self._event_processors[
+                        (self._consumer_group, partition_id or ALL_PARTITIONS)
+                    ]
+                except KeyError:
+                    pass
+
     async def receive(
         self,
         on_event: Callable[["PartitionContext", "EventData"], Awaitable[None]],
         *,
+        max_wait_time: int = 3,
+        enable_callback_when_no_event: bool = False,
         partition_id: Optional[str] = None,
         owner_level: Optional[int] = None,
         prefetch: int = 300,
@@ -329,64 +424,63 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        async with self._lock:
-            error = None
-            if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
-                error = (
-                    "This consumer client is already receiving events "
-                    "from all partitions for consumer group {}. ".format(
-                        self._consumer_group
-                    )
-                )
-            elif partition_id is None and any(
-                x[0] == self._consumer_group for x in self._event_processors
-            ):
-                error = (
-                    "This consumer client is already receiving events "
-                    "for consumer group {}. ".format(self._consumer_group)
-                )
-            elif (self._consumer_group, partition_id) in self._event_processors:
-                error = (
-                    "This consumer client is already receiving events "
-                    "from partition {} for consumer group {}. ".format(
-                        partition_id, self._consumer_group
-                    )
-                )
-            if error:
-                _LOGGER.warning(error)
-                raise ValueError(error)
+        await self._receive(
+            on_event,
+            batch=False,
+            max_wait_time=max_wait_time,
+            enable_callback_when_no_event=enable_callback_when_no_event,
+            partition_id=partition_id,
+            owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            starting_position=starting_position,
+            starting_position_inclusive=starting_position_inclusive,
+            on_error=on_error,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close
+        )
 
-            event_processor = EventProcessor(
-                self,
-                self._consumer_group,
-                on_event,
-                partition_id=partition_id,
-                checkpoint_store=self._checkpoint_store,
-                error_handler=on_error,
-                partition_initialize_handler=on_partition_initialize,
-                partition_close_handler=on_partition_close,
-                load_balancing_interval=self._load_balancing_interval,
-                initial_event_position=starting_position if starting_position is not None else "@latest",
-                initial_event_position_inclusive=starting_position_inclusive or False,
-                owner_level=owner_level,
-                prefetch=prefetch,
-                track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-                loop=self._loop,
-            )
-            self._event_processors[
-                (self._consumer_group, partition_id or ALL_PARTITIONS)
-            ] = event_processor
-        try:
-            await event_processor.start()
-        finally:
-            await event_processor.stop()
-            async with self._lock:
-                try:
-                    del self._event_processors[
-                        (self._consumer_group, partition_id or ALL_PARTITIONS)
-                    ]
-                except KeyError:
-                    pass
+    async def receive_batch(
+        self,
+        on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
+        *,
+        max_batch_size: int = 300,
+        max_wait_time: float = 3,
+        enable_callback_when_no_event: bool = False,
+        partition_id: Optional[str] = None,
+        owner_level: Optional[int] = None,
+        prefetch: int = 300,
+        track_last_enqueued_event_properties: bool = False,
+        starting_position: Optional[
+            Union[str, int, datetime.datetime, Dict[str, Any]]
+        ] = None,
+        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        on_error: Optional[
+            Callable[["PartitionContext", Exception], Awaitable[None]]
+        ] = None,
+        on_partition_initialize: Optional[
+            Callable[["PartitionContext"], Awaitable[None]]
+        ] = None,
+        on_partition_close: Optional[
+            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
+        ] = None
+    ) -> None:
+        await self._receive(
+            on_event_batch,
+            batch=True,
+            max_batch_size=max_batch_size,
+            max_wait_time=max_wait_time,
+            enable_callback_when_no_event=enable_callback_when_no_event,
+            partition_id=partition_id,
+            owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            starting_position=starting_position,
+            starting_position_inclusive=starting_position_inclusive,
+            on_error=on_error,
+            on_partition_initialize=on_partition_initialize,
+            on_partition_close=on_partition_close
+        )
 
     async def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.
