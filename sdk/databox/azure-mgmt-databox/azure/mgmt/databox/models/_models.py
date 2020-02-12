@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class AccountCredentialDetails(Model):
@@ -20,6 +21,10 @@ class AccountCredentialDetails(Model):
 
     :ivar account_name: Name of the account.
     :vartype account_name: str
+    :ivar data_destination_type: Data Destination Type. Possible values
+     include: 'StorageAccount', 'ManagedDisk'
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.models.DataDestinationType
     :ivar account_connection_string: Connection string of the account endpoint
      to use the account as a storage endpoint on the device.
     :vartype account_connection_string: str
@@ -31,12 +36,14 @@ class AccountCredentialDetails(Model):
 
     _validation = {
         'account_name': {'readonly': True},
+        'data_destination_type': {'readonly': True},
         'account_connection_string': {'readonly': True},
         'share_credential_details': {'readonly': True},
     }
 
     _attribute_map = {
         'account_name': {'key': 'accountName', 'type': 'str'},
+        'data_destination_type': {'key': 'dataDestinationType', 'type': 'DataDestinationType'},
         'account_connection_string': {'key': 'accountConnectionString', 'type': 'str'},
         'share_credential_details': {'key': 'shareCredentialDetails', 'type': '[ShareCredentialDetails]'},
     }
@@ -44,6 +51,7 @@ class AccountCredentialDetails(Model):
     def __init__(self, **kwargs):
         super(AccountCredentialDetails, self).__init__(**kwargs)
         self.account_name = None
+        self.data_destination_type = None
         self.account_connection_string = None
         self.share_credential_details = None
 
@@ -54,6 +62,8 @@ class AddressValidationOutput(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
     :ivar validation_status: The address validation status. Possible values
      include: 'Valid', 'Invalid', 'Ambiguous'
     :vartype validation_status: str or
@@ -64,17 +74,20 @@ class AddressValidationOutput(Model):
     """
 
     _validation = {
+        'error': {'readonly': True},
         'validation_status': {'readonly': True},
         'alternate_addresses': {'readonly': True},
     }
 
     _attribute_map = {
+        'error': {'key': 'properties.error', 'type': 'Error'},
         'validation_status': {'key': 'properties.validationStatus', 'type': 'AddressValidationStatus'},
         'alternate_addresses': {'key': 'properties.alternateAddresses', 'type': '[ShippingAddress]'},
     }
 
     def __init__(self, **kwargs):
         super(AddressValidationOutput, self).__init__(**kwargs)
+        self.error = None
         self.validation_status = None
         self.alternate_addresses = None
 
@@ -208,11 +221,51 @@ class CancellationReason(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """The error information object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error code string.
+    :vartype code: str
+    :ivar message: Descriptive error information.
+    :vartype message: str
+    :param target: Error target
+    :type target: str
+    :param details: More detailed error information.
+    :type details: list[~azure.mgmt.databox.models.CloudError]
     """
 
-    _attribute_map = {
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
     }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudError]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CloudError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
 
 
 class ContactDetails(Model):
@@ -300,6 +353,10 @@ class CopyProgress(Model):
     :ivar storage_account_name: Name of the storage account where the data
      needs to be uploaded.
     :vartype storage_account_name: str
+    :ivar data_destination_type: Data Destination Type. Possible values
+     include: 'StorageAccount', 'ManagedDisk'
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.models.DataDestinationType
     :ivar account_id: Id of the account where the data needs to be uploaded.
     :vartype account_id: str
     :ivar bytes_sent_to_cloud: Amount of data uploaded by the job as of now.
@@ -312,34 +369,262 @@ class CopyProgress(Model):
     :ivar total_files_to_process: Total number of files to be processed by the
      job.
     :vartype total_files_to_process: long
+    :ivar invalid_files_processed: Number of files not adhering to azure
+     naming conventions which were processed by automatic renaming
+    :vartype invalid_files_processed: long
+    :ivar invalid_file_bytes_uploaded: Total amount of data not adhering to
+     azure naming conventions which were processed by automatic renaming
+    :vartype invalid_file_bytes_uploaded: long
+    :ivar renamed_container_count: Number of folders not adhering to azure
+     naming conventions which were processed by automatic renaming
+    :vartype renamed_container_count: long
+    :ivar files_errored_out: Number of files which could not be copied
+    :vartype files_errored_out: long
     """
 
     _validation = {
         'storage_account_name': {'readonly': True},
+        'data_destination_type': {'readonly': True},
         'account_id': {'readonly': True},
         'bytes_sent_to_cloud': {'readonly': True},
         'total_bytes_to_process': {'readonly': True},
         'files_processed': {'readonly': True},
         'total_files_to_process': {'readonly': True},
+        'invalid_files_processed': {'readonly': True},
+        'invalid_file_bytes_uploaded': {'readonly': True},
+        'renamed_container_count': {'readonly': True},
+        'files_errored_out': {'readonly': True},
     }
 
     _attribute_map = {
         'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
+        'data_destination_type': {'key': 'dataDestinationType', 'type': 'DataDestinationType'},
         'account_id': {'key': 'accountId', 'type': 'str'},
         'bytes_sent_to_cloud': {'key': 'bytesSentToCloud', 'type': 'long'},
         'total_bytes_to_process': {'key': 'totalBytesToProcess', 'type': 'long'},
         'files_processed': {'key': 'filesProcessed', 'type': 'long'},
         'total_files_to_process': {'key': 'totalFilesToProcess', 'type': 'long'},
+        'invalid_files_processed': {'key': 'invalidFilesProcessed', 'type': 'long'},
+        'invalid_file_bytes_uploaded': {'key': 'invalidFileBytesUploaded', 'type': 'long'},
+        'renamed_container_count': {'key': 'renamedContainerCount', 'type': 'long'},
+        'files_errored_out': {'key': 'filesErroredOut', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
         super(CopyProgress, self).__init__(**kwargs)
         self.storage_account_name = None
+        self.data_destination_type = None
         self.account_id = None
         self.bytes_sent_to_cloud = None
         self.total_bytes_to_process = None
         self.files_processed = None
         self.total_files_to_process = None
+        self.invalid_files_processed = None
+        self.invalid_file_bytes_uploaded = None
+        self.renamed_container_count = None
+        self.files_errored_out = None
+
+
+class ValidationRequest(Model):
+    """Input request for all pre job creation validation.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CreateJobValidations
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param individual_request_details: Required. List of request details
+     contain validationType and its request as key and value respectively.
+    :type individual_request_details:
+     list[~azure.mgmt.databox.models.ValidationInputRequest]
+    :param validation_category: Required. Constant filled by server.
+    :type validation_category: str
+    """
+
+    _validation = {
+        'individual_request_details': {'required': True},
+        'validation_category': {'required': True},
+    }
+
+    _attribute_map = {
+        'individual_request_details': {'key': 'individualRequestDetails', 'type': '[ValidationInputRequest]'},
+        'validation_category': {'key': 'validationCategory', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'validation_category': {'JobCreationValidation': 'CreateJobValidations'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ValidationRequest, self).__init__(**kwargs)
+        self.individual_request_details = kwargs.get('individual_request_details', None)
+        self.validation_category = None
+
+
+class CreateJobValidations(ValidationRequest):
+    """It does all pre-job creation validations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param individual_request_details: Required. List of request details
+     contain validationType and its request as key and value respectively.
+    :type individual_request_details:
+     list[~azure.mgmt.databox.models.ValidationInputRequest]
+    :param validation_category: Required. Constant filled by server.
+    :type validation_category: str
+    """
+
+    _validation = {
+        'individual_request_details': {'required': True},
+        'validation_category': {'required': True},
+    }
+
+    _attribute_map = {
+        'individual_request_details': {'key': 'individualRequestDetails', 'type': '[ValidationInputRequest]'},
+        'validation_category': {'key': 'validationCategory', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CreateJobValidations, self).__init__(**kwargs)
+        self.validation_category = 'JobCreationValidation'
+
+
+class ValidationInputRequest(Model):
+    """Minimum fields that must be present in any type of validation request.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CreateOrderLimitForSubscriptionValidationRequest,
+    DataDestinationDetailsValidationRequest, PreferencesValidationRequest,
+    SkuAvailabilityValidationRequest,
+    SubscriptionIsAllowedToCreateJobValidationRequest, ValidateAddress
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    """
+
+    _validation = {
+        'validation_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'validation_type': {'ValidateCreateOrderLimit': 'CreateOrderLimitForSubscriptionValidationRequest', 'ValidateDataDestinationDetails': 'DataDestinationDetailsValidationRequest', 'ValidatePreferences': 'PreferencesValidationRequest', 'ValidateSkuAvailability': 'SkuAvailabilityValidationRequest', 'ValidateSubscriptionIsAllowedToCreateJob': 'SubscriptionIsAllowedToCreateJobValidationRequest', 'ValidateAddress': 'ValidateAddress'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ValidationInputRequest, self).__init__(**kwargs)
+        self.validation_type = None
+
+
+class CreateOrderLimitForSubscriptionValidationRequest(ValidationInputRequest):
+    """Request to validate create order limit for current subscription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :param device_type: Required. Device type to be used for the job. Possible
+     values include: 'DataBox', 'DataBoxDisk', 'DataBoxHeavy'
+    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    """
+
+    _validation = {
+        'validation_type': {'required': True},
+        'device_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'device_type': {'key': 'deviceType', 'type': 'SkuName'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CreateOrderLimitForSubscriptionValidationRequest, self).__init__(**kwargs)
+        self.device_type = kwargs.get('device_type', None)
+        self.validation_type = 'ValidateCreateOrderLimit'
+
+
+class ValidationInputResponse(Model):
+    """Minimum properties that should be present in each individual validation
+    response.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are:
+    CreateOrderLimitForSubscriptionValidationResponseProperties,
+    DataDestinationDetailsValidationResponseProperties,
+    PreferencesValidationResponseProperties,
+    SkuAvailabilityValidationResponseProperties,
+    SubscriptionIsAllowedToCreateJobValidationResponseProperties
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+        'validation_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'validation_type': {'ValidateCreateOrderLimit': 'CreateOrderLimitForSubscriptionValidationResponseProperties', 'ValidateDataDestinationDetails': 'DataDestinationDetailsValidationResponseProperties', 'ValidatePreferences': 'PreferencesValidationResponseProperties', 'ValidateSkuAvailability': 'SkuAvailabilityValidationResponseProperties', 'ValidateSubscriptionIsAllowedToCreateJob': 'SubscriptionIsAllowedToCreateJobValidationResponseProperties'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ValidationInputResponse, self).__init__(**kwargs)
+        self.error = None
+        self.validation_type = None
+
+
+class CreateOrderLimitForSubscriptionValidationResponseProperties(ValidationInputResponse):
+    """Properties of create order limit for subscription validation response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :ivar status: Create order limit validation status. Possible values
+     include: 'Valid', 'Invalid', 'Skipped'
+    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+        'validation_type': {'required': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ValidationStatus'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CreateOrderLimitForSubscriptionValidationResponseProperties, self).__init__(**kwargs)
+        self.status = None
+        self.validation_type = 'ValidateCreateOrderLimit'
 
 
 class DataBoxAccountCopyLogDetails(CopyLogDetails):
@@ -432,7 +717,8 @@ class DataBoxDiskCopyProgress(Model):
     :vartype percent_complete: int
     :ivar status: The Status of the copy. Possible values include:
      'NotStarted', 'InProgress', 'Completed', 'CompletedWithErrors', 'Failed',
-     'NotReturned'
+     'NotReturned', 'HardwareError', 'DeviceFormatted',
+     'DeviceMetadataModified', 'StorageAccountNotAccessible', 'UnsupportedData'
     :vartype status: str or ~azure.mgmt.databox.models.CopyStatus
     """
 
@@ -470,9 +756,9 @@ class JobDetails(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data,
+    :param expected_data_size_in_terabytes: The expected size of the data,
      which needs to be transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :type expected_data_size_in_terabytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and
@@ -519,7 +805,7 @@ class JobDetails(Model):
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
+        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -540,7 +826,7 @@ class JobDetails(Model):
 
     def __init__(self, **kwargs):
         super(JobDetails, self).__init__(**kwargs)
-        self.expected_data_size_in_tera_bytes = kwargs.get('expected_data_size_in_tera_bytes', None)
+        self.expected_data_size_in_terabytes = kwargs.get('expected_data_size_in_terabytes', None)
         self.job_stages = None
         self.contact_details = kwargs.get('contact_details', None)
         self.shipping_address = kwargs.get('shipping_address', None)
@@ -563,9 +849,9 @@ class DataBoxDiskJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data,
+    :param expected_data_size_in_terabytes: The expected size of the data,
      which needs to be transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :type expected_data_size_in_terabytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and
@@ -627,7 +913,7 @@ class DataBoxDiskJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
+        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -664,6 +950,10 @@ class JobSecrets(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param dc_access_security_code: Dc Access Security Code for Customer
+     Managed Shipping
+    :type dc_access_security_code:
+     ~azure.mgmt.databox.models.DcAccessSecurityCode
     :param job_secrets_type: Required. Constant filled by server.
     :type job_secrets_type: str
     """
@@ -673,6 +963,7 @@ class JobSecrets(Model):
     }
 
     _attribute_map = {
+        'dc_access_security_code': {'key': 'dcAccessSecurityCode', 'type': 'DcAccessSecurityCode'},
         'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
     }
 
@@ -682,6 +973,7 @@ class JobSecrets(Model):
 
     def __init__(self, **kwargs):
         super(JobSecrets, self).__init__(**kwargs)
+        self.dc_access_security_code = kwargs.get('dc_access_security_code', None)
         self.job_secrets_type = None
 
 
@@ -693,6 +985,10 @@ class DataBoxDiskJobSecrets(JobSecrets):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param dc_access_security_code: Dc Access Security Code for Customer
+     Managed Shipping
+    :type dc_access_security_code:
+     ~azure.mgmt.databox.models.DcAccessSecurityCode
     :param job_secrets_type: Required. Constant filled by server.
     :type job_secrets_type: str
     :ivar disk_secrets: Contains the list of secrets object for that device.
@@ -711,6 +1007,7 @@ class DataBoxDiskJobSecrets(JobSecrets):
     }
 
     _attribute_map = {
+        'dc_access_security_code': {'key': 'dcAccessSecurityCode', 'type': 'DcAccessSecurityCode'},
         'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
         'disk_secrets': {'key': 'diskSecrets', 'type': '[DiskSecret]'},
         'pass_key': {'key': 'passKey', 'type': 'str'},
@@ -726,7 +1023,7 @@ class DataBoxDiskJobSecrets(JobSecrets):
 
 
 class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
-    """Copy log details for a storage account for DataBoxHeavy.
+    """Copy log details for a storage account for Databox heavy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -761,16 +1058,16 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
 
 
 class DataBoxHeavyJobDetails(JobDetails):
-    """DataBoxHeavy Device Job Details.
+    """Databox Heavy Device Job Details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data,
+    :param expected_data_size_in_terabytes: The expected size of the data,
      which needs to be transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :type expected_data_size_in_terabytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and
@@ -802,6 +1099,8 @@ class DataBoxHeavyJobDetails(JobDetails):
     :type job_details_type: str
     :ivar copy_progress: Copy progress per account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
+    :param device_password: Set Device password for unlocking Databox Heavy
+    :type device_password: str
     """
 
     _validation = {
@@ -820,7 +1119,7 @@ class DataBoxHeavyJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
+        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -834,26 +1133,32 @@ class DataBoxHeavyJobDetails(JobDetails):
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'job_details_type': {'key': 'jobDetailsType', 'type': 'str'},
         'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
+        'device_password': {'key': 'devicePassword', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(DataBoxHeavyJobDetails, self).__init__(**kwargs)
         self.copy_progress = None
+        self.device_password = kwargs.get('device_password', None)
         self.job_details_type = 'DataBoxHeavy'
 
 
 class DataBoxHeavyJobSecrets(JobSecrets):
-    """The secrets related to a DataBoxHeavy job.
+    """The secrets related to a databox heavy job.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param dc_access_security_code: Dc Access Security Code for Customer
+     Managed Shipping
+    :type dc_access_security_code:
+     ~azure.mgmt.databox.models.DcAccessSecurityCode
     :param job_secrets_type: Required. Constant filled by server.
     :type job_secrets_type: str
     :ivar cabinet_pod_secrets: Contains the list of secret objects for a
-     DataBoxHeavy job.
+     databox heavy job.
     :vartype cabinet_pod_secrets:
      list[~azure.mgmt.databox.models.DataBoxHeavySecret]
     """
@@ -864,6 +1169,7 @@ class DataBoxHeavyJobSecrets(JobSecrets):
     }
 
     _attribute_map = {
+        'dc_access_security_code': {'key': 'dcAccessSecurityCode', 'type': 'DcAccessSecurityCode'},
         'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
         'cabinet_pod_secrets': {'key': 'cabinetPodSecrets', 'type': '[DataBoxHeavySecret]'},
     }
@@ -875,7 +1181,7 @@ class DataBoxHeavyJobSecrets(JobSecrets):
 
 
 class DataBoxHeavySecret(Model):
-    """The secrets related to a DataBoxHeavy.
+    """The secrets related to a databox heavy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -921,16 +1227,16 @@ class DataBoxHeavySecret(Model):
 
 
 class DataBoxJobDetails(JobDetails):
-    """DataBox Job Details.
+    """Databox Job Details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data,
+    :param expected_data_size_in_terabytes: The expected size of the data,
      which needs to be transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :type expected_data_size_in_terabytes: int
     :ivar job_stages: List of stages that run in the job.
     :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
     :param contact_details: Required. Contact details for notification and
@@ -962,6 +1268,8 @@ class DataBoxJobDetails(JobDetails):
     :type job_details_type: str
     :ivar copy_progress: Copy progress per storage account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
+    :param device_password: Set Device password for unlocking Databox
+    :type device_password: str
     """
 
     _validation = {
@@ -980,7 +1288,7 @@ class DataBoxJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
+        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -994,19 +1302,25 @@ class DataBoxJobDetails(JobDetails):
         'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
         'job_details_type': {'key': 'jobDetailsType', 'type': 'str'},
         'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
+        'device_password': {'key': 'devicePassword', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(DataBoxJobDetails, self).__init__(**kwargs)
         self.copy_progress = None
+        self.device_password = kwargs.get('device_password', None)
         self.job_details_type = 'DataBox'
 
 
 class DataboxJobSecrets(JobSecrets):
-    """The secrets related to a DataBox job.
+    """The secrets related to a databox job.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param dc_access_security_code: Dc Access Security Code for Customer
+     Managed Shipping
+    :type dc_access_security_code:
+     ~azure.mgmt.databox.models.DcAccessSecurityCode
     :param job_secrets_type: Required. Constant filled by server.
     :type job_secrets_type: str
     :param pod_secrets: Contains the list of secret objects for a job.
@@ -1018,6 +1332,7 @@ class DataboxJobSecrets(JobSecrets):
     }
 
     _attribute_map = {
+        'dc_access_security_code': {'key': 'dcAccessSecurityCode', 'type': 'DcAccessSecurityCode'},
         'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
         'pod_secrets': {'key': 'podSecrets', 'type': '[DataBoxSecret]'},
     }
@@ -1026,6 +1341,71 @@ class DataboxJobSecrets(JobSecrets):
         super(DataboxJobSecrets, self).__init__(**kwargs)
         self.pod_secrets = kwargs.get('pod_secrets', None)
         self.job_secrets_type = 'DataBox'
+
+
+class ScheduleAvailabilityRequest(Model):
+    """Request body to get the availability for scheduling orders.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DataBoxScheduleAvailabilityRequest,
+    DiskScheduleAvailabilityRequest, HeavyScheduleAvailabilityRequest
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_location: Required. Location for data transfer.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
+    :type storage_location: str
+    :param sku_name: Required. Constant filled by server.
+    :type sku_name: str
+    """
+
+    _validation = {
+        'storage_location': {'required': True},
+        'sku_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'storage_location': {'key': 'storageLocation', 'type': 'str'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'sku_name': {'DataBox': 'DataBoxScheduleAvailabilityRequest', 'DataBoxDisk': 'DiskScheduleAvailabilityRequest', 'DataBoxHeavy': 'HeavyScheduleAvailabilityRequest'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ScheduleAvailabilityRequest, self).__init__(**kwargs)
+        self.storage_location = kwargs.get('storage_location', None)
+        self.sku_name = None
+
+
+class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
+    """Request body to get the availability for scheduling data box orders orders.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_location: Required. Location for data transfer.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
+    :type storage_location: str
+    :param sku_name: Required. Constant filled by server.
+    :type sku_name: str
+    """
+
+    _validation = {
+        'storage_location': {'required': True},
+        'sku_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'storage_location': {'key': 'storageLocation', 'type': 'str'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataBoxScheduleAvailabilityRequest, self).__init__(**kwargs)
+        self.sku_name = 'DataBox'
 
 
 class DataBoxSecret(Model):
@@ -1074,8 +1454,97 @@ class DataBoxSecret(Model):
         self.account_credential_details = None
 
 
+class DataDestinationDetailsValidationRequest(ValidationInputRequest):
+    """Request to validate data destination details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :param destination_account_details: Required. Destination account details
+     list.
+    :type destination_account_details:
+     list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :param location: Required. Location of stamp or geo.
+    :type location: str
+    """
+
+    _validation = {
+        'validation_type': {'required': True},
+        'destination_account_details': {'required': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'destination_account_details': {'key': 'destinationAccountDetails', 'type': '[DestinationAccountDetails]'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataDestinationDetailsValidationRequest, self).__init__(**kwargs)
+        self.destination_account_details = kwargs.get('destination_account_details', None)
+        self.location = kwargs.get('location', None)
+        self.validation_type = 'ValidateDataDestinationDetails'
+
+
+class DataDestinationDetailsValidationResponseProperties(ValidationInputResponse):
+    """Properties of data destination details validation response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :ivar status: Data destination details validation status. Possible values
+     include: 'Valid', 'Invalid', 'Skipped'
+    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+        'validation_type': {'required': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ValidationStatus'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataDestinationDetailsValidationResponseProperties, self).__init__(**kwargs)
+        self.status = None
+        self.validation_type = 'ValidateDataDestinationDetails'
+
+
+class DcAccessSecurityCode(Model):
+    """Dc Access Security code for device.
+
+    :param forward_dc_access_code: Dc Access Code for dispatching from DC.
+    :type forward_dc_access_code: str
+    :param reverse_dc_access_code: Dc Access code for dropping off at DC.
+    :type reverse_dc_access_code: str
+    """
+
+    _attribute_map = {
+        'forward_dc_access_code': {'key': 'forwardDcAccessCode', 'type': 'str'},
+        'reverse_dc_access_code': {'key': 'reverseDcAccessCode', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DcAccessSecurityCode, self).__init__(**kwargs)
+        self.forward_dc_access_code = kwargs.get('forward_dc_access_code', None)
+        self.reverse_dc_access_code = kwargs.get('reverse_dc_access_code', None)
+
+
 class DestinationAccountDetails(Model):
-    """Details of the destination of the data.
+    """Details of the destination storage accounts.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: DestinationManagedDiskDetails,
@@ -1086,6 +1555,8 @@ class DestinationAccountDetails(Model):
     :param account_id: Arm Id of the destination where the data has to be
      moved.
     :type account_id: str
+    :param share_password: Share password to be shared by all shares in SA.
+    :type share_password: str
     :param data_destination_type: Required. Constant filled by server.
     :type data_destination_type: str
     """
@@ -1096,6 +1567,7 @@ class DestinationAccountDetails(Model):
 
     _attribute_map = {
         'account_id': {'key': 'accountId', 'type': 'str'},
+        'share_password': {'key': 'sharePassword', 'type': 'str'},
         'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
     }
 
@@ -1106,6 +1578,7 @@ class DestinationAccountDetails(Model):
     def __init__(self, **kwargs):
         super(DestinationAccountDetails, self).__init__(**kwargs)
         self.account_id = kwargs.get('account_id', None)
+        self.share_password = kwargs.get('share_password', None)
         self.data_destination_type = None
 
 
@@ -1117,6 +1590,8 @@ class DestinationManagedDiskDetails(DestinationAccountDetails):
     :param account_id: Arm Id of the destination where the data has to be
      moved.
     :type account_id: str
+    :param share_password: Share password to be shared by all shares in SA.
+    :type share_password: str
     :param data_destination_type: Required. Constant filled by server.
     :type data_destination_type: str
     :param resource_group_id: Required. Destination Resource Group Id where
@@ -1135,6 +1610,7 @@ class DestinationManagedDiskDetails(DestinationAccountDetails):
 
     _attribute_map = {
         'account_id': {'key': 'accountId', 'type': 'str'},
+        'share_password': {'key': 'sharePassword', 'type': 'str'},
         'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
         'resource_group_id': {'key': 'resourceGroupId', 'type': 'str'},
         'staging_storage_account_id': {'key': 'stagingStorageAccountId', 'type': 'str'},
@@ -1155,6 +1631,8 @@ class DestinationStorageAccountDetails(DestinationAccountDetails):
     :param account_id: Arm Id of the destination where the data has to be
      moved.
     :type account_id: str
+    :param share_password: Share password to be shared by all shares in SA.
+    :type share_password: str
     :param data_destination_type: Required. Constant filled by server.
     :type data_destination_type: str
     :param storage_account_id: Required. Destination Storage Account Arm Id.
@@ -1168,6 +1646,7 @@ class DestinationStorageAccountDetails(DestinationAccountDetails):
 
     _attribute_map = {
         'account_id': {'key': 'accountId', 'type': 'str'},
+        'share_password': {'key': 'sharePassword', 'type': 'str'},
         'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
         'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
     }
@@ -1204,6 +1683,40 @@ class DestinationToServiceLocationMap(Model):
         super(DestinationToServiceLocationMap, self).__init__(**kwargs)
         self.destination_location = None
         self.service_location = None
+
+
+class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
+    """Request body to get the availability for scheduling disk orders.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_location: Required. Location for data transfer.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
+    :type storage_location: str
+    :param sku_name: Required. Constant filled by server.
+    :type sku_name: str
+    :param expected_data_size_in_terabytes: Required. The expected size of the
+     data, which needs to be transferred in this job, in terabytes.
+    :type expected_data_size_in_terabytes: int
+    """
+
+    _validation = {
+        'storage_location': {'required': True},
+        'sku_name': {'required': True},
+        'expected_data_size_in_terabytes': {'required': True},
+    }
+
+    _attribute_map = {
+        'storage_location': {'key': 'storageLocation', 'type': 'str'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
+        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DiskScheduleAvailabilityRequest, self).__init__(**kwargs)
+        self.expected_data_size_in_terabytes = kwargs.get('expected_data_size_in_terabytes', None)
+        self.sku_name = 'DataBoxDisk'
 
 
 class DiskSecret(Model):
@@ -1263,6 +1776,50 @@ class Error(Model):
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
+
+
+class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
+    """Request body to get the availability for scheduling heavy orders.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_location: Required. Location for data transfer.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
+    :type storage_location: str
+    :param sku_name: Required. Constant filled by server.
+    :type sku_name: str
+    """
+
+    _validation = {
+        'storage_location': {'required': True},
+        'sku_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'storage_location': {'key': 'storageLocation', 'type': 'str'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HeavyScheduleAvailabilityRequest, self).__init__(**kwargs)
+        self.sku_name = 'DataBoxHeavy'
+
+
+class JobDeliveryInfo(Model):
+    """Additional delivery info.
+
+    :param scheduled_date_time: Scheduled date time.
+    :type scheduled_date_time: datetime
+    """
+
+    _attribute_map = {
+        'scheduled_date_time': {'key': 'scheduledDateTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(JobDeliveryInfo, self).__init__(**kwargs)
+        self.scheduled_date_time = kwargs.get('scheduled_date_time', None)
 
 
 class JobErrorDetails(Model):
@@ -1371,7 +1928,8 @@ class JobResource(Resource):
      include: 'DeviceOrdered', 'DevicePrepared', 'Dispatched', 'Delivered',
      'PickedUp', 'AtAzureDC', 'DataCopy', 'Completed', 'CompletedWithErrors',
      'Cancelled', 'Failed_IssueReportedAtCustomer',
-     'Failed_IssueDetectedAtAzureDC', 'Aborted'
+     'Failed_IssueDetectedAtAzureDC', 'Aborted', 'CompletedWithWarnings',
+     'ReadyToDispatchFromAzureDC', 'ReadyToReceiveAtAzureDC'
     :vartype status: str or ~azure.mgmt.databox.models.StageName
     :ivar start_time: Time at which the job was started in UTC ISO 8601
      format.
@@ -1383,6 +1941,14 @@ class JobResource(Resource):
     :type details: ~azure.mgmt.databox.models.JobDetails
     :ivar cancellation_reason: Reason for cancellation.
     :vartype cancellation_reason: str
+    :param delivery_type: Delivery type of Job. Possible values include:
+     'NonScheduled', 'Scheduled'
+    :type delivery_type: str or ~azure.mgmt.databox.models.JobDeliveryType
+    :param delivery_info: Delivery Info of Job.
+    :type delivery_info: ~azure.mgmt.databox.models.JobDeliveryInfo
+    :ivar is_cancellable_without_fee: Flag to indicate cancellation of
+     scheduled job.
+    :vartype is_cancellable_without_fee: bool
     :ivar name: Name of the object.
     :vartype name: str
     :ivar id: Id of the object.
@@ -1401,6 +1967,7 @@ class JobResource(Resource):
         'start_time': {'readonly': True},
         'error': {'readonly': True},
         'cancellation_reason': {'readonly': True},
+        'is_cancellable_without_fee': {'readonly': True},
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
@@ -1418,6 +1985,9 @@ class JobResource(Resource):
         'error': {'key': 'properties.error', 'type': 'Error'},
         'details': {'key': 'properties.details', 'type': 'JobDetails'},
         'cancellation_reason': {'key': 'properties.cancellationReason', 'type': 'str'},
+        'delivery_type': {'key': 'properties.deliveryType', 'type': 'JobDeliveryType'},
+        'delivery_info': {'key': 'properties.deliveryInfo', 'type': 'JobDeliveryInfo'},
+        'is_cancellable_without_fee': {'key': 'properties.isCancellableWithoutFee', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -1433,6 +2003,9 @@ class JobResource(Resource):
         self.error = None
         self.details = kwargs.get('details', None)
         self.cancellation_reason = None
+        self.delivery_type = kwargs.get('delivery_type', None)
+        self.delivery_info = kwargs.get('delivery_info', None)
+        self.is_cancellable_without_fee = None
         self.name = None
         self.id = None
         self.type = None
@@ -1475,7 +2048,8 @@ class JobStages(Model):
      'DeviceOrdered', 'DevicePrepared', 'Dispatched', 'Delivered', 'PickedUp',
      'AtAzureDC', 'DataCopy', 'Completed', 'CompletedWithErrors', 'Cancelled',
      'Failed_IssueReportedAtCustomer', 'Failed_IssueDetectedAtAzureDC',
-     'Aborted'
+     'Aborted', 'CompletedWithWarnings', 'ReadyToDispatchFromAzureDC',
+     'ReadyToReceiveAtAzureDC'
     :vartype stage_name: str or ~azure.mgmt.databox.models.StageName
     :ivar display_name: Display name of the job stage.
     :vartype display_name: str
@@ -1652,17 +2226,170 @@ class PackageShippingDetails(Model):
 class Preferences(Model):
     """Preferences related to the order.
 
-    :param preferred_data_center_region:
+    :param preferred_data_center_region: Preferred Data Center Region.
     :type preferred_data_center_region: list[str]
+    :param transport_preferences: Preferences related to the shipment
+     logistics of the sku.
+    :type transport_preferences:
+     ~azure.mgmt.databox.models.TransportPreferences
     """
 
     _attribute_map = {
         'preferred_data_center_region': {'key': 'preferredDataCenterRegion', 'type': '[str]'},
+        'transport_preferences': {'key': 'transportPreferences', 'type': 'TransportPreferences'},
     }
 
     def __init__(self, **kwargs):
         super(Preferences, self).__init__(**kwargs)
         self.preferred_data_center_region = kwargs.get('preferred_data_center_region', None)
+        self.transport_preferences = kwargs.get('transport_preferences', None)
+
+
+class PreferencesValidationRequest(ValidationInputRequest):
+    """Request to validate preference of transport and data center.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :param preference: Preference requested with respect to transport type and
+     data center
+    :type preference: ~azure.mgmt.databox.models.Preferences
+    :param device_type: Required. Device type to be used for the job. Possible
+     values include: 'DataBox', 'DataBoxDisk', 'DataBoxHeavy'
+    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    """
+
+    _validation = {
+        'validation_type': {'required': True},
+        'device_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'preference': {'key': 'preference', 'type': 'Preferences'},
+        'device_type': {'key': 'deviceType', 'type': 'SkuName'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PreferencesValidationRequest, self).__init__(**kwargs)
+        self.preference = kwargs.get('preference', None)
+        self.device_type = kwargs.get('device_type', None)
+        self.validation_type = 'ValidatePreferences'
+
+
+class PreferencesValidationResponseProperties(ValidationInputResponse):
+    """Properties of data center and transport preference validation response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :ivar status: Validation status of requested data center and transport.
+     Possible values include: 'Valid', 'Invalid', 'Skipped'
+    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+        'validation_type': {'required': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ValidationStatus'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PreferencesValidationResponseProperties, self).__init__(**kwargs)
+        self.status = None
+        self.validation_type = 'ValidatePreferences'
+
+
+class RegionConfigurationRequest(Model):
+    """Request body to get the configuration for the region.
+
+    :param schedule_availability_request: Request body to get the availability
+     for scheduling orders.
+    :type schedule_availability_request:
+     ~azure.mgmt.databox.models.ScheduleAvailabilityRequest
+    :param transport_availability_request: Request body to get the transport
+     availability for given sku.
+    :type transport_availability_request:
+     ~azure.mgmt.databox.models.TransportAvailabilityRequest
+    """
+
+    _attribute_map = {
+        'schedule_availability_request': {'key': 'scheduleAvailabilityRequest', 'type': 'ScheduleAvailabilityRequest'},
+        'transport_availability_request': {'key': 'transportAvailabilityRequest', 'type': 'TransportAvailabilityRequest'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RegionConfigurationRequest, self).__init__(**kwargs)
+        self.schedule_availability_request = kwargs.get('schedule_availability_request', None)
+        self.transport_availability_request = kwargs.get('transport_availability_request', None)
+
+
+class RegionConfigurationResponse(Model):
+    """Configuration response specific to a region.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar schedule_availability_response: Schedule availability for given sku
+     in a region.
+    :vartype schedule_availability_response:
+     ~azure.mgmt.databox.models.ScheduleAvailabilityResponse
+    :ivar transport_availability_response: Transport options available for
+     given sku in a region.
+    :vartype transport_availability_response:
+     ~azure.mgmt.databox.models.TransportAvailabilityResponse
+    """
+
+    _validation = {
+        'schedule_availability_response': {'readonly': True},
+        'transport_availability_response': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'schedule_availability_response': {'key': 'scheduleAvailabilityResponse', 'type': 'ScheduleAvailabilityResponse'},
+        'transport_availability_response': {'key': 'transportAvailabilityResponse', 'type': 'TransportAvailabilityResponse'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RegionConfigurationResponse, self).__init__(**kwargs)
+        self.schedule_availability_response = None
+        self.transport_availability_response = None
+
+
+class ScheduleAvailabilityResponse(Model):
+    """Schedule availability response for given sku in a region.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar available_dates: List of dates available to schedule
+    :vartype available_dates: list[datetime]
+    """
+
+    _validation = {
+        'available_dates': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'available_dates': {'key': 'availableDates', 'type': '[iso-8601]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ScheduleAvailabilityResponse, self).__init__(**kwargs)
+        self.available_dates = None
 
 
 class ShareCredentialDetails(Model):
@@ -1868,6 +2595,93 @@ class Sku(Model):
         self.family = kwargs.get('family', None)
 
 
+class SkuAvailabilityValidationRequest(ValidationInputRequest):
+    """Request to validate sku availability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :param device_type: Required. Device type to be used for the job. Possible
+     values include: 'DataBox', 'DataBoxDisk', 'DataBoxHeavy'
+    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    :ivar transfer_type: Required. Type of the transfer. Default value:
+     "ImportToAzure" .
+    :vartype transfer_type: str
+    :param country: Required. ISO country code. Country for hardware shipment.
+     For codes check:
+     https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements
+    :type country: str
+    :param location: Required. Location for data transfer. For locations
+     check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
+    :type location: str
+    """
+
+    _validation = {
+        'validation_type': {'required': True},
+        'device_type': {'required': True},
+        'transfer_type': {'required': True, 'constant': True},
+        'country': {'required': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'device_type': {'key': 'deviceType', 'type': 'SkuName'},
+        'transfer_type': {'key': 'transferType', 'type': 'str'},
+        'country': {'key': 'country', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    transfer_type = "ImportToAzure"
+
+    def __init__(self, **kwargs):
+        super(SkuAvailabilityValidationRequest, self).__init__(**kwargs)
+        self.device_type = kwargs.get('device_type', None)
+        self.country = kwargs.get('country', None)
+        self.location = kwargs.get('location', None)
+        self.validation_type = 'ValidateSkuAvailability'
+
+
+class SkuAvailabilityValidationResponseProperties(ValidationInputResponse):
+    """Properties of sku availability validation response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :ivar status: Sku availability validation status. Possible values include:
+     'Valid', 'Invalid', 'Skipped'
+    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+        'validation_type': {'required': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ValidationStatus'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuAvailabilityValidationResponseProperties, self).__init__(**kwargs)
+        self.status = None
+        self.validation_type = 'ValidateSkuAvailability'
+
+
 class SkuCapacity(Model):
     """Capacity of the sku.
 
@@ -1992,6 +2806,155 @@ class SkuInformation(Model):
         self.required_feature = None
 
 
+class SubscriptionIsAllowedToCreateJobValidationRequest(ValidationInputRequest):
+    """Request to validate subscription permission to create jobs.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    """
+
+    _validation = {
+        'validation_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubscriptionIsAllowedToCreateJobValidationRequest, self).__init__(**kwargs)
+        self.validation_type = 'ValidateSubscriptionIsAllowedToCreateJob'
+
+
+class SubscriptionIsAllowedToCreateJobValidationResponseProperties(ValidationInputResponse):
+    """Properties of subscription permission to create job validation response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error code and message of validation response.
+    :vartype error: ~azure.mgmt.databox.models.Error
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
+    :ivar status: Validation status of subscription permission to create job.
+     Possible values include: 'Valid', 'Invalid', 'Skipped'
+    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+        'validation_type': {'required': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+        'validation_type': {'key': 'validationType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'ValidationStatus'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubscriptionIsAllowedToCreateJobValidationResponseProperties, self).__init__(**kwargs)
+        self.status = None
+        self.validation_type = 'ValidateSubscriptionIsAllowedToCreateJob'
+
+
+class TransportAvailabilityDetails(Model):
+    """Transport options availability details for given region.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar shipment_type: Transport Shipment Type supported for given region.
+     Possible values include: 'CustomerManaged', 'MicrosoftManaged'
+    :vartype shipment_type: str or
+     ~azure.mgmt.databox.models.TransportShipmentTypes
+    """
+
+    _validation = {
+        'shipment_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'shipment_type': {'key': 'shipmentType', 'type': 'TransportShipmentTypes'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TransportAvailabilityDetails, self).__init__(**kwargs)
+        self.shipment_type = None
+
+
+class TransportAvailabilityRequest(Model):
+    """Request body to get the transport availability for given sku.
+
+    :param sku_name: Type of the device. Possible values include: 'DataBox',
+     'DataBoxDisk', 'DataBoxHeavy'
+    :type sku_name: str or ~azure.mgmt.databox.models.SkuName
+    """
+
+    _attribute_map = {
+        'sku_name': {'key': 'skuName', 'type': 'SkuName'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TransportAvailabilityRequest, self).__init__(**kwargs)
+        self.sku_name = kwargs.get('sku_name', None)
+
+
+class TransportAvailabilityResponse(Model):
+    """Transport options available for given sku in a region.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar transport_availability_details: List of transport availability
+     details for given region
+    :vartype transport_availability_details:
+     list[~azure.mgmt.databox.models.TransportAvailabilityDetails]
+    """
+
+    _validation = {
+        'transport_availability_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'transport_availability_details': {'key': 'transportAvailabilityDetails', 'type': '[TransportAvailabilityDetails]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TransportAvailabilityResponse, self).__init__(**kwargs)
+        self.transport_availability_details = None
+
+
+class TransportPreferences(Model):
+    """Preferences related to the shipment logistics of the sku.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param preferred_shipment_type: Required. Indicates Shipment Logistics
+     type that the customer preferred. Possible values include:
+     'CustomerManaged', 'MicrosoftManaged'
+    :type preferred_shipment_type: str or
+     ~azure.mgmt.databox.models.TransportShipmentTypes
+    """
+
+    _validation = {
+        'preferred_shipment_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'preferred_shipment_type': {'key': 'preferredShipmentType', 'type': 'TransportShipmentTypes'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TransportPreferences, self).__init__(**kwargs)
+        self.preferred_shipment_type = kwargs.get('preferred_shipment_type', None)
+
+
 class UnencryptedCredentials(Model):
     """Unencrypted credentials for accessing device.
 
@@ -2040,30 +3003,73 @@ class UpdateJobDetails(Model):
         self.shipping_address = kwargs.get('shipping_address', None)
 
 
-class ValidateAddress(Model):
+class ValidateAddress(ValidationInputRequest):
     """The requirements to validate customer address where the device needs to be
     shipped.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param validation_type: Required. Constant filled by server.
+    :type validation_type: str
     :param shipping_address: Required. Shipping address of the customer.
     :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
     :param device_type: Required. Device type to be used for the job. Possible
      values include: 'DataBox', 'DataBoxDisk', 'DataBoxHeavy'
     :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    :param transport_preferences: Preferences related to the shipment
+     logistics of the sku.
+    :type transport_preferences:
+     ~azure.mgmt.databox.models.TransportPreferences
     """
 
     _validation = {
+        'validation_type': {'required': True},
         'shipping_address': {'required': True},
         'device_type': {'required': True},
     }
 
     _attribute_map = {
+        'validation_type': {'key': 'validationType', 'type': 'str'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
         'device_type': {'key': 'deviceType', 'type': 'SkuName'},
+        'transport_preferences': {'key': 'transportPreferences', 'type': 'TransportPreferences'},
     }
 
     def __init__(self, **kwargs):
         super(ValidateAddress, self).__init__(**kwargs)
         self.shipping_address = kwargs.get('shipping_address', None)
         self.device_type = kwargs.get('device_type', None)
+        self.transport_preferences = kwargs.get('transport_preferences', None)
+        self.validation_type = 'ValidateAddress'
+
+
+class ValidationResponse(Model):
+    """Response of pre job creation validations.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: Overall validation status. Possible values include:
+     'AllValidToProceed', 'InputsRevisitRequired',
+     'CertainInputValidationsSkipped'
+    :vartype status: str or ~azure.mgmt.databox.models.OverallValidationStatus
+    :ivar individual_response_details: List of response details contain
+     validationType and its response as key and value respectively.
+    :vartype individual_response_details:
+     list[~azure.mgmt.databox.models.ValidationInputResponse]
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'individual_response_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'properties.status', 'type': 'OverallValidationStatus'},
+        'individual_response_details': {'key': 'properties.individualResponseDetails', 'type': '[ValidationInputResponse]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ValidationResponse, self).__init__(**kwargs)
+        self.status = None
+        self.individual_response_details = None
