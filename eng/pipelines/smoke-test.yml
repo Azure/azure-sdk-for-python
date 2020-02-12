@@ -40,8 +40,8 @@ jobs:
       - script: pip --version
         displayName: pip --version
 
-      - script: pip install packaging
-        displayName: Install packaging requirements
+      - script: pip install packaging pkginfo
+        displayName: Install requirements for dev tools
 
       - script: pip install -r ./common/smoketest/requirements.txt
         displayName: "Install requirements.txt"
