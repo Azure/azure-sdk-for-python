@@ -30,6 +30,7 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
+from ._serialize import get_api_version
 from ._file_client import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
@@ -112,7 +113,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_directory_url(cls, directory_url,  # type: str

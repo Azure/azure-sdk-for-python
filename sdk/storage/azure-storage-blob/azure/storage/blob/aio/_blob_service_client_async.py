@@ -29,6 +29,7 @@ from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
 from .._models import ContainerProperties
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
+from .._serialize import get_api_version
 from ._models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
@@ -116,7 +117,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async

@@ -32,7 +32,7 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
-from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties
+from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties, get_api_version
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
@@ -166,7 +166,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(

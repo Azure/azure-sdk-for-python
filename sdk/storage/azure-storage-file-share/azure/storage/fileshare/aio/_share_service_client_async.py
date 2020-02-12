@@ -22,6 +22,7 @@ from .._generated.aio import AzureFileStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties
 from .._generated.version import VERSION
 from .._share_service_client import ShareServiceClient as ShareServiceClientBase
+from .._serialize import get_api_version
 from ._share_client_async import ShareClient
 from ._models import SharePropertiesPaged
 from .._models import service_properties_deserialize
@@ -87,7 +88,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async

@@ -37,7 +37,7 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     UserDelegationKey,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info
+from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
@@ -158,7 +158,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name

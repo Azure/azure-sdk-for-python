@@ -26,7 +26,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import deserialize_file_properties, deserialize_file_stream
-from .._serialize import get_access_conditions, get_smb_properties
+from .._serialize import get_access_conditions, get_smb_properties, get_api_version
 from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
 from ._lease_async import ShareLeaseClient
@@ -136,7 +136,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             credential=credential, loop=loop, **kwargs
         )
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
