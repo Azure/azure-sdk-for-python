@@ -2118,7 +2118,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             This operation is only available for managed disk accounts.
 
         .. versionadded:: 12.2.0
-            This operation is unsupported in earlier API versions.
+            This operation was introduced in API version '2019-07-07'.
 
         :param previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.

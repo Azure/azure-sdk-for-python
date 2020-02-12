@@ -252,13 +252,12 @@ class ContainerClient(StorageAccountHostsMixin):
         :type metadata: dict[str, str]
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: 'container', 'blob'.
-        :keyword container_encryption_scope:
+        :keyword ~azure.storage.blob.ContainerEncryptionScope container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
             all future writes.
 
             .. versionadded:: 12.2.0
 
-        :paramtype: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None

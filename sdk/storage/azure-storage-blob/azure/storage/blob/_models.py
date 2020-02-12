@@ -1056,7 +1056,7 @@ class CustomerProvidedEncryptionKey(object):
 
 class ContainerEncryptionScope(object):
     """The default encryption scope configuration for a container.
-    
+
     This scope is used implicitly for all future writes within the container,
     but can be overridden per blob operation.
 
