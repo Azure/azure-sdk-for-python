@@ -3,11 +3,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - ade1de00-21f4-11ea-bc09-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 19 Dec 2019 00:15:36 GMT
+      - Wed, 12 Feb 2020 21:44:52 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -16,22 +14,11 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Thu, 19 Dec 2019 00:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7841892597DB0"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Thu, 19 Dec 2019 00:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._multidict.istr
-      - Transfer-Encoding
-      : chunked
-      x-ms-request-id: dbdc35c5-c01a-00b6-4a01-b6e334000000
+      date: Wed, 12 Feb 2020 21:44:51 GMT
+      etag: '"0x8D7B004CAC44514"'
+      last-modified: Wed, 12 Feb 2020 21:44:52 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
       x-ms-version: '2019-07-07'
     status:
       code: 201
@@ -40,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - e88xscnapdz5ptf01d.file.core.windows.net
+        - pyacrstorage6qu5z6l6mmol.file.core.windows.net
         - /sharec8081c28
         - restype=share
         - ''
@@ -48,11 +35,9 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - ae2fdaa4-21f4-11ea-9fa6-001a7dda7113
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 19 Dec 2019 00:15:36 GMT
+      - Wed, 12 Feb 2020 21:44:52 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -61,26 +46,14 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Thu, 19 Dec 2019 00:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7841892597DB0"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Thu, 19 Dec 2019 00:15:36 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._multidict.istr
-      - Transfer-Encoding
-      : chunked
-      x-ms-enabled-protocols: SMB
+      date: Wed, 12 Feb 2020 21:44:51 GMT
+      etag: '"0x8D7B004CAC44514"'
+      last-modified: Wed, 12 Feb 2020 21:44:52 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
-      x-ms-request-id: dbdc35c8-c01a-00b6-4b01-b6e334000000
-      x-ms-share-next-allowed-quota-downgrade-time: Thu, 19 Dec 2019 00:15:36 GMT
+      x-ms-share-next-allowed-quota-downgrade-time: Wed, 12 Feb 2020 21:44:52 GMT
       x-ms-share-provisioned-egress-mbps: '66'
       x-ms-share-provisioned-ingress-mbps: '44'
       x-ms-share-provisioned-iops: '100'
@@ -93,7 +66,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - e88xscnapdz5ptf01d.file.core.windows.net
+        - pyacrstorage6qu5z6l6mmol.file.core.windows.net
         - /sharec8081c28
         - restype=share
         - ''
