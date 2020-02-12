@@ -25,6 +25,7 @@ from .._generated.models import (
     SignedIdentifier,
     DeleteSnapshotsOptionType)
 from .._deserialize import deserialize_share_properties, deserialize_permission
+from .._serialize import get_api_version
 from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
@@ -52,6 +53,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.1.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword loop:
@@ -76,6 +83,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     def get_directory_client(self, directory_path=None):
@@ -95,8 +103,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
-            _location_mode=self._location_mode, loop=self._loop)
+            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
         # type: (str) -> ShareFileClient
@@ -115,7 +123,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         return ShareFileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
-            credential=self.credential, _hosts=self._hosts, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     @distributed_trace_async

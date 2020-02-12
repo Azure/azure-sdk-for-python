@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:11 GMT
       etag: '"0x8D79A1614BFE1BC"'
       last-modified: Wed, 15 Jan 2020 23:53:12 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:11 GMT
       etag: '"0x8D79A1614C7AEBB"'
       last-modified: Wed, 15 Jan 2020 23:53:12 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:12 GMT
       etag: '"0x8D79A1614E7E673"'
       last-modified: Wed, 15 Jan 2020 23:53:12 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:53:12 GMT
       etag: '"0x8D79A1614FAAE5C"'
@@ -200,7 +200,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:12 GMT
       etag: '"0x8D79A1615169F9D"'
       last-modified: Wed, 15 Jan 2020 23:53:12 GMT
@@ -248,7 +248,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
       date: Wed, 15 Jan 2020 23:53:12 GMT
       etag: '"0x8D79A16151E1AF4"'
@@ -282,7 +282,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:12 GMT
       etag: '"0x8D79A1614BFE1BC"'
       last-modified: Wed, 15 Jan 2020 23:53:12 GMT
@@ -315,7 +315,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:12 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
@@ -350,8 +350,8 @@ interactions:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
       accept-ranges: bytes
-      content-length: '1024'
-      content-range: bytes 0-1023/1024
+      Content-Length: '1024'
+      Content-Range: bytes 0-1023/1024
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:13 GMT
       etag: '"0x8D79A16151E1AF4"'

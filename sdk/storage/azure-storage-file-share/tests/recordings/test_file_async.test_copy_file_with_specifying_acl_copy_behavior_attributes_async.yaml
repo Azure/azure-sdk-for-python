@@ -1,0 +1,280 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 28 Jan 2020 05:16:35 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare53de216a?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 28 Jan 2020 05:16:35 GMT
+      etag: '"0x8D7A3B13F220B08"'
+      last-modified: Tue, 28 Jan 2020 05:16:35 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.file.core.windows.net
+        - /utshare53de216a
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Tue, 28 Jan 2020 05:16:36 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 28 Jan 2020 05:16:36 GMT
+      etag: '"0x8D7A3B13FAD5E48"'
+      last-modified: Tue, 28 Jan 2020 05:16:36 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2020-01-28T05:16:36.9079880Z'
+      x-ms-file-creation-time: '2020-01-28T05:16:36.9079880Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2020-01-28T05:16:36.9079880Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 16864655153240182536*4804112389554988934
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.file.core.windows.net
+        - /utshare53de216a/file53de216a
+        - ''
+        - ''
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-range:
+      - bytes=0-1023
+      x-ms-version:
+      - '2019-07-07'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare53de216a/file53de216a?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      date: Tue, 28 Jan 2020 05:16:36 GMT
+      etag: '"0x8D7A3B13FCD9A00"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.file.core.windows.net
+        - /utshare53de216a/file53de216a
+        - comp=range
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-copy-source:
+      - https://emilystageaccount.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-date:
+      - Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-file-attributes:
+      - Temporary|NoScrubData
+      x-ms-file-copy-ignore-read-only:
+      - 'true'
+      x-ms-file-creation-time:
+      - '2017-05-10T17:52:33.9551860Z'
+      x-ms-file-last-write-time:
+      - ''
+      x-ms-file-permission:
+      - O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)
+      x-ms-file-permission-copy-mode:
+      - override
+      x-ms-version:
+      - '2019-07-07'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 28 Jan 2020 05:16:37 GMT
+      etag: '"0x8D7A3B1402FA49C"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id: 76e664d2-a782-4131-8a11-1cd4c8a64aeb
+      x-ms-copy-status: success
+      x-ms-version: '2019-07-07'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.file.core.windows.net
+        - /utshare53de216a/file1copy
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '1024'
+      content-type: application/octet-stream
+      date: Tue, 28 Jan 2020 05:16:37 GMT
+      etag: '"0x8D7A3B1402FA49C"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-completion-time: Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-copy-id: 76e664d2-a782-4131-8a11-1cd4c8a64aeb
+      x-ms-copy-progress: 1024/1024
+      x-ms-copy-source: https://emilystageaccount.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-copy-status: success
+      x-ms-file-attributes: Archive | Temporary | NoScrubData
+      x-ms-file-change-time: '2020-01-28T05:16:37.7617564Z'
+      x-ms-file-creation-time: '2017-05-10T17:52:33.9551860Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2020-01-28T05:16:37.7617564Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 11567002431961314099*4804112389554988934
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
+      x-ms-version: '2019-07-07'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.file.core.windows.net
+        - /utshare53de216a/file1copy
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
+  response:
+    body:
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-range: bytes 0-1023/1024
+      content-type: application/octet-stream
+      date: Tue, 28 Jan 2020 05:16:38 GMT
+      etag: '"0x8D7A3B1402FA49C"'
+      last-modified: Tue, 28 Jan 2020 05:16:37 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-completion-time: Tue, 28 Jan 2020 05:16:37 GMT
+      x-ms-copy-id: 76e664d2-a782-4131-8a11-1cd4c8a64aeb
+      x-ms-copy-progress: 1024/1024
+      x-ms-copy-source: https://emilystageaccount.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-copy-status: success
+      x-ms-file-attributes: Archive | Temporary | NoScrubData
+      x-ms-file-change-time: '2020-01-28T05:16:37.7617564Z'
+      x-ms-file-creation-time: '2017-05-10T17:52:33.9551860Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2020-01-28T05:16:37.7617564Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 11567002431961314099*4804112389554988934
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
+      x-ms-version: '2019-07-07'
+    status:
+      code: 206
+      message: Partial Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilystageaccount.file.core.windows.net
+        - /utshare53de216a/file1copy
+        - ''
+        - ''
+version: 1

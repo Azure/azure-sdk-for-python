@@ -30,12 +30,12 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._generated import AzureBlobStorage
+from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
@@ -87,6 +87,12 @@ class ContainerClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -142,6 +148,7 @@ class ContainerClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -245,6 +252,13 @@ class ContainerClient(StorageAccountHostsMixin):
         :type metadata: dict[str, str]
         :param ~azure.storage.blob.PublicAccess public_access:
             Possible values include: 'container', 'blob'.
+        :keyword container_encryption_scope:
+            Specifies the default encryption scope to set on the container and use for
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -261,10 +275,12 @@ class ContainerClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         timeout = kwargs.pop('timeout', None)
         headers.update(add_metadata_headers(metadata)) # type: ignore
+        container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
             return self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
+                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -791,6 +807,14 @@ class ContainerClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: A BlobClient to interact with the newly uploaded blob.
@@ -1282,7 +1306,7 @@ class ContainerClient(StorageAccountHostsMixin):
         )
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
-            credential=self.credential, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
