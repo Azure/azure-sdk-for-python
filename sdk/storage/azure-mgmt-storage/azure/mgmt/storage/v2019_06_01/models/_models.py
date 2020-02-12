@@ -467,8 +467,10 @@ class BlobServiceProperties(Resource):
      delete.
     :type delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
-    :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if
-     set to true.
+    :param is_versioning_enabled: Versioning is enabled if set to true.
+    :type is_versioning_enabled: bool
+    :param automatic_snapshot_policy_enabled: Deprecated in favor of
+     isVersioningEnabled property.
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
@@ -494,6 +496,7 @@ class BlobServiceProperties(Resource):
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
         'default_service_version': {'key': 'properties.defaultServiceVersion', 'type': 'str'},
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+        'is_versioning_enabled': {'key': 'properties.isVersioningEnabled', 'type': 'bool'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
         'restore_policy': {'key': 'properties.restorePolicy', 'type': 'RestorePolicyProperties'},
@@ -505,6 +508,7 @@ class BlobServiceProperties(Resource):
         self.cors = kwargs.get('cors', None)
         self.default_service_version = kwargs.get('default_service_version', None)
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
+        self.is_versioning_enabled = kwargs.get('is_versioning_enabled', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
         self.change_feed = kwargs.get('change_feed', None)
         self.restore_policy = kwargs.get('restore_policy', None)
