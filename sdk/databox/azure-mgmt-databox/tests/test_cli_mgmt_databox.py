@@ -12,9 +12,11 @@
 # Methods Total   : 16
 # Methods Covered : 16
 # Examples Total  : 21
-# Examples Tested : 17
-# Coverage %      : 80.95238095238095
+# Examples Tested : 21
+# Coverage %      : 100
 # ----------------------
+
+# current method cover: 14/16
 
 import os
 import unittest
@@ -31,14 +33,10 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.databox.DataBoxManagementClient
         )
-        self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClient
-        )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_databox(self, resource_group):
 
-        SERVICE_NAME = "myapimrndxyz"
         SUBSCRIPTION_ID = None
         if self.is_live:
             SUBSCRIPTION_ID = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
@@ -47,6 +45,7 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = 'databoxaccountabc'
         JOB_NAME = 'testjob'
+        LOCATION_NAME = "westus"
 
         # JobsCreate[put]
         BODY = {
@@ -85,6 +84,9 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         result = self.mgmt_client.jobs.create(resource_group.name, JOB_NAME, BODY)
         result = result.result()
 
+        # JobsGet5[get]
+        result = self.mgmt_client.jobs.get(resource_group.name, JOB_NAME)
+
         # JobsGet4[get]
         result = self.mgmt_client.jobs.get(resource_group.name, JOB_NAME)
 
@@ -100,9 +102,6 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         # JobsGet[get]
         result = self.mgmt_client.jobs.get(resource_group.name, JOB_NAME)
 
-        # JobsGet5[get]
-        result = self.mgmt_client.jobs.get(resource_group.name, JOB_NAME)
-
         # JobsListByResourceGroup[get]
         result = self.mgmt_client.jobs.list_by_resource_group(resource_group.name)
 
@@ -112,55 +111,94 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         # OperationsGet[get]
         result = self.mgmt_client.operations.list()
 
-        """
-        # BookShipmentPickupPost[post]
+        # ServiceValidateInputsByResourceGroup[post]
         BODY = {
-          "start_time": "2019-09-20T18:30:00Z",
-          "end_time": "2019-09-22T18:30:00Z",
-          "shipment_location": "Front desk"
+          "validation_category": "JobCreationValidation",
+          "individual_request_details": [
+            {
+              "validation_type": "ValidateDataDestinationDetails",
+              "location": "westus",
+              "destination_account_details": [
+                {
+                  "storage_account_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
+                  "data_destination_type": "StorageAccount"
+                }
+              ]
+            },
+            {
+              "validation_type": "ValidateAddress",
+              "shipping_address": {
+                "street_address1": "16 TOWNSEND ST",
+                "street_address2": "Unit 1",
+                "city": "San Francisco",
+                "state_or_province": "CA",
+                "country": "US",
+                "postal_code": "94107",
+                "company_name": "Microsoft",
+                "address_type": "Commercial"
+              },
+              "device_type": "DataBox"
+            }
+          ]
         }
-        result = self.mgmt_client.jobs.book_shipment_pick_up(resource_group.name, JOB_NAME, BODY, polling=False)
+        result = self.mgmt_client.service.validate_inputs_by_resource_group(resource_group.name, LOCATION_NAME, BODY)
+
+        # AvailableSkusByResourceGroup[post]
+        BODY = {
+          "country": "US",
+          "location": "westus",
+          "transfer_type": "ImportToAzure"
+        }
+        result = self.mgmt_client.service.list_available_skus_by_resource_group(resource_group.name, LOCATION_NAME, BODY)
+
+        """
+        # # BookShipmentPickupPost[post]
+        # BODY = {
+        #   "start_time": "2019-09-20T18:30:00Z",
+        #   "end_time": "2019-09-22T18:30:00Z",
+        #   "shipment_location": "Front desk"
+        # }
+        # result = self.mgmt_client.jobs.book_shipment_pick_up(resource_group.name, JOB_NAME, BODY)
+        """
 
         # JobsListCredentials[post]
-        result = self.mgmt_client.jobs.list_credentials(resource_group.name, JOB_NAME, polling=False)
-        """
+        result = self.mgmt_client.jobs.list_credentials(resource_group.name, JOB_NAME)
 
         # JobsPatch[patch]
         BODY = {
-          "properties": {
-            "details": {
-              "contact_details": {
-                "contact_name": "Update Job",
-                "phone": "1234567890",
-                "phone_extension": "1234",
-                "email_list": [
-                  "testing@microsoft.com"
-                ]
-              },
-              # TODO: raise SsemUserErrorShippingAddressIsNotEditable
-              # "shipping_address": {
-              #   "street_address1": "16 TOWNSEND ST",
-              #   "street_address2": "Unit 1",
-              #   "city": "San Francisco",
-              #   "state_or_province": "CA",
-              #   "country": "US",
-              #   "postal_code": "94107",
-              #   "company_name": "Microsoft",
-              #   "address_type": "Commercial"
-              # }
+          "details": {
+            "contact_details": {
+              "contact_name": "Update Job",
+              "phone": "1234567890",
+              "phone_extension": "1234",
+              "email_list": [
+                "testing@microsoft.com"
+              ]
+            },
+            "shipping_address": {
+              "street_address1": "16 TOWNSEND ST",
+              "street_address2": "Unit 1",
+              "city": "San Francisco",
+              "state_or_province": "CA",
+              "country": "US",
+              "postal_code": "94107",
+              "company_name": "Microsoft",
+              "address_type": "Commercial"
             }
           }
         }
         result = self.mgmt_client.jobs.update(resource_group.name, JOB_NAME, BODY)
         result = result.result()
 
-        # JobsCancelPost[post]
-        BODY = {
-          "reason": "CancelTest"
-        }
-        result = self.mgmt_client.jobs.cancel(resource_group.name, JOB_NAME, BODY)
-
         """
+        # ServiceRegionConfiguration[post]
+        BODY = {
+          "storage_location": "westus",
+          "sku_name": "DataBox"
+        }
+        result = self.mgmt_client.service.region_configuration(LOCATION_NAME, BODY)
+        """
+
         # ValidateAddressPost[post]
         BODY = {
           "validation_type": "ValidateAddress",
@@ -176,7 +214,39 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
           },
           "device_type": "DataBox"
         }
-        result = self.mgmt_client.service.validate_address_method(LOCATION_NAME, BODY, polling=False)
+        result = self.mgmt_client.service.validate_address_method(LOCATION_NAME, BODY)
+
+        # ServiceValidateInputs[post]
+        BODY = {
+          "validation_category": "JobCreationValidation",
+          "individual_request_details": [
+            {
+              "validation_type": "ValidateDataDestinationDetails",
+              "location": "westus",
+              "destination_account_details": [
+                {
+                  "storage_account_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
+                  "data_destination_type": "StorageAccount"
+                }
+              ]
+            },
+            {
+              "validation_type": "ValidateAddress",
+              "shipping_address": {
+                "street_address1": "16 TOWNSEND ST",
+                "street_address2": "Unit 1",
+                "city": "San Francisco",
+                "state_or_province": "CA",
+                "country": "US",
+                "postal_code": "94107",
+                "company_name": "Microsoft",
+                "address_type": "Commercial"
+              },
+              "device_type": "DataBox"
+            }
+          ]
+        }
+        result = self.mgmt_client.service.validate_inputs(LOCATION_NAME, BODY)
 
         # AvailableSkusPost[post]
         BODY = {
@@ -184,8 +254,13 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
           "location": "westus",
           "transfer_type": "ImportToAzure"
         }
-        result = self.mgmt_client.service.list_available_skus(LOCATION_NAME, BODY, polling=False)
-        """
+        result = self.mgmt_client.service.list_available_skus(LOCATION_NAME, BODY)
+
+        # JobsCancelPost[post]
+        BODY = {
+          "reason": "CancelTest"
+        }
+        result = self.mgmt_client.jobs.cancel(resource_group.name, JOB_NAME, BODY)
 
         # JobsDelete[delete]
         result = self.mgmt_client.jobs.delete(resource_group.name, JOB_NAME)
