@@ -59,12 +59,14 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Verify sdist'
+    condition: ne(variables['Skip.VerifySdist'],'true')
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
+    condition: ne(variables['Skip.VerifyWhl'],'true')
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
