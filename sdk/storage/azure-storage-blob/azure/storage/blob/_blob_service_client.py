@@ -29,6 +29,7 @@ from ._generated.models import StorageErrorException, StorageServiceProperties, 
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
 from ._models import ContainerPropertiesPaged
+from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
 if TYPE_CHECKING:
@@ -69,6 +70,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -121,7 +125,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -434,9 +438,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param public_access:
             Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
-        :keyword dict or ~azure.storage.blob.ContainerEncryptionScope container_encryption_scope:
+        :keyword container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
-            all future writes. Introduced in API version '2019-07-07'.
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient

@@ -37,7 +37,7 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     UserDelegationKey,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info
+from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
@@ -87,6 +87,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -155,7 +158,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -462,7 +465,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -924,7 +929,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -1049,7 +1056,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1149,7 +1158,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1237,7 +1248,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1656,7 +1669,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1752,7 +1767,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1933,7 +1950,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2411,7 +2430,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
 
             .. versionadded:: 12.2.0
-                This parameter was introduced in API version '2019-07-07'.
 
         :keyword str encoding:
             Defaults to UTF-8.
@@ -2576,7 +2594,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -2811,7 +2831,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -2965,7 +2987,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             scope can be created using the Management API and referenced here by name. If a default
             encryption scope has been defined at the container, this value will override it if the
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
-            Introduced in API version '2019-07-07'.
+
+            .. versionadded:: 12.2.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         """

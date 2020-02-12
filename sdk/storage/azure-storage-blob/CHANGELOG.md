@@ -3,7 +3,7 @@
 ## 12.2.0
 
 **New features**
-- Added support for the 2019-07-07 service version.
+- Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
 - Added support for encryption scopes that that could be used to encrypt blob content.
 - Added `get_page_range_diff_for_managed_disk` API which returns the list of valid page ranges diff between a snapshot and managed disk or another snapshot.
 

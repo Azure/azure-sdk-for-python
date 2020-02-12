@@ -23,6 +23,7 @@ from ._generated import AzureFileStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._generated.version import VERSION
 from ._share_client import ShareClient
+from ._serialize import get_api_version
 from ._models import (
     SharePropertiesPaged,
     service_properties_deserialize,
@@ -56,6 +57,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.1.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
@@ -93,7 +97,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

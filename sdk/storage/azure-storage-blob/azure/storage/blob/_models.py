@@ -312,6 +312,8 @@ class ContainerProperties(DictMixin):
         Represents whether the container has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
+    :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
+        The default encryption scope configuration for the container.
     """
 
     def __init__(self, **kwargs):
@@ -1053,17 +1055,19 @@ class CustomerProvidedEncryptionKey(object):
 
 
 class ContainerEncryptionScope(object):
-    """This scope is then used implicitly for all future writes within the container,
+    """The default encryption scope configuration for a container.
+
+    This scope is used implicitly for all future writes within the container,
     but can be overridden per blob operation.
 
-    :param default_encryption_scope: Optional. Version 2019-07-07 and later.
+    .. versionadded:: 12.2.0
+
+    :param str default_encryption_scope:
         Specifies the default encryption scope to set on the container and use for
         all future writes.
-    :type default_encryption_scope: str
-    :param prevent_encryption_scope_override: Optional. Version 2019-07-07 and
-        newer.  If true, prevents any request from specifying a different
-        encryption scope than the scope set on the container.
-    :type prevent_encryption_scope_override: bool
+    :param bool prevent_encryption_scope_override:
+        If true, prevents any request from specifying a different encryption scope than the scope
+        set on the container. Default value is false.
     """
 
     def __init__(self, default_encryption_scope, **kwargs):

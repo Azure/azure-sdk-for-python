@@ -143,6 +143,40 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(file_client.api_version, self.api_version_1)
         self.assertEqual(file_client._client._config.version, self.api_version_1)
 
+    def test_invalid_api_version(self):
+        with pytest.raises(ValueError) as error:
+            ShareServiceClient(
+                "https://foo.file.core.windows.net/account",
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
+        with pytest.raises(ValueError) as error:
+            ShareClient(
+                "https://foo.file.core.windows.net/account",
+                "share_name",
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
+        with pytest.raises(ValueError) as error:
+            ShareDirectoryClient(
+                "https://foo.file.core.windows.net/account",
+                "share_name",
+                "dir_path",
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
+        with pytest.raises(ValueError) as error:
+            ShareFileClient(
+                "https://foo.file.core.windows.net/account",
+                "share",
+                self._get_file_reference(),
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
     @GlobalStorageAccountPreparer()
     def test_old_api_copy_file_succeeds(self, resource_group, location, storage_account, storage_account_key):
         fsc = ShareServiceClient(

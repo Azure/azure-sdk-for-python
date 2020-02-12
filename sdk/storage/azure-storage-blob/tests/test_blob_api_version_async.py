@@ -107,6 +107,31 @@ class StorageClientTest(AsyncStorageTestCase):
         self.assertEqual(blob_client.api_version, self.api_version_2)
         self.assertEqual(blob_client._client._config.version, self.api_version_2)
 
+    def test_invalid_api_version(self):
+        with pytest.raises(ValueError) as error:
+            BlobServiceClient(
+                "https://foo.blob.core.windows.net/account",
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
+        with pytest.raises(ValueError) as error:
+            ContainerClient(
+                "https://foo.blob.core.windows.net/account",
+                self.container_name,
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
+        with pytest.raises(ValueError) as error:
+            BlobClient(
+                "https://foo.blob.core.windows.net/account",
+                self.container_name,
+                self._get_blob_reference(),
+                credential="fake_key",
+                api_version="foo")
+        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_old_api_get_page_ranges_succeeds_async(self, resource_group, location, storage_account, storage_account_key):
