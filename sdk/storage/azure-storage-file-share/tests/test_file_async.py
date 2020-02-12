@@ -622,9 +622,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(md.metadata)
         self.assertEqual(0, len(md.metadata))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_file_metadata_with_upper_case_async(self, resource_group, location, storage_account, storage_account_key):
+        # Make this test live test only, for the reason that metadata can only be recorded in lower case.
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         file_client = await self._create_file(storage_account, storage_account_key)
@@ -641,9 +643,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_file_metadata_with_broken_lease_async(self, resource_group, location, storage_account, storage_account_key):
+        # Make this test live test only, for the reason that metadata can only be recorded in lower case.
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         file_client = await self._create_file(storage_account, storage_account_key)
