@@ -58,7 +58,7 @@ class ManagedIdentityCredential(object):
         """
         if not self._credential:
             raise CredentialUnavailableError(message="No managed identity endpoints found")
-        return self._credential.get_token(*scopes, **kwargs)
+        return await self._credential.get_token(*scopes, **kwargs)
 
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
