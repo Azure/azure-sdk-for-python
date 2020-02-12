@@ -198,7 +198,7 @@ interactions:
       x-ms-lease-status: unlocked
       x-ms-meta-hello: world
       x-ms-meta-number: '42'
-      x-ms-meta-up: UPval
+      x-ms-meta-UP: UPval
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2019-02-02'

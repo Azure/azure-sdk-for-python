@@ -18,7 +18,7 @@ from azure.storage.fileshare import (
 )
 from azure.storage.fileshare.aio import ShareServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.filetestcase import (
+from _shared.testcase import (
     LogCaptured,
     GlobalStorageAccountPreparer
 )
@@ -39,7 +39,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class FileServicePropertiesTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
-        url = self.get_file_url(storage_account.name)
+        url = self.account_url(storage_account, "file")
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
