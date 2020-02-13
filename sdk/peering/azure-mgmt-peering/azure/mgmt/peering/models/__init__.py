@@ -12,7 +12,7 @@
 try:
     from ._models_py3 import BgpSession
     from ._models_py3 import CheckServiceProviderAvailabilityInput
-    from ._models_py3 import ContactInfo
+    from ._models_py3 import ContactDetail
     from ._models_py3 import DirectConnection
     from ._models_py3 import DirectPeeringFacility
     from ._models_py3 import ErrorResponse, ErrorResponseException
@@ -28,11 +28,15 @@ try:
     from ._models_py3 import PeeringLocationPropertiesExchange
     from ._models_py3 import PeeringPropertiesDirect
     from ._models_py3 import PeeringPropertiesExchange
+    from ._models_py3 import PeeringRegisteredAsn
+    from ._models_py3 import PeeringRegisteredPrefix
     from ._models_py3 import PeeringService
+    from ._models_py3 import PeeringServiceCountry
     from ._models_py3 import PeeringServiceLocation
     from ._models_py3 import PeeringServicePrefix
     from ._models_py3 import PeeringServicePrefixEvent
     from ._models_py3 import PeeringServiceProvider
+    from ._models_py3 import PeeringServiceSku
     from ._models_py3 import PeeringSku
     from ._models_py3 import Resource
     from ._models_py3 import ResourceTags
@@ -40,7 +44,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import BgpSession
     from ._models import CheckServiceProviderAvailabilityInput
-    from ._models import ContactInfo
+    from ._models import ContactDetail
     from ._models import DirectConnection
     from ._models import DirectPeeringFacility
     from ._models import ErrorResponse, ErrorResponseException
@@ -56,11 +60,15 @@ except (SyntaxError, ImportError):
     from ._models import PeeringLocationPropertiesExchange
     from ._models import PeeringPropertiesDirect
     from ._models import PeeringPropertiesExchange
+    from ._models import PeeringRegisteredAsn
+    from ._models import PeeringRegisteredPrefix
     from ._models import PeeringService
+    from ._models import PeeringServiceCountry
     from ._models import PeeringServiceLocation
     from ._models import PeeringServicePrefix
     from ._models import PeeringServicePrefixEvent
     from ._models import PeeringServiceProvider
+    from ._models import PeeringServiceSku
     from ._models import PeeringSku
     from ._models import Resource
     from ._models import ResourceTags
@@ -69,12 +77,14 @@ from ._paged_models import OperationPaged
 from ._paged_models import PeerAsnPaged
 from ._paged_models import PeeringLocationPaged
 from ._paged_models import PeeringPaged
+from ._paged_models import PeeringRegisteredAsnPaged
+from ._paged_models import PeeringRegisteredPrefixPaged
+from ._paged_models import PeeringServiceCountryPaged
 from ._paged_models import PeeringServiceLocationPaged
 from ._paged_models import PeeringServicePaged
 from ._paged_models import PeeringServicePrefixPaged
 from ._paged_models import PeeringServiceProviderPaged
 from ._peering_management_client_enums import (
-    Name,
     Tier,
     Family,
     Size,
@@ -85,6 +95,7 @@ from ._peering_management_client_enums import (
     SessionStateV6,
     DirectPeeringType,
     ProvisioningState,
+    Role,
     ValidationState,
     PrefixValidationState,
     LearnedType,
@@ -93,7 +104,7 @@ from ._peering_management_client_enums import (
 __all__ = [
     'BgpSession',
     'CheckServiceProviderAvailabilityInput',
-    'ContactInfo',
+    'ContactDetail',
     'DirectConnection',
     'DirectPeeringFacility',
     'ErrorResponse', 'ErrorResponseException',
@@ -109,11 +120,15 @@ __all__ = [
     'PeeringLocationPropertiesExchange',
     'PeeringPropertiesDirect',
     'PeeringPropertiesExchange',
+    'PeeringRegisteredAsn',
+    'PeeringRegisteredPrefix',
     'PeeringService',
+    'PeeringServiceCountry',
     'PeeringServiceLocation',
     'PeeringServicePrefix',
     'PeeringServicePrefixEvent',
     'PeeringServiceProvider',
+    'PeeringServiceSku',
     'PeeringSku',
     'Resource',
     'ResourceTags',
@@ -122,11 +137,13 @@ __all__ = [
     'OperationPaged',
     'PeerAsnPaged',
     'PeeringLocationPaged',
+    'PeeringRegisteredAsnPaged',
+    'PeeringRegisteredPrefixPaged',
+    'PeeringServiceCountryPaged',
     'PeeringServiceLocationPaged',
     'PeeringServicePrefixPaged',
     'PeeringServiceProviderPaged',
     'PeeringServicePaged',
-    'Name',
     'Tier',
     'Family',
     'Size',
@@ -137,6 +154,7 @@ __all__ = [
     'SessionStateV6',
     'DirectPeeringType',
     'ProvisioningState',
+    'Role',
     'ValidationState',
     'PrefixValidationState',
     'LearnedType',

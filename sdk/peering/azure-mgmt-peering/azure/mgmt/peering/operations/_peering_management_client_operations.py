@@ -21,11 +21,11 @@ class PeeringManagementClientOperationsMixin(object):
         """Checks if the peering service provider is present within 1000 miles of
         customer's location.
 
-        :param peering_service_location: Gets or sets the
-         PeeringServiceLocation
+        :param peering_service_location: Gets or sets the peering service
+         location.
         :type peering_service_location: str
-        :param peering_service_provider: Gets or sets the
-         PeeringServiceProvider
+        :param peering_service_provider: Gets or sets the peering service
+         provider.
         :type peering_service_provider: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

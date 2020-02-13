@@ -12,16 +12,6 @@
 from enum import Enum
 
 
-class Name(str, Enum):
-
-    basic_exchange_free = "Basic_Exchange_Free"
-    basic_direct_free = "Basic_Direct_Free"
-    premium_direct_free = "Premium_Direct_Free"
-    premium_exchange_metered = "Premium_Exchange_Metered"
-    premium_direct_metered = "Premium_Direct_Metered"
-    premium_direct_unlimited = "Premium_Direct_Unlimited"
-
-
 class Tier(str, Enum):
 
     basic = "Basic"
@@ -101,6 +91,8 @@ class DirectPeeringType(str, Enum):
     transit = "Transit"
     cdn = "Cdn"
     internal = "Internal"
+    ix = "Ix"
+    ix_rs = "IxRs"
 
 
 class ProvisioningState(str, Enum):
@@ -109,6 +101,15 @@ class ProvisioningState(str, Enum):
     updating = "Updating"
     deleting = "Deleting"
     failed = "Failed"
+
+
+class Role(str, Enum):
+
+    noc = "Noc"
+    policy = "Policy"
+    technical = "Technical"
+    service = "Service"
+    other = "Other"
 
 
 class ValidationState(str, Enum):
