@@ -3,16 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import itertools
-import hashlib
+import functools
 import os
-import pytest
 import logging
 import json
 
 from azure_devtools.scenario_tests import RecordingProcessor
-from certificates_async_test_case import AsyncKeyVaultTestCase
-
 from azure.keyvault.certificates import (
     AdministratorContact,
     CertificateContact,
@@ -27,10 +23,16 @@ from azure.keyvault.certificates import (
     CertificateIssuer,
     IssuerProperties,
 )
+from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from certificates_test_case import KeyVaultTestCase
-from certificates_async_preparer import AsyncVaultClientPreparer
+import pytest
+
+from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case_async import KeyVaultTestCase
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, CertificateClient)
 
 
 class RetryAfterReplacer(RecordingProcessor):
@@ -172,11 +174,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_crud_operations(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_crud_operations(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
         cert_policy = CertificatePolicy(
@@ -227,11 +227,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_list(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_list(self, client, **kwargs):
 
         max_certificates = self.list_test_size
         expected = {}
@@ -259,11 +257,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_list_certificate_versions(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_list_certificate_versions(self, client, **kwargs):
         cert_name = self.get_resource_name("certver")
 
         max_certificates = self.list_test_size
@@ -297,12 +293,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_crud_contacts(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_crud_contacts(self, client, **kwargs):
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
@@ -330,12 +323,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_recover_and_purge(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_recover_and_purge(self, client, **kwargs):
         certs = {}
         # create certificates to recover
         for i in range(self.list_test_size):
@@ -386,12 +376,9 @@ class CertificateClientTests(KeyVaultTestCase):
     @pytest.mark.skip("Skipping because service doesn't allow cancellation of certificates with issuer 'Unknown'")
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_async_request_cancellation_and_deletion(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_async_request_cancellation_and_deletion(self, client, **kwargs):
         cert_name = "asyncCanceledDeletedCert"
         cert_policy = CertificatePolicy.get_default()
 
@@ -449,11 +436,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_policy(self, vault_client, **kwargs):
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_policy(self, client, **kwargs):
         cert_name = "policyCertificate"
         cert_policy = CertificatePolicy(
             issuer_name="Self",
@@ -488,11 +473,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_get_pending_certificate_signing_request(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_get_pending_certificate_signing_request(self, client, **kwargs):
         cert_name = "unknownIssuerCert"
 
         # get pending certificate signing request
@@ -503,11 +486,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_backup_restore(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_backup_restore(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
         policy._san_user_principal_names = ["john.doe@domain.com"]
@@ -527,15 +508,12 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_merge_certificate(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_merge_certificate(self, client, **kwargs):
         import base64
         from OpenSSL import crypto
-        import os
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
         cert_name = "mergeCertificate"
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.unknown, subject="CN=MyCert", certificate_transparency=False
@@ -576,11 +554,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_crud_issuer(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_crud_issuer(self, client, **kwargs):
         issuer_name = "issuer"
         admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
@@ -658,10 +634,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer(client_kwargs={"logging_enable": True})
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_logging_enabled(self, vault_client, **kwargs):
-        client = vault_client.certificates
+    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
+    @KeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -684,10 +659,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_logging_disabled(self, vault_client, **kwargs):
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
