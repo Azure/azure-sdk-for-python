@@ -48,7 +48,7 @@ async def on_event_batch(partition_context, event_batch):
     await partition_context.update_checkpoint()
 
 
-# enable heartbeat by setting callback_without_event=True
+# enable heartbeat by setting enable_callback_when_no_event=True
 async def on_event_batch_with_empty(partition_context, event_batch):
     if event_batch:
         log.info(f"<check> batch process pid:{partition_context.partition_id} last sq {event_batch[-1].sequence_number}")
