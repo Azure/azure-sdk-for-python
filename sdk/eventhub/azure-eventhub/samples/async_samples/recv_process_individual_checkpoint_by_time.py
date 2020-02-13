@@ -32,8 +32,10 @@ async def schedule_to_upload_doc(doc):
 
 
 async def upload_doc(doc):
-    await asyncio.sleep(1)  # http request to upload a doc
-    upload_doc_task_semaphore.release()
+    try:
+        await asyncio.sleep(1)  # http request to upload a doc
+    finally:
+        upload_doc_task_semaphore.release()
 
 
 # checkpoint by time
