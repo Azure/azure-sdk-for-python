@@ -308,10 +308,9 @@ class CheckNameAvailabilityRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name whose availability is to be checked.
+    :param name: Required.
     :type name: str
-    :ivar type: Required. The type of resource that is used as the scope of
-     the availability check. Default value: "Microsoft.Sql/servers" .
+    :ivar type: Required.  Default value: "Microsoft.Sql/servers" .
     :vartype type: str
     """
 
@@ -333,45 +332,44 @@ class CheckNameAvailabilityRequest(Model):
 
 
 class CheckNameAvailabilityResponse(Model):
-    """A response indicating whether the specified name for a resource is
-    available.
+    """The result of a name availability check.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar available: True if the name is available, otherwise false.
-    :vartype available: bool
-    :ivar message: A message explaining why the name is unavailable. Will be
-     null if the name is available.
-    :vartype message: str
     :ivar name: The name whose availability was checked.
     :vartype name: str
+    :ivar available: True if the name is available, otherwise false.
+    :vartype available: bool
     :ivar reason: The reason code explaining why the name is unavailable. Will
-     be null if the name is available. Possible values include: 'Invalid',
+     be undefined if the name is available. Possible values include: 'Invalid',
      'AlreadyExists'
     :vartype reason: str or ~azure.mgmt.sql.models.CheckNameAvailabilityReason
+    :ivar message: A message explaining why the name is unavailable. Will be
+     undefined if the name is available.
+    :vartype message: str
     """
 
     _validation = {
-        'available': {'readonly': True},
-        'message': {'readonly': True},
         'name': {'readonly': True},
+        'available': {'readonly': True},
         'reason': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'available': {'key': 'available', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'CheckNameAvailabilityReason'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
-        self.available = None
-        self.message = None
         self.name = None
+        self.available = None
         self.reason = None
+        self.message = None
 
 
 class CloudError(Model):
@@ -6408,7 +6406,10 @@ class PrivateEndpointConnection(ProxyResource):
     :type private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
-    :vartype provisioning_state: str
+     Possible values include: 'Approving', 'Ready', 'Dropping', 'Failed',
+     'Rejecting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
     """
 
     _validation = {
@@ -6429,6 +6430,42 @@ class PrivateEndpointConnection(ProxyResource):
 
     def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
         super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+     Possible values include: 'Approving', 'Ready', 'Dropping', 'Failed',
+     'Rejecting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
@@ -6522,13 +6559,16 @@ class PrivateLinkServiceConnectionStateProperty(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param status: Required. The private link service connection status.
-    :type status: str
+     Possible values include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateStatus
     :param description: Required. The private link service connection
      description.
     :type description: str
     :ivar actions_required: The actions required for private link service
-     connection.
-    :vartype actions_required: str
+     connection. Possible values include: 'None'
+    :vartype actions_required: str or
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateActionsRequire
     """
 
     _validation = {
@@ -6543,7 +6583,7 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
-    def __init__(self, *, status: str, description: str, **kwargs) -> None:
+    def __init__(self, *, status, description: str, **kwargs) -> None:
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -7252,6 +7292,9 @@ class SensitivityLabel(ProxyResource):
      recommended sensitivity label only. Specifies whether the sensitivity
      recommendation on this column is disabled (dismissed) or not.
     :vartype is_disabled: bool
+    :param rank: Possible values include: 'None', 'Low', 'Medium', 'High',
+     'Critical'
+    :type rank: str or ~azure.mgmt.sql.models.SensitivityLabelRank
     """
 
     _validation = {
@@ -7270,15 +7313,17 @@ class SensitivityLabel(ProxyResource):
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
         'information_type_id': {'key': 'properties.informationTypeId', 'type': 'str'},
         'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
+        'rank': {'key': 'properties.rank', 'type': 'SensitivityLabelRank'},
     }
 
-    def __init__(self, *, label_name: str=None, label_id: str=None, information_type: str=None, information_type_id: str=None, **kwargs) -> None:
+    def __init__(self, *, label_name: str=None, label_id: str=None, information_type: str=None, information_type_id: str=None, rank=None, **kwargs) -> None:
         super(SensitivityLabel, self).__init__(**kwargs)
         self.label_name = label_name
         self.label_id = label_id
         self.information_type = information_type
         self.information_type_id = information_type_id
         self.is_disabled = None
+        self.rank = rank
 
 
 class Server(TrackedResource):
@@ -7317,6 +7362,13 @@ class Server(TrackedResource):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
+    :param minimal_tls_version: Minimal TLS version. Allowed values: '1.0',
+     '1.1', '1.2'
+    :type minimal_tls_version: str
     """
 
     _validation = {
@@ -7327,6 +7379,7 @@ class Server(TrackedResource):
         'kind': {'readonly': True},
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7342,9 +7395,11 @@ class Server(TrackedResource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, **kwargs) -> None:
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.kind = None
@@ -7353,6 +7408,8 @@ class Server(TrackedResource):
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
+        self.minimal_tls_version = minimal_tls_version
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -7830,6 +7887,35 @@ class ServerKey(ProxyResource):
         self.creation_date = creation_date
 
 
+class ServerPrivateEndpointConnection(Model):
+    """A private endpoint connection under a server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.sql.models.PrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
 class ServerSecurityAlertPolicy(ProxyResource):
     """A server security alert policy.
 
@@ -7925,6 +8011,13 @@ class ServerUpdate(Model):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
+    :param minimal_tls_version: Minimal TLS version. Allowed values: '1.0',
+     '1.1', '1.2'
+    :type minimal_tls_version: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -7932,6 +8025,7 @@ class ServerUpdate(Model):
     _validation = {
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7940,16 +8034,20 @@ class ServerUpdate(Model):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, administrator_login: str=None, administrator_login_password: str=None, version: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, tags=None, **kwargs) -> None:
         super(ServerUpdate, self).__init__(**kwargs)
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
+        self.minimal_tls_version = minimal_tls_version
         self.tags = tags
 
 

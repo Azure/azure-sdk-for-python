@@ -15,7 +15,6 @@ from msrest import Serializer, Deserializer
 from ._configuration import SqlManagementClientConfiguration
 from .operations import RecoverableDatabasesOperations
 from .operations import RestorableDroppedDatabasesOperations
-from .operations import ServersOperations
 from .operations import ServerConnectionPoliciesOperations
 from .operations import DatabaseThreatDetectionPoliciesOperations
 from .operations import DataMaskingPoliciesOperations
@@ -97,6 +96,7 @@ from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import ServersOperations
 from .operations import ServerAzureADAdministratorsOperations
 from .operations import CapabilitiesOperations
 from .operations import WorkloadGroupsOperations
@@ -114,8 +114,6 @@ class SqlManagementClient(SDKClient):
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
     :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
-    :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar server_connection_policies: ServerConnectionPolicies operations
     :vartype server_connection_policies: azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
     :ivar database_threat_detection_policies: DatabaseThreatDetectionPolicies operations
@@ -278,6 +276,8 @@ class SqlManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
     :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar capabilities: Capabilities operations
@@ -309,8 +309,6 @@ class SqlManagementClient(SDKClient):
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_connection_policies = ServerConnectionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -473,6 +471,8 @@ class SqlManagementClient(SDKClient):
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
