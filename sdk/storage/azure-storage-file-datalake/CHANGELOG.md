@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0b7 (Unreleased)
+## 12.0.0b7 (2020-02-12)
 **New Feature**
 - Async APIs are supported.
 
