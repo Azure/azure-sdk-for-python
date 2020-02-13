@@ -227,9 +227,13 @@ class RegressionTest:
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
-        # install dev requirement but skip already installed package which is being tested
+        list_to_exclude = [pkg_to_exclude,]
+        installed_pkgs = [p.split('==')[0] for p in list(freeze.freeze(paths=self.context.venv.lib_paths)) if p.startswith('azure-')]
+        logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
+        list_to_exclude.extend(installed_pkgs)
+        # install dev requirement but skip already installed package which is being tested or present in dev requirement
         filtered_dev_req_path = filter_dev_requirements(
-            dependent_pkg_path, [pkg_to_exclude,], dependent_pkg_path
+            dependent_pkg_path, list_to_exclude, dependent_pkg_path
         )
 
         if filtered_dev_req_path:

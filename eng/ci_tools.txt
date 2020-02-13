@@ -11,3 +11,6 @@ doc-warden==0.5.0
 coverage==4.5.4
 codecov
 beautifulsoup4
+pkginfo
+./tools/azure-devtools
+./tools/azure-sdk-tools
