@@ -28,8 +28,6 @@ from pkg_resources import parse_version, parse_requirements, Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
-import pkginfo
-
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
@@ -385,6 +383,7 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 def find_packages_missing_on_pypi(path):
+    import pkginfo
     requires = []
     if path.endswith(".whl"):
         requires = list(filter(lambda_filter_azure_pkg, pkginfo.get_metadata(path).requires_dist))
