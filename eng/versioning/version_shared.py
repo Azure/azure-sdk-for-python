@@ -111,7 +111,7 @@ def set_dev_classifier(setup_py_location, version):
 
         replaced_setup_contents = re.sub(
             DEV_STATUS_REGEX,
-            "\g<1>'{}'".format(classification),
+            '\g<1>"{}"'.format(classification),
             setup_contents
         )
 
