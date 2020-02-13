@@ -467,8 +467,10 @@ class BlobServiceProperties(Resource):
      delete.
     :type delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
-    :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if
-     set to true.
+    :param is_versioning_enabled: Versioning is enabled if set to true.
+    :type is_versioning_enabled: bool
+    :param automatic_snapshot_policy_enabled: Deprecated in favor of
+     isVersioningEnabled property.
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
@@ -494,17 +496,19 @@ class BlobServiceProperties(Resource):
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
         'default_service_version': {'key': 'properties.defaultServiceVersion', 'type': 'str'},
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+        'is_versioning_enabled': {'key': 'properties.isVersioningEnabled', 'type': 'bool'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
         'restore_policy': {'key': 'properties.restorePolicy', 'type': 'RestorePolicyProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, restore_policy=None, **kwargs) -> None:
+    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, is_versioning_enabled: bool=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, restore_policy=None, **kwargs) -> None:
         super(BlobServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.default_service_version = default_service_version
         self.delete_retention_policy = delete_retention_policy
+        self.is_versioning_enabled = is_versioning_enabled
         self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
         self.change_feed = change_feed
         self.restore_policy = restore_policy
