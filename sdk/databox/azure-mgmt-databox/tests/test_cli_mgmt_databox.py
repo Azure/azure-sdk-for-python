@@ -16,7 +16,7 @@
 # Coverage %      : 100
 # ----------------------
 
-# current method cover: 14/16
+# current method cover: 15/16
 
 import os
 import unittest
@@ -152,13 +152,16 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         result = self.mgmt_client.service.list_available_skus_by_resource_group(resource_group.name, LOCATION_NAME, BODY)
 
         """
-        # # BookShipmentPickupPost[post]
-        # BODY = {
-        #   "start_time": "2019-09-20T18:30:00Z",
-        #   "end_time": "2019-09-22T18:30:00Z",
-        #   "shipment_location": "Front desk"
-        # }
-        # result = self.mgmt_client.jobs.book_shipment_pick_up(resource_group.name, JOB_NAME, BODY)
+        # BookShipmentPickupPost[post]
+        now = dt.datetime.now()
+        BODY = {
+          # For new test, change the start time as current date
+          # and end time as start_time + 2 days
+          "start_time": now,
+          "end_time": now + dt.timedelta(days=2),
+          "shipment_location": "Front desk"
+        }
+        self.mgmt_client.jobs.book_shipment_pick_up(resource_group.name, JOB_NAME, BODY)
         """
 
         # JobsListCredentials[post]
@@ -190,14 +193,14 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
         result = self.mgmt_client.jobs.update(resource_group.name, JOB_NAME, BODY)
         result = result.result()
 
-        """
         # ServiceRegionConfiguration[post]
-        BODY = {
-          "storage_location": "westus",
-          "sku_name": "DataBox"
-        }
+        # TODO: SKUs are not available in live test
+        # BODY = {
+        #   "storage_location": "westus",
+        #   "sku_name": "DataBox"
+        # }
+        BODY = None 
         result = self.mgmt_client.service.region_configuration(LOCATION_NAME, BODY)
-        """
 
         # ValidateAddressPost[post]
         BODY = {
