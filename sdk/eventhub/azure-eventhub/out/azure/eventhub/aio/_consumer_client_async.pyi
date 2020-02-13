@@ -7,7 +7,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             *,
             max_batch_size: int=...,
             max_wait_time: float=...,
-            callback_without_event: bool=...,
+            enable_callback_when_no_event: bool=...,
             partition_id: Optional[str]=...,
             owner_level: Optional[int]=...,
             prefetch: int=...,
