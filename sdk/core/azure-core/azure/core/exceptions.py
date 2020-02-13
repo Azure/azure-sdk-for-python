@@ -119,7 +119,7 @@ class ODataV4Format(object):
             raise ValueError("Impossible to extract code/message from received JSON:\n"+json.dumps(json_object))
 
         # Optional fields
-        self.target = json_object.get(cls.TARGET_LABEL, None)  # type: Optional[str]
+        self.target = json_object.get(cls.TARGET_LABEL)  # type: Optional[str]
 
         # details is recursive of this very format
         self.details = [
