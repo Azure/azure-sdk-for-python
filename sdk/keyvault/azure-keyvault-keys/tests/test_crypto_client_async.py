@@ -3,21 +3,28 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import codecs
+import functools
 import hashlib
 import os
 
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
+from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from keys_async_preparer import AsyncVaultClientPreparer
-from keys_async_test_case import AsyncKeyVaultTestCase
+from _shared.test_case_async import KeyVaultTestCase
+
+from crypto_client_preparer_async import CryptoClientPreparer
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 
-class CryptoClientTests(AsyncKeyVaultTestCase):
+class CryptoClientTests(KeyVaultTestCase):
+    def __init__(self, *args, **kwargs):
+        kwargs["match_body"] = False
+        super(CryptoClientTests, self).__init__(*args, **kwargs)
+
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
@@ -71,15 +78,14 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_encrypt_and_decrypt(self, vault_client, **kwargs):
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_encrypt_and_decrypt(self, key_client, credential, **kwargs):
         # TODO: use iv, authentication_data
         key_name = self.get_resource_name("keycrypt")
-        key_client = vault_client.keys
 
         imported_key = await self._import_test_key(key_client, key_name)
-        crypto_client = vault_client.get_cryptography_client(imported_key)
+        crypto_client = CryptographyClient(imported_key.id, credential)
 
         result = await crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         self.assertEqual(result.key_id, imported_key.id)
@@ -91,11 +97,9 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_sign_and_verify(self, vault_client, **kwargs):
-        key_client = vault_client.keys
-
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_sign_and_verify(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()
@@ -103,7 +107,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         digest = md.digest()
 
         imported_key = await self._import_test_key(key_client, key_name)
-        crypto_client = vault_client.get_cryptography_client(imported_key.id)
+        crypto_client = CryptographyClient(imported_key.id, credential)
 
         result = await crypto_client.sign(SignatureAlgorithm.rs256, digest)
         self.assertEqual(result.key_id, imported_key.id)
@@ -115,15 +119,14 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(permissions=NO_GET)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_wrap_and_unwrap(self, vault_client, **kwargs):
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_wrap_and_unwrap(self, key_client, credential, **kwargs):
         key_name = self.get_resource_name("keywrap")
-        key_client = vault_client.keys
 
         created_key = await key_client.create_key(key_name, "RSA")
         self.assertIsNotNone(created_key)
-        crypto_client = vault_client.get_cryptography_client(created_key)
+        crypto_client = CryptographyClient(created_key, credential)
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
@@ -133,7 +136,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
-    @AsyncKeyVaultTestCase.await_prepared_test
+    @KeyVaultTestCase.await_prepared_test
     async def test_symmetric_wrap_and_unwrap_local(self, *args, **kwargs):
         key = KeyVaultKey(
             key_id="http://fake.test.vault/keys/key/version",
@@ -152,14 +155,13 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_encrypt_local(self, vault_client, **kwargs):
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_encrypt_local(self, key_client, credential, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
 
-        key_client = vault_client.keys
         key = await key_client.create_rsa_key("encrypt-local", size=4096)
-        crypto_client = vault_client.get_cryptography_client(key)
+        crypto_client = CryptographyClient(key, credential)
 
         for encrypt_algorithm in EncryptionAlgorithm:
             result = await crypto_client.encrypt(encrypt_algorithm, self.plaintext)
@@ -170,14 +172,13 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_wrap_local(self, vault_client, **kwargs):
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_wrap_local(self, key_client, credential, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
 
-        key_client = vault_client.keys
         key = await key_client.create_rsa_key("wrap-local", size=4096)
-        crypto_client = vault_client.get_cryptography_client(key)
+        crypto_client = CryptographyClient(key, credential)
 
         for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.value.startswith("RSA")):
             result = await crypto_client.wrap_key(wrap_algorithm, self.plaintext)
@@ -188,16 +189,14 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_rsa_verify_local(self, vault_client, **kwargs):
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_rsa_verify_local(self, key_client, credential, **kwargs):
         """Sign with Key Vault, verify locally"""
-
-        key_client = vault_client.keys
 
         for size in (2048, 3072, 4096):
             key = await key_client.create_rsa_key("rsa-verify-{}".format(size), size=size)
-            crypto_client = vault_client.get_cryptography_client(key)
+            crypto_client = CryptographyClient(key, credential)
             for signature_algorithm, hash_function in (
                 (SignatureAlgorithm.ps256, hashlib.sha256),
                 (SignatureAlgorithm.ps384, hashlib.sha384),
@@ -216,12 +215,10 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_ec_verify_local(self, vault_client, **kwargs):
+    @CryptoClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_ec_verify_local(self, key_client, credential, **kwargs):
         """Sign with Key Vault, verify locally"""
-
-        key_client = vault_client.keys
 
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
@@ -232,7 +229,7 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         for curve, (signature_algorithm, hash_function) in matrix.items():
             key = await key_client.create_ec_key("ec-verify-{}".format(curve.value), curve=curve)
-            crypto_client = vault_client.get_cryptography_client(key)
+            crypto_client = CryptographyClient(key, credential)
 
             digest = hash_function(self.plaintext).digest()
 

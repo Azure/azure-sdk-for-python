@@ -6,7 +6,7 @@ from azure.core.exceptions import HttpResponseError, map_error
 from azure.keyvault.keys._shared.exceptions import error_map
 import pytest
 
-from keys_helpers import mock_response
+from _shared.helpers import mock_response
 
 
 def test_error_map():

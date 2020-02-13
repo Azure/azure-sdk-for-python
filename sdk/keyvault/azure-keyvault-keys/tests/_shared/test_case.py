@@ -9,6 +9,12 @@ from devtools_testutils import AzureMgmtTestCase
 
 
 class KeyVaultTestCase(AzureMgmtTestCase):
+    def __init__(self, *args, **kwargs):
+        if "match_body" not in kwargs:
+            kwargs["match_body"] = True
+
+        super(KeyVaultTestCase, self).__init__(*args, **kwargs)
+
     def setUp(self):
         self.list_test_size = 7
         super(KeyVaultTestCase, self).setUp()
