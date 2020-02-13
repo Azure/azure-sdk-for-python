@@ -21,47 +21,31 @@ logging.basicConfig(
     format='%(threadName)s | %(asctime)s | %(name)-12s | %(levelname)-8s %(message)s', datefmt='%m-%d %H:%M:%S',)
 log = logging.getLogger(__name__)
 
-MAX_UPLOAD_DOC_TASK_COUNT = 100
-upload_doc_task_count = 0
+MAX_UPLOAD_DOC_TASK_COUNT = 5
+CHECKPOINT_INTERVAL = 10
+upload_doc_task_semaphore = asyncio.Semaphore(MAX_UPLOAD_DOC_TASK_COUNT)
 
 
-def reduce_task_count(fut):
-    global upload_doc_task_count
-    upload_doc_task_count -= 1
-
-
-async def schedule_task(coro):
-    global upload_doc_task_count
-    while upload_doc_task_count >= MAX_UPLOAD_DOC_TASK_COUNT:
-        await asyncio.sleep(0.2)
-    else:
-        asyncio.create_task(coro).add_done_callback(
-            reduce_task_count
-        )
-        upload_doc_task_count += 1
+async def schedule_to_upload_doc(doc):
+    await upload_doc_task_semaphore.acquire()
+    asyncio.create_task(upload_doc(doc))
 
 
 async def upload_doc(doc):
-    await asyncio.sleep(0.1)  # http request to upload a doc
+    await asyncio.sleep(1)  # http request to upload a doc
+    upload_doc_task_semaphore.release()
 
 
 # checkpoint by time
 async def on_event(partition_context, event):
     log.info(f"<check> batch process pid:{partition_context.partition_id} last sq {event.sequence_number}")
-    await schedule_task(upload_doc(event.body_as_str()))  # at most MAX_UPLOAD_DOC_TASK_COUNT
-    if getattr(partition_context, "last_checkpoint_time", time.time()) + 10 >= time.time():  # every 10 seconds
+    await schedule_to_upload_doc(event.body_as_str())  # at most MAX_UPLOAD_DOC_TASK_COUNT
+    if partition_context.last_checkpoint_time is None \
+            or partition_context.last_checkpoint_time + CHECKPOINT_INTERVAL <= time.time():
         await partition_context.update_checkpoint()
-        partition_context.last_checkpoint_time = time.time()
 
 
-async def receive(client):
-    await client.receive_batch(
-        on_event=on_event,
-        starting_position="-1",  # optional, "-1" is from the beginning of the partition.
-    )
-
-
-async def main():
+async def receive():
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
@@ -69,9 +53,13 @@ async def main():
         checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
     )
     async with client:
-        await receive(client)
+        await client.receive(
+            on_event=on_event,
+            starting_position="-1",  # optional, "-1" is from the beginning of the partition.
+            partition_id="0",
+        )
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    loop.run_until_complete(receive())

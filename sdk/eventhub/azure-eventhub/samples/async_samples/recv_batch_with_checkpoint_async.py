@@ -68,15 +68,7 @@ async def on_event_batch_process_async_batch_checkpoint(partition_context, event
 # process individually and checkpoint individually or by time
 # use EventHubConsumerClient.receive(). Refer to ./recv_process_individual_checkpoint_by_time.py
 
-async def receive_batch(client):
-    await client.receive_batch(
-        on_event=on_event_batch,
-        max_batch_size=10,  # optional
-        max_wait_time=3,  # optional
-        starting_position="-1",  # optional, "-1" is from the beginning of the partition.
-    )
-
-async def main():
+async def receive_batch():
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
@@ -84,9 +76,14 @@ async def main():
         checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
     )
     async with client:
-        await receive_batch(client)
+        await client.receive_batch(
+            on_event_batch=on_event_batch,
+            max_batch_size=100,  # optional
+            max_wait_time=3,  # optional
+            starting_position="-1",  # optional, "-1" is from the beginning of the partition.
+        )
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    loop.run_until_complete(receive_batch())
