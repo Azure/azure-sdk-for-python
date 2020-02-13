@@ -81,7 +81,10 @@ def git_checkout_tag(tag_name, working_dir):
 def git_checkout_branch(branch_name, working_dir):
     # fetch tags
     run_check_call(["git", "fetch", "origin", branch_name], working_dir)
-    run_check_call(["git", "branch", branch_name, "FETCH_HEAD"], working_dir)
+    try:
+        run_check_call(["git", "branch", branch_name, "FETCH_HEAD"], working_dir)
+    except:
+        logging.error("Failed to create branch. But this can happen if a branch already exists so ignoring this error")
     logging.info("checkout git repo with branch {}".format(branch_name))
     commands = ["git", "checkout", branch_name]
     run_check_call(commands, working_dir)
