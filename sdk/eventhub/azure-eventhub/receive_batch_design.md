@@ -10,14 +10,14 @@ In Dec 2019, Elena reached out to 11 customers that tried eventhubs track2 pevie
 
 Currently Python has `EventHubConsumerClient.receive(on_event, **kwargs)`.
 The new feature will add new method `receive_batch(on_event_batch, **kwargs)` into `EventHubConsumerClient`. 
-It calls the user callback on_event_batch(partition_context, event_batch).
-For flow control, the kwargs will have three parameters - `prefetch` for link credit size, `max_batch_size` and max_wait_time.
-max_batch_size is the expected size of the list of events within the max_wait_time. 
-max_wait_time determines the longest waiting time between two calls of user callback `on_event_batch`.  `receive_batch` accumulates events up to max_batch_size and call `on_event_batch` within max_wait_time and call the callback with the list of events (could be an empty list).
+It calls the user callback `on_event_batch(partition_context, event_batch)`.
+For flow control, the kwargs will have three parameters - `prefetch` for link credit size, `max_batch_size` and `max_wait_time`.
+`max_batch_size` is the expected size of the list of events within the `max_wait_time`. 
+`max_wait_time` determines the longest waiting time between two calls of user callback `on_event_batch`.  `receive_batch` accumulates up to max_batch_size of events and call `on_event_batch` within max_wait_time.
+If `enable_callback_when_no_event` is True, callback `on_event_batch` may have an empty list if no events are received within `max_wait_time`. 
+Otherwise, the callback's event list size is always > 0.
 
-A 0 max_wait_time means not to wait and call the callback function immediately with at most one fetch from the event hub. If the number of pre-fetched events is larger than the max_batch_size, there is no need to fetch. Otherwise fetch only once from the event hub and call the callback with up to max_batch_size events. 
-
-Usually `on_event_batch` should have a list with size max_batch_size. But it may have an empty list of events or fewer than max_batch_size list.
+A 0 `max_wait_time` means not to wait and call the callback function immediately with at most one fetch from the event hub. If the number of pre-fetched events is larger than the max_batch_size, there is no need to fetch. Otherwise fetch only once from the event hub and call the callback with up to max_batch_size events. 
 
 A user can call both `receive` and `receive_batch` from one `EventHubConsumerClient`.
 
