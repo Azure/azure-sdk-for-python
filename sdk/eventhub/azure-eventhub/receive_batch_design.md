@@ -17,7 +17,7 @@ For flow control, the kwargs will have three parameters - `prefetch` for link cr
 If `enable_callback_when_no_event` is True, callback `on_event_batch` may have an empty list if no events are received within `max_wait_time`. 
 Otherwise, the callback's event list size is always > 0.
 
-A 0 `max_wait_time` means not to wait and call the callback function immediately with at most one fetch from the event hub. If the number of pre-fetched events is larger than the max_batch_size, there is no need to fetch. Otherwise fetch only once from the event hub and call the callback with up to max_batch_size events. 
+A 0 `max_wait_time` means not to wait and call the callback function immediately with at most one fetch from the event hub. If the number of pre-fetched events is larger than the `max_batch_size`, there is no need to fetch. Otherwise fetch only once from the event hub and call the callback with up to `max_batch_size` events. 
 
 A user can call both `receive` and `receive_batch` from one `EventHubConsumerClient`.
 
@@ -27,7 +27,7 @@ Refer to _consumer_client_async.pyi of this PR for API
 Refer to recv_batch_with_checkpoint_async.py of this PR
 
 **Describe alternatives you've considered**
-1. Make `EventHubConsumerClient.receive(on_event, **kwargs)` to have a "batch" mode. on_event can accept either an single event or a batch. But this will add complexity to specific users. A single user will use either receive_batch, or receive. Plus, max_batch_size will be meaningless for singe event callback.
+1. Make `EventHubConsumerClient.receive(on_event, **kwargs)` to have a "batch" mode. `on_event` can accept either an single event or a batch. But this will add complexity to specific users. A single user will use either `receive_batch`, or `receive`. Plus, `max_batch_size` will be meaningless for singe event callback.
 
 **Additional context**
 None

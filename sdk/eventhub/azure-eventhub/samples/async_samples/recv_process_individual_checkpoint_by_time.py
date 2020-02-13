@@ -52,7 +52,7 @@ async def receive():
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
-        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
+        checkpoint_store=checkpoint_store,
     )
     async with client:
         await client.receive(
