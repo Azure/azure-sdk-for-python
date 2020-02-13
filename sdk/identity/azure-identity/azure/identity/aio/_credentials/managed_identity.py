@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.configuration import Configuration
 
 
-class ManagedIdentityCredential(object):
+class ManagedIdentityCredential(AsyncCredentialBase):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     See the Azure Active Directory documentation for more information about managed identities:
@@ -31,7 +31,7 @@ class ManagedIdentityCredential(object):
     """
 
     def __init__(self, **kwargs: "Any") -> None:
-        self._credential = None
+        self._credential = None  # type: (**Any) -> None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             self._credential = MsiCredential(**kwargs)
         else:
@@ -42,12 +42,15 @@ class ManagedIdentityCredential(object):
             await self._credential.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def close(self):
         """Close the credential's transport session."""
         if self._credential:
             await self._credential.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+    async def get_token(
+        self, *scopes: str, **kwargs: "Any"
+    ) -> "AccessToken":  # pylint:disable=unused-argument,no-self-use
+        # type: (*str,**Any) -> AccessToken
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
@@ -57,7 +60,7 @@ class ManagedIdentityCredential(object):
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         if not self._credential:
-            raise CredentialUnavailableError(message="No managed identity endpoints found")
+            raise CredentialUnavailableError(message="No managed identity endpoint found.")
         return await self._credential.get_token(*scopes, **kwargs)
 
 

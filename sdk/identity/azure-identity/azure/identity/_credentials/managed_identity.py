@@ -33,8 +33,7 @@ if TYPE_CHECKING:
 
 
 class ManagedIdentityCredential(object):
-    """
-    Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
+    """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     See the Azure Active Directory documentation for more information about managed identities:
     https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
@@ -60,7 +59,7 @@ class ManagedIdentityCredential(object):
         """
 
         if not self._credential:
-            raise CredentialUnavailableError(message="No Managed identity endpoint found.")
+            raise CredentialUnavailableError(message="No managed identity endpoint found.")
         return self._credential.get_token(*scopes, **kwargs)
 
 
