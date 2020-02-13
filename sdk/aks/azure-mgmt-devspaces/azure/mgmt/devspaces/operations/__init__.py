@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_host_mappings_operations import ContainerHostMappingsOperations
-from .operations import Operations
-from .controllers_operations import ControllersOperations
+from ._container_host_mappings_operations import ContainerHostMappingsOperations
+from ._operations import Operations
+from ._controllers_operations import ControllersOperations
 
 __all__ = [
     'ContainerHostMappingsOperations',
