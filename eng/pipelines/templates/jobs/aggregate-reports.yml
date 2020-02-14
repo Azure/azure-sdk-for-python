@@ -1,0 +1,34 @@
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+    - repository: azure-sdk-build-tools
+      type: git
+      name: internal/azure-sdk-build-tools
+
+trigger: none
+pr: none
+
+jobs:
+- job: 'ValidateDependencies'
+  variables:
+  - template: ../variables/globals.yml
+
+  pool:
+    vmImage: 'windows-2019'
+
+  steps:
+  - template: ../steps/analyze.yml
+
+  - task: AzureFileCopy@2
+    displayName: 'Upload dependency report'
+    condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
+    inputs:
+      sourcePath: '$(Build.ArtifactStagingDirectory)/reports'
+      azureSubscription: 'Azure SDK Artifacts'
+      destination: AzureBlob
+      storage: azuresdkartifacts
+      containerName: 'azure-sdk-for-python'
+      blobPrefix: dependencies
