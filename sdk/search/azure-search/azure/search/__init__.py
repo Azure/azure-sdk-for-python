@@ -27,3 +27,12 @@
 from ._version import VERSION
 
 __version__ = VERSION
+
+from .index import IndexBatch, SearchApiKeyCredential, SearchIndexClient, SearchQuery
+
+__all__ = (
+    "IndexBatch",
+    "SearchApiKeyCredential",
+    "SearchIndexClient",
+    "SearchQuery",
+)
