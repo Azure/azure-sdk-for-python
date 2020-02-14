@@ -82,3 +82,20 @@ class KeyVaultClientBase(object):
     def vault_url(self):
         # type: () -> str
         return self._vault_url
+
+    def __enter__(self):
+        # type: () -> KeyVaultClientBase
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        # type: (*Any) -> None
+        self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close sockets opened by the client.
+
+        Calling this method is unnecessary when using the client as a context manager.
+        """
+        self._client.__exit__()

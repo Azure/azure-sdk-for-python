@@ -83,3 +83,17 @@ class AsyncKeyVaultClientBase(object):
     @property
     def vault_url(self) -> str:
         return self._vault_url
+
+    async def __aenter__(self) -> "AsyncKeyVaultClientBase":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close sockets opened by the client.
+
+        Calling this method is unnecessary when using the client as a context manager.
+        """
+        await self._client.__aexit__()
