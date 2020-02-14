@@ -1,5 +1,11 @@
 # Release History
 
+## 0.13.0 (2020-02-13)
+
+**Features**
+
+  - New enum values for HanaInstanceSizeNamesEnum
+
 ## 0.12.1 (2020-02-05)
 
 **Bugfixes**
