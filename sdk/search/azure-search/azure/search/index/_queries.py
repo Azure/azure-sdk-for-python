@@ -35,7 +35,7 @@ class _QueryBase(object):
         """Add a `filter` expression for the search results.
 
         """
-        self._request_type.filter = expression
+        self._request.filter = expression
 
     @property
     def request(self):

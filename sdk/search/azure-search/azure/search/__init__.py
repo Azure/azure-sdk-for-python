@@ -28,11 +28,13 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-from .index import IndexBatch, SearchApiKeyCredential, SearchIndexClient, SearchQuery
+from .index import AutocompleteQuery, IndexBatch, SearchApiKeyCredential, SearchIndexClient, SearchQuery, SuggestQuery
 
 __all__ = (
+    "AutocompleteQuery",
     "IndexBatch",
     "SearchApiKeyCredential",
     "SearchIndexClient",
     "SearchQuery",
+    "SuggestQuery",
 )
