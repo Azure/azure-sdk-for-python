@@ -1,5 +1,8 @@
 # Release History
 
+## 4.0.2 (Unreleased)
+
+
 ## 4.0.1 (2020-02-11)
 - `azure.keyvault.secrets` defines `__version__`
 - Challenge authentication policy preserves request options
