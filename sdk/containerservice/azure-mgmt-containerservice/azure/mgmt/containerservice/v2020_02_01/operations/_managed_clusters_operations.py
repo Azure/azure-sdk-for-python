@@ -27,7 +27,7 @@ class ManagedClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-02-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ManagedClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2020-02-01"
 
         self.config = config
 
@@ -55,7 +55,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ManagedCluster
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.ManagedClusterPaged[~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster]
+         ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPaged[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -127,7 +127,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ManagedCluster
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.ManagedClusterPaged[~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster]
+         ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPaged[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -201,7 +201,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ManagedClusterUpgradeProfile or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.ManagedClusterUpgradeProfile
+         ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterUpgradeProfile
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -269,7 +269,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ManagedClusterAccessProfile or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.ManagedClusterAccessProfile
+         ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterAccessProfile
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -335,7 +335,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CredentialResults or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.CredentialResults or
+         ~azure.mgmt.containerservice.v2020_02_01.models.CredentialResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -400,7 +400,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CredentialResults or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.CredentialResults or
+         ~azure.mgmt.containerservice.v2020_02_01.models.CredentialResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -465,7 +465,7 @@ class ManagedClustersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: CredentialResults or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_10_01.models.CredentialResults or
+         ~azure.mgmt.containerservice.v2020_02_01.models.CredentialResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -529,7 +529,7 @@ class ManagedClustersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ManagedCluster or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster
+        :rtype: ~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -642,7 +642,7 @@ class ManagedClustersOperations(object):
         :param parameters: Parameters supplied to the Create or Update a
          Managed Cluster operation.
         :type parameters:
-         ~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster
+         ~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -651,9 +651,9 @@ class ManagedClustersOperations(object):
         :return: An instance of LROPoller that returns ManagedCluster or
          ClientRawResponse<ManagedCluster> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -755,9 +755,9 @@ class ManagedClustersOperations(object):
         :return: An instance of LROPoller that returns ManagedCluster or
          ClientRawResponse<ManagedCluster> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2019_10_01.models.ManagedCluster]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_tags_initial(
@@ -1017,7 +1017,7 @@ class ManagedClustersOperations(object):
         :param parameters: Parameters supplied to the Reset AAD Profile
          operation for a Managed Cluster.
         :type parameters:
-         ~azure.mgmt.containerservice.v2019_10_01.models.ManagedClusterAADProfile
+         ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterAADProfile
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
