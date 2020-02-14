@@ -21,6 +21,7 @@ from .operations import ReportsOperations
 from .operations import FrontDoorsOperations
 from .operations import FrontendEndpointsOperations
 from .operations import EndpointsOperations
+from .operations import RulesEnginesOperations
 from .operations import PoliciesOperations
 from .operations import ManagedRuleSetsOperations
 from . import models
@@ -46,6 +47,8 @@ class FrontDoorManagementClient(FrontDoorManagementClientOperationsMixin, SDKCli
     :vartype frontend_endpoints: azure.mgmt.frontdoor.operations.FrontendEndpointsOperations
     :ivar endpoints: Endpoints operations
     :vartype endpoints: azure.mgmt.frontdoor.operations.EndpointsOperations
+    :ivar rules_engines: RulesEngines operations
+    :vartype rules_engines: azure.mgmt.frontdoor.operations.RulesEnginesOperations
     :ivar policies: Policies operations
     :vartype policies: azure.mgmt.frontdoor.operations.PoliciesOperations
     :ivar managed_rule_sets: ManagedRuleSets operations
@@ -84,6 +87,8 @@ class FrontDoorManagementClient(FrontDoorManagementClientOperationsMixin, SDKCli
         self.frontend_endpoints = FrontendEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.endpoints = EndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.rules_engines = RulesEnginesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policies = PoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
