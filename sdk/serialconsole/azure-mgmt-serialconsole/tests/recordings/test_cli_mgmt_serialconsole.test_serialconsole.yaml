@@ -1,0 +1,211 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-serialconsole/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SerialConsole/consoleServices/default?api-version=2018-05-01
+  response:
+    body:
+      string: "{\n  \"properties\": {\n   \"disabled\": true\n  }\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '46'
+      content-type:
+      - application/json; charset=UTF-8
+      date:
+      - Fri, 14 Feb 2020 10:53:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - deny
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-serialconsole/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SerialConsole/operations?api-version=2018-05-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n   {\n    \"name\": \"Microsoft.SerialConsole/consoleServices/read\"\
+        ,\n    \"isDataAction\": \"false\",\n    \"display\": {\n     \"provider\"\
+        : \"Microsoft.SerialConsole\",\n     \"resource\": \"Serial Console instance\"\
+        ,\n     \"operation\": \"Default\",\n     \"description\": \"Retrieves the\
+        \ current subscription state\"\n    }\n   },\n   {\n    \"name\": \"Microsoft.SerialConsole/consoleServices/disableConsole/action\"\
+        ,\n    \"isDataAction\": \"false\",\n    \"display\": {\n     \"provider\"\
+        : \"Microsoft.SerialConsole\",\n     \"resource\": \"Serial Console instance\"\
+        ,\n     \"operation\": \"Disable Console\",\n     \"description\": \"Disable\
+        \ Serial Console for a subscription\"\n    }\n   },\n   {\n    \"name\": \"\
+        Microsoft.SerialConsole/consoleServices/enableConsole/action\",\n    \"isDataAction\"\
+        : \"false\",\n    \"display\": {\n     \"provider\": \"Microsoft.SerialConsole\"\
+        ,\n     \"resource\": \"Serial Console instance\",\n     \"operation\": \"\
+        Enable Console\",\n     \"description\": \"Enable Serial Console for a subscription\"\
+        \n    }\n   },\n   {\n    \"name\": \"Microsoft.SerialConsole/consoleServices/operations/read\"\
+        ,\n    \"isDataAction\": \"false\",\n    \"display\": {\n     \"provider\"\
+        : \"Microsoft.SerialConsole\",\n     \"resource\": \"Serial Console instance\"\
+        ,\n     \"operation\": \"Serial Console operations\",\n     \"description\"\
+        : \"Display available Serial Console operations\"\n    }\n   }\n  ]\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1313'
+      content-type:
+      - application/json; charset=UTF-8
+      date:
+      - Fri, 14 Feb 2020 10:53:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - deny
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-serialconsole/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SerialConsole/consoleServices/default/enableConsole?api-version=2018-05-01
+  response:
+    body:
+      string: "{\n  \"properties\": {\n   \"disabled\": false\n  }\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '47'
+      content-type:
+      - application/json; charset=UTF-8
+      date:
+      - Fri, 14 Feb 2020 10:53:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - deny
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-serialconsole/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SerialConsole/consoleServices/default/disableConsole?api-version=2018-05-01
+  response:
+    body:
+      string: "{\n  \"properties\": {\n   \"disabled\": true\n  }\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '46'
+      content-type:
+      - application/json; charset=UTF-8
+      date:
+      - Fri, 14 Feb 2020 10:53:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - deny
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+version: 1
