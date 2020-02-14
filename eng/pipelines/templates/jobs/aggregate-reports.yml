@@ -8,6 +8,9 @@ resources:
       type: git
       name: internal/azure-sdk-build-tools
 
+trigger: none
+pr: none
+
 jobs:
 - job: 'ValidateDependencies'
   variables:
@@ -24,10 +27,6 @@ jobs:
     condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
     inputs:
       sourcePath: '$(Build.ArtifactStagingDirectory)/reports'
-      additionalArgumentsForBlobCopy: |
-        '/Y'
-        '/Pattern:*'
-        '/S'
       azureSubscription: 'Azure SDK Artifacts'
       destination: AzureBlob
       storage: azuresdkartifacts
