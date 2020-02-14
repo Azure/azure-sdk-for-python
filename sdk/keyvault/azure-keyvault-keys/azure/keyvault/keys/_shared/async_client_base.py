@@ -5,44 +5,25 @@
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-)
-from .multi_api import load_generated_api
+
 from . import AsyncChallengeAuthPolicy
-from .._user_agent import USER_AGENT
+from .client_base import _get_policies
+from .multi_api import load_generated_api
 
 if TYPE_CHECKING:
     try:
         # pylint:disable=unused-import
         from typing import Any
         from azure.core.configuration import Configuration
-        from azure.core.credentials_async import AsyncTokenCredential
         from azure.core.pipeline.transport import AsyncHttpTransport
+        from azure.core.credentials_async import AsyncTokenCredential
     except ImportError:
         # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
 
 def _build_pipeline(config: "Configuration", transport: "AsyncHttpTransport" = None, **kwargs: "Any") -> AsyncPipeline:
-    logging_policy = HttpLoggingPolicy(**kwargs)
-    logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
-    policies = [
-        config.headers_policy,
-        config.user_agent_policy,
-        config.proxy_policy,
-        ContentDecodePolicy(),
-        config.redirect_policy,
-        config.retry_policy,
-        config.authentication_policy,
-        config.logging_policy,
-        DistributedTracingPolicy(**kwargs),
-        logging_policy,
-    ]
-
+    policies = _get_policies(config, **kwargs)
     if transport is None:
         from azure.core.pipeline.transport import AioHttpTransport
 
@@ -70,11 +51,12 @@ class AsyncKeyVaultClientBase(object):
 
         api_version = kwargs.pop("api_version", None)
         generated = load_generated_api(api_version, aio=True)
-        config = generated.config_cls(credential, **kwargs)
-        config.authentication_policy = AsyncChallengeAuthPolicy(credential)
-        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
-        pipeline = kwargs.pop("pipeline", None) or _build_pipeline(config, **kwargs)
+        pipeline = kwargs.pop("pipeline", None)
+        if not pipeline:
+            config = generated.config_cls(credential, **kwargs)
+            config.authentication_policy = AsyncChallengeAuthPolicy(credential)
+            pipeline = _build_pipeline(config, **kwargs)
 
         # generated clients don't use their credentials parameter
         self._client = generated.client_cls(credentials="", pipeline=pipeline)

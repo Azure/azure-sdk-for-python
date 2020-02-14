@@ -25,13 +25,13 @@ if TYPE_CHECKING:
     from azure.core.configuration import Configuration
 
 
-def _build_pipeline(config, transport=None, **kwargs):
-    # type: (Configuration, HttpTransport, **Any) -> Pipeline
+def _get_policies(config, **kwargs):
     logging_policy = HttpLoggingPolicy(**kwargs)
     logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
-    policies = [
+
+    return [
         config.headers_policy,
-        config.user_agent_policy,
+        UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
         config.proxy_policy,
         ContentDecodePolicy(),
         config.redirect_policy,
@@ -42,6 +42,10 @@ def _build_pipeline(config, transport=None, **kwargs):
         logging_policy,
     ]
 
+
+def _build_pipeline(config, transport=None, **kwargs):
+    # type: (Configuration, HttpTransport, **Any) -> Pipeline
+    policies = _get_policies(config)
     if transport is None:
         transport = RequestsTransport(**kwargs)
 
@@ -68,11 +72,12 @@ class KeyVaultClientBase(object):
 
         api_version = kwargs.pop("api_version", None)
         generated = load_generated_api(api_version)
-        config = generated.config_cls(credential, **kwargs)
-        config.authentication_policy = ChallengeAuthPolicy(credential)
-        config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
-        pipeline = kwargs.pop("pipeline", None) or _build_pipeline(config, **kwargs)
+        pipeline = kwargs.pop("pipeline", None)
+        if not pipeline:
+            config = generated.config_cls(credential, **kwargs)
+            config.authentication_policy = ChallengeAuthPolicy(credential)
+            pipeline = _build_pipeline(config, **kwargs)
 
         # generated clients don't use their credentials parameter
         self._client = generated.client_cls(credentials="", pipeline=pipeline)
