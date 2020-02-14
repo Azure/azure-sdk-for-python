@@ -81,7 +81,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires_on = kwargs.pop("expires_on", None)
 
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
+            attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
 
@@ -409,7 +409,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
+            attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = await self._client.update_key(
@@ -497,7 +497,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
+            attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = await self._client.import_key(
