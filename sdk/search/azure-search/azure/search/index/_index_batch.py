@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from typing import List
 
 
-__all__ = ("IndexOperationBatch",)
+__all__ = ("IndexBatch",)
 
 
 def flatten_args(args):
@@ -21,7 +21,7 @@ def flatten_args(args):
     return args
 
 
-class IndexOperationBatch(object):
+class IndexBatch(object):
     """Represent a batch of upate operations for documents in an Azure
     Search index.
 
@@ -36,7 +36,7 @@ class IndexOperationBatch(object):
 
     def __repr__(self):
         # type: () -> str
-        return "<IndexOperationBatch [{} actions]>".format(len(self.actions))[:1024]
+        return "<IndexBatch [{} actions]>".format(len(self.actions))[:1024]
 
     def add_upload_documents(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> None

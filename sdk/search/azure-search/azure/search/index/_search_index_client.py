@@ -12,8 +12,8 @@ import six
 from azure.core.paging import ItemPaged, PageIterator
 from azure.core.pipeline.policies import HeadersPolicy
 from ._generated import SearchIndexClient as _SearchIndexClient
-from ._generated.models import IndexBatch, IndexingResult, SearchRequest
-from ._index_operation import IndexOperationBatch
+from ._generated.models import IndexBatch as IndexBatchModel, IndexingResult, SearchRequest
+from ._index_batch import IndexBatch
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 
 if TYPE_CHECKING:
@@ -177,27 +177,27 @@ class SearchIndexClient(object):
         """Upload new documents to the Azure search index.
 
         """
-        batch = IndexOperationBatch()
+        batch = IndexBatch()
         batch.add_upload_documents(documents)
-        return self.batch_update(batch, **kwargs)
+        return self.index_batch(batch, **kwargs)
 
     def delete_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Delete documents from the Azure search index
 
         """
-        batch = IndexOperationBatch()
+        batch = IndexBatch()
         batch.add_delete_documents(documents)
-        return self.batch_update(batch, **kwargs)
+        return self.index_batch(batch, **kwargs)
 
     def merge_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index.
 
         """
-        batch = IndexOperationBatch()
+        batch = IndexBatch()
         batch.add_merge_documents(documents)
-        return self.batch_update(batch, **kwargs)
+        return self.index_batch(batch, **kwargs)
 
     def merge_or_upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
@@ -205,15 +205,15 @@ class SearchIndexClient(object):
         or upload them if they do not yet exist.
 
         """
-        batch = IndexOperationBatch()
+        batch = IndexBatch()
         batch.add_merge_or_upload_documents(documents)
-        return self.batch_update(batch, **kwargs)
+        return self.index_batch(batch, **kwargs)
 
-    def batch_update(self, batch, **kwargs):
-        # type: (IndexOperationBatch, **Any) -> List[IndexingResult]
+    def index_batch(self, batch, **kwargs):
+        # type: (IndexBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
 
         """
-        index_batch = IndexBatch(actions=batch.actions)
+        index_batch = IndexBatchModel(actions=batch.actions)
         results = self._client.documents.index(batch=index_batch, **kwargs).results
         return cast(List[IndexingResult], results)
