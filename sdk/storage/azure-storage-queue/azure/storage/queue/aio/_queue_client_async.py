@@ -37,6 +37,7 @@ from .._shared.response_handlers import (
     return_headers_and_deserialized,
 )
 from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
+from .._generated.version import VERSION
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageErrorException, SignedIdentifier
 from .._generated.models import QueueMessage as GenQueueMessage
@@ -65,6 +66,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword encode_policy: The encoding policy to use on outgoing messages.
@@ -105,6 +109,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async

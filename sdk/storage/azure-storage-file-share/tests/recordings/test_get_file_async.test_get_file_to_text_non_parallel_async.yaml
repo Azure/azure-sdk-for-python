@@ -14,7 +14,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:17 GMT
       etag: '"0x8D79A1618111E63"'
       last-modified: Wed, 15 Jan 2020 23:53:17 GMT
@@ -54,7 +54,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:17 GMT
       etag: '"0x8D79A161819DD7F"'
       last-modified: Wed, 15 Jan 2020 23:53:18 GMT
@@ -106,7 +106,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:17 GMT
       etag: '"0x8D79A1618361CED"'
       last-modified: Wed, 15 Jan 2020 23:53:18 GMT
@@ -154,7 +154,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: uKHXKnfsrxcvqdhaQZ9EcQ==
       date: Wed, 15 Jan 2020 23:53:17 GMT
       etag: '"0x8D79A16184B5642"'
@@ -200,7 +200,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       date: Wed, 15 Jan 2020 23:53:18 GMT
       etag: '"0x8D79A16186CC6B5"'
       last-modified: Wed, 15 Jan 2020 23:53:18 GMT
@@ -665,7 +665,7 @@ interactions:
     body:
       string: ''
     headers:
-      content-length: '0'
+      Content-Length: '0'
       content-md5: rCLuHuBLu/VG+Ewd4UqsXg==
       date: Wed, 15 Jan 2020 23:53:18 GMT
       etag: '"0x8D79A16187A3685"'
@@ -1133,8 +1133,8 @@ interactions:
         python python world hello world python hello world'
     headers:
       accept-ranges: bytes
-      content-length: '32768'
-      content-range: bytes 0-32767/32774
+      Content-Length: '32768'
+      Content-Range: bytes 0-32767/32774
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:18 GMT
       etag: '"0x8D79A16187A3685"'
@@ -1184,8 +1184,8 @@ interactions:
       string: ' hello'
     headers:
       accept-ranges: bytes
-      content-length: '6'
-      content-range: bytes 32768-32773/32774
+      Content-Length: '6'
+      Content-Range: bytes 32768-32773/32774
       content-type: application/octet-stream
       date: Wed, 15 Jan 2020 23:53:18 GMT
       etag: '"0x8D79A16187A3685"'

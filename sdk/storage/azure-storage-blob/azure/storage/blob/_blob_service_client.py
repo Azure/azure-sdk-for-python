@@ -24,11 +24,12 @@ from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, par
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
     parse_to_internal_user_delegation_key
-from ._generated import AzureBlobStorage
+from ._generated import AzureBlobStorage, VERSION
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
 from ._models import ContainerPropertiesPaged
+from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
 if TYPE_CHECKING:
@@ -66,6 +67,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+
+        .. versionadded:: 12.2.0
+
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
@@ -118,6 +125,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -430,6 +438,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param public_access:
             Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
+        :keyword container_encryption_scope:
+            Specifies the default encryption scope to set on the container and use for
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient
@@ -541,7 +556,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         )
         return ContainerClient(
             self.url, container_name=container_name,
-            credential=self.credential, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
@@ -594,7 +609,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         )
         return BlobClient( # type: ignore
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
-            credential=self.credential, _configuration=self._config,
+            credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

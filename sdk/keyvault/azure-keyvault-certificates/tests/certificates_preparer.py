@@ -8,11 +8,19 @@ except ImportError:  # python < 3.3
     from mock import Mock
 
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.transport import RequestsTransport
 from azure.identity import EnvironmentCredential
 
 from devtools_testutils import AzureMgmtPreparer
 
 from certificates_vault_client import VaultClient
+
+
+class NoSleepTransport(RequestsTransport):
+    """Prevents the transport from sleeping, e.g. to observe a Retry-After header"""
+
+    def sleep(self, _):
+        return
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
@@ -24,7 +32,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=True
+        random_name_enabled=True,
     ):
         super(VaultClientPreparer, self).__init__(
             name_prefix,
@@ -32,7 +40,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
             disable_recording=disable_recording,
             playback_fake_resource=playback_fake_resource,
             client_kwargs=client_kwargs,
-            random_name_enabled=random_name_enabled
+            random_name_enabled=random_name_enabled,
         )
         self.parameter_name = parameter_name
 
@@ -43,6 +51,8 @@ class VaultClientPreparer(AzureMgmtPreparer):
     def create_vault_client(self, vault_uri):
         if self.is_live:
             credential = EnvironmentCredential()
+            transport = None
         else:
             credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
-        return VaultClient(vault_uri, credential, **self.client_kwargs)
+            transport = NoSleepTransport()
+        return VaultClient(vault_uri, credential, transport=transport, is_live=self.is_live, **self.client_kwargs)

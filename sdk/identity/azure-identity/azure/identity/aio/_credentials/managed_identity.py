@@ -7,12 +7,13 @@ import os
 from typing import TYPE_CHECKING
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from azure.identity._credentials.managed_identity import _ManagedIdentityBase
 from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
+from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
 
 if TYPE_CHECKING:
@@ -55,7 +56,7 @@ class ManagedIdentityCredential(object):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         return AccessToken()
 
@@ -98,7 +99,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: the IMDS endpoint is unreachable
         """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
@@ -107,16 +108,15 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             try:
                 await self._client.request_token(scopes, method="GET", connection_timeout=0.3, retry_total=0)
                 self._endpoint_available = True
-            except (ClientAuthenticationError, HttpResponseError):
-                # received a response a pipeline policy choked on (HttpResponseError)
-                # or that couldn't be deserialized by AuthnClient (AuthenticationError)
+            except HttpResponseError:
+                # received a response, choked on it
                 self._endpoint_available = True
             except Exception:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
 
         if not self._endpoint_available:
-            raise ClientAuthenticationError(message="IMDS endpoint unavailable")
+            raise CredentialUnavailableError(message="IMDS endpoint unavailable")
 
         if len(scopes) != 1:
             raise ValueError("this credential supports one scope per request")
@@ -149,10 +149,10 @@ class MsiCredential(_AsyncManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
         """
         if not self._endpoint:
-            raise ClientAuthenticationError(message="MSI endpoint unavailable")
+            raise CredentialUnavailableError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:
             raise ValueError("this credential supports only one scope per request")

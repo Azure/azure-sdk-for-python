@@ -94,8 +94,8 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
         future_filepath = Path(output_folder) / package_name / template_name
 
         # Might decide to make it more generic one day
-        if template_name == "HISTORY.rst" and future_filepath.exists():
-            _LOGGER.info("Skipping HISTORY.txt template, since a previous one was found")
+        if template_name == "CHANGELOG.md" and future_filepath.exists():
+            _LOGGER.info("Skipping CHANGELOG.md template, since a previous one was found")
             # Never overwirte the ChangeLog
             continue
 

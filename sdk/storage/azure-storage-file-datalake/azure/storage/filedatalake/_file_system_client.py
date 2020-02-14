@@ -82,6 +82,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             raise ValueError("Invalid URL: {}".format(account_url))
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
+        # TODO: add self.account_url to base_client and remove _blob_account_url
+        self._blob_account_url = blob_account_url
 
         datalake_hosts = kwargs.pop('_hosts', None)
         blob_hosts = None

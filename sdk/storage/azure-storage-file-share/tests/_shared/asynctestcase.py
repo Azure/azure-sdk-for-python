@@ -8,11 +8,12 @@
 import asyncio
 import functools
 
+from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from azure.core.credentials import AccessToken
 
-from .filetestcase import FileTestCase
+from .testcase import StorageTestCase
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
@@ -27,7 +28,38 @@ class AsyncFakeTokenCredential(object):
         return self.token
 
 
-class AsyncStorageTestCase(FileTestCase):
+def patch_play_responses(unit_test):
+    """Fixes a bug affecting blob tests by applying https://github.com/kevin1024/vcrpy/pull/511 to vcrpy 3.0.0"""
+
+    try:
+        from vcr.stubs.aiohttp_stubs import _serialize_headers, build_response, Request, URL
+    except ImportError:
+        # return a do-nothing patch when importing from vcr fails
+        return lambda _: None
+
+    def fixed_play_responses(cassette, vcr_request):
+        history = []
+        vcr_response = cassette.play_response(vcr_request)
+        response = build_response(vcr_request, vcr_response, history)
+        while 300 <= response.status <= 399:
+            if "location" not in response.headers:
+                break
+            next_url = URL(response.url).with_path(response.headers["location"])
+            vcr_request = Request("GET", str(next_url), None, _serialize_headers(response.request_info.headers))
+            vcr_request = cassette.find_requests_with_most_matches(vcr_request)[0][0]
+            history.append(response)
+            vcr_response = cassette.play_response(vcr_request)
+            response = build_response(vcr_request, vcr_response, history)
+        return response
+
+    return mock_in_unit_test(unit_test, "vcr.stubs.aiohttp_stubs.play_responses", fixed_play_responses)
+
+
+class AsyncStorageTestCase(StorageTestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.replay_patches.append(patch_play_responses)
+
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes

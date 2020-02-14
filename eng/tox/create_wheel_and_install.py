@@ -33,12 +33,12 @@ def cleanup_build_artifacts(build_folder):
     shutil.rmtree(os.path.join(build_folder, "build"))
 
 
-def discover_whls(setuppy_path, dist_dir, target_setup):
+def discover_whls(setuppy_path, args):
     wheels = []
-    if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+    if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
         wheels = discover_prebuilt_whl(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path)
     else:
-        wheels = build_and_discover_whl(setuppy_path, dist_dir, target_setup)
+        wheels = build_and_discover_whl(setuppy_path, args.distribution_directory, args.target_setup)
     return wheels
 
 
@@ -126,11 +126,17 @@ if __name__ == "__main__":
         help="Location that, if present, will be used as working directory to run pip install.",
     )
 
+    parser.add_argument(
+        "--force-create",
+        dest="force_create",
+        help="Force recreate whl even if it is prebuilt",
+    )
+
 
     args = parser.parse_args()
 
     setup_py_path = os.path.join(args.target_setup, "setup.py")
-    discovered_wheels = discover_whls(setup_py_path, args.distribution_directory, args.target_setup)
+    discovered_wheels = discover_whls(setup_py_path, args)
 
     if args.skip_install:
         logging.info(
@@ -141,7 +147,7 @@ if __name__ == "__main__":
             # if the environment variable is set, that means that this is running where we
             # want to use the pre-built wheels
             pkg_wheel_path = ""
-            if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+            if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
                 # find the wheel in the set of prebuilt wheels
                 whl_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
                 if os.path.isfile(whl_path):

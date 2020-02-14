@@ -352,6 +352,9 @@ class StorageTestCase(unittest.TestCase):
                 if old_value != new_value:
                     if isinstance(val, bytes):
                         val = val.replace(old_value.encode(), new_value.encode())
+                    elif isinstance(val, dict):
+                        val2 = str(val).replace(old_value, new_value)
+                        val = eval(val2)
                     else:
                         val = val.replace(old_value, new_value)
         return val
@@ -396,6 +399,14 @@ class StorageTestCase(unittest.TestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+    def generate_async_oauth_token(self):
+        from azure.identity.aio import ClientSecretCredential
+        return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
+        )
 
 def record(test):
     def recording_test(self):
