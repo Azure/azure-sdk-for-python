@@ -1,5 +1,11 @@
 # Release History
 
+## 5.0.1 (Unreleased)
+
+**Bug fixes**
+
+- Fixed a bug that `azure.eventhub.EventHubConsumerClient.receive()` doesn't call error handler callback on_error #9660
+
 ## 5.0.0 (2020-01-13)
 
 **Breaking changes**
