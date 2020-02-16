@@ -31,7 +31,7 @@ class ManagedIdentityCredential(AsyncCredentialBase):
     """
 
     def __init__(self, **kwargs: "Any") -> None:
-        self._credential = None  # type: (**Any) -> None
+        self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             self._credential = MsiCredential(**kwargs)
         else:
@@ -47,10 +47,7 @@ class ManagedIdentityCredential(AsyncCredentialBase):
         if self._credential:
             await self._credential.__aexit__()
 
-    async def get_token(
-        self, *scopes: str, **kwargs: "Any"
-    ) -> "AccessToken":  # pylint:disable=unused-argument,no-self-use
-        # type: (*str,**Any) -> AccessToken
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.

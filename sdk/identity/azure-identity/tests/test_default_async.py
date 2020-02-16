@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from azure.identity import KnownAuthorities
 from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
-from azure.identity.aio._credentials.managed_identity import ImdsCredential, MsiCredential, ManagedIdentityCredential
+from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
@@ -98,12 +98,12 @@ def test_exclude_options():
         assert actual <= default  # n.b. we know actual is non-empty
         assert default - actual <= excluded
 
-    # with no environment variables set, ManagedIdentityCredential = ImdsCredential
+    # with no environment variables set, ManagedIdentityCredential holds an instance of  ImdsCredential
     with patch("os.environ", {}):
         credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
         assert_credentials_not_present(credential, ManagedIdentityCredential)
 
-    # with $MSI_ENDPOINT set, ManagedIdentityCredential = MsiCredential
+    # with $MSI_ENDPOINT set, ManagedIdentityCredential holds an instance of MsiCredential
     with patch("os.environ", {"MSI_ENDPOINT": "spam"}):
         credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
         assert_credentials_not_present(credential, ManagedIdentityCredential)

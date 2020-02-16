@@ -42,6 +42,7 @@ class ManagedIdentityCredential(object):
     """
 
     def __init__(self, **kwargs):
+        # type: (**Any) -> None
         self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             self._credential = MsiCredential(**kwargs)
@@ -49,6 +50,7 @@ class ManagedIdentityCredential(object):
             self._credential = ImdsCredential(**kwargs)
 
     def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
