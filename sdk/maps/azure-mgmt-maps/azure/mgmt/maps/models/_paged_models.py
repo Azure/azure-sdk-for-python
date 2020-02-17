@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class MapsAccountPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`MapsAccount <azure.mgmt.maps.models.MapsAccount>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MapsAccount]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(MapsAccountPaged, self).__init__(*args, **kwargs)
 class MapsOperationsValueItemPaged(Paged):
     """
     A paging container for iterating over a list of :class:`MapsOperationsValueItem <azure.mgmt.maps.models.MapsOperationsValueItem>` object
@@ -25,3 +38,16 @@ class MapsOperationsValueItemPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(MapsOperationsValueItemPaged, self).__init__(*args, **kwargs)
+class PrivateAtlasPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateAtlas <azure.mgmt.maps.models.PrivateAtlas>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateAtlas]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateAtlasPaged, self).__init__(*args, **kwargs)
