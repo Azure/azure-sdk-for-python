@@ -98,15 +98,9 @@ def test_exclude_options():
         assert actual <= default  # n.b. we know actual is non-empty
         assert default - actual <= excluded
 
-    # with no environment variables set, ManagedIdentityCredential holds an instance of  ImdsCredential
-    with patch("os.environ", {}):
-        credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ManagedIdentityCredential)
-
-    # with $MSI_ENDPOINT set, ManagedIdentityCredential holds an instance of MsiCredential
-    with patch("os.environ", {"MSI_ENDPOINT": "spam"}):
-        credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ManagedIdentityCredential)
+    # when exclude_managed_identity_credential is set to True, check if ManagedIdentityCredential instance is not present
+    credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
+    assert_credentials_not_present(credential, ManagedIdentityCredential)
 
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
