@@ -40,7 +40,7 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
             item_hint = doc.get(hint, None)
             if item_hint is None:
                 doc = {"id": doc.get("id", None), hint: whole_batch_hint, "text": doc.get("text", None)}
-            if item_hint.lower() == "none":
+            elif item_hint.lower() == "none":
                 doc = {"id": doc.get("id", None), hint: "", "text": doc.get("text", None)}
             request_batch.append(doc)
         if isinstance(doc, TextDocumentInput):
@@ -52,7 +52,7 @@ def _validate_batch_input(documents, hint, whole_batch_hint):
             item_hint = doc.country_hint
             if item_hint is None:
                 doc = DetectLanguageInput(id=doc.id, country_hint=whole_batch_hint, text=doc.text)
-            if item_hint.lower() == "none":
+            elif item_hint.lower() == "none":
                 doc = DetectLanguageInput(id=doc.id, country_hint="", text=doc.text)
             request_batch.append(doc)
 

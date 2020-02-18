@@ -1100,3 +1100,27 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         # response = await text_analytics.detect_language(docs)
         # self.assertEqual(response[0].error.code, "invalidCountryHint")
         # self.assertIsNotNone(response[0].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_text_analytics_country_hint_none_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        # service will eventually support this and we will not need to send "" for input == "none"
+        documents = [{"id": "0", "country_hint": "none", "text": "This is written in English."}]
+        documents2 = [DetectLanguageInput(id="1", country_hint="none", text="This is written in English.")]
+
+        def callback(response):
+            country_str = "\"countryHint\": \"\""
+            country = response.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+        # test dict
+        result = await text_analytics.detect_language(documents, response_hook=callback)
+        # test DetectLanguageInput
+        result2 = await text_analytics.detect_language(documents2, response_hook=callback)
+        # test per-operation
+        result3 = await text_analytics.detect_language(inputs=["this is written in english"], country_hint="none", response_hook=callback)
+        # test client default
+        new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
+        result4 = await new_client.detect_language(inputs=["this is written in english"], response_hook=callback)
