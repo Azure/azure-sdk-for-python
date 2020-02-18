@@ -441,39 +441,43 @@ class DeploymentPropertiesExtended(Model):
     :vartype timestamp: datetime
     :ivar duration: The duration of the template deployment.
     :vartype duration: str
-    :param outputs: Key/value pairs that represent deployment output.
-    :type outputs: object
-    :param providers: The list of resource providers needed for the
-     deployment.
-    :type providers:
+    :ivar outputs: Key/value pairs that represent deployment output.
+    :vartype outputs: object
+    :ivar providers: The list of resource providers needed for the deployment.
+    :vartype providers:
      list[~azure.mgmt.resource.resources.v2019_10_01.models.Provider]
-    :param dependencies: The list of deployment dependencies.
-    :type dependencies:
+    :ivar dependencies: The list of deployment dependencies.
+    :vartype dependencies:
      list[~azure.mgmt.resource.resources.v2019_10_01.models.Dependency]
-    :param template: The template content. Use only one of Template or
-     TemplateLink.
-    :type template: object
-    :param template_link: The URI referencing the template. Use only one of
-     Template or TemplateLink.
-    :type template_link:
+    :ivar template_link: The URI referencing the template.
+    :vartype template_link:
      ~azure.mgmt.resource.resources.v2019_10_01.models.TemplateLink
-    :param parameters: Deployment parameters. Use only one of Parameters or
-     ParametersLink.
-    :type parameters: object
-    :param parameters_link: The URI referencing the parameters. Use only one
-     of Parameters or ParametersLink.
-    :type parameters_link:
+    :ivar parameters: Deployment parameters.
+    :vartype parameters: object
+    :ivar parameters_link: The URI referencing the parameters.
+    :vartype parameters_link:
      ~azure.mgmt.resource.resources.v2019_10_01.models.ParametersLink
-    :param mode: The deployment mode. Possible values are Incremental and
+    :ivar mode: The deployment mode. Possible values are Incremental and
      Complete. Possible values include: 'Incremental', 'Complete'
-    :type mode: str or
+    :vartype mode: str or
      ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentMode
-    :param debug_setting: The debug setting of the deployment.
-    :type debug_setting:
+    :ivar debug_setting: The debug setting of the deployment.
+    :vartype debug_setting:
      ~azure.mgmt.resource.resources.v2019_10_01.models.DebugSetting
-    :param on_error_deployment: The deployment on error behavior.
-    :type on_error_deployment:
+    :ivar on_error_deployment: The deployment on error behavior.
+    :vartype on_error_deployment:
      ~azure.mgmt.resource.resources.v2019_10_01.models.OnErrorDeploymentExtended
+    :ivar template_hash: The hash produced for the template.
+    :vartype template_hash: str
+    :ivar output_resources: Array of provisioned resources.
+    :vartype output_resources:
+     list[~azure.mgmt.resource.resources.v2019_10_01.models.ResourceReference]
+    :ivar validated_resources: Array of validated resources.
+    :vartype validated_resources:
+     list[~azure.mgmt.resource.resources.v2019_10_01.models.ResourceReference]
+    :ivar error: The deployment error.
+    :vartype error:
+     ~azure.mgmt.resource.resources.v2019_10_01.models.ErrorResponse
     """
 
     _validation = {
@@ -481,6 +485,19 @@ class DeploymentPropertiesExtended(Model):
         'correlation_id': {'readonly': True},
         'timestamp': {'readonly': True},
         'duration': {'readonly': True},
+        'outputs': {'readonly': True},
+        'providers': {'readonly': True},
+        'dependencies': {'readonly': True},
+        'template_link': {'readonly': True},
+        'parameters': {'readonly': True},
+        'parameters_link': {'readonly': True},
+        'mode': {'readonly': True},
+        'debug_setting': {'readonly': True},
+        'on_error_deployment': {'readonly': True},
+        'template_hash': {'readonly': True},
+        'output_resources': {'readonly': True},
+        'validated_resources': {'readonly': True},
+        'error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -491,52 +508,65 @@ class DeploymentPropertiesExtended(Model):
         'outputs': {'key': 'outputs', 'type': 'object'},
         'providers': {'key': 'providers', 'type': '[Provider]'},
         'dependencies': {'key': 'dependencies', 'type': '[Dependency]'},
-        'template': {'key': 'template', 'type': 'object'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
         'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeploymentExtended'},
+        'template_hash': {'key': 'templateHash', 'type': 'str'},
+        'output_resources': {'key': 'outputResources', 'type': '[ResourceReference]'},
+        'validated_resources': {'key': 'validatedResources', 'type': '[ResourceReference]'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, *, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, on_error_deployment=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(DeploymentPropertiesExtended, self).__init__(**kwargs)
         self.provisioning_state = None
         self.correlation_id = None
         self.timestamp = None
         self.duration = None
-        self.outputs = outputs
-        self.providers = providers
-        self.dependencies = dependencies
-        self.template = template
-        self.template_link = template_link
-        self.parameters = parameters
-        self.parameters_link = parameters_link
-        self.mode = mode
-        self.debug_setting = debug_setting
-        self.on_error_deployment = on_error_deployment
+        self.outputs = None
+        self.providers = None
+        self.dependencies = None
+        self.template_link = None
+        self.parameters = None
+        self.parameters_link = None
+        self.mode = None
+        self.debug_setting = None
+        self.on_error_deployment = None
+        self.template_hash = None
+        self.output_resources = None
+        self.validated_resources = None
+        self.error = None
 
 
 class DeploymentValidateResult(Model):
     """Information from validate template deployment response.
 
-    :param error: The deployment validation error.
-    :type error:
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: The deployment validation error.
+    :vartype error:
      ~azure.mgmt.resource.resources.v2019_10_01.models.ErrorResponse
     :param properties: The template deployment properties.
     :type properties:
      ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentPropertiesExtended
     """
 
+    _validation = {
+        'error': {'readonly': True},
+    }
+
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorResponse'},
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, *, error=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(DeploymentValidateResult, self).__init__(**kwargs)
-        self.error = error
+        self.error = None
         self.properties = properties
 
 
@@ -1393,6 +1423,29 @@ class ResourceProviderOperationDisplayProperties(Model):
         self.description = description
 
 
+class ResourceReference(Model):
+    """The resource Id model.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The fully qualified resource Id.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceReference, self).__init__(**kwargs)
+        self.id = None
+
+
 class ResourcesMoveInfo(Model):
     """Parameters of move resources.
 
@@ -1519,7 +1572,7 @@ class TagDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The tag ID.
+    :ivar id: The tag name ID.
     :vartype id: str
     :param tag_name: The tag name.
     :type tag_name: str
@@ -1551,30 +1604,8 @@ class TagDetails(Model):
         self.values = values
 
 
-class TagPatchRequest(Model):
-    """Tag Request for Patch operation.
-
-    :param operation: The operation type for the patch api. Possible values
-     include: 'Replace', 'Merge', 'Delete'
-    :type operation: str or
-     ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-    :param properties: tags object passing in the request.
-    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
-    """
-
-    _attribute_map = {
-        'operation': {'key': 'operation', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Tags'},
-    }
-
-    def __init__(self, *, operation=None, properties=None, **kwargs) -> None:
-        super(TagPatchRequest, self).__init__(**kwargs)
-        self.operation = operation
-        self.properties = properties
-
-
 class Tags(Model):
-    """key and value pairs for tags.
+    """A dictionary of name and value pairs.
 
     :param tags:
     :type tags: dict[str, str]
@@ -1589,25 +1620,43 @@ class Tags(Model):
         self.tags = tags
 
 
-class TagsResource(Resource):
-    """Tags for the resource.
+class TagsPatchResource(Model):
+    """Wrapper resource for tags patch API request only.
+
+    :param operation: The operation type for the patch API. Possible values
+     include: 'Replace', 'Merge', 'Delete'
+    :type operation: str or
+     ~azure.mgmt.resource.resources.v2019_10_01.models.enum
+    :param properties: The set of tags.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
+    """
+
+    _attribute_map = {
+        'operation': {'key': 'operation', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'Tags'},
+    }
+
+    def __init__(self, *, operation=None, properties=None, **kwargs) -> None:
+        super(TagsPatchResource, self).__init__(**kwargs)
+        self.operation = operation
+        self.properties = properties
+
+
+class TagsResource(Model):
+    """Wrapper resource for tags API requests and responses.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID
+    :ivar id: The ID of the tags wrapper resource.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the tags wrapper resource.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the tags wrapper resource.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param properties: Required. tags property.
+    :param properties: Required. The set of tags.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
 
@@ -1622,13 +1671,14 @@ class TagsResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'Tags'},
     }
 
-    def __init__(self, *, properties, location: str=None, tags=None, **kwargs) -> None:
-        super(TagsResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, properties, **kwargs) -> None:
+        super(TagsResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.properties = properties
 
 
@@ -1638,7 +1688,7 @@ class TagValue(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The tag ID.
+    :ivar id: The tag value ID.
     :vartype id: str
     :param tag_value: The tag value.
     :type tag_value: str

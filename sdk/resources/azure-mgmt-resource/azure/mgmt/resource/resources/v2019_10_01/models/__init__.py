@@ -50,14 +50,15 @@ try:
     from ._models_py3 import ResourceGroupPatchable
     from ._models_py3 import ResourceGroupProperties
     from ._models_py3 import ResourceProviderOperationDisplayProperties
+    from ._models_py3 import ResourceReference
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import ScopedDeployment
     from ._models_py3 import Sku
     from ._models_py3 import SubResource
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
-    from ._models_py3 import TagPatchRequest
     from ._models_py3 import Tags
+    from ._models_py3 import TagsPatchResource
     from ._models_py3 import TagsResource
     from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
@@ -107,14 +108,15 @@ except (SyntaxError, ImportError):
     from ._models import ResourceGroupPatchable
     from ._models import ResourceGroupProperties
     from ._models import ResourceProviderOperationDisplayProperties
+    from ._models import ResourceReference
     from ._models import ResourcesMoveInfo
     from ._models import ScopedDeployment
     from ._models import Sku
     from ._models import SubResource
     from ._models import TagCount
     from ._models import TagDetails
-    from ._models import TagPatchRequest
     from ._models import Tags
+    from ._models import TagsPatchResource
     from ._models import TagsResource
     from ._models import TagValue
     from ._models import TargetResource
@@ -180,14 +182,15 @@ __all__ = [
     'ResourceGroupPatchable',
     'ResourceGroupProperties',
     'ResourceProviderOperationDisplayProperties',
+    'ResourceReference',
     'ResourcesMoveInfo',
     'ScopedDeployment',
     'Sku',
     'SubResource',
     'TagCount',
     'TagDetails',
-    'TagPatchRequest',
     'Tags',
+    'TagsPatchResource',
     'TagsResource',
     'TagValue',
     'TargetResource',
