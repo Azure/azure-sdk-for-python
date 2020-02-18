@@ -88,7 +88,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         sentence_sentiment = _models.SentenceSentiment(
             sentiment="neutral",
-            sentiment_scores=sentiment_confidence_score_per_label,
+            confidence_scores=sentiment_confidence_score_per_label,
             offset=0,
             length=10,
             warnings=["sentence was too short to find sentiment"]
@@ -98,7 +98,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             id="1",
             sentiment="positive",
             statistics=text_document_statistics,
-            sentiment_scores=sentiment_confidence_score_per_label,
+            confidence_scores=sentiment_confidence_score_per_label,
             sentences=[sentence_sentiment],
             is_error=False
         )
@@ -152,13 +152,13 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
         self.assertEqual("SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02)",
                          repr(sentiment_confidence_score_per_label))
-        self.assertEqual("SentenceSentiment(sentiment=neutral, sentiment_scores=SentimentConfidenceScorePerLabel("
+        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScorePerLabel("
                          "positive=0.99, neutral=0.05, negative=0.02), offset=0, length=10, warnings="
                          "['sentence was too short to find sentiment'])", repr(sentence_sentiment))
         self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, statistics=TextDocumentStatistics("
-                         "character_count=14, transaction_count=18), sentiment_scores=SentimentConfidenceScorePerLabel"
+                         "character_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScorePerLabel"
                          "(positive=0.99, neutral=0.05, negative=0.02), sentences=[SentenceSentiment(sentiment=neutral, "
-                         "sentiment_scores=SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02), "
+                         "confidence_scores=SentimentConfidenceScorePerLabel(positive=0.99, neutral=0.05, negative=0.02), "
                          "offset=0, length=10, warnings=['sentence was too short to find sentiment'])], is_error=False)",
                          repr(analyze_sentiment_result))
         self.assertEqual("DocumentError(id=1, error=TextAnalyticsError(code=invalidRequest, "

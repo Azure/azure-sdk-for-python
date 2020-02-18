@@ -391,9 +391,9 @@ class AnalyzeSentimentResult(DictMixin):
         field will contain information about the document payload.
     :type statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
-    :param sentiment_scores: Document level sentiment confidence
+    :param confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment class.
-    :type sentiment_scores:
+    :type confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
     :param sentences: Sentence level sentiment analysis.
     :type sentences:
@@ -406,13 +406,13 @@ class AnalyzeSentimentResult(DictMixin):
         self.id = kwargs.get("id", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.statistics = kwargs.get("statistics", None)
-        self.sentiment_scores = kwargs.get("sentiment_scores", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
         self.sentences = kwargs.get("sentences", None)
         self.is_error = False
 
     def __repr__(self):
-        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, sentiment_scores={}, sentences={}, " \
-               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.sentiment_scores),
+        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, confidence_scores={}, sentences={}, " \
+               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.confidence_scores),
                                      repr(self.sentences), self.is_error)[:1024]
 
 
@@ -674,9 +674,9 @@ class SentenceSentiment(DictMixin):
     :param sentiment: The predicted Sentiment for the sentence.
         Possible values include: 'positive', 'neutral', 'negative'
     :type sentiment: str
-    :param sentiment_scores: The sentiment confidence score between 0
+    :param confidence_scores: The sentiment confidence score between 0
         and 1 for the sentence for all labels.
-    :type sentiment_scores:
+    :type confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
     :param offset: The sentence offset from the start of the
         document.
@@ -689,7 +689,7 @@ class SentenceSentiment(DictMixin):
 
     def __init__(self, **kwargs):
         self.sentiment = kwargs.get("sentiment", None)
-        self.sentiment_scores = kwargs.get("sentiment_scores", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
         self.offset = kwargs.get("offset", None)
         self.length = kwargs.get("length", None)
         self.warnings = kwargs.get("warnings", None)
@@ -698,20 +698,20 @@ class SentenceSentiment(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             sentiment=sentence.sentiment.value,
-            sentiment_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScorePerLabel._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
             offset=sentence.offset,
             length=sentence.length,
             warnings=sentence.warnings,
         )
 
     def __repr__(self):
-        return "SentenceSentiment(sentiment={}, sentiment_scores={}, offset={}, length={}, warnings={})" \
-            .format(self.sentiment, repr(self.sentiment_scores), self.offset, self.length, self.warnings)[:1024]
+        return "SentenceSentiment(sentiment={}, confidence_scores={}, offset={}, length={}, warnings={})" \
+            .format(self.sentiment, repr(self.confidence_scores), self.offset, self.length, self.warnings)[:1024]
 
 
 class SentimentConfidenceScorePerLabel(DictMixin):
-    """Represents the confidence scores between 0 and 1 across all sentiment
-    labels: positive, neutral, negative.
+    """The confidence scores (Softmax scores) between 0 and 1 across all sentiment
+    labels: positive, neutral, negative. Higher values indicate higher confidence.
 
     :param positive: Positive score.
     :type positive: float

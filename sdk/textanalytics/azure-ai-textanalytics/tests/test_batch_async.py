@@ -477,7 +477,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.sentiment_scores)
+            self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
