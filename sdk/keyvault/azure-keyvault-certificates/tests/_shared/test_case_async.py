@@ -5,10 +5,27 @@
 import asyncio
 import functools
 
-from certificates_test_case import KeyVaultTestCase
+from azure_devtools.scenario_tests.patches import mock_in_unit_test
+from devtools_testutils import AzureMgmtTestCase
+from .helpers_async import get_completed_future
 
 
-class AsyncKeyVaultTestCase(KeyVaultTestCase):
+def skip_sleep(unit_test):
+    async def immediate_return(_):
+        return
+
+    return mock_in_unit_test(unit_test, "asyncio.sleep", immediate_return)
+
+
+class KeyVaultTestCase(AzureMgmtTestCase):
+    def __init__(self, *args, match_body=True, **kwargs):
+        super().__init__(*args, match_body=match_body, **kwargs)
+        self.replay_patches.append(skip_sleep)
+
+    def setUp(self):
+        self.list_test_size = 7
+        super(KeyVaultTestCase, self).setUp()
+
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes
@@ -17,9 +34,8 @@ class AsyncKeyVaultTestCase(KeyVaultTestCase):
 
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
-            vault_client = kwargs.get("vault_client")
             loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, vault_client))
+            return loop.run_until_complete(test_fn(test_class_instance, *args, **kwargs))
 
         return run
 
