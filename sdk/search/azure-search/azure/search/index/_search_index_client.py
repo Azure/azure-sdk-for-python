@@ -124,7 +124,7 @@ class SearchIndexClient(object):
         result = self._client.documents.get(key=key, selected_fields=selected_fields)
         return cast(dict, result.additional_properties)
 
-    def get_search_results(self, query, **kwargs):
+    def search(self, query, **kwargs):
         # type: (Union[str, SearchQuery], **Any) -> ItemPaged[dict]
         """Search the Azure search index for documents.
 
@@ -140,7 +140,7 @@ class SearchIndexClient(object):
             self._client, query, kwargs, page_iterator_class=_SearchDocumentsPaged
         )
 
-    def get_suggestions(self, query, **kwargs):
+    def suggest(self, query, **kwargs):
         # type: (Union[str, SuggestQuery], **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
 
@@ -156,7 +156,7 @@ class SearchIndexClient(object):
         results = [r.as_dict() for r in response.results]
         return results
 
-    def get_autocompletions(self, query, **kwargs):
+    def autocomplete(self, query, **kwargs):
         # type: (Union[str, AutocompleteQuery], **Any) -> List[dict]
         """Get search auto-completion results from the Azure search index.
 
