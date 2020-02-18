@@ -26,7 +26,7 @@ async def test_basic_options_aiohttp():
         response = await pipeline.run(request)
 
     assert pipeline._transport.session is None
-    assert response.http_response.status_code == 200
+    assert isinstance(response.http_response.status_code, int)
 
 
 @pytest.mark.asyncio

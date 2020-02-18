@@ -121,7 +121,7 @@ class TestExceptions(object):
         assert error.message == "Operation returned an invalid status 'OK'"
         assert error.response is not None
         assert error.reason == 'OK'
-        assert error.status_code == 200
+        assert isinstance(error.status_code, int)
         assert error.error is None
 
     def test_odata_v4_exception(self):
