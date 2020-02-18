@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import codecs
 import uuid
 
 from cryptography.exceptions import InvalidSignature
@@ -223,20 +222,3 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
 
     def _private_key_material(self):
         return self.private_key.private_numbers() if self.private_key else None
-
-
-def _bytes_to_int(b):
-    return int(codecs.encode(b, "hex"), 16)
-
-
-def _int_to_bytes(i):
-    h = hex(i)
-    if len(h) > 1 and h[0:2] == "0x":
-        h = h[2:]
-
-    # need to strip L in python 2.x
-    h = h.strip("L")
-
-    if len(h) % 2:
-        h = "0" + h
-    return codecs.decode(h, "hex")
