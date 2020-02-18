@@ -5,6 +5,11 @@
 
 import pytest
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 from azure.search.index._generated.models import AutocompleteRequest, SearchRequest, SuggestRequest
 
 from azure.search import AutocompleteQuery, SearchQuery, SuggestQuery
@@ -15,6 +20,14 @@ class TestAutocompleteQuery(object):
         query = AutocompleteQuery()
         assert type(query.request) is AutocompleteRequest
         assert query.request.filter is None
+
+    @mock.patch('azure.search.AutocompleteQuery._request_type')
+    def test_kwargs_forwarded(self, mock_request):
+        mock_request.return_value = None
+        AutocompleteQuery(foo=10, bar=20)
+        mock_request.assert_called_once()
+        assert mock_request.call_args[0] == ()
+        assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
 
     def test_repr(self):
         query = AutocompleteQuery()
@@ -42,6 +55,14 @@ class TestSearchQuery(object):
         assert query.request.filter is None
         assert query.request.order_by is None
         assert query.request.select is None
+
+    @mock.patch('azure.search.SearchQuery._request_type')
+    def test_kwargs_forwarded(self, mock_request):
+        mock_request.return_value = None
+        SearchQuery(foo=10, bar=20)
+        mock_request.assert_called_once()
+        assert mock_request.call_args[0] == ()
+        assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
 
     def test_repr(self):
         query = SearchQuery()
@@ -101,6 +122,14 @@ class TestSuggestQuery(object):
         query = SuggestQuery()
         assert type(query.request) is SuggestRequest
         assert query.request.filter is None
+
+    @mock.patch('azure.search.SuggestQuery._request_type')
+    def test_kwargs_forwarded(self, mock_request):
+        mock_request.return_value = None
+        SuggestQuery(foo=10, bar=20)
+        mock_request.assert_called_once()
+        assert mock_request.call_args[0] == ()
+        assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
 
     def test_repr(self):
         query = SuggestQuery()

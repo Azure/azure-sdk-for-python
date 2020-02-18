@@ -25,6 +25,9 @@ if TYPE_CHECKING:
 __all__ = ("SearchIndexClient",)
 
 
+DEFAULT_SEARCH_DNS_SUFFIX = "search.windows.net"
+
+
 def convert_search_result(result):
     ret = result.additional_properties
     ret["@search.score"] = result.score
@@ -92,7 +95,7 @@ class SearchIndexClient(object):
             }
         )
 
-        search_dns_suffix = kwargs.pop("search_dns_suffix", "search.windows.net")
+        search_dns_suffix = kwargs.pop("search_dns_suffix", DEFAULT_SEARCH_DNS_SUFFIX)
 
         self._search_service_name = search_service_name  # type: str
         self._index_name = index_name  # type: str
@@ -106,7 +109,7 @@ class SearchIndexClient(object):
     def __repr__(self):
         # type: () -> str
         return "<SearchIndexClient [service={}, index={}]>".format(
-            self._search_service_name, self._index_name
+            repr(self._search_service_name), repr(self._index_name)
         )[:1024]
 
     def get_document_count(self):
@@ -133,7 +136,7 @@ class SearchIndexClient(object):
             query = SearchQuery(search_text=query)
         elif not isinstance(query, SearchQuery):
             raise TypeError(
-                "Expected a string or SearchQuery for 'query', but got {}".format(query)
+                "Expected a string or SearchQuery for 'query', but got {}".format(repr(query))
             )
 
         return ItemPaged(
@@ -147,7 +150,7 @@ class SearchIndexClient(object):
         """
         if not isinstance(query, SuggestQuery):
             raise TypeError(
-                "Expected a SuggestQuery for 'query', but got {}".format(query)
+                "Expected a SuggestQuery for 'query', but got {}".format(repr(query))
             )
 
         response = self._client.documents.suggest_post(
@@ -163,7 +166,7 @@ class SearchIndexClient(object):
         """
         if not isinstance(query, AutocompleteQuery):
             raise TypeError(
-                "Expected a AutocompleteQuery for 'query', but got {}".format(query)
+                "Expected a AutocompleteQuery for 'query', but got {}".format(repr(query))
             )
 
         response = self._client.documents.autocomplete_post(
