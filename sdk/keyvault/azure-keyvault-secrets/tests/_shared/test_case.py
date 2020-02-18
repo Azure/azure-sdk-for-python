@@ -3,12 +3,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-import os
 
+from azure_devtools.scenario_tests.patches import patch_time_sleep_api
 from devtools_testutils import AzureMgmtTestCase
 
 
 class KeyVaultTestCase(AzureMgmtTestCase):
+    def __init__(self, *args, **kwargs):
+        if "match_body" not in kwargs:
+            kwargs["match_body"] = True
+
+        super(KeyVaultTestCase, self).__init__(*args, **kwargs)
+        self.replay_patches.append(patch_time_sleep_api)
+
     def setUp(self):
         self.list_test_size = 7
         super(KeyVaultTestCase, self).setUp()
