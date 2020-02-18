@@ -1,5 +1,16 @@
 # Release History
 
+## 8.3.0 (2020-02-14)
+
+**Features**
+
+  - Model ManagedCluster has a new parameter auto_scaler_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter spot_max_price
+  - Model AgentPool has a new parameter spot_max_price
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter spot_max_price
+  - Model ContainerServiceNetworkProfile has a new parameter network_mode
+  - Added operation ManagedClustersOperations.list_cluster_monitoring_user_credentials
+
 ## 8.2.0 (2020-01-07)
 
 **Features**

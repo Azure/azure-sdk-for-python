@@ -88,18 +88,6 @@ class RegressionContext:
     def initialize(self, dep_pkg_root_path):
         self.dep_pkg_root_path = dep_pkg_root_path
         self.venv.clear_venv()
-        # install test tools requirements outside virtual environment to access pypi_tools package
-        run_check_call(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                "-r",
-                test_tools_req_file,
-            ],
-            self.package_root_path
-        )
 
     def deinitialize(self, dep_pkg_root_path):
         # This function can be used to reset code repo to master branch
@@ -173,8 +161,9 @@ class RegressionTest:
                     "-r",
                     test_tools_req_file,
                 ],
-                self.context.package_root_path,
+                dep_pkg_path
             )
+
             # Install pre-built whl for current package
             install_package_from_whl(
                 self.whl_path,

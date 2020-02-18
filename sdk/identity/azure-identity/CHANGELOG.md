@@ -1,5 +1,8 @@
 # Release History
 
+## 1.3.1 (Unreleased)
+
+
 ## 1.3.0 (2020-02-11)
 
 - Correctly parse token expiration time on Windows App Service

@@ -1,5 +1,8 @@
 # Release History
 
+## 4.0.2 (Unreleased)
+
+
 ## 4.0.1 (2020-02-11)
 - `azure.keyvault.certificates` defines `__version__`
 - Updated `msrest` requirement to >=0.6.0
