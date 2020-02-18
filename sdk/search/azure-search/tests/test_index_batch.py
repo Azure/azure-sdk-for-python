@@ -31,6 +31,12 @@ class TestIndexBatch(object):
         batch._actions = [1,2,3]
         assert repr(batch) == "<IndexBatch [3 actions]>"
 
+        # a strict length test here would require constructing an actions list
+        # with a length of ~10**24, so settle for this simple sanity check on
+        # an extreme case.
+        batch_actions = list(range(2000))
+        assert len(repr(batch)) <= 1024
+
     def test_actions_returns_list_copy(self):
         batch = IndexBatch()
         batch.actions.extend([1,2,3])

@@ -36,6 +36,9 @@ class TestAutocompleteQuery(object):
         query = AutocompleteQuery(search_text="foo bar")
         assert repr(query) == "<AutocompleteQuery [foo bar]>"
 
+        query = AutocompleteQuery(search_text="aaaaabbbbb"*200)
+        assert len(repr(query)) == 1024
+
     def test_filter(self):
         query = AutocompleteQuery()
         assert query.request.filter is None
@@ -71,6 +74,9 @@ class TestSearchQuery(object):
         query = SearchQuery(search_text="foo bar")
         assert repr(query) == "<SearchQuery [foo bar]>"
 
+        query = SearchQuery(search_text="aaaaabbbbb"*200)
+        assert len(repr(query)) == 1024
+
     def test_filter(self):
         query = SearchQuery()
         assert query.request.filter is None
@@ -99,6 +105,10 @@ class TestSearchQuery(object):
         query.order_by("f3", "f4")
         assert query.request.order_by == "f3,f4"
 
+        with pytest.raises(ValueError) as e:
+            query.order_by()
+            assert str(e) == "At least one field must be provided"
+
     def test_select(self):
         query = SearchQuery()
         assert query.request.select is None
@@ -115,6 +125,10 @@ class TestSearchQuery(object):
         assert query.request.select == "f1,f2"
         query.select("f3", "f4")
         assert query.request.select == "f3,f4"
+
+        with pytest.raises(ValueError) as e:
+            query.select()
+            assert str(e) == "At least one field must be provided"
 
 class TestSuggestQuery(object):
 
@@ -137,6 +151,10 @@ class TestSuggestQuery(object):
 
         query = SuggestQuery(search_text="foo bar")
         assert repr(query) == "<SuggestQuery [foo bar]>"
+
+        query = SuggestQuery(search_text="aaaaabbbbb"*200)
+        assert len(repr(query)) == 1024
+
 
     def test_filter(self):
         query = SuggestQuery()

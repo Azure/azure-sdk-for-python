@@ -15,7 +15,7 @@ class TestSearchApiKeyCredential(object):
         credential = SearchApiKeyCredential("some_key")
         assert credential.api_key == "some_key"
 
-    @pytest.mark.parametrize('bad_key', BAD_KEYS)
+    @pytest.mark.parametrize('bad_key', BAD_KEYS, ids=repr)
     def test_bad_init(self, bad_key):
         with pytest.raises(TypeError) as e:
             SearchApiKeyCredential(bad_key)

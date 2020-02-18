@@ -12,7 +12,11 @@ import six
 from azure.core.paging import ItemPaged, PageIterator
 from azure.core.pipeline.policies import HeadersPolicy
 from ._generated import SearchIndexClient as _SearchIndexClient
-from ._generated.models import IndexBatch as IndexBatchModel, IndexingResult, SearchRequest
+from ._generated.models import (
+    IndexBatch as IndexBatchModel,
+    IndexingResult,
+    SearchRequest,
+)
 from ._index_batch import IndexBatch
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 
@@ -20,9 +24,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
     from ._credential import SearchApiKeyCredential
-
-
-__all__ = ("SearchIndexClient",)
 
 
 DEFAULT_SEARCH_DNS_SUFFIX = "search.windows.net"
@@ -136,7 +137,9 @@ class SearchIndexClient(object):
             query = SearchQuery(search_text=query)
         elif not isinstance(query, SearchQuery):
             raise TypeError(
-                "Expected a string or SearchQuery for 'query', but got {}".format(repr(query))
+                "Expected a string or SearchQuery for 'query', but got {}".format(
+                    repr(query)
+                )
             )
 
         return ItemPaged(
@@ -166,7 +169,9 @@ class SearchIndexClient(object):
         """
         if not isinstance(query, AutocompleteQuery):
             raise TypeError(
-                "Expected a AutocompleteQuery for 'query', but got {}".format(repr(query))
+                "Expected a AutocompleteQuery for 'query', but got {}".format(
+                    repr(query)
+                )
             )
 
         response = self._client.documents.autocomplete_post(

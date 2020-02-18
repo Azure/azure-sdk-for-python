@@ -12,9 +12,6 @@ if TYPE_CHECKING:
     from typing import List
 
 
-__all__ = ("IndexBatch",)
-
-
 def flatten_args(args):
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return args[0]

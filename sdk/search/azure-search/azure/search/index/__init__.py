@@ -11,9 +11,4 @@ from ._queries import (  # pylint: disable=unused-import
     SuggestQuery,
 )
 
-__all__ = (
-    "IndexBatch",
-    "SearchApiKeyCredential",
-    "SearchIndexClient",
-    "SearchQuery",
-)
+__all__ = ("IndexBatch", "SearchApiKeyCredential", "SearchIndexClient", "SearchQuery")
