@@ -1,0 +1,317 @@
+interactions:
+- request:
+    body: '{"location": "global", "tags": {"test": "true"}, "sku": {"name": "S0"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '71'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maps/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname?api-version=2018-05-01
+  response:
+    body:
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname\"\
+        ,\r\n  \"name\": \"accountname\",\r\n  \"type\": \"Microsoft.Maps/accounts\"\
+        ,\r\n  \"location\": \"global\",\r\n  \"tags\": {\r\n    \"test\": \"true\"\
+        \r\n  },\r\n  \"sku\": {\r\n    \"name\": \"S0\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"x-ms-client-id\": \"144cabaf-076d-4e9f-8d96-b5da49bcce07\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '441'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 Feb 2020 04:17:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maps/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname?api-version=2018-05-01
+  response:
+    body:
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname\"\
+        ,\r\n  \"name\": \"accountname\",\r\n  \"type\": \"Microsoft.Maps/accounts\"\
+        ,\r\n  \"location\": \"global\",\r\n  \"tags\": {\r\n    \"test\": \"true\"\
+        \r\n  },\r\n  \"sku\": {\r\n    \"name\": \"S0\",\r\n    \"tier\": \"Standard\"\
+        \r\n  },\r\n  \"properties\": {\r\n    \"x-ms-client-id\": \"144cabaf-076d-4e9f-8d96-b5da49bcce07\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '441'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 Feb 2020 04:17:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"keyType": "primary"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maps/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname/regenerateKey?api-version=2018-05-01
+  response:
+    body:
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname\"\
+        ,\r\n  \"primaryKey\": \"MYNPUe9z30krVAYcD4lUQo2wZrds6mfNxJMFK8Qabtc\",\r\n\
+        \  \"secondaryKey\": \"ICubKt1Cjhyj69U4cvdggWkb5feV85I577UxSDRB65M\",\r\n\
+        \  \"primaryKeyLastUpdated\": \"2020-02-18T04:17:35.298607Z\",\r\n  \"secondaryKeyLastUpdated\"\
+        : \"2020-02-18T04:17:31.9655787Z\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '416'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 Feb 2020 04:17:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maps/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname/listKeys?api-version=2018-05-01
+  response:
+    body:
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname\"\
+        ,\r\n  \"primaryKey\": \"MYNPUe9z30krVAYcD4lUQo2wZrds6mfNxJMFK8Qabtc\",\r\n\
+        \  \"secondaryKey\": \"ICubKt1Cjhyj69U4cvdggWkb5feV85I577UxSDRB65M\",\r\n\
+        \  \"primaryKeyLastUpdated\": \"2020-02-18T04:17:35.298607Z\",\r\n  \"secondaryKeyLastUpdated\"\
+        : \"2020-02-18T04:17:31.9655787Z\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '416'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 Feb 2020 04:17:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"tags": "{''special_tag'': ''true''}"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '45'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maps/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname?api-version=2018-05-01
+  response:
+    body:
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname\"\
+        ,\r\n  \"name\": \"accountname\",\r\n  \"type\": \"Microsoft.Maps/accounts\"\
+        ,\r\n  \"location\": \"global\",\r\n  \"tags\": {\r\n    \"tags\": \"{'special_tag':\
+        \ 'true'}\"\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"S0\",\r\n    \"tier\"\
+        : \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"x-ms-client-id\": \"\
+        144cabaf-076d-4e9f-8d96-b5da49bcce07\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '460'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 18 Feb 2020 04:17:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-maps/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_maps_test_mapsa6f40b7a/providers/Microsoft.Maps/accounts/accountname?api-version=2018-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 18 Feb 2020 04:17:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+version: 1
