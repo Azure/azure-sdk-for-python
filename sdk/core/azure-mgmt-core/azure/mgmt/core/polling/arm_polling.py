@@ -130,15 +130,14 @@ class LongRunningOperation(object):
 
     def _raise_if_bad_http_status_and_method(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
-        """Check response status code is valid for a Put or Patch
-        request. Must be 200, 201, 202, or 204.
+        """Check response status code is valid.
+
+        Must be 200, 201, 202, or 204.
 
         :raises: BadStatus if invalid status.
         """
         code = response.status_code
-        if code in {200, 202} or \
-           (code == 201 and self.method in {'PUT', 'PATCH'}) or \
-           (code == 204 and self.method in {'DELETE', 'POST'}):
+        if code in {200, 201, 202, 204}:
             return
         raise BadStatus(
             "Invalid return status {!r} for {!r} operation".format(code, self.method))
