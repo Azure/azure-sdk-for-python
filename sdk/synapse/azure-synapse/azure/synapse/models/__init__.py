@@ -33,7 +33,6 @@ try:
     from ._models_py3 import LivySessionStateInformation
     from ._models_py3 import LivyStatementCancellationResponse
     from ._models_py3 import LivyStatementOutput
-    from ._models_py3 import LivyStatementOutputData
     from ._models_py3 import LivyStatementRequestBody
     from ._models_py3 import LivyStatementResponseBody
     from ._models_py3 import LivyStatementsResponseBody
@@ -73,7 +72,6 @@ except (SyntaxError, ImportError):
     from ._models import LivySessionStateInformation  # type: ignore
     from ._models import LivyStatementCancellationResponse  # type: ignore
     from ._models import LivyStatementOutput  # type: ignore
-    from ._models import LivyStatementOutputData  # type: ignore
     from ._models import LivyStatementRequestBody  # type: ignore
     from ._models import LivyStatementResponseBody  # type: ignore
     from ._models import LivyStatementsResponseBody  # type: ignore
@@ -121,7 +119,6 @@ __all__ = [
     'LivySessionStateInformation',
     'LivyStatementCancellationResponse',
     'LivyStatementOutput',
-    'LivyStatementOutputData',
     'LivyStatementRequestBody',
     'LivyStatementResponseBody',
     'LivyStatementsResponseBody',

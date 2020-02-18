@@ -1202,7 +1202,7 @@ class LivyStatementOutput(msrest.serialization.Model):
     :param execution_count:
     :type execution_count: int
     :param data:
-    :type data: ~azure.synapse.models.LivyStatementOutputData
+    :type data: object
     :param ename:
     :type ename: str
     :param evalue:
@@ -1214,7 +1214,7 @@ class LivyStatementOutput(msrest.serialization.Model):
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'execution_count': {'key': 'execution_count', 'type': 'int'},
-        'data': {'key': 'data', 'type': 'LivyStatementOutputData'},
+        'data': {'key': 'data', 'type': 'object'},
         'ename': {'key': 'ename', 'type': 'str'},
         'evalue': {'key': 'evalue', 'type': 'str'},
         'traceback': {'key': 'traceback', 'type': '[str]'},
@@ -1225,7 +1225,7 @@ class LivyStatementOutput(msrest.serialization.Model):
         *,
         status: Optional[str] = None,
         execution_count: Optional[int] = None,
-        data: Optional["LivyStatementOutputData"] = None,
+        data: Optional[object] = None,
         ename: Optional[str] = None,
         evalue: Optional[str] = None,
         traceback: Optional[List[str]] = None,
@@ -1238,21 +1238,6 @@ class LivyStatementOutput(msrest.serialization.Model):
         self.ename = ename
         self.evalue = evalue
         self.traceback = traceback
-
-
-class LivyStatementOutputData(msrest.serialization.Model):
-    """LivyStatementOutputData.
-
-    """
-
-    _attribute_map = {
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LivyStatementOutputData, self).__init__(**kwargs)
 
 
 class LivyStatementRequestBody(msrest.serialization.Model):
