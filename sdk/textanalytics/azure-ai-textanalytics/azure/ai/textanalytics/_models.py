@@ -532,9 +532,9 @@ class LinkedEntity(DictMixin):
         list[~azure.ai.textanalytics.LinkedEntityMatch]
     :param language: Language used in the data source.
     :type language: str
-    :param id: Unique identifier of the recognized entity from the data
+    :param data_source_entity_id: Unique identifier of the recognized entity from the data
         source.
-    :type id: str
+    :type data_source_entity_id: str
     :param url: URL to the entity's page from the data source.
     :type url: str
     :param data_source: Data source used to extract entity linking,
@@ -546,7 +546,7 @@ class LinkedEntity(DictMixin):
         self.name = kwargs.get("name", None)
         self.matches = kwargs.get("matches", None)
         self.language = kwargs.get("language", None)
-        self.id = kwargs.get("id", None)
+        self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
 
@@ -556,15 +556,15 @@ class LinkedEntity(DictMixin):
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
-            id=entity.id,
+            data_source_entity_id=entity.id,
             url=entity.url,
             data_source=entity.data_source,
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, id={}, url={}, " \
-               "data_source={})".format(self.name, repr(self.matches), self.language, self.id, self.url,
-                                        self.data_source)[:1024]
+        return "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, " \
+               "data_source={})".format(self.name, repr(self.matches), self.language, self.data_source_entity_id,
+                                        self.url, self.data_source)[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
