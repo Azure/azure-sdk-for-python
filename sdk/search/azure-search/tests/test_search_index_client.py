@@ -52,7 +52,7 @@ class TestSearchIndexClient(object):
     def test_get_document_count(self, mock_count):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
         client.get_document_count()
-        mock_count.assert_called_once()
+        assert mock_count.called
         assert mock_count.call_args[0] == ()
         assert mock_count.call_args[1] == {}
 
@@ -66,9 +66,9 @@ class TestSearchIndexClient(object):
         search_result = SearchDocumentsResult()
         search_result.results = [SearchResult(additional_properties={"key":"val"})]
         mock_search_post.return_value = search_result
-        mock_search_post.assert_not_called()
+        assert not mock_search_post.called
         next(result)
-        mock_search_post.assert_called_once()
+        assert mock_search_post.called
         assert mock_search_post.call_args[0] == ()
         assert mock_search_post.call_args[1]["search_request"].search_text == "search text"
 
@@ -82,7 +82,7 @@ class TestSearchIndexClient(object):
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
         result = client.suggest(SuggestQuery(search_text="search text"))
-        mock_suggest_post.assert_called_once()
+        assert mock_suggest_post.called
         assert mock_suggest_post.call_args[0] == ()
         assert mock_suggest_post.call_args[1]["suggest_request"].search_text == "search text"
 
@@ -96,7 +96,7 @@ class TestSearchIndexClient(object):
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchIndexClient("service name", "index name", CREDENTIAL)
         result = client.autocomplete(AutocompleteQuery(search_text="search text"))
-        mock_autocomplete_post.assert_called_once()
+        assert mock_autocomplete_post.called
         assert mock_autocomplete_post.call_args[0] == ()
         assert mock_autocomplete_post.call_args[1]["autocomplete_request"].search_text == "search text"
 
@@ -115,7 +115,7 @@ class TestSearchIndexClient(object):
             method = getattr(client, method_name)
             method(arg)
 
-            mock_index_batch.assert_called_once()
+            assert mock_index_batch.called
             assert len(mock_index_batch.call_args[0]) == 1
             batch = mock_index_batch.call_args[0][0]
             assert isinstance(batch, IndexBatch)

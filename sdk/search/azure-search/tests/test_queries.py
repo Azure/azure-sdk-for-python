@@ -25,7 +25,7 @@ class TestAutocompleteQuery(object):
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         AutocompleteQuery(foo=10, bar=20)
-        mock_request.assert_called_once()
+        assert mock_request.called
         assert mock_request.call_args[0] == ()
         assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
 
@@ -63,7 +63,7 @@ class TestSearchQuery(object):
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SearchQuery(foo=10, bar=20)
-        mock_request.assert_called_once()
+        assert mock_request.called
         assert mock_request.call_args[0] == ()
         assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
 
@@ -141,7 +141,7 @@ class TestSuggestQuery(object):
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SuggestQuery(foo=10, bar=20)
-        mock_request.assert_called_once()
+        assert mock_request.called
         assert mock_request.call_args[0] == ()
         assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
 
