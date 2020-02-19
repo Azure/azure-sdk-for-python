@@ -28,11 +28,6 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 ```bash
 pip install azure-servicebus
 ```
-
-To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
-```bash
-pip install azure-identity
-```
 2. Clone or download this sample repository.
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
 
@@ -41,6 +36,9 @@ pip install azure-identity
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python topic_send.py`.
+
+        Note: If the sample in question uses pytest (look for @livetest marks) please run via pytest specifying the test name, and have the servicebus credentials present in environment variables
+        as described in conftest.py.
 
 ## Next steps
 

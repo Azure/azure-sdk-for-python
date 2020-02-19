@@ -32,6 +32,7 @@ def create_servicebus_client():
 def process_message(message):
     print(message)
 
+# TODO: Prior to Track2 release, these should be converted to console-runnable.  See EventHubs.
 @pytest.mark.liveTest
 def test_example_create_servicebus_client(live_servicebus_config):
 
