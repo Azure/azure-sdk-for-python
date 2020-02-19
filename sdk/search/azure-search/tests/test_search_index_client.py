@@ -12,7 +12,7 @@ except ImportError:
 
 from azure.core.paging import ItemPaged
 
-from azure.search.index._generated.models import IndexAction, SearchDocumentsResult, SearchResult
+from azure.search.index._generated.models import IndexAction, IndexBatch as IndexBatchModel, SearchDocumentsResult, SearchResult
 from azure.search.index._search_index_client import _SearchDocumentsPaged
 
 from azure.search import AutocompleteQuery, IndexBatch, SearchApiKeyCredential, SearchIndexClient, SearchQuery, SuggestQuery
@@ -55,6 +55,21 @@ class TestSearchIndexClient(object):
         assert mock_count.called
         assert mock_count.call_args[0] == ()
         assert mock_count.call_args[1] == {}
+
+    @mock.patch("azure.search.index._generated.operations._documents_operations.DocumentsOperations.get")
+    def test_get_document_count(self, mock_get):
+        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+        client.get_document("some_key")
+        assert mock_get.called
+        assert mock_get.call_args[0] == ()
+        assert mock_get.call_args[1] == {"key": "some_key", "selected_fields": None}
+
+        mock_get.reset()
+
+        client.get_document("some_key", selected_fields="foo")
+        assert mock_get.called
+        assert mock_get.call_args[0] == ()
+        assert mock_get.call_args[1] == {"key": "some_key", "selected_fields": "foo"}
 
     @pytest.mark.parametrize('query', ["search text", SearchQuery(search_text="search text")], ids=repr)
     @mock.patch("azure.search.index._generated.operations._documents_operations.DocumentsOperations.search_post")
@@ -113,7 +128,7 @@ class TestSearchIndexClient(object):
             client = SearchIndexClient("service name", "index name", CREDENTIAL)
 
             method = getattr(client, method_name)
-            method(arg)
+            method(arg, extra="foo")
 
             assert mock_index_batch.called
             assert len(mock_index_batch.call_args[0]) == 1
@@ -121,4 +136,23 @@ class TestSearchIndexClient(object):
             assert isinstance(batch, IndexBatch)
             assert all(action.action_type == CRUD_METHOD_MAP[method_name] for action in batch.actions)
             assert [action.additional_properties for action in batch.actions] == arg
-            assert mock_index_batch.call_args[1] == {}
+            assert mock_index_batch.call_args[1] == {"extra": "foo"}
+
+    @mock.patch("azure.search.index._generated.operations._documents_operations.DocumentsOperations.index")
+    def test_index_batch(self, mock_index):
+        client = SearchIndexClient("service name", "index name", CREDENTIAL)
+
+        batch = IndexBatch()
+        batch.add_upload_documents("upload1")
+        batch.add_delete_documents("delete1", "delete2")
+        batch.add_merge_documents(["merge1", "merge2", 'merge3'])
+        batch.add_merge_or_upload_documents("merge_or_upload1")
+
+        client.index_batch(batch, extra="foo")
+        assert mock_index.called
+        assert mock_index.call_args[0] == ()
+        assert len(mock_index.call_args[1]) == 2
+        assert mock_index.call_args[1]['extra'] == "foo"
+        index_batch = mock_index.call_args[1]['batch']
+        assert isinstance(index_batch, IndexBatchModel)
+        assert index_batch.actions == batch.actions
