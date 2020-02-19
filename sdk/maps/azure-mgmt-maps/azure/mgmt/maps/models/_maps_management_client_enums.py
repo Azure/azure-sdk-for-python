@@ -9,19 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class MapsAccountPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`MapsAccount <azure.mgmt.maps.models.MapsAccount>` object
-    """
+class CreatedByType(str, Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[MapsAccount]'}
-    }
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
-    def __init__(self, *args, **kwargs):
 
-        super(MapsAccountPaged, self).__init__(*args, **kwargs)
+class KeyType(str, Enum):
+
+    primary = "primary"
+    secondary = "secondary"
