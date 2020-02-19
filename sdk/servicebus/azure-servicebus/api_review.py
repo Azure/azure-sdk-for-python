@@ -65,9 +65,10 @@ class ServiceBusReceiverClient:
         self,
         fully_qualified_namespace : str,
         entity_name : str,
+        credential: TokenCredential,
         subscription_name : str = None,
         session : str = None,
-        credential : TokenCredential,
+        mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
         logging_enable: bool = False,
         http_proxy: dict = None,
         transport_type: TransportType = None,
@@ -80,6 +81,7 @@ class ServiceBusReceiverClient:
         queue_name : str,
         credential : TokenCredential,
         session: str = None,
+        mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
         **kwargs
     ) -> ServiceBusReceiverClient:
     @classmethod
@@ -90,6 +92,7 @@ class ServiceBusReceiverClient:
         subscription_name : str,
         credential: TokenCredential,
         session: str = None,
+        mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
         **kwargs
     ) -> ServiceBusReceiverClient:
     @classmethod
@@ -99,6 +102,7 @@ class ServiceBusReceiverClient:
         entity_name : str = None,
         subscription_name : str = None,
         session: str = None,
+        mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
         **kwargs
     )-> ServiceBusReceiverClient:
 
@@ -121,13 +125,11 @@ class ServiceBusReceiverClient:
     def receive_deferred_messages(
         self,
         sequence_numbers : List[int],
-        mode : ReceiveSettleMode =ReceiveSettleMode.PeekLock
     ) -> List[DeferredMessage]:
     def receive(
         self,
         max_batch_size : int = None,
         timeout : float = None,
-        mode : ReceiveSettleMode =ReceiveSettleMode.PeekLock
     ) -> List[Message]:  # Pull mode receive
     def settle_deferred_messages(
         self,
