@@ -103,29 +103,3 @@ class EdgeNodePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(EdgeNodePaged, self).__init__(*args, **kwargs)
-class CdnWebApplicationFirewallPolicyPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`CdnWebApplicationFirewallPolicy <azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[CdnWebApplicationFirewallPolicy]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(CdnWebApplicationFirewallPolicyPaged, self).__init__(*args, **kwargs)
-class ManagedRuleSetDefinitionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedRuleSetDefinition <azure.mgmt.cdn.models.ManagedRuleSetDefinition>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedRuleSetDefinition]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedRuleSetDefinitionPaged, self).__init__(*args, **kwargs)
