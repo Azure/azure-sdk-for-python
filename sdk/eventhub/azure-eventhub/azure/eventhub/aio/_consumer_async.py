@@ -209,24 +209,18 @@ class EventHubConsumer(
                             last_exception,
                         )
                         raise last_exception
-            '''
-            if msg_buffer_size < len(self._message_buffer):
-                msg_buffer_size += len(self._message_buffer)
-            else:
-                break  # didn't fetch a message from service. Stop fetching
-            '''
 
-        while self._message_buffer:
-            if self._batch:
-                events_for_callback = []
-                for _ in range(min(self._max_batch_size, len(self._message_buffer))):
-                    events_for_callback.append(self._next_message_in_buffer())
-                await self._on_event_received(events_for_callback)
-            else:
-                await self._on_event_received(self._next_message_in_buffer())
-        else:
-            if self._enable_callback_when_no_event:
+        if self._message_buffer:
+            while self._message_buffer:
                 if self._batch:
-                    await self._on_event_received([])
+                    events_for_callback = []
+                    for _ in range(min(self._max_batch_size, len(self._message_buffer))):
+                        events_for_callback.append(self._next_message_in_buffer())
+                    await self._on_event_received(events_for_callback)
                 else:
-                    await self._on_event_received(None)
+                    await self._on_event_received(self._next_message_in_buffer())
+        elif self._enable_callback_when_no_event:
+            if self._batch:
+                await self._on_event_received([])
+            else:
+                await self._on_event_received(None)
