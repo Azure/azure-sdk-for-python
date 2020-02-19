@@ -12,6 +12,7 @@ from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
 
 from crypto_client_preparer_async import CryptoClientPreparer
@@ -22,8 +23,7 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 class CryptoClientTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
-        kwargs["match_body"] = False
-        super(CryptoClientTests, self).__init__(*args, **kwargs)
+        super().__init__(*args, match_body=False, custom_request_matchers=[json_attribute_matcher], **kwargs)
 
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
@@ -227,7 +227,7 @@ class CryptoClientTests(KeyVaultTestCase):
             KeyCurveName.p_521: (SignatureAlgorithm.es512, hashlib.sha512),
         }
 
-        for curve, (signature_algorithm, hash_function) in matrix.items():
+        for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
             key = await key_client.create_ec_key("ec-verify-{}".format(curve.value), curve=curve)
             crypto_client = CryptographyClient(key, credential)
 
