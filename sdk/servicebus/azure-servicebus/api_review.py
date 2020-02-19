@@ -1,4 +1,4 @@
-# Approach 1
+# Two-Clients Approach
 
 ## APIs:
 class SeviceBusSenderClient:
@@ -206,10 +206,12 @@ class BatchMessage(Message):
 class PeekMessage(Message):
 # inherited from Message, and cannot settle/lock the message
 
+
 class DeferredMessage(Message):
     # interited from Message
     # its own @properties
     def settled(self) -> bool:  # read-only
+
 
 class ReceiveSettleMode:
     PeekLock
@@ -226,8 +228,9 @@ class ServiceBusSharedKeyCredential:
     def get_token(self, *scopes, **kwargs):
 
 
-## Sampe Code:
+################################################### Split Line ###################################################
 
+## Sampe Code:
 
 ### creation of differen entity clients
 
@@ -499,6 +502,7 @@ with subscription_receiver:
         except:
             transaction.abort()
 
+################################################### Split Line ###################################################
 
 # Approach for Session APIs - Option 1
 ## APIs
@@ -553,7 +557,6 @@ class SubscriptionReceiverClient:
     def add_rule(self, rule_name, filter):
     def remove_rule(self, rule_name):
     def get_rules(self):
-
 
 
 # Approach for Rule APIs - Option 2
