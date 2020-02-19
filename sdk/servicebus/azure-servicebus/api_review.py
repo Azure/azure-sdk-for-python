@@ -48,14 +48,14 @@ class SeviceBusSenderClient:
     def send(
         self,
         messages,
-        session_id : str = None,
+        session : str = None,
         message_timeout : float = None
     ) -> None:
     def schedule(
         self,
         messages,
         schedule_time : datetime,
-        session_id : str = None
+        session : str = None
     ) -> List[int]:
     def cancel_scheduled_messages(self, sequence_numbers : List[int]) -> None:
 
@@ -66,6 +66,7 @@ class ServiceBusReceiverClient:
         fully_qualified_namespace : str,
         entity_name : str,
         subscription_name : str = None,
+        session : str = None,
         credential : TokenCredential,
         logging_enable: bool = False,
         http_proxy: dict = None,
@@ -78,6 +79,7 @@ class ServiceBusReceiverClient:
         fully_qualified_namespace : str,
         queue_name : str,
         credential : TokenCredential,
+        session: str = None,
         **kwargs
     ) -> ServiceBusReceiverClient:
     @classmethod
@@ -87,6 +89,7 @@ class ServiceBusReceiverClient:
         topic_name : str,
         subscription_name : str,
         credential: TokenCredential,
+        session: str = None,
         **kwargs
     ) -> ServiceBusReceiverClient:
     @classmethod
@@ -95,6 +98,7 @@ class ServiceBusReceiverClient:
         conn_str : str,
         entity_name : str = None,
         subscription_name : str = None,
+        session: str = None,
         **kwargs
     )-> ServiceBusReceiverClient:
 
@@ -111,19 +115,16 @@ class ServiceBusReceiverClient:
 
     def peek(
         self,
-        session : Union[str, Session] = None,
         count : int = 1,
         start_from : int = None
     ) -> List[PeekMessage]:
     def receive_deferred_messages(
         self,
-        session : Union[str, Session] = None,
         sequence_numbers : List[int],
         mode : ReceiveSettleMode =ReceiveSettleMode.PeekLock
     ) -> List[DeferredMessage]:
     def receive(
         self,
-        session : Union[str, Session] = None,
         max_batch_size : int = None,
         timeout : float = None,
         mode : ReceiveSettleMode =ReceiveSettleMode.PeekLock
@@ -135,8 +136,8 @@ class ServiceBusReceiverClient:
         **kwargs
     ) -> None:  # Batch settle deferred messages
 
-    def list_session_ids(self) -> List[str]:
-    def get_session(self, session_id : str = "NEXT_AVAILABLE") -> Session:  # raise Error when called on non-session entity
+    def list_sessions(self) -> List[str]:
+    def get_session(self) -> Session:  # raise Error when called on non-session entity
 
     # Rule APIs, raise Error when called on Queue
     def add_rule(self, rule_name : str, filter : str) -> None: # TODO: figure out what filter is
@@ -268,7 +269,8 @@ queue_receiver = SeviceBusReceiverClient.from_connection_string(
 queue_receiver = SeviceBusReceiverClient(
     fully_qualified_namepsace="fully_qualified_namepsace",
     entity_name="queue_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key")
+    credential=ServiceBusSharedKeyCredential("policy", "key"),
+    session="test_session"
 )
 
 # Topic Sender
@@ -307,7 +309,8 @@ subscription_receiver = SeviceBusReceiverClient(
     fully_qualified_namepsace="fully_qualified_namespace",
     entity_name="topic_name",
     subscription_name="subcription_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key")
+    credential=ServiceBusSharedKeyCredential("policy", "key"),
+    session="test_session"
 )
 
 
@@ -424,21 +427,19 @@ subscription_receiver = ServiceBusReceiverClient.from_topic_subscription
     fully_qualified_namespace="fully_qualified_namespace",
     topic_name="topic_name",
     subscription_name="subscription_name",
-    credential=ServiceBusSharedKeyCredential("policy", "key")
+    credential=ServiceBusSharedKeyCredential("policy", "key"),
+    session="test_session"
 )
 
 # 2.1 peek
 with subscription_receiver:
-    msgs = subscription_receiver.peek(count=10, session="test_session")
+    msgs = subscription_receiver.peek(count=10)
 
 # 2.2 iterator receive
 with subscription_receiver:
-    session = subscription_receiver.get_session("test_session")
-    # Option 2:
-    # session_ids = subscription_receiver.list_session()
-    # session = subscription_receiver.get_session(session_ids[0])
+    session = subscription_receiver.get_session()
     session.set_session_state("START")
-    for msg in subscription_receiver(session=session):
+    for msg in subscription_receiver:
         print(message)
         msg.complete()
         session.renew_lock()
@@ -448,8 +449,8 @@ with subscription_receiver:
 
 # 2.3 pull mode receive
 with subscription_receiver:
-    session = subscription_receiver.get_session("test_session")
-    msgs = subscription_receiver.receive(max_batch_size=10, session=session)
+    session = subscription_receiver.get_session()
+    msgs = subscription_receiver.receive(max_batch_size=10)
     session.set_session_state("BEGIN")
     for msg in msgs:
         msg.complete()
@@ -458,10 +459,10 @@ with subscription_receiver:
 
 # 2.4 receive deferred letter
 with subscription_receiver:
-    session = subscription_receiver.get_session("test_session")
+    session = subscription_receiver.get_session()
     if session.get_session_state() == "DONE":
         defered_sequence_numbers = [xxxx]
-        deferred = subscription_receiver.receive_deferred_messages(defered_sequence_numbers, session=session)
+        deferred = subscription_receiver.receive_deferred_messages(defered_sequence_numbers)
         subscription_receiver.settle_deferred_messages('completed', deferred)
 
 ### Rule operations
@@ -497,7 +498,7 @@ with subscription_receiver:
             for msg in msgs:
                 msg.abandon()
             subscription_receiver.remove_rule("test_rule")
-            session_msgs = subscription_receiver.receive(max_batch_size=1000, session="test_session")
+            session_msgs = subscription_receiver.receive(max_batch_size=1000)
             for msg in session_msgs:
                 msg.complete()
         except:
@@ -510,41 +511,40 @@ with subscription_receiver:
 ### Put session methods on ServiceBusReceiverClient
 class ServiceBusReceiverClient:
     def list_sessions(self):
-    def set_session_state(self, session_id, session_state):
-    def get_session_state(self, session_id):
-    def renew_lock(self, session_id):
+    def set_session_state(self, session_state):
+    def get_session_state(self):
+    def renew_lock(self):
     @property
-    def expired(self, session_id):
+    def expired(self):
 
 
 ## Sample Code:
 # iterator receive
 with subscription_receiver:
-    session_id = "test_session"
-    subscription_receiver.set_session_state(session=session_id, session_state="START")
-    for msg in subscription_receiver(session=session_id):
+    subscription_receiver.set_session_state(session_state="START")
+    for msg in subscription_receiver:
         print(message)
         msg.complete()
-        subscription_receiver.renew_lock(session=session_id)
+        subscription_receiver.renew_lock()
         if str(msg) == "shutdown":
-            subscription_receiver.set_session_state(session=session_id, session_state="STOP")
+            subscription_receiver.set_session_state(session_state="STOP")
             break
 
 # pull mode receive
 with subscription_receiver:
     session_id = "test_session"
-    msgs = subscription_receiver.receive(max_batch_size=10, session=session_id)
-    subscription_receiver.set_session_state(session=session_id, session_state="BEGIN")
+    msgs = subscription_receiver.receive(max_batch_size=10)
+    subscription_receiver.set_session_state(session_state="BEGIN")
     for msg in msgs:
         msg.complete()
-        subscription_receiver.renew_lock(session=session_id)
-    subscription_receiver.set_session_state(session=session_id, session_state="END")
+        subscription_receiver.renew_lock()
+    subscription_receiver.set_session_state(session_state="END")
 
 # receive deferred letter
 with subscription_receiver:
-    if subscription_receiver.get_session_state(session="test_session") == "DONE":
+    if subscription_receiver.get_session_state() == "DONE":
         defered_sequence_numbers = [xxxx]
-        deferred = subscription_receiver.receive_deferred_messages(defered_sequence_numbers, session=session)
+        deferred = subscription_receiver.receive_deferred_messages(defered_sequence_numbers)
         subscription_receiver.settle_deferred_messages('completed', deferred)
 
 
