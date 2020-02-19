@@ -547,6 +547,8 @@ with subscription_receiver:
         subscription_receiver.settle_deferred_messages('completed', deferred)
 
 
+################################################### Split Line ###################################################
+
 # Approach for Rule APIs - Option 1
 ## APIs
 ### 3-Clients approach
@@ -559,6 +561,8 @@ class SubscriptionReceiverClient:
     def get_rules(self):
 
 
+################################################### Split Line ###################################################
+
 # Approach for Rule APIs - Option 2
 ## APIs
 class ServiceBusReceiverClient:
@@ -569,6 +573,8 @@ class SubscriptionRuleManager:
     def remove_rule(self, rule_name):
     def get_rules(self):
 
+
+################################################### Split Line ###################################################
 
 # Approach for Rule APIs - Option 3
 ## APIs
