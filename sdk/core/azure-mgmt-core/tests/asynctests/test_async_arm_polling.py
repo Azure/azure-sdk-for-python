@@ -498,15 +498,17 @@ async def test_long_running_delete():
 @pytest.mark.asyncio
 async def test_long_running_post():
 
-    # Test throw on non LRO related status code
-    response = TestArmPolling.mock_send('POST', 201, {})
-    op = LongRunningOperation(response, lambda x:None)
-    with pytest.raises(BadStatus):
-        op.set_initial_status(response)
-    with pytest.raises(ARMError):
-        await async_poller(CLIENT, response,
-            TestArmPolling.mock_outputs,
-            AsyncARMPolling(0))
+    # Test polling from azure-asyncoperation header
+    response = TestArmPolling.mock_send(
+        'POST', 201,
+        {'azure-asyncoperation': ASYNC_URL},
+        body={'properties':{'provisioningState': 'Succeeded'}})
+    polling_method = AsyncARMPolling(0)
+    poll = await async_poller(CLIENT, response,
+        TestArmPolling.mock_outputs,
+        polling_method)
+    #self.assertIsNone(poll)
+    assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
