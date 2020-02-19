@@ -125,7 +125,8 @@ class ServiceBusReceiverClient:
         self,
         session : Union[str, Session] = None,
         max_batch_size : int = None,
-        timeout : float = None
+        timeout : float = None,
+        mode : ReceiveSettleMode =ReceiveSettleMode.PeekLock
     ) -> List[Message]:  # Pull mode receive
     def settle_deferred_messages(
         self,
