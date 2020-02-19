@@ -83,7 +83,20 @@ def map_error(status_code, response, error_map):
     raise error
 
 class AzureError(Exception):
-    """Base exception for all errors."""
+    """Base exception for all errors.
+
+    :param message: The message object stringified as 'message' attribute
+    :keyword error: The original exception if any
+    :paramtype error: Exception
+
+    :ivar inner_exception: The exception passed with the 'error' kwarg
+    :type inner_exception: Exception
+    :ivar exc_type: The exc_type from sys.exc_info()
+    :ivar exc_value: The exc_value from sys.exc_info()
+    :ivar exc_traceback: The exc_traceback from sys.exc_info()
+    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
+    :ivar str message: A stringified version of the message parameter
+    """
 
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get('error')
@@ -120,6 +133,9 @@ class HttpResponseError(AzureError):
     :type message: string
     :param response: The response that triggered the exception.
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+
+    :ivar reason: The HTTP response reason
+    :type reason: str
     :ivar status_code: HttpResponse's status code
     :type status_code: int
     :ivar response: The response that triggered the exception.

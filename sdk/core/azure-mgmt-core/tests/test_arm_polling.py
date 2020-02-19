@@ -486,15 +486,17 @@ class TestArmPolling(object):
     def test_long_running_post_legacy(self):
         # Former oooooold tests to refactor one day to something more readble
 
-        # Test throw on non LRO related status code
-        response = TestArmPolling.mock_send('POST', 201, {})
-        op = LongRunningOperation(response, lambda x:None)
-        with pytest.raises(BadStatus):
-            op.set_initial_status(response)
-        with pytest.raises(ARMError):
-            LROPoller(CLIENT, response,
-                TestArmPolling.mock_outputs,
-                ARMPolling(0)).result()
+        # Test polling from azure-asyncoperation header
+        response = TestArmPolling.mock_send(
+            'POST', 201,
+            {'azure-asyncoperation': ASYNC_URL},
+            body={'properties':{'provisioningState': 'Succeeded'}})
+        poll = LROPoller(CLIENT, response,
+            TestArmPolling.mock_outputs,
+            ARMPolling(0))
+        poll.wait()
+        #self.assertIsNone(poll.result())
+        assert poll._polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollAsyncOpHeader is None
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(

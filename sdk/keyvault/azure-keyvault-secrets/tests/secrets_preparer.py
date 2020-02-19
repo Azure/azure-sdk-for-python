@@ -49,4 +49,4 @@ class VaultClientPreparer(AzureMgmtPreparer):
             credential = EnvironmentCredential()
         else:
             credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
-        return VaultClient(vault_uri, credential, **self.client_kwargs)
+        return VaultClient(vault_uri, credential, is_live=self.is_live, **self.client_kwargs)

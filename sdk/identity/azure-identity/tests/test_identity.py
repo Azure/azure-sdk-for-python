@@ -13,7 +13,13 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import ChainedTokenCredential, ClientSecretCredential, DefaultAzureCredential, EnvironmentCredential
+from azure.identity import (
+    ChainedTokenCredential,
+    ClientSecretCredential,
+    CredentialUnavailableError,
+    DefaultAzureCredential,
+    EnvironmentCredential,
+)
 from azure.identity._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
@@ -54,13 +60,14 @@ def test_client_secret_environment_credential():
 
 
 def test_credential_chain_error_message():
-    def raise_authn_error(message):
-        raise ClientAuthenticationError(message)
-
     first_error = "first_error"
-    first_credential = Mock(spec=ClientSecretCredential, get_token=lambda _: raise_authn_error(first_error))
+    first_credential = Mock(
+        spec=ClientSecretCredential, get_token=Mock(side_effect=CredentialUnavailableError(first_error))
+    )
     second_error = "second_error"
-    second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
+    second_credential = Mock(
+        name="second_credential", get_token=Mock(side_effect=ClientAuthenticationError(second_error))
+    )
 
     with pytest.raises(ClientAuthenticationError) as ex:
         ChainedTokenCredential(first_credential, second_credential).get_token("scope")
@@ -71,14 +78,11 @@ def test_credential_chain_error_message():
 
 
 def test_chain_attempts_all_credentials():
-    def raise_authn_error(message="it didn't work"):
-        raise ClientAuthenticationError(message)
-
     expected_token = AccessToken("expected_token", 0)
 
     credentials = [
-        Mock(get_token=Mock(wraps=raise_authn_error)),
-        Mock(get_token=Mock(wraps=raise_authn_error)),
+        Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
+        Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
         Mock(get_token=Mock(return_value=expected_token)),
     ]
 
@@ -87,6 +91,24 @@ def test_chain_attempts_all_credentials():
 
     for credential in credentials:
         assert credential.get_token.call_count == 1
+
+
+def test_chain_raises_for_unexpected_error():
+    """the chain should not continue after an unexpected error (i.e. anything but CredentialUnavailableError)"""
+
+    expected_message = "it can't be done"
+
+    credentials = [
+        Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
+        Mock(get_token=Mock(side_effect=ValueError(expected_message))),
+        Mock(get_token=Mock(return_value=AccessToken("**", 42))),
+    ]
+
+    with pytest.raises(ClientAuthenticationError) as ex:
+        ChainedTokenCredential(*credentials).get_token("scope")
+
+    assert expected_message in ex.value.message
+    assert credentials[-1].get_token.call_count == 0
 
 
 def test_chain_returns_first_token():

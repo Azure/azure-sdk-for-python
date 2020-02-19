@@ -140,7 +140,7 @@ can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
 [Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
 
-[KeyClient](key_client_docs) can create keys in the vault, get existing keys
+[KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
 [examples](#examples "examples") below.
 

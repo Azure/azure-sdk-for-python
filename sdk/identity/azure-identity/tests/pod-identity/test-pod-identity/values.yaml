@@ -1,0 +1,22 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+# Default values for test-pod-identity
+
+image:
+  repository: ""
+  name: ""
+  tag: ""
+  pullPolicy: Always
+
+vaultUrl: ""
+
+# override values for aad-pod-identity
+aad-pod-identity:
+  azureIdentityBinding:
+    name: "pod-identity-test-binding"
+    selector: "pod-identity-test"
+  azureIdentity:
+    enabled: true

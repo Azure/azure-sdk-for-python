@@ -5,20 +5,29 @@ import ast
 from datetime import datetime
 import glob
 import io
+import json
 import os
 from pkg_resources import Requirement
 import re
 import sys
 import textwrap
 
-def should_skip_lib(lib_name):
-    skip_pkgs = [
-        'azure-mgmt-documentdb',         # deprecated
-        'azure-sdk-for-python',          # top-level package
-        'azure-sdk-tools',               # internal tooling for automation
-        'azure-servicemanagement-legacy' # legacy (not officially deprecated)
-    ]
+# Todo: This should use a common omit logic once ci scripts are refactored into ci_tools
+skip_pkgs = [
+    'azure-mgmt-documentdb',         # deprecated
+    'azure-sdk-for-python',          # top-level package
+    'azure-sdk-tools',               # internal tooling for automation
+    'azure-servicemanagement-legacy', # legacy (not officially deprecated)
+    'azure-common',
+    'azure',
+    'azure-keyvault'
+]
+
+def report_should_skip_lib(lib_name):
     return lib_name in skip_pkgs or lib_name.endswith('-nspkg')
+
+def dump_should_skip_lib(lib_name):
+    return report_should_skip_lib(lib_name) or '-mgmt' in lib_name or not lib_name.startswith('azure')
 
 def locate_libs(base_dir):
     packages = [os.path.dirname(p) for p in (glob.glob(os.path.join(base_dir, 'azure*', 'setup.py')) + glob.glob(os.path.join(base_dir, 'sdk/*/azure*', 'setup.py')))]
@@ -37,8 +46,7 @@ def parse_req(req):
     except:
         print('Failed to parse requirement %s' % (req))
 
-def record_dep(dependencies, req, lib_name):
-    req_name, spec = parse_req(req)
+def record_dep(dependencies, req_name, spec, lib_name):
     if not req_name in dependencies:
         dependencies[req_name] = {}
     if not spec in dependencies[req_name]:
@@ -54,16 +62,20 @@ def get_lib_deps(base_dir):
             setup_path = os.path.join(lib_dir, 'setup.py')
             lib_name, version, requires = parse_setup(setup_path)
             
-            if should_skip_lib(lib_name):
-                continue
-            
             packages[lib_name] = {
                 'version': version,
-                'source': lib_dir
+                'source': lib_dir,
+                'deps': []
             }
 
             for req in requires:
-                record_dep(dependencies, req, lib_name)
+                req_name, spec = parse_req(req)
+                packages[lib_name]['deps'].append({
+                    'name': req_name,
+                    'version': spec
+                })
+                if not report_should_skip_lib(lib_name):
+                    record_dep(dependencies, req_name, spec, lib_name)
         except:
             print('Failed to parse %s' % (setup_path))
     return packages, dependencies
@@ -79,19 +91,24 @@ def get_wheel_deps(wheel_dir):
             with WheelFile(whl_path) as whl:
                 pkg_info = read_pkg_info_bytes(whl.read(whl.dist_info_path + '/METADATA'))
                 lib_name = pkg_info.get('Name')
-                if should_skip_lib(lib_name):
-                    continue
 
                 packages[lib_name] = {
                     'version': pkg_info.get('Version'),
-                    'source': whl_path
+                    'source': whl_path,
+                    'deps': []
                 }
 
                 requires = pkg_info.get_all('Requires-Dist')
                 for req in requires:
                     req = req.split(';')[0] # Extras conditions appear after a semicolon
                     req = re.sub(r'[\s\(\)]', '', req) # Version specifiers appear in parentheses
-                    record_dep(dependencies, req, lib_name)
+                    req_name, spec = parse_req(req)
+                    packages[lib_name]['deps'].append({
+                        'name': req_name,
+                        'version': spec
+                    })
+                    if not report_should_skip_lib(lib_name):
+                        record_dep(dependencies, req_name, spec, lib_name)
         except:
             print('Failed to parse METADATA from %s' % (whl_path))
     return packages, dependencies
@@ -153,6 +170,47 @@ def render_report(output_path, report_context):
     with io.open(output_path, 'w', encoding='utf-8') as output:
         output.write(template.render(report_context))
 
+def get_dependent_packages(data_pkgs):
+    # Get unique set of Azure SDK packages that are added as required package
+    deps = []
+    for v in data_pkgs.values():
+        deps.extend([dep['name'] for dep in v['deps'] if not dump_should_skip_lib(dep['name'])])
+    return set(deps)
+
+def dump_packages(data_pkgs):
+    dump_data = {}
+    unique_dependent_packages = get_dependent_packages(data_pkgs)
+    for p_name, p_data in data_pkgs.items():
+        p_id = p_name + ':' + p_data['version']
+        dep = [p for p in p_data['deps'] if not dump_should_skip_lib(p['name'])]
+        # Add package if it requires other azure sdk package or if it is added as required by other sdk package
+        if len(dep) > 0 or p_name in unique_dependent_packages:
+            dump_data[p_id] = {
+                'name': p_name,
+                'version': p_data['version'],
+                'type': 'internal',
+                'deps': dep
+            }
+
+    return dump_data
+
+def resolve_lib_deps(dump_data, data_pkgs, pkg_id):
+    for dep in dump_data[pkg_id]['deps']:
+        dep_req = Requirement.parse(dep['name'] + dep['version'])
+        if dep['name'] in data_pkgs and data_pkgs[dep['name']]['version'] in dep_req:
+            # If the internal package version matches the dependency spec,
+            # rewrite the dep version to match the internal package version
+            dep['version'] = data_pkgs[dep['name']]['version']
+        else:
+            dep_id = dep['name'] + ':' + dep['version']
+            if not dep_id in dump_data:
+                dump_data[dep_id] = {
+                    'name': dep['name'],
+                    'version': dep['version'],
+                    'type': 'internalbinary' if dep['name'] in data_pkgs else 'external',
+                    'deps': []
+                }
+
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -168,6 +226,7 @@ if __name__ == '__main__':
     parser.add_argument('--verbose', help='verbose output', action='store_true')
     parser.add_argument('--freeze', help='freeze dependencies after analyzing (otherwise, validate dependencies against frozen list)', action='store_true')
     parser.add_argument('--out', metavar='FILE', help='write HTML-formatted report to FILE')
+    parser.add_argument('--dump', metavar='FILE', help='write JSONP-formatted dependency data to FILE')
     parser.add_argument('--wheeldir', metavar='DIR', help='analyze wheels in DIR rather than source packages in this repository')
     args = parser.parse_args()
 
@@ -179,9 +238,11 @@ if __name__ == '__main__':
             sys.exit(1)
 
     if args.wheeldir:
-        packages, dependencies = get_wheel_deps(args.wheeldir)
+        all_packages, dependencies = get_wheel_deps(args.wheeldir)
     else:
-        packages, dependencies = get_lib_deps(base_dir)
+        all_packages, dependencies = get_lib_deps(base_dir)
+
+    packages = {k: v for k,v in all_packages.items() if not report_should_skip_lib(k)}
 
     if args.verbose:
         print('Packages analyzed')
@@ -249,7 +310,8 @@ if __name__ == '__main__':
             for line in frozen_file:
                 if line.startswith('#override'):
                     _, lib_name, req_override = line.split(' ', 2)
-                    record_dep(overrides, req_override, lib_name)
+                    req_override_name, override_spec = parse_req(req_override)
+                    record_dep(overrides, req_override_name, override_spec, lib_name)
                     override_count += 1
                 elif not line.startswith('#'):
                     req_name, spec = parse_req(line)
@@ -318,7 +380,7 @@ if __name__ == '__main__':
         print('\nAll library dependencies verified, no incompatible versions detected')
 
     if args.out:
-        external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
+        external = [k for k in dependencies if k not in packages and not report_should_skip_lib(k)]
         def display_order(k):
             if k in inconsistent:
                 return 'a' + k if k in external else 'b' + k
@@ -342,5 +404,14 @@ if __name__ == '__main__':
             'packages': packages,
             'repo_name': 'azure-sdk-for-python'
         })
+
+    if args.dump:
+        data_pkgs = {k: v for k, v in all_packages.items() if not dump_should_skip_lib(k)}
+        dump_data = dump_packages(data_pkgs)
+        pkg_ids = [k for k in dump_data.keys()]
+        for pkg_id in pkg_ids:
+            resolve_lib_deps(dump_data, data_pkgs, pkg_id)
+        with io.open(args.dump, 'w', encoding='utf-8') as dump_file:
+            dump_file.write('const data = ' + json.dumps(dump_data) + ';')
 
     sys.exit(exitcode)

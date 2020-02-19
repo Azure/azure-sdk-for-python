@@ -2,13 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 import hashlib
 import os
 
 from azure.core.exceptions import ResourceNotFoundError
+from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from keys_async_preparer import AsyncVaultClientPreparer
-from keys_async_test_case import AsyncKeyVaultTestCase
+from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case_async import KeyVaultTestCase
+
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
 
 
 def print(*args):
@@ -30,14 +36,13 @@ def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(AsyncKeyVaultTestCase):
-
+class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_key_crud_operations(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_example_key_crud_operations(self, client, **kwargs):
+        key_client = client
         # [START create_key]
 
         from dateutil import parser as date_parse
@@ -47,7 +52,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = await key_client.create_key("key-name", "RSA", size=key_size, key_operations=key_ops, expires_on=expires_on)
+        key = await key_client.create_key(
+            "key-name", "RSA", size=key_size, key_operations=key_ops, expires_on=expires_on
+        )
 
         print(key.id)
         print(key.name)
@@ -124,11 +131,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END delete_key]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_key_list_operations(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_example_key_list_operations(self, client, **kwargs):
+        key_client = client
 
         for i in range(4):
             await key_client.create_ec_key("key{}".format(i))
@@ -175,11 +182,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END list_deleted_keys]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_keys_backup_restore(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_example_keys_backup_restore(self, client, **kwargs):
+        key_client = client
         key_name = "test-key"
         await key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -192,9 +199,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_key]
 
-        polling_interval = 0 if self.is_playback() else 2
-
-        await key_client.delete_key(key_name, _polling_interval=polling_interval)
+        await key_client.delete_key(key_name)
 
         # [START restore_key_backup]
 
@@ -207,15 +212,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [END restore_key_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @AsyncVaultClientPreparer()
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_keys_recover(self, vault_client, **kwargs):
-        key_client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    @KeyVaultTestCase.await_prepared_test
+    async def test_example_keys_recover(self, client, **kwargs):
+        key_client = client
         created_key = await key_client.create_key("key-name", "RSA")
 
-        polling_interval = 0 if self.is_playback() else 2
-        await key_client.delete_key(created_key.name, _polling_interval=polling_interval)
+        await key_client.delete_key(created_key.name)
 
         # [START get_deleted_key]
 

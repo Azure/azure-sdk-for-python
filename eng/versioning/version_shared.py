@@ -19,7 +19,7 @@ from setup_parser import parse_setup
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
 common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
-from common_tasks import process_glob_string
+from common_tasks import process_glob_string, run_check_call
 
 VERSION_PY = "_version.py"
 VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
@@ -111,9 +111,27 @@ def set_dev_classifier(setup_py_location, version):
 
         replaced_setup_contents = re.sub(
             DEV_STATUS_REGEX,
-            "\g<1>'{}'".format(classification),
+            '\g<1>"{}"'.format(classification),
             setup_contents
         )
 
         setup_py_file.write(replaced_setup_contents)
+
+def update_change_log(setup_py_location, version, is_unreleased, replace_version):
+    script = os.path.join(root_dir, "eng", "common", "Update-Change-Log.ps1")
+    pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))
+    commands = [
+        "pwsh",
+        script,
+        "--Version",
+        version,
+        "--ChangeLogPath",
+        pkg_root,
+        "--Unreleased",
+        str(is_unreleased),
+        "--ReplaceVersion",
+        str(replace_version)
+    ]
+    # Run script to update change log
+    run_check_call(commands, pkg_root)
 
