@@ -1,7 +1,9 @@
 # Release History
 
 ## 4.0.2 (Unreleased)
-
+- `SecretClient` instances have a `close` method which closes opened sockets.
+Used as a context manager, a `SecretClient` closes opened sockets on exit.
+([#9906](https://github.com/Azure/azure-sdk-for-python/pull/9906))
 
 ## 4.0.1 (2020-02-11)
 - `azure.keyvault.secrets` defines `__version__`
