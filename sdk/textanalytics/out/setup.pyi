@@ -11,4 +11,4 @@ namespace_name: Any
 ver: Any
 version: Any
 readme: Any
-history: Any
+changelog: Any
