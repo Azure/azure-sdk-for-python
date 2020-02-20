@@ -26,3 +26,10 @@ class SpendingLimit(str, Enum):
     on = "On"
     off = "Off"
     current_period_off = "CurrentPeriodOff"
+
+
+class TenantCategory(str, Enum):
+
+    home = "Home"
+    projected_by = "ProjectedBy"
+    managed_by = "ManagedBy"

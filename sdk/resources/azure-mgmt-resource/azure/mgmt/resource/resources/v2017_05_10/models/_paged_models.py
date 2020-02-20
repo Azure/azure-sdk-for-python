@@ -38,19 +38,19 @@ class ProviderPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProviderPaged, self).__init__(*args, **kwargs)
-class GenericResourcePaged(Paged):
+class GenericResourceExpandedPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`GenericResource <azure.mgmt.resource.resources.v2017_05_10.models.GenericResource>` object
+    A paging container for iterating over a list of :class:`GenericResourceExpanded <azure.mgmt.resource.resources.v2017_05_10.models.GenericResourceExpanded>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[GenericResource]'}
+        'current_page': {'key': 'value', 'type': '[GenericResourceExpanded]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(GenericResourcePaged, self).__init__(*args, **kwargs)
+        super(GenericResourceExpandedPaged, self).__init__(*args, **kwargs)
 class ResourceGroupPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ResourceGroup <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup>` object

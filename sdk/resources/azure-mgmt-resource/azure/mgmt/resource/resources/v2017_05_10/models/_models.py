@@ -708,6 +708,79 @@ class GenericResource(Resource):
         self.identity = kwargs.get('identity', None)
 
 
+class GenericResourceExpanded(GenericResource):
+    """Resource information.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param plan: The plan of the resource.
+    :type plan: ~azure.mgmt.resource.resources.v2017_05_10.models.Plan
+    :param properties: The resource properties.
+    :type properties: object
+    :param kind: The kind of the resource.
+    :type kind: str
+    :param managed_by: ID of the resource that manages this resource.
+    :type managed_by: str
+    :param sku: The SKU of the resource.
+    :type sku: ~azure.mgmt.resource.resources.v2017_05_10.models.Sku
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.resource.resources.v2017_05_10.models.Identity
+    :ivar created_time: The created time of the resource. This is only present
+     if requested via the $expand query parameter.
+    :vartype created_time: datetime
+    :ivar changed_time: The changed time of the resource. This is only present
+     if requested via the $expand query parameter.
+    :vartype changed_time: datetime
+    :ivar provisioning_state: The provisioning state of the resource. This is
+     only present if requested via the $expand query parameter.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
+        'created_time': {'readonly': True},
+        'changed_time': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'plan': {'key': 'plan', 'type': 'Plan'},
+        'properties': {'key': 'properties', 'type': 'object'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GenericResourceExpanded, self).__init__(**kwargs)
+        self.created_time = None
+        self.changed_time = None
+        self.provisioning_state = None
+
+
 class GenericResourceFilter(Model):
     """Resource filter.
 
