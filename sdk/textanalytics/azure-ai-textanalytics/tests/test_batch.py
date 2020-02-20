@@ -972,8 +972,8 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
         try:
             result = text_analytics.analyze_sentiment(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidRequest")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertIsNotNone(err.error.message)
 
         # DocumentErrors
         doc_errors = text_analytics.analyze_sentiment(docs)
@@ -989,8 +989,8 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
         try:
             result = text_analytics.analyze_sentiment(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "MissingInputRecords")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "MissingInputRecords")
+            self.assertIsNotNone(err.error.message)
 
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
@@ -998,16 +998,16 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
         try:
             result = text_analytics.analyze_sentiment(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocument")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocument")
+            self.assertIsNotNone(err.error.message)
 
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
             response = text_analytics.detect_language(docs)
         except HttpResponseError as err:
-            self.assertEqual(err.error_code, "InvalidDocumentBatch")
-            self.assertIsNotNone(err.message)
+            self.assertEqual(err.error.code, "InvalidDocumentBatch")
+            self.assertIsNotNone(err.error.message)
 
         # Service bug returns invalidDocument here. Uncomment after v3.0-preview.2
         # docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
