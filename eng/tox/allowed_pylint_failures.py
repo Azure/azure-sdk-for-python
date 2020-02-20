@@ -42,5 +42,6 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-servicebus",
     "azure-servicefabric",
     "azure-template",
-    "azure-keyvault"
+    "azure-keyvault",
+    "azure-synapse"
 ]
