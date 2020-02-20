@@ -54,7 +54,7 @@ class WorkspaceAclOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WorkspaceAccessControlResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.WorkspaceAccessControlResponse
-        :raises: ~azure.synapse.models.ErrorResponseException:
+        :raises: ~azure.core.HttpResponseError
         """
         cls = kwargs.pop('cls', None )  # type: ClsType["models.WorkspaceAccessControlResponse"]
         error_map = kwargs.pop('error_map', {})
@@ -115,7 +115,7 @@ class WorkspaceAclOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WorkspaceAccessControlResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.WorkspaceAccessControlResponse
-        :raises: ~azure.synapse.models.ErrorResponseException:
+        :raises: ~azure.core.HttpResponseError
         """
         cls = kwargs.pop('cls', None )  # type: ClsType["models.WorkspaceAccessControlResponse"]
         error_map = kwargs.pop('error_map', {})
