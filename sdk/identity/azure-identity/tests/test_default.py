@@ -11,7 +11,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
 )
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.managed_identity import ImdsCredential, MsiCredential
+from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 from six.moves.urllib_parse import urlparse
 
 from helpers import mock_response, Request, validating_transport
@@ -93,15 +93,9 @@ def test_exclude_options():
         assert actual <= default  # n.b. we know actual is non-empty
         assert default - actual <= excluded
 
-    # with no environment variables set, ManagedIdentityCredential = ImdsCredential
-    with patch("os.environ", {}):
-        credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ImdsCredential, MsiCredential)
-
-    # with $MSI_ENDPOINT set, ManagedIdentityCredential = MsiCredential
-    with patch("os.environ", {"MSI_ENDPOINT": "spam"}):
-        credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
-        assert_credentials_not_present(credential, ImdsCredential, MsiCredential)
+    # when exclude_managed_identity_credential is set to True, check if ManagedIdentityCredential instance is not present
+    credential = DefaultAzureCredential(exclude_managed_identity_credential=True)
+    assert_credentials_not_present(credential, ManagedIdentityCredential)
 
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)

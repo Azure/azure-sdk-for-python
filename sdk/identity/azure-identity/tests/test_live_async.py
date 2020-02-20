@@ -25,6 +25,17 @@ async def test_certificate_credential(live_certificate):
 
 
 @pytest.mark.asyncio
+async def test_certificate_credential_with_password(live_certificate_with_password):
+    credential = CertificateCredential(
+        live_certificate_with_password["tenant_id"],
+        live_certificate_with_password["client_id"],
+        live_certificate_with_password["cert_path"],
+        password=live_certificate_with_password["password"],
+    )
+    await get_token(credential)
+
+
+@pytest.mark.asyncio
 async def test_client_secret_credential(live_service_principal):
     credential = ClientSecretCredential(
         live_service_principal["tenant_id"],

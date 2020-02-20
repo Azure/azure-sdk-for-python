@@ -18,21 +18,6 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
-
-OUTPUT:
-    Document text: Microsoft was founded by Bill Gates and Paul Allen.
-    Entity:          Microsoft      Type:    Organization   Confidence Score:        1.0
-    Entity:          Bill Gates     Type:    Person         Confidence Score:        1.0
-    Entity:          Paul Allen     Type:    Person         Confidence Score:        1.0
-
-    Document text: I had a wonderful trip to Seattle last week.
-    Entity:          Seattle        Type:    Location       Confidence Score:        0.806
-    Entity:          last week      Type:    DateTime       Confidence Score:        0.8
-
-    Document text: I visited the Space Needle 2 times.
-    Entity:          Space Needle   Type:    Organization   Confidence Score:        0.922
-    Entity:          2              Type:    Quantity       Confidence Score:        0.8
-
 """
 
 import os
@@ -47,8 +32,8 @@ class RecognizeEntitiesSampleAsync(object):
     async def recognize_entities_async(self):
         # [START batch_recognize_entities_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
         documents = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
             "I had a wonderful trip to Seattle last week.",
@@ -63,7 +48,7 @@ class RecognizeEntitiesSampleAsync(object):
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: \t", entity.text, "\tType: \t", entity.type,
+                print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
                       "\tConfidence Score: \t", round(entity.score, 3))
         # [END batch_recognize_entities_async]
 
@@ -76,8 +61,8 @@ class RecognizeEntitiesSampleAsync(object):
         with the text.
         """
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import TextAnalyticsAPIKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsAPIKeyCredential(self.key))
+        from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
+        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
 
         documents = [
             {"id": "0", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},

@@ -131,7 +131,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-08-01"
+            api_version="2019-07-01"
         )
         self.assertFalse(resource_exist)
 
@@ -141,7 +141,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-08-01",
+            api_version="2019-07-01",
             parameters={'location': self.region}
         )
         result = create_result.result()
@@ -153,7 +153,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-08-01",
+            api_version="2019-07-01",
         )
         self.assertEqual(get_result.name, resource_name)
 
@@ -184,7 +184,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-08-01",
+            api_version="2019-07-01",
         )
         delete_result.wait()
 
@@ -228,7 +228,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
     {
       "type": "Microsoft.Compute/availabilitySets",
       "name": "availabilitySet1",
-      "apiVersion": "2019-08-01",
+      "apiVersion": "2019-07-01",
       "location": "[parameters('location')]",
       "properties": {}
     }

@@ -24,7 +24,7 @@ from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, Http
 
 import pytest
 
-from keys_helpers import mock_response, Request, validating_transport
+from _shared.helpers import mock_response, Request, validating_transport
 
 
 def empty_challenge_cache(fn):
@@ -112,7 +112,7 @@ def test_scope():
             raise ValueError("unexpected request")
 
         def get_token(*scopes):
-            assert len(scopes) is 1
+            assert len(scopes) == 1
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
 

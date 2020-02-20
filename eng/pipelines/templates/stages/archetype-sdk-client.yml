@@ -21,6 +21,7 @@ stages:
     - template: pipelines/stages/archetype-python-release.yml@azure-sdk-build-tools
       parameters:
         DependsOn: Build
+        ServiceDirectory: ${{parameters.ServiceDirectory}}
         Artifacts: ${{parameters.Artifacts}}
         ArtifactName: packages
         DocArtifact: documentation

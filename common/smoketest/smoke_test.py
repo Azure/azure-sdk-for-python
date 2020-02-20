@@ -9,14 +9,15 @@ from storage_blob import StorageBlob
 from event_hubs import EventHub
 from cosmos_db import CosmosDB
 
-print("")
-print("==========================================")
-print("      AZURE TRACK 2 SDKs SMOKE TEST")
-print("==========================================")
+def execute_smoke_tests():
+    print("")
+    print("==========================================")
+    print("      AZURE TRACK 2 SDKs SMOKE TEST")
+    print("==========================================")
 
-KeyVaultCertificates().run()
-KeyVaultKeys().run()
-KeyVaultSecrets().run()
-StorageBlob().run()
-EventHub().run()
-CosmosDB().run()
+    KeyVaultCertificates().run()
+    KeyVaultKeys().run()
+    KeyVaultSecrets().run()
+    StorageBlob().run()
+    EventHub().run()
+    CosmosDB().run()

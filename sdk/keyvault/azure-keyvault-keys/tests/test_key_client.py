@@ -13,22 +13,26 @@ import sys
 import json
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.keyvault.keys import JsonWebKey
-from keys_preparer import VaultClientPreparer
-from keys_test_case import KeyVaultTestCase
+from azure.keyvault.keys import JsonWebKey, KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
+from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case import KeyVaultTestCase
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, KeyClient)
 
 # used for logging tests
 class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
         self.messages = []
+
     def emit(self, record):
         self.messages.append(record)
 
-class KeyClientTests(KeyVaultTestCase):
 
+class KeyClientTests(KeyVaultTestCase):
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -45,7 +49,9 @@ class KeyClientTests(KeyVaultTestCase):
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = client.create_rsa_key(key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags)
+        created_key = client.create_rsa_key(
+            key_name, hardware_protected=hsm, size=key_size, key_operations=key_ops, tags=tags
+        )
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
         kty = "RSA-HSM" if hsm else "RSA"
@@ -73,7 +79,8 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
         )
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
@@ -85,7 +92,8 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(key.n and key.e, "Bad RSA public material.")
         self.assertEqual(key_ops, key.key_ops, "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
         self.assertTrue(
-            key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
+            key_attributes.properties.created_on and key_attributes.properties.updated_on,
+            "Missing required date attributes.",
         )
 
     def _update_key_properties(self, client, key):
@@ -136,12 +144,11 @@ class KeyClientTests(KeyVaultTestCase):
         return imported_key
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_key_crud_operations(self, vault_client, **kwargs):
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_key_crud_operations(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
 
         # create ec key
         self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
@@ -171,8 +178,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
-        polling_interval = 0 if self.is_playback() else 2
-        deleted_key_poller = client.begin_delete_key(created_rsa_key.name, _polling_interval=polling_interval)
+        deleted_key_poller = client.begin_delete_key(created_rsa_key.name)
         deleted_key = deleted_key_poller.result()
         self.assertIsNotNone(deleted_key)
         self.assertEqual(created_rsa_key.key_type, deleted_key.key_type)
@@ -188,12 +194,11 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_backup_restore(self, vault_client, **kwargs):
+    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultClientPreparer()
+    def test_backup_restore(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("keybak")
         key_type = "RSA"
 
@@ -206,8 +211,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertIsNotNone(key_backup, "key_backup")
 
         # delete key
-        polling_interval = 0 if self.is_playback() else 2
-        client.begin_delete_key(created_bundle.name, _polling_interval=polling_interval).wait()
+        client.begin_delete_key(created_bundle.name).wait()
 
         # restore key
         restored = client.restore_key_backup(key_backup)
@@ -215,11 +219,10 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_key_list(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_key_list(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
         expected = {}
@@ -240,11 +243,10 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_list_versions(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_list_versions(self, client, **kwargs):
 
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+        self.assertIsNotNone(client)
         key_name = self.get_resource_name("testKey")
 
         max_keys = self.list_test_size
@@ -266,11 +268,10 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(0, len(expected))
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_list_deleted_keys(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_list_deleted_keys(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         expected = {}
 
@@ -281,9 +282,8 @@ class KeyClientTests(KeyVaultTestCase):
             expected[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
-        polling_interval = 0 if self.is_playback() else 2
         for key_name in expected.keys():
-            client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
+            client.begin_delete_key(key_name).wait()
 
         # validate list deleted keys with attributes
         for deleted_key in client.list_deleted_keys():
@@ -299,11 +299,10 @@ class KeyClientTests(KeyVaultTestCase):
                 del expected[key.name]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_recover(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_recover(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         # create keys
         keys = {}
@@ -312,9 +311,8 @@ class KeyClientTests(KeyVaultTestCase):
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
-        polling_interval = 0 if self.is_playback() else 2
         for key_name in keys.keys():
-            client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
+            client.begin_delete_key(key_name).wait()
 
         # validate the deleted keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
@@ -322,16 +320,15 @@ class KeyClientTests(KeyVaultTestCase):
 
         # recover the keys
         for key_name in keys.keys():
-            recovered_key = client.begin_recover_deleted_key(key_name, _polling_interval=polling_interval).result()
+            recovered_key = client.begin_recover_deleted_key(key_name).result()
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=True)
-    @VaultClientPreparer()
-    def test_purge(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.keys
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_purge(self, client, **kwargs):
+        self.assertIsNotNone(client)
 
         # create keys
         key_names = ["key{}".format(i) for i in range(self.list_test_size)]
@@ -339,9 +336,8 @@ class KeyClientTests(KeyVaultTestCase):
             client.create_key(name, "RSA")
 
         # delete them
-        polling_interval = 0 if self.is_playback() else 2
         for key_name in key_names:
-            client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
+            client.begin_delete_key(key_name).wait()
 
         # validate all our deleted keys are returned by list_deleted_keys
         deleted = [k.name for k in client.list_deleted_keys()]
@@ -361,22 +357,21 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer(client_kwargs={'logging_enable': True})
-    def test_logging_enabled(self, vault_client, **kwargs):
-        client = vault_client.keys
+    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
+    def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
-                    if body['kty'] == 'RSA':
+                    if body["kty"] == "RSA":
                         return
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
@@ -386,19 +381,18 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_logging_disabled(self, vault_client, **kwargs):
-        client = vault_client.keys
+    @KeyVaultClientPreparer()
+    def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
-        logger = logging.getLogger('azure')
+        logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_rsa_key("rsa-key-name", size=2048)
 
         for message in mock_handler.messages:
-            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+            if message.levelname == "DEBUG" and message.funcName == "on_request":
                 try:
                     body = json.loads(message.message)
                     assert body["kty"] != "RSA", "Client request body was logged"

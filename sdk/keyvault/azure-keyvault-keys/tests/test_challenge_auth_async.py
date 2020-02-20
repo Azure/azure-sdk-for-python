@@ -20,7 +20,8 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 import pytest
 
-from keys_helpers import async_validating_transport, mock_response, Request
+from _shared.helpers import mock_response, Request
+from _shared.helpers_async import async_validating_transport
 from test_challenge_auth import empty_challenge_cache, get_policies_for_request_mutation_test, get_random_url
 
 
@@ -65,7 +66,7 @@ async def test_scope():
             raise ValueError("unexpected request")
 
         async def get_token(*scopes):
-            assert len(scopes) is 1
+            assert len(scopes) == 1
             assert scopes[0] == expected_scope
             return AccessToken(expected_token, 0)
 

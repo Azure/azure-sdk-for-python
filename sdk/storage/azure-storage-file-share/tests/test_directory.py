@@ -14,8 +14,8 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     StorageErrorCode,
 )
-from _shared.filetestcase import (
-    FileTestCase,
+from _shared.testcase import (
+    StorageTestCase,
     LogCaptured,
     GlobalStorageAccountPreparer
 )
@@ -24,9 +24,9 @@ from _shared.filetestcase import (
 # ------------------------------------------------------------------------------
 
 
-class StorageDirectoryTest(FileTestCase):
+class StorageDirectoryTest(StorageTestCase):
     def _setup(self, storage_account, storage_account_key):
-        url = self.get_file_url(storage_account.name)
+        url = self.account_url(storage_account, "file")
         credential = storage_account_key
         self.fsc = ShareServiceClient(url, credential=credential)
         self.share_name = self.get_resource_name('utshare')
@@ -492,11 +492,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props)
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
-
-        if self.is_file_encryption_enabled():
-            self.assertTrue(props.server_encrypted)
-        else:
-            self.assertFalse(props.server_encrypted)
+        self.assertTrue(props.server_encrypted)
 
 
 # ------------------------------------------------------------------------------

@@ -28,7 +28,9 @@ import logging
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy
+from .pipeline.policies import (
+    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+)
 
 try:
     from typing import TYPE_CHECKING
@@ -100,10 +102,11 @@ class AsyncPipelineClient(PipelineClientBase):
 
         if policies is None:  # [] is a valid policy list
             policies = [
+                RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(),
+                ContentDecodePolicy(**kwargs),
                 config.redirect_policy,
                 config.retry_policy,
                 config.authentication_policy,

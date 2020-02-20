@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     Any,
     List,
     Dict,
+    TYPE_CHECKING
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.models import TextAnalyticsErrorException
@@ -37,6 +38,10 @@ from .._models import (
     DocumentError,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from .._credential import TextAnalyticsApiKeyCredential
+
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class
@@ -51,10 +56,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
         endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of TextAnalyticsAPIKeyCredential if using a
-        cognitive services/text analytics subscription key or a token credential
+        This can be the an instance of TextAnalyticsApiKeyCredential if using a
+        cognitive services/text analytics API key or a token credential
         from azure.identity.
-    :type credential: ~azure.ai.textanalytics.TextAnalyticsAPIKeyCredential
+    :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential
         or ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the empty string "".
@@ -68,7 +73,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :end-before: [END create_ta_client_with_key_async]
             :language: python
             :dedent: 8
-            :caption: Creating the TextAnalyticsClient with endpoint and subscription key.
+            :caption: Creating the TextAnalyticsClient with endpoint and API key.
 
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_ta_client_with_aad_async]
@@ -78,8 +83,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Any, Any) -> None
+    def __init__(  # type: ignore
+        self,
+        endpoint: str,
+        credential: Union["TextAnalyticsApiKeyCredential", "AsyncTokenCredential"],
+        **kwargs: Any
+    ) -> None:
         super(TextAnalyticsClient, self).__init__(credential=credential, **kwargs)
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
@@ -88,7 +97,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
 
     @distributed_trace_async
-    async def detect_languages(  # type: ignore
+    async def detect_language(  # type: ignore
         self,
         inputs: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
         country_hint: Optional[str] = None,
@@ -99,6 +108,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         Returns the detected language and a numeric score between zero and
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
@@ -123,9 +135,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_detect_languages_async.py
-                :start-after: [START batch_detect_languages_async]
-                :end-before: [END batch_detect_languages_async]
+            .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
+                :start-after: [START batch_detect_language_async]
+                :end-before: [END batch_detect_language_async]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
@@ -152,11 +164,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
-        """Named Entity Recognition for a batch of documents.
+        """Entity Recognition for a batch of documents.
 
-        Returns a list of general named entities in a given document.
+        Identifies and categorizes entities in your text as people, places,
+        organizations, date/time, quantities, percentages, currencies, and more.
         For the list of supported entity types, check: https://aka.ms/taner
-        For the list of enabled languages, check: https://aka.ms/talangs
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -167,7 +182,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -213,8 +229,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         Returns a list of personal information entities ("SSN",
         "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii. See https://aka.ms/talangs
-        for the list of enabled languages.
+        check https://aka.ms/tanerpii.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -225,7 +243,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -269,9 +288,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
-        Returns a list of recognized entities with links to a
-        well-known knowledge base. See https://aka.ms/talangs for
-        supported languages in Text Analytics API.
+        Identifies and disambiguates the identity of each entity found in text (for example,
+        determining whether an occurrence of the word Mars refers to the planet, or to the
+        Roman god of war). Recognized entities are associated with URLs to a well-known
+        knowledge base, like Wikipedia.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -282,7 +305,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -327,8 +351,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """Extract Key Phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
-        text. See https://aka.ms/talangs for the list of enabled
-        languages.
+        text. For example, for the input text "The food was delicious and there
+        were wonderful staff", the API returns the main talking points: "food"
+        and "wonderful staff"
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -339,7 +367,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -385,8 +414,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         Returns a sentiment prediction, as well as sentiment scores for
         each sentiment class (Positive, Negative, and Neutral) for the document
-        and each sentence within it. See https://aka.ms/talangs for the list
-        of enabled languages.
+        and each sentence within it.
+
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        for document length limits, maximum batch size, and supported text encoding.
 
         :param inputs: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -397,7 +428,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language.
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.

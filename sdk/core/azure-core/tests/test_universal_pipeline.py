@@ -69,6 +69,19 @@ def test_request_history():
     assert request_history.http_request.url == request.url
     assert request_history.http_request.method == request.method
 
+def test_request_history_type_error():
+    class Non_deep_copiable(object):
+        def __deepcopy__(self, memodict={}):
+            raise TypeError()
+
+    body = Non_deep_copiable()
+    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request.body = body
+    request_history = RequestHistory(request)
+    assert request_history.http_request.headers == request.headers
+    assert request_history.http_request.url == request.url
+    assert request_history.http_request.method == request.method
+
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
@@ -147,6 +160,9 @@ def test_retry_without_http_response():
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()
+    context = PipelineContext(None, stream=False)
+    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    request = PipelineRequest(universal_request, context)
 
     def build_response(body, content_type=None):
         class MockResponse(HttpResponse):
@@ -157,59 +173,83 @@ def test_raw_deserializer():
 
             def body(self):
                 return self._body
-        return PipelineResponse(None, MockResponse(body, content_type), PipelineContext(None, stream=False))
+
+        return PipelineResponse(request, MockResponse(body, content_type), context)
 
     response = build_response(b"<groot/>", content_type="application/xml")
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result.tag == "groot"
 
+    response = build_response(b"\xef\xbb\xbf<utf8groot/>", content_type="application/xml")
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result.tag == "utf8groot"
+
     # The basic deserializer works with unicode XML
     response = build_response(u'<groot language="français"/>'.encode('utf-8'), content_type="application/xml")
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result.attrib["language"] == u"français"
 
     # Catch some weird situation where content_type is XML, but content is JSON
     response = build_response(b'{"ugly": true}', content_type="application/xml")
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result["ugly"] is True
 
     # Be sure I catch the correct exception if it's neither XML nor JSON
     response = build_response(b'gibberish', content_type="application/xml")
     with pytest.raises(DecodeError) as err:
-        raw_deserializer.on_response(None, response)
+        raw_deserializer.on_response(request, response)
     assert err.value.response is response.http_response
 
     response = build_response(b'{{gibberish}}', content_type="application/xml")
     with pytest.raises(DecodeError) as err:
-        raw_deserializer.on_response(None, response)
+        raw_deserializer.on_response(request, response)
     assert err.value.response is response.http_response
 
     # Simple JSON
     response = build_response(b'{"success": true}', content_type="application/json")
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result["success"] is True
+
+    # Simple JSON with BOM
+    response = build_response(b'\xef\xbb\xbf{"success": true}', content_type="application/json")
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
     # Simple JSON with complex content_type
     response = build_response(b'{"success": true}', content_type="application/vnd.microsoft.appconfig.kv.v1+json")
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
     # Simple JSON with complex content_type, v2
     response = build_response(b'{"success": true}', content_type="text/vnd.microsoft.appconfig.kv.v1+json")
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
     # For compat, if no content-type, decode JSON
     response = build_response(b'"data"')
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result == "data"
+
+    # Let text/plain let through
+    response = build_response(b'I am groot', content_type="text/plain")
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result == "I am groot"
+
+    # Let text/plain let through + BOM
+    response = build_response(b'\xef\xbb\xbfI am groot', content_type="text/plain")
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result == "I am groot"
 
     # Try with a mock of requests
 
@@ -219,10 +259,39 @@ def test_raw_deserializer():
     req_response._content_consumed = True
     response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
 
-    raw_deserializer.on_response(None, response)
+    raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
+    # I can enable it per request
+    request.context.options['response_encoding'] = 'utf-8'
+    response = build_response(b'\xc3\xa9', content_type="text/plain")
+    raw_deserializer.on_request(request)
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result == "é"
+    assert response.context["response_encoding"] == "utf-8"
+    del request.context['response_encoding']
+
+    # I can enable it globally
+    raw_deserializer = ContentDecodePolicy(response_encoding="utf-8")
+    response = build_response(b'\xc3\xa9', content_type="text/plain")
+    raw_deserializer.on_request(request)
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result == "é"
+    assert response.context["response_encoding"] == "utf-8"
+    del request.context['response_encoding']
+
+    # Per request is more important
+    request.context.options['response_encoding'] = 'utf-8-sig'
+    response = build_response(b'\xc3\xa9', content_type="text/plain")
+    raw_deserializer.on_request(request)
+    raw_deserializer.on_response(request, response)
+    result = response.context["deserialized_data"]
+    assert result == "é"
+    assert response.context["response_encoding"] == "utf-8-sig"
+    del request.context['response_encoding']
 
 def test_http_logger():
 
