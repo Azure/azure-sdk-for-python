@@ -32,6 +32,8 @@ class _QueryBase(object):
         # type: (str) -> None
         """Add a `filter` expression for the search results.
 
+        :param expression: An ODate expression of for the query filter.
+        :type expression: str
         """
         self._request.filter = expression
 
@@ -44,11 +46,10 @@ class _QueryBase(object):
 
 
 class AutocompleteQuery(_QueryBase):
-    """Represent an autocomplete query again an Azure Search index.
-
-    """
 
     _request_type = AutocompleteRequest
+
+    __doc__ = AutocompleteRequest.__doc__
 
 
 class SearchQuery(_QueryBase):
@@ -58,10 +59,15 @@ class SearchQuery(_QueryBase):
 
     _request_type = SearchRequest
 
+    __doc__ = SearchRequest.__doc__
+
     def order_by(self, *fields):
         # type: (*str) -> None
         """Update the `orderby` property for the search results.
 
+        :param fields: An list of fields for the query result to be ordered by.
+        :type expression: str
+        :raises: ValueError
         """
         if not fields:
             raise ValueError("At least one field must be provided")
@@ -72,6 +78,9 @@ class SearchQuery(_QueryBase):
         # type: (*str) -> None
         """Update the `select` property for the search results.
 
+        :param fields: An list of fields for the query result to return.
+        :type expression: str
+        :raises: ValueError
         """
         if not fields:
             raise ValueError("At least one field must be provided")
@@ -85,3 +94,5 @@ class SuggestQuery(_QueryBase):
     """
 
     _request_type = SuggestRequest
+
+    __doc__ = SuggestRequest.__doc__

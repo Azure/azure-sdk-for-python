@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 
 def flatten_args(args):
+    # type (Union[List[dict], List[List[dict]]]) -> List[dict]
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return args[0]
     return args
@@ -39,6 +40,9 @@ class IndexBatch(object):
         # type (Union[List[dict], List[List[dict]]]) -> None
         """Add documents to upload to the Azure search index.
 
+        :param documents: Documents to upload to an Azure search index. May be
+         a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         """
         self._extend_batch(flatten_args(documents), "upload")
 
@@ -46,6 +50,9 @@ class IndexBatch(object):
         # type (Union[List[dict], List[List[dict]]]) -> None
         """Add documents to delete to the Azure search index.
 
+        :param documents: Documents to delete from an Azure search index. May be
+         a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         """
         self._extend_batch(flatten_args(documents), "delete")
 
@@ -54,6 +61,9 @@ class IndexBatch(object):
         """Add documents to merge in to existing documets in the Azure search
         index.
 
+        :param documents: Documents to merge into an Azure search index. May be
+         a single list of documents, or documents as individual parameters.
+        :type documents: dict or list[dict]
         """
         self._extend_batch(flatten_args(documents), "merge")
 
@@ -62,6 +72,10 @@ class IndexBatch(object):
         """Add documents to merge in to existing documets in the Azure search
         index, or upload if they do not yet exist.
 
+        :param documents: Documents to merge or uplaod into an Azure search
+         index. May be a single list of documents, or documents as individual
+         parameters.
+        :type documents: dict or list[dict]
         """
         self._extend_batch(flatten_args(documents), "mergeOrUpload")
 

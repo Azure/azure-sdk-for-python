@@ -223,5 +223,5 @@ class SearchIndexClient(object):
 
         """
         index_batch = IndexBatchModel(actions=batch.actions)
-        results = self._client.documents.index(batch=index_batch, **kwargs).results
-        return cast(List[IndexingResult], results)
+        batch_response = self._client.documents.index(batch=index_batch, **kwargs)
+        return cast(List[IndexingResult], batch_response.results)
