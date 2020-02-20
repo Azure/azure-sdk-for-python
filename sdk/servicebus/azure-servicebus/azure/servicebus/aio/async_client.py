@@ -41,7 +41,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param http_request_session: Optional. Session object to use for HTTP requests.
     :param bool debug: Whether to output AMQP network trace to the logger.
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_async_servicebus_client]
             :end-before: [END create_async_servicebus_client]
@@ -76,7 +76,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :param conn_str: The connection string.
         :type conn_str: str
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START create_async_servicebus_client_connstr]
                 :end-before: [END create_async_servicebus_client_connstr]
@@ -105,7 +105,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START get_async_queue_client]
                 :end-before: [END get_async_queue_client]
@@ -158,7 +158,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START get_async_topic_client]
                 :end-before: [END get_async_topic_client]
@@ -211,7 +211,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START get_async_subscription_client]
                 :end-before: [END get_async_subscription_client]
@@ -287,7 +287,7 @@ class SendClientMixin:
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START queue_client_send]
                 :end-before: [END queue_client_send]
@@ -337,7 +337,7 @@ class SendClientMixin:
         :returns: A Sender instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_send_handler.Sender
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_context]
                 :end-before: [END open_close_sender_context]
@@ -387,7 +387,7 @@ class ReceiveClientMixin:
         :type session: str
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START client_peek_messages]
                 :end-before: [END client_peek_messages]
@@ -428,7 +428,7 @@ class ReceiveClientMixin:
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START client_defer_messages]
                 :end-before: [END client_defer_messages]
@@ -467,7 +467,7 @@ class ReceiveClientMixin:
         :param messages: A list of deferred messages to be settled.
         :type messages: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START client_settle_deferred_messages]
                 :end-before: [END client_settle_deferred_messages]
@@ -549,7 +549,7 @@ class ReceiveClientMixin:
         :returns: A Receiver instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_receive_handler.Receiver
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_receiver_context]
                 :end-before: [END open_close_receiver_context]
@@ -617,7 +617,7 @@ class ReceiveClientMixin:
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.aio.async_receive_handler.Receiver
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_deadletter_messages]
                 :end-before: [END receiver_deadletter_messages]
@@ -688,7 +688,7 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_queue_client]
             :end-before: [END create_queue_client]
@@ -726,7 +726,7 @@ class TopicClient(SendClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_topic_client]
             :end-before: [END create_topic_client]
@@ -764,7 +764,7 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START create_sub_client]
             :end-before: [END create_sub_client]

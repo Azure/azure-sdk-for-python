@@ -102,7 +102,7 @@ class AutoLockRenew(object):
      This cannot be combined with `executor`.
     :type max_workers: int
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START auto_lock_renew_message]
             :end-before: [END auto_lock_renew_message]

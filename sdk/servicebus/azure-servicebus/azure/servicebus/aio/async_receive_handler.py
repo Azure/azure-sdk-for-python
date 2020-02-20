@@ -67,7 +67,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START open_close_receiver_context]
             :end-before: [END open_close_receiver_context]
@@ -260,7 +260,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
          due to an error.
         :type exception: Exception
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_receiver_directly]
                 :end-before: [END open_close_receiver_directly]
@@ -289,7 +289,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_peek_messages]
                 :end-before: [END receiver_peek_messages]
@@ -328,7 +328,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_defer_messages]
                 :end-before: [END receiver_defer_messages]
@@ -376,7 +376,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.aio.async_message.Message]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_fetch_batch]
                 :end-before: [END receiver_fetch_batch]
@@ -437,7 +437,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START open_close_receiver_session_context]
             :end-before: [END open_close_receiver_session_context]
@@ -517,7 +517,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
         :rtype: str
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START set_session_state]
                 :end-before: [END set_session_state]
@@ -542,7 +542,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :param state: The state value.
         :type state: str or bytes or bytearray
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START set_session_state]
                 :end-before: [END set_session_state]
@@ -566,7 +566,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         This operation can also be performed as an asynchronous background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_renew_session_lock]
                 :end-before: [END receiver_renew_session_lock]
@@ -596,7 +596,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_peek_session_messages]
                 :end-before: [END receiver_peek_session_messages]
@@ -636,7 +636,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START receiver_defer_session_messages]
                 :end-before: [END receiver_defer_session_messages]

@@ -146,7 +146,7 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
 
         .. note:: This operation is not thread-safe.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_directly]
                 :end-before: [END open_close_sender_directly]
@@ -184,7 +184,7 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
          due to an error.
         :type exception: Exception
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/async_samples/test_examples_async.py
                 :start-after: [START open_close_sender_directly]
                 :end-before: [END open_close_sender_directly]

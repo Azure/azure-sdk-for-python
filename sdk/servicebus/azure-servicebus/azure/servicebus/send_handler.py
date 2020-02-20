@@ -49,7 +49,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_sender_client]
             :end-before: [END create_sender_client]
@@ -86,7 +86,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type message: ~azure.servicebus.common.message.Message
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to send.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START send_message]
                 :end-before: [END send_message]
@@ -117,7 +117,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type messages: ~azure.servicebus.common.message.Message
         :rtype: list[int]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START scheduling_messages]
                 :end-before: [END scheduling_messages]
@@ -140,7 +140,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :param sequence_numbers: The seqeuence numbers of the scheduled messages.
         :type sequence_numbers: int
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START cancel_scheduled_messages]
                 :end-before: [END cancel_scheduled_messages]
@@ -167,7 +167,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START queue_and_send_messages]
                 :end-before: [END queue_and_send_messages]
@@ -251,7 +251,7 @@ class SessionSender(Sender):
          send.
         :raises: ValueError if there is no session ID specified.
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START send_message]
                 :end-before: [END send_message]
@@ -275,7 +275,7 @@ class SessionSender(Sender):
         :param message: The message to be sent.
         :type message: ~azure.servicebus.Message
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START queue_and_send_session_messages]
                 :end-before: [END queue_and_send_session_messages]
@@ -299,7 +299,7 @@ class SessionSender(Sender):
         :type messages: ~azure.servicebus.common.message.Message
         :rtype: list[int]
 
-        Example:
+        .. admonition:: Example:
             .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START scheduling_messages]
                 :end-before: [END scheduling_messages]

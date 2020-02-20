@@ -26,7 +26,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START send_complex_message]
             :end-before: [END send_complex_message]
@@ -398,7 +398,7 @@ class BatchMessage(Message):
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START send_batch_message]
             :end-before: [END send_batch_message]

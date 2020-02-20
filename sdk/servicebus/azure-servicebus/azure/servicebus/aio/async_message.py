@@ -21,7 +21,7 @@ class Message(message.Message):
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START send_complex_message]
             :end-before: [END send_complex_message]

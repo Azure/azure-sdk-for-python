@@ -390,7 +390,7 @@ class _ETreeXmlToObject(object):
         '''Converts an xml fragment into a list of scalar types.  The parent xml
         element contains a flat list of xml elements which are converted into the
         specified scalar type and added to the list.
-        Example:
+        .. admonition:: Example:
         xmldoc=
     <Endpoints>
         <Endpoint>http://{storage-service-name}.blob.core.windows.net/</Endpoint>
@@ -421,7 +421,7 @@ class _ETreeXmlToObject(object):
         '''Converts an xml fragment into a dictionary. The parent xml element
         contains a list of xml elements where each element has a child element for
         the key, and another for the value.
-        Example:
+        .. admonition:: Example:
         xmldoc=
     <ExtendedProperties>
         <ExtendedProperty>

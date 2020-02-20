@@ -24,7 +24,7 @@ class AutoLockRenew:
     :param loop: An async event loop.
     :type loop: ~asyncio.EventLoop
 
-    Example:
+    .. admonition:: Example:
         .. literalinclude:: ../samples/async_samples/test_examples_async.py
             :start-after: [START auto_lock_renew_async_message]
             :end-before: [END auto_lock_renew_async_message]
