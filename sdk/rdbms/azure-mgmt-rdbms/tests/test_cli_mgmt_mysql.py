@@ -47,6 +47,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         CONFIGURATION_NAME = "configuration"
         VIRTUAL_NETWORK_RULE_NAME = "virutal_networkrule"
         SECURITY_ALERT_POLICY_NAME = "securityalertpolicy"
+        LOCATION_NAME = "eastus"
 
         # Create a new server[put]
         BODY = {
@@ -200,14 +201,14 @@ class MgmtMySQLTest(AzureMgmtTestCase):
             "email_account_admins": True
           }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME, SECURITY_ALERT_POLICY_NAME, BODY)
+        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
         # Get a server's threat detection policy[get]
-        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME, SECURITY_ALERT_POLICY_NAME)
+        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME)
 
-        # Gets a virtual network rule[get]
-        result = self.mgmt_client.virtual_network_rules.get(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
+        # # Gets a virtual network rule[get]
+        # result = self.mgmt_client.virtual_network_rules.get(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
 
         # # ConfigurationGet[get]
         # result = self.mgmt_client.configurations.get(resource_group.name, SERVER_NAME, CONFIGURATION_NAME)
