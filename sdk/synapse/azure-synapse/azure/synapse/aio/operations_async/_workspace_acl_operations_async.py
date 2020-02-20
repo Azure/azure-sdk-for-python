@@ -53,9 +53,9 @@ class WorkspaceAclOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WorkspaceAccessControlResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.WorkspaceAccessControlResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.WorkspaceAccessControlResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.WorkspaceAccessControlResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _resource = models.GetAccessControlInfoRequest(artifact_name=artifact_name)
@@ -113,9 +113,9 @@ class WorkspaceAclOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WorkspaceAccessControlResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.WorkspaceAccessControlResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.WorkspaceAccessControlResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.WorkspaceAccessControlResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _request = models.SetWorkspaceAdministratorsRequest(administrators=administrators)
