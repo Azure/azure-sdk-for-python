@@ -62,7 +62,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :type credential: ~azure.ai.textanalytics.TextAnalyticsApiKeyCredential or
         ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
-        Defaults to "US". If you don't want to use a country hint, pass the empty string "".
+        Defaults to "US". If you don't want to use a country hint, pass the string "none".
     :keyword str default_language: Sets the default language to use for all operations.
         Defaults to "en".
 
@@ -118,7 +118,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
-            "US". If you don't want to use a country hint, pass the empty string "".
+            "US". If you don't want to use a country hint, pass the string "none".
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
