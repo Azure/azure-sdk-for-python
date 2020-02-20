@@ -161,10 +161,10 @@ def _handle_exception(
         name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         _LOGGER.info("%r stops due to keyboard interrupt", name)
-        closable.close()
+        closable._close_connection()  # pylint:disable=protected-access
         raise exception
     elif isinstance(exception, EventHubError):
-        closable.close()
+        closable._close_handler()  # pylint:disable=protected-access
         raise exception
     elif isinstance(
         exception,
@@ -197,12 +197,7 @@ def _handle_exception(
         elif isinstance(exception, errors.MessageHandlerError):
             if hasattr(closable, "_close_handler"):
                 closable._close_handler()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.AMQPConnectionError):
-            if hasattr(closable, "_close_connection"):
-                closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, compat.TimeoutException):
-            pass  # Timeout doesn't need to recreate link or connection to retry
-        else:
+        else:  # errors.AMQPConnectionError, compat.TimeoutException
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
         return _create_eventhub_exception(exception)

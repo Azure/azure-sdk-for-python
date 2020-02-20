@@ -7,10 +7,19 @@ import functools
 import hashlib
 import os
 
+from azure.keyvault.certificates import (
+    CertificateClient,
+    CertificatePolicy,
+    CertificateContentType,
+    WellKnownIssuerNames,
+)
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from certificates_preparer import VaultClientPreparer
-from certificates_test_case import KeyVaultTestCase
-from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
+
+from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case import KeyVaultTestCase
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, CertificateClient)
 
 
 def print(*args):
@@ -33,12 +42,11 @@ def test_create_certificate_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_certificate_crud_operations(self, vault_client, **kwargs):
-        certificate_client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_example_certificate_crud_operations(self, client, **kwargs):
+        certificate_client = client
 
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -114,9 +122,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        certificate_client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_example_certificate_list_operations(self, client, **kwargs):
+        certificate_client = client
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -135,9 +143,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for i in range(4):
             certificate_client.begin_create_certificate(
-                certificate_name="certificate{}".format(i),
-                policy=cert_policy,
-                _polling_interval=polling_interval
+                certificate_name="certificate{}".format(i), policy=cert_policy, _polling_interval=polling_interval
             ).wait()
 
         # [START list_properties_of_certificates]
@@ -180,9 +186,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
-    @VaultClientPreparer()
-    def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        certificate_client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_example_certificate_backup_restore(self, client, **kwargs):
+        certificate_client = client
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -198,9 +204,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
         polling_interval = 0 if self.is_playback() else None
         cert_name = "cert-name"
-        certificate_client.begin_create_certificate(
-            certificate_name=cert_name, policy=cert_policy
-        ).wait()
+        certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
 
@@ -212,9 +216,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_certificate]
 
-        certificate_client.begin_delete_certificate(
-            certificate_name=cert_name
-        ).wait()
+        certificate_client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # [START restore_certificate]
 
@@ -229,9 +231,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_certificate_recover(self, vault_client, **kwargs):
-        certificate_client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_example_certificate_recover(self, client, **kwargs):
+        certificate_client = client
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -249,13 +251,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         cert_name = "cert-name"
 
         polling_interval = 0 if self.is_playback() else None
-        certificate_client.begin_create_certificate(
-            certificate_name=cert_name, policy=cert_policy
-        ).wait()
+        certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
-        certificate_client.begin_delete_certificate(
-            certificate_name=cert_name
-        ).wait()
+        certificate_client.begin_delete_certificate(certificate_name=cert_name).wait()
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
@@ -281,12 +279,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_contacts(self, vault_client, **kwargs):
-        certificate_client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_example_contacts(self, client, **kwargs):
+        certificate_client = client
 
         # [START set_contacts]
         from azure.keyvault.certificates import CertificateContact
+
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
@@ -326,9 +325,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_issuers(self, vault_client, **kwargs):
-        certificate_client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_example_issuers(self, client, **kwargs):
+        certificate_client = client
 
         # [START create_issuer]
         from azure.keyvault.certificates import AdministratorContact
@@ -339,7 +338,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         ]
 
         issuer = certificate_client.create_issuer(
-            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
+            issuer_name="issuer1",
+            provider="Test",
+            account_id="keyvaultuser",
+            admin_contacts=admin_contacts,
+            enabled=True,
         )
 
         print(issuer.name)
@@ -370,7 +373,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END get_issuer]
 
-        certificate_client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
+        certificate_client.create_issuer(
+            issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True
+        )
 
         # [START list_properties_of_issuers]
 
