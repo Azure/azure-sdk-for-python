@@ -166,7 +166,7 @@ class ClientBaseAsync(ClientBase):
                 conn = await self._conn_manager_async.get_connection(
                     self._address.hostname, mgmt_auth
                 )
-                mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token().token
+                mgmt_msg.application_properties["security_token"] = (await mgmt_auth.get_token()).token
                 await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
