@@ -36,6 +36,7 @@
 /sdk/servicefabric/ @QingChenmsft @samedder
 /sql/sql/ @jaredmoo
 /sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+/sdk/synapse/ @aim-for-better @idear1203
 
 # Management Plane
 /**/*mgmt*/ @zikalino
