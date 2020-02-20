@@ -64,9 +64,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyListSessionResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyListSessionResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivyListSessionResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.ExtendedLivyListSessionResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -131,9 +131,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivySessionResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivySessionResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivySessionResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.ExtendedLivySessionResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -198,9 +198,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivySessionResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivySessionResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivySessionResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.ExtendedLivySessionResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -258,9 +258,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[None] = kwargs.pop('cls', None )
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -312,9 +312,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[None] = kwargs.pop('cls', None )
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -366,9 +366,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LivyStatementsResponseBody or the result of cls(response)
         :rtype: ~azure.synapse.models.LivyStatementsResponseBody
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementsResponseBody"] = kwargs.pop('cls', None )
+        cls: ClsType["models.LivyStatementsResponseBody"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -427,9 +427,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LivyStatementResponseBody or the result of cls(response)
         :rtype: ~azure.synapse.models.LivyStatementResponseBody
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementResponseBody"] = kwargs.pop('cls', None )
+        cls: ClsType["models.LivyStatementResponseBody"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -492,9 +492,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LivyStatementResponseBody or the result of cls(response)
         :rtype: ~azure.synapse.models.LivyStatementResponseBody
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementResponseBody"] = kwargs.pop('cls', None )
+        cls: ClsType["models.LivyStatementResponseBody"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -554,9 +554,9 @@ class SparkSessionOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LivyStatementCancellationResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.LivyStatementCancellationResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.LivyStatementCancellationResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.LivyStatementCancellationResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL

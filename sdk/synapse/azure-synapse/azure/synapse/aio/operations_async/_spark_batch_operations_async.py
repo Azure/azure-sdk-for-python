@@ -64,9 +64,9 @@ class SparkBatchOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyListBatchResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyListBatchResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivyListBatchResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.ExtendedLivyListBatchResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -131,9 +131,9 @@ class SparkBatchOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyBatchResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyBatchResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivyBatchResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.ExtendedLivyBatchResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -198,9 +198,9 @@ class SparkBatchOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyBatchResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyBatchResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.ExtendedLivyBatchResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.ExtendedLivyBatchResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -258,9 +258,9 @@ class SparkBatchOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType[None] = kwargs.pop('cls', None )
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
