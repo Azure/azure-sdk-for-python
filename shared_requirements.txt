@@ -113,6 +113,7 @@ six>=1.6
 #override azure-keyvault-certificates azure-core<2.0.0,>=1.2.1
 #override azure-keyvault-keys azure-core<2.0.0,>=1.2.1
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.2.1
+#override azure-synapse azure-core<2.0.0,>=1.2.2
 #override azure-ai-textanalytics msrest>=0.6.0
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.1.0
 #override azure-storage-blob msrest>=0.6.10
