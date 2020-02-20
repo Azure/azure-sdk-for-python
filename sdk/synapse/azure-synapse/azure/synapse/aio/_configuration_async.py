@@ -30,7 +30,7 @@ class SynapseClientConfiguration(Configuration):
     def __init__(
         self,
         credential: "TokenCredential",
-        synapse_dns_suffix: str = "azuresynapse.net​",
+        synapse_dns_suffix: str = "dev.azuresynapse.net",
         livy_api_version: str = "2019-11-01-preview",
         **kwargs: Any
     ) -> None:
