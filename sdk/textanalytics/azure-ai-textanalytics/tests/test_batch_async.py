@@ -337,7 +337,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.id)
+                self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
 
@@ -477,7 +477,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.sentiment_scores)
+            self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
