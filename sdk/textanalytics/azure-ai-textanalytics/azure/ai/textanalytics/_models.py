@@ -504,7 +504,7 @@ class DetectLanguageInput(LanguageInput):
     :param country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
-     in the empty string "" to not use a country_hint.
+     in the string "none" to not use a country_hint.
     :type country_hint: str
     """
 
