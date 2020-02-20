@@ -392,7 +392,7 @@ class AnalyzeSentimentResult(DictMixin):
     :type statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :param confidence_scores: Document level sentiment confidence
-        scores between 0 and 1 for each sentiment class.
+        scores between 0 and 1 for each sentiment label.
     :type confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScorePerLabel
     :param sentences: Sentence level sentiment analysis.

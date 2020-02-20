@@ -2,6 +2,13 @@
 
 ## 1.0.0b3 (Unreleased)
 
+**Breaking changes**
+- `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScorePerLabel`
+- `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
+- `LinkedEntity` attribute `id` has been renamed to `data_source_entity_id`
+
+**New features**
+- Pass `country_hint="none"` to not use the default country hint of `"US"`.
 
 ## 1.0.0b2 (2020-02-11)
 
