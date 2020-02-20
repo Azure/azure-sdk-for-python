@@ -1969,12 +1969,15 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(root_included_path.get('indexes'))
 
     def test_client_request_timeout(self):
-        connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout =  0.000000000001
-        with self.assertRaises(Exception):
-            # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+        # Test is flaky on Emulator
+        if not('localhost' in self.host or '127.0.0.1' in self.host):
+            connection_policy = documents.ConnectionPolicy()
+            # making timeout 0 ms to make sure it will throw
+            connection_policy.RequestTimeout =  0.000000000001
+
+            with self.assertRaises(Exception):
+                # client does a getDatabaseAccount on initialization, which will time out
+                cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
