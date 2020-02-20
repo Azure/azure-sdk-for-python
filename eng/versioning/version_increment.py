@@ -10,8 +10,11 @@
 import os
 import argparse
 from packaging.version import parse
+import logging
 
 from version_shared import get_packages, set_version_py, set_dev_classifier, update_change_log
+
+logging.getLogger().setLevel(logging.INFO)
 
 def increment_version(old_version):
     parsed_version = parse(old_version)
@@ -39,12 +42,12 @@ if __name__ == '__main__':
 
     package_name = args.package_name.replace('_', '-')
 
-    packages = get_packages(args)
+    packages = get_packages(args, package_name)
 
     package_map = { pkg[1][0]: pkg for pkg in packages }
 
     if package_name not in package_map:
-        raise ValueError("Package name not found: %s" % package_name)
+        raise ValueError("Package name not found: {}".format(package_name))
 
     target_package = package_map[package_name]
 
