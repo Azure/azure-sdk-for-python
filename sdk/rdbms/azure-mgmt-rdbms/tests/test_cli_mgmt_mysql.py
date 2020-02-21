@@ -122,7 +122,6 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
         # Create a database as a point in time restore[put]
         point_in_time = dt.datetime.now(tz=UTC()).isoformat()
-        print(point_in_time)
         BODY = {
           "location": "eastus",
           "properties":{
