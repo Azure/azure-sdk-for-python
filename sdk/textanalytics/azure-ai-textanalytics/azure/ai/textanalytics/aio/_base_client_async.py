@@ -37,7 +37,7 @@ class AsyncTextAnalyticsClientBase(object):
             credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credential, TextAnalyticsApiKeyCredential):
+        elif hasattr(credential, "api_key"):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
