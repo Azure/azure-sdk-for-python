@@ -23,6 +23,20 @@ import azure.mgmt.rdbms.mysql
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
+ZERO = dt.timedelta(0)
+
+class UTC(dt.tzinfo):
+    """UTC"""
+
+    def utcoffset(self, dt):
+        return ZERO
+
+    def tzname(self, dt):
+        return "UTC"
+
+    def dst(self, dt):
+        return ZERO
+
 
 class MgmtMySQLTest(AzureMgmtTestCase):
 
@@ -107,7 +121,8 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        point_in_time = dt.datetime.now(tz=dt.timezone(dt.timedelta(hours=0))).isoformat()
+        point_in_time = dt.datetime.now(tz=UTC()).isoformat()
+        print(point_in_time)
         BODY = {
           "location": "eastus",
           "properties":{
