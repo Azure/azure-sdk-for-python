@@ -9,18 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_insights_operations import StorageInsightsOperations
-from .workspaces_operations import WorkspacesOperations
-from .saved_searches_operations import SavedSearchesOperations
-from .linked_services_operations import LinkedServicesOperations
-from .data_sources_operations import DataSourcesOperations
-from .operations import Operations
+from ._linked_services_operations import LinkedServicesOperations
+from ._data_sources_operations import DataSourcesOperations
+from ._workspaces_operations import WorkspacesOperations
+from ._operations import Operations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._operational_insights_management_client_operations import OperationalInsightsManagementClientOperationsMixin
 
 __all__ = [
-    'StorageInsightsOperations',
-    'WorkspacesOperations',
-    'SavedSearchesOperations',
     'LinkedServicesOperations',
     'DataSourcesOperations',
+    'WorkspacesOperations',
     'Operations',
+    'PrivateLinkResourcesOperations',
+    'PrivateEndpointConnectionsOperations',
+    'OperationalInsightsManagementClientOperationsMixin',
 ]
