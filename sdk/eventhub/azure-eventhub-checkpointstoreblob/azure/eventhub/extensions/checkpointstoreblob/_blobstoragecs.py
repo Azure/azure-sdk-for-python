@@ -12,7 +12,7 @@ from collections import defaultdict
 from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.storage.blob import BlobClient, ContainerClient  # type: ignore
+from ._vendor.storage.blob import BlobClient, ContainerClient
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""

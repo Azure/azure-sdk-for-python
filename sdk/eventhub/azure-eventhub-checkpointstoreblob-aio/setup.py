@@ -39,7 +39,7 @@ exclude_packages = [
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.eventhub',
-        'azure.eventhub.extensions',
+        'azure.eventhub.extensions'
     ]
 
 setup(
@@ -66,7 +66,9 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.5.3",
     install_requires=[
-        'azure-storage-blob<13.0.0,>=12.0.0',
+        "azure-core<2.0.0,>=1.2.2",
+        "msrest>=0.6.10",
+        "cryptography>=2.1.4",
         'azure-eventhub<6.0.0,>=5.0.0',
         'aiohttp<4.0,>=3.0',
     ],

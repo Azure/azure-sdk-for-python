@@ -9,7 +9,7 @@ import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
+from ._vendor.storage.blob.aio import ContainerClient, BlobClient
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
