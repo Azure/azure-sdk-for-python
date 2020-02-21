@@ -11,6 +11,7 @@ jobs:
   - template: ./tests_invoke.yml
     parameters:
       InjectedPackages: $(InjectedPackages)
+      AllocateResourceGroup: 'false'
       EnvVars:
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
         STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)

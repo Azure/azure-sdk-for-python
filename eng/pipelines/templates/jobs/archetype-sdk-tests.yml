@@ -9,6 +9,7 @@ parameters:
   InjectedPackages: ''
   BuildDocs: true
   JobName: Test
+  AllocateResourceGroup: 'true'
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -47,19 +48,20 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
-      - pwsh: |
-          $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
-          $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
-          $ResourceGroupExpiration = (Get-Date).ToUniversalTime().AddHours(24).ToString("o")
-          Write-Host "Creating Resource Group: $($RgName)"
-          Write-Host "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME]$RgName"
+      - ${{ if (eq(${{ parameters.AllocateResourceGroups }}, 'true')) }}:
+        - pwsh: |
+            $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
+            $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
+            $ResourceGroupExpiration = (Get-Date).ToUniversalTime().AddHours(24).ToString("o")
+            Write-Host "Creating Resource Group: $($RgName)"
+            Write-Host "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME]$RgName"
 
-          az login --service-principal -u $(provisioner-aad-id) -p $(provisioner-aad-secret) --tenant $(provisioner-aad-tenant)
-          az account set --subscription $(provisioner-subscription)
+            az login --service-principal -u $(provisioner-aad-id) -p $(provisioner-aad-secret) --tenant $(provisioner-aad-tenant)
+            az account set --subscription $(provisioner-subscription)
 
-          az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId='$(Build.BuildId)' BuildJob='$(Agent.JobName)' BuildNumber='$(Build.BuildNumber)' BuildReason='$(Build.Reason)'
-          az group wait --created --resource-group $RgName
-        displayName: Create resource group and environment variable for tests
+            az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId='$(Build.BuildId)' BuildJob='$(Agent.JobName)' BuildNumber='$(Build.BuildNumber)' BuildReason='$(Build.Reason)'
+            az group wait --created --resource-group $RgName
+          displayName: Create resource group and environment variable for tests
 
       - template: ../steps/build-test.yml
         parameters:
@@ -78,7 +80,8 @@ jobs:
           InjectedPackages: ${{ parameters.InjectedPackages }}
           BuildDocs: ${{parameters.BuildDocs}}
 
-      - pwsh: |
-          az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
-        displayName: Delete resource group
+      - ${{ if (eq(${{ parameters.AllocateResourceGroups }}, 'true')) }}:
+        - pwsh: |
+            az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
+          displayName: Delete resource group
 
