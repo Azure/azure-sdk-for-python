@@ -48,14 +48,14 @@ def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
     packages = []
     pkg_name, _, version = get_package_details(setuppy_path)
     if package_type == "wheel":
-        prebuilt_package_path = find_whl(dist_directory, pkg_name, version)
+        prebuilt_package = find_whl(dist_directory, pkg_name, version)
     else:
-        prebuilt_package_path = find_sdist(dist_directory, pkg_name, version)
+        prebuilt_package = find_sdist(dist_directory, pkg_name, version)
 
-    if prebuilt_package_path is None:
+    if prebuilt_package is None:
         logging.error("Package is missing in prebuilt directory {0} for package {1} and version {2}".format(dist_directory, pkg_name, version))
         exit(1)
-    packages.append(prebuilt_package_path)
+    packages.append(prebuilt_package)
     return packages
 
 
