@@ -397,6 +397,21 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_from_file_system_client_async())
 
+    async def _test_get_root_directory_client(self):
+        file_system = await self._create_file_system()
+        directory_client = file_system.get_root_directory_client()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        await directory_client.set_access_control(acl=acl)
+        access_control = await directory_client.get_access_control()
+
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_get_root_directory_client_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_root_directory_client())
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

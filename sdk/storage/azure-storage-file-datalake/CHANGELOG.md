@@ -1,7 +1,8 @@
 # Release History
 
 ## 12.0.0b8 (Unreleased)
-
+**New Feature**
+- Added `get_root_directory_client` sync and async API.
 
 ## 12.0.0b7 (2020-02-12)
 **New Feature**
