@@ -204,7 +204,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -222,7 +222,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraKeyspaceResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -401,7 +401,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -419,7 +419,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraTableResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -721,6 +721,30 @@ class ContainerPartitionKey(Model):
         self.version = version
 
 
+class CreateUpdateOptions(Model):
+    """CreateUpdateOptions are a list of key-value pairs that describe the
+    resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
+    and "Throughput".
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, str]
+    :param throughput: Request Units per second. For example, "throughput":
+     "10000".
+    :type throughput: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{str}'},
+        'throughput': {'key': 'throughput', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, throughput: str=None, **kwargs) -> None:
+        super(CreateUpdateOptions, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.throughput = throughput
+
+
 class DatabaseAccountConnectionString(Model):
     """Connection string for the Cosmos DB account.
 
@@ -812,6 +836,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -841,11 +867,12 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.consistency_policy = consistency_policy
@@ -859,6 +886,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.key_vault_key_uri = key_vault_key_uri
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -939,6 +967,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -977,9 +1007,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -999,6 +1030,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.key_vault_key_uri = key_vault_key_uri
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1157,6 +1189,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param disable_key_based_metadata_write_access: Disable write operations
      on metadata resources (databases, containers, throughput) via account keys
     :type disable_key_based_metadata_write_access: bool
+    :param key_vault_key_uri: The URI of the key vault
+    :type key_vault_key_uri: str
     """
 
     _attribute_map = {
@@ -1173,9 +1207,10 @@ class DatabaseAccountUpdateParameters(Model):
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
         'disable_key_based_metadata_write_access': {'key': 'properties.disableKeyBasedMetadataWriteAccess', 'type': 'bool'},
+        'key_vault_key_uri': {'key': 'properties.keyVaultKeyUri', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1190,6 +1225,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
+        self.key_vault_key_uri = key_vault_key_uri
 
 
 class ErrorResponse(Model):
@@ -1359,7 +1395,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -1377,7 +1413,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -1515,7 +1551,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -1533,7 +1569,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinGraphResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -2067,7 +2103,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -2085,7 +2121,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBCollectionResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -2241,7 +2277,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -2259,7 +2295,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -2991,7 +3027,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3009,7 +3045,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlContainerResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3201,7 +3237,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3219,7 +3255,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3367,7 +3403,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3385,7 +3421,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlStoredProcedureResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3531,7 +3567,7 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlTriggerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3549,7 +3585,7 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlTriggerResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3718,7 +3754,7 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3736,7 +3772,7 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'SqlUserDefinedFunctionResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
@@ -3882,7 +3918,7 @@ class TableCreateUpdateParameters(ARMResourceProperties):
     :type resource: ~azure.mgmt.cosmosdb.models.TableResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
+    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
     _validation = {
@@ -3900,7 +3936,7 @@ class TableCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'TableResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
+        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
     }
 
     def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
