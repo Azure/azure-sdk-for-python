@@ -64,7 +64,7 @@ class CryptographyClient(KeyVaultClientBase):
             self._key = key
             self._key_id = parse_vault_id(key.id)
             self._allowed_ops = frozenset(self._key.key_operations)
-        elif isinstance(key, six.text_type):
+        elif isinstance(key, six.string_types):
             self._key = None
             self._key_id = parse_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
