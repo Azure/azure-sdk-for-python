@@ -17,7 +17,6 @@
 # ----------------------
 
 import datetime as dt
-import pytz
 import unittest
 
 import azure.mgmt.rdbms.mysql
@@ -108,7 +107,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        point_in_time = dt.datetime.now(tz=pytz.timezone('UTC')).isoformat()
+        point_in_time = dt.datetime.now(tz=dt.timezone(dt.timedelta(hours=0))).isoformat()
         BODY = {
           "location": "eastus",
           "properties":{
