@@ -48,7 +48,7 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
-      - ${{ if (eq(${{ parameters.AllocateResourceGroups }}, 'true')) }}:
+      - ${{ if eq(${{ parameters.AllocateResourceGroups }}, 'true') }}:
         - pwsh: |
             $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
             $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
@@ -80,7 +80,7 @@ jobs:
           InjectedPackages: ${{ parameters.InjectedPackages }}
           BuildDocs: ${{parameters.BuildDocs}}
 
-      - ${{ if (eq(${{ parameters.AllocateResourceGroups }}, 'true')) }}:
+      - ${{ if eq(${{ parameters.AllocateResourceGroups }}, 'true') }}:
         - pwsh: |
             az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
           displayName: Delete resource group
