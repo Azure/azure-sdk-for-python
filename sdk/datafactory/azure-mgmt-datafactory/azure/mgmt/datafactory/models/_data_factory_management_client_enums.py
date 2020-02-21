@@ -131,51 +131,6 @@ class DataFlowDebugCommandType(str, Enum):
     execute_expression_query = "executeExpressionQuery"
 
 
-class TumblingWindowFrequency(str, Enum):
-
-    minute = "Minute"
-    hour = "Hour"
-
-
-class BlobEventTypes(str, Enum):
-
-    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
-    microsoft_storage_blob_deleted = "Microsoft.Storage.BlobDeleted"
-
-
-class DayOfWeek(str, Enum):
-
-    sunday = "Sunday"
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-
-
-class DaysOfWeek(str, Enum):
-
-    sunday = "Sunday"
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-
-
-class RecurrenceFrequency(str, Enum):
-
-    not_specified = "NotSpecified"
-    minute = "Minute"
-    hour = "Hour"
-    day = "Day"
-    week = "Week"
-    month = "Month"
-    year = "Year"
-
-
 class GoogleAdWordsAuthenticationType(str, Enum):
 
     service_authentication = "ServiceAuthentication"
@@ -364,6 +319,51 @@ class AvroCompressionCodec(str, Enum):
     snappy = "snappy"
     xz = "xz"
     bzip2 = "bzip2"
+
+
+class TumblingWindowFrequency(str, Enum):
+
+    minute = "Minute"
+    hour = "Hour"
+
+
+class BlobEventTypes(str, Enum):
+
+    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
+    microsoft_storage_blob_deleted = "Microsoft.Storage.BlobDeleted"
+
+
+class DayOfWeek(str, Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class DaysOfWeek(str, Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class RecurrenceFrequency(str, Enum):
+
+    not_specified = "NotSpecified"
+    minute = "Minute"
+    hour = "Hour"
+    day = "Day"
+    week = "Week"
+    month = "Month"
+    year = "Year"
 
 
 class DataFlowComputeType(str, Enum):
