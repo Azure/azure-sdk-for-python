@@ -23,6 +23,20 @@ import azure.mgmt.rdbms.mariadb
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
+ZERO = dt.timedelta(0)
+
+class UTC(dt.tzinfo):
+    """UTC"""
+
+    def utcoffset(self, dt):
+        return ZERO
+
+    def tzname(self, dt):
+        return "UTC"
+
+    def dst(self, dt):
+        return ZERO
+
 
 class MgmtMariaDBTest(AzureMgmtTestCase):
 
@@ -88,7 +102,7 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        point_in_time = dt.datetime.now(tz=dt.timezone(dt.timedelta(hours=0))).isoformat()
+        point_in_time = dt.datetime.now(tz=UTC()).isoformat()
         BODY = {
           "location": "eastus",
           "properties": {
