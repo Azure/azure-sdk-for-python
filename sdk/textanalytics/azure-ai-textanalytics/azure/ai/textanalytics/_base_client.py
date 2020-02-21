@@ -20,7 +20,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
-from ._credential import TextAnalyticsApiKeyCredential
 from ._user_agent import USER_AGENT
 
 

@@ -18,7 +18,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     DistributedTracingPolicy
 )
-from .._credential import TextAnalyticsApiKeyCredential
 from .._policies import CognitiveServicesCredentialPolicy
 from ._policies_async import AsyncTextAnalyticsResponseHook
 from .._user_agent import USER_AGENT
