@@ -65,8 +65,8 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START get_receiver]
             :end-before: [END get_receiver]
             :language: python
@@ -194,8 +194,8 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
 
         :rtype: int
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START queue_size]
                 :end-before: [END queue_size]
                 :language: python
@@ -221,8 +221,8 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START peek_messages]
                 :end-before: [END peek_messages]
                 :language: python
@@ -260,8 +260,8 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.common.message.DeferredMessage]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START receive_deferred_messages]
                 :end-before: [END receive_deferred_messages]
                 :language: python
@@ -337,8 +337,8 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
          due to an error.
         :type exception: Exception
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START open_close_receiver_connection]
                 :end-before: [END open_close_receiver_connection]
                 :language: python
@@ -372,8 +372,8 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.common.message.Message]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START fetch_next_messages]
                 :end-before: [END fetch_next_messages]
                 :language: python
@@ -433,15 +433,15 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    Example:
-        .. literalinclude:: ../examples/test_examples.py
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_session_receiver_client]
             :end-before: [END create_session_receiver_client]
             :language: python
             :dedent: 4
             :caption: Running a session receiver within a context manager.
 
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../samples/sync_samples/test_examples.py
             :start-after: [START create_receiver_session_nextavailable]
             :end-before: [END create_receiver_session_nextavailable]
             :language: python
@@ -512,8 +512,8 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
         :rtype: str
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START get_session_state]
                 :end-before: [END get_session_state]
                 :language: python
@@ -537,8 +537,8 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :param state: The state value.
         :type state: str, bytes or bytearray
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START set_session_state]
                 :end-before: [END set_session_state]
                 :language: python
@@ -562,8 +562,8 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START renew_lock]
                 :end-before: [END renew_lock]
                 :language: python
@@ -592,8 +592,8 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START peek_messages]
                 :end-before: [END peek_messages]
                 :language: python
@@ -632,8 +632,8 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.common.message.DeferredMessage]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START receive_deferred_messages]
                 :end-before: [END receive_deferred_messages]
                 :language: python
@@ -678,8 +678,8 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type skip: int
         :rtype: list[str]
 
-        Example:
-            .. literalinclude:: ../examples/test_examples.py
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/test_examples.py
                 :start-after: [START list_sessions]
                 :end-before: [END list_sessions]
                 :language: python

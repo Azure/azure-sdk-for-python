@@ -4,13 +4,16 @@
 # -------------------------------------
 from __future__ import print_function
 import functools
-import hashlib
-import os
 
 from azure.core.exceptions import ResourceNotFoundError
+from azure.keyvault.secrets import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from secrets_preparer import VaultClientPreparer
-from secrets_test_case import KeyVaultTestCase
+
+from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case import KeyVaultTestCase
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, SecretClient)
 
 
 def print(*args):
@@ -33,12 +36,11 @@ def test_create_secret_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_secret_crud_operations(self, vault_client, **kwargs):
-        secret_client = vault_client.secrets
+    @KeyVaultClientPreparer()
+    def test_example_secret_crud_operations(self, client, **kwargs):
+        secret_client = client
 
         # [START set_secret]
         from dateutil import parser as date_parse
@@ -104,9 +106,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_secret_list_operations(self, vault_client, **kwargs):
-        secret_client = vault_client.secrets
+    @KeyVaultClientPreparer()
+    def test_example_secret_list_operations(self, client, **kwargs):
+        secret_client = client
 
         for i in range(7):
             secret_client.set_secret("key{}".format(i), "value{}".format(i))
@@ -153,9 +155,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
-    @VaultClientPreparer()
-    def test_example_secrets_backup_restore(self, vault_client, **kwargs):
-        secret_client = vault_client.secrets
+    @KeyVaultClientPreparer()
+    def test_example_secrets_backup_restore(self, client, **kwargs):
+        secret_client = client
         created_secret = secret_client.set_secret("secret-name", "secret-value")
         secret_name = created_secret.name
         # [START backup_secret]
@@ -178,9 +180,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_example_secrets_recover(self, vault_client, **kwargs):
-        secret_client = vault_client.secrets
+    @KeyVaultClientPreparer()
+    def test_example_secrets_recover(self, client, **kwargs):
+        secret_client = client
         created_secret = secret_client.set_secret("secret-name", "secret-value")
         secret_client.begin_delete_secret(created_secret.name).wait()
 

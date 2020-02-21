@@ -65,9 +65,9 @@ class SparkBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyListBatchResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyListBatchResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.ExtendedLivyListBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyListBatchResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -133,9 +133,9 @@ class SparkBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyBatchResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyBatchResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.ExtendedLivyBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyBatchResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -201,9 +201,9 @@ class SparkBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedLivyBatchResponse or the result of cls(response)
         :rtype: ~azure.synapse.models.ExtendedLivyBatchResponse
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.ExtendedLivyBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedLivyBatchResponse"]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL
@@ -262,9 +262,9 @@ class SparkBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {})
 
         # Construct URL

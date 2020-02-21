@@ -402,7 +402,7 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
 @pytest.mark.asyncio
 async def test_async_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
     try:
-        from examples.async_examples.example_queue_send_receive_batch_async import sample_queue_send_receive_batch_async
+        from samples.async_samples.example_queue_send_receive_batch_async import sample_queue_send_receive_batch_async
     except ImportError:
         pytest.skip("")
     await sample_queue_send_receive_batch_async(live_servicebus_config, standard_queue)
@@ -411,7 +411,7 @@ async def test_async_sample_queue_send_receive_batch(live_servicebus_config, sta
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_batch(live_servicebus_config, session_queue):
     try:
-        from examples.async_examples.example_session_send_receive_batch_async import sample_session_send_receive_batch_async
+        from samples.async_samples.example_session_send_receive_batch_async import sample_session_send_receive_batch_async
     except ImportError:
         pytest.skip("")
     await sample_session_send_receive_batch_async(live_servicebus_config, session_queue)
@@ -420,7 +420,7 @@ async def test_async_sample_session_send_receive_batch(live_servicebus_config, s
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
     try:
-        from examples.async_examples.example_session_send_receive_with_pool_async import sample_session_send_receive_with_pool_async
+        from samples.async_samples.example_session_send_receive_with_pool_async import sample_session_send_receive_with_pool_async
     except ImportError:
         pytest.skip("")
     await sample_session_send_receive_with_pool_async(live_servicebus_config, session_queue)

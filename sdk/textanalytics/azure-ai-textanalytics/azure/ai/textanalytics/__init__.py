@@ -24,7 +24,7 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentScorePerLabel,
+    SentimentConfidenceScorePerLabel,
     PiiEntity
 )
 from ._credential import TextAnalyticsApiKeyCredential
@@ -48,7 +48,7 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentScorePerLabel',
+    'SentimentConfidenceScorePerLabel',
     'TextAnalyticsApiKeyCredential',
     'PiiEntity'
 ]

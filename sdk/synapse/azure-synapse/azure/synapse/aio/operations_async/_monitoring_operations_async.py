@@ -62,9 +62,9 @@ class MonitoringOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerDataResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerDataResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.HistoryServerDataResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.HistoryServerDataResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -119,9 +119,9 @@ class MonitoringOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkJobListViewResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.SparkJobListViewResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.SparkJobListViewResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.SparkJobListViewResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -178,9 +178,9 @@ class MonitoringOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkJobListViewResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.SparkJobListViewResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.SparkJobListViewResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.SparkJobListViewResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -233,9 +233,9 @@ class MonitoringOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerPropertiesResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerPropertiesResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.HistoryServerPropertiesResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.HistoryServerPropertiesResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -298,9 +298,9 @@ class MonitoringOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerDiagnosticResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerDiagnosticResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.HistoryServerDiagnosticResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.HistoryServerDiagnosticResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -367,9 +367,9 @@ class MonitoringOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerGraphResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerGraphResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls: ClsType["models.HistoryServerGraphResponse"] = kwargs.pop('cls', None )
+        cls: ClsType["models.HistoryServerGraphResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 

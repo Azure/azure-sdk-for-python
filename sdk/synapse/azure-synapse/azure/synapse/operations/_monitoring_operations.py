@@ -63,9 +63,9 @@ class MonitoringOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerDataResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerDataResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.HistoryServerDataResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.HistoryServerDataResponse"]
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -121,9 +121,9 @@ class MonitoringOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkJobListViewResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.SparkJobListViewResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.SparkJobListViewResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkJobListViewResponse"]
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -181,9 +181,9 @@ class MonitoringOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SparkJobListViewResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.SparkJobListViewResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.SparkJobListViewResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkJobListViewResponse"]
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -237,9 +237,9 @@ class MonitoringOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerPropertiesResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerPropertiesResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.HistoryServerPropertiesResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.HistoryServerPropertiesResponse"]
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -303,9 +303,9 @@ class MonitoringOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerDiagnosticResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerDiagnosticResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.HistoryServerDiagnosticResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.HistoryServerDiagnosticResponse"]
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -373,9 +373,9 @@ class MonitoringOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HistoryServerGraphResponse or  or the result of cls(response)
         :rtype: ~azure.synapse.models.HistoryServerGraphResponse or None
-        :raises: ~azure.core.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None )  # type: ClsType["models.HistoryServerGraphResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.HistoryServerGraphResponse"]
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 

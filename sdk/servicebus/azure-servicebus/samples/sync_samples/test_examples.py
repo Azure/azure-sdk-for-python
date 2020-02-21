@@ -32,6 +32,7 @@ def create_servicebus_client():
 def process_message(message):
     print(message)
 
+# TODO: Prior to Track2 release, these should be converted to console-runnable.  See EventHubs.
 @pytest.mark.liveTest
 def test_example_create_servicebus_client(live_servicebus_config):
 
@@ -484,7 +485,7 @@ def test_example_create_sender_send_message(live_servicebus_config, standard_que
 @pytest.mark.liveTest
 def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
     try:
-        from examples.example_queue_send_receive_batch import sample_queue_send_receive_batch
+        from samples.sync_samples.example_queue_send_receive_batch import sample_queue_send_receive_batch
     except ImportError:
         pytest.skip("")
     sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
@@ -492,7 +493,7 @@ def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
 @pytest.mark.liveTest
 def test_sample_session_send_receive_batch(live_servicebus_config, session_queue):
     try:
-        from examples.example_session_send_receive_batch import sample_session_send_receive_batch
+        from samples.sync_samples.example_session_send_receive_batch import sample_session_send_receive_batch
     except ImportError:
         pytest.skip("")
     sample_session_send_receive_batch(live_servicebus_config, session_queue)
@@ -500,7 +501,7 @@ def test_sample_session_send_receive_batch(live_servicebus_config, session_queue
 @pytest.mark.liveTest
 def test_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
     try:
-        from examples.example_session_send_receive_with_pool import sample_session_send_receive_with_pool
+        from samples.sync_samples.example_session_send_receive_with_pool import sample_session_send_receive_with_pool
     except ImportError:
         pytest.skip("")
     sample_session_send_receive_with_pool(live_servicebus_config, session_queue)

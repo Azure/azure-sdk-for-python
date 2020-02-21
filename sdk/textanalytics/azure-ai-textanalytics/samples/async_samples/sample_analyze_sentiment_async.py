@@ -51,17 +51,17 @@ class AnalyzeSentimentSampleAsync(object):
             print("Document text: {}".format(documents[idx]))
             print("Overall sentiment: {}".format(doc.sentiment))
         # [END batch_analyze_sentiment_async]
-            print("Overall scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
-                doc.sentiment_scores.positive,
-                doc.sentiment_scores.neutral,
-                doc.sentiment_scores.negative,
+            print("Overall confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
+                doc.confidence_scores.positive,
+                doc.confidence_scores.neutral,
+                doc.confidence_scores.negative,
             ))
             for idx, sentence in enumerate(doc.sentences):
                 print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
-                print("Sentence score: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
-                    sentence.sentiment_scores.positive,
-                    sentence.sentiment_scores.neutral,
-                    sentence.sentiment_scores.negative,
+                print("Sentence confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
+                    sentence.confidence_scores.positive,
+                    sentence.confidence_scores.neutral,
+                    sentence.confidence_scores.negative,
                 ))
                 print("Offset: {}".format(sentence.offset))
                 print("Length: {}\n".format(sentence.length))
