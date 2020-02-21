@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-synapse"
+package_pprint_name = "Synapse Management"
+package_doc_id = ""
+is_stable = true

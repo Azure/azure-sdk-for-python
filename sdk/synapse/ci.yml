@@ -42,3 +42,6 @@ stages:
     Artifacts:
     - name: azure_synapse
       safeName: azuresynapse
+    - name: azure_mgmt_synapse
+      safeName: azuremgmtsynapse
+      
