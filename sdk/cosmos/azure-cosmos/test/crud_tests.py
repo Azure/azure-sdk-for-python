@@ -181,8 +181,6 @@ class CRUDTests(unittest.TestCase):
         )
         self.assertEqual(created_db.id, database_id)
 
-        conftest.database_ids_to_delete.append(created_db.id)
-
         # Verify offer throughput for database
         offer = created_db.read_offer()
         self.assertEqual(offer.offer_throughput, offer_throughput)
@@ -191,14 +189,12 @@ class CRUDTests(unittest.TestCase):
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
+        self.client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.
         db1 = self.client.create_database('database 1' + str(uuid.uuid4()))
         db2 = self.client.create_database('database 2' + str(uuid.uuid4()))
-
-        conftest.database_ids_to_delete.append(db1.id)
-        conftest.database_ids_to_delete.append(db2.id)
 
         # query with parameters.
         databases = list(self.client.query_databases({
@@ -218,6 +214,8 @@ class CRUDTests(unittest.TestCase):
         # query with a string.
         databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
+        self.client.delete_database(db1.id)
+        self.client.delete_database(db2.id)
 
     def test_collection_crud(self):
         created_db = self.databaseForTest

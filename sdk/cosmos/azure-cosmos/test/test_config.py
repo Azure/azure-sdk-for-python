@@ -38,8 +38,11 @@ except:
 class _test_config(object):
 
     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
-    masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    host = os.getenv('ACCOUNT_HOST', 'https://localhost:443/')
+    #masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
+    #host = os.getenv('ACCOUNT_HOST', 'https://localhost:443/')
+    masterKey = os.getenv('ACCOUNT_KEY',
+                          'LyiYjQopDScUDPLeN6Myn4umLwFoJCttLpwpf9OoIvsyroPazV83EEwb9k7N8ANqORA4QF60mtjwwwgqfm9yVg==')
+    host = os.getenv('ACCOUNT_HOST', 'https://java-async-gated.documents-staging.windows-ppe.net:443/')
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
@@ -80,6 +83,7 @@ class _test_config(object):
         cls.try_delete_database(client)
         cls.TEST_DATABASE = client.create_database(cls.TEST_DATABASE_ID)
         cls.IS_MULTIMASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
+        os.environ['COSMOS_TEST_DATABASE_ID'] = cls.TEST_DATABASE_ID
         return cls.TEST_DATABASE
 
     @classmethod
