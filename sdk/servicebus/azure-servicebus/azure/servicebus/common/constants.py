@@ -41,6 +41,10 @@ REQUEST_RESPONSE_ADD_RULE_OPERATION = VENDOR + b":add-rule"
 REQUEST_RESPONSE_REMOVE_RULE_OPERATION = VENDOR + b":remove-rule"
 REQUEST_RESPONSE_GET_RULES_OPERATION = VENDOR + b":enumerate-rules"
 
+CONTAINER_PREFIX = "eventhub.pysdk-"
+JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
+USER_AGENT_PREFIX = "azsdk-python-servicebus"
+
 
 class ReceiveSettleMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock

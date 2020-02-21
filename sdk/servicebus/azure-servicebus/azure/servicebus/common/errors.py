@@ -115,6 +115,10 @@ class NoActiveSession(ServiceBusError):
     """No active Sessions are available to receive from."""
 
 
+class OperationTimeoutError(ServiceBusError):
+    """Operation timed out."""
+
+
 class MessageAlreadySettled(ServiceBusError):
     """Failed to settle the message.
 
