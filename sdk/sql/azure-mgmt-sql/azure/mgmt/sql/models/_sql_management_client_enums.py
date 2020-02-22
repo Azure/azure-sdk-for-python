@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class CheckNameAvailabilityReason(str, Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
 class ServerConnectionType(str, Enum):
 
     default = "Default"
@@ -331,11 +325,6 @@ class OperationOrigin(str, Enum):
     system = "system"
 
 
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
 class SyncAgentState(str, Enum):
 
     online = "Online"
@@ -504,6 +493,15 @@ class RestorePointType(str, Enum):
     discrete = "DISCRETE"
 
 
+class SensitivityLabelRank(str, Enum):
+
+    none = "None"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+    critical = "Critical"
+
+
 class ManagementOperationState(str, Enum):
 
     pending = "Pending"
@@ -617,6 +615,11 @@ class InstancePoolLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+
+
 class ManagedServerCreateMode(str, Enum):
 
     default = "Default"
@@ -636,23 +639,32 @@ class ManagedInstanceProxyOverride(str, Enum):
     default = "Default"
 
 
-class ManagedDatabaseStatus(str, Enum):
+class PrivateLinkServiceConnectionStateStatus(str, Enum):
 
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    restoring = "Restoring"
-    updating = "Updating"
+    approved = "Approved"
+    pending = "Pending"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
 
 
-class ManagedDatabaseCreateMode(str, Enum):
+class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
 
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
+    none = "None"
+
+
+class PrivateEndpointProvisioningState(str, Enum):
+
+    approving = "Approving"
+    ready = "Ready"
+    dropping = "Dropping"
+    failed = "Failed"
+    rejecting = "Rejecting"
+
+
+class CheckNameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class MaxSizeUnit(str, Enum):
@@ -691,6 +703,26 @@ class PauseDelayTimeUnit(str, Enum):
     minutes = "Minutes"
 
 
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    restoring = "Restoring"
+    updating = "Updating"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+
+
 class LongTermRetentionDatabaseState(str, Enum):
 
     all = "All"
@@ -723,3 +755,45 @@ class CapabilityGroup(str, Enum):
     supported_managed_instance_versions = "supportedManagedInstanceVersions"
     supported_instance_pool_editions = "supportedInstancePoolEditions"
     supported_managed_instance_editions = "supportedManagedInstanceEditions"
+
+
+class DatabaseState1(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
+
+
+class DatabaseState2(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
+
+
+class DatabaseState3(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
+
+
+class DatabaseState4(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
+
+
+class DatabaseState5(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
+
+
+class DatabaseState6(str, Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
