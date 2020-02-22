@@ -6,6 +6,7 @@
 - `SentimentScorePerLabel` has been renamed to `SentimentConfidenceScorePerLabel`
 - `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
 - `LinkedEntity` attribute `id` has been renamed to `data_source_entity_id`
+- Parameters `country_hint` and `language` are now passed as keyword arguments
 
 **New features**
 - Pass `country_hint="none"` to not use the default country hint of `"US"`.
