@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ActiveDirectoryObject
     from ._models_py3 import Actor
     from ._models_py3 import AgentProperties
     from ._models_py3 import Argument
@@ -116,6 +117,7 @@ try:
     from ._models_py3 import WebhookCreateParameters
     from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
+    from ._models import ActiveDirectoryObject
     from ._models import Actor
     from ._models import AgentProperties
     from ._models import Argument
@@ -266,6 +268,7 @@ from ._container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ActiveDirectoryObject',
     'Actor',
     'AgentProperties',
     'Argument',

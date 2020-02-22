@@ -12,31 +12,6 @@
 from msrest.serialization import Model
 
 
-class ActiveDirectoryObject(Model):
-    """The Active Directory Object that will be used for authenticating the token
-    of a container registry.
-
-    :param object_id: The user/group/application object ID for Active
-     Directory Object that will be used for authenticating the token of a
-     container registry.
-    :type object_id: str
-    :param tenant_id: The tenant ID of user/group/application object Active
-     Directory Object that will be used for authenticating the token of a
-     container registry.
-    :type tenant_id: str
-    """
-
-    _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ActiveDirectoryObject, self).__init__(**kwargs)
-        self.object_id = kwargs.get('object_id', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-
-
 class Actor(Model):
     """The agent that initiated the event. For most situations, this could be from
     the authorization context of the request.
@@ -91,6 +66,29 @@ class CloudError(Model):
     }
 
 
+class EncryptionProperty(Model):
+    """EncryptionProperty.
+
+    :param status: Indicates whether or not the encryption is enabled for
+     container registry. Possible values include: 'enabled', 'disabled'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionStatus
+    :param key_vault_properties: Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
 class EventInfo(Model):
     """The basic information of an event.
 
@@ -115,11 +113,11 @@ class Event(EventInfo):
     :param event_request_message: The event request message sent to the
      service URI.
     :type event_request_message:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.EventRequestMessage
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventRequestMessage
     :param event_response_message: The event response message received from
      the service URI.
     :type event_response_message:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.EventResponseMessage
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventResponseMessage
     """
 
     _attribute_map = {
@@ -145,18 +143,18 @@ class EventContent(Model):
     :type action: str
     :param target: The target of the event.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Target
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Target
     :param request: The request that generated the event.
     :type request:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Request
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Request
     :param actor: The agent that initiated the event. For most situations,
      this could be from the authorization context of the request.
     :type actor:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Actor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Actor
     :param source: The registry node that generated the event. Put
      differently, while the actor initiates the event, the source generates it.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Source
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Source
     """
 
     _attribute_map = {
@@ -185,7 +183,7 @@ class EventRequestMessage(Model):
 
     :param content: The content of the event request message.
     :type content:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.EventContent
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventContent
     :param headers: The headers of the event request message.
     :type headers: dict[str, str]
     :param method: The HTTP method used to send the event request message.
@@ -245,55 +243,39 @@ class EventResponseMessage(Model):
         self.version = kwargs.get('version', None)
 
 
-class GenerateCredentialsParameters(Model):
-    """The parameters used to generate credentials for a specified token or user
-    of a container registry.
+class IdentityProperties(Model):
+    """Managed identity for the resource.
 
-    :param token_id: The resource ID of the token for which credentials have
-     to be generated.
-    :type token_id: str
-    :param expiry: The expiry date of the generated credentials after which
-     the credentials become invalid.
-    :type expiry: datetime
-    :param name: Specifies name of the password which should be regenerated if
-     any -- password1 or password2. Possible values include: 'password1',
-     'password2'
-    :type name: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
+    :param principal_id: The principal ID of resource identity.
+    :type principal_id: str
+    :param tenant_id: The tenant ID of resource.
+    :type tenant_id: str
+    :param type: The identity type. Possible values include: 'SystemAssigned',
+     'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
+    :type type: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ResourceIdentityType
+    :param user_assigned_identities: The list of user identities associated
+     with the resource. The user identity
+     dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
+     providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UserIdentityProperties]
     """
 
     _attribute_map = {
-        'token_id': {'key': 'tokenId', 'type': 'str'},
-        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentityProperties}'},
     }
 
     def __init__(self, **kwargs):
-        super(GenerateCredentialsParameters, self).__init__(**kwargs)
-        self.token_id = kwargs.get('token_id', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.name = kwargs.get('name', None)
-
-
-class GenerateCredentialsResult(Model):
-    """The response from the GenerateCredentials operation.
-
-    :param username: The username for a container registry.
-    :type username: str
-    :param passwords: The list of passwords for a container registry.
-    :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
-    """
-
-    _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GenerateCredentialsResult, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.passwords = kwargs.get('passwords', None)
+        super(IdentityProperties, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class ImportImageParameters(Model):
@@ -303,7 +285,7 @@ class ImportImageParameters(Model):
 
     :param source: Required. The source of the image.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ImportSource
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSource
     :param target_tags: List of strings of the form repo[:tag]. When tag is
      omitted the source will be used (or 'latest' if source tag is also
      omitted).
@@ -316,7 +298,7 @@ class ImportImageParameters(Model):
      copying begins. Possible values include: 'NoForce', 'Force'. Default
      value: "NoForce" .
     :type mode: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ImportMode
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportMode
     """
 
     _validation = {
@@ -351,7 +333,7 @@ class ImportSource(Model):
     :type registry_uri: str
     :param credentials: Credentials used when importing from a registry uri.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ImportSourceCredentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSourceCredentials
     :param source_image: Required. Repository name of the source image.
      Specify an image by repository ('hello-world'). This will use the 'latest'
      tag.
@@ -415,7 +397,7 @@ class IPRule(Model):
     :param action: The action of IP ACL rule. Possible values include:
      'Allow'. Default value: "Allow" .
     :type action: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Action
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR
      format. Only IPV4 address is allowed.
     :type ip_address_or_range: str
@@ -436,6 +418,39 @@ class IPRule(Model):
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
 
 
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param key_identifier: Key vault uri to access the encryption key.
+    :type key_identifier: str
+    :ivar versioned_key_identifier: The fully qualified key identifier that
+     includes the version of the key that is actually used for encryption.
+    :vartype versioned_key_identifier: str
+    :param identity: The client id of the identity which will be used to
+     access key vault.
+    :type identity: str
+    """
+
+    _validation = {
+        'versioned_key_identifier': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'versioned_key_identifier': {'key': 'versionedKeyIdentifier', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = kwargs.get('key_identifier', None)
+        self.versioned_key_identifier = None
+        self.identity = kwargs.get('identity', None)
+
+
 class NetworkRuleSet(Model):
     """The network rule set for a container registry.
 
@@ -445,13 +460,13 @@ class NetworkRuleSet(Model):
      no other rules match. Possible values include: 'Allow', 'Deny'. Default
      value: "Allow" .
     :type default_action: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.DefaultAction
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.DefaultAction
     :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.VirtualNetworkRule]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.VirtualNetworkRule]
     :param ip_rules: The IP ACL rules.
     :type ip_rules:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.IPRule]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.IPRule]
     """
 
     _validation = {
@@ -481,10 +496,10 @@ class OperationDefinition(Model):
     :param display: The display information for the container registry
      operation.
     :type display:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.OperationDisplayDefinition
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDisplayDefinition
     :param service_specification: The definition of Azure Monitoring service.
     :type service_specification:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.OperationServiceSpecificationDefinition
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationServiceSpecificationDefinition
     """
 
     _attribute_map = {
@@ -567,12 +582,12 @@ class OperationMetricSpecificationDefinition(Model):
 
 
 class OperationServiceSpecificationDefinition(Model):
-    """The definition of Azure Monitoring metrics list.
+    """The definition of Azure Monitoring list.
 
     :param metric_specifications: A list of Azure Monitoring metrics
      definition.
     :type metric_specifications:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.OperationMetricSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationMetricSpecificationDefinition]
     """
 
     _attribute_map = {
@@ -584,47 +599,183 @@ class OperationServiceSpecificationDefinition(Model):
         self.metric_specifications = kwargs.get('metric_specifications', None)
 
 
-class ProxyResource(Model):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class Policies(Model):
+    """The policies for a container registry.
+
+    :param quarantine_policy: The quarantine policy for a container registry.
+    :type quarantine_policy:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.QuarantinePolicy
+    :param trust_policy: The content trust policy for a container registry.
+    :type trust_policy:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicy
+    :param retention_policy: The retention policy for a container registry.
+    :type retention_policy:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RetentionPolicy
+    """
+
+    _attribute_map = {
+        'quarantine_policy': {'key': 'quarantinePolicy', 'type': 'QuarantinePolicy'},
+        'trust_policy': {'key': 'trustPolicy', 'type': 'TrustPolicy'},
+        'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Policies, self).__init__(**kwargs)
+        self.quarantine_policy = kwargs.get('quarantine_policy', None)
+        self.trust_policy = kwargs.get('trust_policy', None)
+        self.retention_policy = kwargs.get('retention_policy', None)
+
+
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    :param id: This is private endpoint resource created with
+     Microsoft.Network resource provider.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateEndpointConnection(Model):
+    """An object that represents a private endpoint connection for a container
+    registry.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The resource type is private endpoint connection.
     :vartype type: str
+    :param id: The resource ID.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param private_endpoint: The resource of private endpoint.
+    :type private_endpoint:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpoint
+    :param private_link_service_connection_state: A collection of information
+     about the state of the connection between service consumer and provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of private endpoint
+     connection resource. Possible values include: 'Creating', 'Updating',
+     'Deleting', 'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.type = None
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class PrivateLinkResource(Model):
+    """A resource that supports private link capabilities.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The resource type is private link resource.
+    :vartype type: str
+    :param id: The resource ID.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param group_id: The private link resource group id.
+    :type group_id: str
+    :param required_members: The private link resource required member names.
+    :type required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
         'type': {'readonly': True},
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
+        super(PrivateLinkResource, self).__init__(**kwargs)
         self.type = None
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.required_members = kwargs.get('required_members', None)
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """The state of a private link service connection.
+
+    :param status: The private link service connection status. Possible values
+     include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :param description: The description for connection status. For example if
+     connection is rejected it can indicate reason for rejection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer. Possible values include:
+     'None', 'Recreate'
+    :type actions_required: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActionsRequired
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
 
 
 class QuarantinePolicy(Model):
-    """An object that represents quarantine policy for a container registry.
+    """The quarantine policy for a container registry.
 
     :param status: The value that indicates whether the policy is enabled or
-     not. Possible values include: 'enabled', 'disabled'
+     not. Possible values include: 'enabled', 'disabled'. Default value:
+     "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -633,7 +784,7 @@ class QuarantinePolicy(Model):
 
     def __init__(self, **kwargs):
         super(QuarantinePolicy, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get('status', "disabled")
 
 
 class RegenerateCredentialParameters(Model):
@@ -645,7 +796,7 @@ class RegenerateCredentialParameters(Model):
      regenerated -- password or password2. Possible values include: 'password',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.PasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
     """
 
     _validation = {
@@ -726,7 +877,10 @@ class Registry(Resource):
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
     :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
@@ -737,21 +891,37 @@ class Registry(Resource):
      at the time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar status: The status of the container registry at the time the
      operation was called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status1
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
      container registry. Only applicable to Classic SKU.
     :type storage_account:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.StorageAccountProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.StorageAccountProperties
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.NetworkRuleSet
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
+    :param policies: The policies for a container registry.
+    :type policies:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :param encryption: The encryption settings of container registry.
+    :type encryption:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :param data_endpoint_enabled: Enable a single data endpoint per region for
+     serving data.
+    :type data_endpoint_enabled: bool
+    :ivar data_endpoint_host_names: List of host names that will serve data
+     when dataEndpointEnabled is true.
+    :vartype data_endpoint_host_names: list[str]
+    :ivar private_endpoint_connections: List of private endpoint connections
+     for a container registry.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -764,6 +934,8 @@ class Registry(Resource):
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
+        'data_endpoint_host_names': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -773,18 +945,25 @@ class Registry(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status'},
+        'status': {'key': 'properties.status', 'type': 'Status1'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
+        'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
+        'data_endpoint_host_names': {'key': 'properties.dataEndpointHostNames', 'type': '[str]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(self, **kwargs):
         super(Registry, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
@@ -792,6 +971,11 @@ class Registry(Resource):
         self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
         self.storage_account = kwargs.get('storage_account', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
+        self.policies = kwargs.get('policies', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
+        self.data_endpoint_host_names = None
+        self.private_endpoint_connections = None
 
 
 class RegistryListCredentialsResult(Model):
@@ -801,7 +985,7 @@ class RegistryListCredentialsResult(Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.RegistryPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -881,7 +1065,7 @@ class RegistryPassword(Model):
     :param name: The password name. Possible values include: 'password',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.PasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
     :param value: The password value.
     :type value: str
     """
@@ -897,66 +1081,54 @@ class RegistryPassword(Model):
         self.value = kwargs.get('value', None)
 
 
-class RegistryPolicies(Model):
-    """An object that represents policies for a container registry.
-
-    :param quarantine_policy: An object that represents quarantine policy for
-     a container registry.
-    :type quarantine_policy:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.QuarantinePolicy
-    :param trust_policy: An object that represents content trust policy for a
-     container registry.
-    :type trust_policy:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TrustPolicy
-    """
-
-    _attribute_map = {
-        'quarantine_policy': {'key': 'quarantinePolicy', 'type': 'QuarantinePolicy'},
-        'trust_policy': {'key': 'trustPolicy', 'type': 'TrustPolicy'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RegistryPolicies, self).__init__(**kwargs)
-        self.quarantine_policy = kwargs.get('quarantine_policy', None)
-        self.trust_policy = kwargs.get('trust_policy', None)
-
-
 class RegistryUpdateParameters(Model):
     """The parameters for updating a container registry.
 
     :param tags: The tags for the container registry.
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled.
     :type admin_user_enabled: bool
-    :param storage_account: The parameters of a storage account for the
-     container registry. Only applicable to Classic SKU. If specified, the
-     storage account must be in the same physical location as the container
-     registry.
-    :type storage_account:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.StorageAccountProperties
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.NetworkRuleSet
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
+    :param policies: The policies for a container registry.
+    :type policies:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :param encryption: The encryption settings of container registry.
+    :type encryption:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :param data_endpoint_enabled: Enable a single data endpoint per region for
+     serving data.
+    :type data_endpoint_enabled: bool
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
+        'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(RegistryUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.admin_user_enabled = kwargs.get('admin_user_enabled', None)
-        self.storage_account = kwargs.get('storage_account', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
+        self.policies = kwargs.get('policies', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
 
 
 class RegistryUsage(Model):
@@ -971,7 +1143,7 @@ class RegistryUsage(Model):
     :param unit: The unit of measurement. Possible values include: 'Count',
      'Bytes'
     :type unit: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.RegistryUsageUnit
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsageUnit
     """
 
     _attribute_map = {
@@ -994,7 +1166,7 @@ class RegistryUsageListResult(Model):
 
     :param value: The list of container registry quota usages.
     :type value:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.RegistryUsage]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsage]
     """
 
     _attribute_map = {
@@ -1029,11 +1201,11 @@ class Replication(Resource):
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar status: The status of the replication at the time the operation was
      called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status1
     """
 
     _validation = {
@@ -1052,7 +1224,7 @@ class Replication(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status'},
+        'status': {'key': 'properties.status', 'type': 'Status1'},
     }
 
     def __init__(self, **kwargs):
@@ -1112,88 +1284,39 @@ class Request(Model):
         self.useragent = kwargs.get('useragent', None)
 
 
-class ScopeMap(ProxyResource):
-    """An object that represents a scope map for a container registry.
+class RetentionPolicy(Model):
+    """The retention policy for a container registry.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param description: The user friendly description of the scope map.
-    :type description: str
-    :ivar scope_map_type: The type of the scope map. E.g. BuildIn scope map.
-    :vartype scope_map_type: str
-    :ivar creation_date: The creation date of scope map.
-    :vartype creation_date: datetime
-    :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
-     'Canceled'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
-    :param actions: Required. The list of scoped permissions for registry
-     artifacts.
-     E.g. repositories/repository-name/content/read,
-     repositories/repository-name/metadata/write
-    :type actions: list[str]
+    :param days: The number of days to retain an untagged manifest after which
+     it gets purged. Default value: 7 .
+    :type days: int
+    :ivar last_updated_time: The timestamp when the policy was last updated.
+    :vartype last_updated_time: datetime
+    :param status: The value that indicates whether the policy is enabled or
+     not. Possible values include: 'enabled', 'disabled'. Default value:
+     "disabled" .
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'scope_map_type': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'actions': {'required': True},
+        'last_updated_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'scope_map_type': {'key': 'properties.type', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'actions': {'key': 'properties.actions', 'type': '[str]'},
+        'days': {'key': 'days', 'type': 'int'},
+        'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ScopeMap, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.scope_map_type = None
-        self.creation_date = None
-        self.provisioning_state = None
-        self.actions = kwargs.get('actions', None)
-
-
-class ScopeMapUpdateParameters(Model):
-    """The properties for updating the scope map.
-
-    :param description: The user friendly description of the scope map.
-    :type description: str
-    :param actions: The list of scope permissions for registry artifacts.
-     E.g. repositories/repository-name/pull,
-     repositories/repository-name/delete
-    :type actions: list[str]
-    """
-
-    _attribute_map = {
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'actions': {'key': 'properties.actions', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ScopeMapUpdateParameters, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.actions = kwargs.get('actions', None)
+        super(RetentionPolicy, self).__init__(**kwargs)
+        self.days = kwargs.get('days', 7)
+        self.last_updated_time = None
+        self.status = kwargs.get('status', "disabled")
 
 
 class Sku(Model):
@@ -1208,11 +1331,11 @@ class Sku(Model):
      for registry creation. Possible values include: 'Classic', 'Basic',
      'Standard', 'Premium'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.SkuName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuName
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
      'Classic', 'Basic', 'Standard', 'Premium'
     :vartype tier: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.SkuTier
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuTier
     """
 
     _validation = {
@@ -1255,7 +1378,7 @@ class Source(Model):
         self.instance_id = kwargs.get('instance_id', None)
 
 
-class Status(Model):
+class Status1(Model):
     """The status of an Azure resource at the time the operation was called.
 
     Variables are only populated by the server, and will be ignored when
@@ -1284,7 +1407,7 @@ class Status(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Status, self).__init__(**kwargs)
+        super(Status1, self).__init__(**kwargs)
         self.display_status = None
         self.message = None
         self.timestamp = None
@@ -1362,201 +1485,18 @@ class Target(Model):
         self.version = kwargs.get('version', None)
 
 
-class Token(ProxyResource):
-    """An object that represents a token for a container registry.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar creation_date: The creation date of scope map.
-    :vartype creation_date: datetime
-    :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
-     'Canceled'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
-    :param scope_map_id: The resource ID of the scope map to which the token
-     will be associated with.
-    :type scope_map_id: str
-    :param credentials: The credentials that can be used for authenticating
-     the token.
-    :type credentials:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCredentialsProperties
-    :param status: The status of the token example enabled or disabled.
-     Possible values include: 'enabled', 'disabled'
-    :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
-        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Token, self).__init__(**kwargs)
-        self.creation_date = None
-        self.provisioning_state = None
-        self.scope_map_id = kwargs.get('scope_map_id', None)
-        self.credentials = kwargs.get('credentials', None)
-        self.status = kwargs.get('status', None)
-
-
-class TokenCertificate(Model):
-    """The properties of a certificate used for authenticating a token.
-
-    :param name: Possible values include: 'certificate1', 'certificate2'
-    :type name: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCertificateName
-    :param expiry: The expiry datetime of the certificate.
-    :type expiry: datetime
-    :param thumbprint: The thumbprint of the certificate.
-    :type thumbprint: str
-    :param encoded_pem_certificate: Base 64 encoded string of the public
-     certificate1 in PEM format that will be used for authenticating the token.
-    :type encoded_pem_certificate: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'encoded_pem_certificate': {'key': 'encodedPemCertificate', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TokenCertificate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.thumbprint = kwargs.get('thumbprint', None)
-        self.encoded_pem_certificate = kwargs.get('encoded_pem_certificate', None)
-
-
-class TokenCredentialsProperties(Model):
-    """The properties of the credentials that can be used for authenticating the
-    token.
-
-    :param active_directory_object:
-    :type active_directory_object:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ActiveDirectoryObject
-    :param certificates:
-    :type certificates:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCertificate]
-    :param passwords:
-    :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
-    """
-
-    _attribute_map = {
-        'active_directory_object': {'key': 'activeDirectoryObject', 'type': 'ActiveDirectoryObject'},
-        'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
-        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TokenCredentialsProperties, self).__init__(**kwargs)
-        self.active_directory_object = kwargs.get('active_directory_object', None)
-        self.certificates = kwargs.get('certificates', None)
-        self.passwords = kwargs.get('passwords', None)
-
-
-class TokenPassword(Model):
-    """The password that will be used for authenticating the token of a container
-    registry.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param creation_time: The creation datetime of the password.
-    :type creation_time: datetime
-    :param expiry: The expiry datetime of the password.
-    :type expiry: datetime
-    :param name: The password name "password1" or "password2". Possible values
-     include: 'password1', 'password2'
-    :type name: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
-    :ivar value: The password value.
-    :vartype value: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TokenPassword, self).__init__(**kwargs)
-        self.creation_time = kwargs.get('creation_time', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.name = kwargs.get('name', None)
-        self.value = None
-
-
-class TokenUpdateParameters(Model):
-    """The parameters for updating a token.
-
-    :param scope_map_id: The resource ID of the scope map to which the token
-     will be associated with.
-    :type scope_map_id: str
-    :param status: The status of the token example enabled or disabled.
-     Possible values include: 'enabled', 'disabled'
-    :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
-    :param credentials: The credentials that can be used for authenticating
-     the token.
-    :type credentials:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCredentialsProperties
-    """
-
-    _attribute_map = {
-        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TokenUpdateParameters, self).__init__(**kwargs)
-        self.scope_map_id = kwargs.get('scope_map_id', None)
-        self.status = kwargs.get('status', None)
-        self.credentials = kwargs.get('credentials', None)
-
-
 class TrustPolicy(Model):
-    """An object that represents content trust policy for a container registry.
+    """The content trust policy for a container registry.
 
-    :param type: The type of trust policy. Possible values include: 'Notary'
+    :param type: The type of trust policy. Possible values include: 'Notary'.
+     Default value: "Notary" .
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TrustPolicyType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicyType
     :param status: The value that indicates whether the policy is enabled or
-     not. Possible values include: 'enabled', 'disabled'
+     not. Possible values include: 'enabled', 'disabled'. Default value:
+     "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -1566,8 +1506,28 @@ class TrustPolicy(Model):
 
     def __init__(self, **kwargs):
         super(TrustPolicy, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.status = kwargs.get('status', None)
+        self.type = kwargs.get('type', "Notary")
+        self.status = kwargs.get('status', "disabled")
+
+
+class UserIdentityProperties(Model):
+    """UserIdentityProperties.
+
+    :param principal_id: The principal id of user assigned identity.
+    :type principal_id: str
+    :param client_id: The client id of user assigned identity.
+    :type client_id: str
+    """
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserIdentityProperties, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.client_id = kwargs.get('client_id', None)
 
 
 class VirtualNetworkRule(Model):
@@ -1578,7 +1538,7 @@ class VirtualNetworkRule(Model):
     :param action: The action of virtual network rule. Possible values
      include: 'Allow'. Default value: "Allow" .
     :type action: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Action
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for
      example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
@@ -1622,7 +1582,7 @@ class Webhook(Resource):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -1631,12 +1591,12 @@ class Webhook(Resource):
     :param actions: Required. The list of actions that trigger the webhook to
      post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -1687,7 +1647,7 @@ class WebhookCreateParameters(Model):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -1696,7 +1656,7 @@ class WebhookCreateParameters(Model):
     :param actions: Required. The list of actions that trigger the webhook to
      post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     """
 
     _validation = {
@@ -1739,7 +1699,7 @@ class WebhookUpdateParameters(Model):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -1748,7 +1708,7 @@ class WebhookUpdateParameters(Model):
     :param actions: The list of actions that trigger the webhook to post
      notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     """
 
     _attribute_map = {

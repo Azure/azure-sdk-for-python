@@ -13,6 +13,31 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ActiveDirectoryObject(Model):
+    """The Active Directory Object that will be used for authenticating the token
+    of a container registry.
+
+    :param object_id: The user/group/application object ID for Active
+     Directory Object that will be used for authenticating the token of a
+     container registry.
+    :type object_id: str
+    :param tenant_id: The tenant ID of user/group/application object Active
+     Directory Object that will be used for authenticating the token of a
+     container registry.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ActiveDirectoryObject, self).__init__(**kwargs)
+        self.object_id = kwargs.get('object_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+
+
 class Actor(Model):
     """The agent that initiated the event. For most situations, this could be from
     the authorization context of the request.
@@ -3554,9 +3579,6 @@ class Token(ProxyResource):
     :param scope_map_id: The resource ID of the scope map to which the token
      will be associated with.
     :type scope_map_id: str
-    :param object_id: The user/group/application object ID for which the token
-     has to be created.
-    :type object_id: str
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
@@ -3582,7 +3604,6 @@ class Token(ProxyResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
         'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
         'status': {'key': 'properties.status', 'type': 'str'},
     }
@@ -3592,7 +3613,6 @@ class Token(ProxyResource):
         self.creation_date = None
         self.provisioning_state = None
         self.scope_map_id = kwargs.get('scope_map_id', None)
-        self.object_id = kwargs.get('object_id', None)
         self.credentials = kwargs.get('credentials', None)
         self.status = kwargs.get('status', None)
 
@@ -3631,6 +3651,9 @@ class TokenCredentialsProperties(Model):
     """The properties of the credentials that can be used for authenticating the
     token.
 
+    :param active_directory_object:
+    :type active_directory_object:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ActiveDirectoryObject
     :param certificates:
     :type certificates:
      list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificate]
@@ -3640,12 +3663,14 @@ class TokenCredentialsProperties(Model):
     """
 
     _attribute_map = {
+        'active_directory_object': {'key': 'activeDirectoryObject', 'type': 'ActiveDirectoryObject'},
         'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
         'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
     }
 
     def __init__(self, **kwargs):
         super(TokenCredentialsProperties, self).__init__(**kwargs)
+        self.active_directory_object = kwargs.get('active_directory_object', None)
         self.certificates = kwargs.get('certificates', None)
         self.passwords = kwargs.get('passwords', None)
 
