@@ -928,9 +928,22 @@ class VaultPatchProperties(Model):
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
     :param enable_soft_delete: Property to specify whether the 'soft delete'
-     functionality is enabled for this key vault. If omitted, assume true as
-     default value. Once set to true, cannot be reverted to false.
+     functionality is enabled for this key vault. If omitted, assume false as
+     default value when patching an existing vault. Once set to true, cannot be
+     reverted to false. Default value: False .
     :type enable_soft_delete: bool
+    :param soft_delete_retention_in_days: softDelete data retention days. It
+     accepts >=7 and <=90.
+    :type soft_delete_retention_in_days: int
+    :param enable_rbac_authorization: Property that controls how data actions
+     are authorized. When true, the key vault will use Role Based Access
+     Control (RBAC) for authorization of data actions, and the access policies
+     specified in vault properties will be  ignored (warning: this is a preview
+     feature). When false, the key vault will use the access policies specified
+     in vault properties, and any policy stored on Azure Resource Manager will
+     be ignored. If null or not specified, the value of this property will not
+     change.
+    :type enable_rbac_authorization: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
@@ -956,12 +969,14 @@ class VaultPatchProperties(Model):
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
+        'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
+        'enable_rbac_authorization': {'key': 'enableRbacAuthorization', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, *, tenant_id: str=None, sku=None, access_policies=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str=None, sku=None, access_policies=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=False, soft_delete_retention_in_days: int=None, enable_rbac_authorization: bool=None, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
         super(VaultPatchProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.sku = sku
@@ -970,6 +985,8 @@ class VaultPatchProperties(Model):
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
+        self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.enable_rbac_authorization = enable_rbac_authorization
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
         self.network_acls = network_acls
@@ -1009,9 +1026,24 @@ class VaultProperties(Model):
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
     :param enable_soft_delete: Property to specify whether the 'soft delete'
-     functionality is enabled for this key vault. If omitted, assume true as
-     default value. Once set to true, cannot be reverted to false.
+     functionality is enabled for this key vault. If it's not set to any
+     value(true or false) when creating new key vault, it will be set to true
+     by default. Once it's been set to true value, it can NOT be reverted to
+     false. Default value: True .
     :type enable_soft_delete: bool
+    :param soft_delete_retention_in_days: softDelete data retention days. It
+     accepts >=7 and <=90. Default value: 90 .
+    :type soft_delete_retention_in_days: int
+    :param enable_rbac_authorization: Property that controls how data actions
+     are authorized. When true, the key vault will use Role Based Access
+     Control (RBAC) for authorization of data actions, and the access policies
+     specified in vault properties will be  ignored (warning: this is a preview
+     feature). When false, the key vault will use the access policies specified
+     in vault properties, and any policy stored on Azure Resource Manager will
+     be ignored. If null or not specified, the vault is created with the
+     default value of false. Note that management actions are always authorized
+     with RBAC. Default value: False .
+    :type enable_rbac_authorization: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
@@ -1048,13 +1080,15 @@ class VaultProperties(Model):
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
+        'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
+        'enable_rbac_authorization': {'key': 'enableRbacAuthorization', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnectionItem]'},
     }
 
-    def __init__(self, *, tenant_id: str, sku, access_policies=None, vault_uri: str=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
+    def __init__(self, *, tenant_id: str, sku, access_policies=None, vault_uri: str=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=True, soft_delete_retention_in_days: int=90, enable_rbac_authorization: bool=False, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
         super(VaultProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.sku = sku
@@ -1064,6 +1098,8 @@ class VaultProperties(Model):
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
+        self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.enable_rbac_authorization = enable_rbac_authorization
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
         self.network_acls = network_acls
