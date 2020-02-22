@@ -1038,3 +1038,65 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
         # test client default
         new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
         result4 = new_client.detect_language(inputs=["this is written in english"], response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_keyword_arguments(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        def callback(response):
+            country_str = "\"countryHint\": \"ES\""
+            self.assertEqual(response.http_request.body.count(country_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        def callback2(response):
+            language_str = "\"language\": \"es\""
+            self.assertEqual(response.http_request.body.count(language_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        def callback3(response):
+            language_str = "\"language\": \"en\""
+            self.assertEqual(response.http_request.body.count(language_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        res = text_analytics.detect_language(
+            inputs=["this is written in english"],
+            model_version="latest",
+            show_stats=True,
+            country_hint="ES",
+            response_hook=callback
+        )
+
+        res = text_analytics.recognize_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            response_hook=callback2
+        )
+
+        res = text_analytics.recognize_linked_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            response_hook=callback2
+        )
+
+        res = text_analytics.recognize_pii_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="en",
+            response_hook=callback3
+        )
+
+        res = text_analytics.analyze_sentiment(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            response_hook=callback2
+        )

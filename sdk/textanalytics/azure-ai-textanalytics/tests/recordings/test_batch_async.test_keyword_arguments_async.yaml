@@ -1,0 +1,203 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "this is written in english", "countryHint":
+      "ES"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '87'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}],"statistics":{"charactersCount":26,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 116e6eff-74c7-4922-8c7a-b185416000d7
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Fri, 21 Feb 2020 21:33:25 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '4'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/languages
+        - model-version=latest&showStats=true
+        - ''
+- request:
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '93'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
+        Gates","type":"Person","offset":0,"length":10,"score":0.8},{"text":"Microsoft","type":"Organization","offset":25,"length":9,"score":0.98}]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id: 646e9fd6-668a-4df8-bb5d-130f0a894727
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Fri, 21 Feb 2020 21:33:25 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '24'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/entities/recognition/general
+        - model-version=latest&showStats=true
+        - ''
+- request:
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '93'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/linking?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"name":"Bill
+        Gates","matches":[{"text":"Bill Gates","offset":0,"length":10,"score":0.32285729110882921}],"language":"es","id":"Bill
+        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":25,"length":9,"score":0.24235412233423559}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"},{"name":"Director
+        ejecutivo","matches":[{"text":"CEO","offset":18,"length":3,"score":0.13690795466701777}],"language":"es","id":"Director
+        ejecutivo","url":"https://es.wikipedia.org/wiki/Director_ejecutivo","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id: 644fcff9-c25c-426b-bcbf-220912b7156f
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Fri, 21 Feb 2020 21:33:25 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '14'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/entities/linking
+        - model-version=latest&showStats=true
+        - ''
+- request:
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '93'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
+        Gates","type":"Person","offset":0,"length":10,"score":0.56},{"text":"Microsoft","type":"Organization","offset":25,"length":9,"score":0.99}]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id: 745e7c23-266a-45d4-9274-02d53b30e4d7
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Fri, 21 Feb 2020 21:33:25 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '24'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/entities/recognition/pii
+        - model-version=latest&showStats=true
+        - ''
+- request:
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '93'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"documentScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":35}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 7780698f-33ff-475e-be0c-7ceb61412a17
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Fri, 21 Feb 2020 21:33:25 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '74'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - westus2.api.cognitive.microsoft.com
+        - //text/analytics/v3.0-preview.1/sentiment
+        - model-version=latest&showStats=true
+        - ''
+version: 1

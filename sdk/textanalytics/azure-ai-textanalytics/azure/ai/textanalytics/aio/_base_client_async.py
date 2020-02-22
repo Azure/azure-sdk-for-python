@@ -18,7 +18,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     DistributedTracingPolicy
 )
-from .._credential import TextAnalyticsApiKeyCredential
 from .._policies import CognitiveServicesCredentialPolicy
 from ._policies_async import AsyncTextAnalyticsResponseHook
 from .._user_agent import USER_AGENT
@@ -37,7 +36,7 @@ class AsyncTextAnalyticsClientBase(object):
             credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credential, TextAnalyticsApiKeyCredential):
+        elif hasattr(credential, "api_key"):
             credential_policy = CognitiveServicesCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}. Use an instance of TextAnalyticsApiKeyCredential "
