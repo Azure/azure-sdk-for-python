@@ -59,6 +59,10 @@ def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
     return packages
 
 
+def in_ci():
+    return os.getenv("TF_BUILD", False)
+
+
 def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
 
     if package_type == "wheel":
@@ -88,7 +92,8 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
         f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".zip")
     ]
 
-    cleanup_build_artifacts(target_setup)
+    if not in_ci:
+        cleanup_build_artifacts(target_setup)
     return prebuilt_packages
 
 
