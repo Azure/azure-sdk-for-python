@@ -1,3 +1,4 @@
+import functools
 import hashlib
 from collections import namedtuple
 
@@ -381,3 +382,6 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
             template = 'To create this service bus queue authorization rule a service bus queue is required. Please add ' \
                        'decorator @{} in front of this service bus preparer.'
             raise AzureTestError(template.format(ServiceBusQueuePreparer.__name__))
+
+CachedServiceBusNamespacePreparer = functools.partial(ServiceBusNamespacePreparer, use_cache=True)
+CachedServiceBusQueuePreparer = functools.partial(ServiceBusQueuePreparer, use_cache=True)

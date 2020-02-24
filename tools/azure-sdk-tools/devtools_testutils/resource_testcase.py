@@ -1,4 +1,5 @@
 from collections import namedtuple
+import functools
 import os
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
@@ -20,6 +21,7 @@ FakeResource = namedtuple(
 
 class ResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
+                 use_cache=False,
                  random_name_length=75,
                  parameter_name=RESOURCE_GROUP_PARAM,
                  parameter_name_for_location='location', location='westus',
@@ -41,6 +43,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             self._need_creation = False
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
+        self.set_cache(use_cache, location)
 
     def create_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
@@ -81,3 +84,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     self.client.resource_groups.delete(name, polling=False)
             except CloudError:
                 pass
+
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True)
