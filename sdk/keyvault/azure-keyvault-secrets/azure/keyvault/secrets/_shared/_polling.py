@@ -106,7 +106,8 @@ class RecoverDeletedPollingMethod(PollingMethod):
         try:
             while not self.finished():
                 self._update_status()
-                time.sleep(self._polling_interval)
+                if not self.finished():
+                    time.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise

@@ -45,7 +45,8 @@ class RecoverDeletedAsyncPollingMethod(AsyncPollingMethod):
         try:
             while not self.finished():
                 await self._update_status()
-                await asyncio.sleep(self._polling_interval)
+                if not self.finished():
+                    await asyncio.sleep(self._polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise
