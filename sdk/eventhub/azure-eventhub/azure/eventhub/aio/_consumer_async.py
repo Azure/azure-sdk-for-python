@@ -81,10 +81,6 @@ class EventHubConsumer(
         self._on_event_received = kwargs[
             "on_event_received"
         ]  # type: Callable[[EventData], Awaitable[None]]
-        self._batch = kwargs.get("batch")
-        self._max_batch_size = kwargs.get("max_batch_size")
-        self._max_wait_time = kwargs.get("max_wait_time")
-        self._enable_callback_when_no_event = kwargs.get("enable_callback_when_no_event")
         self._loop = kwargs.get("loop", None)
         self._client = client
         self._source = source
@@ -172,14 +168,14 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def receive(self) -> None:
+    async def receive(self, batch, max_batch_size, max_wait_time, enable_callback_when_no_event) -> None:
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
         # msg_buffer_size = len(self._message_buffer)
         fetch_trips = 0
-        deadline = time.time() + self._max_wait_time
-        while len(self._message_buffer) < self._max_batch_size and \
+        deadline = time.time() + max_wait_time
+        while len(self._message_buffer) < max_batch_size and \
                 (time.time() < deadline or fetch_trips == 0):  # ensure one trip when self._max_wait_time is very small
             retried_times = 0
             while retried_times <= max_retries:
@@ -212,15 +208,15 @@ class EventHubConsumer(
 
         if self._message_buffer:
             while self._message_buffer:
-                if self._batch:
+                if batch:
                     events_for_callback = []
-                    for _ in range(min(self._max_batch_size, len(self._message_buffer))):
+                    for _ in range(min(max_batch_size, len(self._message_buffer))):
                         events_for_callback.append(self._next_message_in_buffer())
                     await self._on_event_received(events_for_callback)
                 else:
                     await self._on_event_received(self._next_message_in_buffer())
-        elif self._enable_callback_when_no_event:
-            if self._batch:
+        elif enable_callback_when_no_event:
+            if batch:
                 await self._on_event_received([])
             else:
                 await self._on_event_received(None)

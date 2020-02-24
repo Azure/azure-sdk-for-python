@@ -265,10 +265,6 @@ class EventProcessor(
                 initial_event_position,
                 event_position_inclusive,
                 event_received_callback,  # type: ignore
-                batch=self._batch,
-                max_batch_size=self._max_wait_time,
-                max_wait_time=self._max_wait_time,
-                enable_callback_when_no_event=self._enable_callback_when_no_event
             )
 
             if self._partition_initialize_handler:
@@ -288,7 +284,9 @@ class EventProcessor(
 
             while self._running:
                 try:
-                    await self._consumers[partition_id].receive()
+                    await self._consumers[partition_id].receive(
+                        self._batch, self._max_batch_size, self._max_wait_time, self._enable_callback_when_no_event
+                    )
                 except asyncio.CancelledError:
                     _LOGGER.info(
                         "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
