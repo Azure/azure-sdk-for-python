@@ -308,10 +308,9 @@ class CheckNameAvailabilityRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name whose availability is to be checked.
+    :param name: Required.
     :type name: str
-    :ivar type: Required. The type of resource that is used as the scope of
-     the availability check. Default value: "Microsoft.Sql/servers" .
+    :ivar type: Required.  Default value: "Microsoft.Sql/servers" .
     :vartype type: str
     """
 
@@ -333,45 +332,44 @@ class CheckNameAvailabilityRequest(Model):
 
 
 class CheckNameAvailabilityResponse(Model):
-    """A response indicating whether the specified name for a resource is
-    available.
+    """The result of a name availability check.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar available: True if the name is available, otherwise false.
-    :vartype available: bool
-    :ivar message: A message explaining why the name is unavailable. Will be
-     null if the name is available.
-    :vartype message: str
     :ivar name: The name whose availability was checked.
     :vartype name: str
+    :ivar available: True if the name is available, otherwise false.
+    :vartype available: bool
     :ivar reason: The reason code explaining why the name is unavailable. Will
-     be null if the name is available. Possible values include: 'Invalid',
+     be undefined if the name is available. Possible values include: 'Invalid',
      'AlreadyExists'
     :vartype reason: str or ~azure.mgmt.sql.models.CheckNameAvailabilityReason
+    :ivar message: A message explaining why the name is unavailable. Will be
+     undefined if the name is available.
+    :vartype message: str
     """
 
     _validation = {
-        'available': {'readonly': True},
-        'message': {'readonly': True},
         'name': {'readonly': True},
+        'available': {'readonly': True},
         'reason': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'available': {'key': 'available', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'CheckNameAvailabilityReason'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
-        self.available = None
-        self.message = None
         self.name = None
+        self.available = None
         self.reason = None
+        self.message = None
 
 
 class CloudError(Model):
@@ -4684,7 +4682,7 @@ class ManagedDatabase(TrackedResource):
      by restoring a geo-replicated backup. RecoverableDatabaseId must be
      specified as the recoverable database resource ID to restore. Possible
      values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
-     'Recovery'
+     'Recovery', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -4706,6 +4704,9 @@ class ManagedDatabase(TrackedResource):
     :param recoverable_database_id: The resource identifier of the recoverable
      database associated with create operation of this database.
     :type recoverable_database_id: str
+    :param long_term_retention_backup_resource_id: The name of the Long Term
+     Retention backup to be used for restore of this managed database.
+    :type long_term_retention_backup_resource_id: str
     """
 
     _validation = {
@@ -4740,9 +4741,10 @@ class ManagedDatabase(TrackedResource):
         'storage_container_sas_token': {'key': 'properties.storageContainerSasToken', 'type': 'str'},
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
+        'long_term_retention_backup_resource_id': {'key': 'properties.longTermRetentionBackupResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, long_term_retention_backup_resource_id: str=None, **kwargs) -> None:
         super(ManagedDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
         self.status = None
@@ -4758,86 +4760,7 @@ class ManagedDatabase(TrackedResource):
         self.storage_container_sas_token = storage_container_sas_token
         self.failover_group_id = None
         self.recoverable_database_id = recoverable_database_id
-
-
-class ManagedDatabaseRestoreDetailsResult(ProxyResource):
-    """A managed database restore details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar status: Restore status.
-    :vartype status: str
-    :ivar current_restoring_file_name: Current restoring file name.
-    :vartype current_restoring_file_name: str
-    :ivar last_restored_file_name: Last restored file name.
-    :vartype last_restored_file_name: str
-    :ivar last_restored_file_time: Last restored file time.
-    :vartype last_restored_file_time: datetime
-    :ivar percent_completed: Percent completed.
-    :vartype percent_completed: float
-    :ivar unrestorable_files: List of unrestorable files.
-    :vartype unrestorable_files: list[str]
-    :ivar number_of_files_detected: Number of files detected.
-    :vartype number_of_files_detected: long
-    :ivar last_uploaded_file_name: Last uploaded file name.
-    :vartype last_uploaded_file_name: str
-    :ivar last_uploaded_file_time: Last uploaded file time.
-    :vartype last_uploaded_file_time: datetime
-    :ivar block_reason: The reason why restore is in Blocked state.
-    :vartype block_reason: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'current_restoring_file_name': {'readonly': True},
-        'last_restored_file_name': {'readonly': True},
-        'last_restored_file_time': {'readonly': True},
-        'percent_completed': {'readonly': True},
-        'unrestorable_files': {'readonly': True},
-        'number_of_files_detected': {'readonly': True},
-        'last_uploaded_file_name': {'readonly': True},
-        'last_uploaded_file_time': {'readonly': True},
-        'block_reason': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'current_restoring_file_name': {'key': 'properties.currentRestoringFileName', 'type': 'str'},
-        'last_restored_file_name': {'key': 'properties.lastRestoredFileName', 'type': 'str'},
-        'last_restored_file_time': {'key': 'properties.lastRestoredFileTime', 'type': 'iso-8601'},
-        'percent_completed': {'key': 'properties.percentCompleted', 'type': 'float'},
-        'unrestorable_files': {'key': 'properties.unrestorableFiles', 'type': '[str]'},
-        'number_of_files_detected': {'key': 'properties.numberOfFilesDetected', 'type': 'long'},
-        'last_uploaded_file_name': {'key': 'properties.lastUploadedFileName', 'type': 'str'},
-        'last_uploaded_file_time': {'key': 'properties.lastUploadedFileTime', 'type': 'iso-8601'},
-        'block_reason': {'key': 'properties.blockReason', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ManagedDatabaseRestoreDetailsResult, self).__init__(**kwargs)
-        self.status = None
-        self.current_restoring_file_name = None
-        self.last_restored_file_name = None
-        self.last_restored_file_time = None
-        self.percent_completed = None
-        self.unrestorable_files = None
-        self.number_of_files_detected = None
-        self.last_uploaded_file_name = None
-        self.last_uploaded_file_time = None
-        self.block_reason = None
+        self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
 
 
 class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
@@ -4952,7 +4875,7 @@ class ManagedDatabaseUpdate(Model):
      by restoring a geo-replicated backup. RecoverableDatabaseId must be
      specified as the recoverable database resource ID to restore. Possible
      values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
-     'Recovery'
+     'Recovery', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -4974,6 +4897,9 @@ class ManagedDatabaseUpdate(Model):
     :param recoverable_database_id: The resource identifier of the recoverable
      database associated with create operation of this database.
     :type recoverable_database_id: str
+    :param long_term_retention_backup_resource_id: The name of the Long Term
+     Retention backup to be used for restore of this managed database.
+    :type long_term_retention_backup_resource_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -5001,10 +4927,11 @@ class ManagedDatabaseUpdate(Model):
         'storage_container_sas_token': {'key': 'properties.storageContainerSasToken', 'type': 'str'},
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
+        'long_term_retention_backup_resource_id': {'key': 'properties.longTermRetentionBackupResourceId', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, long_term_retention_backup_resource_id: str=None, tags=None, **kwargs) -> None:
         super(ManagedDatabaseUpdate, self).__init__(**kwargs)
         self.collation = collation
         self.status = None
@@ -5020,6 +4947,7 @@ class ManagedDatabaseUpdate(Model):
         self.storage_container_sas_token = storage_container_sas_token
         self.failover_group_id = None
         self.recoverable_database_id = recoverable_database_id
+        self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
         self.tags = tags
 
 
@@ -5441,6 +5369,118 @@ class ManagedInstanceKey(ProxyResource):
         self.uri = uri
         self.thumbprint = None
         self.creation_date = None
+
+
+class ManagedInstanceLongTermRetentionBackup(ProxyResource):
+    """A long term retention backup for a managed database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar managed_instance_name: The managed instance that the backup database
+     belongs to.
+    :vartype managed_instance_name: str
+    :ivar managed_instance_create_time: The create time of the instance.
+    :vartype managed_instance_create_time: datetime
+    :ivar database_name: The name of the database the backup belong to
+    :vartype database_name: str
+    :ivar database_deletion_time: The delete time of the database
+    :vartype database_deletion_time: datetime
+    :ivar backup_time: The time the backup was taken
+    :vartype backup_time: datetime
+    :ivar backup_expiration_time: The time the long term retention backup will
+     expire.
+    :vartype backup_expiration_time: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'managed_instance_name': {'readonly': True},
+        'managed_instance_create_time': {'readonly': True},
+        'database_name': {'readonly': True},
+        'database_deletion_time': {'readonly': True},
+        'backup_time': {'readonly': True},
+        'backup_expiration_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'managed_instance_name': {'key': 'properties.managedInstanceName', 'type': 'str'},
+        'managed_instance_create_time': {'key': 'properties.managedInstanceCreateTime', 'type': 'iso-8601'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'database_deletion_time': {'key': 'properties.databaseDeletionTime', 'type': 'iso-8601'},
+        'backup_time': {'key': 'properties.backupTime', 'type': 'iso-8601'},
+        'backup_expiration_time': {'key': 'properties.backupExpirationTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ManagedInstanceLongTermRetentionBackup, self).__init__(**kwargs)
+        self.managed_instance_name = None
+        self.managed_instance_create_time = None
+        self.database_name = None
+        self.database_deletion_time = None
+        self.backup_time = None
+        self.backup_expiration_time = None
+
+
+class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
+    """A long term retention policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param weekly_retention: The weekly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type weekly_retention: str
+    :param monthly_retention: The monthly retention policy for an LTR backup
+     in an ISO 8601 format.
+    :type monthly_retention: str
+    :param yearly_retention: The yearly retention policy for an LTR backup in
+     an ISO 8601 format.
+    :type yearly_retention: str
+    :param week_of_year: The week of year to take the yearly backup in an ISO
+     8601 format.
+    :type week_of_year: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'weekly_retention': {'key': 'properties.weeklyRetention', 'type': 'str'},
+        'monthly_retention': {'key': 'properties.monthlyRetention', 'type': 'str'},
+        'yearly_retention': {'key': 'properties.yearlyRetention', 'type': 'str'},
+        'week_of_year': {'key': 'properties.weekOfYear', 'type': 'int'},
+    }
+
+    def __init__(self, *, weekly_retention: str=None, monthly_retention: str=None, yearly_retention: str=None, week_of_year: int=None, **kwargs) -> None:
+        super(ManagedInstanceLongTermRetentionPolicy, self).__init__(**kwargs)
+        self.weekly_retention = weekly_retention
+        self.monthly_retention = monthly_retention
+        self.yearly_retention = yearly_retention
+        self.week_of_year = week_of_year
 
 
 class ManagedInstancePairInfo(Model):
@@ -6408,7 +6448,10 @@ class PrivateEndpointConnection(ProxyResource):
     :type private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
-    :vartype provisioning_state: str
+     Possible values include: 'Approving', 'Ready', 'Dropping', 'Failed',
+     'Rejecting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
     """
 
     _validation = {
@@ -6429,6 +6472,42 @@ class PrivateEndpointConnection(ProxyResource):
 
     def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
         super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+     Possible values include: 'Approving', 'Ready', 'Dropping', 'Failed',
+     'Rejecting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
@@ -6522,13 +6601,16 @@ class PrivateLinkServiceConnectionStateProperty(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param status: Required. The private link service connection status.
-    :type status: str
+     Possible values include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateStatus
     :param description: Required. The private link service connection
      description.
     :type description: str
     :ivar actions_required: The actions required for private link service
-     connection.
-    :vartype actions_required: str
+     connection. Possible values include: 'None'
+    :vartype actions_required: str or
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateActionsRequire
     """
 
     _validation = {
@@ -6543,7 +6625,7 @@ class PrivateLinkServiceConnectionStateProperty(Model):
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
-    def __init__(self, *, status: str, description: str, **kwargs) -> None:
+    def __init__(self, *, status, description: str, **kwargs) -> None:
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -7252,6 +7334,9 @@ class SensitivityLabel(ProxyResource):
      recommended sensitivity label only. Specifies whether the sensitivity
      recommendation on this column is disabled (dismissed) or not.
     :vartype is_disabled: bool
+    :param rank: Possible values include: 'None', 'Low', 'Medium', 'High',
+     'Critical'
+    :type rank: str or ~azure.mgmt.sql.models.SensitivityLabelRank
     """
 
     _validation = {
@@ -7270,15 +7355,17 @@ class SensitivityLabel(ProxyResource):
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
         'information_type_id': {'key': 'properties.informationTypeId', 'type': 'str'},
         'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
+        'rank': {'key': 'properties.rank', 'type': 'SensitivityLabelRank'},
     }
 
-    def __init__(self, *, label_name: str=None, label_id: str=None, information_type: str=None, information_type_id: str=None, **kwargs) -> None:
+    def __init__(self, *, label_name: str=None, label_id: str=None, information_type: str=None, information_type_id: str=None, rank=None, **kwargs) -> None:
         super(SensitivityLabel, self).__init__(**kwargs)
         self.label_name = label_name
         self.label_id = label_id
         self.information_type = information_type
         self.information_type_id = information_type_id
         self.is_disabled = None
+        self.rank = rank
 
 
 class Server(TrackedResource):
@@ -7317,6 +7404,18 @@ class Server(TrackedResource):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
+    :param minimal_tls_version: Minimal TLS version. Allowed values: '1.0',
+     '1.1', '1.2'
+    :type minimal_tls_version: str
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this server.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.sql.models.ServerPublicNetworkAccess
     """
 
     _validation = {
@@ -7327,6 +7426,7 @@ class Server(TrackedResource):
         'kind': {'readonly': True},
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7342,9 +7442,12 @@ class Server(TrackedResource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, public_network_access=None, **kwargs) -> None:
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.kind = None
@@ -7353,6 +7456,9 @@ class Server(TrackedResource):
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
+        self.minimal_tls_version = minimal_tls_version
+        self.public_network_access = public_network_access
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -7426,6 +7532,9 @@ class ServerAzureADAdministrator(ProxyResource):
     :type sid: str
     :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
+    :param azure_ad_only_authentication: Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -7445,15 +7554,17 @@ class ServerAzureADAdministrator(ProxyResource):
         'login': {'key': 'properties.login', 'type': 'str'},
         'sid': {'key': 'properties.sid', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
     }
 
     administrator_type = "ActiveDirectory"
 
-    def __init__(self, *, login: str, sid: str, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, login: str, sid: str, tenant_id: str=None, azure_ad_only_authentication: bool=None, **kwargs) -> None:
         super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.login = login
         self.sid = sid
         self.tenant_id = tenant_id
+        self.azure_ad_only_authentication = azure_ad_only_authentication
 
 
 class ServerBlobAuditingPolicy(ProxyResource):
@@ -7830,6 +7941,35 @@ class ServerKey(ProxyResource):
         self.creation_date = creation_date
 
 
+class ServerPrivateEndpointConnection(Model):
+    """A private endpoint connection under a server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.sql.models.PrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
 class ServerSecurityAlertPolicy(ProxyResource):
     """A server security alert policy.
 
@@ -7925,6 +8065,18 @@ class ServerUpdate(Model):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
+    :param minimal_tls_version: Minimal TLS version. Allowed values: '1.0',
+     '1.1', '1.2'
+    :type minimal_tls_version: str
+    :param public_network_access: Whether or not public endpoint access is
+     allowed for this server.  Value is optional but if passed in, must be
+     'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.sql.models.ServerPublicNetworkAccess
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -7932,6 +8084,7 @@ class ServerUpdate(Model):
     _validation = {
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7940,16 +8093,22 @@ class ServerUpdate(Model):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, administrator_login: str=None, administrator_login_password: str=None, version: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, public_network_access=None, tags=None, **kwargs) -> None:
         super(ServerUpdate, self).__init__(**kwargs)
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
+        self.minimal_tls_version = minimal_tls_version
+        self.public_network_access = public_network_access
         self.tags = tags
 
 
