@@ -73,9 +73,10 @@ async def upload_datalake_file(  # pylint: disable=unused-argument
             validate_content=validate_content,
             **kwargs)
 
-        await client.flush_data(position=length,
-                                path_http_headers=path_http_headers,
-                                modified_access_conditions=modified_access_conditions,
-                                **kwargs)
+        return await client.flush_data(position=length,
+                                       path_http_headers=path_http_headers,
+                                       modified_access_conditions=modified_access_conditions,
+                                       cls=return_response_headers,
+                                       **kwargs)
     except StorageErrorException as error:
         process_storage_error(error)

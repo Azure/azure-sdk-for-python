@@ -273,7 +273,11 @@ class DataLakeFileClient(PathClient):
 
         return kwargs
 
-    def upload_data(self, data, length=None, overwrite=False, **kwargs):
+    def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+                    length=None,  # type: Optional[int]
+                    overwrite=False,  # type: Optional[bool]
+                    **kwargs):
+        # type: (...) -> Dict[str, Any]
         """
         Upload data to a file.
 

@@ -189,7 +189,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         blob_properties = await self._get_path_properties(**kwargs)
         return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
-    def upload_data(self, data, length=None, overwrite=False, metadata=None, **kwargs):
+    def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+                    length=None,  # type: Optional[int]
+                    metadata=None,  # type: Optional[bool]
+                    **kwargs):
+        # type: (...) -> Dict[str, Any]
         """
         Upload data to a file.
 
@@ -241,7 +245,6 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         options = self._upload_options(
             data,
             length=length,
-            overwrite=overwrite,
             metadata=metadata,
             **kwargs)
         return upload_datalake_file(**options)
