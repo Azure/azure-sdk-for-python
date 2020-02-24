@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class RecoverDeletedAsyncPollingMethod(AsyncPollingMethod):
+class AsyncKeyVaultPollingMethod(AsyncPollingMethod):
     def __init__(self, finished, interval=2):
         self._command = None
         self._resource = None

@@ -12,7 +12,7 @@ from azure.core.polling import PollingMethod, LROPoller, NoPolling
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 try:
-    from urlparse import urlparse # type: ignore # pylint: disable=unused-import
+    from urlparse import urlparse  # type: ignore # pylint: disable=unused-import
 except ImportError:
     from urllib.parse import urlparse
 
@@ -61,8 +61,8 @@ class KeyVaultOperationPoller(LROPoller):
         if not self._polling_method.finished():
             self._done = threading.Event()
             self._thread = threading.Thread(
-                target=with_current_context(self._start),
-                name="KeyVaultOperationPoller({})".format(uuid.uuid4()))
+                target=with_current_context(self._start), name="KeyVaultOperationPoller({})".format(uuid.uuid4())
+            )
             self._thread.daemon = True
             self._thread.start()
 
@@ -72,10 +72,17 @@ class KeyVaultOperationPoller(LROPoller):
         try:
             # Let's handle possible None in forgiveness here
             raise self._exception  # type: ignore
-        except TypeError: # Was None
+        except TypeError:  # Was None
             pass
 
-class RecoverDeletedPollingMethod(PollingMethod):
+
+class KeyVaultPollingMethod(PollingMethod):
+    """Poll with GET requests until one succeeds.
+
+    This allows waiting for Key Vault to delete, or recover, a resource, by polling for the existence of the deleted
+    or recovered resource, respectively.
+    """
+
     def __init__(self, command, final_resource, finished, interval=2):
         self._command = command
         self._resource = final_resource

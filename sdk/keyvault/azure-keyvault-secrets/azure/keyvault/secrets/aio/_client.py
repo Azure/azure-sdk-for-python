@@ -12,7 +12,7 @@ from azure.core.polling import async_poller
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared.exceptions import error_map as _error_map
-from .._shared._polling_async import RecoverDeletedAsyncPollingMethod
+from .._shared._polling_async import AsyncKeyVaultPollingMethod
 
 
 class SecretClient(AsyncKeyVaultClientBase):
@@ -267,7 +267,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
-        delete_secret_poller = RecoverDeletedAsyncPollingMethod(
+        delete_secret_poller = AsyncKeyVaultPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_secret.recovery_id is None,
             interval=polling_interval,
@@ -375,6 +375,6 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
         command = partial(self.get_secret, name=name, **kwargs)
-        polling_method = RecoverDeletedAsyncPollingMethod(finished=False, interval=polling_interval)
+        polling_method = AsyncKeyVaultPollingMethod(finished=False, interval=polling_interval)
 
         return await async_poller(command, recovered_secret, None, polling_method)
