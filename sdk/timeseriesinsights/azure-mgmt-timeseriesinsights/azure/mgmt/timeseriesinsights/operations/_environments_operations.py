@@ -27,7 +27,7 @@ class EnvironmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-11-15".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-08-15-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class EnvironmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-15"
+        self.api_version = "2018-08-15-preview"
 
         self.config = config
 
@@ -216,7 +216,7 @@ class EnvironmentsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, environment_name, environment_update_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, environment_name, standard_environment_update_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -242,7 +242,7 @@ class EnvironmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(environment_update_parameters, 'EnvironmentUpdateParameters')
+        body_content = self._serialize.body(standard_environment_update_parameters, 'StandardEnvironmentUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -265,7 +265,7 @@ class EnvironmentsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, environment_name, environment_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, environment_name, standard_environment_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates the environment with the specified name in the specified
         subscription and resource group.
 
@@ -274,10 +274,10 @@ class EnvironmentsOperations(object):
         :param environment_name: The name of the Time Series Insights
          environment associated with the specified resource group.
         :type environment_name: str
-        :param environment_update_parameters: Request object that contains the
-         updated information for the environment.
-        :type environment_update_parameters:
-         ~azure.mgmt.timeseriesinsights.models.EnvironmentUpdateParameters
+        :param standard_environment_update_parameters: Request object that
+         contains the updated information for the environment.
+        :type standard_environment_update_parameters:
+         ~azure.mgmt.timeseriesinsights.models.StandardEnvironmentUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -294,7 +294,7 @@ class EnvironmentsOperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            environment_update_parameters=environment_update_parameters,
+            standard_environment_update_parameters=standard_environment_update_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
