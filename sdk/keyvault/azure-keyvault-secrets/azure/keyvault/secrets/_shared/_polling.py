@@ -76,25 +76,24 @@ class KeyVaultOperationPoller(LROPoller):
             pass
 
 class RecoverDeletedPollingMethod(PollingMethod):
-    def __init__(self, command, final_resource, initial_status, finished_status, interval=2):
+    def __init__(self, command, final_resource, finished, interval=2):
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
-        self._status = initial_status
-        self._finished_status = finished_status
+        self._finished = finished
 
     def _update_status(self):
         # type: () -> None
         try:
             self._command()
-            self._status = self._finished_status
+            self._finished = True
         except ResourceNotFoundError:
             pass
         except HttpResponseError as e:
             # If we are polling on get_deleted_* and we don't have get permissions, we will get
             # ResourceNotFoundError until the resource is recovered, at which point we'll get a 403.
             if e.status_code == 403:
-                self._status = self._finished_status
+                self._finished = True
             else:
                 raise
 
@@ -114,7 +113,7 @@ class RecoverDeletedPollingMethod(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        return self._status == self._finished_status
+        return self._finished
 
     def resource(self):
         # type: () -> Any
@@ -122,20 +121,4 @@ class RecoverDeletedPollingMethod(PollingMethod):
 
     def status(self):
         # type: () -> str
-        return self._status
-
-
-class DeletePollingMethod(RecoverDeletedPollingMethod):
-    def __init__(self, command, final_resource, initial_status, finished_status, sd_disabled, interval=2):
-        self._sd_disabled = sd_disabled
-        super(DeletePollingMethod, self).__init__(
-            command=command,
-            final_resource=final_resource,
-            initial_status=initial_status,
-            finished_status=finished_status,
-            interval=interval
-        )
-
-    def finished(self):
-        # type: () -> bool
-        return self._sd_disabled or self._status == self._finished_status
+        return "finished" if self._finished else "polling"

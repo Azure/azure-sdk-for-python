@@ -16,24 +16,23 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 class RecoverDeletedAsyncPollingMethod(AsyncPollingMethod):
-    def __init__(self, initial_status, finished_status, interval=2):
+    def __init__(self, finished, interval=2):
         self._command = None
         self._resource = None
         self._polling_interval = interval
-        self._status = initial_status
-        self._finished_status = finished_status
+        self._finished = finished
 
     async def _update_status(self) -> None:
         try:
             await self._command()
-            self._status = self._finished_status
+            self._finished = True
         except ResourceNotFoundError:
             pass
         except HttpResponseError as e:
             # If we are polling on get_deleted_* and we don't have get permissions, we will get
             # ResourceNotFoundError until the resource is recovered, at which point we'll get a 403.
             if e.status_code == 403:
-                self._status = self._finished_status
+                self._finished = True
             else:
                 raise
 
@@ -52,19 +51,10 @@ class RecoverDeletedAsyncPollingMethod(AsyncPollingMethod):
             raise
 
     def finished(self) -> bool:
-        return self._status == self._finished_status
+        return self._finished
 
     def resource(self) -> "Any":
         return self._resource
 
     def status(self) -> str:
-        return self._status
-
-
-class DeleteAsyncPollingMethod(RecoverDeletedAsyncPollingMethod):
-    def __init__(self, initial_status, finished_status, sd_disabled, interval=2):
-        self._sd_disabled = sd_disabled
-        super(DeleteAsyncPollingMethod, self).__init__(initial_status, finished_status, interval)
-
-    def finished(self) -> bool:
-        return self._sd_disabled or self._status == self._finished_status
+        return "finished" if self._finished else "polling"
