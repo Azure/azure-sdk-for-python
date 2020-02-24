@@ -10,11 +10,11 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy
 from .._models import TextDocumentBatchStatistics
 
 
-class AsyncTextAnalyticsResponseHook(AsyncHTTPPolicy):
+class AsyncTextAnalyticsResponseHookPolicy(AsyncHTTPPolicy):
 
     def __init__(self, **kwargs):
         self._response_callback = kwargs.get('response_hook')
-        super(AsyncTextAnalyticsResponseHook, self).__init__()
+        super(AsyncTextAnalyticsResponseHookPolicy, self).__init__()
 
     async def send(self, request):
         response_callback = request.context.options.pop("response_hook", self._response_callback)
