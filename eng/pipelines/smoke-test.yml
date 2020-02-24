@@ -23,10 +23,10 @@ jobs:
           OSVmImage: windows-2019
         Python_37_Mac:
           PythonVersion: '3.7'
-          OSVmImage: macOS-10.14
+          OSVmImage: macOS-10.15
         Python_38_Mac:
           PythonVersion: '3.8'
-          OSVmImage: macOS-10.14
+          OSVmImage: macOS-10.15
 
     pool:
       vmImage: $(OSVmImage)
