@@ -6,7 +6,6 @@ import random
 from typing import (
     Dict,
     Callable,
-    List,
     Any,
     Union,
     TYPE_CHECKING,
@@ -209,17 +208,17 @@ class EventProcessor(
                 await self._process_error(partition_context, err)
 
     async def _on_event_received(
-        self, partition_context: PartitionContext, event: Union[EventData, List[EventData]]
+        self, partition_context: PartitionContext, event: Union[EventData, Iterable[EventData]]
     ) -> None:
-        # TODO: Add distributed tracing here with self._context()
-        if event:
-            partition_context._last_received_event = (  # pylint: disable=protected-access
-                event[-1] if self._batch else event
-            )
-        else:
-            partition_context._last_received_event = None
+        with self._context(event):
+            if event:
+                partition_context._last_received_event = (  # pylint: disable=protected-access
+                    event[-1] if self._batch else event
+                )
+            else:
+                partition_context._last_received_event = None
 
-        await self._event_handler(partition_context, event)
+            await self._event_handler(partition_context, event)
 
     async def _close_consumer(self, partition_context):
         partition_id = partition_context.partition_id

@@ -7,6 +7,7 @@ from datetime import datetime
 from contextlib import contextmanager
 from typing import (
     Union,
+    Iterable,
     Dict,
     Callable,
     Any,
@@ -97,7 +98,7 @@ class EventProcessorMixin(object):
 
     @contextmanager
     def _context(self, event):
-        # type: (EventData) -> Iterator[None]
+        # type: (Union[EventData, Iterable[EventData]]) -> Iterator[None]
         """Tracing"""
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is None:
