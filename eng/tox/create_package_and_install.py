@@ -92,7 +92,8 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
         f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".zip")
     ]
 
-    if not in_ci:
+    if not in_ci():
+        logging.info("Cleaning up build directories and files")
         cleanup_build_artifacts(target_setup)
     return prebuilt_packages
 
