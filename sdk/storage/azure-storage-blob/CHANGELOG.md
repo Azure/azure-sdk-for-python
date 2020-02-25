@@ -2,6 +2,9 @@
 
 ## 12.2.1 (Unreleased)
 
+**Breaking changes**
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core.
+
 
 ## 12.2.0
 

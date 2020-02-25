@@ -5,6 +5,9 @@
 **Fixes**
 - Responses are always decoded as UTF8
 
+**Breaking changes**
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core.
+
 ## 12.1.0 (2019-12-04)
 
  **New features**
