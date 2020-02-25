@@ -47,17 +47,17 @@ class SeviceBusSenderClient:
 
     def send(
         self,
-        messages,
+        message : Union[Message,BatchMessage],
         session : str = None,
         message_timeout : float = None
     ) -> None:
     def schedule(
         self,
-        messages,
+        message : Union[Message,BatchMessage],
         schedule_time : datetime,
         session : str = None
     ) -> List[int]:
-    def cancel_scheduled_messages(self, sequence_numbers : List[int]) -> None:
+    def cancel_scheduled_messages(self, sequence_number : Union[int, List[int]]) -> None:
 
 
 class ServiceBusReceiverClient:
@@ -138,7 +138,7 @@ class ServiceBusReceiverClient:
         **kwargs
     ) -> None:  # Batch settle deferred messages
 
-    def list_sessions(self) -> List[str]:
+    def list_session_ids(self) -> List[str]:
     def get_session(self) -> Session:  # raise Error when called on non-session entity
 
     # Rule APIs, raise Error when called on Queue
