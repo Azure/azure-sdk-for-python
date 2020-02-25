@@ -125,7 +125,9 @@ opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
 opentelemetry-api>=0.3a0
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.10
+#override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.2.2
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.10
+#override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.2.2
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub uamqp<2.0,>=1.2.5
 #override azure-appconfiguration msrest>=0.6.10
