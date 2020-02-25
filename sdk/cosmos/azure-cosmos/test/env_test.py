@@ -24,7 +24,7 @@ import uuid
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
-import test.test_config as test_config
+import test_config
 import os
 
 pytestmark = pytest.mark.cosmosEmulator

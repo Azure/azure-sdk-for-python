@@ -28,7 +28,7 @@ import azure.cosmos.exceptions as exceptions
 import azure.cosmos._retry_options as retry_options
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos import _retry_utility
-import test.test_config as test_config
+import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 

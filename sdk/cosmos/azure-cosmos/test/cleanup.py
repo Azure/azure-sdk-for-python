@@ -1,9 +1,8 @@
-import sys
-import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.exceptions as exceptions
-import test.test_config as test_config
-
 def delete_database(database_id):
+    import azure.cosmos.cosmos_client as cosmos_client
+    import azure.cosmos.exceptions as exceptions
+    import test_config
+
     print("Cleaning up test resources.")
     config = test_config._test_config
     host = config.host
@@ -24,7 +23,11 @@ def delete_database(database_id):
 
 
 if __name__== "__main__":
+    import sys
     if len(sys.argv) < 2:
         raise ValueError("database_id for deletion not provided.")
+    import os.path as path
+    root_path = path.abspath(path.join(__file__, "..", ".."))
+    sys.path.append(root_path)
     database_id = sys.argv[1]
     delete_database(database_id)

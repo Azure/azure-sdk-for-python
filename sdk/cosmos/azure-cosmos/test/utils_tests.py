@@ -24,7 +24,7 @@ import pytest
 import azure.cosmos
 import azure.cosmos._utils as _utils
 import platform
-import test.test_config as test_config
+import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 

@@ -9,7 +9,7 @@ from azure.cosmos._execution_context.base_execution_context import _QueryExecuti
 from azure.cosmos.documents import _DistinctType
 import pytest
 import collections
-import test.test_config as test_config
+import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 

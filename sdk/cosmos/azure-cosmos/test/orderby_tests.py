@@ -29,7 +29,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import _query_iterable as query_iterable
 import azure.cosmos._base as base
 from six.moves import xrange
-import test.test_config as test_config
+import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
