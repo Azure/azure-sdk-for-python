@@ -437,10 +437,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics
+[source_code]: azure/ai/textanalytics
 [TA_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [TA_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs
-[TA_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples
+[TA_samples]: samples
 [TA_product_documentation]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
 [azure_subscription]: https://azure.microsoft.com/free/
 [TA_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
@@ -453,14 +453,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [cognitive_authentication]: https://docs.microsoft.com/azure/cognitive-services/authentication
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#install-the-package
+[install_azure_identity]: ../../identity/azure-identity#install-the-package
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [cognitive_custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
+[azure_identity_credentials]: ../../identity/azure-identity#credentials
+[default_azure_credential]: ../../identity/azure-identity#defaultazurecredential
 [service_limits]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
 
 [document_error]: https://aka.ms/azsdk-python-textanalytics-documenterror
@@ -485,23 +485,23 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.2.1/azure.core.pipeline.policies.html
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
-[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_core]: ../../core/azure-core/README.md
+[azure_identity]: ../../identity/azure-identity
 [python_logging]: https://docs.python.org/3.5/library/logging.html
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
-[detect_language_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_detect_language.py
-[detect_language_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
-[analyze_sentiment_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
-[analyze_sentiment_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
-[extract_key_phrases_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
-[extract_key_phrases_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
-[recognize_entities_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entities.py
-[recognize_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
-[recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
-[recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
-[recognize_linked_entities_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
-[recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
+[sample_authentication]: samples/sample_authentication.py
+[sample_authentication_async]: samples/async_samples/sample_authentication_async.py
+[detect_language_sample]: samples/sample_detect_language.py
+[detect_language_sample_async]: samples/async_samples/sample_detect_language_async.py
+[analyze_sentiment_sample]: samples/sample_analyze_sentiment.py
+[analyze_sentiment_sample_async]: samples/async_samples/sample_analyze_sentiment_async.py
+[extract_key_phrases_sample]: samples/sample_extract_key_phrases.py
+[extract_key_phrases_sample_async]: samples/async_samples/sample_extract_key_phrases_async.py
+[recognize_entities_sample]: samples/sample_recognize_entities.py
+[recognize_entities_sample_async]: samples/async_samples/sample_recognize_entities_async.py
+[recognize_pii_entities_sample]: samples/sample_recognize_pii_entities.py
+[recognize_pii_entities_sample_async]: samples/async_samples/sample_recognize_pii_entities_async.py
+[recognize_linked_entities_sample]: samples/sample_recognize_linked_entities.py
+[recognize_linked_entities_sample_async]: samples/async_samples/sample_recognize_linked_entities_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
