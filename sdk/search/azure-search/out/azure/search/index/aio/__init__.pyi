@@ -1,0 +1,1 @@
+from ._search_index_client_async import SearchIndexClient as SearchIndexClient

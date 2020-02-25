@@ -1,0 +1,1 @@
+from ._search_index_client import SearchIndexClient as SearchIndexClient
