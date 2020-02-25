@@ -16,7 +16,7 @@ parameters:
       PythonVersion: '3.5'
     MacOs_Python37:
       OSName: 'MacOS'
-      OSVmImage: 'macOS-10.14'
+      OSVmImage: 'macOS-10.15'
       PythonVersion: '3.7'
     Windows_Python27:
       OSName: 'Windows'

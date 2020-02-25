@@ -100,7 +100,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def detect_language(  # type: ignore
         self,
         inputs: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
-        country_hint: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detects Language for a batch of documents.
@@ -118,7 +117,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             DetectLanguageInput, like `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput]
-        :param str country_hint: A country hint for the entire batch. Accepts two
+        :keyword str country_hint: A country hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the string "none".
@@ -142,7 +141,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
-        country_hint = country_hint if country_hint is not None else self._default_country_hint
+        country_hint_arg = kwargs.pop("country_hint", None)
+        country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
         docs = _validate_batch_input(inputs, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -161,7 +161,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_entities(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Entity Recognition for a batch of documents.
@@ -179,7 +178,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
@@ -203,7 +202,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -222,7 +222,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_pii_entities(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
@@ -240,7 +239,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
@@ -264,7 +263,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -283,7 +283,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_linked_entities(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
@@ -302,7 +301,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
@@ -326,7 +325,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -345,7 +345,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def extract_key_phrases(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract Key Phrases from a batch of documents.
@@ -364,7 +363,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
@@ -388,7 +387,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
@@ -407,7 +407,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def analyze_sentiment(  # type: ignore
         self,
         inputs: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        language: Optional[str] = None,
         **kwargs: Any
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents.
@@ -425,7 +424,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             TextDocumentInput, like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type inputs:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput]
-        :param str language: The 2 letter ISO 639-1 representation of language for the
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
@@ -449,7 +448,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_batch_input(inputs, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)

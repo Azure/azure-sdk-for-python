@@ -337,7 +337,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.id)
+                self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
 
@@ -477,7 +477,7 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.sentiment_scores)
+            self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1124,3 +1124,66 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
         # test client default
         new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
         result4 = await new_client.detect_language(inputs=["this is written in english"], response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_keyword_arguments_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        def callback(response):
+            country_str = "\"countryHint\": \"ES\""
+            self.assertEqual(response.http_request.body.count(country_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        def callback2(response):
+            language_str = "\"language\": \"es\""
+            self.assertEqual(response.http_request.body.count(language_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        def callback3(response):
+            language_str = "\"language\": \"en\""
+            self.assertEqual(response.http_request.body.count(language_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        res = await text_analytics.detect_language(
+            inputs=["this is written in english"],
+            model_version="latest",
+            show_stats=True,
+            country_hint="ES",
+            response_hook=callback
+        )
+
+        res = await text_analytics.recognize_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            response_hook=callback2
+        )
+
+        res = await text_analytics.recognize_linked_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            response_hook=callback2
+        )
+
+        res = await text_analytics.recognize_pii_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="en",
+            response_hook=callback3
+        )
+
+        res = await text_analytics.analyze_sentiment(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            response_hook=callback2
+        )
