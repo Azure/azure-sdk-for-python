@@ -9,6 +9,7 @@ import six
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.pipeline.policies import HeadersPolicy
+from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio import SearchIndexClient as _SearchIndexClient
 from .._generated.models import (
     IndexBatch as IndexBatchModel,
@@ -91,13 +92,15 @@ class SearchIndexClient(object):
             repr(self._search_service_name), repr(self._index_name)
         )[:1024]
 
-    async def get_document_count(self):
+    @distributed_trace_async
+    async def get_document_count(self, **kwargs):
         # type: () -> int
         """Return the number of documents in the Azure search index.
 
         """
-        return int(await self._client.documents.count())
+        return int(await self._client.documents.count(**kwargs))
 
+    @distributed_trace_async
     async def get_document(self, key, selected_fields=None):
         # type: (str, List[str]) -> dict
         """Retrieve a document from the Azure search index by its key.
@@ -108,6 +111,7 @@ class SearchIndexClient(object):
         )
         return cast(dict, result.additional_properties)
 
+    @distributed_trace_async
     async def search(self, query, **kwargs):
         # type: (Union[str, SearchQuery], **Any) -> AsyncItemPaged[dict]
         """Search the Azure search index for documents.
@@ -126,6 +130,7 @@ class SearchIndexClient(object):
             self._client, query, kwargs, page_iterator_class=_SearchDocumentsPagedAsync
         )
 
+    @distributed_trace_async
     async def suggest(self, query, **kwargs):
         # type: (Union[str, SuggestQuery], **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
@@ -142,6 +147,7 @@ class SearchIndexClient(object):
         results = [r.as_dict() for r in response.results]
         return results
 
+    @distributed_trace_async
     async def autocomplete(self, query, **kwargs):
         # type: (Union[str, AutocompleteQuery], **Any) -> List[dict]
         """Get search auto-completion results from the Azure search index.
@@ -197,6 +203,7 @@ class SearchIndexClient(object):
         batch.add_merge_or_upload_documents(documents)
         return await self.index_batch(batch, **kwargs)
 
+    @distributed_trace_async
     async def index_batch(self, batch, **kwargs):
         # type: (IndexBatch, **Any) -> List[IndexingResult]
         """Specify a document operations to perform as a batch.
