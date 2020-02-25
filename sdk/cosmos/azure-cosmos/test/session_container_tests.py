@@ -25,7 +25,7 @@ import time
 
 import pytest
 import azure.cosmos.cosmos_client as cosmos_client
-import test_config
+import test.test_config as test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 

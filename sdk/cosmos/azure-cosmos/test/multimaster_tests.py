@@ -5,7 +5,7 @@ import pytest
 import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import HttpHeaders
 from azure.cosmos import _retry_utility
-import test_config
+import test.test_config as test_config
 from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator

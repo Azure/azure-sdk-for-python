@@ -49,17 +49,14 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos._murmur_hash as _murmur_hash
-import test_config
+import test.test_config as test_config
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
-import conftest
 from azure.cosmos import _retry_utility
 import requests
 from urllib3.util.retry import Retry
-from requests.exceptions import ConnectionError
-
 
 pytestmark = pytest.mark.cosmosEmulator
 

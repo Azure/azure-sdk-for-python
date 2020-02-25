@@ -30,7 +30,7 @@ from six.moves import xrange
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
-import test_config
+import test.test_config as test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 

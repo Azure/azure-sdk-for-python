@@ -30,7 +30,7 @@ import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import StatusCodes
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 from azure.cosmos import _retry_utility
-import test_config
+import test.test_config as test_config
 
 pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.globaldb]
 

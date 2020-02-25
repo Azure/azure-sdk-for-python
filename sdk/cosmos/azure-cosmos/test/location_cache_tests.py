@@ -11,7 +11,7 @@ from azure.cosmos._location_cache import LocationCache
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos import _retry_utility
-import test_config
+import test.test_config as test_config
 import six
 
 pytestmark = pytest.mark.cosmosEmulator

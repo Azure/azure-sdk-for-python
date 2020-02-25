@@ -25,7 +25,7 @@ import pytest
 import random
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.partition_key import PartitionKey
-import test_config
+import test.test_config as test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 

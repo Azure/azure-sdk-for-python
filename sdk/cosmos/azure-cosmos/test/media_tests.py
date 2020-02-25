@@ -1,7 +1,7 @@
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._synchronized_request as synchronized_request
 import unittest
-import test_config
+import test.test_config as test_config
 
 
 class FakePipelineResponse:

@@ -21,7 +21,7 @@
 
 # pytest fixture 'teardown' is called at the end of a test run to clean up resources
 
-import test_config
+import test.test_config as test_config
 import pytest
 import cleanup
 

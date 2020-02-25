@@ -1,7 +1,7 @@
-import test_config
 import sys
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
+import test.test_config as test_config
 
 def delete_database(database_id):
     print("Cleaning up test resources.")

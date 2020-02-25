@@ -25,7 +25,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos._routing import routing_range as routing_range
-import test_config
+import test.test_config as test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 

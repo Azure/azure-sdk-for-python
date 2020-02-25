@@ -27,7 +27,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
-import test_config
+import test.test_config as test_config
 from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
