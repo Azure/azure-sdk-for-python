@@ -9,18 +9,29 @@ from typing import TYPE_CHECKING
 
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Any, Callable, Union
 
 logger = logging.getLogger(__name__)
 
+
 class AsyncKeyVaultPollingMethod(AsyncPollingMethod):
-    def __init__(self, finished, interval=2):
-        self._command = None
-        self._resource = None
+    """Poll with GET requests until one succeeds.
+
+    This allows waiting for Key Vault to delete, or recover, a resource, by polling for the existence of the deleted
+    or recovered resource, respectively.
+    """
+
+    def __init__(self, command, final_resource, finished, interval=2):
+        self._command = command
+        self._resource = final_resource
         self._polling_interval = interval
         self._finished = finished
+
+    def initialize(self, client, initial_response, deserialization_callback):
+        pass
 
     async def _update_status(self) -> None:
         try:
@@ -35,10 +46,6 @@ class AsyncKeyVaultPollingMethod(AsyncPollingMethod):
                 self._finished = True
             else:
                 raise
-
-    def initialize(self, client: "Any", initial_response: str, _: "Callable") -> None:
-        self._command = client
-        self._resource = initial_response
 
     async def run(self) -> None:
         try:
