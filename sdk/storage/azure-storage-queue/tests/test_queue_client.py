@@ -396,10 +396,7 @@ class StorageQueueClientTest(StorageTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            assert ("azsdk-python-storage-queue/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())) in response.http_request.headers['User-Agent']
+            assert "azsdk-python-storage-queue/{}".format(VERSION) in response.http_request.headers['User-Agent']
 
         service.get_service_properties(raw_response_hook=callback)
 

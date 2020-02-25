@@ -53,7 +53,7 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
-from .._user_agent import USER_AGENT
+from .._version import VERSION
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -379,7 +379,7 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+    config.user_agent_policy = UserAgentPolicy(sdk_moniker="storage-file-share/{}".format(VERSION), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
