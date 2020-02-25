@@ -75,6 +75,10 @@ setup(
         'azure-eventhub<6.0.0,>=5.0.0',
     ],
     extras_require={
-
-    }
+        # dependencies for the vendored storage blob
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
+        # end of dependencies for the vendored storage blob
+    },
 )
