@@ -34,35 +34,34 @@ class AnalyzeSentimentSample(object):
         from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
         text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
         documents = [
-            "🥨. I'm having a great day!",
+            "I had the best day of my life.",
             "This was a waste of my time. The speaker put me to sleep.",
             "No tengo dinero ni nada que dar...",
             "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."
         ]
 
         result = text_analytics_client.analyze_sentiment(documents)
-        print(result)
         docs = [doc for doc in result if not doc.is_error]
 
-        # for idx, doc in enumerate(docs):
-        #     print("Document text: {}".format(documents[idx]))
-        #     print("Overall sentiment: {}".format(doc.sentiment))
-        # # [END batch_analyze_sentiment]
-        #     print("Overall confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
-        #         doc.confidence_scores.positive,
-        #         doc.confidence_scores.neutral,
-        #         doc.confidence_scores.negative,
-        #     ))
-        #     for idx, sentence in enumerate(doc.sentences):
-        #         print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
-        #         print("Sentence confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
-        #             sentence.confidence_scores.positive,
-        #             sentence.confidence_scores.neutral,
-        #             sentence.confidence_scores.negative,
-        #         ))
-        #         print("Offset: {}".format(sentence.offset))
-        #         print("Length: {}\n".format(sentence.length))
-        #     print("------------------------------------")
+        for idx, doc in enumerate(docs):
+            print("Document text: {}".format(documents[idx]))
+            print("Overall sentiment: {}".format(doc.sentiment))
+        # [END batch_analyze_sentiment]
+            print("Overall confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f} \n".format(
+                doc.confidence_scores.positive,
+                doc.confidence_scores.neutral,
+                doc.confidence_scores.negative,
+            ))
+            for idx, sentence in enumerate(doc.sentences):
+                print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
+                print("Sentence confidence scores: positive={0:.3f}; neutral={1:.3f}; negative={2:.3f}".format(
+                    sentence.confidence_scores.positive,
+                    sentence.confidence_scores.neutral,
+                    sentence.confidence_scores.negative,
+                ))
+                print("Offset: {}".format(sentence.offset))
+                print("Length: {}\n".format(sentence.length))
+            print("------------------------------------")
 
     def alternative_scenario_analyze_sentiment(self):
         """This sample demonstrates how to retrieve batch statistics, the
