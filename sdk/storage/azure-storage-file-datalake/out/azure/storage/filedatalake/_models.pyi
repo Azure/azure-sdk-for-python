@@ -7,7 +7,7 @@ from ._generated.models import Path
 from ._shared.models import DictMixin
 from ._shared.response_handlers import process_storage_error
 from azure.core.paging import PageIterator
-from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions, BlobSasPermissions, ContainerSasPermissions, ContentSettings as BlobContentSettings, LeaseProperties as BlobLeaseProperties, ResourceTypes as BlobResourceTypes, UserDelegationKey as BlobUserDelegationKey
+from azure.storage.blob import AccessPolicy as BlobAccessPolicy, AccountSasPermissions as BlobAccountSasPermissions, BlobSasPermissions, ContainerSasPermissions, ContentSettings as BlobContentSettings, LeaseProperties as BlobLeaseProperties, ResourceTypes as BlobResourceTypes, UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob._models import ContainerPropertiesPaged
 from enum import Enum
 from typing import Any, Optional
@@ -93,10 +93,14 @@ class DirectorySasPermissions(BlobSasPermissions):
 class FileSasPermissions(BlobSasPermissions):
     def __init__(self, read: bool = ..., create: bool = ..., write: bool = ..., delete: bool = ...) -> None: ...
 
+class AccessPolicy(BlobAccessPolicy):
+    def __init__(self, permission: Optional[Any] = ..., expiry: Optional[Any] = ..., start: Optional[Any] = ...) -> None: ...
+
 class ResourceTypes(BlobResourceTypes):
     def __init__(self, service: bool = ..., file_system: bool = ..., object: bool = ...) -> None: ...
 
-class UserDelegationKey(BlobUserDelegationKey): ...
+class UserDelegationKey(BlobUserDelegationKey):
+    def __init__(self) -> None: ...
 
 class PublicAccess(str, Enum):
     OFF: str = ...
