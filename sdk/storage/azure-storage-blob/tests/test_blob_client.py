@@ -536,7 +536,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-blob/{} Python/{} ({})".format(
+                "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-blob/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -551,13 +551,12 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-blob/{} Python/{} ({}) customer_user_agent".format(
+                "customer_user_agent azsdk-python-storage-blob/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
 
-        custom_headers = {'User-Agent': 'customer_user_agent'}
-        service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
+        service.get_service_properties(raw_response_hook=callback, user_agent='customer_user_agent')
 
     def test_error_with_malformed_conn_str(self):
         # Arrange
