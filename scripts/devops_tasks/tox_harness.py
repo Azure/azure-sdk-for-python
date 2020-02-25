@@ -35,7 +35,7 @@ coverage_dir = os.path.join(root_dir, "_coverage/")
 pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
-
+DEPENDS_TEST_TOX_NAME = "depends"
 
 class ToxWorkItem:
     def __init__(self, target_package_path, tox_env, options_array):
@@ -364,16 +364,33 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             destination_dev_req, parsed_args.injected_packages, package_dir
         )
 
-        if parsed_args.tox_env:
-            tox_execution_array.extend(["-e", parsed_args.tox_env])
+        tox_env_arg = parsed_args.tox_env
+        # If tox env arg has multiple env and one of it is "depends" test then run depends test seperately
+        # Depends test creates whl and this can cause issue when running in parallel
+        tox_env_list = tox_env_arg.split(",")
+        depends_tox_execution_array = []
+        if DEPENDS_TEST_TOX_NAME in tox_env_list and len(tox_env_list) > 1:
+            tox_env_list.remove(DEPENDS_TEST_TOX_NAME)
+            tox_env_arg = ",".join(tox_env_list)
+            depends_tox_execution_array = list(tox_execution_array)
+            depends_tox_execution_array.extend(["-e", DEPENDS_TEST_TOX_NAME])
 
+        if tox_env_arg:
+            tox_execution_array.extend(["-e", tox_env_arg])
+
+        additional_args = []
         if parsed_args.tenvparallel:
-            tox_execution_array.extend(["-p", "all"])
+            additional_args.extend(["-p", "all"])
 
         if local_options_array:
-            tox_execution_array.extend(["--"] + local_options_array)
+            additional_args.extend(["--"] + local_options_array)
 
+        tox_execution_array.extend(additional_args)
         tox_command_tuples.append((tox_execution_array, package_dir))
+
+        if depends_tox_execution_array:
+            depends_tox_execution_array.extend(additional_args)
+            tox_command_tuples.append((depends_tox_execution_array, package_dir))
 
     if parsed_args.tparallel:
         return_code = execute_tox_parallel(tox_command_tuples)
