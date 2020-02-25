@@ -7,7 +7,6 @@ from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling import async_poller
 
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
@@ -266,16 +265,16 @@ class SecretClient(AsyncKeyVaultClientBase):
             await self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         )
 
-        command = partial(self.get_deleted_secret, name=name, **kwargs)
-        delete_secret_poller = AsyncKeyVaultPollingMethod(
+        polling_method = AsyncKeyVaultPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
-            finished=deleted_secret.recovery_id is None,
             command=partial(self.get_deleted_secret, name=name, **kwargs),
             final_resource=deleted_secret,
+            finished=deleted_secret.recovery_id is None,
             interval=polling_interval,
         )
+        await polling_method.run()
 
-        return await async_poller(command, deleted_secret, None, delete_secret_poller)
+        return polling_method.resource()
 
     @distributed_trace_async
     async def get_deleted_secret(self, name: str, **kwargs: "Any") -> DeletedSecret:
@@ -377,6 +376,9 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
         command = partial(self.get_secret, name=name, **kwargs)
-        polling_method = AsyncKeyVaultPollingMethod(finished=False, interval=polling_interval)
+        polling_method = AsyncKeyVaultPollingMethod(
+            command=command, final_resource=recovered_secret, finished=False, interval=polling_interval
+        )
+        await polling_method.run()
 
-        return await async_poller(command, recovered_secret, None, polling_method)
+        return polling_method.resource()
