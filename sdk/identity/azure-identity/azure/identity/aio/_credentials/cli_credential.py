@@ -49,7 +49,8 @@ class AzureCliCredential(object):
         _proc = await asyncio.create_subprocess_shell(
             command,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE)
+            stderr=asyncio.subprocess.PIPE,
+            timeout=10)
             
         stdout, stderr = await _proc.communicate()
 

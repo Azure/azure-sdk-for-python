@@ -49,30 +49,26 @@ def test_cli_login():
     assert ClientAuthenticationError == excinfo.type
     assert AzureCliCredential._CLI_LOGIN_ERR in str(excinfo.value)
 
-def test_stdout_error():
-    def test_no_json():
-        mock_token = 'not a json'
-        mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
+def test_no_json():
+    mock_token = 'not a json'
+    mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
 
-        with pytest.raises(ClientAuthenticationError) as excinfo:
-            with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-                cred = AzureCliCredential()
-                token = cred.get_token()
+    with pytest.raises(ClientAuthenticationError) as excinfo:
+        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
+            cred = AzureCliCredential()
+            token = cred.get_token()
 
-        assert ClientAuthenticationError == excinfo.type
-        assert 'JSONDecodeError' in str(excinfo.value)
+    assert ClientAuthenticationError == excinfo.type
+    assert 'JSONDecodeError' in str(excinfo.value)
 
-    def test_bad_token():
-        mock_token = json.dumps({"foo" : "bar"})
-        mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
+def test_bad_token():
+    mock_token = json.dumps({"foo" : "bar"})
+    mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
 
-        with pytest.raises(ClientAuthenticationError) as excinfo:
-            with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-                cred = AzureCliCredential()
-                token = cred.get_token()
+    with pytest.raises(ClientAuthenticationError) as excinfo:
+        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
+            cred = AzureCliCredential()
+            token = cred.get_token()
 
-        assert ClientAuthenticationError == excinfo.type
-        assert 'KeyError' in str(excinfo.value)
-
-    test_no_json()
-    test_bad_token()
+    assert ClientAuthenticationError == excinfo.type
+    assert 'KeyError' in str(excinfo.value)

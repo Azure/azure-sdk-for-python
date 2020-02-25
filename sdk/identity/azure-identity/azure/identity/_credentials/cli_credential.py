@@ -46,7 +46,7 @@ class AzureCliCredential(object):
         return AccessToken(access_token, expires_on)
 
     def _get_cli_access_token(self, command):
-        _proc = run(command, shell=True, stderr=PIPE, stdout=PIPE)
+        _proc = run(command, shell=True, stderr=PIPE, stdout=PIPE, timeout=10)
         return_code = _proc.returncode
         stdout = six.ensure_str(_proc.stdout)
         stderr = six.ensure_str(_proc.stderr)
