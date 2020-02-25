@@ -23,11 +23,11 @@ class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
 
 class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
     def __init__(self, **kwargs):
-        self._response_callback = kwargs.get("response_hook")
+        self._response_callback = kwargs.get("raw_response_hook")
         super(TextAnalyticsResponseHookPolicy, self).__init__()
 
     def on_request(self, request):
-        self._response_callback = request.context.options.pop("response_hook", self._response_callback)
+        self._response_callback = request.context.options.pop("raw_response_hook", self._response_callback)
 
     def on_response(self, request, response):
         if self._response_callback:

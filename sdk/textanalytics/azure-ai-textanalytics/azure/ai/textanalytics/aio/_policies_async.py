@@ -13,11 +13,11 @@ from .._models import TextDocumentBatchStatistics
 class AsyncTextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
-        self._response_callback = kwargs.get('response_hook')
+        self._response_callback = kwargs.get('raw_response_hook')
         super(AsyncTextAnalyticsResponseHookPolicy, self).__init__()
 
     async def on_request(self, request):
-        self._response_callback = request.context.options.pop("response_hook", self._response_callback)
+        self._response_callback = request.context.options.pop("raw_response_hook", self._response_callback)
 
     async def on_response(self, request, response):
         if self._response_callback:
