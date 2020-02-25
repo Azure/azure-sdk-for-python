@@ -17,7 +17,7 @@ from ._generated.models import (
 
 
 _SUPPORTED_API_VERSIONS = [
-    '2017-11-09',
+    '2017-11-09',  # added after porting
     '2019-02-02',
     '2019-07-07'
 ]
