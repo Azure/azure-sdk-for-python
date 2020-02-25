@@ -84,4 +84,5 @@ jobs:
         - pwsh: |
             az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
           displayName: Delete resource group
+          condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
 
