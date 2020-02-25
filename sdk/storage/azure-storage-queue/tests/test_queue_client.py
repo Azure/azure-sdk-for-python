@@ -426,7 +426,7 @@ class StorageQueueClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-queue/{} Python/{} ({})".format(
+                "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-queue/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -441,13 +441,12 @@ class StorageQueueClientTest(StorageTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-queue/{} Python/{} ({}) customer_user_agent".format(
+                "customer_user_agent azsdk-python-storage-queue/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
 
-        custom_headers = {'User-Agent': 'customer_user_agent'}
-        service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
+        service.get_service_properties(raw_response_hook=callback, user_agent='customer_user_agent')
 
     @GlobalStorageAccountPreparer()
     def test_create_queue_client_with_complete_queue_url(self, resource_group, location, storage_account, storage_account_key):
