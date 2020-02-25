@@ -137,6 +137,10 @@ try:
         sync_transport = validating_transport(requests, responses)
         return mock.Mock(send=asyncio.coroutine(sync_transport.send))
 
+    def async_return(result):
+        f = asyncio.Future()
+        f.set_result(result)
+        return f
 
 except ImportError:
     pass

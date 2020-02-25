@@ -6,8 +6,8 @@ import json
 import time
 from datetime import datetime
 
+import asyncio
 from subprocess import Popen, PIPE
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -36,7 +36,7 @@ class AzureCliCredential(object):
         except ClientAuthenticationError:
             raise
         except Exception as e:
-            raise ClientAuthenticationError(repr(e))
+            raise ClientAuthenticationError("Azure CLI didn't provide an access token")
         
         expires_on = int((
             datetime.strptime(get_access_token_object['expiresOn'], '%Y-%m-%d %H:%M:%S.%f')
@@ -46,13 +46,16 @@ class AzureCliCredential(object):
         return AccessToken(access_token, expires_on)
 
     async def _get_cli_access_token(self, command):
-        _proc = Popen(command, shell=True, stderr=PIPE, stdout=PIPE)
-        return_code = _proc.wait()
-        stdout = six.ensure_str(_proc.stdout.read())
-        stderr = six.ensure_str(_proc.stderr.read())
-        if return_code == 127 or (return_code == 1 and 'not recognized as' in stderr):
+        _proc = await asyncio.create_subprocess_shell(
+            command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE)
+            
+        stdout, stderr = await _proc.communicate()
+
+        if _proc.returncode == 127 or (_proc.returncode == 1 and 'not recognized as' in stderr):
             raise ClientAuthenticationError(self._CLI_NOT_INSTALLED_ERR)
-        elif return_code == 1:
+        elif _proc.returncode == 1:
             raise ClientAuthenticationError(self._CLI_LOGIN_ERR)
-        
+
         return stdout
