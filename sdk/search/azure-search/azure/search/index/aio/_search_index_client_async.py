@@ -94,20 +94,20 @@ class SearchIndexClient(object):
 
     @distributed_trace_async
     async def get_document_count(self, **kwargs):
-        # type: () -> int
+        # type: (**Any) -> int
         """Return the number of documents in the Azure search index.
 
         """
         return int(await self._client.documents.count(**kwargs))
 
     @distributed_trace_async
-    async def get_document(self, key, selected_fields=None):
-        # type: (str, List[str]) -> dict
+    async def get_document(self, key, selected_fields=None, **kwargs):
+        # type: (str, List[str], **Any) -> dict
         """Retrieve a document from the Azure search index by its key.
 
         """
         result = await self._client.documents.get(
-            key=key, selected_fields=selected_fields
+            key=key, selected_fields=selected_fields, **kwargs
         )
         return cast(dict, result.additional_properties)
 
@@ -173,7 +173,8 @@ class SearchIndexClient(object):
         """
         batch = IndexBatch()
         batch.add_upload_documents(documents)
-        return await self.index_batch(batch, **kwargs)
+        results = await self.index_batch(batch, **kwargs)
+        return cast(List[IndexingResult], results)
 
     async def delete_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
@@ -182,7 +183,8 @@ class SearchIndexClient(object):
         """
         batch = IndexBatch()
         batch.add_delete_documents(documents)
-        return await self.index_batch(batch, **kwargs)
+        results = await self.index_batch(batch, **kwargs)
+        return cast(List[IndexingResult], results)
 
     async def merge_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
@@ -191,7 +193,8 @@ class SearchIndexClient(object):
         """
         batch = IndexBatch()
         batch.add_merge_documents(documents)
-        return await self.index_batch(batch, **kwargs)
+        results = await self.index_batch(batch, **kwargs)
+        return cast(List[IndexingResult], results)
 
     async def merge_or_upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
@@ -201,7 +204,8 @@ class SearchIndexClient(object):
         """
         batch = IndexBatch()
         batch.add_merge_or_upload_documents(documents)
-        return await self.index_batch(batch, **kwargs)
+        results = await self.index_batch(batch, **kwargs)
+        return cast(List[IndexingResult], results)
 
     @distributed_trace_async
     async def index_batch(self, batch, **kwargs):
