@@ -67,9 +67,11 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
+        # dependencies for the vendored storage blob
         "azure-core<2.0.0,>=1.2.2",
         "msrest>=0.6.10",
         "cryptography>=2.1.4",
+        # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
     ],
     extras_require={

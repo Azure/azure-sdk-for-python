@@ -66,9 +66,11 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.5.3",
     install_requires=[
+        # dependencies for the vendored storage blob
         "azure-core<2.0.0,>=1.2.2",
         "msrest>=0.6.10",
         "cryptography>=2.1.4",
+        # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
         'aiohttp<4.0,>=3.0',
     ],
