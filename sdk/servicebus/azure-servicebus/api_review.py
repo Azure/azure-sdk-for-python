@@ -183,8 +183,8 @@ class Message:
     def partition_key(self) -> str:
     def via_partition_key(self, value: str):
     def via_partition_key(self) -> str:
-    def sessio_id(self, value : str):
-    def sessio_id(self) -> str:
+    def session_id(self, value : str):
+    def session_id(self) -> str:
     def time_to_live(self, value : Union[float, timedelta]):
     def time_to_live(self) -> datetime.timedelta:
     def annotations(self, value : dict[str, Any]):
