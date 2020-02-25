@@ -55,8 +55,8 @@ class RecognizeLinkedEntitiesSampleAsync(object):
                 print("Data Source: {}".format(entity.data_source))
                 for match in entity.matches:
                     print("Score: {0:.3f}".format(match.score))
-                    print("Offset: {}".format(match.offset))
-                    print("Length: {}\n".format(match.length))
+                    print("Offset: {}".format(match.grapheme_offset))
+                    print("Length: {}\n".format(match.grapheme_length))
             print("------------------------------------------")
         # [END batch_recognize_linked_entities_async]
 

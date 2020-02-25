@@ -59,8 +59,8 @@ class AnalyzeSentimentSample(object):
                     sentence.confidence_scores.neutral,
                     sentence.confidence_scores.negative,
                 ))
-                print("Offset: {}".format(sentence.offset))
-                print("Length: {}\n".format(sentence.length))
+                print("Offset: {}".format(sentence.grapheme_offset))
+                print("Length: {}\n".format(sentence.grapheme_length))
             print("------------------------------------")
 
     def alternative_scenario_analyze_sentiment(self):
