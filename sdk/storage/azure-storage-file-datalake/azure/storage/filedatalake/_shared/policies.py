@@ -13,7 +13,6 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
 import types
-import platform
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
@@ -40,7 +39,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
-from .._version import VERSION
 from .models import LocationMode
 
 try:
