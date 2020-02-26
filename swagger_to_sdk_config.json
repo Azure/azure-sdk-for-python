@@ -2,6 +2,7 @@
   "$schema": "https://openapistorageprod.blob.core.windows.net/sdkautomation/prod/schemas/swagger_to_sdk_config.schema.json",
   "meta": {
     "autorest_options": {
+      "version": "V2",
       "use": "@microsoft.azure/autorest.python@~4.0.71",
       "python": "",
       "python-mode": "update",
