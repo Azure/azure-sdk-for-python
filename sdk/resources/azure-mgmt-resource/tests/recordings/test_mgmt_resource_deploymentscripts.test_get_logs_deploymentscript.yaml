@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.6 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
+        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/bashSampleScript/logs?api-version=2019-10-01-preview
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"properties\": {\r\n        \"log\":
+        \"custom script\\n\"\r\n      },\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/bashSampleScript/logs/default\",\r\n
+        \     \"type\": \"Microsoft.Resources/deploymentScripts/logs\",\r\n      \"name\":
+        \"default\"\r\n    }\r\n  ]\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '367'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 26 Feb 2020 17:58:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

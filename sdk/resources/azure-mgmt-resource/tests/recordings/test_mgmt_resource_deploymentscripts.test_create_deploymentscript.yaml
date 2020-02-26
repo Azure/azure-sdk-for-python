@@ -1,0 +1,73 @@
+interactions:
+- request:
+    body: 'b''{"identity": {"type": "UserAssigned", "userAssignedIdentities": {"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/python_test_sdk_msi":
+      {}}}, "location": "West US2", "kind": "AzureCLI", "properties": {"cleanupPreference":
+      "OnExpiration", "scriptContent": "echo foo", "arguments": "foo bar", "forceUpdateTag":
+      "123456", "retentionInterval": "P1D", "azCliVersion": "2.0.80"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '466'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.6 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
+        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/inlineSampleScript01?api-version=2019-10-01-preview
+  response:
+    body:
+      string: "{\r\n  \"kind\": \"AzureCLI\",\r\n  \"identity\": {\r\n    \"type\":
+        \"userAssigned\",\r\n    \"tenantId\": \"00000000-0000-0000-0000-000000000000\",\r\n
+        \   \"userAssignedIdentities\": {\r\n      \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/python_test_sdk_msi\":
+        {\r\n        \"principalId\": \"00000000-0000-0000-0000-000000000000\",\r\n
+        \       \"clientId\": \"00000000-0000-0000-0000-000000000000\"\r\n      }\r\n
+        \   }\r\n  },\r\n  \"location\": \"West US2\",\r\n  \"properties\": {\r\n
+        \   \"provisioningState\": \"Succeeded\",\r\n    \"forceUpdateTag\": \"123456\",\r\n
+        \   \"azCliVersion\": \"2.0.80\",\r\n    \"scriptContent\": \"echo foo\",\r\n
+        \   \"arguments\": \"foo bar\",\r\n    \"retentionInterval\": \"P1D\",\r\n
+        \   \"timeout\": \"P1D\",\r\n    \"containerSettings\": {\r\n      \"restartPolicy\":
+        \"never\"\r\n    },\r\n    \"status\": {\r\n      \"containerInstanceId\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ContainerInstance/containerGroups/container\",\r\n
+        \     \"storageAccountId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Storage/storageAccounts/storage\",\r\n
+        \     \"startTime\": \"2020-02-26T00:20:07.3320322Z\",\r\n      \"endTime\":
+        \"2020-02-26T00:22:26.7128208Z\",\r\n      \"expirationTime\": \"2020-02-27T00:22:26.7128208Z\"\r\n
+        \   },\r\n    \"cleanupPreference\": \"OnExpiration\"\r\n  },\r\n  \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/inlineSampleScript01\",\r\n
+        \ \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n  \"name\": \"inlineSampleScript01\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1671'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 26 Feb 2020 17:58:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+version: 1
