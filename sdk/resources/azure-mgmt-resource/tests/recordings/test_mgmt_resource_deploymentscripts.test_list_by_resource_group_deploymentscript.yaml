@@ -1,0 +1,84 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.6 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
+        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts?api-version=2019-10-01-preview
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"kind\": \"AzureCLI\",\r\n      \"identity\":
+        {\r\n        \"type\": \"userAssigned\",\r\n        \"tenantId\": \"00000000-0000-0000-0000-000000000000\",\r\n
+        \       \"userAssignedIdentities\": {\r\n          \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jcotillo-script-debug/providers/Microsoft.ManagedIdentity/userAssignedIdentities/jcotillo-script-msi\":
+        {\r\n            \"principalId\": \"00000000-0000-0000-0000-000000000000\",\r\n
+        \           \"clientId\": \"00000000-0000-0000-0000-000000000000\"\r\n          }\r\n
+        \       }\r\n      },\r\n      \"location\": \"westus2\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"forceUpdateTag\":
+        \"20200225T215911Z\",\r\n        \"azCliVersion\": \"2.0.80\",\r\n        \"scriptContent\":
+        \"echo 'custom script'\",\r\n        \"arguments\": \"'foo' 'bar'\",\r\n        \"retentionInterval\":
+        \"P1D\",\r\n        \"timeout\": \"PT30M\",\r\n        \"containerSettings\":
+        {\r\n          \"restartPolicy\": \"never\"\r\n        },\r\n        \"status\":
+        {\r\n          \"containerInstanceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ContainerInstance/containerGroups/container\",\r\n
+        \         \"storageAccountId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Storage/storageAccounts/storage\",\r\n
+        \         \"startTime\": \"2020-02-25T21:59:19.1307493Z\",\r\n          \"endTime\":
+        \"2020-02-25T22:01:37.0668591Z\",\r\n          \"expirationTime\": \"2020-02-26T22:01:37.0668591Z\"\r\n
+        \       },\r\n        \"cleanupPreference\": \"OnExpiration\"\r\n      },\r\n
+        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/bashSampleScript\",\r\n
+        \     \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n      \"name\":
+        \"bashSampleScript\"\r\n    },\r\n    {\r\n      \"kind\": \"AzureCLI\",\r\n
+        \     \"identity\": {\r\n        \"type\": \"userAssigned\",\r\n        \"tenantId\":
+        \"00000000-0000-0000-0000-000000000000\",\r\n        \"userAssignedIdentities\":
+        {\r\n          \"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/python_test_sdk_msi\":
+        {\r\n            \"principalId\": \"00000000-0000-0000-0000-000000000000\",\r\n
+        \           \"clientId\": \"00000000-0000-0000-0000-000000000000\"\r\n          }\r\n
+        \       }\r\n      },\r\n      \"location\": \"West US2\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"forceUpdateTag\":
+        \"123456\",\r\n        \"azCliVersion\": \"2.0.80\",\r\n        \"scriptContent\":
+        \"echo foo\",\r\n        \"arguments\": \"foo bar\",\r\n        \"retentionInterval\":
+        \"P1D\",\r\n        \"timeout\": \"P1D\",\r\n        \"containerSettings\":
+        {\r\n          \"restartPolicy\": \"never\"\r\n        },\r\n        \"status\":
+        {\r\n          \"containerInstanceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ContainerInstance/containerGroups/container\",\r\n
+        \         \"storageAccountId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Storage/storageAccounts/storage\",\r\n
+        \         \"startTime\": \"2020-02-26T00:20:07.3320322Z\",\r\n          \"endTime\":
+        \"2020-02-26T00:22:26.7128208Z\",\r\n          \"expirationTime\": \"2020-02-27T00:22:26.7128208Z\"\r\n
+        \       },\r\n        \"cleanupPreference\": \"OnExpiration\"\r\n      },\r\n
+        \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/inlineSampleScript01\",\r\n
+        \     \"type\": \"Microsoft.Resources/deploymentScripts\",\r\n      \"name\":
+        \"inlineSampleScript01\"\r\n    }\r\n  ]\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '3691'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 26 Feb 2020 19:12:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
