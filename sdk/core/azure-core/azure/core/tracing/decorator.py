@@ -46,13 +46,13 @@ if TYPE_CHECKING:
 @overload
 def distributed_trace(__func):
     # type: (Callable[..., T]) -> Callable[..., T]
-    ...
+    pass
 
 
 @overload
 def distributed_trace(**kwargs):
     # type: (**Any) -> Callable[[Callable[..., T]], Callable[..., T]]
-    ...
+    pass
 
 
 def distributed_trace(
