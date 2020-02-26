@@ -8,19 +8,19 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMError
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RecommendationsOperations(object):
-    """RecommendationsOperations operations.
+class RecommendationsOperations:
+    """RecommendationsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -35,17 +35,16 @@ class RecommendationsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def generate(
+    async def generate(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs
+    ) -> None:
         """Initiates the recommendation generation or computation process for a subscription. This operation is asynchronous. The generated recommendations are stored in a cache in the Advisor service.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -53,7 +52,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -65,15 +64,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -89,12 +88,11 @@ class RecommendationsOperations(object):
 
     generate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations'}
 
-    def get_generate_status(
+    async def get_generate_status(
         self,
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        operation_id: str,
+        **kwargs
+    ) -> None:
         """Retrieves the status of the recommendation computation or generation process. Invoke this API after calling the generation recommendation. The URI of this API is returned in the Location field of the response header.
 
         :param operation_id: The operation ID, which can be found from the Location field in the
@@ -105,7 +103,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -118,15 +116,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
@@ -140,12 +138,11 @@ class RecommendationsOperations(object):
 
     def list(
         self,
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceRecommendationBaseListResult"
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs
+    ) -> "models.ResourceRecommendationBaseListResult":
         """Obtains cached recommendations for a subscription. The recommendations are generated or computed by invoking generateRecommendations.
 
         :param filter: The filter to apply to the recommendations.
@@ -160,7 +157,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBaseListResult
         :raises: ~azure.mgmt.core.ARMError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceRecommendationBaseListResult"]
+        cls: ClsType["models.ResourceRecommendationBaseListResult"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -176,7 +173,7 @@ class RecommendationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
             if filter is not None:
                 query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
@@ -186,24 +183,24 @@ class RecommendationsOperations(object):
                 query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceRecommendationBaseListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -212,18 +209,17 @@ class RecommendationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations'}
 
-    def get(
+    async def get(
         self,
-        resource_uri,  # type: str
-        recommendation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceRecommendationBase"
+        resource_uri: str,
+        recommendation_id: str,
+        **kwargs
+    ) -> "models.ResourceRecommendationBase":
         """Obtains details of a cached recommendation.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -236,7 +232,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceRecommendationBase"]
+        cls: ClsType["models.ResourceRecommendationBase"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -249,16 +245,16 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

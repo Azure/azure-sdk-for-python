@@ -6,8 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._advisor_management_client import AdvisorManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
+from ._advisor_management_client_async import AdvisorManagementClient
 __all__ = ['AdvisorManagementClient']

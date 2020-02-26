@@ -33,13 +33,15 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         )
 
     def test_generate_recommendations(self):
+        def _callback(pipeline_response, _, headers):
+            return pipeline_response.http_response, headers
 
         # trigger generate recommendations
-        response = self.client.recommendations.generate(raw=True)
+        _, response_headers = self.client.recommendations.generate(cls=_callback)
 
         # we should get a valid Location header back
-        self.assertTrue('Location' in response.headers)
-        location = response.headers['Location']
+        self.assertTrue('Location' in response_headers)
+        location = response_headers['Location']
 
         # extract the operation ID from the Location header
         operation_id = re.findall("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", location)
@@ -49,11 +51,11 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         self.assertTrue(len(operation_id), 1)
 
         # we should be able to get generation status for this operation ID
-        response = self.client.recommendations.get_generate_status(
-            raw=True,
-            operation_id = operation_id[0]
+        response, _ = self.client.recommendations.get_generate_status(
+            operation_id = operation_id[0],
+            cls=_callback
         )
-        status_code = response.response.status_code
+        status_code = response.status_code
 
         # and the status should be 202 or 204
         self.assertTrue(status_code == 202 or status_code == 204)

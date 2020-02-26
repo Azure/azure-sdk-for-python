@@ -8,19 +8,19 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMError
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConfigurationsOperations(object):
-    """ConfigurationsOperations operations.
+class ConfigurationsOperations:
+    """ConfigurationsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -35,7 +35,7 @@ class ConfigurationsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -43,9 +43,8 @@ class ConfigurationsOperations(object):
 
     def list_by_subscription(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ConfigurationListResult"
+        **kwargs
+    ) -> "models.ConfigurationListResult":
         """Retrieve Azure Advisor configurations and also retrieve configurations of contained resource groups.
 
         Retrieve Azure Advisor configurations.
@@ -55,7 +54,7 @@ class ConfigurationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ConfigurationListResult
         :raises: ~azure.mgmt.core.ARMError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationListResult"]
+        cls: ClsType["models.ConfigurationListResult"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -71,28 +70,28 @@ class ConfigurationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ConfigurationListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -101,17 +100,16 @@ class ConfigurationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
 
-    def create_in_subscription(
+    async def create_in_subscription(
         self,
-        config_contract,  # type: "models.ConfigData"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ARMErrorResponseBody"
+        config_contract: "models.ConfigData",
+        **kwargs
+    ) -> "models.ARMErrorResponseBody":
         """Create/Overwrite Azure Advisor configuration and also delete all configurations of contained resource groups.
 
         Create/Overwrite Azure Advisor configuration.
@@ -123,7 +121,7 @@ class ConfigurationsOperations(object):
         :rtype: None or ~azure.mgmt.advisor.models.ARMErrorResponseBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ARMErrorResponseBody"]
+        cls: ClsType["models.ARMErrorResponseBody"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -135,11 +133,11 @@ class ConfigurationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -148,7 +146,7 @@ class ConfigurationsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 400]:
@@ -167,10 +165,9 @@ class ConfigurationsOperations(object):
 
     def list_by_resource_group(
         self,
-        resource_group,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ConfigurationListResult"
+        resource_group: str,
+        **kwargs
+    ) -> "models.ConfigurationListResult":
         """Retrieve Azure Advisor configurations.
 
         Retrieve Azure Advisor configurations.
@@ -182,7 +179,7 @@ class ConfigurationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ConfigurationListResult
         :raises: ~azure.mgmt.core.ARMError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationListResult"]
+        cls: ClsType["models.ConfigurationListResult"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -199,28 +196,28 @@ class ConfigurationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ConfigurationListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -229,18 +226,17 @@ class ConfigurationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}
 
-    def create_in_resource_group(
+    async def create_in_resource_group(
         self,
-        resource_group,  # type: str
-        config_contract,  # type: "models.ConfigData"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ARMErrorResponseBody"
+        resource_group: str,
+        config_contract: "models.ConfigData",
+        **kwargs
+    ) -> "models.ARMErrorResponseBody":
         """Create/Overwrite Azure Advisor configuration.
 
         Create/Overwrite Azure Advisor configuration.
@@ -254,7 +250,7 @@ class ConfigurationsOperations(object):
         :rtype: None or ~azure.mgmt.advisor.models.ARMErrorResponseBody
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ARMErrorResponseBody"]
+        cls: ClsType["models.ARMErrorResponseBody"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -267,11 +263,11 @@ class ConfigurationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -280,7 +276,7 @@ class ConfigurationsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 400]:

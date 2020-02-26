@@ -8,19 +8,19 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMError
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SuppressionsOperations(object):
-    """SuppressionsOperations operations.
+class SuppressionsOperations:
+    """SuppressionsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -35,20 +35,19 @@ class SuppressionsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def get(
+    async def get(
         self,
-        resource_uri,  # type: str
-        recommendation_id,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SuppressionContract"
+        resource_uri: str,
+        recommendation_id: str,
+        name: str,
+        **kwargs
+    ) -> "models.SuppressionContract":
         """Obtains the details of a suppression.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -63,7 +62,7 @@ class SuppressionsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.SuppressionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuppressionContract"]
+        cls: ClsType["models.SuppressionContract"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -77,16 +76,16 @@ class SuppressionsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -101,16 +100,15 @@ class SuppressionsOperations(object):
         return deserialized
     get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'}
 
-    def create(
+    async def create(
         self,
-        resource_uri,  # type: str
-        recommendation_id,  # type: str
-        name,  # type: str
-        suppression_id=None,  # type: Optional[str]
-        ttl=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SuppressionContract"
+        resource_uri: str,
+        recommendation_id: str,
+        name: str,
+        suppression_id: Optional[str] = None,
+        ttl: Optional[str] = None,
+        **kwargs
+    ) -> "models.SuppressionContract":
         """Enables the snoozed or dismissed attribute of a recommendation. The snoozed or dismissed attribute is referred to as a suppression. Use this API to create or update the snoozed or dismissed status of a recommendation.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -129,7 +127,7 @@ class SuppressionsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.SuppressionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuppressionContract"]
+        cls: ClsType["models.SuppressionContract"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _suppression_contract = models.SuppressionContract(suppression_id=suppression_id, ttl=ttl)
@@ -145,11 +143,11 @@ class SuppressionsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -158,7 +156,7 @@ class SuppressionsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -173,14 +171,13 @@ class SuppressionsOperations(object):
         return deserialized
     create.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'}
 
-    def delete(
+    async def delete(
         self,
-        resource_uri,  # type: str
-        recommendation_id,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_uri: str,
+        recommendation_id: str,
+        name: str,
+        **kwargs
+    ) -> None:
         """Enables the activation of a snoozed or dismissed recommendation. The snoozed or dismissed attribute of a recommendation is referred to as a suppression.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -195,7 +192,7 @@ class SuppressionsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -209,15 +206,15 @@ class SuppressionsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -231,11 +228,10 @@ class SuppressionsOperations(object):
 
     def list(
         self,
-        top=None,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SuppressionContractListResult"
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs
+    ) -> "models.SuppressionContractListResult":
         """Retrieves the list of snoozed or dismissed suppressions for a subscription. The snoozed or dismissed attribute of a recommendation is referred to as a suppression.
 
         :param top: The number of suppressions per page if a paged version of this API is being used.
@@ -247,7 +243,7 @@ class SuppressionsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.SuppressionContractListResult
         :raises: ~azure.mgmt.core.ARMError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SuppressionContractListResult"]
+        cls: ClsType["models.SuppressionContractListResult"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2017-04-19"
 
@@ -263,7 +259,7 @@ class SuppressionsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
             if top is not None:
                 query_parameters['$top'] = self._serialize.query("top", top, 'int')
@@ -271,24 +267,24 @@ class SuppressionsOperations(object):
                 query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('SuppressionContractListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -297,7 +293,7 @@ class SuppressionsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/suppressions'}
