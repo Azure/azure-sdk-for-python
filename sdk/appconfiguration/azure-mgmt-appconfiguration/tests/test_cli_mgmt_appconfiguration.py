@@ -20,7 +20,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.appconfiguration.AppConfigurationManagementClient
         )
-    
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appconfiguration(self, resource_group):
 
@@ -37,7 +37,7 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
             "my_tag": "myTagValue"
           }
         }
-        result = self.mgmt_client.configuration_stores.create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
+        result = self.mgmt_client.configuration_stores.begin_create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
         result = result.result()
         self.assertEqual(result.name, CONFIGURATION_STORE_NAME)
         self.assertEqual(result.provisioning_state, "Succeeded")

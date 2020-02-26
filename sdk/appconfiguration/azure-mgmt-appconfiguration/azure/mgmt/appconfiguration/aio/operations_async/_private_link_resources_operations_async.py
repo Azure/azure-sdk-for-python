@@ -8,18 +8,18 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateLinkResourcesOperations(object):
-    """PrivateLinkResourcesOperations operations.
+class PrivateLinkResourcesOperations:
+    """PrivateLinkResourcesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -34,7 +34,7 @@ class PrivateLinkResourcesOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -42,11 +42,10 @@ class PrivateLinkResourcesOperations(object):
 
     def list_by_configuration_store(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PrivateLinkResourceListResult"
+        resource_group_name: str,
+        config_store_name: str,
+        **kwargs
+    ) -> "models.PrivateLinkResourceListResult":
         """Gets the private link resources that need to be created for a configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -59,7 +58,7 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~azure.mgmt.appconfiguration.models.PrivateLinkResourceListResult
         :raises: ~azure.mgmt.appconfiguration.models.ErrorException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
+        cls: ClsType["models.PrivateLinkResourceListResult"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -77,28 +76,28 @@ class PrivateLinkResourcesOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -107,19 +106,18 @@ class PrivateLinkResourcesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_configuration_store.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateLinkResources'}
 
-    def get(
+    async def get(
         self,
-        resource_group_name,  # type: str
-        config_store_name,  # type: str
-        group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PrivateLinkResource"
+        resource_group_name: str,
+        config_store_name: str,
+        group_name: str,
+        **kwargs
+    ) -> "models.PrivateLinkResource":
         """Gets a private link resource that need to be created for a configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -134,7 +132,7 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~azure.mgmt.appconfiguration.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResource"]
+        cls: ClsType["models.PrivateLinkResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2019-11-01-preview"
 
@@ -149,16 +147,16 @@ class PrivateLinkResourcesOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
