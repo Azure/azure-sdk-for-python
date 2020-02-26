@@ -283,7 +283,7 @@ class FileTest(StorageTestCase):
         downloaded_data = await file_client.read_file()
         self.assertEqual(data, downloaded_data)
 
-    def test_flush_data_with_match_condition_async(self):
+    def test_upload_data_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_data())
 
