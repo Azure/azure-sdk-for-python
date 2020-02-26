@@ -3,7 +3,7 @@
 ## 12.0.0b8 (Unreleased)
 
 **Notes**
-- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core.
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
 ## 12.0.0b7 (2020-02-12)
 **New Feature**
