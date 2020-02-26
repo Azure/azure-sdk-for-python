@@ -50,12 +50,12 @@ def distributed_trace(__func):
 
 
 @overload
-def distributed_trace(**kwargs):
+def distributed_trace(**kwargs):  # pylint:disable=function-redefined,unused-argument
     # type: (**Any) -> Callable[[Callable[..., T]], Callable[..., T]]
     pass
 
 
-def distributed_trace(
+def distributed_trace(  # pylint:disable=function-redefined
     __func=None,  # type: Callable[..., T]
     **kwargs  # type: Any
 ):

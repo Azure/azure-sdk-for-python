@@ -37,20 +37,22 @@ T = TypeVar("T")
 
 
 @overload
-def distributed_trace(
+def distributed_trace_async(
     __func: Callable[..., Awaitable[T]]
 ) -> Callable[..., Awaitable[T]]:
     pass
 
 
 @overload
-def distributed_trace(
-    **kwargs: Any
+def distributed_trace_async(  # pylint:disable=function-redefined
+    **kwargs: Any  # pylint:disable=unused-argument
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
     pass
 
 
-def distributed_trace_async(__func: Callable[..., Awaitable[T]] = None, **kwargs: Any):
+def distributed_trace_async(  # pylint:disable=function-redefined
+    __func: Callable[..., Awaitable[T]] = None, **kwargs: Any
+):
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
