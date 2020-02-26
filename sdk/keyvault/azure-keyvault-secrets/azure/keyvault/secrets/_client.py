@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._polling import KeyVaultPollingMethod, KeyVaultOperationPoller
+from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 
 try:
     from typing import TYPE_CHECKING
@@ -306,14 +306,14 @@ class SecretClient(KeyVaultClientBase):
         )
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
-        delete_secret_polling_method = KeyVaultPollingMethod(
+        polling_method = DeleteRecoverPollingMethod(
             # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
             finished=deleted_secret.recovery_id is None,
             command=command,
             final_resource=deleted_secret,
             interval=polling_interval,
         )
-        return KeyVaultOperationPoller(delete_secret_polling_method)
+        return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):
@@ -431,7 +431,7 @@ class SecretClient(KeyVaultClientBase):
         )
 
         command = partial(self.get_secret, name=name, **kwargs)
-        polling_method = KeyVaultPollingMethod(
+        polling_method = DeleteRecoverPollingMethod(
             finished=False, command=command, final_resource=recovered_secret, interval=polling_interval,
         )
         return KeyVaultOperationPoller(polling_method)
