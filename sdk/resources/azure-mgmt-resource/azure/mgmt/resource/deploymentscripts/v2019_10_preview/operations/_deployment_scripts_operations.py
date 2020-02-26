@@ -75,7 +75,7 @@ class DeploymentScriptsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
+            raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -114,7 +114,7 @@ class DeploymentScriptsOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -164,7 +164,7 @@ class DeploymentScriptsOperations(object):
          ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         deployment_script = None
         if tags is not None:
@@ -205,7 +205,7 @@ class DeploymentScriptsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
+            raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -237,7 +237,7 @@ class DeploymentScriptsOperations(object):
          ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -267,7 +267,7 @@ class DeploymentScriptsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
+            raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -298,7 +298,7 @@ class DeploymentScriptsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -327,7 +327,7 @@ class DeploymentScriptsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
+            raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -347,7 +347,7 @@ class DeploymentScriptsOperations(object):
         :rtype:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -386,7 +386,7 @@ class DeploymentScriptsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
+                raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
             return response
 
@@ -418,7 +418,7 @@ class DeploymentScriptsOperations(object):
          ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLogsList
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.get_logs.metadata['url']
@@ -448,7 +448,7 @@ class DeploymentScriptsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
+            raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -480,7 +480,7 @@ class DeploymentScriptsOperations(object):
          ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ScriptLog
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         # Construct URL
         url = self.get_logs_default.metadata['url']
@@ -510,7 +510,7 @@ class DeploymentScriptsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.DefaultErrorResponseException(self._deserialize, response)
+            raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -539,7 +539,7 @@ class DeploymentScriptsOperations(object):
         :rtype:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptPaged[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScript]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponseException>`
+         :class:`DeploymentScriptsErrorException<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DeploymentScriptsErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -579,7 +579,7 @@ class DeploymentScriptsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.DefaultErrorResponseException(self._deserialize, response)
+                raise models.DeploymentScriptsErrorException(self._deserialize, response)
 
             return response
 

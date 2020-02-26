@@ -369,47 +369,6 @@ class CloudError(Model):
     }
 
 
-class DefaultErrorResponse(Model):
-    """The details of the error.
-
-    :param code: One of a server-defined set of error codes.
-    :type code: str
-    :param message: A human-readable representation of the error.
-    :type message: str
-    :param target: The target of the particular error.
-    :type target: str
-    :param details: Detailed errors.
-    :type details:
-     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponse]
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[DefaultErrorResponse]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DefaultErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-
-
-class DefaultErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'DefaultErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(DefaultErrorResponseException, self).__init__(deserialize, response, 'DefaultErrorResponse', *args)
-
-
 class DeploymentScriptPropertiesBase(Model):
     """Common properties for the deployment script.
 
@@ -452,6 +411,35 @@ class DeploymentScriptPropertiesBase(Model):
         self.provisioning_state = None
         self.status = None
         self.outputs = None
+
+
+class DeploymentScriptsError(Model):
+    """Deployment scripts error response.
+
+    :param error:
+    :type error:
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeploymentScriptsError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class DeploymentScriptsErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'DeploymentScriptsError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(DeploymentScriptsErrorException, self).__init__(deserialize, response, 'DeploymentScriptsError', *args)
 
 
 class DeploymentScriptUpdateParameter(AzureResourceBase):
@@ -516,6 +504,79 @@ class EnvironmentVariable(Model):
         self.name = kwargs.get('name', None)
         self.value = kwargs.get('value', None)
         self.secure_value = kwargs.get('secure_value', None)
+
+
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorResponse(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class ManagedServiceIdentity(Model):
@@ -675,7 +736,7 @@ class ScriptStatus(Model):
     :vartype expiration_time: datetime
     :param error: Error that is relayed from the script execution.
     :type error:
-     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.DefaultErrorResponse
+     ~azure.mgmt.resource.deploymentscripts.v2019_10_preview.models.ErrorResponse
     """
 
     _validation = {
@@ -692,7 +753,7 @@ class ScriptStatus(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'expiration_time': {'key': 'expirationTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'DefaultErrorResponse'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
     def __init__(self, **kwargs):

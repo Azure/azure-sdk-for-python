@@ -13,10 +13,12 @@ try:
     from ._models_py3 import AzureCliScript
     from ._models_py3 import AzurePowerShellScript
     from ._models_py3 import AzureResourceBase
-    from ._models_py3 import DefaultErrorResponse, DefaultErrorResponseException
     from ._models_py3 import DeploymentScript
+    from ._models_py3 import DeploymentScriptsError, DeploymentScriptsErrorException
     from ._models_py3 import DeploymentScriptUpdateParameter
     from ._models_py3 import EnvironmentVariable
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import ScriptLog
     from ._models_py3 import ScriptLogsList
@@ -26,10 +28,12 @@ except (SyntaxError, ImportError):
     from ._models import AzureCliScript
     from ._models import AzurePowerShellScript
     from ._models import AzureResourceBase
-    from ._models import DefaultErrorResponse, DefaultErrorResponseException
     from ._models import DeploymentScript
+    from ._models import DeploymentScriptsError, DeploymentScriptsErrorException
     from ._models import DeploymentScriptUpdateParameter
     from ._models import EnvironmentVariable
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorResponse
     from ._models import ManagedServiceIdentity
     from ._models import ScriptLog
     from ._models import ScriptLogsList
@@ -46,10 +50,12 @@ __all__ = [
     'AzureCliScript',
     'AzurePowerShellScript',
     'AzureResourceBase',
-    'DefaultErrorResponse', 'DefaultErrorResponseException',
     'DeploymentScript',
+    'DeploymentScriptsError', 'DeploymentScriptsErrorException',
     'DeploymentScriptUpdateParameter',
     'EnvironmentVariable',
+    'ErrorAdditionalInfo',
+    'ErrorResponse',
     'ManagedServiceIdentity',
     'ScriptLog',
     'ScriptLogsList',
