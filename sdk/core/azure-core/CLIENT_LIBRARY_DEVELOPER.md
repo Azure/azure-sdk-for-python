@@ -384,7 +384,7 @@ from azure.core.pipeline.policies import (
 )
 ```
 
-#### Available policies
+#### Available Policies
 
 | Name | Policy Flavor | Parameters accepted in Init | Parameters accepted in Request |
 | --- | --- | --- | --- |
