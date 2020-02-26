@@ -379,7 +379,7 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(sdk_moniker="storage-blob/{}".format(VERSION), **kwargs)
+    config.user_agent_policy = UserAgentPolicy(sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
