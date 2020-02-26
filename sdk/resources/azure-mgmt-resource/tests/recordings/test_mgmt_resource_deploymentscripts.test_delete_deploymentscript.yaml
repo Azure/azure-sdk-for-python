@@ -24,7 +24,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Wed, 26 Feb 2020 17:58:25 GMT
+      - Wed, 26 Feb 2020 19:00:24 GMT
       expires:
       - '-1'
       pragma:
@@ -38,4 +38,69 @@ interactions:
     status:
       code: 204
       message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.6 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
+        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/deploymentScripts?api-version=2019-10-01-preview
+  response:
+    body:
+      string: '{"value":[{"kind":"AzurePowerShell","identity":{"type":"userAssigned","tenantId":"00000000-0000-0000-0000-000000000000","userAssignedIdentities":{"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DeploymentScriptsRunnersStaticResources-eastus2euap/providers/Microsoft.ManagedIdentity/userAssignedIdentities/DeploymentScriptRunners-eastus2euap":{"principalId":"6bc230c7-5127-4fab-a303-0872df3d48b1","clientId":"00000000-0000-0000-0000-000000000000"}}},"location":"eastus2euap","properties":{"provisioningState":"Failed","azPowerShellVersion":"2.8","scriptContent":"param(\r\n\t[string]
+        $Location,\r\n\t[string] $Name\r\n\t)\r\n\r\nWrite-Host $Location\r\nWrite-Host
+        $Name\r\n\r\n$deploymentScriptOutputs[''test''] = ''value''\r\n\r\nWrite-Host
+        $deploymentScriptOutputs[''test'']\r\n\r\nWrite-Host ''end of user script.''","arguments":"-Location
+        eastus2euap -Name ''testScript''","retentionInterval":"P1DT1H","timeout":"PT30M","containerSettings":{"restartPolicy":"never"},"status":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/debugrg-eastus2euap/providers/Microsoft.Storage/storageAccounts/storage","startTime":"2020-02-26T17:35:30.2528614Z","endTime":"2020-02-26T17:37:18.3604773Z","expirationTime":"2020-02-27T18:37:18.3604773Z","error":{"code":"DeploymentScriptOperationFailed","message":"The
+        requested resource is not available in the location ''eastus2euap'' at this
+        moment. Please retry with a different resource request or in another location.
+        Resource requested: ''1'' CPU ''1'' GB memory ''Linux'' OS"}},"cleanupPreference":"OnExpiration"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/debugrg-eastus2euap/providers/Microsoft.Resources/deploymentScripts/debugScript","type":"Microsoft.Resources/deploymentScripts","name":"debugScript"},{"kind":"AzurePowerShell","identity":{"type":"userAssigned","tenantId":"00000000-0000-0000-0000-000000000000","userAssignedIdentities":{"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/user-assigned-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/contributor-identity":{"principalId":"00000000-0000-0000-0000-000000000000","clientId":"00000000-0000-0000-0000-000000000000"}}},"location":"westus","tags":{"testTag":"tagValue"},"properties":{"provisioningState":"Failed","azPowerShellVersion":"2.7","scriptContent":"\r\nParam\r\n(\r\n  [string]\r\n  $Location,\r\n\r\n  [string]\r\n  $Name\r\n)\r\n\r\nWrite-Host
+        $Location\r\nWrite-Host $Name\r\n\r\n$deploymentScriptOutputs[''test''] =
+        ''value''\r\n\r\nWrite-Host $deploymentScriptOutputs[''test'']\r\n\r\nGet-AzResourceGroup
+        -Location $Location -Name $Name\r\n\r\nWrite-Host ''end of user script.''","arguments":"-Location
+        ''westus'' -Name \"*rg2\"","retentionInterval":"P1D","timeout":"P1D","containerSettings":{"restartPolicy":"never"},"status":{"containerInstanceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/snek/providers/Microsoft.ContainerInstance/containerGroups/container","storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/snek/providers/Microsoft.Storage/storageAccounts/storage","startTime":"2019-11-02T05:20:14.2503475Z"},"cleanupPreference":"Always"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/snek/providers/Microsoft.Resources/deploymentScripts/no-step-on-snek3","type":"Microsoft.Resources/deploymentScripts","name":"no-step-on-snek3"},{"kind":"AzurePowerShell","identity":{"type":"userAssigned","tenantId":"00000000-0000-0000-0000-000000000000","userAssignedIdentities":{"/subscriptions/e4272367-5645-4c4e-9c67-3b74b59a6982/resourceGroups/Contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alex-test-identity":{"principalId":"00000000-0000-0000-0000-000000000000","clientId":"00000000-0000-0000-0000-000000000000"}}},"location":"eastus","properties":{"provisioningState":"Succeeded","forceUpdateTag":"20191209T193407Z","azPowerShellVersion":"2.7","arguments":"-vaultName
+        alex-test-kv -certificateName test-cert -subjectName ''CN=contoso.com''","primaryScriptUri":"https://raw.githubusercontent.com/alex-frankel/VbDemos/master/misc/create-cert.ps1","retentionInterval":"P1D","timeout":"PT30M","containerSettings":{"restartPolicy":"never"},"status":{"containerInstanceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alex-test-002/providers/Microsoft.ContainerInstance/containerGroups/container","storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alex-test-002/providers/Microsoft.Storage/storageAccounts/storage","startTime":"2019-12-09T19:34:27.7986736Z","endTime":"2019-12-09T19:36:00.8936806Z"},"outputs":{"certThumbprint":"A07C5858F372A8DA6186DCCB2B27E755BB08EE21"},"cleanupPreference":"OnSuccess"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alex-test-002/providers/Microsoft.Resources/deploymentScripts/createCert","type":"Microsoft.Resources/deploymentScripts","name":"createCert"},{"kind":"AzurePowerShell","identity":{"type":"userAssigned","tenantId":"00000000-0000-0000-0000-000000000000","userAssignedIdentities":{"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alex-test-identity":{"principalId":"00000000-0000-0000-0000-000000000000","clientId":"00000000-0000-0000-0000-000000000000"}}},"location":"eastus","properties":{"provisioningState":"Succeeded","forceUpdateTag":"20191205T175253Z","azPowerShellVersion":"2.8","scriptContent":"\r\n            param([string]
+        $name)\r\n            $output = \"Hello $name\"\r\n            $output2 =
+        ''Hello {0}'' -f $name\r\n            Write-Output $output\r\n            Write-Output
+        $output2\r\n            $DeploymentScriptOutputs = @{}\r\n            $DeploymentScriptOutputs[''text'']
+        = $output\r\n            $DeploymentScriptOutputs[''text2''] = $output2\r\n          ","arguments":"-name
+        ''John Dole''","retentionInterval":"P1D","timeout":"PT1H","containerSettings":{"restartPolicy":"never"},"status":{"containerInstanceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alex-test-002/providers/Microsoft.ContainerInstance/containerGroups/container","storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alex-test-002/providers/Microsoft.Storage/storageAccounts/storage","startTime":"2019-12-05T17:53:20.2733811Z","endTime":"2019-12-05T17:54:37.9378349Z"},"outputs":{"text2":"Hello
+        John Dole","text":"Hello John Dole"},"cleanupPreference":"OnSuccess"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alex-test-002/providers/Microsoft.Resources/deploymentScripts/scriptInTemplate1","type":"Microsoft.Resources/deploymentScripts","name":"scriptInTemplate1"},{"kind":"AzureCLI","identity":{"type":"userAssigned","tenantId":"00000000-0000-0000-0000-000000000000","userAssignedIdentities":{"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jcotillo-script-debug/providers/Microsoft.ManagedIdentity/userAssignedIdentities/jcotillo-script-msi":{"principalId":"195cfaa6-7dc9-4c32-875d-b48499a6065d","clientId":"00000000-0000-0000-0000-000000000000"}}},"location":"westus2","properties":{"provisioningState":"Succeeded","forceUpdateTag":"20200225T215911Z","azCliVersion":"2.0.80","scriptContent":"echo
+        ''custom script''","arguments":"''foo'' ''bar''","retentionInterval":"P1D","timeout":"PT30M","containerSettings":{"restartPolicy":"never"},"status":{"containerInstanceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ContainerInstance/containerGroups/container","storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Storage/storageAccounts/storage","startTime":"2020-02-25T21:59:19.1307493Z","endTime":"2020-02-25T22:01:37.0668591Z","expirationTime":"2020-02-26T22:01:37.0668591Z"},"cleanupPreference":"OnExpiration"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/bashSampleScript","type":"Microsoft.Resources/deploymentScripts","name":"bashSampleScript"},{"kind":"AzureCLI","identity":{"type":"userAssigned","tenantId":"00000000-0000-0000-0000-000000000000","userAssignedIdentities":{"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/python_test_sdk_msi":{"principalId":"00000000-0000-0000-0000-000000000000","clientId":"00000000-0000-0000-0000-000000000000"}}},"location":"West
+        US2","properties":{"provisioningState":"Succeeded","forceUpdateTag":"123456","azCliVersion":"2.0.80","scriptContent":"echo
+        foo","arguments":"foo bar","retentionInterval":"P1D","timeout":"P1D","containerSettings":{"restartPolicy":"never"},"status":{"containerInstanceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.ContainerInstance/containerGroups/container","storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Storage/storageAccounts/storage","startTime":"2020-02-26T00:20:07.3320322Z","endTime":"2020-02-26T00:22:26.7128208Z","expirationTime":"2020-02-27T00:22:26.7128208Z"},"cleanupPreference":"OnExpiration"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_sdk_test/providers/Microsoft.Resources/deploymentScripts/inlineSampleScript01","type":"Microsoft.Resources/deploymentScripts","name":"inlineSampleScript01"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '9751'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 26 Feb 2020 19:00:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-original-request-ids:
+      - 0ae7ab4f-b003-48a6-8233-963f23bceb09
+      - 7223c53d-123f-41c8-9c42-68a48ddc6c2e
+    status:
+      code: 200
+      message: OK
 version: 1

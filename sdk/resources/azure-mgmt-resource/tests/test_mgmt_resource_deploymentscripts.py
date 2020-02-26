@@ -46,6 +46,7 @@ class MgmtResourceDeploymentScriptsTest(AzureMgmtTestCase):
         async_operation.wait()
         result = \
             async_operation.result()
+        self.assertIsNotNone(result)
 
     def test_get_deploymentscript(self):
         self.deploymentscripts_client.deployment_scripts.get(
@@ -56,18 +57,26 @@ class MgmtResourceDeploymentScriptsTest(AzureMgmtTestCase):
     def test_delete_deploymentscript(self):
         self.deploymentscripts_client.deployment_scripts.delete(
             resource_group_name="python_sdk_test",
-            script_name="inlineSampleScript"
-        )
+            script_name="inlineSampleScript")
+        
+        deployment_scripts = \
+            list(self.deploymentscripts_client.deployment_scripts.list_by_subscription())
+        
+        self.assertTrue("inlineSampleScript" not in deployment_scripts)
 
     def test_list_by_subscription_deploymentscript(self):
-        self.deploymentscripts_client.deployment_scripts.list_by_subscription()
+        deployment_scripts = list(self.deploymentscripts_client.deployment_scripts.list_by_subscription())
+        self.assertGreater(len(deployment_scripts), 0)
 
     def test_get_logs_deploymentscript(self):
-        self.deploymentscripts_client.deployment_scripts.get_logs(
+        log = self.deploymentscripts_client.deployment_scripts.get_logs(
             resource_group_name="python_sdk_test",
-            script_name="bashSampleScript"
-        )
+            script_name="bashSampleScript")
+
+        self.assertIsNotNone(log)
 
     def test_list_by_resource_group_deploymentscript(self):
-        self.deploymentscripts_client.deployment_scripts.list_by_resource_group(
-            resource_group_name="python_sdk_test")
+        deployment_scripts = \
+            list(self.deploymentscripts_client.deployment_scripts.list_by_resource_group(
+            resource_group_name="python_sdk_test"))
+        self.assertGreater(len(deployment_scripts), 0)
