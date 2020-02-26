@@ -36,6 +36,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    UserAgentPolicy,
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -44,7 +45,6 @@ from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .policies import (
     StorageHeadersPolicy,
-    StorageUserAgentPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageResponseHook,
@@ -53,6 +53,7 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
+from .._version import VERSION
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -378,7 +379,8 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
+    config.user_agent_policy = UserAgentPolicy(
+        sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
