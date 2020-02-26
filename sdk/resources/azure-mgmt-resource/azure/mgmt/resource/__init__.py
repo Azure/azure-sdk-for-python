@@ -12,6 +12,7 @@ from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
 from .links import ManagementLinkClient
 from .managedapplications import ApplicationClient
+from .deploymentscripts import DeploymentScriptsClient
 
 from .version import VERSION
 
@@ -24,4 +25,5 @@ __all__ = [
     'SubscriptionClient',
     'ManagementLinkClient',
     'ApplicationClient',
+    'DeploymentScriptsClient',
 ]
