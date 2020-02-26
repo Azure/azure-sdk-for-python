@@ -80,6 +80,8 @@ class RetryPolicy(HTTPPolicy):
 
     :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
 
+    :keyword int max_timeout: Maximal timeout setting for the operation in seconds, default is 600s (10 minutes).
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/test_example_sync.py
@@ -103,6 +105,7 @@ class RetryPolicy(HTTPPolicy):
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
         self.retry_mode = kwargs.pop('retry_mode', RetryMode.Exponential)
+        self.max_timeout = kwargs.pop('max_timeout', 600)
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
@@ -132,6 +135,7 @@ class RetryPolicy(HTTPPolicy):
             'backoff': options.pop("retry_backoff_factor", self.backoff_factor),
             'max_backoff': options.pop("retry_backoff_max", self.BACKOFF_MAX),
             'methods': options.pop("retry_on_methods", self._method_whitelist),
+            'max_timeout': options.pop("max_timeout", self.max_timeout),
             'history': []
         }
 
@@ -293,6 +297,12 @@ class RetryPolicy(HTTPPolicy):
         :return: False if have more retries. True if retries exhausted.
         :rtype: bool
         """
+        max_timeout = settings['max_timeout']
+        start_time = settings['start_time']
+        time_consuption = time.time() - start_time
+        if time_consuption >= max_timeout:
+            return True
+
         retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
         retry_counts = list(filter(None, retry_counts))
         if not retry_counts:
@@ -412,6 +422,7 @@ class RetryPolicy(HTTPPolicy):
 
         retry_settings['body_position'] = body_position
         retry_settings['file_positions'] = file_positions
+        retry_settings['start_time'] = time.time()
 
         while retry_active:
             try:
