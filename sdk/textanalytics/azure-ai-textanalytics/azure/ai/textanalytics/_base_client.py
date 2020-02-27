@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
-from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
+from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
 
 
@@ -55,7 +55,7 @@ class TextAnalyticsClientBase(object):
             config.retry_policy,
             credential_policy,
             config.logging_policy,
-            TextAnalyticsResponseHook(**kwargs),
+            TextAnalyticsResponseHookPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]

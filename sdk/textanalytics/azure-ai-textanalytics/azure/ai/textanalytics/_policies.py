@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.policies import SansIOHTTPPolicy, HTTPPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ._models import TextDocumentBatchStatistics
 
 
@@ -21,15 +21,16 @@ class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers["X-BingApis-SDK-Client"] = "Python-SDK"
 
 
-class TextAnalyticsResponseHook(HTTPPolicy):
+class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
     def __init__(self, **kwargs):
-        self._response_callback = kwargs.get("response_hook")
-        super(TextAnalyticsResponseHook, self).__init__()
+        self._response_callback = kwargs.get("raw_response_hook")
+        super(TextAnalyticsResponseHookPolicy, self).__init__()
 
-    def send(self, request):
-        response_callback = request.context.options.pop("response_hook", self._response_callback)
-        if response_callback:
-            response = self.next.send(request)
+    def on_request(self, request):
+        self._response_callback = request.context.options.pop("raw_response_hook", self._response_callback)
+
+    def on_response(self, request, response):
+        if self._response_callback:
             data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
             statistics = data.get("statistics", None)
             model_version = data.get("modelVersion", None)
@@ -38,6 +39,4 @@ class TextAnalyticsResponseHook(HTTPPolicy):
             response.statistics = batch_statistics
             response.model_version = model_version
             response.raw_response = data
-            response_callback(response)
-            return response
-        return self.next.send(request)
+            self._response_callback(response)
