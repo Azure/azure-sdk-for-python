@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .user_assigned_identities_operations import UserAssignedIdentitiesOperations
+from ._system_assigned_identities_operations import SystemAssignedIdentitiesOperations
+from ._operations import Operations
+from ._user_assigned_identities_operations import UserAssignedIdentitiesOperations
 
 __all__ = [
+    'SystemAssignedIdentitiesOperations',
     'Operations',
     'UserAssignedIdentitiesOperations',
 ]
