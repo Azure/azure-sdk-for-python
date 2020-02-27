@@ -107,7 +107,7 @@ with queue_sender:
     batch_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204)
     while True:
         try:
-            batch_message.try_add(Message("Test message"))
+            batch_message.add(Message("Test message"))
         except ValueError:
             break
 
@@ -116,17 +116,20 @@ with queue_sender:
     # 1.3 schedule
     schedule_message = Message("scheduled_message")
 
-    enqueue_time = datetime.utcnow() + timedelta(minutes=10)
-    sequence_number = topic_sender.schedule(schedule_message, enqueue_time)
+    enqueue_time_utc = datetime.utcnow() + timedelta(minutes=10)
+    sequence_number = topic_sender.schedule(schedule_message, enqueue_time_utc)
+
+    running = True
 
     batch_schedule_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204)
-    while True:
-        try:
-            batch_message.try_add(Message("Test message"))
-        except ValueError:
-            break
 
-    batch_sequence_numbers = topic_sender.schedule(batch_schedule_message, enqueue_time)
+    while running:
+        try:
+            batch_message.add(Message("Test message"))
+        except ValueError:
+            batch_sequence_numbers = topic_sender.schedule(batch_schedule_message, enqueue_time_utc)
+            batch_schedule_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204)
+
 
     # 1.4 cancel schedule
     topic_sender.cancel_scheduled_messages(sequence_number)
@@ -152,6 +155,8 @@ subscription_receiver = ServiceBusReceiverClient.from_queue(
 # 2.1 peek
 with queue_receiver:
     msgs = queue_receiver.peek(count=10)
+    for msg in msgs:
+        print(msg)
 
 # 2.2 iterator receive
 with queue_receiver:
@@ -171,9 +176,10 @@ with queue_receiver:
 
 # 2.4 receive deferred letter
 with queue_receiver:
-    defered_sequence_numbers = [xxxx]
-    deferred = queue_receiver.receive_deferred_messages(defered_sequence_numbers)
-    queue_receiver.settle_deferred_messages('completed', deferred)
+    defered_sequence_numbers = [1,2,3,4,5,6]
+    deferred_messages = queue_receiver.receive_deferred_messages(defered_sequence_numbers)
+    for i in deferred_messages:
+        deferred_messages.abandon()
 
 
 ### Session operation
@@ -194,10 +200,10 @@ with topic_sender:
     topic_sender.send(message, session_id="test_session")
 
     # 1.2 send batch
-    batch_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204, seesion_id="test_session")
+    batch_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204, session_id="test_session")
     while True:
         try:
-            batch_message.try_add(Message("Test message"))
+            batch_message.add(Message("Test message"))
         except ValueError:
             break
 
@@ -206,17 +212,19 @@ with topic_sender:
     # 1.3 schedule
     schedule_message = Message("scheduled_message")
 
-    enqueue_time = datetime.utcnow() + timedelta(minutes=10)
-    sequence_number = topic_sender.schedule(schedule_message, enqueue_time, session_id="test_session")
+    enqueue_time_utc = datetime.utcnow() + timedelta(minutes=10)
+    sequence_number = topic_sender.schedule(schedule_message, enqueue_time_utc)
 
-    batch_schedule_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204)
-    while True:
+    running = True
+
+    batch_schedule_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204, session_id="test_session")
+
+    while running:
         try:
-            batch_message.try_add(Message("Test message"))
+            batch_message.add(Message("Test message"))
         except ValueError:
-            break
-
-    batch_sequence_numbers = topic_sender.schedule(batch_schedule_message, enqueue_time)
+            batch_sequence_numbers = topic_sender.schedule(batch_schedule_message, enqueue_time_utc)
+            batch_schedule_message = topic_sender.create_batch(max_size_in_bytes=256 * 1204)
 
     # 1.4 cancel schedule
     topic_sender.cancel_scheduled_messages(sequence_number)
@@ -238,7 +246,7 @@ with subscription_receiver:
 
 # 2.2 iterator receive
 with subscription_receiver:
-    session = subscription_receiver.get_session()
+    session = subscription_receiver.session
     session.set_session_state("START")
     for msg in subscription_receiver:
         print(message)
@@ -250,21 +258,24 @@ with subscription_receiver:
 
 # 2.3 pull mode receive
 with subscription_receiver:
-    session = subscription_receiver.get_session()
+    session = subscription_receiver.session
     msgs = subscription_receiver.receive(max_batch_size=10)
+
     session.set_session_state("BEGIN")
     for msg in msgs:
         msg.complete()
         session.renew_lock()
     session.set_session_state("END")
 
+
 # 2.4 receive deferred letter
 with subscription_receiver:
-    session = subscription_receiver.get_session()
+    session = subscription_receiver.session
     if session.get_session_state() == "DONE":
         defered_sequence_numbers = [1,2,3,4,5]
-        deferred = subscription_receiver.receive_deferred_messages(defered_sequence_numbers)
-        subscription_receiver.settle_deferred_messages('completed', deferred)
+        deferred_messages = subscription_receiver.receive_deferred_messages(defered_sequence_numbers)
+        for msg in deferred_messages:
+            deferred_messages.abandon()
 
 ### Rule operations
 
