@@ -4,7 +4,7 @@
 
 
 **Dependency updates**
-- Adopted [azure-core](https://pypi.org/project/azure-core/) version 1.2.3 or greater
+- Adopted [azure-core](https://pypi.org/project/azure-core/) version 1.3.0 or greater
 
 ## 1.0.0b2 (2020-02-11)
 
