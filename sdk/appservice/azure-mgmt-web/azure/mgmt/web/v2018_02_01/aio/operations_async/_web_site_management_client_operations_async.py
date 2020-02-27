@@ -8,24 +8,23 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMError
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class WebSiteManagementClientOperationsMixin(object):
+class WebSiteManagementClientOperationsMixin:
 
-    def get_publishing_user(
+    async def get_publishing_user(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.User"
+        **kwargs
+    ) -> "models.User":
         """Gets publishing user.
 
         Gets publishing user.
@@ -35,7 +34,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.User
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls: ClsType["models.User"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -43,16 +42,16 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self.get_publishing_user.metadata['url']
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -67,12 +66,11 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     get_publishing_user.metadata = {'url': '/providers/Microsoft.Web/publishingUsers/web'}
 
-    def update_publishing_user(
+    async def update_publishing_user(
         self,
-        user_details,  # type: "models.User"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.User"
+        user_details: "models.User",
+        **kwargs
+    ) -> "models.User":
         """Updates publishing user.
 
         Updates publishing user.
@@ -84,7 +82,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.User
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls: ClsType["models.User"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -92,11 +90,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self.update_publishing_user.metadata['url']
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -105,7 +103,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -122,9 +120,8 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_source_controls(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SourceControlCollection"
+        **kwargs
+    ) -> "models.SourceControlCollection":
         """Gets the source controls available for Azure websites.
 
         Gets the source controls available for Azure websites.
@@ -134,7 +131,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SourceControlCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControlCollection"]
+        cls: ClsType["models.SourceControlCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -146,28 +143,28 @@ class WebSiteManagementClientOperationsMixin(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('SourceControlCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -176,17 +173,16 @@ class WebSiteManagementClientOperationsMixin(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_source_controls.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols'}
 
-    def get_source_control(
+    async def get_source_control(
         self,
-        source_control_type,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SourceControl"
+        source_control_type: str,
+        **kwargs
+    ) -> "models.SourceControl":
         """Gets source control token.
 
         Gets source control token.
@@ -198,7 +194,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControl"]
+        cls: ClsType["models.SourceControl"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -210,16 +206,16 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -234,13 +230,12 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     get_source_control.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'}
 
-    def update_source_control(
+    async def update_source_control(
         self,
-        source_control_type,  # type: str
-        request_message,  # type: "models.SourceControl"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SourceControl"
+        source_control_type: str,
+        request_message: "models.SourceControl",
+        **kwargs
+    ) -> "models.SourceControl":
         """Updates source control token.
 
         Updates source control token.
@@ -254,7 +249,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControl"]
+        cls: ClsType["models.SourceControl"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -266,11 +261,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -279,7 +274,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -296,11 +291,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_billing_meters(
         self,
-        billing_location=None,  # type: Optional[str]
-        os_type=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.BillingMeterCollection"
+        billing_location: Optional[str] = None,
+        os_type: Optional[str] = None,
+        **kwargs
+    ) -> "models.BillingMeterCollection":
         """Gets a list of meters for a given location.
 
         Gets a list of meters for a given location.
@@ -314,7 +308,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.BillingMeterCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BillingMeterCollection"]
+        cls: ClsType["models.BillingMeterCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -330,7 +324,7 @@ class WebSiteManagementClientOperationsMixin(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if billing_location is not None:
                 query_parameters['billingLocation'] = self._serialize.query("billing_location", billing_location, 'str')
             if os_type is not None:
@@ -338,24 +332,24 @@ class WebSiteManagementClientOperationsMixin(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('BillingMeterCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -364,19 +358,18 @@ class WebSiteManagementClientOperationsMixin(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_billing_meters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/billingMeters'}
 
-    def check_name_availability(
+    async def check_name_availability(
         self,
-        name,  # type: str
-        type,  # type: Union[str, "models.CheckNameResourceTypes"]
-        is_fqdn=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceNameAvailability"
+        name: str,
+        type: Union[str, "models.CheckNameResourceTypes"],
+        is_fqdn: Optional[bool] = None,
+        **kwargs
+    ) -> "models.ResourceNameAvailability":
         """Check if a resource name is available.
 
         Check if a resource name is available.
@@ -392,7 +385,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceNameAvailability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceNameAvailability"]
+        cls: ClsType["models.ResourceNameAvailability"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
@@ -406,11 +399,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -419,7 +412,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -434,11 +427,10 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/checknameavailability'}
 
-    def get_subscription_deployment_locations(
+    async def get_subscription_deployment_locations(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DeploymentLocations"
+        **kwargs
+    ) -> "models.DeploymentLocations":
         """Gets list of available geo regions plus ministamps.
 
         Gets list of available geo regions plus ministamps.
@@ -448,7 +440,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DeploymentLocations
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentLocations"]
+        cls: ClsType["models.DeploymentLocations"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -460,16 +452,16 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -486,13 +478,12 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_geo_regions(
         self,
-        sku=None,  # type: Optional[Union[str, "models.SkuName"]]
-        linux_workers_enabled=None,  # type: Optional[bool]
-        xenon_workers_enabled=None,  # type: Optional[bool]
-        linux_dynamic_workers_enabled=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.GeoRegionCollection"
+        sku: Optional[Union[str, "models.SkuName"]] = None,
+        linux_workers_enabled: Optional[bool] = None,
+        xenon_workers_enabled: Optional[bool] = None,
+        linux_dynamic_workers_enabled: Optional[bool] = None,
+        **kwargs
+    ) -> "models.GeoRegionCollection":
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
@@ -513,7 +504,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.GeoRegionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GeoRegionCollection"]
+        cls: ClsType["models.GeoRegionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -529,7 +520,7 @@ class WebSiteManagementClientOperationsMixin(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if sku is not None:
                 query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
             if linux_workers_enabled is not None:
@@ -541,24 +532,24 @@ class WebSiteManagementClientOperationsMixin(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('GeoRegionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -567,17 +558,16 @@ class WebSiteManagementClientOperationsMixin(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_geo_regions.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/geoRegions'}
 
     def list_site_identifiers_assigned_to_host_name(
         self,
-        name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.IdentifierCollection"
+        name: Optional[str] = None,
+        **kwargs
+    ) -> "models.IdentifierCollection":
         """List all apps that are assigned to a hostname.
 
         List all apps that are assigned to a hostname.
@@ -589,7 +579,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.IdentifierCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
+        cls: ClsType["models.IdentifierCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         _name_identifier = models.NameIdentifier(name=name)
         api_version = "2018-02-01"
@@ -606,11 +596,11 @@ class WebSiteManagementClientOperationsMixin(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
             header_parameters['Content-Type'] = 'application/json'
 
@@ -621,17 +611,17 @@ class WebSiteManagementClientOperationsMixin(object):
             request = self._client.post(url, query_parameters, header_parameters, body_content)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('IdentifierCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -640,16 +630,15 @@ class WebSiteManagementClientOperationsMixin(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_identifiers_assigned_to_host_name.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/listSitesAssignedToHostName'}
 
     def list_premier_add_on_offers(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.PremierAddOnOfferCollection"
+        **kwargs
+    ) -> "models.PremierAddOnOfferCollection":
         """List all premier add-on offers.
 
         List all premier add-on offers.
@@ -659,7 +648,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.PremierAddOnOfferCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOnOfferCollection"]
+        cls: ClsType["models.PremierAddOnOfferCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -675,28 +664,28 @@ class WebSiteManagementClientOperationsMixin(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PremierAddOnOfferCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -705,16 +694,15 @@ class WebSiteManagementClientOperationsMixin(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_premier_add_on_offers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/premieraddonoffers'}
 
-    def list_skus(
+    async def list_skus(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SkuInfos"
+        **kwargs
+    ) -> "models.SkuInfos":
         """List all SKUs.
 
         List all SKUs.
@@ -724,7 +712,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SkuInfos
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfos"]
+        cls: ClsType["models.SkuInfos"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -736,16 +724,16 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -760,12 +748,11 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/skus'}
 
-    def verify_hosting_environment_vnet(
+    async def verify_hosting_environment_vnet(
         self,
-        parameters,  # type: "models.VnetParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.VnetValidationFailureDetails"
+        parameters: "models.VnetParameters",
+        **kwargs
+    ) -> "models.VnetValidationFailureDetails":
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network Security Group rules.
 
         Verifies if this VNET is compatible with an App Service Environment by analyzing the Network
@@ -778,7 +765,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetValidationFailureDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetValidationFailureDetails"]
+        cls: ClsType["models.VnetValidationFailureDetails"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -790,11 +777,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -803,7 +790,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -818,14 +805,13 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     verify_hosting_environment_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/verifyHostingEnvironmentVnet'}
 
-    def move(
+    async def move(
         self,
-        resource_group_name,  # type: str
-        target_resource_group=None,  # type: Optional[str]
-        resources=None,  # type: Optional[List[str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        target_resource_group: Optional[str] = None,
+        resources: Optional[List[str]] = None,
+        **kwargs
+    ) -> None:
         """Move resources between resource groups.
 
         Move resources between resource groups.
@@ -841,7 +827,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
@@ -856,11 +842,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Content-Type'] = 'application/json'
 
         # Construct body
@@ -868,7 +854,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -880,13 +866,12 @@ class WebSiteManagementClientOperationsMixin(object):
 
     move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'}
 
-    def validate(
+    async def validate(
         self,
-        resource_group_name,  # type: str
-        validate_request,  # type: "models.ValidateRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ValidateResponse"
+        resource_group_name: str,
+        validate_request: "models.ValidateRequest",
+        **kwargs
+    ) -> "models.ValidateResponse":
         """Validate if a resource can be created.
 
         Validate if a resource can be created.
@@ -900,7 +885,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ValidateResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ValidateResponse"]
+        cls: ClsType["models.ValidateResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -913,11 +898,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -926,7 +911,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -941,13 +926,12 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'}
 
-    def validate_container_settings(
+    async def validate_container_settings(
         self,
-        resource_group_name,  # type: str
-        validate_container_settings_request,  # type: "models.ValidateContainerSettingsRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> object
+        resource_group_name: str,
+        validate_container_settings_request: "models.ValidateContainerSettingsRequest",
+        **kwargs
+    ) -> object:
         """Validate if the container settings are correct.
 
         Validate if the container settings are correct.
@@ -961,7 +945,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls: ClsType[object] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -974,11 +958,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -987,7 +971,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1002,14 +986,13 @@ class WebSiteManagementClientOperationsMixin(object):
         return deserialized
     validate_container_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validateContainerSettings'}
 
-    def validate_move(
+    async def validate_move(
         self,
-        resource_group_name,  # type: str
-        target_resource_group=None,  # type: Optional[str]
-        resources=None,  # type: Optional[List[str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        target_resource_group: Optional[str] = None,
+        resources: Optional[List[str]] = None,
+        **kwargs
+    ) -> None:
         """Validate whether a resource can be moved.
 
         Validate whether a resource can be moved.
@@ -1025,7 +1008,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
@@ -1040,11 +1023,11 @@ class WebSiteManagementClientOperationsMixin(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Content-Type'] = 'application/json'
 
         # Construct body
@@ -1052,7 +1035,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:

@@ -8,59 +8,59 @@
 
 from typing import Any, Optional
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration import WebSiteManagementClientConfiguration
-from .operations import AppServiceCertificateOrdersOperations
-from .operations import CertificateRegistrationProviderOperations
-from .operations import DomainsOperations
-from .operations import TopLevelDomainsOperations
-from .operations import DomainRegistrationProviderOperations
-from .operations import CertificatesOperations
-from .operations import DeletedWebAppsOperations
-from .operations import DiagnosticsOperations
-from .operations import ProviderOperations
-from .operations import RecommendationsOperations
-from .operations import WebSiteManagementClientOperationsMixin
-from .operations import WebAppsOperations
-from .operations import AppServiceEnvironmentsOperations
-from .operations import AppServicePlansOperations
-from .operations import ResourceHealthMetadataOperations
-from . import models
+from ._configuration_async import WebSiteManagementClientConfiguration
+from .operations_async import AppServiceCertificateOrdersOperations
+from .operations_async import CertificateRegistrationProviderOperations
+from .operations_async import DomainsOperations
+from .operations_async import TopLevelDomainsOperations
+from .operations_async import DomainRegistrationProviderOperations
+from .operations_async import CertificatesOperations
+from .operations_async import DeletedWebAppsOperations
+from .operations_async import DiagnosticsOperations
+from .operations_async import ProviderOperations
+from .operations_async import RecommendationsOperations
+from .operations_async import WebSiteManagementClientOperationsMixin
+from .operations_async import WebAppsOperations
+from .operations_async import AppServiceEnvironmentsOperations
+from .operations_async import AppServicePlansOperations
+from .operations_async import ResourceHealthMetadataOperations
+from .. import models
 
 
 class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):
     """WebSite Management Client.
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
-    :vartype app_service_certificate_orders: azure.mgmt.web.v2018_02_01.operations.AppServiceCertificateOrdersOperations
+    :vartype app_service_certificate_orders: azure.mgmt.web.v2018_02_01.aio.operations_async.AppServiceCertificateOrdersOperations
     :ivar certificate_registration_provider: CertificateRegistrationProviderOperations operations
-    :vartype certificate_registration_provider: azure.mgmt.web.v2018_02_01.operations.CertificateRegistrationProviderOperations
+    :vartype certificate_registration_provider: azure.mgmt.web.v2018_02_01.aio.operations_async.CertificateRegistrationProviderOperations
     :ivar domains: DomainsOperations operations
-    :vartype domains: azure.mgmt.web.v2018_02_01.operations.DomainsOperations
+    :vartype domains: azure.mgmt.web.v2018_02_01.aio.operations_async.DomainsOperations
     :ivar top_level_domains: TopLevelDomainsOperations operations
-    :vartype top_level_domains: azure.mgmt.web.v2018_02_01.operations.TopLevelDomainsOperations
+    :vartype top_level_domains: azure.mgmt.web.v2018_02_01.aio.operations_async.TopLevelDomainsOperations
     :ivar domain_registration_provider: DomainRegistrationProviderOperations operations
-    :vartype domain_registration_provider: azure.mgmt.web.v2018_02_01.operations.DomainRegistrationProviderOperations
+    :vartype domain_registration_provider: azure.mgmt.web.v2018_02_01.aio.operations_async.DomainRegistrationProviderOperations
     :ivar certificates: CertificatesOperations operations
-    :vartype certificates: azure.mgmt.web.v2018_02_01.operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.web.v2018_02_01.aio.operations_async.CertificatesOperations
     :ivar deleted_web_apps: DeletedWebAppsOperations operations
-    :vartype deleted_web_apps: azure.mgmt.web.v2018_02_01.operations.DeletedWebAppsOperations
+    :vartype deleted_web_apps: azure.mgmt.web.v2018_02_01.aio.operations_async.DeletedWebAppsOperations
     :ivar diagnostics: DiagnosticsOperations operations
-    :vartype diagnostics: azure.mgmt.web.v2018_02_01.operations.DiagnosticsOperations
+    :vartype diagnostics: azure.mgmt.web.v2018_02_01.aio.operations_async.DiagnosticsOperations
     :ivar provider: ProviderOperations operations
-    :vartype provider: azure.mgmt.web.v2018_02_01.operations.ProviderOperations
+    :vartype provider: azure.mgmt.web.v2018_02_01.aio.operations_async.ProviderOperations
     :ivar recommendations: RecommendationsOperations operations
-    :vartype recommendations: azure.mgmt.web.v2018_02_01.operations.RecommendationsOperations
+    :vartype recommendations: azure.mgmt.web.v2018_02_01.aio.operations_async.RecommendationsOperations
     :ivar web_apps: WebAppsOperations operations
-    :vartype web_apps: azure.mgmt.web.v2018_02_01.operations.WebAppsOperations
+    :vartype web_apps: azure.mgmt.web.v2018_02_01.aio.operations_async.WebAppsOperations
     :ivar app_service_environments: AppServiceEnvironmentsOperations operations
-    :vartype app_service_environments: azure.mgmt.web.v2018_02_01.operations.AppServiceEnvironmentsOperations
+    :vartype app_service_environments: azure.mgmt.web.v2018_02_01.aio.operations_async.AppServiceEnvironmentsOperations
     :ivar app_service_plans: AppServicePlansOperations operations
-    :vartype app_service_plans: azure.mgmt.web.v2018_02_01.operations.AppServicePlansOperations
+    :vartype app_service_plans: azure.mgmt.web.v2018_02_01.aio.operations_async.AppServicePlansOperations
     :ivar resource_health_metadata: ResourceHealthMetadataOperations operations
-    :vartype resource_health_metadata: azure.mgmt.web.v2018_02_01.operations.ResourceHealthMetadataOperations
+    :vartype resource_health_metadata: azure.mgmt.web.v2018_02_01.aio.operations_async.ResourceHealthMetadataOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: azure.core.credentials.TokenCredential
     :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
@@ -70,16 +70,15 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = WebSiteManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -114,15 +113,12 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):
         self.resource_health_metadata = ResourceHealthMetadataOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> WebSiteManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "WebSiteManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

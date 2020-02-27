@@ -6,8 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._web_site_management_client import WebSiteManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
+from ._web_site_management_client_async import WebSiteManagementClient
 __all__ = ['WebSiteManagementClient']

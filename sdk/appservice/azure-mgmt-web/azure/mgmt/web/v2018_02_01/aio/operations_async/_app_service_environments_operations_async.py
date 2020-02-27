@@ -8,21 +8,21 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
 from azure.mgmt.core.exceptions import ARMError
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AppServiceEnvironmentsOperations(object):
-    """AppServiceEnvironmentsOperations operations.
+class AppServiceEnvironmentsOperations:
+    """AppServiceEnvironmentsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -37,7 +37,7 @@ class AppServiceEnvironmentsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -45,9 +45,8 @@ class AppServiceEnvironmentsOperations(object):
 
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceEnvironmentCollection"
+        **kwargs
+    ) -> "models.AppServiceEnvironmentCollection":
         """Get all App Service Environments for a subscription.
 
         Get all App Service Environments for a subscription.
@@ -57,7 +56,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentCollection"]
+        cls: ClsType["models.AppServiceEnvironmentCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -73,28 +72,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServiceEnvironmentCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -103,17 +102,16 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/hostingEnvironments'}
 
     def list_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceEnvironmentCollection"
+        resource_group_name: str,
+        **kwargs
+    ) -> "models.AppServiceEnvironmentCollection":
         """Get all App Service Environments in a resource group.
 
         Get all App Service Environments in a resource group.
@@ -125,7 +123,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentCollection"]
+        cls: ClsType["models.AppServiceEnvironmentCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -142,28 +140,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServiceEnvironmentCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -172,18 +170,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments'}
 
-    def get(
+    async def get(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceEnvironmentResource"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.AppServiceEnvironmentResource":
         """Get the properties of an App Service Environment.
 
         Get the properties of an App Service Environment.
@@ -197,7 +194,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+        cls: ClsType["models.AppServiceEnvironmentResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -211,16 +208,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -235,15 +232,14 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
-    def _create_or_update_initial(
+    async def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        hosting_environment_envelope,  # type: "models.AppServiceEnvironmentResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceEnvironmentResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+        resource_group_name: str,
+        name: str,
+        hosting_environment_envelope: "models.AppServiceEnvironmentResource",
+        **kwargs
+    ) -> "models.AppServiceEnvironmentResource":
+        cls: ClsType["models.AppServiceEnvironmentResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -257,11 +253,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -270,7 +266,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
@@ -290,14 +286,13 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
-    def begin_create_or_update(
+    async def create_or_update(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        hosting_environment_envelope,  # type: "models.AppServiceEnvironmentResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceEnvironmentResource"
+        resource_group_name: str,
+        name: str,
+        hosting_environment_envelope: "models.AppServiceEnvironmentResource",
+        **kwargs
+    ) -> "models.AppServiceEnvironmentResource":
         """Create or update an App Service Environment.
 
         Create or update an App Service Environment.
@@ -311,15 +306,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns AppServiceEnvironmentResource
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource]
 
         :raises ~azure.mgmt.core.ARMError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
-        raw_result = self._create_or_update_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.AppServiceEnvironmentResource"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
             name=name,
             hosting_environment_envelope=hosting_environment_envelope,
@@ -338,21 +333,20 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
-    def _delete_initial(
+    async def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        force_delete=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        resource_group_name: str,
+        name: str,
+        force_delete: Optional[bool] = None,
+        **kwargs
+    ) -> None:
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -366,17 +360,17 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if force_delete is not None:
             query_parameters['forceDelete'] = self._serialize.query("force_delete", force_delete, 'bool')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204, 400, 404, 409]:
@@ -388,14 +382,13 @@ class AppServiceEnvironmentsOperations(object):
 
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
-    def begin_delete(
+    async def delete(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        force_delete=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        force_delete: Optional[bool] = None,
+        **kwargs
+    ) -> None:
         """Delete an App Service Environment.
 
         Delete an App Service Environment.
@@ -410,15 +403,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
 
         :raises ~azure.mgmt.core.ARMError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        raw_result = self._delete_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType[None] = kwargs.pop('cls', None)
+        raw_result = await self._delete_initial(
             resource_group_name=resource_group_name,
             name=name,
             force_delete=force_delete,
@@ -434,20 +427,19 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
-    def update(
+    async def update(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        hosting_environment_envelope,  # type: "models.AppServiceEnvironmentPatchResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceEnvironmentResource"
+        resource_group_name: str,
+        name: str,
+        hosting_environment_envelope: "models.AppServiceEnvironmentPatchResource",
+        **kwargs
+    ) -> "models.AppServiceEnvironmentResource":
         """Create or update an App Service Environment.
 
         Create or update an App Service Environment.
@@ -463,7 +455,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource or ~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironmentResource or None or None or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceEnvironmentResource"]
+        cls: ClsType["models.AppServiceEnvironmentResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -477,11 +469,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -490,7 +482,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
@@ -512,11 +504,10 @@ class AppServiceEnvironmentsOperations(object):
 
     def list_capacities(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.StampCapacityCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.StampCapacityCollection":
         """Get the used, available, and total worker capacity an App Service Environment.
 
         Get the used, available, and total worker capacity an App Service Environment.
@@ -530,7 +521,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.StampCapacityCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StampCapacityCollection"]
+        cls: ClsType["models.StampCapacityCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -548,28 +539,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('StampCapacityCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -578,18 +569,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_capacities.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/compute'}
 
-    def list_vips(
+    async def list_vips(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AddressResponse"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.AddressResponse":
         """Get IP addresses assigned to an App Service Environment.
 
         Get IP addresses assigned to an App Service Environment.
@@ -603,7 +593,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AddressResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AddressResponse"]
+        cls: ClsType["models.AddressResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -617,16 +607,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -641,16 +631,15 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_vips.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/virtualip'}
 
-    def _change_vnet_initial(
+    async def _change_vnet_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        id=None,  # type: Optional[str]
-        subnet=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        resource_group_name: str,
+        name: str,
+        id: Optional[str] = None,
+        subnet: Optional[str] = None,
+        **kwargs
+    ) -> "models.WebAppCollection":
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _vnet_info = models.VirtualNetworkProfile(id=id, subnet=subnet)
@@ -666,11 +655,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -679,7 +668,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -699,15 +688,14 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     _change_vnet_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/changeVirtualNetwork'}
 
-    def begin_change_vnet(
+    async def change_vnet(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        id=None,  # type: Optional[str]
-        subnet=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
+        resource_group_name: str,
+        name: str,
+        id: Optional[str] = None,
+        subnet: Optional[str] = None,
+        **kwargs
+    ) -> "models.WebAppCollection":
         """Move an App Service Environment to a different VNET.
 
         Move an App Service Environment to a different VNET.
@@ -723,15 +711,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns WebAppCollection
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
-        raw_result = self._change_vnet_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
+        raw_result = await self._change_vnet_initial(
             resource_group_name=resource_group_name,
             name=name,
             id=id,
@@ -751,19 +739,18 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_change_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/changeVirtualNetwork'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    change_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/changeVirtualNetwork'}
 
-    def list_diagnostics(
+    async def list_diagnostics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["HostingEnvironmentDiagnostics"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> List["HostingEnvironmentDiagnostics"]:
         """Get diagnostic information for an App Service Environment.
 
         Get diagnostic information for an App Service Environment.
@@ -777,7 +764,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentDiagnostics]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["HostingEnvironmentDiagnostics"]]
+        cls: ClsType[List["HostingEnvironmentDiagnostics"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -791,16 +778,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -815,14 +802,13 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     list_diagnostics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/diagnostics'}
 
-    def get_diagnostics_item(
+    async def get_diagnostics_item(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        diagnostics_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HostingEnvironmentDiagnostics"
+        resource_group_name: str,
+        name: str,
+        diagnostics_name: str,
+        **kwargs
+    ) -> "models.HostingEnvironmentDiagnostics":
         """Get a diagnostics item for an App Service Environment.
 
         Get a diagnostics item for an App Service Environment.
@@ -838,7 +824,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentDiagnostics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HostingEnvironmentDiagnostics"]
+        cls: ClsType["models.HostingEnvironmentDiagnostics"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -853,16 +839,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -879,11 +865,10 @@ class AppServiceEnvironmentsOperations(object):
 
     def get_inbound_network_dependencies_endpoints(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.InboundEnvironmentEndpointCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.InboundEnvironmentEndpointCollection":
         """Get the network endpoints of all inbound dependencies of an App Service Environment.
 
         Get the network endpoints of all inbound dependencies of an App Service Environment.
@@ -897,7 +882,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.InboundEnvironmentEndpointCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InboundEnvironmentEndpointCollection"]
+        cls: ClsType["models.InboundEnvironmentEndpointCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -915,28 +900,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('InboundEnvironmentEndpointCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -945,18 +930,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     get_inbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/inboundNetworkDependenciesEndpoints'}
 
-    def list_metric_definitions(
+    async def list_metric_definitions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.MetricDefinition"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.MetricDefinition":
         """Get global metric definitions of an App Service Environment.
 
         Get global metric definitions of an App Service Environment.
@@ -970,7 +954,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.MetricDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricDefinition"]
+        cls: ClsType["models.MetricDefinition"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -984,16 +968,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1010,13 +994,12 @@ class AppServiceEnvironmentsOperations(object):
 
     def list_metrics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        details=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricCollection"
+        resource_group_name: str,
+        name: str,
+        details: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.ResourceMetricCollection":
         """Get global metrics of an App Service Environment.
 
         Get global metrics of an App Service Environment.
@@ -1038,7 +1021,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls: ClsType["models.ResourceMetricCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1056,7 +1039,7 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if details is not None:
                 query_parameters['details'] = self._serialize.query("details", details, 'bool')
             if filter is not None:
@@ -1064,24 +1047,24 @@ class AppServiceEnvironmentsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1090,18 +1073,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metrics'}
 
     def list_multi_role_pools(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WorkerPoolCollection":
         """Get all multi-role pools.
 
         Get all multi-role pools.
@@ -1115,7 +1097,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolCollection"]
+        cls: ClsType["models.WorkerPoolCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1133,28 +1115,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('WorkerPoolCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1163,18 +1145,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_pools.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools'}
 
-    def get_multi_role_pool(
+    async def get_multi_role_pool(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WorkerPoolResource":
         """Get properties of a multi-role pool.
 
         Get properties of a multi-role pool.
@@ -1188,7 +1169,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1202,16 +1183,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1226,15 +1207,14 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     get_multi_role_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
 
-    def _create_or_update_multi_role_pool_initial(
+    async def _create_or_update_multi_role_pool_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        multi_role_pool_envelope,  # type: "models.WorkerPoolResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        resource_group_name: str,
+        name: str,
+        multi_role_pool_envelope: "models.WorkerPoolResource",
+        **kwargs
+    ) -> "models.WorkerPoolResource":
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1248,11 +1228,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -1261,7 +1241,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
@@ -1281,14 +1261,13 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     _create_or_update_multi_role_pool_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
 
-    def begin_create_or_update_multi_role_pool(
+    async def create_or_update_multi_role_pool(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        multi_role_pool_envelope,  # type: "models.WorkerPoolResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
+        resource_group_name: str,
+        name: str,
+        multi_role_pool_envelope: "models.WorkerPoolResource",
+        **kwargs
+    ) -> "models.WorkerPoolResource":
         """Create or update a multi-role pool.
 
         Create or update a multi-role pool.
@@ -1302,15 +1281,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns WorkerPoolResource
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]
 
         :raises ~azure.mgmt.core.ARMError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
-        raw_result = self._create_or_update_multi_role_pool_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_multi_role_pool_initial(
             resource_group_name=resource_group_name,
             name=name,
             multi_role_pool_envelope=multi_role_pool_envelope,
@@ -1329,20 +1308,19 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update_multi_role_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update_multi_role_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
 
-    def update_multi_role_pool(
+    async def update_multi_role_pool(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        multi_role_pool_envelope,  # type: "models.WorkerPoolResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
+        resource_group_name: str,
+        name: str,
+        multi_role_pool_envelope: "models.WorkerPoolResource",
+        **kwargs
+    ) -> "models.WorkerPoolResource":
         """Create or update a multi-role pool.
 
         Create or update a multi-role pool.
@@ -1358,7 +1336,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or None or None or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1372,11 +1350,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -1385,7 +1363,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
@@ -1407,12 +1385,11 @@ class AppServiceEnvironmentsOperations(object):
 
     def list_multi_role_pool_instance_metric_definitions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        instance,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricDefinitionCollection"
+        resource_group_name: str,
+        name: str,
+        instance: str,
+        **kwargs
+    ) -> "models.ResourceMetricDefinitionCollection":
         """Get metric definitions for a specific instance of a multi-role pool of an App Service Environment.
 
         Get metric definitions for a specific instance of a multi-role pool of an App Service
@@ -1429,7 +1406,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls: ClsType["models.ResourceMetricDefinitionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1448,28 +1425,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricDefinitionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1478,20 +1455,19 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_pool_instance_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metricdefinitions'}
 
     def list_multi_role_pool_instance_metrics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        instance,  # type: str
-        details=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricCollection"
+        resource_group_name: str,
+        name: str,
+        instance: str,
+        details: Optional[bool] = None,
+        **kwargs
+    ) -> "models.ResourceMetricCollection":
         """Get metrics for a specific instance of a multi-role pool of an App Service Environment.
 
         Get metrics for a specific instance of a multi-role pool of an App Service Environment.
@@ -1510,7 +1486,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls: ClsType["models.ResourceMetricCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1529,30 +1505,30 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if details is not None:
                 query_parameters['details'] = self._serialize.query("details", details, 'bool')
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1561,18 +1537,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metrics'}
 
     def list_multi_role_metric_definitions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricDefinitionCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.ResourceMetricDefinitionCollection":
         """Get metric definitions for a multi-role pool of an App Service Environment.
 
         Get metric definitions for a multi-role pool of an App Service Environment.
@@ -1586,7 +1561,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls: ClsType["models.ResourceMetricDefinitionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1604,28 +1579,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricDefinitionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1634,23 +1609,22 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metricdefinitions'}
 
     def list_multi_role_metrics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        start_time=None,  # type: Optional[str]
-        end_time=None,  # type: Optional[str]
-        time_grain=None,  # type: Optional[str]
-        details=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricCollection"
+        resource_group_name: str,
+        name: str,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        time_grain: Optional[str] = None,
+        details: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.ResourceMetricCollection":
         """Get metrics for a multi-role pool of an App Service Environment.
 
         Get metrics for a multi-role pool of an App Service Environment.
@@ -1678,7 +1652,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls: ClsType["models.ResourceMetricCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1696,7 +1670,7 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if start_time is not None:
                 query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'str')
             if end_time is not None:
@@ -1710,24 +1684,24 @@ class AppServiceEnvironmentsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1736,18 +1710,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metrics'}
 
     def list_multi_role_pool_skus(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SkuInfoCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.SkuInfoCollection":
         """Get available SKUs for scaling a multi-role pool.
 
         Get available SKUs for scaling a multi-role pool.
@@ -1761,7 +1734,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SkuInfoCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfoCollection"]
+        cls: ClsType["models.SkuInfoCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1779,28 +1752,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('SkuInfoCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1809,18 +1782,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_pool_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/skus'}
 
     def list_multi_role_usages(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.UsageCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.UsageCollection":
         """Get usage metrics for a multi-role pool of an App Service Environment.
 
         Get usage metrics for a multi-role pool of an App Service Environment.
@@ -1834,7 +1806,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.UsageCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageCollection"]
+        cls: ClsType["models.UsageCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1852,28 +1824,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('UsageCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1882,18 +1854,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_multi_role_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/usages'}
 
-    def list_operations(
+    async def list_operations(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["Operation"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> List["Operation"]:
         """List all currently running operations on the App Service Environment.
 
         List all currently running operations on the App Service Environment.
@@ -1907,7 +1878,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.Operation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["Operation"]]
+        cls: ClsType[List["Operation"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1921,16 +1892,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1947,11 +1918,10 @@ class AppServiceEnvironmentsOperations(object):
 
     def get_outbound_network_dependencies_endpoints(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.OutboundEnvironmentEndpointCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.OutboundEnvironmentEndpointCollection":
         """Get the network endpoints of all outbound dependencies of an App Service Environment.
 
         Get the network endpoints of all outbound dependencies of an App Service Environment.
@@ -1965,7 +1935,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.OutboundEnvironmentEndpointCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OutboundEnvironmentEndpointCollection"]
+        cls: ClsType["models.OutboundEnvironmentEndpointCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1983,28 +1953,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('OutboundEnvironmentEndpointCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2013,18 +1983,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     get_outbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/outboundNetworkDependenciesEndpoints'}
 
-    def reboot(
+    async def reboot(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> None:
         """Reboot all machines in an App Service Environment.
 
         Reboot all machines in an App Service Environment.
@@ -2038,7 +2007,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2052,15 +2021,15 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 400, 404, 409]:
@@ -2072,14 +2041,13 @@ class AppServiceEnvironmentsOperations(object):
 
     reboot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/reboot'}
 
-    def _resume_initial(
+    async def _resume_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WebAppCollection":
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2093,16 +2061,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -2122,13 +2090,12 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     _resume_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'}
 
-    def begin_resume(
+    async def resume(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WebAppCollection":
         """Resume an App Service Environment.
 
         Resume an App Service Environment.
@@ -2140,15 +2107,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns WebAppCollection
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
-        raw_result = self._resume_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
+        raw_result = await self._resume_initial(
             resource_group_name=resource_group_name,
             name=name,
             cls=lambda x,y,z: x,
@@ -2166,19 +2133,18 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'}
 
     def list_app_service_plans(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlanCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.AppServicePlanCollection":
         """Get all App Service plans in an App Service Environment.
 
         Get all App Service plans in an App Service Environment.
@@ -2192,7 +2158,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlanCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls: ClsType["models.AppServicePlanCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2210,28 +2176,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServicePlanCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2240,19 +2206,18 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_app_service_plans.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/serverfarms'}
 
     def list_web_apps(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        properties_to_include=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
+        resource_group_name: str,
+        name: str,
+        properties_to_include: Optional[str] = None,
+        **kwargs
+    ) -> "models.WebAppCollection":
         """Get all apps in an App Service Environment.
 
         Get all apps in an App Service Environment.
@@ -2268,7 +2233,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WebAppCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2286,30 +2251,30 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if properties_to_include is not None:
                 query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('WebAppCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2318,19 +2283,18 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_web_apps.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/sites'}
 
-    def _suspend_initial(
+    async def _suspend_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WebAppCollection":
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2344,16 +2308,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -2373,13 +2337,12 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     _suspend_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'}
 
-    def begin_suspend(
+    async def suspend(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WebAppCollection":
         """Suspend an App Service Environment.
 
         Suspend an App Service Environment.
@@ -2391,15 +2354,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns WebAppCollection
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.WebAppCollection]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
-        raw_result = self._suspend_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
+        raw_result = await self._suspend_initial(
             resource_group_name=resource_group_name,
             name=name,
             cls=lambda x,y,z: x,
@@ -2417,20 +2380,19 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_suspend.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    suspend.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'}
 
     def list_usages(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CsmUsageQuotaCollection"
+        resource_group_name: str,
+        name: str,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.CsmUsageQuotaCollection":
         """Get global usage metrics of an App Service Environment.
 
         Get global usage metrics of an App Service Environment.
@@ -2449,7 +2411,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.CsmUsageQuotaCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls: ClsType["models.CsmUsageQuotaCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2467,30 +2429,30 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if filter is not None:
                 query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CsmUsageQuotaCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2499,18 +2461,17 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/usages'}
 
     def list_worker_pools(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.WorkerPoolCollection":
         """Get all worker pools of an App Service Environment.
 
         Get all worker pools of an App Service Environment.
@@ -2524,7 +2485,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolCollection"]
+        cls: ClsType["models.WorkerPoolCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2542,28 +2503,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('WorkerPoolCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2572,19 +2533,18 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_worker_pools.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools'}
 
-    def get_worker_pool(
+    async def get_worker_pool(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        **kwargs
+    ) -> "models.WorkerPoolResource":
         """Get properties of a worker pool.
 
         Get properties of a worker pool.
@@ -2600,7 +2560,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2615,16 +2575,16 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2639,16 +2599,15 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     get_worker_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
 
-    def _create_or_update_worker_pool_initial(
+    async def _create_or_update_worker_pool_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        worker_pool_envelope,  # type: "models.WorkerPoolResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        worker_pool_envelope: "models.WorkerPoolResource",
+        **kwargs
+    ) -> "models.WorkerPoolResource":
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2663,11 +2622,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -2676,7 +2635,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
@@ -2696,15 +2655,14 @@ class AppServiceEnvironmentsOperations(object):
         return deserialized
     _create_or_update_worker_pool_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
 
-    def begin_create_or_update_worker_pool(
+    async def create_or_update_worker_pool(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        worker_pool_envelope,  # type: "models.WorkerPoolResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        worker_pool_envelope: "models.WorkerPoolResource",
+        **kwargs
+    ) -> "models.WorkerPoolResource":
         """Create or update a worker pool.
 
         Create or update a worker pool.
@@ -2720,15 +2678,15 @@ class AppServiceEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns WorkerPoolResource
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource]
 
         :raises ~azure.mgmt.core.ARMError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
-        raw_result = self._create_or_update_worker_pool_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_worker_pool_initial(
             resource_group_name=resource_group_name,
             name=name,
             worker_pool_name=worker_pool_name,
@@ -2748,21 +2706,20 @@ class AppServiceEnvironmentsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update_worker_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update_worker_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
 
-    def update_worker_pool(
+    async def update_worker_pool(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        worker_pool_envelope,  # type: "models.WorkerPoolResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WorkerPoolResource"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        worker_pool_envelope: "models.WorkerPoolResource",
+        **kwargs
+    ) -> "models.WorkerPoolResource":
         """Create or update a worker pool.
 
         Create or update a worker pool.
@@ -2780,7 +2737,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or ~azure.mgmt.web.v2018_02_01.models.WorkerPoolResource or None or None or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkerPoolResource"]
+        cls: ClsType["models.WorkerPoolResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2795,11 +2752,11 @@ class AppServiceEnvironmentsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -2808,7 +2765,7 @@ class AppServiceEnvironmentsOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
@@ -2830,13 +2787,12 @@ class AppServiceEnvironmentsOperations(object):
 
     def list_worker_pool_instance_metric_definitions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        instance,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricDefinitionCollection"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        instance: str,
+        **kwargs
+    ) -> "models.ResourceMetricDefinitionCollection":
         """Get metric definitions for a specific instance of a worker pool of an App Service Environment.
 
         Get metric definitions for a specific instance of a worker pool of an App Service Environment.
@@ -2854,7 +2810,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls: ClsType["models.ResourceMetricDefinitionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2874,28 +2830,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricDefinitionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2904,22 +2860,21 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_worker_pool_instance_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metricdefinitions'}
 
     def list_worker_pool_instance_metrics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        instance,  # type: str
-        details=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricCollection"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        instance: str,
+        details: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.ResourceMetricCollection":
         """Get metrics for a specific instance of a worker pool of an App Service Environment.
 
         Get metrics for a specific instance of a worker pool of an App Service Environment.
@@ -2945,7 +2900,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls: ClsType["models.ResourceMetricCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2965,7 +2920,7 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if details is not None:
                 query_parameters['details'] = self._serialize.query("details", details, 'bool')
             if filter is not None:
@@ -2973,24 +2928,24 @@ class AppServiceEnvironmentsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -2999,19 +2954,18 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_worker_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metrics'}
 
     def list_web_worker_metric_definitions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricDefinitionCollection"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        **kwargs
+    ) -> "models.ResourceMetricDefinitionCollection":
         """Get metric definitions for a worker pool of an App Service Environment.
 
         Get metric definitions for a worker pool of an App Service Environment.
@@ -3027,7 +2981,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls: ClsType["models.ResourceMetricDefinitionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -3046,28 +3000,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricDefinitionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3076,21 +3030,20 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_web_worker_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metricdefinitions'}
 
     def list_web_worker_metrics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        details=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricCollection"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        details: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.ResourceMetricCollection":
         """Get metrics for a worker pool of a AppServiceEnvironment (App Service Environment).
 
         Get metrics for a worker pool of a AppServiceEnvironment (App Service Environment).
@@ -3114,7 +3067,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls: ClsType["models.ResourceMetricCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -3133,7 +3086,7 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if details is not None:
                 query_parameters['details'] = self._serialize.query("details", details, 'bool')
             if filter is not None:
@@ -3141,24 +3094,24 @@ class AppServiceEnvironmentsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3167,19 +3120,18 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_web_worker_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metrics'}
 
     def list_worker_pool_skus(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SkuInfoCollection"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        **kwargs
+    ) -> "models.SkuInfoCollection":
         """Get available SKUs for scaling a worker pool.
 
         Get available SKUs for scaling a worker pool.
@@ -3195,7 +3147,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SkuInfoCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfoCollection"]
+        cls: ClsType["models.SkuInfoCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -3214,28 +3166,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('SkuInfoCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3244,19 +3196,18 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_worker_pool_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/skus'}
 
     def list_web_worker_usages(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_pool_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.UsageCollection"
+        resource_group_name: str,
+        name: str,
+        worker_pool_name: str,
+        **kwargs
+    ) -> "models.UsageCollection":
         """Get usage metrics for a worker pool of an App Service Environment.
 
         Get usage metrics for a worker pool of an App Service Environment.
@@ -3272,7 +3223,7 @@ class AppServiceEnvironmentsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.UsageCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageCollection"]
+        cls: ClsType["models.UsageCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -3291,28 +3242,28 @@ class AppServiceEnvironmentsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('UsageCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -3321,7 +3272,7 @@ class AppServiceEnvironmentsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_web_worker_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/usages'}

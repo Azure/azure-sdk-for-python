@@ -8,18 +8,18 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class TopLevelDomainsOperations(object):
-    """TopLevelDomainsOperations operations.
+class TopLevelDomainsOperations:
+    """TopLevelDomainsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -34,7 +34,7 @@ class TopLevelDomainsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -42,9 +42,8 @@ class TopLevelDomainsOperations(object):
 
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.TopLevelDomainCollection"
+        **kwargs
+    ) -> "models.TopLevelDomainCollection":
         """Get all top-level domains supported for registration.
 
         Get all top-level domains supported for registration.
@@ -54,7 +53,7 @@ class TopLevelDomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.TopLevelDomainCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TopLevelDomainCollection"]
+        cls: ClsType["models.TopLevelDomainCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -70,28 +69,28 @@ class TopLevelDomainsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('TopLevelDomainCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -100,17 +99,16 @@ class TopLevelDomainsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains'}
 
-    def get(
+    async def get(
         self,
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.TopLevelDomain"
+        name: str,
+        **kwargs
+    ) -> "models.TopLevelDomain":
         """Get details of a top-level domain.
 
         Get details of a top-level domain.
@@ -122,7 +120,7 @@ class TopLevelDomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.TopLevelDomain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TopLevelDomain"]
+        cls: ClsType["models.TopLevelDomain"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -135,16 +133,16 @@ class TopLevelDomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -161,12 +159,11 @@ class TopLevelDomainsOperations(object):
 
     def list_agreements(
         self,
-        name,  # type: str
-        include_privacy=None,  # type: Optional[bool]
-        for_transfer=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.TldLegalAgreementCollection"
+        name: str,
+        include_privacy: Optional[bool] = None,
+        for_transfer: Optional[bool] = None,
+        **kwargs
+    ) -> "models.TldLegalAgreementCollection":
         """Gets all legal agreements that user needs to accept before purchasing a domain.
 
         Gets all legal agreements that user needs to accept before purchasing a domain.
@@ -184,7 +181,7 @@ class TopLevelDomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.TldLegalAgreementCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TldLegalAgreementCollection"]
+        cls: ClsType["models.TldLegalAgreementCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         _agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy, for_transfer=for_transfer)
         api_version = "2018-02-01"
@@ -202,11 +199,11 @@ class TopLevelDomainsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
             header_parameters['Content-Type'] = 'application/json'
 
@@ -217,17 +214,17 @@ class TopLevelDomainsOperations(object):
             request = self._client.post(url, query_parameters, header_parameters, body_content)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('TldLegalAgreementCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -236,7 +233,7 @@ class TopLevelDomainsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_agreements.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}/listAgreements'}

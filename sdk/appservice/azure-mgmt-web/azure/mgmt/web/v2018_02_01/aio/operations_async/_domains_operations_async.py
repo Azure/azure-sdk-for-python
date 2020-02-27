@@ -8,21 +8,21 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
 from azure.mgmt.core.exceptions import ARMError
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class DomainsOperations(object):
-    """DomainsOperations operations.
+class DomainsOperations:
+    """DomainsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -37,18 +37,17 @@ class DomainsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def check_availability(
+    async def check_availability(
         self,
-        name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainAvailablilityCheckResult"
+        name: Optional[str] = None,
+        **kwargs
+    ) -> "models.DomainAvailablilityCheckResult":
         """Check if a domain is available for registration.
 
         Check if a domain is available for registration.
@@ -60,7 +59,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainAvailablilityCheckResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainAvailablilityCheckResult"]
+        cls: ClsType["models.DomainAvailablilityCheckResult"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _identifier = models.NameIdentifier(name=name)
@@ -74,11 +73,11 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -87,7 +86,7 @@ class DomainsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -104,9 +103,8 @@ class DomainsOperations(object):
 
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainCollection"
+        **kwargs
+    ) -> "models.DomainCollection":
         """Get all domains in a subscription.
 
         Get all domains in a subscription.
@@ -116,7 +114,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
+        cls: ClsType["models.DomainCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -132,28 +130,28 @@ class DomainsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DomainCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -162,16 +160,15 @@ class DomainsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/domains'}
 
-    def get_control_center_sso_request(
+    async def get_control_center_sso_request(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainControlCenterSsoRequest"
+        **kwargs
+    ) -> "models.DomainControlCenterSsoRequest":
         """Generate a single sign-on request for the domain management portal.
 
         Generate a single sign-on request for the domain management portal.
@@ -181,7 +178,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainControlCenterSsoRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainControlCenterSsoRequest"]
+        cls: ClsType["models.DomainControlCenterSsoRequest"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -193,16 +190,16 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -219,11 +216,10 @@ class DomainsOperations(object):
 
     def list_recommendations(
         self,
-        keywords=None,  # type: Optional[str]
-        max_domain_recommendations=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.NameIdentifierCollection"
+        keywords: Optional[str] = None,
+        max_domain_recommendations: Optional[int] = None,
+        **kwargs
+    ) -> "models.NameIdentifierCollection":
         """Get domain name recommendations based on keywords.
 
         Get domain name recommendations based on keywords.
@@ -237,7 +233,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.NameIdentifierCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NameIdentifierCollection"]
+        cls: ClsType["models.NameIdentifierCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         _parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
         api_version = "2018-02-01"
@@ -254,11 +250,11 @@ class DomainsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
             header_parameters['Content-Type'] = 'application/json'
 
@@ -269,17 +265,17 @@ class DomainsOperations(object):
             request = self._client.post(url, query_parameters, header_parameters, body_content)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('NameIdentifierCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -288,17 +284,16 @@ class DomainsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_recommendations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/listDomainRecommendations'}
 
     def list_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainCollection"
+        resource_group_name: str,
+        **kwargs
+    ) -> "models.DomainCollection":
         """Get all domains in a resource group.
 
         Get all domains in a resource group.
@@ -310,7 +305,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
+        cls: ClsType["models.DomainCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -327,28 +322,28 @@ class DomainsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DomainCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -357,18 +352,17 @@ class DomainsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains'}
 
-    def get(
+    async def get(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Domain"
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs
+    ) -> "models.Domain":
         """Get a domain.
 
         Get a domain.
@@ -382,7 +376,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls: ClsType["models.Domain"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -396,16 +390,16 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -420,15 +414,14 @@ class DomainsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
-    def _create_or_update_initial(
+    async def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain,  # type: "models.Domain"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Domain"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        resource_group_name: str,
+        domain_name: str,
+        domain: "models.Domain",
+        **kwargs
+    ) -> "models.Domain":
+        cls: ClsType["models.Domain"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -442,11 +435,11 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -455,7 +448,7 @@ class DomainsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -475,14 +468,13 @@ class DomainsOperations(object):
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
-    def begin_create_or_update(
+    async def create_or_update(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain,  # type: "models.Domain"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Domain"
+        resource_group_name: str,
+        domain_name: str,
+        domain: "models.Domain",
+        **kwargs
+    ) -> "models.Domain":
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -496,15 +488,15 @@ class DomainsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns Domain
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.Domain]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
-        raw_result = self._create_or_update_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.Domain"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
             domain=domain,
@@ -523,20 +515,19 @@ class DomainsOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
-    def delete(
+    async def delete(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        force_hard_delete_domain=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        domain_name: str,
+        force_hard_delete_domain: Optional[bool] = None,
+        **kwargs
+    ) -> None:
         """Delete a domain.
 
         Delete a domain.
@@ -553,7 +544,7 @@ class DomainsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -567,17 +558,17 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if force_hard_delete_domain is not None:
             query_parameters['forceHardDeleteDomain'] = self._serialize.query("force_hard_delete_domain", force_hard_delete_domain, 'bool')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -589,14 +580,13 @@ class DomainsOperations(object):
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
-    def update(
+    async def update(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain,  # type: "models.DomainPatchResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Domain"
+        resource_group_name: str,
+        domain_name: str,
+        domain: "models.DomainPatchResource",
+        **kwargs
+    ) -> "models.Domain":
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -612,7 +602,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.Domain or ~azure.mgmt.web.v2018_02_01.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls: ClsType["models.Domain"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -626,11 +616,11 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -639,7 +629,7 @@ class DomainsOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -661,11 +651,10 @@ class DomainsOperations(object):
 
     def list_ownership_identifiers(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainOwnershipIdentifierCollection"
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs
+    ) -> "models.DomainOwnershipIdentifierCollection":
         """Lists domain ownership identifiers.
 
         Lists domain ownership identifiers.
@@ -679,7 +668,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifierCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifierCollection"]
+        cls: ClsType["models.DomainOwnershipIdentifierCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -697,28 +686,28 @@ class DomainsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DomainOwnershipIdentifierCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -727,19 +716,18 @@ class DomainsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_ownership_identifiers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers'}
 
-    def get_ownership_identifier(
+    async def get_ownership_identifier(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainOwnershipIdentifier"
+        resource_group_name: str,
+        domain_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.DomainOwnershipIdentifier":
         """Get ownership identifier for domain.
 
         Get ownership identifier for domain.
@@ -755,7 +743,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls: ClsType["models.DomainOwnershipIdentifier"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -770,16 +758,16 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -794,16 +782,15 @@ class DomainsOperations(object):
         return deserialized
     get_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
-    def create_or_update_ownership_identifier(
+    async def create_or_update_ownership_identifier(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        name,  # type: str
-        kind=None,  # type: Optional[str]
-        ownership_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainOwnershipIdentifier"
+        resource_group_name: str,
+        domain_name: str,
+        name: str,
+        kind: Optional[str] = None,
+        ownership_id: Optional[str] = None,
+        **kwargs
+    ) -> "models.DomainOwnershipIdentifier":
         """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -824,7 +811,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls: ClsType["models.DomainOwnershipIdentifier"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
@@ -841,11 +828,11 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -854,7 +841,7 @@ class DomainsOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -869,14 +856,13 @@ class DomainsOperations(object):
         return deserialized
     create_or_update_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
-    def delete_ownership_identifier(
+    async def delete_ownership_identifier(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        domain_name: str,
+        name: str,
+        **kwargs
+    ) -> None:
         """Delete ownership identifier for domain.
 
         Delete ownership identifier for domain.
@@ -892,7 +878,7 @@ class DomainsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -907,15 +893,15 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -927,16 +913,15 @@ class DomainsOperations(object):
 
     delete_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
-    def update_ownership_identifier(
+    async def update_ownership_identifier(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        name,  # type: str
-        kind=None,  # type: Optional[str]
-        ownership_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DomainOwnershipIdentifier"
+        resource_group_name: str,
+        domain_name: str,
+        name: str,
+        kind: Optional[str] = None,
+        ownership_id: Optional[str] = None,
+        **kwargs
+    ) -> "models.DomainOwnershipIdentifier":
         """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -957,7 +942,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls: ClsType["models.DomainOwnershipIdentifier"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
@@ -974,11 +959,11 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -987,7 +972,7 @@ class DomainsOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1002,13 +987,12 @@ class DomainsOperations(object):
         return deserialized
     update_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
-    def renew(
+    async def renew(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs
+    ) -> None:
         """Renew a domain.
 
         Renew a domain.
@@ -1022,7 +1006,7 @@ class DomainsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1036,15 +1020,15 @@ class DomainsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204, 400, 500]:

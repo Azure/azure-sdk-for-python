@@ -8,19 +8,19 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMError
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RecommendationsOperations(object):
-    """RecommendationsOperations operations.
+class RecommendationsOperations:
+    """RecommendationsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -35,7 +35,7 @@ class RecommendationsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -43,11 +43,10 @@ class RecommendationsOperations(object):
 
     def list(
         self,
-        featured=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationCollection"
+        featured: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationCollection":
         """List all recommendations for a subscription.
 
         List all recommendations for a subscription.
@@ -64,7 +63,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls: ClsType["models.RecommendationCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -80,7 +79,7 @@ class RecommendationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if featured is not None:
                 query_parameters['featured'] = self._serialize.query("featured", featured, 'bool')
             if filter is not None:
@@ -88,24 +87,24 @@ class RecommendationsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('RecommendationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -114,16 +113,15 @@ class RecommendationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations'}
 
-    def reset_all_filters(
+    async def reset_all_filters(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs
+    ) -> None:
         """Reset all recommendation opt-out settings for a subscription.
 
         Reset all recommendation opt-out settings for a subscription.
@@ -133,7 +131,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -145,15 +143,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -165,12 +163,11 @@ class RecommendationsOperations(object):
 
     reset_all_filters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations/reset'}
 
-    def disable_recommendation_for_subscription(
+    async def disable_recommendation_for_subscription(
         self,
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        name: str,
+        **kwargs
+    ) -> None:
         """Disables the specified rule so it will not apply to a subscription in the future.
 
         Disables the specified rule so it will not apply to a subscription in the future.
@@ -182,7 +179,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -195,15 +192,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -217,13 +214,12 @@ class RecommendationsOperations(object):
 
     def list_history_for_hosting_environment(
         self,
-        resource_group_name,  # type: str
-        hosting_environment_name,  # type: str
-        expired_only=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationCollection"
+        resource_group_name: str,
+        hosting_environment_name: str,
+        expired_only: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationCollection":
         """Get past recommendations for an app, optionally specified by the time range.
 
         Get past recommendations for an app, optionally specified by the time range.
@@ -244,7 +240,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls: ClsType["models.RecommendationCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -262,7 +258,7 @@ class RecommendationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if expired_only is not None:
                 query_parameters['expiredOnly'] = self._serialize.query("expired_only", expired_only, 'bool')
             if filter is not None:
@@ -270,24 +266,24 @@ class RecommendationsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('RecommendationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -296,20 +292,19 @@ class RecommendationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_history_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendationHistory'}
 
     def list_recommended_rules_for_hosting_environment(
         self,
-        resource_group_name,  # type: str
-        hosting_environment_name,  # type: str
-        featured=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationCollection"
+        resource_group_name: str,
+        hosting_environment_name: str,
+        featured: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationCollection":
         """Get all recommendations for an app.
 
         Get all recommendations for an app.
@@ -329,7 +324,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls: ClsType["models.RecommendationCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -347,7 +342,7 @@ class RecommendationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if featured is not None:
                 query_parameters['featured'] = self._serialize.query("featured", featured, 'bool')
             if filter is not None:
@@ -355,24 +350,24 @@ class RecommendationsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('RecommendationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -381,19 +376,18 @@ class RecommendationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_recommended_rules_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations'}
 
-    def disable_all_for_hosting_environment(
+    async def disable_all_for_hosting_environment(
         self,
-        resource_group_name,  # type: str
-        environment_name,  # type: str
-        hosting_environment_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        environment_name: str,
+        hosting_environment_name: str,
+        **kwargs
+    ) -> None:
         """Disable all recommendations for an app.
 
         Disable all recommendations for an app.
@@ -409,7 +403,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -423,16 +417,16 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['environmentName'] = self._serialize.query("environment_name", environment_name, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -444,14 +438,13 @@ class RecommendationsOperations(object):
 
     disable_all_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/disable'}
 
-    def reset_all_filters_for_hosting_environment(
+    async def reset_all_filters_for_hosting_environment(
         self,
-        resource_group_name,  # type: str
-        environment_name,  # type: str
-        hosting_environment_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        environment_name: str,
+        hosting_environment_name: str,
+        **kwargs
+    ) -> None:
         """Reset all recommendation opt-out settings for an app.
 
         Reset all recommendation opt-out settings for an app.
@@ -467,7 +460,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -481,16 +474,16 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['environmentName'] = self._serialize.query("environment_name", environment_name, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -502,16 +495,15 @@ class RecommendationsOperations(object):
 
     reset_all_filters_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/reset'}
 
-    def get_rule_details_by_hosting_environment(
+    async def get_rule_details_by_hosting_environment(
         self,
-        resource_group_name,  # type: str
-        hosting_environment_name,  # type: str
-        name,  # type: str
-        update_seen=None,  # type: Optional[bool]
-        recommendation_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationRule"
+        resource_group_name: str,
+        hosting_environment_name: str,
+        name: str,
+        update_seen: Optional[bool] = None,
+        recommendation_id: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationRule":
         """Get a recommendation rule for an app.
 
         Get a recommendation rule for an app.
@@ -533,7 +525,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationRule"]
+        cls: ClsType["models.RecommendationRule"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -548,7 +540,7 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if update_seen is not None:
             query_parameters['updateSeen'] = self._serialize.query("update_seen", update_seen, 'bool')
         if recommendation_id is not None:
@@ -556,12 +548,12 @@ class RecommendationsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -576,15 +568,14 @@ class RecommendationsOperations(object):
         return deserialized
     get_rule_details_by_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/{name}'}
 
-    def disable_recommendation_for_hosting_environment(
+    async def disable_recommendation_for_hosting_environment(
         self,
-        resource_group_name,  # type: str
-        environment_name,  # type: str
-        name,  # type: str
-        hosting_environment_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        hosting_environment_name: str,
+        **kwargs
+    ) -> None:
         """Disables the specific rule for a web site permanently.
 
         Disables the specific rule for a web site permanently.
@@ -602,7 +593,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -617,16 +608,16 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['environmentName'] = self._serialize.query("environment_name", environment_name, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -640,13 +631,12 @@ class RecommendationsOperations(object):
 
     def list_history_for_web_app(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        expired_only=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationCollection"
+        resource_group_name: str,
+        site_name: str,
+        expired_only: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationCollection":
         """Get past recommendations for an app, optionally specified by the time range.
 
         Get past recommendations for an app, optionally specified by the time range.
@@ -667,7 +657,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls: ClsType["models.RecommendationCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -685,7 +675,7 @@ class RecommendationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if expired_only is not None:
                 query_parameters['expiredOnly'] = self._serialize.query("expired_only", expired_only, 'bool')
             if filter is not None:
@@ -693,24 +683,24 @@ class RecommendationsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('RecommendationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -719,20 +709,19 @@ class RecommendationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_history_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendationHistory'}
 
     def list_recommended_rules_for_web_app(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        featured=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationCollection"
+        resource_group_name: str,
+        site_name: str,
+        featured: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationCollection":
         """Get all recommendations for an app.
 
         Get all recommendations for an app.
@@ -752,7 +741,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls: ClsType["models.RecommendationCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -770,7 +759,7 @@ class RecommendationsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if featured is not None:
                 query_parameters['featured'] = self._serialize.query("featured", featured, 'bool')
             if filter is not None:
@@ -778,24 +767,24 @@ class RecommendationsOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('RecommendationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -804,18 +793,17 @@ class RecommendationsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_recommended_rules_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations'}
 
-    def disable_all_for_web_app(
+    async def disable_all_for_web_app(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        site_name: str,
+        **kwargs
+    ) -> None:
         """Disable all recommendations for an app.
 
         Disable all recommendations for an app.
@@ -829,7 +817,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -843,15 +831,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -863,13 +851,12 @@ class RecommendationsOperations(object):
 
     disable_all_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/disable'}
 
-    def reset_all_filters_for_web_app(
+    async def reset_all_filters_for_web_app(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        site_name: str,
+        **kwargs
+    ) -> None:
         """Reset all recommendation opt-out settings for an app.
 
         Reset all recommendation opt-out settings for an app.
@@ -883,7 +870,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -897,15 +884,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -917,16 +904,15 @@ class RecommendationsOperations(object):
 
     reset_all_filters_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/reset'}
 
-    def get_rule_details_by_web_app(
+    async def get_rule_details_by_web_app(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        name,  # type: str
-        update_seen=None,  # type: Optional[bool]
-        recommendation_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.RecommendationRule"
+        resource_group_name: str,
+        site_name: str,
+        name: str,
+        update_seen: Optional[bool] = None,
+        recommendation_id: Optional[str] = None,
+        **kwargs
+    ) -> "models.RecommendationRule":
         """Get a recommendation rule for an app.
 
         Get a recommendation rule for an app.
@@ -948,7 +934,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.RecommendationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationRule"]
+        cls: ClsType["models.RecommendationRule"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -963,7 +949,7 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if update_seen is not None:
             query_parameters['updateSeen'] = self._serialize.query("update_seen", update_seen, 'bool')
         if recommendation_id is not None:
@@ -971,12 +957,12 @@ class RecommendationsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -991,14 +977,13 @@ class RecommendationsOperations(object):
         return deserialized
     get_rule_details_by_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/{name}'}
 
-    def disable_recommendation_for_site(
+    async def disable_recommendation_for_site(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        site_name: str,
+        name: str,
+        **kwargs
+    ) -> None:
         """Disables the specific rule for a web site permanently.
 
         Disables the specific rule for a web site permanently.
@@ -1014,7 +999,7 @@ class RecommendationsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1029,15 +1014,15 @@ class RecommendationsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

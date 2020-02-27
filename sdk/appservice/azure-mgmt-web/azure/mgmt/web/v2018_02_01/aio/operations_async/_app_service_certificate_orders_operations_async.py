@@ -8,21 +8,21 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
 from azure.mgmt.core.exceptions import ARMError
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AppServiceCertificateOrdersOperations(object):
-    """AppServiceCertificateOrdersOperations operations.
+class AppServiceCertificateOrdersOperations:
+    """AppServiceCertificateOrdersOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -37,7 +37,7 @@ class AppServiceCertificateOrdersOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -45,9 +45,8 @@ class AppServiceCertificateOrdersOperations(object):
 
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateOrderCollection"
+        **kwargs
+    ) -> "models.AppServiceCertificateOrderCollection":
         """List all certificate orders in a subscription.
 
         List all certificate orders in a subscription.
@@ -57,7 +56,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrderCollection"]
+        cls: ClsType["models.AppServiceCertificateOrderCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -73,28 +72,28 @@ class AppServiceCertificateOrdersOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServiceCertificateOrderCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -103,17 +102,16 @@ class AppServiceCertificateOrdersOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CertificateRegistration/certificateOrders'}
 
-    def validate_purchase_information(
+    async def validate_purchase_information(
         self,
-        app_service_certificate_order,  # type: "models.AppServiceCertificateOrder"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        app_service_certificate_order: "models.AppServiceCertificateOrder",
+        **kwargs
+    ) -> None:
         """Validate information for a certificate order.
 
         Validate information for a certificate order.
@@ -125,7 +123,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -137,11 +135,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Content-Type'] = 'application/json'
 
         # Construct body
@@ -149,7 +147,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -163,10 +161,9 @@ class AppServiceCertificateOrdersOperations(object):
 
     def list_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateOrderCollection"
+        resource_group_name: str,
+        **kwargs
+    ) -> "models.AppServiceCertificateOrderCollection":
         """Get certificate orders in a resource group.
 
         Get certificate orders in a resource group.
@@ -178,7 +175,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrderCollection"]
+        cls: ClsType["models.AppServiceCertificateOrderCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -195,28 +192,28 @@ class AppServiceCertificateOrdersOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServiceCertificateOrderCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -225,18 +222,17 @@ class AppServiceCertificateOrdersOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders'}
 
-    def get(
+    async def get(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateOrder"
+        resource_group_name: str,
+        certificate_order_name: str,
+        **kwargs
+    ) -> "models.AppServiceCertificateOrder":
         """Get a certificate order.
 
         Get a certificate order.
@@ -250,7 +246,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+        cls: ClsType["models.AppServiceCertificateOrder"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -264,16 +260,16 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -288,15 +284,14 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'}
 
-    def _create_or_update_initial(
+    async def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        certificate_distinguished_name,  # type: "models.AppServiceCertificateOrder"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateOrder"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+        resource_group_name: str,
+        certificate_order_name: str,
+        certificate_distinguished_name: "models.AppServiceCertificateOrder",
+        **kwargs
+    ) -> "models.AppServiceCertificateOrder":
+        cls: ClsType["models.AppServiceCertificateOrder"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -310,11 +305,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -323,7 +318,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -343,14 +338,13 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'}
 
-    def begin_create_or_update(
+    async def create_or_update(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        certificate_distinguished_name,  # type: "models.AppServiceCertificateOrder"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateOrder"
+        resource_group_name: str,
+        certificate_order_name: str,
+        certificate_distinguished_name: "models.AppServiceCertificateOrder",
+        **kwargs
+    ) -> "models.AppServiceCertificateOrder":
         """Create or update a certificate purchase order.
 
         Create or update a certificate purchase order.
@@ -364,15 +358,15 @@ class AppServiceCertificateOrdersOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns AppServiceCertificateOrder
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
-        raw_result = self._create_or_update_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.AppServiceCertificateOrder"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             certificate_distinguished_name=certificate_distinguished_name,
@@ -391,19 +385,18 @@ class AppServiceCertificateOrdersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'}
 
-    def delete(
+    async def delete(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        **kwargs
+    ) -> None:
         """Delete an existing certificate order.
 
         Delete an existing certificate order.
@@ -417,7 +410,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -431,15 +424,15 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -451,14 +444,13 @@ class AppServiceCertificateOrdersOperations(object):
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'}
 
-    def update(
+    async def update(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        certificate_distinguished_name,  # type: "models.AppServiceCertificateOrderPatchResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateOrder"
+        resource_group_name: str,
+        certificate_order_name: str,
+        certificate_distinguished_name: "models.AppServiceCertificateOrderPatchResource",
+        **kwargs
+    ) -> "models.AppServiceCertificateOrder":
         """Create or update a certificate purchase order.
 
         Create or update a certificate purchase order.
@@ -474,7 +466,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder or ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateOrder"]
+        cls: ClsType["models.AppServiceCertificateOrder"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -488,11 +480,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -501,7 +493,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -523,11 +515,10 @@ class AppServiceCertificateOrdersOperations(object):
 
     def list_certificates(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateCollection"
+        resource_group_name: str,
+        certificate_order_name: str,
+        **kwargs
+    ) -> "models.AppServiceCertificateCollection":
         """List all certificates associated with a certificate order.
 
         List all certificates associated with a certificate order.
@@ -541,7 +532,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateCollection"]
+        cls: ClsType["models.AppServiceCertificateCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -559,28 +550,28 @@ class AppServiceCertificateOrdersOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServiceCertificateCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -589,19 +580,18 @@ class AppServiceCertificateOrdersOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_certificates.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates'}
 
-    def get_certificate(
+    async def get_certificate(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateResource"
+        resource_group_name: str,
+        certificate_order_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.AppServiceCertificateResource":
         """Get the certificate associated with a certificate order.
 
         Get the certificate associated with a certificate order.
@@ -617,7 +607,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+        cls: ClsType["models.AppServiceCertificateResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -632,16 +622,16 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -656,16 +646,15 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     get_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'}
 
-    def _create_or_update_certificate_initial(
+    async def _create_or_update_certificate_initial(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        name,  # type: str
-        key_vault_certificate,  # type: "models.AppServiceCertificateResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+        resource_group_name: str,
+        certificate_order_name: str,
+        name: str,
+        key_vault_certificate: "models.AppServiceCertificateResource",
+        **kwargs
+    ) -> "models.AppServiceCertificateResource":
+        cls: ClsType["models.AppServiceCertificateResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -680,11 +669,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -693,7 +682,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -713,15 +702,14 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     _create_or_update_certificate_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'}
 
-    def begin_create_or_update_certificate(
+    async def create_or_update_certificate(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        name,  # type: str
-        key_vault_certificate,  # type: "models.AppServiceCertificateResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateResource"
+        resource_group_name: str,
+        certificate_order_name: str,
+        name: str,
+        key_vault_certificate: "models.AppServiceCertificateResource",
+        **kwargs
+    ) -> "models.AppServiceCertificateResource":
         """Creates or updates a certificate and associates with key vault secret.
 
         Creates or updates a certificate and associates with key vault secret.
@@ -737,15 +725,15 @@ class AppServiceCertificateOrdersOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns AppServiceCertificateResource
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
-        raw_result = self._create_or_update_certificate_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.AppServiceCertificateResource"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_certificate_initial(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             name=name,
@@ -765,20 +753,19 @@ class AppServiceCertificateOrdersOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'}
 
-    def delete_certificate(
+    async def delete_certificate(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        name: str,
+        **kwargs
+    ) -> None:
         """Delete the certificate associated with a certificate order.
 
         Delete the certificate associated with a certificate order.
@@ -794,7 +781,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -809,15 +796,15 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -829,15 +816,14 @@ class AppServiceCertificateOrdersOperations(object):
 
     delete_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'}
 
-    def update_certificate(
+    async def update_certificate(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        name,  # type: str
-        key_vault_certificate,  # type: "models.AppServiceCertificatePatchResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServiceCertificateResource"
+        resource_group_name: str,
+        certificate_order_name: str,
+        name: str,
+        key_vault_certificate: "models.AppServiceCertificatePatchResource",
+        **kwargs
+    ) -> "models.AppServiceCertificateResource":
         """Creates or updates a certificate and associates with key vault secret.
 
         Creates or updates a certificate and associates with key vault secret.
@@ -855,7 +841,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource or ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServiceCertificateResource"]
+        cls: ClsType["models.AppServiceCertificateResource"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -870,11 +856,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -883,7 +869,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -903,14 +889,13 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     update_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}'}
 
-    def reissue(
+    async def reissue(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        reissue_certificate_order_request,  # type: "models.ReissueCertificateOrderRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        reissue_certificate_order_request: "models.ReissueCertificateOrderRequest",
+        **kwargs
+    ) -> None:
         """Reissue an existing certificate order.
 
         Reissue an existing certificate order.
@@ -926,7 +911,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -940,11 +925,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Content-Type'] = 'application/json'
 
         # Construct body
@@ -952,7 +937,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -964,14 +949,13 @@ class AppServiceCertificateOrdersOperations(object):
 
     reissue.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/reissue'}
 
-    def renew(
+    async def renew(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        renew_certificate_order_request,  # type: "models.RenewCertificateOrderRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        renew_certificate_order_request: "models.RenewCertificateOrderRequest",
+        **kwargs
+    ) -> None:
         """Renew an existing certificate order.
 
         Renew an existing certificate order.
@@ -987,7 +971,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1001,11 +985,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Content-Type'] = 'application/json'
 
         # Construct body
@@ -1013,7 +997,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1025,13 +1009,12 @@ class AppServiceCertificateOrdersOperations(object):
 
     renew.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/renew'}
 
-    def resend_email(
+    async def resend_email(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        **kwargs
+    ) -> None:
         """Resend certificate email.
 
         Resend certificate email.
@@ -1045,7 +1028,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1059,15 +1042,15 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1079,14 +1062,13 @@ class AppServiceCertificateOrdersOperations(object):
 
     resend_email.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/resendEmail'}
 
-    def resend_request_emails(
+    async def resend_request_emails(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        name: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -1102,7 +1084,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _name_identifier = models.NameIdentifier(name=name)
@@ -1118,11 +1100,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Content-Type'] = 'application/json'
 
         # Construct body
@@ -1130,7 +1112,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1142,15 +1124,14 @@ class AppServiceCertificateOrdersOperations(object):
 
     resend_request_emails.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/resendRequestEmails'}
 
-    def retrieve_site_seal(
+    async def retrieve_site_seal(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        light_theme=None,  # type: Optional[bool]
-        locale=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SiteSeal"
+        resource_group_name: str,
+        certificate_order_name: str,
+        light_theme: Optional[bool] = None,
+        locale: Optional[str] = None,
+        **kwargs
+    ) -> "models.SiteSeal":
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -1169,7 +1150,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSeal
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SiteSeal"]
+        cls: ClsType["models.SiteSeal"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
         _site_seal_request = models.SiteSealRequest(light_theme=light_theme, locale=locale)
@@ -1185,11 +1166,11 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -1198,7 +1179,7 @@ class AppServiceCertificateOrdersOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1213,13 +1194,12 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     retrieve_site_seal.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/retrieveSiteSeal'}
 
-    def verify_domain_ownership(
+    async def verify_domain_ownership(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        certificate_order_name: str,
+        **kwargs
+    ) -> None:
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -1233,7 +1213,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1247,15 +1227,15 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1267,13 +1247,12 @@ class AppServiceCertificateOrdersOperations(object):
 
     verify_domain_ownership.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/verifyDomainOwnership'}
 
-    def retrieve_certificate_actions(
+    async def retrieve_certificate_actions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["CertificateOrderAction"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> List["CertificateOrderAction"]:
         """Retrieve the list of certificate actions.
 
         Retrieve the list of certificate actions.
@@ -1287,7 +1266,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateOrderAction]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["CertificateOrderAction"]]
+        cls: ClsType[List["CertificateOrderAction"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1301,16 +1280,16 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1325,13 +1304,12 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
     retrieve_certificate_actions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveCertificateActions'}
 
-    def retrieve_certificate_email_history(
+    async def retrieve_certificate_email_history(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["CertificateEmail"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> List["CertificateEmail"]:
         """Retrieve email history.
 
         Retrieve email history.
@@ -1345,7 +1323,7 @@ class AppServiceCertificateOrdersOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateEmail]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["CertificateEmail"]]
+        cls: ClsType[List["CertificateEmail"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1359,16 +1337,16 @@ class AppServiceCertificateOrdersOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

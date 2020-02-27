@@ -8,18 +8,18 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ProviderOperations(object):
-    """ProviderOperations operations.
+class ProviderOperations:
+    """ProviderOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -34,7 +34,7 @@ class ProviderOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -42,10 +42,9 @@ class ProviderOperations(object):
 
     def get_available_stacks(
         self,
-        os_type_selected=None,  # type: Optional[Union[str, "models.Enum4"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ApplicationStackCollection"
+        os_type_selected: Optional[Union[str, "models.Enum4"]] = None,
+        **kwargs
+    ) -> "models.ApplicationStackCollection":
         """Get available application frameworks and their versions.
 
         Get available application frameworks and their versions.
@@ -57,7 +56,7 @@ class ProviderOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ApplicationStackCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationStackCollection"]
+        cls: ClsType["models.ApplicationStackCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -69,30 +68,30 @@ class ProviderOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if os_type_selected is not None:
                 query_parameters['osTypeSelected'] = self._serialize.query("os_type_selected", os_type_selected, 'str')
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ApplicationStackCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -101,16 +100,15 @@ class ProviderOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     get_available_stacks.metadata = {'url': '/providers/Microsoft.Web/availableStacks'}
 
     def list_operations(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CsmOperationCollection"
+        **kwargs
+    ) -> "models.CsmOperationCollection":
         """Gets all available operations for the Microsoft.Web resource provider. Also exposes resource metric definitions.
 
         Gets all available operations for the Microsoft.Web resource provider. Also exposes resource
@@ -121,7 +119,7 @@ class ProviderOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.CsmOperationCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmOperationCollection"]
+        cls: ClsType["models.CsmOperationCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -133,28 +131,28 @@ class ProviderOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CsmOperationCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -163,17 +161,16 @@ class ProviderOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_operations.metadata = {'url': '/providers/Microsoft.Web/operations'}
 
     def get_available_stacks_on_prem(
         self,
-        os_type_selected=None,  # type: Optional[Union[str, "models.Enum5"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ApplicationStackCollection"
+        os_type_selected: Optional[Union[str, "models.Enum5"]] = None,
+        **kwargs
+    ) -> "models.ApplicationStackCollection":
         """Get available application frameworks and their versions.
 
         Get available application frameworks and their versions.
@@ -185,7 +182,7 @@ class ProviderOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ApplicationStackCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationStackCollection"]
+        cls: ClsType["models.ApplicationStackCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -201,30 +198,30 @@ class ProviderOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if os_type_selected is not None:
                 query_parameters['osTypeSelected'] = self._serialize.query("os_type_selected", os_type_selected, 'str')
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ApplicationStackCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -233,7 +230,7 @@ class ProviderOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     get_available_stacks_on_prem.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/availableStacks'}

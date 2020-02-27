@@ -9,18 +9,18 @@ import datetime
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class DiagnosticsOperations(object):
-    """DiagnosticsOperations operations.
+class DiagnosticsOperations:
+    """DiagnosticsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -35,7 +35,7 @@ class DiagnosticsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -43,11 +43,10 @@ class DiagnosticsOperations(object):
 
     def list_hosting_environment_detector_responses(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DetectorResponseCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.DetectorResponseCollection":
         """List Hosting Environment Detector Responses.
 
         List Hosting Environment Detector Responses.
@@ -61,7 +60,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponseCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
+        cls: ClsType["models.DetectorResponseCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -79,28 +78,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -109,22 +108,21 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_hosting_environment_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors'}
 
-    def get_hosting_environment_detector_response(
+    async def get_hosting_environment_detector_response(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        detector_name,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DetectorResponse"
+        resource_group_name: str,
+        name: str,
+        detector_name: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DetectorResponse":
         """Get Hosting Environment Detector Response.
 
         Get Hosting Environment Detector Response.
@@ -146,7 +144,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
+        cls: ClsType["models.DetectorResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -161,7 +159,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -171,12 +169,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -193,11 +191,10 @@ class DiagnosticsOperations(object):
 
     def list_site_detector_responses(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DetectorResponseCollection"
+        resource_group_name: str,
+        site_name: str,
+        **kwargs
+    ) -> "models.DetectorResponseCollection":
         """List Site Detector Responses.
 
         List Site Detector Responses.
@@ -211,7 +208,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponseCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
+        cls: ClsType["models.DetectorResponseCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -229,28 +226,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -259,22 +256,21 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors'}
 
-    def get_site_detector_response(
+    async def get_site_detector_response(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        detector_name,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DetectorResponse"
+        resource_group_name: str,
+        site_name: str,
+        detector_name: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DetectorResponse":
         """Get site detector response.
 
         Get site detector response.
@@ -296,7 +292,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
+        cls: ClsType["models.DetectorResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -311,7 +307,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -321,12 +317,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -343,11 +339,10 @@ class DiagnosticsOperations(object):
 
     def list_site_diagnostic_categories(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticCategoryCollection"
+        resource_group_name: str,
+        site_name: str,
+        **kwargs
+    ) -> "models.DiagnosticCategoryCollection":
         """Get Diagnostics Categories.
 
         Get Diagnostics Categories.
@@ -361,7 +356,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategoryCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategoryCollection"]
+        cls: ClsType["models.DiagnosticCategoryCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -379,28 +374,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticCategoryCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -409,19 +404,18 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_diagnostic_categories.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics'}
 
-    def get_site_diagnostic_category(
+    async def get_site_diagnostic_category(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticCategory"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        **kwargs
+    ) -> "models.DiagnosticCategory":
         """Get Diagnostics Category.
 
         Get Diagnostics Category.
@@ -437,7 +431,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategory"]
+        cls: ClsType["models.DiagnosticCategory"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -452,16 +446,16 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -478,12 +472,11 @@ class DiagnosticsOperations(object):
 
     def list_site_analyses(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticAnalysisCollection"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        **kwargs
+    ) -> "models.DiagnosticAnalysisCollection":
         """Get Site Analyses.
 
         Get Site Analyses.
@@ -499,7 +492,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysisCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysisCollection"]
+        cls: ClsType["models.DiagnosticAnalysisCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -518,28 +511,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticAnalysisCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -548,20 +541,19 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_analyses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses'}
 
-    def get_site_analysis(
+    async def get_site_analysis(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        analysis_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticAnalysis"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        analysis_name: str,
+        **kwargs
+    ) -> "models.DiagnosticAnalysis":
         """Get Site Analysis.
 
         Get Site Analysis.
@@ -579,7 +571,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
+        cls: ClsType["models.DiagnosticAnalysis"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -595,16 +587,16 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -619,18 +611,17 @@ class DiagnosticsOperations(object):
         return deserialized
     get_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}
 
-    def execute_site_analysis(
+    async def execute_site_analysis(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        analysis_name,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticAnalysis"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        analysis_name: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DiagnosticAnalysis":
         """Execute Analysis.
 
         Execute Analysis.
@@ -654,7 +645,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
+        cls: ClsType["models.DiagnosticAnalysis"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -670,7 +661,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -680,12 +671,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -702,12 +693,11 @@ class DiagnosticsOperations(object):
 
     def list_site_detectors(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticDetectorCollection"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        **kwargs
+    ) -> "models.DiagnosticDetectorCollection":
         """Get Detectors.
 
         Get Detectors.
@@ -723,7 +713,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
+        cls: ClsType["models.DiagnosticDetectorCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -742,28 +732,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticDetectorCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -772,20 +762,19 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detectors.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors'}
 
     def get_site_detector(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        detector_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticDetectorCollection"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        detector_name: str,
+        **kwargs
+    ) -> "models.DiagnosticDetectorCollection":
         """Get Detector.
 
         Get Detector.
@@ -803,7 +792,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
+        cls: ClsType["models.DiagnosticDetectorCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -823,28 +812,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticDetectorCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -853,23 +842,22 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     get_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}
 
-    def execute_site_detector(
+    async def execute_site_detector(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        detector_name,  # type: str
-        diagnostic_category,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticDetectorResponse"
+        resource_group_name: str,
+        site_name: str,
+        detector_name: str,
+        diagnostic_category: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DiagnosticDetectorResponse":
         """Execute Detector.
 
         Execute Detector.
@@ -893,7 +881,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorResponse"]
+        cls: ClsType["models.DiagnosticDetectorResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -909,7 +897,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -919,12 +907,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -941,12 +929,11 @@ class DiagnosticsOperations(object):
 
     def list_site_detector_responses_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DetectorResponseCollection"
+        resource_group_name: str,
+        site_name: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DetectorResponseCollection":
         """List Site Detector Responses.
 
         List Site Detector Responses.
@@ -962,7 +949,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponseCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponseCollection"]
+        cls: ClsType["models.DetectorResponseCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -981,28 +968,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1011,23 +998,22 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detector_responses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors'}
 
-    def get_site_detector_response_slot(
+    async def get_site_detector_response_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        detector_name,  # type: str
-        slot,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DetectorResponse"
+        resource_group_name: str,
+        site_name: str,
+        detector_name: str,
+        slot: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DetectorResponse":
         """Get site detector response.
 
         Get site detector response.
@@ -1051,7 +1037,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DetectorResponse"]
+        cls: ClsType["models.DetectorResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1067,7 +1053,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -1077,12 +1063,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1099,12 +1085,11 @@ class DiagnosticsOperations(object):
 
     def list_site_diagnostic_categories_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticCategoryCollection"
+        resource_group_name: str,
+        site_name: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DiagnosticCategoryCollection":
         """Get Diagnostics Categories.
 
         Get Diagnostics Categories.
@@ -1120,7 +1105,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategoryCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategoryCollection"]
+        cls: ClsType["models.DiagnosticCategoryCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1139,28 +1124,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticCategoryCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1169,20 +1154,19 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_diagnostic_categories_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics'}
 
-    def get_site_diagnostic_category_slot(
+    async def get_site_diagnostic_category_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticCategory"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DiagnosticCategory":
         """Get Diagnostics Category.
 
         Get Diagnostics Category.
@@ -1200,7 +1184,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticCategory
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticCategory"]
+        cls: ClsType["models.DiagnosticCategory"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1216,16 +1200,16 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1242,13 +1226,12 @@ class DiagnosticsOperations(object):
 
     def list_site_analyses_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticAnalysisCollection"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DiagnosticAnalysisCollection":
         """Get Site Analyses.
 
         Get Site Analyses.
@@ -1266,7 +1249,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysisCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysisCollection"]
+        cls: ClsType["models.DiagnosticAnalysisCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1286,28 +1269,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticAnalysisCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1316,21 +1299,20 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_analyses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses'}
 
-    def get_site_analysis_slot(
+    async def get_site_analysis_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        analysis_name,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticAnalysis"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        analysis_name: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DiagnosticAnalysis":
         """Get Site Analysis.
 
         Get Site Analysis.
@@ -1350,7 +1332,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
+        cls: ClsType["models.DiagnosticAnalysis"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1367,16 +1349,16 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1391,19 +1373,18 @@ class DiagnosticsOperations(object):
         return deserialized
     get_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}
 
-    def execute_site_analysis_slot(
+    async def execute_site_analysis_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        analysis_name,  # type: str
-        slot,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticAnalysis"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        analysis_name: str,
+        slot: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DiagnosticAnalysis":
         """Execute Analysis.
 
         Execute Analysis.
@@ -1429,7 +1410,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticAnalysis
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticAnalysis"]
+        cls: ClsType["models.DiagnosticAnalysis"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1446,7 +1427,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -1456,12 +1437,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1478,13 +1459,12 @@ class DiagnosticsOperations(object):
 
     def list_site_detectors_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticDetectorCollection"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DiagnosticDetectorCollection":
         """Get Detectors.
 
         Get Detectors.
@@ -1502,7 +1482,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
+        cls: ClsType["models.DiagnosticDetectorCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1522,28 +1502,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticDetectorCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1552,21 +1532,20 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detectors_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors'}
 
     def get_site_detector_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        diagnostic_category,  # type: str
-        detector_name,  # type: str
-        slot,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticDetectorCollection"
+        resource_group_name: str,
+        site_name: str,
+        diagnostic_category: str,
+        detector_name: str,
+        slot: str,
+        **kwargs
+    ) -> "models.DiagnosticDetectorCollection":
         """Get Detector.
 
         Get Detector.
@@ -1586,7 +1565,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorCollection"]
+        cls: ClsType["models.DiagnosticDetectorCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1607,28 +1586,28 @@ class DiagnosticsOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('DiagnosticDetectorCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1637,24 +1616,23 @@ class DiagnosticsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     get_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}
 
-    def execute_site_detector_slot(
+    async def execute_site_detector_slot(
         self,
-        resource_group_name,  # type: str
-        site_name,  # type: str
-        detector_name,  # type: str
-        diagnostic_category,  # type: str
-        slot,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.DiagnosticDetectorResponse"
+        resource_group_name: str,
+        site_name: str,
+        detector_name: str,
+        diagnostic_category: str,
+        slot: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs
+    ) -> "models.DiagnosticDetectorResponse":
         """Execute Detector.
 
         Execute Detector.
@@ -1680,7 +1658,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DiagnosticDetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiagnosticDetectorResponse"]
+        cls: ClsType["models.DiagnosticDetectorResponse"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1697,7 +1675,7 @@ class DiagnosticsOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if start_time is not None:
             query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
         if end_time is not None:
@@ -1707,12 +1685,12 @@ class DiagnosticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

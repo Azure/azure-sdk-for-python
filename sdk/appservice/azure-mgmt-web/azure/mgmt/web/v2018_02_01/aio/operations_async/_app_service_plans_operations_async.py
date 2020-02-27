@@ -8,21 +8,21 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod, async_poller
 from azure.mgmt.core.exceptions import ARMError
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from .. import models
+from ... import models
 
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AppServicePlansOperations(object):
-    """AppServicePlansOperations operations.
+class AppServicePlansOperations:
+    """AppServicePlansOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -37,7 +37,7 @@ class AppServicePlansOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -45,10 +45,9 @@ class AppServicePlansOperations(object):
 
     def list(
         self,
-        detailed=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlanCollection"
+        detailed: Optional[bool] = None,
+        **kwargs
+    ) -> "models.AppServicePlanCollection":
         """Get all App Service plans for a subscription.
 
         Get all App Service plans for a subscription.
@@ -62,7 +61,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlanCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls: ClsType["models.AppServicePlanCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -78,30 +77,30 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if detailed is not None:
                 query_parameters['detailed'] = self._serialize.query("detailed", detailed, 'bool')
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServicePlanCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -110,17 +109,16 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/serverfarms'}
 
     def list_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlanCollection"
+        resource_group_name: str,
+        **kwargs
+    ) -> "models.AppServicePlanCollection":
         """Get all App Service plans in a resource group.
 
         Get all App Service plans in a resource group.
@@ -132,7 +130,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlanCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlanCollection"]
+        cls: ClsType["models.AppServicePlanCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -149,28 +147,28 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('AppServicePlanCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -179,18 +177,17 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms'}
 
-    def get(
+    async def get(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlan"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.AppServicePlan":
         """Get an App Service plan.
 
         Get an App Service plan.
@@ -204,7 +201,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        cls: ClsType["models.AppServicePlan"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -218,16 +215,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -244,15 +241,14 @@ class AppServicePlansOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'}
 
-    def _create_or_update_initial(
+    async def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        app_service_plan,  # type: "models.AppServicePlan"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlan"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        resource_group_name: str,
+        name: str,
+        app_service_plan: "models.AppServicePlan",
+        **kwargs
+    ) -> "models.AppServicePlan":
+        cls: ClsType["models.AppServicePlan"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -266,11 +262,11 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -279,7 +275,7 @@ class AppServicePlansOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
@@ -302,14 +298,13 @@ class AppServicePlansOperations(object):
         return deserialized
     _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'}
 
-    def begin_create_or_update(
+    async def create_or_update(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        app_service_plan,  # type: "models.AppServicePlan"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlan"
+        resource_group_name: str,
+        name: str,
+        app_service_plan: "models.AppServicePlan",
+        **kwargs
+    ) -> "models.AppServicePlan":
         """Creates or updates an App Service Plan.
 
         Creates or updates an App Service Plan.
@@ -323,15 +318,15 @@ class AppServicePlansOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :return: An instance of LROPoller that returns AppServicePlan
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
 
         :raises ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
-        raw_result = self._create_or_update_initial(
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
+        cls: ClsType["models.AppServicePlan"] = kwargs.pop('cls', None)
+        raw_result = await self._create_or_update_initial(
             resource_group_name=resource_group_name,
             name=name,
             app_service_plan=app_service_plan,
@@ -350,19 +345,18 @@ class AppServicePlansOperations(object):
             'polling_interval',
             self._config.polling_interval
         )
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'}
+        return await async_poller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'}
 
-    def delete(
+    async def delete(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> None:
         """Delete an App Service plan.
 
         Delete an App Service plan.
@@ -376,7 +370,7 @@ class AppServicePlansOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -390,15 +384,15 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -410,14 +404,13 @@ class AppServicePlansOperations(object):
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'}
 
-    def update(
+    async def update(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        app_service_plan,  # type: "models.AppServicePlanPatchResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.AppServicePlan"
+        resource_group_name: str,
+        name: str,
+        app_service_plan: "models.AppServicePlanPatchResource",
+        **kwargs
+    ) -> "models.AppServicePlan":
         """Creates or updates an App Service Plan.
 
         Creates or updates an App Service Plan.
@@ -433,7 +426,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or ~azure.mgmt.web.v2018_02_01.models.AppServicePlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AppServicePlan"]
+        cls: ClsType["models.AppServicePlan"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -447,11 +440,11 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -460,7 +453,7 @@ class AppServicePlansOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -480,13 +473,12 @@ class AppServicePlansOperations(object):
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'}
 
-    def list_capabilities(
+    async def list_capabilities(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["Capability"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> List["Capability"]:
         """List all capabilities of an App Service plan.
 
         List all capabilities of an App Service plan.
@@ -500,7 +492,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.Capability]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["Capability"]]
+        cls: ClsType[List["Capability"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -514,16 +506,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -538,15 +530,14 @@ class AppServicePlansOperations(object):
         return deserialized
     list_capabilities.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/capabilities'}
 
-    def get_hybrid_connection(
+    async def get_hybrid_connection(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        namespace_name,  # type: str
-        relay_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HybridConnection"
+        resource_group_name: str,
+        name: str,
+        namespace_name: str,
+        relay_name: str,
+        **kwargs
+    ) -> "models.HybridConnection":
         """Retrieve a Hybrid Connection in use in an App Service plan.
 
         Retrieve a Hybrid Connection in use in an App Service plan.
@@ -564,7 +555,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnection"]
+        cls: ClsType["models.HybridConnection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -580,16 +571,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -604,15 +595,14 @@ class AppServicePlansOperations(object):
         return deserialized
     get_hybrid_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'}
 
-    def delete_hybrid_connection(
+    async def delete_hybrid_connection(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        namespace_name,  # type: str
-        relay_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        namespace_name: str,
+        relay_name: str,
+        **kwargs
+    ) -> None:
         """Delete a Hybrid Connection in use in an App Service plan.
 
         Delete a Hybrid Connection in use in an App Service plan.
@@ -630,7 +620,7 @@ class AppServicePlansOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -646,15 +636,15 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -666,15 +656,14 @@ class AppServicePlansOperations(object):
 
     delete_hybrid_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'}
 
-    def list_hybrid_connection_keys(
+    async def list_hybrid_connection_keys(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        namespace_name,  # type: str
-        relay_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HybridConnectionKey"
+        resource_group_name: str,
+        name: str,
+        namespace_name: str,
+        relay_name: str,
+        **kwargs
+    ) -> "models.HybridConnectionKey":
         """Get the send key name and value of a Hybrid Connection.
 
         Get the send key name and value of a Hybrid Connection.
@@ -692,7 +681,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionKey"]
+        cls: ClsType["models.HybridConnectionKey"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -708,16 +697,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -734,13 +723,12 @@ class AppServicePlansOperations(object):
 
     def list_web_apps_by_hybrid_connection(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        namespace_name,  # type: str
-        relay_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceCollection"
+        resource_group_name: str,
+        name: str,
+        namespace_name: str,
+        relay_name: str,
+        **kwargs
+    ) -> "models.ResourceCollection":
         """Get all apps that use a Hybrid Connection in an App Service Plan.
 
         Get all apps that use a Hybrid Connection in an App Service Plan.
@@ -758,7 +746,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceCollection"]
+        cls: ClsType["models.ResourceCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -778,28 +766,28 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -808,18 +796,17 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_web_apps_by_hybrid_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/sites'}
 
-    def get_hybrid_connection_plan_limit(
+    async def get_hybrid_connection_plan_limit(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HybridConnectionLimits"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.HybridConnectionLimits":
         """Get the maximum number of Hybrid Connections allowed in an App Service plan.
 
         Get the maximum number of Hybrid Connections allowed in an App Service plan.
@@ -833,7 +820,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionLimits
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionLimits"]
+        cls: ClsType["models.HybridConnectionLimits"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -847,16 +834,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -873,11 +860,10 @@ class AppServicePlansOperations(object):
 
     def list_hybrid_connections(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HybridConnectionCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.HybridConnectionCollection":
         """Retrieve all Hybrid Connections in use in an App Service plan.
 
         Retrieve all Hybrid Connections in use in an App Service plan.
@@ -891,7 +877,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HybridConnectionCollection"]
+        cls: ClsType["models.HybridConnectionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -909,28 +895,28 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('HybridConnectionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -939,18 +925,17 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_hybrid_connections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionRelays'}
 
     def list_metric_defintions(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricDefinitionCollection"
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> "models.ResourceMetricDefinitionCollection":
         """Get metrics that can be queried for an App Service plan, and their definitions.
 
         Get metrics that can be queried for an App Service plan, and their definitions.
@@ -964,7 +949,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricDefinitionCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricDefinitionCollection"]
+        cls: ClsType["models.ResourceMetricDefinitionCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -982,28 +967,28 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricDefinitionCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1012,20 +997,19 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_metric_defintions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metricdefinitions'}
 
     def list_metrics(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        details=None,  # type: Optional[bool]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ResourceMetricCollection"
+        resource_group_name: str,
+        name: str,
+        details: Optional[bool] = None,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.ResourceMetricCollection":
         """Get metrics for an App Service plan.
 
         Get metrics for an App Service plan.
@@ -1047,7 +1031,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceMetricCollection"]
+        cls: ClsType["models.ResourceMetricCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1065,7 +1049,7 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if details is not None:
                 query_parameters['details'] = self._serialize.query("details", details, 'bool')
             if filter is not None:
@@ -1073,24 +1057,24 @@ class AppServicePlansOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('ResourceMetricCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1099,19 +1083,18 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metrics'}
 
-    def restart_web_apps(
+    async def restart_web_apps(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        soft_restart=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        soft_restart: Optional[bool] = None,
+        **kwargs
+    ) -> None:
         """Restart all apps in an App Service plan.
 
         Restart all apps in an App Service plan.
@@ -1129,7 +1112,7 @@ class AppServicePlansOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1143,17 +1126,17 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         if soft_restart is not None:
             query_parameters['softRestart'] = self._serialize.query("soft_restart", soft_restart, 'bool')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1167,14 +1150,13 @@ class AppServicePlansOperations(object):
 
     def list_web_apps(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        skip_token=None,  # type: Optional[str]
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.WebAppCollection"
+        resource_group_name: str,
+        name: str,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        top: Optional[str] = None,
+        **kwargs
+    ) -> "models.WebAppCollection":
         """Get all apps associated with an App Service plan.
 
         Get all apps associated with an App Service plan.
@@ -1197,7 +1179,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.WebAppCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WebAppCollection"]
+        cls: ClsType["models.WebAppCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1215,7 +1197,7 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if skip_token is not None:
                 query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
             if filter is not None:
@@ -1225,24 +1207,24 @@ class AppServicePlansOperations(object):
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('WebAppCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1251,18 +1233,17 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_web_apps.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/sites'}
 
-    def get_server_farm_skus(
+    async def get_server_farm_skus(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> object
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> object:
         """Gets all selectable SKUs for a given App Service Plan.
 
         Gets all selectable SKUs for a given App Service Plan.
@@ -1276,7 +1257,7 @@ class AppServicePlansOperations(object):
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls: ClsType[object] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1290,16 +1271,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1316,12 +1297,11 @@ class AppServicePlansOperations(object):
 
     def list_usages(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CsmUsageQuotaCollection"
+        resource_group_name: str,
+        name: str,
+        filter: Optional[str] = None,
+        **kwargs
+    ) -> "models.CsmUsageQuotaCollection":
         """Gets server farm usage information.
 
         Gets server farm usage information.
@@ -1338,7 +1318,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.CsmUsageQuotaCollection
         :raises: ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CsmUsageQuotaCollection"]
+        cls: ClsType["models.CsmUsageQuotaCollection"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1356,30 +1336,30 @@ class AppServicePlansOperations(object):
                 url = next_link
 
             # Construct parameters
-            query_parameters = {}
+            query_parameters: Dict[str, Any] = {}
             if filter is not None:
                 query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
             query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             # Construct headers
-            header_parameters = {}
+            header_parameters: Dict[str, Any] = {}
             header_parameters['Accept'] = 'application/json'
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('CsmUsageQuotaCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link, iter(list_of_elem)
+            return deserialized.next_link, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1388,18 +1368,17 @@ class AppServicePlansOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/usages'}
 
-    def list_vnets(
+    async def list_vnets(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["VnetInfo"]
+        resource_group_name: str,
+        name: str,
+        **kwargs
+    ) -> List["VnetInfo"]:
         """Get all Virtual Networks associated with an App Service plan.
 
         Get all Virtual Networks associated with an App Service plan.
@@ -1413,7 +1392,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VnetInfo"]]
+        cls: ClsType[List["VnetInfo"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1427,16 +1406,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1451,14 +1430,13 @@ class AppServicePlansOperations(object):
         return deserialized
     list_vnets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections'}
 
-    def get_vnet_from_server_farm(
+    async def get_vnet_from_server_farm(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.VnetInfo"
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        **kwargs
+    ) -> "models.VnetInfo":
         """Get a Virtual Network associated with an App Service plan.
 
         Get a Virtual Network associated with an App Service plan.
@@ -1474,7 +1452,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetInfo"]
+        cls: ClsType["models.VnetInfo"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1489,16 +1467,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1515,15 +1493,14 @@ class AppServicePlansOperations(object):
         return deserialized
     get_vnet_from_server_farm.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}'}
 
-    def get_vnet_gateway(
+    async def get_vnet_gateway(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        gateway_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.VnetGateway"
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        gateway_name: str,
+        **kwargs
+    ) -> "models.VnetGateway":
         """Get a Virtual Network gateway.
 
         Get a Virtual Network gateway.
@@ -1541,7 +1518,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls: ClsType["models.VnetGateway"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1557,16 +1534,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1581,16 +1558,15 @@ class AppServicePlansOperations(object):
         return deserialized
     get_vnet_gateway.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'}
 
-    def update_vnet_gateway(
+    async def update_vnet_gateway(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        gateway_name,  # type: str
-        connection_envelope,  # type: "models.VnetGateway"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.VnetGateway"
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        gateway_name: str,
+        connection_envelope: "models.VnetGateway",
+        **kwargs
+    ) -> "models.VnetGateway":
         """Update a Virtual Network gateway.
 
         Update a Virtual Network gateway.
@@ -1610,7 +1586,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetGateway"]
+        cls: ClsType["models.VnetGateway"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1626,11 +1602,11 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -1639,7 +1615,7 @@ class AppServicePlansOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1654,14 +1630,13 @@ class AppServicePlansOperations(object):
         return deserialized
     update_vnet_gateway.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'}
 
-    def list_routes_for_vnet(
+    async def list_routes_for_vnet(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["VnetRoute"]
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        **kwargs
+    ) -> List["VnetRoute"]:
         """Get all routes that are associated with a Virtual Network in an App Service plan.
 
         Get all routes that are associated with a Virtual Network in an App Service plan.
@@ -1677,7 +1652,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VnetRoute"]]
+        cls: ClsType[List["VnetRoute"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1692,16 +1667,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1716,15 +1691,14 @@ class AppServicePlansOperations(object):
         return deserialized
     list_routes_for_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes'}
 
-    def get_route_for_vnet(
+    async def get_route_for_vnet(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        route_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["VnetRoute"]
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        route_name: str,
+        **kwargs
+    ) -> List["VnetRoute"]:
         """Get a Virtual Network route in an App Service plan.
 
         Get a Virtual Network route in an App Service plan.
@@ -1742,7 +1716,7 @@ class AppServicePlansOperations(object):
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute] or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["VnetRoute"]]
+        cls: ClsType[List["VnetRoute"]] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1758,16 +1732,16 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1784,16 +1758,15 @@ class AppServicePlansOperations(object):
         return deserialized
     get_route_for_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'}
 
-    def create_or_update_vnet_route(
+    async def create_or_update_vnet_route(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        route_name,  # type: str
-        route,  # type: "models.VnetRoute"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.VnetRoute"
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        route_name: str,
+        route: "models.VnetRoute",
+        **kwargs
+    ) -> "models.VnetRoute":
         """Create or update a Virtual Network route in an App Service plan.
 
         Create or update a Virtual Network route in an App Service plan.
@@ -1813,7 +1786,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetRoute"]
+        cls: ClsType["models.VnetRoute"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1829,11 +1802,11 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -1842,7 +1815,7 @@ class AppServicePlansOperations(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 400, 404]:
@@ -1859,15 +1832,14 @@ class AppServicePlansOperations(object):
         return deserialized
     create_or_update_vnet_route.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'}
 
-    def delete_vnet_route(
+    async def delete_vnet_route(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        route_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        route_name: str,
+        **kwargs
+    ) -> None:
         """Delete a Virtual Network route in an App Service plan.
 
         Delete a Virtual Network route in an App Service plan.
@@ -1885,7 +1857,7 @@ class AppServicePlansOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1901,15 +1873,15 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1921,16 +1893,15 @@ class AppServicePlansOperations(object):
 
     delete_vnet_route.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'}
 
-    def update_vnet_route(
+    async def update_vnet_route(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        vnet_name,  # type: str
-        route_name,  # type: str
-        route,  # type: "models.VnetRoute"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.VnetRoute"
+        resource_group_name: str,
+        name: str,
+        vnet_name: str,
+        route_name: str,
+        route: "models.VnetRoute",
+        **kwargs
+    ) -> "models.VnetRoute":
         """Create or update a Virtual Network route in an App Service plan.
 
         Create or update a Virtual Network route in an App Service plan.
@@ -1950,7 +1921,7 @@ class AppServicePlansOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetRoute"]
+        cls: ClsType["models.VnetRoute"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -1966,11 +1937,11 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json'
 
@@ -1979,7 +1950,7 @@ class AppServicePlansOperations(object):
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 400, 404]:
@@ -1996,14 +1967,13 @@ class AppServicePlansOperations(object):
         return deserialized
     update_vnet_route.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'}
 
-    def reboot_worker(
+    async def reboot_worker(
         self,
-        resource_group_name,  # type: str
-        name,  # type: str
-        worker_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        name: str,
+        worker_name: str,
+        **kwargs
+    ) -> None:
         """Reboot a worker machine in an App Service plan.
 
         Reboot a worker machine in an App Service plan.
@@ -2019,7 +1989,7 @@ class AppServicePlansOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
         api_version = "2018-02-01"
 
@@ -2034,15 +2004,15 @@ class AppServicePlansOperations(object):
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
-        query_parameters = {}
+        query_parameters: Dict[str, Any] = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
-        header_parameters = {}
+        header_parameters: Dict[str, Any] = {}
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
