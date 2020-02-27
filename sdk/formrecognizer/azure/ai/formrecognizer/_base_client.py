@@ -18,6 +18,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    ContentDecodePolicy
 )
 from ._policies import CognitiveServicesCredentialPolicy
 from ._user_agent import USER_AGENT
@@ -54,6 +55,7 @@ class FormRecognizerClientBase(object):
             config.redirect_policy,
             config.retry_policy,
             credential_policy,
+            ContentDecodePolicy(**kwargs),
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),

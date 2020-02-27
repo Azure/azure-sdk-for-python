@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cognitiveservices-formrecognizer"
-PACKAGE_PPRINT_NAME = "Cognitive Services Form Recognizer"
+PACKAGE_NAME = "azure-ai-formrecognizer"
+PACKAGE_PPRINT_NAME = "Azure Form Recognizer"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -36,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -75,13 +75,16 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.cognitiveservices',
+        'azure.ai',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        "azure-core<2.0.0,>=1.1.0",
+        "msrest>=0.6.0",
         'azure-common~=1.1',
+        'six>=1.6',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-cognitiveservices-nspkg'],
+        ":python_version<'3.0'": ['azure-ai-nspkg'],
+        ":python_version<'3.5'": ['typing'],
     }
 )
