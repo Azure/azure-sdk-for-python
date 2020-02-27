@@ -10,48 +10,62 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .workspace_provider_authorization_py3 import WorkspaceProviderAuthorization
-    from .sku_py3 import Sku
-    from .workspace_py3 import Workspace
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .workspace_update_py3 import WorkspaceUpdate
-    from .error_detail_py3 import ErrorDetail
-    from .error_info_py3 import ErrorInfo
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorInfo
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import Workspace
+    from ._models_py3 import WorkspaceCustomBooleanParameter
+    from ._models_py3 import WorkspaceCustomObjectParameter
+    from ._models_py3 import WorkspaceCustomParameters
+    from ._models_py3 import WorkspaceCustomStringParameter
+    from ._models_py3 import WorkspaceProviderAuthorization
+    from ._models_py3 import WorkspaceUpdate
 except (SyntaxError, ImportError):
-    from .workspace_provider_authorization import WorkspaceProviderAuthorization
-    from .sku import Sku
-    from .workspace import Workspace
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .workspace_update import WorkspaceUpdate
-    from .error_detail import ErrorDetail
-    from .error_info import ErrorInfo
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-from .workspace_paged import WorkspacePaged
-from .operation_paged import OperationPaged
-from .databricks_client_enums import (
+    from ._models import ErrorDetail
+    from ._models import ErrorInfo
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import TrackedResource
+    from ._models import Workspace
+    from ._models import WorkspaceCustomBooleanParameter
+    from ._models import WorkspaceCustomObjectParameter
+    from ._models import WorkspaceCustomParameters
+    from ._models import WorkspaceCustomStringParameter
+    from ._models import WorkspaceProviderAuthorization
+    from ._models import WorkspaceUpdate
+from ._paged_models import OperationPaged
+from ._paged_models import WorkspacePaged
+from ._databricks_client_enums import (
+    CustomParameterType,
     ProvisioningState,
 )
 
 __all__ = [
-    'WorkspaceProviderAuthorization',
-    'Sku',
-    'Workspace',
-    'TrackedResource',
-    'Resource',
-    'WorkspaceUpdate',
     'ErrorDetail',
     'ErrorInfo',
     'ErrorResponse', 'ErrorResponseException',
-    'OperationDisplay',
     'Operation',
+    'OperationDisplay',
+    'Resource',
+    'Sku',
+    'TrackedResource',
+    'Workspace',
+    'WorkspaceCustomBooleanParameter',
+    'WorkspaceCustomObjectParameter',
+    'WorkspaceCustomParameters',
+    'WorkspaceCustomStringParameter',
+    'WorkspaceProviderAuthorization',
+    'WorkspaceUpdate',
     'WorkspacePaged',
     'OperationPaged',
+    'CustomParameterType',
     'ProvisioningState',
 ]
