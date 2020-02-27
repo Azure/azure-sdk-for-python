@@ -82,7 +82,7 @@ class RecognizeEntitiesSampleAsync(object):
                 documents,
                 show_stats=True,
                 model_version="latest",
-                response_hook=callback
+                raw_response_hook=callback
             )
 
 

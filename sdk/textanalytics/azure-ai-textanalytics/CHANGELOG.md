@@ -7,6 +7,7 @@
 - `AnalyzeSentimentResult` and `SentenceSentiment` attribute `sentiment_scores` has been renamed to `confidence_scores`
 - `LinkedEntity` attribute `id` has been renamed to `data_source_entity_id`
 - Parameters `country_hint` and `language` are now passed as keyword arguments
+- The keyword argument `response_hook` has been renamed to `raw_response_hook`
 - `length` and `offset` attributes have been renamed to `grapheme_length` and `grapheme_offset` for the `SentenceSentiment`,
 `CategorizedEntity`, `PiiEntity`, and `LinkedEntityMatch` models
 

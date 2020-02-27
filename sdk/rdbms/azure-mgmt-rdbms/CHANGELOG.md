@@ -1,5 +1,73 @@
 # Release History
 
+## 2.0.0 (2020-02-21)
+
+**Features**
+
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group AdvisorsOperations
+- Added operation group MySQLManagementClientOperationsMixin
+- Added operation group QueryTextsOperations
+- Added operation group RecommendedActionsOperations
+- Added operation group MariaDBManagementClientOperationsMixin
+- Added operation group LocationBasedRecommendedActionSessionsOperationStatusOperations
+- Added operation group LocationBasedRecommendedActionSessionsResultOperations
+- Added operation group WaitStatisticsOperations
+- Added operation group TopQueryStatisticsOperations
+
+**General breaking changes**
+
+This version uses a next-generation code generator that *might*
+introduce breaking changes if from some import. In summary, some modules
+were incorrectly visible/importable and have been renamed. This fixed
+several issues caused by usage of classes that were not supposed to be
+used in the first place.
+
+  - MariaDBManagementClient cannot be imported from
+    `azure.mgmt.rdbms.mariadb.maria_db_management_client` anymore (import from
+    `azure.mgmt.rdbms.mariadb` works like before)
+  - KustoManagementClientConfiguration import has been moved from
+    `azure.mgmt.rdbms.mariadb.maria_db_management_client` to
+    `azure.mgmt.rdbms.mariadb`
+  - A model `MyClass` from a "models" sub-module cannot be imported
+    anymore using `azure.mgmt.rdbms.mariadb.models.my_class` (import from
+    `azure.mgmt.rdbms.mariadb.models` works like before)
+  - An operation class `MyClassOperations` from an `operations`
+    sub-module cannot be imported anymore using
+    `azure.mgmt.rdbms.mariadb.operations.my_class_operations` (import from
+    `azure.mgmt.rdbms.mariadb.operations` works like before)
+  - MySQLManagementClient cannot be imported from
+    `azure.mgmt.rdbms.mysql.my_sql_management_client` anymore (import from
+    `azure.mgmt.rdbms.mysql` works like before)
+  - MySQLManagementClientConfiguration import has been moved from
+    `azure.mgmt.rdbms.mysql.my_sql_management_client` to
+    `azure.mgmt.rdbms.mysql`
+  - A model `MyClass` from a "models" sub-module cannot be imported
+    anymore using `azure.mgmt.rdbms.mysql.models.my_class` (import from
+    `azure.mgmt.rdbms.mysql.models` works like before)
+  - An operation class `MyClassOperations` from an `operations`
+    sub-module cannot be imported anymore using
+    `azure.mgmt.rdbms.mysql.operations.my_class_operations` (import from
+    `azure.mgmt.rdbms.mysql.operations` works like before)
+  - PostgreSQLManagementClient cannot be imported from
+    `azure.mgmt.rdbms.postgresql.postgre_sql_management_client` anymore (import from
+    `azure.mgmt.rdbms.postgresql` works like before)
+  - PostgreSQLManagementClientConfiguration import has been moved from
+    `azure.mgmt.rdbms.postgresql.my_sql_management_client` to
+    `azure.mgmt.rdbms.postgresql`
+  - A model `MyClass` from a "models" sub-module cannot be imported
+    anymore using `azure.mgmt.rdbms.postgresql.models.my_class` (import from
+    `azure.mgmt.rdbms.postgresql.models` works like before)
+  - An operation class `MyClassOperations` from an `operations`
+    sub-module cannot be imported anymore using
+    `azure.mgmt.rdbms.postgresql.operations.my_class_operations` (import from
+    `azure.mgmt.rdbms.postgresql.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default.
+You should always use a client as a context manager, or call close(), or
+use no more than one client per process.
+
 ## 1.9.0 (2019-06-04)
 
 **Features**
