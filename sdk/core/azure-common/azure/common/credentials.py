@@ -46,8 +46,6 @@ class _CliCredentials(object):
     _DEFAULT_PREFIX = "/.default"
 
     def __init__(self, cli_profile, resource):
-        if AccessToken is None:  # import failed
-            raise ImportError("You need to install 'azure-core' to use this feature")
         self._profile = cli_profile
         self._resource = resource
         self._cred_dict = {}
@@ -59,6 +57,8 @@ class _CliCredentials(object):
         return self._cred_dict[resource]
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if AccessToken is None:  # import failed
+            raise ImportError("You need to install 'azure-core' to use CLI credentials in this context")
 
         if len(scopes) != 1:
             raise ValueError("Multiple scopes are not supported: {}".format(scopes))
