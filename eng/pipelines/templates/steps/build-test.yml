@@ -52,6 +52,7 @@ steps:
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+      failTaskOnFailedTests: true
   
   - template: publish-coverage.yml
     parameters: 
