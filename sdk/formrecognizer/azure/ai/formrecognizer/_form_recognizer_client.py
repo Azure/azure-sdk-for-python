@@ -54,9 +54,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ErrorResponseException as err:
             raise HttpResponseError(err)
 
-        def callback(response):
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, response)
-            extracted_receipt = prepare_receipt_result(analyze_result)
+        def callback(raw_response):
+            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_receipt = prepare_receipt_result(analyze_result, include_text_details)
             return extracted_receipt
 
         poll_method = ARMPolling()

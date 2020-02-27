@@ -69,12 +69,9 @@ class ReceiptFields:
     transaction_time: FieldValue
 
 class ReceiptItemField:
-    name: str
-    quantity: int
-    total_price: float
-    bounding_box: List[float]
-    confidence: float
-    raw_field: List[ExtractedLine]
+    name: FieldValue
+    quantity: FieldValue
+    total_price: FieldValue
 
 class FieldValue:
     value: Union[str, float, int]
