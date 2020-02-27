@@ -1,0 +1,40 @@
+{
+    "chosen_version": "2016-12-01",
+    "total_api_version_list": ["2016-12-01"],
+    "client": {
+        "name": "StorageManagement",
+        "filename": "_storage_management.py",
+        "description": "The Azure Storage Management API.",
+        "has_subscription_id": false
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "package_version": false,
+        "global_parameters": {
+            "method": {
+                "credential": {
+                    "method_signature": "credential,  # type: \"TokenCredential\"",
+                    "description": "Credential needed for the client to connect to Azure.",
+                    "docstring_type": "azure.core.credentials.TokenCredential",
+                    "required": true
+                },
+                "subscription_id": {
+                    "method_signature": "subscription_id,  # type: str",
+                    "description": "Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                    "docstring_type": "str",
+                    "required": true
+                }
+            },
+            "constant": {
+                "api_version": "\"2016-12-01\""
+            }
+        }
+    },
+    "operation_groups": {
+        "storage_accounts": "StorageAccountsOperations",
+        "usage": "UsageOperations"
+    },
+    "operation_mixins": {
+    }
+}
