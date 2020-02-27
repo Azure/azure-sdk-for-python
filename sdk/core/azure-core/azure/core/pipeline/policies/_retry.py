@@ -92,6 +92,8 @@ class RetryPolicy(HTTPPolicy):
             :caption: Configuring a retry policy.
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     #: Maximum backoff time.
     BACKOFF_MAX = 120
     _SAFE_CODES = set(range(506)) - set([408, 429, 500, 502, 503, 504])
