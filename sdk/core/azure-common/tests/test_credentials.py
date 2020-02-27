@@ -6,8 +6,15 @@
 # license information.
 #--------------------------------------------------------------------------
 import time
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+import pytest
 
 from azure.common.credentials import _CliCredentials
+import azure.common.credentials
 
 
 class MockCliCredentials:
@@ -38,6 +45,12 @@ def test_cli_credentials_mgmt():
     assert cli_profile.received_resource == "http://resource.id"
     assert session == "session"
 
+    # Trying to mock azure-core not here
+    with mock.patch('azure.common.credentials._AccessToken', None):
+        # Should not crash
+        cred.signed_session("session")
+
+
 def test_cli_credentials_accesstoken():
 
     cli_profile = MockCliProfile()
@@ -50,3 +63,10 @@ def test_cli_credentials_accesstoken():
     assert access_token.token == "TOKEN"
     assert access_token.expires_on <= int(time.time() + 42)
 
+    access_token = cred.get_token("http://resource.newid")
+    assert cli_profile.received_resource == "http://resource.newid"
+
+    # Trying to mock azure-core not here
+    with mock.patch('azure.common.credentials._AccessToken', None):
+        with pytest.raises(ImportError):
+            cred.get_token("http://resource.yetid")
