@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy
 )
 from .._policies import CognitiveServicesCredentialPolicy
-from ._policies_async import AsyncTextAnalyticsResponseHook
+from ._policies_async import AsyncTextAnalyticsResponseHookPolicy
 from .._user_agent import USER_AGENT
 
 
@@ -60,7 +60,7 @@ class AsyncTextAnalyticsClientBase(object):
             AsyncRetryPolicy(**kwargs),
             credential_policy,
             config.logging_policy,
-            AsyncTextAnalyticsResponseHook(**kwargs),
+            AsyncTextAnalyticsResponseHookPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
