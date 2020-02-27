@@ -4,37 +4,47 @@
 
 **Features**
 
-  - Model ImageReference has a new parameter exact_version
-  - Model DiskUpdate has a new parameter encryption
-  - Model AvailabilitySetUpdate has a new parameter type
-  - Model AvailabilitySetUpdate has a new parameter id
   - Model AvailabilitySetUpdate has a new parameter name
-  - Model SnapshotUpdate has a new parameter encryption
-  - Model VirtualMachineScaleSetExtension has a new parameter type1
-  - Model DedicatedHostGroupUpdate has a new parameter type
-  - Model DedicatedHostGroupUpdate has a new parameter id
+  - Model AvailabilitySetUpdate has a new parameter id
+  - Model AvailabilitySetUpdate has a new parameter type
   - Model DedicatedHostGroupUpdate has a new parameter name
-  - Model VirtualMachineScaleSetUpdate has a new parameter type
-  - Model VirtualMachineScaleSetUpdate has a new parameter id
-  - Model VirtualMachineScaleSetUpdate has a new parameter name
-  - Model DedicatedHostUpdate has a new parameter type
-  - Model DedicatedHostUpdate has a new parameter id
-  - Model DedicatedHostUpdate has a new parameter name
+  - Model DedicatedHostGroupUpdate has a new parameter id
+  - Model DedicatedHostGroupUpdate has a new parameter type
+  - Model ImageReference has a new parameter exact_version
+  - Model SnapshotUpdate has a new parameter encryption
   - Model ProximityPlacementGroup has a new parameter colocation_status
-  - Model ImageUpdate has a new parameter type
-  - Model ImageUpdate has a new parameter id
   - Model ImageUpdate has a new parameter name
-  - Model VirtualMachineUpdate has a new parameter type
-  - Model VirtualMachineUpdate has a new parameter id
-  - Model VirtualMachineUpdate has a new parameter name
+  - Model ImageUpdate has a new parameter id
+  - Model ImageUpdate has a new parameter type
   - Model VirtualMachineExtensionUpdate has a new parameter name
   - Model VirtualMachineExtensionUpdate has a new parameter id
   - Model VirtualMachineExtensionUpdate has a new parameter virtual_machine_extension_update_type
-  - Added operation VirtualMachineScaleSetExtensionsOperations.update
-  - Added operation GalleryApplicationVersionsOperations.update
-  - Added operation GalleryImageVersionsOperations.update
+  - Model Disk has a new parameter share_info
+  - Model Disk has a new parameter disk_mbps_read_only
+  - Model Disk has a new parameter managed_by_extended
+  - Model Disk has a new parameter max_shares
+  - Model Disk has a new parameter disk_iops_read_only
+  - Model CreationData has a new parameter gallery_image_reference
+  - Model DiskUpdate has a new parameter max_shares
+  - Model DiskUpdate has a new parameter encryption
+  - Model DiskUpdate has a new parameter disk_mbps_read_only
+  - Model DiskUpdate has a new parameter disk_iops_read_only
+  - Model VirtualMachineScaleSetUpdate has a new parameter name
+  - Model VirtualMachineScaleSetUpdate has a new parameter id
+  - Model VirtualMachineScaleSetUpdate has a new parameter type
+  - Model DedicatedHostUpdate has a new parameter name
+  - Model DedicatedHostUpdate has a new parameter id
+  - Model DedicatedHostUpdate has a new parameter type
+  - Model TargetRegion has a new parameter encryption
+  - Model VirtualMachineUpdate has a new parameter name
+  - Model VirtualMachineUpdate has a new parameter id
+  - Model VirtualMachineUpdate has a new parameter type
+  - Model VirtualMachineScaleSetExtension has a new parameter type1
   - Added operation GalleriesOperations.update
   - Added operation GalleryImagesOperations.update
+  - Added operation GalleryImageVersionsOperations.update
+  - Added operation VirtualMachineScaleSetExtensionsOperations.update
+  - Added operation GalleryApplicationVersionsOperations.update
   - Added operation GalleryApplicationsOperations.update
 
 **Breaking changes**
