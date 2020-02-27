@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class FeatureSupportRequest(Model):
@@ -7240,6 +7241,34 @@ class EncryptionDetails(Model):
         self.secret_key_vault_id = secret_key_vault_id
 
 
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
 class ErrorDetail(Model):
     """Error Detail class which encapsulates Code, Message and Recommendations.
 
@@ -7271,6 +7300,63 @@ class ErrorDetail(Model):
         self.code = None
         self.message = None
         self.recommendations = None
+
+
+class ErrorResponse(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class OperationResultInfoBase(Model):

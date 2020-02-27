@@ -139,7 +139,9 @@ try:
     from ._models_py3 import DPMProtectedItem
     from ._models_py3 import DPMProtectedItemExtendedInfo
     from ._models_py3 import EncryptionDetails
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ExportJobsOperationResultInfo
     from ._models_py3 import ExtendedProperties
     from ._models_py3 import FeatureSupportRequest
@@ -372,7 +374,9 @@ except (SyntaxError, ImportError):
     from ._models import DPMProtectedItem
     from ._models import DPMProtectedItemExtendedInfo
     from ._models import EncryptionDetails
+    from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import ExportJobsOperationResultInfo
     from ._models import ExtendedProperties
     from ._models import FeatureSupportRequest
@@ -671,7 +675,9 @@ __all__ = [
     'DPMProtectedItem',
     'DPMProtectedItemExtendedInfo',
     'EncryptionDetails',
+    'ErrorAdditionalInfo',
     'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'ExportJobsOperationResultInfo',
     'ExtendedProperties',
     'FeatureSupportRequest',
