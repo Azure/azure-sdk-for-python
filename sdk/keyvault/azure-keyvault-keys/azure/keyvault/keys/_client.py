@@ -7,7 +7,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
+from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 from ._models import KeyVaultKey, KeyProperties, DeletedKey
 
 try:
@@ -198,17 +198,16 @@ class KeyClient(KeyVaultClientBase):
         deleted_key = DeletedKey._from_deleted_key_bundle(
             self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
         )
-        sd_disabled = deleted_key.recovery_id is None
+
         command = partial(self.get_deleted_key, name=name, **kwargs)
-        delete_key_polling_method = DeletePollingMethod(
+        polling_method = DeleteRecoverPollingMethod(
+            # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
+            finished=deleted_key.recovery_id is None,
             command=command,
             final_resource=deleted_key,
-            initial_status="deleting",
-            finished_status="deleted",
-            sd_disabled=sd_disabled,
             interval=polling_interval,
         )
-        return KeyVaultOperationPoller(delete_key_polling_method)
+        return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
@@ -397,14 +396,12 @@ class KeyClient(KeyVaultClientBase):
             )
         )
         command = partial(self.get_key, name=name, **kwargs)
-        recover_key_polling_method = RecoverDeletedPollingMethod(
-            command=command,
-            final_resource=recovered_key,
-            initial_status="recovering",
-            finished_status="recovered",
-            interval=polling_interval,
+        polling_method = DeleteRecoverPollingMethod(
+            finished=False, command=command, final_resource=recovered_key, interval=polling_interval,
         )
-        return KeyVaultOperationPoller(recover_key_polling_method)
+
+        return KeyVaultOperationPoller(polling_method)
+
 
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):

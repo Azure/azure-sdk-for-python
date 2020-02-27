@@ -11,7 +11,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
-from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
+from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 from ._models import (
     KeyVaultCertificate,
     CertificateProperties,
@@ -222,17 +222,16 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
-        sd_disabled = deleted_cert.recovery_id is None
-        command = partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs)
-        delete_cert_polling_method = DeletePollingMethod(
-            command=command,
+
+        polling_method = DeleteRecoverPollingMethod(
+            # no recovery ID means soft-delete is disabled, in which case we initialize the poller as finished
+            finished=deleted_cert.recovery_id is None,
+            command=partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs),
             final_resource=deleted_cert,
-            initial_status="deleting",
-            finished_status="deleted",
-            sd_disabled=sd_disabled,
             interval=polling_interval,
         )
-        return KeyVaultOperationPoller(delete_cert_polling_method)
+
+        return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
     def get_deleted_certificate(self, certificate_name, **kwargs):
@@ -315,19 +314,18 @@ class CertificateClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
+
         recovered_cert_bundle = self._client.recover_deleted_certificate(
             vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
         command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
-        recover_cert_polling_method = RecoverDeletedPollingMethod(
-            command=command,
-            final_resource=recovered_certificate,
-            initial_status="recovering",
-            finished_status="recovered",
-            interval=polling_interval,
+        polling_method = DeleteRecoverPollingMethod(
+            finished=False, command=command, final_resource=recovered_certificate, interval=polling_interval
         )
-        return KeyVaultOperationPoller(recover_cert_polling_method)
+
+        return KeyVaultOperationPoller(polling_method)
+
 
     @distributed_trace
     def import_certificate(self, certificate_name, certificate_bytes, **kwargs):
