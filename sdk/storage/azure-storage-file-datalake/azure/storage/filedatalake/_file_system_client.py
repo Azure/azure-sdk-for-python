@@ -403,7 +403,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         access_policy = self._container_client.get_container_access_policy(**kwargs)
         return {
-            'public_access': PublicAccess._from_generated(access_policy['public_access']),
+            'public_access': PublicAccess._from_generated(access_policy['public_access']),  # pylint: disable=protected-access
             'signed_identifiers': access_policy['signed_identifiers']
         }
 
@@ -508,9 +508,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :return: DataLakeDirectoryClient
         """
         directory_client = self.get_directory_client(directory)
-        directory_client.create_directory(content_settings=kwargs.pop('content_settings', None),
-                                          metadata=metadata,
-                                          **kwargs)
+        directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
     def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]

@@ -356,7 +356,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         access_policy = await self._container_client.get_container_access_policy(**kwargs)
         return {
-            'public_access': PublicAccess._from_generated(access_policy['public_access']),
+            'public_access': PublicAccess._from_generated(access_policy['public_access']),  # pylint: disable=protected-access
             'signed_identifiers': access_policy['signed_identifiers']
         }
 
@@ -408,7 +408,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
-                               content_settings=None,  # type: Optional[ContentSettings]
                                metadata=None,  # type: Optional[Dict[str, str]]
                                **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -419,11 +418,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
         :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -462,7 +461,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :return: DataLakeDirectoryClient
         """
         directory_client = self.get_directory_client(directory)
-        await directory_client.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
+        await directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
     async def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]

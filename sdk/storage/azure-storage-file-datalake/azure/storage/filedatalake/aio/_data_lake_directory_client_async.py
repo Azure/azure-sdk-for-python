@@ -191,7 +191,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         blob_properties = await self._get_path_properties(**kwargs)
         return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
-    async def rename_directory(self, new_name, **kwargs):
+    async def rename_directory(self, new_name,  # type: str
+                               **kwargs):
         # type: (**Any) -> DataLakeDirectoryClient
         """
         Rename the source directory.

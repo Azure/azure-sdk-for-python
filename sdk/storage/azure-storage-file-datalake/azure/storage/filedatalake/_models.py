@@ -492,8 +492,17 @@ class UserDelegationKey(BlobUserDelegationKey):
     :ivar str value:
         The user delegation key.
     """
-    def __init__(self):
-        super(UserDelegationKey, self).__init__()
+    @classmethod
+    def _from_generated(cls, generated):
+        delegation_key = cls()
+        delegation_key.signed_oid = generated.signed_oid
+        delegation_key.signed_tid = generated.signed_tid
+        delegation_key.signed_start = generated.signed_start
+        delegation_key.signed_expiry = generated.signed_expiry
+        delegation_key.signed_service = generated.signed_service
+        delegation_key.signed_version = generated.signed_version
+        delegation_key.value = None
+        return delegation_key
 
 
 class PublicAccess(str, Enum):
@@ -521,8 +530,7 @@ class PublicAccess(str, Enum):
             return cls.File
         elif public_access == "container":
             return cls.FileSystem
-        elif public_access == "off":
-            return cls.OFF
+
         return None
 
 

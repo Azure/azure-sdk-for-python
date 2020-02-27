@@ -23,7 +23,7 @@ from testcase import (
 )
 
 # ------------------------------------------------------------------------------
-from build.lib.azure.storage.filedatalake import FileSystemSasPermissions
+from azure.storage.filedatalake import FileSystemSasPermissions
 
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 

@@ -337,7 +337,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             return await downloader.readinto(stream)
         return await downloader.readall()
 
-    async def rename_file(self, new_name, **kwargs):
+    async def rename_file(self, new_name,  # type: str
+                          **kwargs):
         # type: (**Any) -> DataLakeFileClient
         """
         Rename the source file.
