@@ -17,6 +17,7 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResultsDescription
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ServiceAccessPolicyEntry
     from ._models_py3 import ServiceAuthenticationConfigurationInfo
     from ._models_py3 import ServiceCorsConfigurationInfo
@@ -33,6 +34,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay
     from ._models import OperationResultsDescription
     from ._models import Resource
+    from ._models import ResourceIdentity
     from ._models import ServiceAccessPolicyEntry
     from ._models import ServiceAuthenticationConfigurationInfo
     from ._models import ServiceCorsConfigurationInfo
@@ -46,6 +48,7 @@ from ._paged_models import ServicesDescriptionPaged
 from ._healthcare_apis_management_client_enums import (
     ProvisioningState,
     Kind,
+    ManagedServiceIdentityType,
     ServiceNameUnavailabilityReason,
     OperationResultStatus,
 )
@@ -58,6 +61,7 @@ __all__ = [
     'OperationDisplay',
     'OperationResultsDescription',
     'Resource',
+    'ResourceIdentity',
     'ServiceAccessPolicyEntry',
     'ServiceAuthenticationConfigurationInfo',
     'ServiceCorsConfigurationInfo',
@@ -70,6 +74,7 @@ __all__ = [
     'OperationPaged',
     'ProvisioningState',
     'Kind',
+    'ManagedServiceIdentityType',
     'ServiceNameUnavailabilityReason',
     'OperationResultStatus',
 ]
