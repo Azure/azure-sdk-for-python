@@ -50,7 +50,9 @@ class _SearchDocumentsPagedAsync(AsyncPageIterator):
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return self._client.documents.search_post(search_request=next_page_request)
+        return await self._client.documents.search_post(
+            search_request=next_page_request
+        )
 
     async def _extract_data_cb(self, response):  # pylint:disable=no-self-use
         continuation_token = pack_continuation_token(response)
@@ -91,6 +93,10 @@ class SearchIndexClient(object):
         return "<SearchIndexClient [service={}, index={}]>".format(
             repr(self._search_service_name), repr(self._index_name)
         )[:1024]
+
+    async def close(self):
+        # type: () -> None
+        return await self._client.close()
 
     @distributed_trace_async
     async def get_document_count(self, **kwargs):
@@ -216,3 +222,12 @@ class SearchIndexClient(object):
         index_batch = IndexBatchModel(actions=batch.actions)
         batch_response = await self._client.documents.index(batch=index_batch, **kwargs)
         return cast(List[IndexingResult], batch_response.results)
+
+    async def __aenter__(self):
+        # type: () -> SearchIndexClient
+        await self._client.__aenter__()  # pylint: disable=no-member
+        return self
+
+    async def __aexit__(self, *args):
+        # type: (*Any) -> None
+        await self._client.__aexit__(*args)  # pylint: disable=no-member

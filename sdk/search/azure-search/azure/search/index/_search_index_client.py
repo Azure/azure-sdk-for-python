@@ -114,6 +114,10 @@ class SearchIndexClient(object):
             repr(self._search_service_name), repr(self._index_name)
         )[:1024]
 
+    def close(self):
+        # type: () -> None
+        return self._client.close()
+
     @distributed_trace
     def get_document_count(self, **kwargs):
         # type: (**Any) -> int
@@ -238,3 +242,12 @@ class SearchIndexClient(object):
         index_batch = IndexBatchModel(actions=batch.actions)
         batch_response = self._client.documents.index(batch=index_batch, **kwargs)
         return cast(List[IndexingResult], batch_response.results)
+
+    def __enter__(self):
+        # type: () -> SearchIndexClient
+        self._client.__enter__()  # pylint:disable=no-member
+        return self
+
+    def __exit__(self, *args):
+        # type: (*Any) -> None
+        self._client.__exit__(*args)  # pylint:disable=no-member
