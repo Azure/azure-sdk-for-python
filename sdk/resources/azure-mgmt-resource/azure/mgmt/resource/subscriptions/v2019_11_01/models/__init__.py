@@ -11,17 +11,21 @@
 
 try:
     from ._models_py3 import Location
+    from ._models_py3 import LocationMetadata
     from ._models_py3 import ManagedByTenant
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import PairedRegion
     from ._models_py3 import Subscription
     from ._models_py3 import SubscriptionPolicies
     from ._models_py3 import TenantIdDescription
 except (SyntaxError, ImportError):
     from ._models import Location
+    from ._models import LocationMetadata
     from ._models import ManagedByTenant
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import PairedRegion
     from ._models import Subscription
     from ._models import SubscriptionPolicies
     from ._models import TenantIdDescription
@@ -30,6 +34,8 @@ from ._paged_models import OperationPaged
 from ._paged_models import SubscriptionPaged
 from ._paged_models import TenantIdDescriptionPaged
 from ._subscription_client_enums import (
+    RegionType,
+    RegionCategory,
     SubscriptionState,
     SpendingLimit,
     TenantCategory,
@@ -37,9 +43,11 @@ from ._subscription_client_enums import (
 
 __all__ = [
     'Location',
+    'LocationMetadata',
     'ManagedByTenant',
     'Operation',
     'OperationDisplay',
+    'PairedRegion',
     'Subscription',
     'SubscriptionPolicies',
     'TenantIdDescription',
@@ -47,6 +55,8 @@ __all__ = [
     'LocationPaged',
     'SubscriptionPaged',
     'TenantIdDescriptionPaged',
+    'RegionType',
+    'RegionCategory',
     'SubscriptionState',
     'SpendingLimit',
     'TenantCategory',

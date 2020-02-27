@@ -9,27 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from ._operations import Operations
+from ._subscriptions_operations import SubscriptionsOperations
+from ._tenants_operations import TenantsOperations
 
-
-class SubscriptionState(str, Enum):
-
-    enabled = "Enabled"
-    warned = "Warned"
-    past_due = "PastDue"
-    disabled = "Disabled"
-    deleted = "Deleted"
-
-
-class SpendingLimit(str, Enum):
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
-
-
-class TenantCategory(str, Enum):
-
-    home = "Home"
-    projected_by = "ProjectedBy"
-    managed_by = "ManagedBy"
+__all__ = [
+    'Operations',
+    'SubscriptionsOperations',
+    'TenantsOperations',
+]

@@ -12,6 +12,18 @@
 from enum import Enum
 
 
+class RegionType(str, Enum):
+
+    physical = "Physical"
+    logical = "Logical"
+
+
+class RegionCategory(str, Enum):
+
+    recommended = "Recommended"
+    other = "Other"
+
+
 class SubscriptionState(str, Enum):
 
     enabled = "Enabled"

@@ -9,27 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from ._configuration import SubscriptionClientConfiguration
+from ._subscription_client import SubscriptionClient
+__all__ = ['SubscriptionClient', 'SubscriptionClientConfiguration']
 
+from .version import VERSION
 
-class SubscriptionState(str, Enum):
+__version__ = VERSION
 
-    enabled = "Enabled"
-    warned = "Warned"
-    past_due = "PastDue"
-    disabled = "Disabled"
-    deleted = "Deleted"
-
-
-class SpendingLimit(str, Enum):
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
-
-
-class TenantCategory(str, Enum):
-
-    home = "Home"
-    projected_by = "ProjectedBy"
-    managed_by = "ManagedBy"
