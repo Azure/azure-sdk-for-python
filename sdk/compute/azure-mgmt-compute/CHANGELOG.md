@@ -1,5 +1,48 @@
 # Release History
 
+## 11.0.0 (2020-02-27)
+
+**Features**
+
+  - Model ImageReference has a new parameter exact_version
+  - Model DiskUpdate has a new parameter encryption
+  - Model AvailabilitySetUpdate has a new parameter type
+  - Model AvailabilitySetUpdate has a new parameter id
+  - Model AvailabilitySetUpdate has a new parameter name
+  - Model SnapshotUpdate has a new parameter encryption
+  - Model VirtualMachineScaleSetExtension has a new parameter type1
+  - Model DedicatedHostGroupUpdate has a new parameter type
+  - Model DedicatedHostGroupUpdate has a new parameter id
+  - Model DedicatedHostGroupUpdate has a new parameter name
+  - Model VirtualMachineScaleSetUpdate has a new parameter type
+  - Model VirtualMachineScaleSetUpdate has a new parameter id
+  - Model VirtualMachineScaleSetUpdate has a new parameter name
+  - Model DedicatedHostUpdate has a new parameter type
+  - Model DedicatedHostUpdate has a new parameter id
+  - Model DedicatedHostUpdate has a new parameter name
+  - Model ProximityPlacementGroup has a new parameter colocation_status
+  - Model ImageUpdate has a new parameter type
+  - Model ImageUpdate has a new parameter id
+  - Model ImageUpdate has a new parameter name
+  - Model VirtualMachineUpdate has a new parameter type
+  - Model VirtualMachineUpdate has a new parameter id
+  - Model VirtualMachineUpdate has a new parameter name
+  - Model VirtualMachineExtensionUpdate has a new parameter name
+  - Model VirtualMachineExtensionUpdate has a new parameter id
+  - Model VirtualMachineExtensionUpdate has a new parameter virtual_machine_extension_update_type
+  - Added operation VirtualMachineScaleSetExtensionsOperations.update
+  - Added operation GalleryApplicationVersionsOperations.update
+  - Added operation GalleryImageVersionsOperations.update
+  - Added operation GalleriesOperations.update
+  - Added operation GalleryImagesOperations.update
+  - Added operation GalleryApplicationsOperations.update
+
+**Breaking changes**
+
+  - Model AutomaticRepairsPolicy no longer has parameter max_instance_repairs_percent
+  - Model ProximityPlacementGroupUpdate has a new signature
+  - Model UpdateResource has a new signature
+
 ## 10.0.0 (2019-11-18)
 
 **Features**
