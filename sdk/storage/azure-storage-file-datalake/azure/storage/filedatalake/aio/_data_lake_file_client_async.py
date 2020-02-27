@@ -191,7 +191,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
                     length=None,  # type: Optional[int]
-                    metadata=None,  # type: Optional[bool]
+                    overwrite=None,  # type: Optional[bool]
                     **kwargs):
         # type: (...) -> Dict[str, Any]
         """
@@ -200,9 +200,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :param data: Content to be uploaded to file
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
@@ -245,7 +245,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         options = self._upload_options(
             data,
             length=length,
-            metadata=metadata,
+            overwrite=overwrite,
             **kwargs)
         return await upload_datalake_file(**options)
 

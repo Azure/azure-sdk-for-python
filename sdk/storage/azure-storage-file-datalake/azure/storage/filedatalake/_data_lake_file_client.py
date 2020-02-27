@@ -284,15 +284,15 @@ class DataLakeFileClient(PathClient):
         :param data: Content to be uploaded to file
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
+        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
-        :param metadata:
+        :keyword metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
-        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+        :keyword str umaskoverwrite: Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
             The resulting permission is given by p & ^u, where p is the permission and u is the umask.
