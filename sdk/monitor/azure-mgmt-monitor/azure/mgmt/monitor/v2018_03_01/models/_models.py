@@ -651,19 +651,19 @@ class MetricAlertAction(Model):
 
     :param action_group_id: the id of the action group to use.
     :type action_group_id: str
-    :param webhook_properties: The properties of a webhook object.
-    :type webhook_properties: dict[str, str]
+    :param web_hook_properties: The properties of a webhook object.
+    :type web_hook_properties: dict[str, str]
     """
 
     _attribute_map = {
         'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
+        'web_hook_properties': {'key': 'webHookProperties', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(MetricAlertAction, self).__init__(**kwargs)
         self.action_group_id = kwargs.get('action_group_id', None)
-        self.webhook_properties = kwargs.get('webhook_properties', None)
+        self.web_hook_properties = kwargs.get('web_hook_properties', None)
 
 
 class MetricAlertCriteria(Model):
