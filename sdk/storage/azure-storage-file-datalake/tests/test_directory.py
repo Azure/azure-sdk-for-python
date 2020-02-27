@@ -319,7 +319,7 @@ class DirectoryTest(StorageTestCase):
     @record
     def test_rename_to_an_existing_directory_in_another_file_system(self):
         # create a file dir1 under file system1
-        destination_file_system_name = "destfilesystem"
+        destination_file_system_name = self._get_directory_reference("destfilesystem")
         destination_dir_name = "destdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
         fs_client.create_file_system()
