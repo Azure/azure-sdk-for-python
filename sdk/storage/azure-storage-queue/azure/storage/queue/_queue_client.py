@@ -54,10 +54,10 @@ class QueueClient(StorageAccountHostsMixin):
         Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword encode_policy: The encoding policy to use on outgoing messages.
+    :keyword message_encode_policy: The encoding policy to use on outgoing messages.
         Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
         :class:`BinaryBase64EncodePolicy` or `None`.
-    :keyword decode_policy: The decoding policy to use on incoming messages.
+    :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
 
