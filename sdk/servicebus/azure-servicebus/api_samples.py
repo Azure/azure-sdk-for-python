@@ -4,18 +4,18 @@
 ### creation of differen entity clients
 
 # Queue Sender
-queue_sender = SeviceBusSenderClient.from_queue(
+queue_sender = ServiceBusSenderClient.from_queue(
     fully_qualified_namepsace="fully_qualified_namepsace",
     queue_name="queue_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
 )
 
-queue_sender = SeviceBusSenderClient.from_connection_string(
+queue_sender = ServiceBusSenderClient.from_connection_string(
     conn_str="conn_str",
     entity_name="queue_name"
 )
 
-queue_sender = SeviceBusSenderClient(
+queue_sender = ServiceBusSenderClient(
     fully_qualified_namepsace="fully_qualified_namepsace",
     entity_name="queue_name",
     ServiceBusSharedKeyCredential("policy", "key")
@@ -41,18 +41,18 @@ queue_receiver = SeviceBusReceiverClient(
 )
 
 # Topic Sender
-topic_sender = SeviceBusSenderClient.from_topic(
+topic_sender = ServiceBusSenderClient.from_topic(
     fully_qualified_namepsace="fully_qualified_namepsace",
     topic_name="topic_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
 )
 
-topic_sender = SeviceBusSenderClient.from_connection_string(
+topic_sender = ServiceBusSenderClient.from_connection_string(
     conn_str="conn_str",
     entity_name="topic_name"
 )
 
-topic_sender = SeviceBusSenderClient(
+topic_sender = ServiceBusSenderClient(
     fully_qualified_namepsace="fully_qualified_namepsace",
     entity_name="topic_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
@@ -84,14 +84,14 @@ subscription_receiver = SeviceBusReceiverClient(
 ### Send and receive
 # 1 Send
 
-queue_sender = SeviceBusSenderClient.from_queue(
+queue_sender = ServiceBusSenderClient.from_queue(
     fully_qualified_namepsace="fully_qualified_namepsace",
     queue_name="queue_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
 )
 
 '''
-topic_sender = SeviceBusSenderClient.from_queue(
+topic_sender = ServiceBusSenderClient.from_queue(
     fully_qualified_namepsace="fully_qualified_namepsace",
     topic_name="topic_name",
     credential=ServiceBusSharedKeyCredential("policy", "key")
@@ -186,7 +186,7 @@ with queue_receiver:
 
 
 # 1 Send
-topic_sender = SeviceBusSenderClient.from_topic
+topic_sender = ServiceBusSenderClient.from_topic
 (
     fully_qualified_namespace="fully_qualified_namepsace",
     topic_name="topic_name",
