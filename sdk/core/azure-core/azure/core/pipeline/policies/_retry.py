@@ -39,7 +39,8 @@ from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
     ServiceResponseError,
-    ServiceRequestError
+    ServiceRequestError,
+    TimeoutError,
 )
 
 from ._base import HTTPPolicy, RequestHistory
@@ -425,7 +426,7 @@ class RetryPolicy(HTTPPolicy):
             try:
                 start_time = time.time()
                 if absolute_timeout <= 0:
-                    break
+                    raise TimeoutError('Operation timeout')
                 request.context.options['connection_timeout'] = absolute_timeout
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
