@@ -25,7 +25,7 @@ class AdvancedThreatProtectionOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2017-08-01-preview".
+    :ivar api_version: API version for the operation. Constant value: "2019-01-01".
     :ivar setting_name: Advanced Threat Protection setting name. Constant value: "current".
     """
 
@@ -36,7 +36,7 @@ class AdvancedThreatProtectionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-01-preview"
+        self.api_version = "2019-01-01"
         self.setting_name = "current"
 
         self.config = config

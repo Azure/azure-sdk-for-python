@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class JitNetworkAccessPoliciesOperations(object):
-    """JitNetworkAccessPoliciesOperations operations.
+class AutomationsOperations(object):
+    """AutomationsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,8 +25,7 @@ class JitNetworkAccessPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2015-06-01-preview".
-    :ivar jit_network_access_policy_initiate_type: Type of the action to do on the Just-in-Time access policy. Constant value: "initiate".
+    :ivar api_version: API version for the operation. Constant value: "2019-01-01-preview".
     """
 
     models = models
@@ -36,23 +35,24 @@ class JitNetworkAccessPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-06-01-preview"
-        self.jit_network_access_policy_initiate_type = "initiate"
+        self.api_version = "2019-01-01-preview"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Policies for protecting resources using Just-in-Time access control.
+        """Lists all the security automations in the specified subscription. Use
+        the 'nextLink' property in the response to get the next page of
+        security automations for the specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of JitNetworkAccessPolicy
+        :return: An iterator like instance of Automation
         :rtype:
-         ~azure.mgmt.security.models.JitNetworkAccessPolicyPaged[~azure.mgmt.security.models.JitNetworkAccessPolicy]
+         ~azure.mgmt.security.models.AutomationPaged[~azure.mgmt.security.models.Automation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -102,83 +102,16 @@ class JitNetworkAccessPoliciesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.JitNetworkAccessPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.AutomationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/jitNetworkAccessPolicies'}
-
-    def list_by_region(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Policies for protecting resources using Just-in-Time access control for
-        the subscription, location.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of JitNetworkAccessPolicy
-        :rtype:
-         ~azure.mgmt.security.models.JitNetworkAccessPolicyPaged[~azure.mgmt.security.models.JitNetworkAccessPolicy]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_region.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-                    'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.JitNetworkAccessPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/automations'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Policies for protecting resources using Just-in-Time access control for
-        the subscription, location.
+        """Lists all the security automations in the specified resource group. Use
+        the 'nextLink' property in the response to get the next page of
+        security automations for the specified resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -188,9 +121,9 @@ class JitNetworkAccessPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of JitNetworkAccessPolicy
+        :return: An iterator like instance of Automation
         :rtype:
-         ~azure.mgmt.security.models.JitNetworkAccessPolicyPaged[~azure.mgmt.security.models.JitNetworkAccessPolicy]
+         ~azure.mgmt.security.models.AutomationPaged[~azure.mgmt.security.models.Automation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -241,101 +174,27 @@ class JitNetworkAccessPoliciesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.JitNetworkAccessPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.AutomationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/jitNetworkAccessPolicies'}
-
-    def list_by_resource_group_and_region(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Policies for protecting resources using Just-in-Time access control for
-        the subscription, location.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of JitNetworkAccessPolicy
-        :rtype:
-         ~azure.mgmt.security.models.JitNetworkAccessPolicyPaged[~azure.mgmt.security.models.JitNetworkAccessPolicy]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_resource_group_and_region.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.JitNetworkAccessPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_by_resource_group_and_region.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations'}
 
     def get(
-            self, resource_group_name, jit_network_access_policy_name, custom_headers=None, raw=False, **operation_config):
-        """Policies for protecting resources using Just-in-Time access control for
-        the subscription, location.
+            self, resource_group_name, automation_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves information about the model of a security automation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param jit_network_access_policy_name: Name of a Just-in-Time access
-         configuration policy.
-        :type jit_network_access_policy_name: str
+        :param automation_name: The security automation name.
+        :type automation_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: JitNetworkAccessPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.JitNetworkAccessPolicy or
+        :return: Automation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.Automation or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -344,8 +203,7 @@ class JitNetworkAccessPoliciesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'jitNetworkAccessPolicyName': self._serialize.url("jit_network_access_policy_name", jit_network_access_policy_name, 'str')
+            'automationName': self._serialize.url("automation_name", automation_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -374,35 +232,35 @@ class JitNetworkAccessPoliciesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('JitNetworkAccessPolicy', response)
+            deserialized = self._deserialize('Automation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies/{jitNetworkAccessPolicyName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}'}
 
     def create_or_update(
-            self, resource_group_name, jit_network_access_policy_name, body, custom_headers=None, raw=False, **operation_config):
-        """Create a policy for protecting resources using Just-in-Time access
-        control.
+            self, resource_group_name, automation_name, automation, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a security automation. If a security automation is
+        already created and a subsequent request is issued for the same
+        automation id, then it will be updated.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param jit_network_access_policy_name: Name of a Just-in-Time access
-         configuration policy.
-        :type jit_network_access_policy_name: str
-        :param body:
-        :type body: ~azure.mgmt.security.models.JitNetworkAccessPolicy
+        :param automation_name: The security automation name.
+        :type automation_name: str
+        :param automation: The security automation resource
+        :type automation: ~azure.mgmt.security.models.Automation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: JitNetworkAccessPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.JitNetworkAccessPolicy or
+        :return: Automation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.Automation or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -411,8 +269,7 @@ class JitNetworkAccessPoliciesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'jitNetworkAccessPolicyName': self._serialize.url("jit_network_access_policy_name", jit_network_access_policy_name, 'str')
+            'automationName': self._serialize.url("automation_name", automation_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -432,38 +289,39 @@ class JitNetworkAccessPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'JitNetworkAccessPolicy')
+        body_content = self._serialize.body(automation, 'Automation')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('JitNetworkAccessPolicy', response)
+            deserialized = self._deserialize('Automation', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('Automation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies/{jitNetworkAccessPolicyName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}'}
 
     def delete(
-            self, resource_group_name, jit_network_access_policy_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a Just-in-Time access control policy.
+            self, resource_group_name, automation_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a security automation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param jit_network_access_policy_name: Name of a Just-in-Time access
-         configuration policy.
-        :type jit_network_access_policy_name: str
+        :param automation_name: The security automation name.
+        :type automation_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -478,8 +336,7 @@ class JitNetworkAccessPoliciesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'jitNetworkAccessPolicyName': self._serialize.url("jit_network_access_policy_name", jit_network_access_policy_name, 'str')
+            'automationName': self._serialize.url("automation_name", automation_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -500,7 +357,7 @@ class JitNetworkAccessPoliciesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -508,46 +365,36 @@ class JitNetworkAccessPoliciesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies/{jitNetworkAccessPolicyName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}'}
 
-    def initiate(
-            self, resource_group_name, jit_network_access_policy_name, virtual_machines, justification=None, custom_headers=None, raw=False, **operation_config):
-        """Initiate a JIT access from a specific Just-in-Time policy
-        configuration.
+    def validate(
+            self, resource_group_name, automation_name, automation, custom_headers=None, raw=False, **operation_config):
+        """Validates the security automation model before create or update. Any
+        validation errors are returned to the client.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param jit_network_access_policy_name: Name of a Just-in-Time access
-         configuration policy.
-        :type jit_network_access_policy_name: str
-        :param virtual_machines: A list of virtual machines & ports to open
-         access for
-        :type virtual_machines:
-         list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateVirtualMachine]
-        :param justification: The justification for making the initiate
-         request
-        :type justification: str
+        :param automation_name: The security automation name.
+        :type automation_name: str
+        :param automation: The security automation resource
+        :type automation: ~azure.mgmt.security.models.Automation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: JitNetworkAccessRequest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.JitNetworkAccessRequest or
+        :return: AutomationValidationStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.AutomationValidationStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        body = models.JitNetworkAccessPolicyInitiateRequest(virtual_machines=virtual_machines, justification=justification)
-
         # Construct URL
-        url = self.initiate.metadata['url']
+        url = self.validate.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'jitNetworkAccessPolicyName': self._serialize.url("jit_network_access_policy_name", jit_network_access_policy_name, 'str'),
-            'jitNetworkAccessPolicyInitiateType': self._serialize.url("self.jit_network_access_policy_initiate_type", self.jit_network_access_policy_initiate_type, 'str')
+            'automationName': self._serialize.url("automation_name", automation_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -567,24 +414,24 @@ class JitNetworkAccessPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'JitNetworkAccessPolicyInitiateRequest')
+        body_content = self._serialize.body(automation, 'Automation')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
-        if response.status_code == 202:
-            deserialized = self._deserialize('JitNetworkAccessRequest', response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('AutomationValidationStatus', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    initiate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/jitNetworkAccessPolicies/{jitNetworkAccessPolicyName}/{jitNetworkAccessPolicyInitiateType}'}
+    validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}/validate'}
