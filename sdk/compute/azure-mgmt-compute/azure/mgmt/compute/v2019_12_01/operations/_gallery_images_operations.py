@@ -27,7 +27,7 @@ class GalleryImagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-12-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class GalleryImagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2019-12-01"
 
         self.config = config
 
@@ -113,7 +113,7 @@ class GalleryImagesOperations(object):
         :param gallery_image: Parameters supplied to the create or update
          gallery image operation.
         :type gallery_image:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImage
+         ~azure.mgmt.compute.v2019_12_01.models.GalleryImage
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -122,9 +122,9 @@ class GalleryImagesOperations(object):
         :return: An instance of LROPoller that returns GalleryImage or
          ClientRawResponse<GalleryImage> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_12_01.models.GalleryImage]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_12_01.models.GalleryImage]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -223,7 +223,7 @@ class GalleryImagesOperations(object):
         :param gallery_image: Parameters supplied to the update gallery image
          operation.
         :type gallery_image:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImageUpdate
+         ~azure.mgmt.compute.v2019_12_01.models.GalleryImageUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -232,9 +232,9 @@ class GalleryImagesOperations(object):
         :return: An instance of LROPoller that returns GalleryImage or
          ClientRawResponse<GalleryImage> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_12_01.models.GalleryImage]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_12_01.models.GalleryImage]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -283,7 +283,7 @@ class GalleryImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: GalleryImage or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2019_07_01.models.GalleryImage or
+        :rtype: ~azure.mgmt.compute.v2019_12_01.models.GalleryImage or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -432,7 +432,7 @@ class GalleryImagesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of GalleryImage
         :rtype:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImagePaged[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]
+         ~azure.mgmt.compute.v2019_12_01.models.GalleryImagePaged[~azure.mgmt.compute.v2019_12_01.models.GalleryImage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

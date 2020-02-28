@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class GalleryImagesOperations(object):
-    """GalleryImagesOperations operations.
+class GalleryImageVersionsOperations(object):
+    """GalleryImageVersionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -27,7 +27,7 @@ class GalleryImagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-12-01".
     """
 
     models = models
@@ -37,20 +37,21 @@ class GalleryImagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2019-12-01"
 
         self.config = config
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
-            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str')
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -70,7 +71,7 @@ class GalleryImagesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(gallery_image, 'GalleryImage')
+        body_content = self._serialize.body(gallery_image_version, 'GalleryImageVersion')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -84,11 +85,11 @@ class GalleryImagesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -97,48 +98,53 @@ class GalleryImagesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a gallery Image Definition.
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery in which the
-         Image Definition is to be created.
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery Image Definition to
-         be created or updated. The allowed characters are alphabets and
-         numbers with dots, dashes, and periods allowed in the middle. The
-         maximum length is 80 characters.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version is to be created.
         :type gallery_image_name: str
-        :param gallery_image: Parameters supplied to the create or update
-         gallery image operation.
-        :type gallery_image:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImage
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be created. Needs to follow semantic version name pattern:
+         The allowed characters are digit and period. Digits must be within the
+         range of a 32-bit integer. Format:
+         <MajorVersion>.<MinorVersion>.<Patch>
+        :type gallery_image_version_name: str
+        :param gallery_image_version: Parameters supplied to the create or
+         update gallery Image Version operation.
+        :type gallery_image_version:
+         ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns GalleryImage or
-         ClientRawResponse<GalleryImage> if raw==True
+        :return: An instance of LROPoller that returns GalleryImageVersion or
+         ClientRawResponse<GalleryImageVersion> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             gallery_name=gallery_name,
             gallery_image_name=gallery_image_name,
-            gallery_image=gallery_image,
+            gallery_image_version_name=gallery_image_version_name,
+            gallery_image_version=gallery_image_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -153,18 +159,19 @@ class GalleryImagesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
 
     def _update_initial(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
-            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str')
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -184,7 +191,7 @@ class GalleryImagesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(gallery_image, 'GalleryImageUpdate')
+        body_content = self._serialize.body(gallery_image_version, 'GalleryImageVersionUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -198,7 +205,7 @@ class GalleryImagesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -207,48 +214,53 @@ class GalleryImagesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update a gallery Image Definition.
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery in which the
-         Image Definition is to be updated.
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery Image Definition to
-         be updated. The allowed characters are alphabets and numbers with
-         dots, dashes, and periods allowed in the middle. The maximum length is
-         80 characters.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version is to be updated.
         :type gallery_image_name: str
-        :param gallery_image: Parameters supplied to the update gallery image
-         operation.
-        :type gallery_image:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImageUpdate
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be updated. Needs to follow semantic version name pattern:
+         The allowed characters are digit and period. Digits must be within the
+         range of a 32-bit integer. Format:
+         <MajorVersion>.<MinorVersion>.<Patch>
+        :type gallery_image_version_name: str
+        :param gallery_image_version: Parameters supplied to the update
+         gallery Image Version operation.
+        :type gallery_image_version:
+         ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersionUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns GalleryImage or
-         ClientRawResponse<GalleryImage> if raw==True
+        :return: An instance of LROPoller that returns GalleryImageVersion or
+         ClientRawResponse<GalleryImageVersion> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             gallery_name=gallery_name,
             gallery_image_name=gallery_image_name,
-            gallery_image=gallery_image,
+            gallery_image_version_name=gallery_image_version_name,
+            gallery_image_version=gallery_image_version,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -263,27 +275,34 @@ class GalleryImagesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
     def get(
-            self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves information about a gallery Image Definition.
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves information about a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the Shared Image Gallery from which
-         the Image Definitions are to be retrieved.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery Image Definition to
-         be retrieved.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version resides.
         :type gallery_image_name: str
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be retrieved.
+        :type gallery_image_version_name: str
+        :param expand: The expand expression to apply on the operation.
+         Possible values include: 'ReplicationStatus'
+        :type expand: str or
+         ~azure.mgmt.compute.v2019_12_01.models.ReplicationStatusTypes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GalleryImage or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2019_07_01.models.GalleryImage or
+        :return: GalleryImageVersion or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -293,12 +312,15 @@ class GalleryImagesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
-            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str')
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -322,25 +344,26 @@ class GalleryImagesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('GalleryImage', response)
+            deserialized = self._deserialize('GalleryImageVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
-            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str')
+            'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str'),
+            'galleryImageVersionName': self._serialize.url("gallery_image_version_name", gallery_image_version_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -371,17 +394,20 @@ class GalleryImagesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a gallery image.
+            self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery in which the
-         Image Definition is to be deleted.
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery Image Definition to
-         be deleted.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version resides.
         :type gallery_image_name: str
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be deleted.
+        :type gallery_image_version_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -397,6 +423,7 @@ class GalleryImagesOperations(object):
             resource_group_name=resource_group_name,
             gallery_name=gallery_name,
             gallery_image_name=gallery_image_name,
+            gallery_image_version_name=gallery_image_version_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -414,35 +441,39 @@ class GalleryImagesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}'}
 
-    def list_by_gallery(
-            self, resource_group_name, gallery_name, custom_headers=None, raw=False, **operation_config):
-        """List gallery Image Definitions in a gallery.
+    def list_by_gallery_image(
+            self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, **operation_config):
+        """List gallery Image Versions in a gallery Image Definition.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the Shared Image Gallery from which
-         Image Definitions are to be listed.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition resides.
         :type gallery_name: str
+        :param gallery_image_name: The name of the Shared Image Gallery Image
+         Definition from which the Image Versions are to be listed.
+        :type gallery_image_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GalleryImage
+        :return: An iterator like instance of GalleryImageVersion
         :rtype:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImagePaged[~azure.mgmt.compute.v2019_07_01.models.GalleryImage]
+         ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersionPaged[~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersion]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_gallery.metadata['url']
+                url = self.list_by_gallery_image.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'galleryName': self._serialize.url("gallery_name", gallery_name, 'str')
+                    'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+                    'galleryImageName': self._serialize.url("gallery_image_name", gallery_image_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -484,7 +515,7 @@ class GalleryImagesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.GalleryImagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.GalleryImageVersionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_gallery.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images'}
+    list_by_gallery_image.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions'}
