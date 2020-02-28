@@ -311,3 +311,25 @@ def standard_subscription(live_servicebus_config, standard_topic):  # pylint: di
         yield (topic, subscription)
     finally:
         cleanup_subscription(live_servicebus_config, topic, subscription, client=client)
+
+def pytest_configure(config):
+    # register an additional marker
+    config.addinivalue_line(
+        "markers", "live_test_only: mark test to be a live test only"
+    )
+    config.addinivalue_line(
+        "markers", "playback_test_only: mark test to be a playback test only"
+    )
+
+def pytest_runtest_setup(item):
+    is_live_only_test_marked = bool([mark for mark in item.iter_markers(name="live_test_only")])
+    if is_live_only_test_marked:
+        from devtools_testutils import is_live
+        if not is_live():
+            pytest.skip("live test only")
+
+    is_playback_test_marked = bool([mark for mark in item.iter_markers(name="playback_test_only")])
+    if is_playback_test_marked:
+        from devtools_testutils import is_live
+        if is_live() and os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
+            pytest.skip("playback test only")
