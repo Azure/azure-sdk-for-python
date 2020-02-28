@@ -10,6 +10,7 @@ resources:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      AllocateResourceGroup: 'false'
       ServiceDirectory: eventhub
       Matrix:
         Linux_Python35:
@@ -26,7 +27,7 @@ jobs:
           PythonVersion: '2.7'
         MacOs_Python37:
           OSName: 'MacOS'
-          OSVmImage: 'macOS-10.14'
+          OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
       EnvVars:
         AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)

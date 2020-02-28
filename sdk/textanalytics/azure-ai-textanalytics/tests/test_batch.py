@@ -298,7 +298,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 self.assertIsNotNone(entity.name)
                 self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.id)
+                self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
 
@@ -426,7 +426,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.sentiment_scores)
+            self.assertIsNotNone(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -578,7 +578,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             docs,
             show_stats=True,
             model_version="latest",
-            response_hook=callback
+            raw_response_hook=callback
         )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -604,7 +604,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -621,7 +621,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.detect_language(docs, country_hint="", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_per_item_dont_use_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -640,7 +640,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_language(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -657,7 +657,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -672,7 +672,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -692,7 +692,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             DetectLanguageInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="US", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_country_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -710,7 +710,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="CA", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -727,7 +727,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.analyze_sentiment(docs, language="fr", response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="fr", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -744,7 +744,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = text_analytics.analyze_sentiment(docs, language="", response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_per_item_dont_use_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -763,7 +763,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_obj_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -780,7 +780,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.analyze_sentiment(docs, language="de", response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="de", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_dict_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -795,7 +795,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.analyze_sentiment(docs, language="es", response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="es", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -815,7 +815,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -834,7 +834,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_bad_document_input(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -863,9 +863,9 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.detect_language(docs, response_hook=callback)
-        response = text_analytics.detect_language(docs, country_hint="DE", response_hook=callback_2)
-        response = text_analytics.detect_language(docs, response_hook=callback)
+        response = text_analytics.detect_language(docs, raw_response_hook=callback)
+        response = text_analytics.detect_language(docs, country_hint="DE", raw_response_hook=callback_2)
+        response = text_analytics.detect_language(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_client_passed_default_language_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -885,9 +885,9 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
-        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback_2)
-        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, language="en", raw_response_hook=callback_2)
+        response = text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -923,7 +923,7 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed it."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = text_analytics.analyze_sentiment(docs, response_hook=callback)
+        response = text_analytics.analyze_sentiment(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_document_attribute_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -1015,3 +1015,88 @@ class TestBatchTextAnalytics(TextAnalyticsTest):
         # response = text_analytics.detect_language(docs)
         # self.assertEqual(response[0].error.code, "invalidCountryHint")
         # self.assertIsNotNone(response[0].error.message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_text_analytics_country_hint_none(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        # service will eventually support this and we will not need to send "" for input == "none"
+        documents = [{"id": "0", "country_hint": "none", "text": "This is written in English."}]
+        documents2 = [DetectLanguageInput(id="1", country_hint="none", text="This is written in English.")]
+
+        def callback(response):
+            country_str = "\"countryHint\": \"\""
+            country = response.http_request.body.count(country_str)
+            self.assertEqual(country, 1)
+
+        # test dict
+        result = text_analytics.detect_language(documents, raw_response_hook=callback)
+        # test DetectLanguageInput
+        result2 = text_analytics.detect_language(documents2, raw_response_hook=callback)
+        # test per-operation
+        result3 = text_analytics.detect_language(inputs=["this is written in english"], country_hint="none", raw_response_hook=callback)
+        # test client default
+        new_client = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key), default_country_hint="none")
+        result4 = new_client.detect_language(inputs=["this is written in english"], raw_response_hook=callback)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    def test_keyword_arguments(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        def callback(response):
+            country_str = "\"countryHint\": \"ES\""
+            self.assertEqual(response.http_request.body.count(country_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        def callback2(response):
+            language_str = "\"language\": \"es\""
+            self.assertEqual(response.http_request.body.count(language_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        def callback3(response):
+            language_str = "\"language\": \"en\""
+            self.assertEqual(response.http_request.body.count(language_str), 1)
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.statistics)
+
+        res = text_analytics.detect_language(
+            inputs=["this is written in english"],
+            model_version="latest",
+            show_stats=True,
+            country_hint="ES",
+            raw_response_hook=callback
+        )
+
+        res = text_analytics.recognize_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            raw_response_hook=callback2
+        )
+
+        res = text_analytics.recognize_linked_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            raw_response_hook=callback2
+        )
+
+        res = text_analytics.recognize_pii_entities(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="en",
+            raw_response_hook=callback3
+        )
+
+        res = text_analytics.analyze_sentiment(
+            inputs=["Bill Gates is the CEO of Microsoft."],
+            model_version="latest",
+            show_stats=True,
+            language="es",
+            raw_response_hook=callback2
+        )

@@ -36,28 +36,9 @@ except ImportError:
     from mock import Mock
 
 # module under test
-from azure.core.exceptions import HttpResponseError, ODataV4Error
+from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase
-
-
-class FakeErrorOne(object):
-
-    def __init__(self):
-        self.error = Mock(message="A fake error", code="FakeErrorOne")
-
-
-class FakeErrorTwo(object):
-
-    def __init__(self):
-        self.message = "A different fake error"
-
-
-class FakeHttpResponse(HttpResponseError):
-
-    def __init__(self, error, *args, **kwargs):
-        self.error = error
-        super(FakeHttpResponse, self).__init__(self, *args, **kwargs)
 
 
 def _build_response(json_body):
@@ -76,6 +57,27 @@ def _build_response(json_body):
             return self._body
 
     return MockResponse()
+
+
+class FakeErrorOne(object):
+
+    def __init__(self):
+        self.error = Mock(message="A fake error", code="FakeErrorOne")
+
+
+class FakeErrorTwo(object):
+
+    def __init__(self):
+        self.code = "FakeErrorTwo"
+        self.message = "A different fake error"
+
+
+class FakeHttpResponse(HttpResponseError):
+
+    def __init__(self, response, error, *args, **kwargs):
+        self.error = error
+        super(FakeHttpResponse, self).__init__(self, response=response, *args, **kwargs)
+
 
 class TestExceptions(object):
 
@@ -98,20 +100,54 @@ class TestExceptions(object):
         assert error.status_code is None
 
     def test_deserialized_httpresponse_error_code(self):
-        error = FakeHttpResponse(FakeErrorOne())
+        """This is backward compat support of autorest azure-core (KV 4.0.0, Storage 12.0.0).
+
+        Do NOT adapt this test unless you know what you're doing.
+        """
+        message = {
+            "error": {
+                "code": "FakeErrorOne",
+                "message": "A fake error",
+            }
+        }
+        response = _build_response(json.dumps(message).encode("utf-8"))
+        error = FakeHttpResponse(response, FakeErrorOne())
         assert error.message == "(FakeErrorOne) A fake error"
-        assert error.response is None
-        assert error.reason is None
-        assert error.status_code is None
-        assert isinstance(error.error, FakeErrorOne)
+        assert str(error.error) == "(FakeErrorOne) A fake error"
+        assert error.error.code == "FakeErrorOne"
+        assert error.error.message == "A fake error"
+        assert error.response is response
+        assert error.reason == "Bad Request"
+        assert error.status_code == 400
+        assert isinstance(error.model, FakeErrorOne)
+        assert isinstance(error.error, ODataV4Format)
+
+        # Could test if we see a deprecation warning
+        assert error.error.error.code == "FakeErrorOne"
+        assert error.error.error.message == "A fake error"
+
 
     def test_deserialized_httpresponse_error_message(self):
-        error = FakeHttpResponse(FakeErrorTwo())
-        assert error.message == "A different fake error"
-        assert error.response is None
-        assert error.reason is None
-        assert error.status_code is None
-        assert isinstance(error.error, FakeErrorTwo)
+        """This is backward compat support for weird responses, adn even if it's likely
+        just the autorest testserver, should be fine parsing.
+
+        Do NOT adapt this test unless you know what you're doing.
+        """
+        message = {
+            "code": "FakeErrorTwo",
+            "message": "A different fake error",
+        }
+        response = _build_response(json.dumps(message).encode("utf-8"))
+        error = FakeHttpResponse(response, FakeErrorTwo())
+        assert error.message == "(FakeErrorTwo) A different fake error"
+        assert str(error.error) == "(FakeErrorTwo) A different fake error"
+        assert error.error.code == "FakeErrorTwo"
+        assert error.error.message == "A different fake error"
+        assert error.response is response
+        assert error.reason == "Bad Request"
+        assert error.status_code == 400
+        assert isinstance(error.model, FakeErrorTwo)
+        assert isinstance(error.error, ODataV4Format)
 
     def test_httpresponse_error_with_response(self):
         response = requests.get("https://bing.com")

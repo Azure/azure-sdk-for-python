@@ -41,18 +41,15 @@ class ManagedIdentityCredential(object):
     :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __new__(cls, **kwargs):
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            return MsiCredential(**kwargs)
-        return ImdsCredential(**kwargs)
-
-    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
-    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        pass
+        self._credential = None
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            self._credential = MsiCredential(**kwargs)
+        else:
+            self._credential = ImdsCredential(**kwargs)
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
+    def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -62,7 +59,10 @@ class ManagedIdentityCredential(object):
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
-        return AccessToken()
+
+        if not self._credential:
+            raise CredentialUnavailableError(message="No managed identity endpoint found.")
+        return self._credential.get_token(*scopes, **kwargs)
 
 
 class _ManagedIdentityBase(object):

@@ -46,7 +46,7 @@ parameters:
       RunForPR: false
     MacOS_Python27:
       OSName: 'MacOS'
-      OSVmImage: 'macOS-10.13'
+      OSVmImage: 'macOS-10.15'
       PythonVersion: '2.7'
       CoverageArg: ''
       RunForPR: false

@@ -3,5 +3,6 @@ pytest-cov
 pytest-xdist
 pytest-asyncio; python_version >= '3.5'
 coverage==4.5.4
+idna==2.8
 ../../../tools/azure-devtools
 ../../../tools/azure-sdk-tools

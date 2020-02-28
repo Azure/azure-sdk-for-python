@@ -53,7 +53,7 @@ class TimeSeriesInsightsClient(SDKClient):
         super(TimeSeriesInsightsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-11-15'
+        self.api_version = '2018-08-15-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

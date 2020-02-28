@@ -1,5 +1,7 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
 ## 1.0.0 (2020-01-13)
 Stable release. No new features or API changes.
 

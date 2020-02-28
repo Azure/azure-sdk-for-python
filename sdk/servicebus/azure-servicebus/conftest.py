@@ -14,7 +14,7 @@ import pytest
 collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("tests/async_tests")
-    collect_ignore.append("examples/async_examples")
+    collect_ignore.append("samples/async_samples")
 
 def get_live_servicebus_config():
     config = {}

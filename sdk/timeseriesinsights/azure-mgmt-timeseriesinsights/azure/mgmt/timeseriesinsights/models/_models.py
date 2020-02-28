@@ -30,7 +30,7 @@ class AccessPolicyCreateOrUpdateParameters(Model):
     _attribute_map = {
         'principal_object_id': {'key': 'properties.principalObjectId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'roles': {'key': 'properties.roles', 'type': '[AccessPolicyRole]'},
+        'roles': {'key': 'properties.roles', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -128,7 +128,7 @@ class AccessPolicyResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'principal_object_id': {'key': 'properties.principalObjectId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'roles': {'key': 'properties.roles', 'type': '[AccessPolicyRole]'},
+        'roles': {'key': 'properties.roles', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -151,7 +151,7 @@ class AccessPolicyUpdateParameters(Model):
 
     _attribute_map = {
         'description': {'key': 'properties.description', 'type': 'str'},
-        'roles': {'key': 'properties.roles', 'type': '[AccessPolicyRole]'},
+        'roles': {'key': 'properties.roles', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -180,7 +180,7 @@ class ResourceProperties(Model):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
     }
 
@@ -215,7 +215,7 @@ class EventSourceCommonProperties(ResourceProperties):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
     }
@@ -257,7 +257,7 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
@@ -359,55 +359,47 @@ class CreateOrUpdateTrackedResourceProperties(Model):
 class EnvironmentCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProperties):
     """Parameters supplied to the CreateOrUpdate Environment operation.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StandardEnvironmentCreateOrUpdateParameters,
+    LongTermEnvironmentCreateOrUpdateParameters
+
     All required parameters must be populated in order to send to Azure.
 
     :param location: Required. The location of the resource.
     :type location: str
     :param tags: Key-value pairs of additional properties for the resource.
     :type tags: dict[str, str]
-    :param sku: Required. The sku determines the capacity of the environment,
-     the SLA (in queries-per-minute and total capacity), and the billing rate.
+    :param sku: Required. The sku determines the type of environment, either
+     standard (S1 or S2) or long-term (L1). For standard environments the sku
+     determines the capacity of the environment, the ingress rate, and the
+     billing rate.
     :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param data_retention_time: Required. ISO8601 timespan specifying the
-     minimum number of days the environment's events will be available for
-     query.
-    :type data_retention_time: timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series
-     Insights service should take when the environment's capacity has been
-     exceeded. If "PauseIngress" is specified, new events will not be read from
-     the event source. If "PurgeOldData" is specified, new events will continue
-     to be read and old events will be deleted from the environment. The
-     default behavior is PurgeOldData. Possible values include: 'PurgeOldData',
-     'PauseIngress'
-    :type storage_limit_exceeded_behavior: str or
-     ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of partition keys according to
-     which the data in the environment will be ordered.
-    :type partition_key_properties:
-     list[~azure.mgmt.timeseriesinsights.models.PartitionKeyProperty]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'location': {'required': True},
         'sku': {'required': True},
-        'data_retention_time': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
-        'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'StorageLimitExceededBehavior'},
-        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[PartitionKeyProperty]'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'Standard': 'StandardEnvironmentCreateOrUpdateParameters', 'LongTerm': 'LongTermEnvironmentCreateOrUpdateParameters'}
     }
 
     def __init__(self, **kwargs):
         super(EnvironmentCreateOrUpdateParameters, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
-        self.data_retention_time = kwargs.get('data_retention_time', None)
-        self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
-        self.partition_key_properties = kwargs.get('partition_key_properties', None)
+        self.kind = None
+        self.kind = 'EnvironmentCreateOrUpdateParameters'
 
 
 class EnvironmentListResponse(Model):
@@ -472,6 +464,9 @@ class EnvironmentResource(TrackedResource):
     """An environment is a set of time-series data available for query, and is the
     top level Azure Time Series Insights resource.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StandardEnvironmentResource, LongTermEnvironmentResource
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -487,26 +482,51 @@ class EnvironmentResource(TrackedResource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param sku: The sku determines the capacity of the environment, the SLA
-     (in queries-per-minute and total capacity), and the billing rate.
+    :param sku: Required. The sku determines the type of environment, either
+     standard (S1 or S2) or long-term (L1). For standard environments the sku
+     determines the capacity of the environment, the ingress rate, and the
+     billing rate.
     :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param data_retention_time: Required. ISO8601 timespan specifying the
-     minimum number of days the environment's events will be available for
-     query.
-    :type data_retention_time: timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series
-     Insights service should take when the environment's capacity has been
-     exceeded. If "PauseIngress" is specified, new events will not be read from
-     the event source. If "PurgeOldData" is specified, new events will continue
-     to be read and old events will be deleted from the environment. The
-     default behavior is PurgeOldData. Possible values include: 'PurgeOldData',
-     'PauseIngress'
-    :type storage_limit_exceeded_behavior: str or
-     ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of partition keys according to
-     which the data in the environment will be ordered.
-    :type partition_key_properties:
-     list[~azure.mgmt.timeseriesinsights.models.PartitionKeyProperty]
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'sku': {'required': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'Standard': 'StandardEnvironmentResource', 'LongTerm': 'LongTermEnvironmentResource'}
+    }
+
+    def __init__(self, **kwargs):
+        super(EnvironmentResource, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.kind = None
+        self.kind = 'EnvironmentResource'
+
+
+class EnvironmentResourceProperties(ResourceProperties):
+    """Properties of the environment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param provisioning_state: Provisioning state of the resource. Possible
      values include: 'Accepted', 'Creating', 'Updating', 'Succeeded', 'Failed',
      'Deleting'
@@ -528,41 +548,21 @@ class EnvironmentResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'data_retention_time': {'required': True},
         'creation_time': {'readonly': True},
         'data_access_id': {'readonly': True},
         'data_access_fqdn': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
-        'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'StorageLimitExceededBehavior'},
-        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[PartitionKeyProperty]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'data_access_id': {'key': 'properties.dataAccessId', 'type': 'str'},
-        'data_access_fqdn': {'key': 'properties.dataAccessFqdn', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'EnvironmentStatus'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'data_access_id': {'key': 'dataAccessId', 'type': 'str'},
+        'data_access_fqdn': {'key': 'dataAccessFqdn', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'EnvironmentStatus'},
     }
 
     def __init__(self, **kwargs):
-        super(EnvironmentResource, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.data_retention_time = kwargs.get('data_retention_time', None)
-        self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
-        self.partition_key_properties = kwargs.get('partition_key_properties', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.creation_time = None
+        super(EnvironmentResourceProperties, self).__init__(**kwargs)
         self.data_access_id = None
         self.data_access_fqdn = None
         self.status = kwargs.get('status', None)
@@ -598,57 +598,37 @@ class EnvironmentStatus(Model):
      environment.
     :type ingress:
      ~azure.mgmt.timeseriesinsights.models.IngressEnvironmentStatus
+    :param warm_storage: An object that represents the status of warm storage
+     on an environment.
+    :type warm_storage:
+     ~azure.mgmt.timeseriesinsights.models.WarmStorageEnvironmentStatus
     """
 
     _attribute_map = {
         'ingress': {'key': 'ingress', 'type': 'IngressEnvironmentStatus'},
+        'warm_storage': {'key': 'warmStorage', 'type': 'WarmStorageEnvironmentStatus'},
     }
 
     def __init__(self, **kwargs):
         super(EnvironmentStatus, self).__init__(**kwargs)
         self.ingress = kwargs.get('ingress', None)
+        self.warm_storage = kwargs.get('warm_storage', None)
 
 
 class EnvironmentUpdateParameters(Model):
     """Parameters supplied to the Update Environment operation.
 
-    :param sku: The sku of the environment.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
     :param tags: Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
-    :param data_retention_time: ISO8601 timespan specifying the minimum number
-     of days the environment's events will be available for query.
-    :type data_retention_time: timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series
-     Insights service should take when the environment's capacity has been
-     exceeded. If "PauseIngress" is specified, new events will not be read from
-     the event source. If "PurgeOldData" is specified, new events will continue
-     to be read and old events will be deleted from the environment. The
-     default behavior is PurgeOldData. Possible values include: 'PurgeOldData',
-     'PauseIngress'
-    :type storage_limit_exceeded_behavior: str or
-     ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of event properties which will
-     be used to partition data in the environment.
-    :type partition_key_properties:
-     list[~azure.mgmt.timeseriesinsights.models.PartitionKeyProperty]
     """
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
-        'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'StorageLimitExceededBehavior'},
-        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[PartitionKeyProperty]'},
     }
 
     def __init__(self, **kwargs):
         super(EnvironmentUpdateParameters, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
-        self.data_retention_time = kwargs.get('data_retention_time', None)
-        self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
-        self.partition_key_properties = kwargs.get('partition_key_properties', None)
 
 
 class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
@@ -698,7 +678,7 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
@@ -818,7 +798,7 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
@@ -967,7 +947,7 @@ class EventHubEventSourceResource(EventSourceResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
@@ -1107,7 +1087,7 @@ class IngressEnvironmentStatus(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'IngressState'},
+        'state': {'key': 'state', 'type': 'str'},
         'state_details': {'key': 'stateDetails', 'type': 'EnvironmentStateDetails'},
     }
 
@@ -1160,7 +1140,7 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
@@ -1236,7 +1216,7 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
@@ -1325,7 +1305,7 @@ class IoTHubEventSourceResource(EventSourceResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
@@ -1404,7 +1384,7 @@ class LocalTimestamp(Model):
     """
 
     _attribute_map = {
-        'format': {'key': 'format', 'type': 'LocalTimestampFormat'},
+        'format': {'key': 'format', 'type': 'str'},
         'time_zone_offset': {'key': 'timeZoneOffset', 'type': 'LocalTimestampTimeZoneOffset'},
     }
 
@@ -1435,6 +1415,291 @@ class LocalTimestampTimeZoneOffset(Model):
     def __init__(self, **kwargs):
         super(LocalTimestampTimeZoneOffset, self).__init__(**kwargs)
         self.property_name = kwargs.get('property_name', None)
+
+
+class LongTermEnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameters):
+    """Parameters supplied to the Create or Update Environment operation for a
+    long-term environment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location of the resource.
+    :type location: str
+    :param tags: Key-value pairs of additional properties for the resource.
+    :type tags: dict[str, str]
+    :param sku: Required. The sku determines the type of environment, either
+     standard (S1 or S2) or long-term (L1). For standard environments the sku
+     determines the capacity of the environment, the ingress rate, and the
+     billing rate.
+    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param time_series_id_properties: Required. The list of event properties
+     which will be used to define the environment's time series id.
+    :type time_series_id_properties:
+     list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+    :param storage_configuration: Required. The storage configuration provides
+     the connection details that allows the Time Series Insights service to
+     connect to the customer storage account that is used to store the
+     environment's data.
+    :type storage_configuration:
+     ~azure.mgmt.timeseriesinsights.models.LongTermStorageConfigurationInput
+    :param data_retention: Required. ISO8601 timespan specifying the number of
+     days the environment's events will be available for query from the warm
+     store.
+    :type data_retention: timedelta
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'sku': {'required': True},
+        'kind': {'required': True},
+        'time_series_id_properties': {'required': True},
+        'storage_configuration': {'required': True},
+        'data_retention': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'time_series_id_properties': {'key': 'properties.timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
+        'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'LongTermStorageConfigurationInput'},
+        'data_retention': {'key': 'properties.warmStoreConfiguration.dataRetention', 'type': 'duration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermEnvironmentCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.time_series_id_properties = kwargs.get('time_series_id_properties', None)
+        self.storage_configuration = kwargs.get('storage_configuration', None)
+        self.data_retention = kwargs.get('data_retention', None)
+        self.kind = 'LongTerm'
+
+
+class LongTermEnvironmentResource(EnvironmentResource):
+    """An environment is a set of time-series data available for query, and is the
+    top level Azure Time Series Insights resource. LongTerm environments do not
+    have set data retention limits.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku: Required. The sku determines the type of environment, either
+     standard (S1 or S2) or long-term (L1). For standard environments the sku
+     determines the capacity of the environment, the ingress rate, and the
+     billing rate.
+    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar data_access_id: An id used to access the environment data, e.g. to
+     query the environment's events or upload reference data for the
+     environment.
+    :vartype data_access_id: str
+    :ivar data_access_fqdn: The fully qualified domain name used to access the
+     environment data, e.g. to query the environment's events or upload
+     reference data for the environment.
+    :vartype data_access_fqdn: str
+    :param status: An object that represents the status of the environment,
+     and its internal state in the Time Series Insights service.
+    :type status: ~azure.mgmt.timeseriesinsights.models.EnvironmentStatus
+    :param provisioning_state: Provisioning state of the resource. Possible
+     values include: 'Accepted', 'Creating', 'Updating', 'Succeeded', 'Failed',
+     'Deleting'
+    :type provisioning_state: str or
+     ~azure.mgmt.timeseriesinsights.models.ProvisioningState
+    :ivar creation_time: The time the resource was created.
+    :vartype creation_time: datetime
+    :param time_series_id_properties: Required. The list of event properties
+     which will be used to define the environment's time series id.
+    :type time_series_id_properties:
+     list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+    :param storage_configuration: Required. The storage configuration provides
+     the connection details that allows the Time Series Insights service to
+     connect to the customer storage account that is used to store the
+     environment's data.
+    :type storage_configuration:
+     ~azure.mgmt.timeseriesinsights.models.LongTermStorageConfigurationOutput
+    :param data_retention: Required. ISO8601 timespan specifying the number of
+     days the environment's events will be available for query from the warm
+     store.
+    :type data_retention: timedelta
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'sku': {'required': True},
+        'kind': {'required': True},
+        'data_access_id': {'readonly': True},
+        'data_access_fqdn': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'time_series_id_properties': {'required': True},
+        'storage_configuration': {'required': True},
+        'data_retention': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'data_access_id': {'key': 'properties.dataAccessId', 'type': 'str'},
+        'data_access_fqdn': {'key': 'properties.dataAccessFqdn', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'EnvironmentStatus'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'time_series_id_properties': {'key': 'properties.timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
+        'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'LongTermStorageConfigurationOutput'},
+        'data_retention': {'key': 'properties.warmStoreConfiguration.dataRetention', 'type': 'duration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermEnvironmentResource, self).__init__(**kwargs)
+        self.data_access_id = None
+        self.data_access_fqdn = None
+        self.status = kwargs.get('status', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.creation_time = None
+        self.time_series_id_properties = kwargs.get('time_series_id_properties', None)
+        self.storage_configuration = kwargs.get('storage_configuration', None)
+        self.data_retention = kwargs.get('data_retention', None)
+        self.kind = 'LongTerm'
+
+
+class LongTermEnvironmentUpdateParameters(EnvironmentUpdateParameters):
+    """Parameters supplied to the Update Environment operation to update a
+    long-term environment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Key-value pairs of additional properties for the environment.
+    :type tags: dict[str, str]
+    :param storage_configuration: The storage configuration provides the
+     connection details that allows the Time Series Insights service to connect
+     to the customer storage account that is used to store the environment's
+     data.
+    :type storage_configuration:
+     ~azure.mgmt.timeseriesinsights.models.LongTermStorageConfigurationMutableProperties
+    :param data_retention: Required. ISO8601 timespan specifying the number of
+     days the environment's events will be available for query from the warm
+     store.
+    :type data_retention: timedelta
+    """
+
+    _validation = {
+        'data_retention': {'required': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'LongTermStorageConfigurationMutableProperties'},
+        'data_retention': {'key': 'properties.warmStoreConfiguration.dataRetention', 'type': 'duration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermEnvironmentUpdateParameters, self).__init__(**kwargs)
+        self.storage_configuration = kwargs.get('storage_configuration', None)
+        self.data_retention = kwargs.get('data_retention', None)
+
+
+class LongTermStorageConfigurationInput(Model):
+    """The storage configuration provides the connection details that allows the
+    Time Series Insights service to connect to the customer storage account
+    that is used to store the environment's data.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. The name of the storage account that will
+     hold the environment's long term data.
+    :type account_name: str
+    :param management_key: Required. The value of the management key that
+     grants the Time Series Insights service write access to the storage
+     account. This property is not shown in environment responses.
+    :type management_key: str
+    """
+
+    _validation = {
+        'account_name': {'required': True},
+        'management_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'management_key': {'key': 'managementKey', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermStorageConfigurationInput, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.management_key = kwargs.get('management_key', None)
+
+
+class LongTermStorageConfigurationMutableProperties(Model):
+    """The storage configuration provides the connection details that allows the
+    Time Series Insights service to connect to the customer storage account
+    that is used to store the environment's data.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param management_key: Required. The value of the management key that
+     grants the Time Series Insights service write access to the storage
+     account. This property is not shown in environment responses.
+    :type management_key: str
+    """
+
+    _validation = {
+        'management_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'management_key': {'key': 'managementKey', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermStorageConfigurationMutableProperties, self).__init__(**kwargs)
+        self.management_key = kwargs.get('management_key', None)
+
+
+class LongTermStorageConfigurationOutput(Model):
+    """The storage configuration provides the non-secret connection details about
+    the customer storage account that is used to store the environment's data.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. The name of the storage account that will
+     hold the environment's long term data.
+    :type account_name: str
+    """
+
+    _validation = {
+        'account_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'account_name': {'key': 'accountName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermStorageConfigurationOutput, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
 
 
 class Operation(Model):
@@ -1507,27 +1772,6 @@ class OperationDisplay(Model):
         self.description = None
 
 
-class PartitionKeyProperty(Model):
-    """The structure of the property that a partition key can have. An environment
-    can have multiple such properties.
-
-    :param name: The name of the property.
-    :type name: str
-    :param type: The type of the property. Possible values include: 'String'
-    :type type: str or ~azure.mgmt.timeseriesinsights.models.PropertyType
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PartitionKeyProperty, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-
-
 class ReferenceDataSetCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProperties):
     """ReferenceDataSetCreateOrUpdateParameters.
 
@@ -1560,7 +1804,7 @@ class ReferenceDataSetCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProp
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'key_properties': {'key': 'properties.keyProperties', 'type': '[ReferenceDataSetKeyProperty]'},
-        'data_string_comparison_behavior': {'key': 'properties.dataStringComparisonBehavior', 'type': 'DataStringComparisonBehavior'},
+        'data_string_comparison_behavior': {'key': 'properties.dataStringComparisonBehavior', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1583,7 +1827,7 @@ class ReferenceDataSetKeyProperty(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ReferenceDataKeyPropertyType'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1667,8 +1911,8 @@ class ReferenceDataSetResource(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'key_properties': {'key': 'properties.keyProperties', 'type': '[ReferenceDataSetKeyProperty]'},
-        'data_string_comparison_behavior': {'key': 'properties.dataStringComparisonBehavior', 'type': 'DataStringComparisonBehavior'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'data_string_comparison_behavior': {'key': 'properties.dataStringComparisonBehavior', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
     }
 
@@ -1698,16 +1942,18 @@ class ReferenceDataSetUpdateParameters(Model):
 
 
 class Sku(Model):
-    """The sku determines the capacity of the environment, the SLA (in
-    queries-per-minute and total capacity), and the billing rate.
+    """The sku determines the type of environment, either standard (S1 or S2) or
+    long-term (L1). For standard environments the sku determines the capacity
+    of the environment, the ingress rate, and the billing rate.
 
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of this SKU. Possible values include:
-     'S1', 'S2'
+     'S1', 'S2', 'P1', 'L1'
     :type name: str or ~azure.mgmt.timeseriesinsights.models.SkuName
-    :param capacity: Required. The capacity of the sku. This value can be
-     changed to support scale out of environments after they have been created.
+    :param capacity: Required. The capacity of the sku. For standard
+     environments, this value can be changed to support scale out of
+     environments after they have been created.
     :type capacity: int
     """
 
@@ -1717,7 +1963,7 @@ class Sku(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'SkuName'},
+        'name': {'key': 'name', 'type': 'str'},
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
@@ -1725,3 +1971,271 @@ class Sku(Model):
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.capacity = kwargs.get('capacity', None)
+
+
+class StandardEnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameters):
+    """Parameters supplied to the Create or Update Environment operation for a
+    standard environment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location of the resource.
+    :type location: str
+    :param tags: Key-value pairs of additional properties for the resource.
+    :type tags: dict[str, str]
+    :param sku: Required. The sku determines the type of environment, either
+     standard (S1 or S2) or long-term (L1). For standard environments the sku
+     determines the capacity of the environment, the ingress rate, and the
+     billing rate.
+    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param data_retention_time: Required. ISO8601 timespan specifying the
+     minimum number of days the environment's events will be available for
+     query.
+    :type data_retention_time: timedelta
+    :param storage_limit_exceeded_behavior: The behavior the Time Series
+     Insights service should take when the environment's capacity has been
+     exceeded. If "PauseIngress" is specified, new events will not be read from
+     the event source. If "PurgeOldData" is specified, new events will continue
+     to be read and old events will be deleted from the environment. The
+     default behavior is PurgeOldData. Possible values include: 'PurgeOldData',
+     'PauseIngress'
+    :type storage_limit_exceeded_behavior: str or
+     ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+    :param partition_key_properties: The list of event properties which will
+     be used to partition data in the environment.
+    :type partition_key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'sku': {'required': True},
+        'kind': {'required': True},
+        'data_retention_time': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
+        'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'str'},
+        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[TimeSeriesIdProperty]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StandardEnvironmentCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.data_retention_time = kwargs.get('data_retention_time', None)
+        self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
+        self.partition_key_properties = kwargs.get('partition_key_properties', None)
+        self.kind = 'Standard'
+
+
+class StandardEnvironmentResource(EnvironmentResource):
+    """An environment is a set of time-series data available for query, and is the
+    top level Azure Time Series Insights resource. Standard environments have
+    data retention limits.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku: Required. The sku determines the type of environment, either
+     standard (S1 or S2) or long-term (L1). For standard environments the sku
+     determines the capacity of the environment, the ingress rate, and the
+     billing rate.
+    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param data_retention_time: Required. ISO8601 timespan specifying the
+     minimum number of days the environment's events will be available for
+     query.
+    :type data_retention_time: timedelta
+    :param storage_limit_exceeded_behavior: The behavior the Time Series
+     Insights service should take when the environment's capacity has been
+     exceeded. If "PauseIngress" is specified, new events will not be read from
+     the event source. If "PurgeOldData" is specified, new events will continue
+     to be read and old events will be deleted from the environment. The
+     default behavior is PurgeOldData. Possible values include: 'PurgeOldData',
+     'PauseIngress'
+    :type storage_limit_exceeded_behavior: str or
+     ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+    :param partition_key_properties: The list of event properties which will
+     be used to partition data in the environment.
+    :type partition_key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+    :ivar data_access_id: An id used to access the environment data, e.g. to
+     query the environment's events or upload reference data for the
+     environment.
+    :vartype data_access_id: str
+    :ivar data_access_fqdn: The fully qualified domain name used to access the
+     environment data, e.g. to query the environment's events or upload
+     reference data for the environment.
+    :vartype data_access_fqdn: str
+    :param status: An object that represents the status of the environment,
+     and its internal state in the Time Series Insights service.
+    :type status: ~azure.mgmt.timeseriesinsights.models.EnvironmentStatus
+    :param provisioning_state: Provisioning state of the resource. Possible
+     values include: 'Accepted', 'Creating', 'Updating', 'Succeeded', 'Failed',
+     'Deleting'
+    :type provisioning_state: str or
+     ~azure.mgmt.timeseriesinsights.models.ProvisioningState
+    :ivar creation_time: The time the resource was created.
+    :vartype creation_time: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'sku': {'required': True},
+        'kind': {'required': True},
+        'data_retention_time': {'required': True},
+        'data_access_id': {'readonly': True},
+        'data_access_fqdn': {'readonly': True},
+        'creation_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
+        'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'str'},
+        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[TimeSeriesIdProperty]'},
+        'data_access_id': {'key': 'properties.dataAccessId', 'type': 'str'},
+        'data_access_fqdn': {'key': 'properties.dataAccessFqdn', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'EnvironmentStatus'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StandardEnvironmentResource, self).__init__(**kwargs)
+        self.data_retention_time = kwargs.get('data_retention_time', None)
+        self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
+        self.partition_key_properties = kwargs.get('partition_key_properties', None)
+        self.data_access_id = None
+        self.data_access_fqdn = None
+        self.status = kwargs.get('status', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.creation_time = None
+        self.kind = 'Standard'
+
+
+class StandardEnvironmentUpdateParameters(EnvironmentUpdateParameters):
+    """Parameters supplied to the Update Environment operation to update a
+    standard environment.
+
+    :param tags: Key-value pairs of additional properties for the environment.
+    :type tags: dict[str, str]
+    :param sku: The sku of the environment.
+    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :param data_retention_time: ISO8601 timespan specifying the minimum number
+     of days the environment's events will be available for query.
+    :type data_retention_time: timedelta
+    :param storage_limit_exceeded_behavior: The behavior the Time Series
+     Insights service should take when the environment's capacity has been
+     exceeded. If "PauseIngress" is specified, new events will not be read from
+     the event source. If "PurgeOldData" is specified, new events will continue
+     to be read and old events will be deleted from the environment. The
+     default behavior is PurgeOldData. Possible values include: 'PurgeOldData',
+     'PauseIngress'
+    :type storage_limit_exceeded_behavior: str or
+     ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+    :param partition_key_properties: The list of event properties which will
+     be used to partition data in the environment.
+    :type partition_key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
+        'storage_limit_exceeded_behavior': {'key': 'properties.storageLimitExceededBehavior', 'type': 'str'},
+        'partition_key_properties': {'key': 'properties.partitionKeyProperties', 'type': '[TimeSeriesIdProperty]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StandardEnvironmentUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.data_retention_time = kwargs.get('data_retention_time', None)
+        self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
+        self.partition_key_properties = kwargs.get('partition_key_properties', None)
+
+
+class TimeSeriesIdProperty(Model):
+    """The structure of the property that a time series id can have. An
+    environment can have multiple such properties.
+
+    :param name: The name of the property.
+    :type name: str
+    :param type: The type of the property. Possible values include: 'String'
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.PropertyType
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TimeSeriesIdProperty, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+
+
+class WarmStorageEnvironmentStatus(Model):
+    """An object that represents the status of warm storage on an environment.
+
+    :param state: This string represents the state of warm storage properties
+     usage. It can be "Ok", "Error", "Unknown". Possible values include: 'Ok',
+     'Error', 'Unknown'
+    :type state: str or
+     ~azure.mgmt.timeseriesinsights.models.WarmStoragePropertiesState
+    :param current_count: A value that represents the number of properties
+     used by the environment for S1/S2 SKU and number of properties used by
+     Warm Store for PAYG SKU
+    :type current_count: int
+    :param max_count: A value that represents the maximum number of properties
+     used allowed by the environment for S1/S2 SKU and maximum number of
+     properties allowed by Warm Store for PAYG SKU.
+    :type max_count: int
+    """
+
+    _validation = {
+        'current_count': {'maximum': 10, 'minimum': 1},
+        'max_count': {'maximum': 10, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'state': {'key': 'propertiesUsage.state', 'type': 'str'},
+        'current_count': {'key': 'propertiesUsage.stateDetails.currentCount', 'type': 'int'},
+        'max_count': {'key': 'propertiesUsage.stateDetails.maxCount', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WarmStorageEnvironmentStatus, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.current_count = kwargs.get('current_count', None)
+        self.max_count = kwargs.get('max_count', None)

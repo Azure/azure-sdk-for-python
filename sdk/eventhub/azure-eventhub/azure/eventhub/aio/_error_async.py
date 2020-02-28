@@ -6,7 +6,7 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING, Union, cast
 
-from uamqp import errors, compat
+from uamqp import errors
 
 from ..exceptions import (
     _create_eventhub_exception,
@@ -34,10 +34,10 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
         name = cast("ClientBaseAsync", closable)._container_id
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         _LOGGER.info("%r stops due to keyboard interrupt", name)
-        await cast("ConsumerProducerMixin", closable).close()
+        await cast("ConsumerProducerMixin", closable)._close_connection_async()
         raise error
     elif isinstance(exception, EventHubError):
-        await cast("ConsumerProducerMixin", closable).close()
+        await cast("ConsumerProducerMixin", closable)._close_handler_async()
         raise error
     elif isinstance(
         exception,
@@ -67,11 +67,7 @@ async def _handle_exception(  # pylint:disable=too-many-branches, too-many-state
                 await closable._close_connection_async()
             elif isinstance(exception, errors.MessageHandlerError):
                 await cast("ConsumerProducerMixin", closable)._close_handler_async()
-            elif isinstance(exception, errors.AMQPConnectionError):
-                await closable._close_connection_async()
-            elif isinstance(exception, compat.TimeoutException):
-                pass  # Timeout doesn't need to recreate link or connection to retry
-            else:
+            else:  # errors.AMQPConnectionError, compat.TimeoutException, and any other errors
                 await closable._close_connection_async()
         except AttributeError:
             pass
