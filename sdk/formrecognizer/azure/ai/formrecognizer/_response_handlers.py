@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField
+from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table
 
 
 def get_pipeline_response(pipeline_response, _, response_headers):
@@ -21,6 +21,7 @@ def get_receipt_field_value(field):
 
 
 def prepare_receipt_result(response, include_raw):
+    receipts = []
     for page in response.analyze_result.document_results:
         receipt = ExtractedReceipt(
             merchant_address=get_receipt_field_value(page.fields.get("MerchantAddress")),
@@ -92,4 +93,17 @@ def prepare_receipt_result(response, include_raw):
                 ),
             )
         )
-        return receipt
+        receipts.append(receipt)
+    return receipts
+
+
+def prepare_layout_result(response, include_raw):
+    layouts = []
+    pages = []
+    for page in response.analyze_result.page_results:
+        for table in page.tables:
+            my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
+            for cell in table.cells:
+                my_table[cell.row_index][cell.column_index] = TableCell._from_generated(cell)
+            layouts.append(Table(my_table))
+        pages.append(layouts)

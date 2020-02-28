@@ -162,3 +162,59 @@ class ExtractedWord(object):
             bounding_box=word.bounding_box,
             confidence=word.confidence
         )
+
+
+class ExtractedLayoutPage(object):
+    def __init__(self, **kwargs):
+        self.tables = kwargs.get("tables", None)
+        self.page_number = kwargs.get("page_number", None)
+
+    @classmethod
+    def _from_generated(cls, page):
+        return cls(
+            tables=page,
+            page_number=page.page_number
+        )
+
+
+def Table(table):
+    class ExtractedTable(type(table)):
+
+        @property
+        def row_count(self):
+            return len(table)
+
+        @property
+        def column_count(self):
+            return len(table[0])
+
+    return ExtractedTable(table)
+
+
+class TableCell(object):
+    def __init__(self, **kwargs):
+        self.text = kwargs.get('text', None)
+        self.row_index = kwargs.get('row_index', None)
+        self.column_index = kwargs.get('column_index', None)
+        self.row_span = kwargs.get('row_span', 1)
+        self.column_span = kwargs.get('column_span', 1)
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.confidence = kwargs.get('confidence', None)
+        self.is_header = kwargs.get('is_header', False)
+        self.is_footer = kwargs.get('is_footer', False)
+        self.raw_field = kwargs.get('raw_field', None)
+
+    @classmethod
+    def _from_generated(cls, cell):
+        return cls(
+            text=cell.text,
+            row_index=cell.row_index,
+            column_index=cell.column_index,
+            row_span=cell.row_span or 1,
+            column_span=cell.column_span or 1,
+            bounding_box=cell.bounding_box,
+            confidence=cell.confidence,
+            is_header=cell.is_header,
+            is_footer=cell.is_footer,
+            raw_field=cell  # need to hook up raw field
+        )
