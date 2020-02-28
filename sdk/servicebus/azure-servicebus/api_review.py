@@ -1,7 +1,7 @@
 # Two-Clients Approach
 
 ## APIs:
-class SeviceBusSenderClient:
+class ServiceBusSenderClient:
     def __init__(
         self,
         fully_qualified_namespace : str,
@@ -22,7 +22,7 @@ class SeviceBusSenderClient:
         queue_name : str,
         credential : TokenCredential,
         **kwargs
-    ) -> SeviceBusSenderClient:
+    ) -> ServiceBusSenderClient:
     @classmethod
     def from_topic(
         cls,
@@ -30,14 +30,14 @@ class SeviceBusSenderClient:
         topic_name : str,
         credential : TokenCredential,
         **kwargs
-    ) -> SeviceBusSenderClient:
+    ) -> ServiceBusSenderClient:
     @classmethod
     def from_connection_string(
         cls,
         conn_str : str,
         entity_name : str = None,
         **kwargs
-    ) -> SeviceBusSenderClient:
+    ) -> ServiceBusSenderClient:
 
     def __enter__(self):
     def __exit__(self):
@@ -246,14 +246,18 @@ class ServiceBusConnection:
     def __int__(
         self,
         fully_qualified_namespace,
-        entity_name,
         token_credential
     ) -> None:
     def from_connection_string(
         self,
-        conn_str,
-        entity_name=None
+        conn_str
     ) -> ServiceBusConnection:
+
+    def __enter__(self):
+    def __exit__(self):
+
+    def open(self):
+    def close(self):
 
 class ServiceBusSharedKeyCredential:
     def __init__(self, policy, key):
