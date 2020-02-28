@@ -119,7 +119,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request):
+    async def send(self, request):    # pylint: disable=too-many-statements
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object
@@ -132,10 +132,16 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        retry_settings['start_time'] = time.time()
+
+        absolute_timeout = retry_settings['timeout']
 
         while retry_active:
             try:
+                start_time = time.time()
+                if absolute_timeout <= 0:
+                    break
+                request.context.options['connection_timeout'] = absolute_timeout
+
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
@@ -154,6 +160,10 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                         await self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
+            finally:
+                end_time = time.time()
+                if absolute_timeout:
+                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response

@@ -161,7 +161,7 @@ def test_retry_seekable_file():
         pipeline.run(http_request)
     os.unlink(f.name)
 
-def test_retry_max_timeout():
+def test_retry_timeout():
     class MockTransport(HttpTransport):
         def __init__(self):
             self.count = 0
@@ -183,7 +183,7 @@ def test_retry_max_timeout():
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
-    http_retry = RetryPolicy(retry_total=1, max_timeout=10)
+    http_retry = RetryPolicy(retry_total=1, timeout=10)
     pipeline = Pipeline(MockTransport(), [http_retry])
     with pytest.raises(ServiceResponseError):
         pipeline.run(http_request)

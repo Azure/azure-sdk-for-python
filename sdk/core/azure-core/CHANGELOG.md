@@ -10,7 +10,7 @@
 ### Features
 
 - Add raw_request_hook support in custom_hook_policy   #9958
-- Add max_timeout support in retry_policy   #10011
+- Add timeout support in retry_policy   #10011
 
 ## 1.2.2 (2020-02-10)
 
