@@ -4,7 +4,7 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
 
-from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind, tracer
+from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
 from opentelemetry.context import Context
 from opentelemetry.propagators import extract, inject
 
@@ -208,7 +208,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
-        return tracer()
+        return Tracer.get_tracer()
 
     @classmethod
     def change_context(cls, span):
