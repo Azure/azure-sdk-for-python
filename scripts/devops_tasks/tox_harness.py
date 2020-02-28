@@ -332,6 +332,9 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         coverage_commands = create_code_coverage_params(parsed_args, package_name)
         local_options_array.extend(coverage_commands)
 
+        pkg_egg_info_name = "{}.egg-info".format(package_name.replace("-", "_"))
+        local_options_array.extend(["--ignore", pkg_egg_info_name])
+
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
         # we explicitly handle this here.
