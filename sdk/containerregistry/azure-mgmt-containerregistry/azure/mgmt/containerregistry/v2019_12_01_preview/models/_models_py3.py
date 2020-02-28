@@ -32,10 +32,10 @@ class ActiveDirectoryObject(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, object_id: str=None, tenant_id: str=None, **kwargs) -> None:
         super(ActiveDirectoryObject, self).__init__(**kwargs)
-        self.object_id = kwargs.get('object_id', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
+        self.object_id = object_id
+        self.tenant_id = tenant_id
 
 
 class Actor(Model):
@@ -51,9 +51,9 @@ class Actor(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, **kwargs) -> None:
         super(Actor, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
 
 
 class AgentProperties(Model):
@@ -68,9 +68,9 @@ class AgentProperties(Model):
         'cpu': {'key': 'cpu', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, cpu: int=None, **kwargs) -> None:
         super(AgentProperties, self).__init__(**kwargs)
-        self.cpu = kwargs.get('cpu', None)
+        self.cpu = cpu
 
 
 class Argument(Model):
@@ -98,11 +98,11 @@ class Argument(Model):
         'is_secret': {'key': 'isSecret', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, value: str, is_secret: bool=False, **kwargs) -> None:
         super(Argument, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-        self.is_secret = kwargs.get('is_secret', False)
+        self.name = name
+        self.value = value
+        self.is_secret = is_secret
 
 
 class AuthInfo(Model):
@@ -113,7 +113,7 @@ class AuthInfo(Model):
     :param token_type: Required. The type of Auth token. Possible values
      include: 'PAT', 'OAuth'
     :type token_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenType
     :param token: Required. The access token used to access the source control
      provider.
     :type token: str
@@ -138,13 +138,13 @@ class AuthInfo(Model):
         'expires_in': {'key': 'expiresIn', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, token_type, token: str, refresh_token: str=None, scope: str=None, expires_in: int=None, **kwargs) -> None:
         super(AuthInfo, self).__init__(**kwargs)
-        self.token_type = kwargs.get('token_type', None)
-        self.token = kwargs.get('token', None)
-        self.refresh_token = kwargs.get('refresh_token', None)
-        self.scope = kwargs.get('scope', None)
-        self.expires_in = kwargs.get('expires_in', None)
+        self.token_type = token_type
+        self.token = token
+        self.refresh_token = refresh_token
+        self.scope = scope
+        self.expires_in = expires_in
 
 
 class AuthInfoUpdateParameters(Model):
@@ -153,7 +153,7 @@ class AuthInfoUpdateParameters(Model):
     :param token_type: The type of Auth token. Possible values include: 'PAT',
      'OAuth'
     :type token_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenType
     :param token: The access token used to access the source control provider.
     :type token: str
     :param refresh_token: The refresh token used to refresh the access token.
@@ -172,13 +172,13 @@ class AuthInfoUpdateParameters(Model):
         'expires_in': {'key': 'expiresIn', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, token_type=None, token: str=None, refresh_token: str=None, scope: str=None, expires_in: int=None, **kwargs) -> None:
         super(AuthInfoUpdateParameters, self).__init__(**kwargs)
-        self.token_type = kwargs.get('token_type', None)
-        self.token = kwargs.get('token', None)
-        self.refresh_token = kwargs.get('refresh_token', None)
-        self.scope = kwargs.get('scope', None)
-        self.expires_in = kwargs.get('expires_in', None)
+        self.token_type = token_type
+        self.token = token
+        self.refresh_token = refresh_token
+        self.scope = scope
+        self.expires_in = expires_in
 
 
 class BaseImageDependency(Model):
@@ -187,7 +187,7 @@ class BaseImageDependency(Model):
     :param type: The type of the base image dependency. Possible values
      include: 'BuildTime', 'RunTime'
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependencyType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependencyType
     :param registry: The registry login server.
     :type registry: str
     :param repository: The repository name.
@@ -206,13 +206,13 @@ class BaseImageDependency(Model):
         'digest': {'key': 'digest', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, registry: str=None, repository: str=None, tag: str=None, digest: str=None, **kwargs) -> None:
         super(BaseImageDependency, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.registry = kwargs.get('registry', None)
-        self.repository = kwargs.get('repository', None)
-        self.tag = kwargs.get('tag', None)
-        self.digest = kwargs.get('digest', None)
+        self.type = type
+        self.registry = registry
+        self.repository = repository
+        self.tag = tag
+        self.digest = digest
 
 
 class BaseImageTrigger(Model):
@@ -223,18 +223,18 @@ class BaseImageTrigger(Model):
     :param base_image_trigger_type: Required. The type of the auto trigger for
      base image dependency updates. Possible values include: 'All', 'Runtime'
     :type base_image_trigger_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTriggerType
     :param update_trigger_endpoint: The endpoint URL for receiving update
      triggers.
     :type update_trigger_endpoint: str
     :param update_trigger_payload_type: Type of Payload body for Base image
      update triggers. Possible values include: 'Default', 'Token'
     :type update_trigger_payload_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UpdateTriggerPayloadType
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -252,13 +252,13 @@ class BaseImageTrigger(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, base_image_trigger_type, name: str, update_trigger_endpoint: str=None, update_trigger_payload_type=None, status="Enabled", **kwargs) -> None:
         super(BaseImageTrigger, self).__init__(**kwargs)
-        self.base_image_trigger_type = kwargs.get('base_image_trigger_type', None)
-        self.update_trigger_endpoint = kwargs.get('update_trigger_endpoint', None)
-        self.update_trigger_payload_type = kwargs.get('update_trigger_payload_type', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+        self.base_image_trigger_type = base_image_trigger_type
+        self.update_trigger_endpoint = update_trigger_endpoint
+        self.update_trigger_payload_type = update_trigger_payload_type
+        self.status = status
+        self.name = name
 
 
 class BaseImageTriggerUpdateParameters(Model):
@@ -269,18 +269,18 @@ class BaseImageTriggerUpdateParameters(Model):
     :param base_image_trigger_type: The type of the auto trigger for base
      image dependency updates. Possible values include: 'All', 'Runtime'
     :type base_image_trigger_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTriggerType
     :param update_trigger_endpoint: The endpoint URL for receiving update
      triggers.
     :type update_trigger_endpoint: str
     :param update_trigger_payload_type: Type of Payload body for Base image
      update triggers. Possible values include: 'Default', 'Token'
     :type update_trigger_payload_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UpdateTriggerPayloadType
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -297,13 +297,13 @@ class BaseImageTriggerUpdateParameters(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, base_image_trigger_type=None, update_trigger_endpoint: str=None, update_trigger_payload_type=None, status="Enabled", **kwargs) -> None:
         super(BaseImageTriggerUpdateParameters, self).__init__(**kwargs)
-        self.base_image_trigger_type = kwargs.get('base_image_trigger_type', None)
-        self.update_trigger_endpoint = kwargs.get('update_trigger_endpoint', None)
-        self.update_trigger_payload_type = kwargs.get('update_trigger_payload_type', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+        self.base_image_trigger_type = base_image_trigger_type
+        self.update_trigger_endpoint = update_trigger_endpoint
+        self.update_trigger_payload_type = update_trigger_payload_type
+        self.status = status
+        self.name = name
 
 
 class CallbackConfig(Model):
@@ -328,10 +328,10 @@ class CallbackConfig(Model):
         'custom_headers': {'key': 'customHeaders', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, service_uri: str, custom_headers=None, **kwargs) -> None:
         super(CallbackConfig, self).__init__(**kwargs)
-        self.service_uri = kwargs.get('service_uri', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
+        self.service_uri = service_uri
+        self.custom_headers = custom_headers
 
 
 class CloudError(Model):
@@ -349,7 +349,7 @@ class Credentials(Model):
     :param source_registry: Describes the credential parameters for accessing
      the source registry.
     :type source_registry:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceRegistryCredentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceRegistryCredentials
     :param custom_registries: Describes the credential parameters for
      accessing other custom registries. The key
      for the dictionary item will be the registry login server
@@ -357,7 +357,7 @@ class Credentials(Model):
      the value of the item will be the registry credentials for accessing the
      registry.
     :type custom_registries: dict[str,
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.CustomRegistryCredentials]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.CustomRegistryCredentials]
     """
 
     _attribute_map = {
@@ -365,10 +365,10 @@ class Credentials(Model):
         'custom_registries': {'key': 'customRegistries', 'type': '{CustomRegistryCredentials}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_registry=None, custom_registries=None, **kwargs) -> None:
         super(Credentials, self).__init__(**kwargs)
-        self.source_registry = kwargs.get('source_registry', None)
-        self.custom_registries = kwargs.get('custom_registries', None)
+        self.source_registry = source_registry
+        self.custom_registries = custom_registries
 
 
 class CustomRegistryCredentials(Model):
@@ -377,12 +377,12 @@ class CustomRegistryCredentials(Model):
 
     :param user_name: The username for logging into the custom registry.
     :type user_name:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObject
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SecretObject
     :param password: The password for logging into the custom registry. The
      password is a secret
      object that allows multiple ways of providing the value for it.
     :type password:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObject
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SecretObject
     :param identity: Indicates the managed identity assigned to the custom
      credential. If a user-assigned identity
      this value is the Client ID. If a system-assigned identity, the value will
@@ -401,11 +401,11 @@ class CustomRegistryCredentials(Model):
         'identity': {'key': 'identity', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, user_name=None, password=None, identity: str=None, **kwargs) -> None:
         super(CustomRegistryCredentials, self).__init__(**kwargs)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.identity = kwargs.get('identity', None)
+        self.user_name = user_name
+        self.password = password
+        self.identity = identity
 
 
 class RunRequest(Model):
@@ -437,9 +437,9 @@ class RunRequest(Model):
         'type': {'DockerBuildRequest': 'DockerBuildRequest', 'FileTaskRunRequest': 'FileTaskRunRequest', 'TaskRunRequest': 'TaskRunRequest', 'EncodedTaskRunRequest': 'EncodedTaskRunRequest'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, is_archive_enabled: bool=False, **kwargs) -> None:
         super(RunRequest, self).__init__(**kwargs)
-        self.is_archive_enabled = kwargs.get('is_archive_enabled', False)
+        self.is_archive_enabled = is_archive_enabled
         self.type = None
 
 
@@ -470,16 +470,16 @@ class DockerBuildRequest(RunRequest):
     :param arguments: The collection of override arguments to be used when
      executing the run.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
      context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
@@ -488,7 +488,7 @@ class DockerBuildRequest(RunRequest):
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -514,19 +514,19 @@ class DockerBuildRequest(RunRequest):
         'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, **kwargs):
-        super(DockerBuildRequest, self).__init__(**kwargs)
-        self.image_names = kwargs.get('image_names', None)
-        self.is_push_enabled = kwargs.get('is_push_enabled', True)
-        self.no_cache = kwargs.get('no_cache', False)
-        self.docker_file_path = kwargs.get('docker_file_path', None)
-        self.target = kwargs.get('target', None)
-        self.arguments = kwargs.get('arguments', None)
-        self.timeout = kwargs.get('timeout', 3600)
-        self.platform = kwargs.get('platform', None)
-        self.agent_configuration = kwargs.get('agent_configuration', None)
-        self.source_location = kwargs.get('source_location', None)
-        self.credentials = kwargs.get('credentials', None)
+    def __init__(self, *, docker_file_path: str, platform, is_archive_enabled: bool=False, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, target: str=None, arguments=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
+        super(DockerBuildRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+        self.image_names = image_names
+        self.is_push_enabled = is_push_enabled
+        self.no_cache = no_cache
+        self.docker_file_path = docker_file_path
+        self.target = target
+        self.arguments = arguments
+        self.timeout = timeout
+        self.platform = platform
+        self.agent_configuration = agent_configuration
+        self.source_location = source_location
+        self.credentials = credentials
         self.type = 'DockerBuildRequest'
 
 
@@ -543,7 +543,7 @@ class TaskStepProperties(Model):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -570,11 +570,11 @@ class TaskStepProperties(Model):
         'type': {'Docker': 'DockerBuildStep', 'FileTask': 'FileTaskStep', 'EncodedTask': 'EncodedTaskStep'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, **kwargs) -> None:
         super(TaskStepProperties, self).__init__(**kwargs)
         self.base_image_dependencies = None
-        self.context_path = kwargs.get('context_path', None)
-        self.context_access_token = kwargs.get('context_access_token', None)
+        self.context_path = context_path
+        self.context_access_token = context_access_token
         self.type = None
 
 
@@ -588,7 +588,7 @@ class DockerBuildStep(TaskStepProperties):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -614,7 +614,7 @@ class DockerBuildStep(TaskStepProperties):
     :param arguments: The collection of override arguments to be used when
      executing this build step.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     """
 
     _validation = {
@@ -636,14 +636,14 @@ class DockerBuildStep(TaskStepProperties):
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
     }
 
-    def __init__(self, **kwargs):
-        super(DockerBuildStep, self).__init__(**kwargs)
-        self.image_names = kwargs.get('image_names', None)
-        self.is_push_enabled = kwargs.get('is_push_enabled', True)
-        self.no_cache = kwargs.get('no_cache', False)
-        self.docker_file_path = kwargs.get('docker_file_path', None)
-        self.target = kwargs.get('target', None)
-        self.arguments = kwargs.get('arguments', None)
+    def __init__(self, *, docker_file_path: str, context_path: str=None, context_access_token: str=None, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, target: str=None, arguments=None, **kwargs) -> None:
+        super(DockerBuildStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.image_names = image_names
+        self.is_push_enabled = is_push_enabled
+        self.no_cache = no_cache
+        self.docker_file_path = docker_file_path
+        self.target = target
+        self.arguments = arguments
         self.type = 'Docker'
 
 
@@ -680,10 +680,10 @@ class TaskStepUpdateParameters(Model):
         'type': {'Docker': 'DockerBuildStepUpdateParameters', 'FileTask': 'FileTaskStepUpdateParameters', 'EncodedTask': 'EncodedTaskStepUpdateParameters'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, **kwargs) -> None:
         super(TaskStepUpdateParameters, self).__init__(**kwargs)
-        self.context_path = kwargs.get('context_path', None)
-        self.context_access_token = kwargs.get('context_access_token', None)
+        self.context_path = context_path
+        self.context_access_token = context_access_token
         self.type = None
 
 
@@ -715,7 +715,7 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
     :param arguments: The collection of override arguments to be used when
      executing this build step.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     :param target: The name of the target build stage for the docker build.
     :type target: str
     """
@@ -736,14 +736,14 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(DockerBuildStepUpdateParameters, self).__init__(**kwargs)
-        self.image_names = kwargs.get('image_names', None)
-        self.is_push_enabled = kwargs.get('is_push_enabled', None)
-        self.no_cache = kwargs.get('no_cache', None)
-        self.docker_file_path = kwargs.get('docker_file_path', None)
-        self.arguments = kwargs.get('arguments', None)
-        self.target = kwargs.get('target', None)
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, image_names=None, is_push_enabled: bool=None, no_cache: bool=None, docker_file_path: str=None, arguments=None, target: str=None, **kwargs) -> None:
+        super(DockerBuildStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.image_names = image_names
+        self.is_push_enabled = is_push_enabled
+        self.no_cache = no_cache
+        self.docker_file_path = docker_file_path
+        self.arguments = arguments
+        self.target = target
         self.type = 'Docker'
 
 
@@ -766,16 +766,16 @@ class EncodedTaskRunRequest(RunRequest):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
      context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
@@ -784,7 +784,7 @@ class EncodedTaskRunRequest(RunRequest):
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -807,16 +807,16 @@ class EncodedTaskRunRequest(RunRequest):
         'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, **kwargs):
-        super(EncodedTaskRunRequest, self).__init__(**kwargs)
-        self.encoded_task_content = kwargs.get('encoded_task_content', None)
-        self.encoded_values_content = kwargs.get('encoded_values_content', None)
-        self.values = kwargs.get('values', None)
-        self.timeout = kwargs.get('timeout', 3600)
-        self.platform = kwargs.get('platform', None)
-        self.agent_configuration = kwargs.get('agent_configuration', None)
-        self.source_location = kwargs.get('source_location', None)
-        self.credentials = kwargs.get('credentials', None)
+    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
+        super(EncodedTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+        self.encoded_task_content = encoded_task_content
+        self.encoded_values_content = encoded_values_content
+        self.values = values
+        self.timeout = timeout
+        self.platform = platform
+        self.agent_configuration = agent_configuration
+        self.source_location = source_location
+        self.credentials = credentials
         self.type = 'EncodedTaskRunRequest'
 
 
@@ -830,7 +830,7 @@ class EncodedTaskStep(TaskStepProperties):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -848,7 +848,7 @@ class EncodedTaskStep(TaskStepProperties):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -867,11 +867,11 @@ class EncodedTaskStep(TaskStepProperties):
         'values': {'key': 'values', 'type': '[SetValue]'},
     }
 
-    def __init__(self, **kwargs):
-        super(EncodedTaskStep, self).__init__(**kwargs)
-        self.encoded_task_content = kwargs.get('encoded_task_content', None)
-        self.encoded_values_content = kwargs.get('encoded_values_content', None)
-        self.values = kwargs.get('values', None)
+    def __init__(self, *, encoded_task_content: str, context_path: str=None, context_access_token: str=None, encoded_values_content: str=None, values=None, **kwargs) -> None:
+        super(EncodedTaskStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.encoded_task_content = encoded_task_content
+        self.encoded_values_content = encoded_values_content
+        self.values = values
         self.type = 'EncodedTask'
 
 
@@ -897,7 +897,7 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -913,12 +913,35 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         'values': {'key': 'values', 'type': '[SetValue]'},
     }
 
-    def __init__(self, **kwargs):
-        super(EncodedTaskStepUpdateParameters, self).__init__(**kwargs)
-        self.encoded_task_content = kwargs.get('encoded_task_content', None)
-        self.encoded_values_content = kwargs.get('encoded_values_content', None)
-        self.values = kwargs.get('values', None)
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, encoded_task_content: str=None, encoded_values_content: str=None, values=None, **kwargs) -> None:
+        super(EncodedTaskStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.encoded_task_content = encoded_task_content
+        self.encoded_values_content = encoded_values_content
+        self.values = values
         self.type = 'EncodedTask'
+
+
+class EncryptionProperty(Model):
+    """EncryptionProperty.
+
+    :param status: Indicates whether or not the encryption is enabled for
+     container registry. Possible values include: 'enabled', 'disabled'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionStatus
+    :param key_vault_properties: Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, *, status=None, key_vault_properties=None, **kwargs) -> None:
+        super(EncryptionProperty, self).__init__(**kwargs)
+        self.status = status
+        self.key_vault_properties = key_vault_properties
 
 
 class Error(Model):
@@ -942,10 +965,10 @@ class Error(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = code
+        self.message = message
 
 
 class ErrorSchema(Model):
@@ -953,16 +976,16 @@ class ErrorSchema(Model):
 
     :param error: Azure container registry build API error body.
     :type error:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Error
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Error
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'Error'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(ErrorSchema, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class ErrorSchemaException(HttpOperationError):
@@ -988,9 +1011,9 @@ class EventInfo(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, **kwargs) -> None:
         super(EventInfo, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
 
 
 class Event(EventInfo):
@@ -1001,11 +1024,11 @@ class Event(EventInfo):
     :param event_request_message: The event request message sent to the
      service URI.
     :type event_request_message:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.EventRequestMessage
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventRequestMessage
     :param event_response_message: The event response message received from
      the service URI.
     :type event_response_message:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.EventResponseMessage
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventResponseMessage
     """
 
     _attribute_map = {
@@ -1014,10 +1037,10 @@ class Event(EventInfo):
         'event_response_message': {'key': 'eventResponseMessage', 'type': 'EventResponseMessage'},
     }
 
-    def __init__(self, **kwargs):
-        super(Event, self).__init__(**kwargs)
-        self.event_request_message = kwargs.get('event_request_message', None)
-        self.event_response_message = kwargs.get('event_response_message', None)
+    def __init__(self, *, id: str=None, event_request_message=None, event_response_message=None, **kwargs) -> None:
+        super(Event, self).__init__(id=id, **kwargs)
+        self.event_request_message = event_request_message
+        self.event_response_message = event_response_message
 
 
 class EventContent(Model):
@@ -1031,18 +1054,18 @@ class EventContent(Model):
     :type action: str
     :param target: The target of the event.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Target
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Target
     :param request: The request that generated the event.
     :type request:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Request
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Request
     :param actor: The agent that initiated the event. For most situations,
      this could be from the authorization context of the request.
     :type actor:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Actor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Actor
     :param source: The registry node that generated the event. Put
      differently, while the actor initiates the event, the source generates it.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Source
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Source
     """
 
     _attribute_map = {
@@ -1055,15 +1078,15 @@ class EventContent(Model):
         'source': {'key': 'source', 'type': 'Source'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, timestamp=None, action: str=None, target=None, request=None, actor=None, source=None, **kwargs) -> None:
         super(EventContent, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.timestamp = kwargs.get('timestamp', None)
-        self.action = kwargs.get('action', None)
-        self.target = kwargs.get('target', None)
-        self.request = kwargs.get('request', None)
-        self.actor = kwargs.get('actor', None)
-        self.source = kwargs.get('source', None)
+        self.id = id
+        self.timestamp = timestamp
+        self.action = action
+        self.target = target
+        self.request = request
+        self.actor = actor
+        self.source = source
 
 
 class EventRequestMessage(Model):
@@ -1071,7 +1094,7 @@ class EventRequestMessage(Model):
 
     :param content: The content of the event request message.
     :type content:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.EventContent
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventContent
     :param headers: The headers of the event request message.
     :type headers: dict[str, str]
     :param method: The HTTP method used to send the event request message.
@@ -1090,13 +1113,13 @@ class EventRequestMessage(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, content=None, headers=None, method: str=None, request_uri: str=None, version: str=None, **kwargs) -> None:
         super(EventRequestMessage, self).__init__(**kwargs)
-        self.content = kwargs.get('content', None)
-        self.headers = kwargs.get('headers', None)
-        self.method = kwargs.get('method', None)
-        self.request_uri = kwargs.get('request_uri', None)
-        self.version = kwargs.get('version', None)
+        self.content = content
+        self.headers = headers
+        self.method = method
+        self.request_uri = request_uri
+        self.version = version
 
 
 class EventResponseMessage(Model):
@@ -1122,13 +1145,13 @@ class EventResponseMessage(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, content: str=None, headers=None, reason_phrase: str=None, status_code: str=None, version: str=None, **kwargs) -> None:
         super(EventResponseMessage, self).__init__(**kwargs)
-        self.content = kwargs.get('content', None)
-        self.headers = kwargs.get('headers', None)
-        self.reason_phrase = kwargs.get('reason_phrase', None)
-        self.status_code = kwargs.get('status_code', None)
-        self.version = kwargs.get('version', None)
+        self.content = content
+        self.headers = headers
+        self.reason_phrase = reason_phrase
+        self.status_code = status_code
+        self.version = version
 
 
 class FileTaskRunRequest(RunRequest):
@@ -1150,16 +1173,16 @@ class FileTaskRunRequest(RunRequest):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
      context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
@@ -1168,7 +1191,7 @@ class FileTaskRunRequest(RunRequest):
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -1191,16 +1214,16 @@ class FileTaskRunRequest(RunRequest):
         'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, **kwargs):
-        super(FileTaskRunRequest, self).__init__(**kwargs)
-        self.task_file_path = kwargs.get('task_file_path', None)
-        self.values_file_path = kwargs.get('values_file_path', None)
-        self.values = kwargs.get('values', None)
-        self.timeout = kwargs.get('timeout', 3600)
-        self.platform = kwargs.get('platform', None)
-        self.agent_configuration = kwargs.get('agent_configuration', None)
-        self.source_location = kwargs.get('source_location', None)
-        self.credentials = kwargs.get('credentials', None)
+    def __init__(self, *, task_file_path: str, platform, is_archive_enabled: bool=False, values_file_path: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
+        super(FileTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+        self.task_file_path = task_file_path
+        self.values_file_path = values_file_path
+        self.values = values
+        self.timeout = timeout
+        self.platform = platform
+        self.agent_configuration = agent_configuration
+        self.source_location = source_location
+        self.credentials = credentials
         self.type = 'FileTaskRunRequest'
 
 
@@ -1214,7 +1237,7 @@ class FileTaskStep(TaskStepProperties):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -1232,7 +1255,7 @@ class FileTaskStep(TaskStepProperties):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -1251,11 +1274,11 @@ class FileTaskStep(TaskStepProperties):
         'values': {'key': 'values', 'type': '[SetValue]'},
     }
 
-    def __init__(self, **kwargs):
-        super(FileTaskStep, self).__init__(**kwargs)
-        self.task_file_path = kwargs.get('task_file_path', None)
-        self.values_file_path = kwargs.get('values_file_path', None)
-        self.values = kwargs.get('values', None)
+    def __init__(self, *, task_file_path: str, context_path: str=None, context_access_token: str=None, values_file_path: str=None, values=None, **kwargs) -> None:
+        super(FileTaskStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.task_file_path = task_file_path
+        self.values_file_path = values_file_path
+        self.values = values
         self.type = 'FileTask'
 
 
@@ -1281,7 +1304,7 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -1297,11 +1320,11 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
         'values': {'key': 'values', 'type': '[SetValue]'},
     }
 
-    def __init__(self, **kwargs):
-        super(FileTaskStepUpdateParameters, self).__init__(**kwargs)
-        self.task_file_path = kwargs.get('task_file_path', None)
-        self.values_file_path = kwargs.get('values_file_path', None)
-        self.values = kwargs.get('values', None)
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, task_file_path: str=None, values_file_path: str=None, values=None, **kwargs) -> None:
+        super(FileTaskStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
+        self.task_file_path = task_file_path
+        self.values_file_path = values_file_path
+        self.values = values
         self.type = 'FileTask'
 
 
@@ -1319,7 +1342,7 @@ class GenerateCredentialsParameters(Model):
      any -- password1 or password2. Possible values include: 'password1',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPasswordName
     """
 
     _attribute_map = {
@@ -1328,11 +1351,11 @@ class GenerateCredentialsParameters(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, token_id: str=None, expiry=None, name=None, **kwargs) -> None:
         super(GenerateCredentialsParameters, self).__init__(**kwargs)
-        self.token_id = kwargs.get('token_id', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.name = kwargs.get('name', None)
+        self.token_id = token_id
+        self.expiry = expiry
+        self.name = name
 
 
 class GenerateCredentialsResult(Model):
@@ -1342,7 +1365,7 @@ class GenerateCredentialsResult(Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPassword]
     """
 
     _attribute_map = {
@@ -1350,10 +1373,10 @@ class GenerateCredentialsResult(Model):
         'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, username: str=None, passwords=None, **kwargs) -> None:
         super(GenerateCredentialsResult, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.passwords = kwargs.get('passwords', None)
+        self.username = username
+        self.passwords = passwords
 
 
 class IdentityProperties(Model):
@@ -1366,14 +1389,14 @@ class IdentityProperties(Model):
     :param type: The identity type. Possible values include: 'SystemAssigned',
      'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ResourceIdentityType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the resource. The user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
      providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UserIdentityProperties]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UserIdentityProperties]
     """
 
     _attribute_map = {
@@ -1383,12 +1406,12 @@ class IdentityProperties(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentityProperties}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, principal_id: str=None, tenant_id: str=None, type=None, user_assigned_identities=None, **kwargs) -> None:
         super(IdentityProperties, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.principal_id = principal_id
+        self.tenant_id = tenant_id
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class ImageDescriptor(Model):
@@ -1411,12 +1434,12 @@ class ImageDescriptor(Model):
         'digest': {'key': 'digest', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, registry: str=None, repository: str=None, tag: str=None, digest: str=None, **kwargs) -> None:
         super(ImageDescriptor, self).__init__(**kwargs)
-        self.registry = kwargs.get('registry', None)
-        self.repository = kwargs.get('repository', None)
-        self.tag = kwargs.get('tag', None)
-        self.digest = kwargs.get('digest', None)
+        self.registry = registry
+        self.repository = repository
+        self.tag = tag
+        self.digest = digest
 
 
 class ImageUpdateTrigger(Model):
@@ -1428,7 +1451,7 @@ class ImageUpdateTrigger(Model):
     :type timestamp: datetime
     :param images: The list of image updates that caused the build.
     :type images:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageDescriptor]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImageDescriptor]
     """
 
     _attribute_map = {
@@ -1437,11 +1460,11 @@ class ImageUpdateTrigger(Model):
         'images': {'key': 'images', 'type': '[ImageDescriptor]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, timestamp=None, images=None, **kwargs) -> None:
         super(ImageUpdateTrigger, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.timestamp = kwargs.get('timestamp', None)
-        self.images = kwargs.get('images', None)
+        self.id = id
+        self.timestamp = timestamp
+        self.images = images
 
 
 class ImportImageParameters(Model):
@@ -1451,7 +1474,7 @@ class ImportImageParameters(Model):
 
     :param source: Required. The source of the image.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImportSource
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSource
     :param target_tags: List of strings of the form repo[:tag]. When tag is
      omitted the source will be used (or 'latest' if source tag is also
      omitted).
@@ -1464,7 +1487,7 @@ class ImportImageParameters(Model):
      copying begins. Possible values include: 'NoForce', 'Force'. Default
      value: "NoForce" .
     :type mode: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImportMode
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportMode
     """
 
     _validation = {
@@ -1478,12 +1501,12 @@ class ImportImageParameters(Model):
         'mode': {'key': 'mode', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source, target_tags=None, untagged_target_repositories=None, mode="NoForce", **kwargs) -> None:
         super(ImportImageParameters, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
-        self.target_tags = kwargs.get('target_tags', None)
-        self.untagged_target_repositories = kwargs.get('untagged_target_repositories', None)
-        self.mode = kwargs.get('mode', "NoForce")
+        self.source = source
+        self.target_tags = target_tags
+        self.untagged_target_repositories = untagged_target_repositories
+        self.mode = mode
 
 
 class ImportSource(Model):
@@ -1499,7 +1522,7 @@ class ImportSource(Model):
     :type registry_uri: str
     :param credentials: Credentials used when importing from a registry uri.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImportSourceCredentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSourceCredentials
     :param source_image: Required. Repository name of the source image.
      Specify an image by repository ('hello-world'). This will use the 'latest'
      tag.
@@ -1520,12 +1543,12 @@ class ImportSource(Model):
         'source_image': {'key': 'sourceImage', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_image: str, resource_id: str=None, registry_uri: str=None, credentials=None, **kwargs) -> None:
         super(ImportSource, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.registry_uri = kwargs.get('registry_uri', None)
-        self.credentials = kwargs.get('credentials', None)
-        self.source_image = kwargs.get('source_image', None)
+        self.resource_id = resource_id
+        self.registry_uri = registry_uri
+        self.credentials = credentials
+        self.source_image = source_image
 
 
 class ImportSourceCredentials(Model):
@@ -1549,10 +1572,10 @@ class ImportSourceCredentials(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, password: str, username: str=None, **kwargs) -> None:
         super(ImportSourceCredentials, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
+        self.username = username
+        self.password = password
 
 
 class IPRule(Model):
@@ -1563,7 +1586,7 @@ class IPRule(Model):
     :param action: The action of IP ACL rule. Possible values include:
      'Allow'. Default value: "Allow" .
     :type action: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Action
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR
      format. Only IPV4 address is allowed.
     :type ip_address_or_range: str
@@ -1578,10 +1601,43 @@ class IPRule(Model):
         'ip_address_or_range': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, ip_address_or_range: str, action="Allow", **kwargs) -> None:
         super(IPRule, self).__init__(**kwargs)
-        self.action = kwargs.get('action', "Allow")
-        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
+        self.action = action
+        self.ip_address_or_range = ip_address_or_range
+
+
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param key_identifier: Key vault uri to access the encryption key.
+    :type key_identifier: str
+    :ivar versioned_key_identifier: The fully qualified key identifier that
+     includes the version of the key that is actually used for encryption.
+    :vartype versioned_key_identifier: str
+    :param identity: The client id of the identity which will be used to
+     access key vault.
+    :type identity: str
+    """
+
+    _validation = {
+        'versioned_key_identifier': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'versioned_key_identifier': {'key': 'versionedKeyIdentifier', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_identifier: str=None, identity: str=None, **kwargs) -> None:
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = key_identifier
+        self.versioned_key_identifier = None
+        self.identity = identity
 
 
 class NetworkRuleSet(Model):
@@ -1593,13 +1649,13 @@ class NetworkRuleSet(Model):
      no other rules match. Possible values include: 'Allow', 'Deny'. Default
      value: "Allow" .
     :type default_action: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.DefaultAction
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.DefaultAction
     :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.VirtualNetworkRule]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.VirtualNetworkRule]
     :param ip_rules: The IP ACL rules.
     :type ip_rules:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.IPRule]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.IPRule]
     """
 
     _validation = {
@@ -1612,11 +1668,11 @@ class NetworkRuleSet(Model):
         'ip_rules': {'key': 'ipRules', 'type': '[IPRule]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, default_action="Allow", virtual_network_rules=None, ip_rules=None, **kwargs) -> None:
         super(NetworkRuleSet, self).__init__(**kwargs)
-        self.default_action = kwargs.get('default_action', "Allow")
-        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
-        self.ip_rules = kwargs.get('ip_rules', None)
+        self.default_action = default_action
+        self.virtual_network_rules = virtual_network_rules
+        self.ip_rules = ip_rules
 
 
 class OperationDefinition(Model):
@@ -1629,10 +1685,10 @@ class OperationDefinition(Model):
     :param display: The display information for the container registry
      operation.
     :type display:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OperationDisplayDefinition
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDisplayDefinition
     :param service_specification: The definition of Azure Monitoring service.
     :type service_specification:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OperationServiceSpecificationDefinition
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationServiceSpecificationDefinition
     """
 
     _attribute_map = {
@@ -1642,12 +1698,12 @@ class OperationDefinition(Model):
         'service_specification': {'key': 'properties.serviceSpecification', 'type': 'OperationServiceSpecificationDefinition'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, origin: str=None, name: str=None, display=None, service_specification=None, **kwargs) -> None:
         super(OperationDefinition, self).__init__(**kwargs)
-        self.origin = kwargs.get('origin', None)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.service_specification = kwargs.get('service_specification', None)
+        self.origin = origin
+        self.name = name
+        self.display = display
+        self.service_specification = service_specification
 
 
 class OperationDisplayDefinition(Model):
@@ -1670,12 +1726,12 @@ class OperationDisplayDefinition(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
         super(OperationDisplayDefinition, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
 class OperationMetricSpecificationDefinition(Model):
@@ -1704,14 +1760,14 @@ class OperationMetricSpecificationDefinition(Model):
         'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, internal_metric_name: str=None, **kwargs) -> None:
         super(OperationMetricSpecificationDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.display_description = kwargs.get('display_description', None)
-        self.unit = kwargs.get('unit', None)
-        self.aggregation_type = kwargs.get('aggregation_type', None)
-        self.internal_metric_name = kwargs.get('internal_metric_name', None)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.internal_metric_name = internal_metric_name
 
 
 class OperationServiceSpecificationDefinition(Model):
@@ -1720,16 +1776,16 @@ class OperationServiceSpecificationDefinition(Model):
     :param metric_specifications: A list of Azure Monitoring metrics
      definition.
     :type metric_specifications:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.OperationMetricSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationMetricSpecificationDefinition]
     """
 
     _attribute_map = {
         'metric_specifications': {'key': 'metricSpecifications', 'type': '[OperationMetricSpecificationDefinition]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, metric_specifications=None, **kwargs) -> None:
         super(OperationServiceSpecificationDefinition, self).__init__(**kwargs)
-        self.metric_specifications = kwargs.get('metric_specifications', None)
+        self.metric_specifications = metric_specifications
 
 
 class OverrideTaskStepProperties(Model):
@@ -1744,13 +1800,13 @@ class OverrideTaskStepProperties(Model):
      used when
      executing a build step.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     :param target: The name of the target build stage for the docker build.
     :type target: str
     :param values: The collection of overridable values that can be passed
      when running a Task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     :param update_trigger_token: Base64 encoded update trigger token that will
      be attached with the base image trigger webhook.
     :type update_trigger_token: str
@@ -1765,14 +1821,14 @@ class OverrideTaskStepProperties(Model):
         'update_trigger_token': {'key': 'updateTriggerToken', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, context_path: str=None, file: str=None, arguments=None, target: str=None, values=None, update_trigger_token: str=None, **kwargs) -> None:
         super(OverrideTaskStepProperties, self).__init__(**kwargs)
-        self.context_path = kwargs.get('context_path', None)
-        self.file = kwargs.get('file', None)
-        self.arguments = kwargs.get('arguments', None)
-        self.target = kwargs.get('target', None)
-        self.values = kwargs.get('values', None)
-        self.update_trigger_token = kwargs.get('update_trigger_token', None)
+        self.context_path = context_path
+        self.file = file
+        self.arguments = arguments
+        self.target = target
+        self.values = values
+        self.update_trigger_token = update_trigger_token
 
 
 class PlatformProperties(Model):
@@ -1783,15 +1839,15 @@ class PlatformProperties(Model):
     :param os: Required. The operating system type required for the run.
      Possible values include: 'Windows', 'Linux'
     :type os: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OS
     :param architecture: The OS architecture. Possible values include:
      'amd64', 'x86', '386', 'arm', 'arm64'
     :type architecture: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Architecture
     :param variant: Variant of the CPU. Possible values include: 'v6', 'v7',
      'v8'
     :type variant: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Variant
     """
 
     _validation = {
@@ -1804,11 +1860,11 @@ class PlatformProperties(Model):
         'variant': {'key': 'variant', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, os, architecture=None, variant=None, **kwargs) -> None:
         super(PlatformProperties, self).__init__(**kwargs)
-        self.os = kwargs.get('os', None)
-        self.architecture = kwargs.get('architecture', None)
-        self.variant = kwargs.get('variant', None)
+        self.os = os
+        self.architecture = architecture
+        self.variant = variant
 
 
 class PlatformUpdateParameters(Model):
@@ -1817,15 +1873,15 @@ class PlatformUpdateParameters(Model):
     :param os: The operating system type required for the run. Possible values
      include: 'Windows', 'Linux'
     :type os: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OS
     :param architecture: The OS architecture. Possible values include:
      'amd64', 'x86', '386', 'arm', 'arm64'
     :type architecture: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Architecture
     :param variant: Variant of the CPU. Possible values include: 'v6', 'v7',
      'v8'
     :type variant: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Variant
     """
 
     _attribute_map = {
@@ -1834,11 +1890,11 @@ class PlatformUpdateParameters(Model):
         'variant': {'key': 'variant', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, os=None, architecture=None, variant=None, **kwargs) -> None:
         super(PlatformUpdateParameters, self).__init__(**kwargs)
-        self.os = kwargs.get('os', None)
-        self.architecture = kwargs.get('architecture', None)
-        self.variant = kwargs.get('variant', None)
+        self.os = os
+        self.architecture = architecture
+        self.variant = variant
 
 
 class Policies(Model):
@@ -1846,13 +1902,13 @@ class Policies(Model):
 
     :param quarantine_policy: The quarantine policy for a container registry.
     :type quarantine_policy:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.QuarantinePolicy
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.QuarantinePolicy
     :param trust_policy: The content trust policy for a container registry.
     :type trust_policy:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TrustPolicy
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicy
     :param retention_policy: The retention policy for a container registry.
     :type retention_policy:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RetentionPolicy
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RetentionPolicy
     """
 
     _attribute_map = {
@@ -1861,11 +1917,153 @@ class Policies(Model):
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, quarantine_policy=None, trust_policy=None, retention_policy=None, **kwargs) -> None:
         super(Policies, self).__init__(**kwargs)
-        self.quarantine_policy = kwargs.get('quarantine_policy', None)
-        self.trust_policy = kwargs.get('trust_policy', None)
-        self.retention_policy = kwargs.get('retention_policy', None)
+        self.quarantine_policy = quarantine_policy
+        self.trust_policy = trust_policy
+        self.retention_policy = retention_policy
+
+
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    :param id: This is private endpoint resource created with
+     Microsoft.Network resource provider.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = id
+
+
+class PrivateEndpointConnection(Model):
+    """An object that represents a private endpoint connection for a container
+    registry.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The resource type is private endpoint connection.
+    :vartype type: str
+    :param id: The resource ID.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param private_endpoint: The resource of private endpoint.
+    :type private_endpoint:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpoint
+    :param private_link_service_connection_state: A collection of information
+     about the state of the connection between service consumer and provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of private endpoint
+     connection resource. Possible values include: 'Creating', 'Updating',
+     'Deleting', 'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.type = None
+        self.id = id
+        self.name = name
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateLinkResource(Model):
+    """A resource that supports private link capabilities.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The resource type is private link resource.
+    :vartype type: str
+    :param id: The resource ID.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param group_id: The private link resource group id.
+    :type group_id: str
+    :param required_members: The private link resource required member names.
+    :type required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, group_id: str=None, required_members=None, required_zone_names=None, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.type = None
+        self.id = id
+        self.name = name
+        self.group_id = group_id
+        self.required_members = required_members
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """The state of a private link service connection.
+
+    :param status: The private link service connection status. Possible values
+     include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :param description: The description for connection status. For example if
+     connection is rejected it can indicate reason for rejection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer. Possible values include:
+     'None', 'Recreate'
+    :type actions_required: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActionsRequired
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, actions_required=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
 
 
 class ProxyResource(Model):
@@ -1895,7 +2093,7 @@ class ProxyResource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1909,16 +2107,16 @@ class QuarantinePolicy(Model):
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, status="disabled", **kwargs) -> None:
         super(QuarantinePolicy, self).__init__(**kwargs)
-        self.status = kwargs.get('status', "disabled")
+        self.status = status
 
 
 class RegenerateCredentialParameters(Model):
@@ -1930,7 +2128,7 @@ class RegenerateCredentialParameters(Model):
      regenerated -- password or password2. Possible values include: 'password',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
     """
 
     _validation = {
@@ -1941,9 +2139,9 @@ class RegenerateCredentialParameters(Model):
         'name': {'key': 'name', 'type': 'PasswordName'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name, **kwargs) -> None:
         super(RegenerateCredentialParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
 
 
 class Resource(Model):
@@ -1982,13 +2180,13 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = location
+        self.tags = tags
 
 
 class Registry(Resource):
@@ -2011,7 +2209,10 @@ class Registry(Resource):
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
     :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
@@ -2022,24 +2223,37 @@ class Registry(Resource):
      at the time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar status: The status of the container registry at the time the
      operation was called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status1
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
      container registry. Only applicable to Classic SKU.
     :type storage_account:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StorageAccountProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.StorageAccountProperties
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.NetworkRuleSet
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
     :type policies:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Policies
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :param encryption: The encryption settings of container registry.
+    :type encryption:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :param data_endpoint_enabled: Enable a single data endpoint per region for
+     serving data.
+    :type data_endpoint_enabled: bool
+    :ivar data_endpoint_host_names: List of host names that will serve data
+     when dataEndpointEnabled is true.
+    :vartype data_endpoint_host_names: list[str]
+    :ivar private_endpoint_connections: List of private endpoint connections
+     for a container registry.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -2052,6 +2266,8 @@ class Registry(Resource):
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
+        'data_endpoint_host_names': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2061,27 +2277,37 @@ class Registry(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status'},
+        'status': {'key': 'properties.status', 'type': 'Status1'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
+        'data_endpoint_host_names': {'key': 'properties.dataEndpointHostNames', 'type': '[str]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
-    def __init__(self, **kwargs):
-        super(Registry, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str, sku, tags=None, identity=None, admin_user_enabled: bool=False, storage_account=None, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, **kwargs) -> None:
+        super(Registry, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.identity = identity
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
         self.status = None
-        self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
-        self.storage_account = kwargs.get('storage_account', None)
-        self.network_rule_set = kwargs.get('network_rule_set', None)
-        self.policies = kwargs.get('policies', None)
+        self.admin_user_enabled = admin_user_enabled
+        self.storage_account = storage_account
+        self.network_rule_set = network_rule_set
+        self.policies = policies
+        self.encryption = encryption
+        self.data_endpoint_enabled = data_endpoint_enabled
+        self.data_endpoint_host_names = None
+        self.private_endpoint_connections = None
 
 
 class RegistryListCredentialsResult(Model):
@@ -2091,7 +2317,7 @@ class RegistryListCredentialsResult(Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.RegistryPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -2099,10 +2325,10 @@ class RegistryListCredentialsResult(Model):
         'passwords': {'key': 'passwords', 'type': '[RegistryPassword]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, username: str=None, passwords=None, **kwargs) -> None:
         super(RegistryListCredentialsResult, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
-        self.passwords = kwargs.get('passwords', None)
+        self.username = username
+        self.passwords = passwords
 
 
 class RegistryNameCheckRequest(Model):
@@ -2133,9 +2359,9 @@ class RegistryNameCheckRequest(Model):
 
     type = "Microsoft.ContainerRegistry/registries"
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(RegistryNameCheckRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
 
 
 class RegistryNameStatus(Model):
@@ -2158,11 +2384,11 @@ class RegistryNameStatus(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name_available: bool=None, reason: str=None, message: str=None, **kwargs) -> None:
         super(RegistryNameStatus, self).__init__(**kwargs)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
 
 
 class RegistryPassword(Model):
@@ -2171,7 +2397,7 @@ class RegistryPassword(Model):
     :param name: The password name. Possible values include: 'password',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
     :param value: The password value.
     :type value: str
     """
@@ -2181,10 +2407,10 @@ class RegistryPassword(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name=None, value: str=None, **kwargs) -> None:
         super(RegistryPassword, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+        self.name = name
+        self.value = value
 
 
 class RegistryUpdateParameters(Model):
@@ -2193,33 +2419,48 @@ class RegistryUpdateParameters(Model):
     :param tags: The tags for the container registry.
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled.
     :type admin_user_enabled: bool
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.NetworkRuleSet
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
     :type policies:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Policies
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :param encryption: The encryption settings of container registry.
+    :type encryption:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :param data_endpoint_enabled: Enable a single data endpoint per region for
+     serving data.
+    :type data_endpoint_enabled: bool
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, sku=None, identity=None, admin_user_enabled: bool=None, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, **kwargs) -> None:
         super(RegistryUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.admin_user_enabled = kwargs.get('admin_user_enabled', None)
-        self.network_rule_set = kwargs.get('network_rule_set', None)
-        self.policies = kwargs.get('policies', None)
+        self.tags = tags
+        self.sku = sku
+        self.identity = identity
+        self.admin_user_enabled = admin_user_enabled
+        self.network_rule_set = network_rule_set
+        self.policies = policies
+        self.encryption = encryption
+        self.data_endpoint_enabled = data_endpoint_enabled
 
 
 class RegistryUsage(Model):
@@ -2234,7 +2475,7 @@ class RegistryUsage(Model):
     :param unit: The unit of measurement. Possible values include: 'Count',
      'Bytes'
     :type unit: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RegistryUsageUnit
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsageUnit
     """
 
     _attribute_map = {
@@ -2244,12 +2485,12 @@ class RegistryUsage(Model):
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, limit: int=None, current_value: int=None, unit=None, **kwargs) -> None:
         super(RegistryUsage, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.limit = kwargs.get('limit', None)
-        self.current_value = kwargs.get('current_value', None)
-        self.unit = kwargs.get('unit', None)
+        self.name = name
+        self.limit = limit
+        self.current_value = current_value
+        self.unit = unit
 
 
 class RegistryUsageListResult(Model):
@@ -2257,16 +2498,16 @@ class RegistryUsageListResult(Model):
 
     :param value: The list of container registry quota usages.
     :type value:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.RegistryUsage]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsage]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[RegistryUsage]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(RegistryUsageListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
 
 
 class Replication(Resource):
@@ -2292,11 +2533,11 @@ class Replication(Resource):
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar status: The status of the replication at the time the operation was
      called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status1
     """
 
     _validation = {
@@ -2315,11 +2556,11 @@ class Replication(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status'},
+        'status': {'key': 'properties.status', 'type': 'Status1'},
     }
 
-    def __init__(self, **kwargs):
-        super(Replication, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(Replication, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.status = None
 
@@ -2335,9 +2576,9 @@ class ReplicationUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(ReplicationUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
 
 
 class Request(Model):
@@ -2366,13 +2607,13 @@ class Request(Model):
         'useragent': {'key': 'useragent', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, addr: str=None, host: str=None, method: str=None, useragent: str=None, **kwargs) -> None:
         super(Request, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.addr = kwargs.get('addr', None)
-        self.host = kwargs.get('host', None)
-        self.method = kwargs.get('method', None)
-        self.useragent = kwargs.get('useragent', None)
+        self.id = id
+        self.addr = addr
+        self.host = host
+        self.method = method
+        self.useragent = useragent
 
 
 class RetentionPolicy(Model):
@@ -2390,7 +2631,7 @@ class RetentionPolicy(Model):
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _validation = {
@@ -2403,11 +2644,11 @@ class RetentionPolicy(Model):
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, days: int=7, status="disabled", **kwargs) -> None:
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.days = kwargs.get('days', 7)
+        self.days = days
         self.last_updated_time = None
-        self.status = kwargs.get('status', "disabled")
+        self.status = status
 
 
 class Run(ProxyResource):
@@ -2428,13 +2669,13 @@ class Run(ProxyResource):
      'Queued', 'Started', 'Running', 'Succeeded', 'Failed', 'Canceled',
      'Error', 'Timeout'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunStatus
     :param last_updated_time: The last updated time for the run.
     :type last_updated_time: datetime
     :param run_type: The type of run. Possible values include: 'QuickBuild',
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunType
     :param create_time: The time the run was scheduled.
     :type create_time: datetime
     :param start_time: The time the run started.
@@ -2444,26 +2685,26 @@ class Run(ProxyResource):
     :param output_images: The list of all images that were generated from the
      run. This is applicable if the run generates base image dependencies.
     :type output_images:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageDescriptor]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImageDescriptor]
     :param task: The task against which run was scheduled.
     :type task: str
     :param image_update_trigger: The image update trigger that caused the run.
      This is applicable if the task has base image trigger configured.
     :type image_update_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageUpdateTrigger
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImageUpdateTrigger
     :param source_trigger: The source trigger that caused the run.
     :type source_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerDescriptor
     :param timer_trigger: The timer trigger that caused the run.
     :type timer_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TimerTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TimerTriggerDescriptor
     :param platform: The platform properties against which the run will
      happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_registry_auth: The scope of the credentials that were used
      to login to the source registry during this run.
     :type source_registry_auth: str
@@ -2479,7 +2720,7 @@ class Run(ProxyResource):
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :type provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not. Default value: False .
     :type is_archive_enabled: bool
@@ -2518,28 +2759,28 @@ class Run(ProxyResource):
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, timer_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, update_trigger_token: str=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
-        self.run_id = kwargs.get('run_id', None)
-        self.status = kwargs.get('status', None)
-        self.last_updated_time = kwargs.get('last_updated_time', None)
-        self.run_type = kwargs.get('run_type', None)
-        self.create_time = kwargs.get('create_time', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.finish_time = kwargs.get('finish_time', None)
-        self.output_images = kwargs.get('output_images', None)
-        self.task = kwargs.get('task', None)
-        self.image_update_trigger = kwargs.get('image_update_trigger', None)
-        self.source_trigger = kwargs.get('source_trigger', None)
-        self.timer_trigger = kwargs.get('timer_trigger', None)
-        self.platform = kwargs.get('platform', None)
-        self.agent_configuration = kwargs.get('agent_configuration', None)
-        self.source_registry_auth = kwargs.get('source_registry_auth', None)
-        self.custom_registries = kwargs.get('custom_registries', None)
+        self.run_id = run_id
+        self.status = status
+        self.last_updated_time = last_updated_time
+        self.run_type = run_type
+        self.create_time = create_time
+        self.start_time = start_time
+        self.finish_time = finish_time
+        self.output_images = output_images
+        self.task = task
+        self.image_update_trigger = image_update_trigger
+        self.source_trigger = source_trigger
+        self.timer_trigger = timer_trigger
+        self.platform = platform
+        self.agent_configuration = agent_configuration
+        self.source_registry_auth = source_registry_auth
+        self.custom_registries = custom_registries
         self.run_error_message = None
-        self.update_trigger_token = kwargs.get('update_trigger_token', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.is_archive_enabled = kwargs.get('is_archive_enabled', False)
+        self.update_trigger_token = update_trigger_token
+        self.provisioning_state = provisioning_state
+        self.is_archive_enabled = is_archive_enabled
 
 
 class RunFilter(Model):
@@ -2550,12 +2791,12 @@ class RunFilter(Model):
     :param run_type: The type of run. Possible values include: 'QuickBuild',
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunType
     :param status: The current status of the run. Possible values include:
      'Queued', 'Started', 'Running', 'Succeeded', 'Failed', 'Canceled',
      'Error', 'Timeout'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunStatus
     :param create_time: The create time for a run.
     :type create_time: datetime
     :param finish_time: The time the run finished.
@@ -2582,16 +2823,16 @@ class RunFilter(Model):
         'task_name': {'key': 'taskName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, run_id: str=None, run_type=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, **kwargs) -> None:
         super(RunFilter, self).__init__(**kwargs)
-        self.run_id = kwargs.get('run_id', None)
-        self.run_type = kwargs.get('run_type', None)
-        self.status = kwargs.get('status', None)
-        self.create_time = kwargs.get('create_time', None)
-        self.finish_time = kwargs.get('finish_time', None)
-        self.output_image_manifests = kwargs.get('output_image_manifests', None)
-        self.is_archive_enabled = kwargs.get('is_archive_enabled', None)
-        self.task_name = kwargs.get('task_name', None)
+        self.run_id = run_id
+        self.run_type = run_type
+        self.status = status
+        self.create_time = create_time
+        self.finish_time = finish_time
+        self.output_image_manifests = output_image_manifests
+        self.is_archive_enabled = is_archive_enabled
+        self.task_name = task_name
 
 
 class RunGetLogResult(Model):
@@ -2605,9 +2846,9 @@ class RunGetLogResult(Model):
         'log_link': {'key': 'logLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, log_link: str=None, **kwargs) -> None:
         super(RunGetLogResult, self).__init__(**kwargs)
-        self.log_link = kwargs.get('log_link', None)
+        self.log_link = log_link
 
 
 class RunUpdateParameters(Model):
@@ -2622,9 +2863,9 @@ class RunUpdateParameters(Model):
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, is_archive_enabled: bool=None, **kwargs) -> None:
         super(RunUpdateParameters, self).__init__(**kwargs)
-        self.is_archive_enabled = kwargs.get('is_archive_enabled', None)
+        self.is_archive_enabled = is_archive_enabled
 
 
 class ScopeMap(ProxyResource):
@@ -2651,7 +2892,7 @@ class ScopeMap(ProxyResource):
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param actions: Required. The list of scoped permissions for registry
      artifacts.
      E.g. repositories/repository-name/content/read,
@@ -2680,13 +2921,13 @@ class ScopeMap(ProxyResource):
         'actions': {'key': 'properties.actions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, actions, description: str=None, **kwargs) -> None:
         super(ScopeMap, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
+        self.description = description
         self.scope_map_type = None
         self.creation_date = None
         self.provisioning_state = None
-        self.actions = kwargs.get('actions', None)
+        self.actions = actions
 
 
 class ScopeMapUpdateParameters(Model):
@@ -2705,10 +2946,10 @@ class ScopeMapUpdateParameters(Model):
         'actions': {'key': 'properties.actions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, description: str=None, actions=None, **kwargs) -> None:
         super(ScopeMapUpdateParameters, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.actions = kwargs.get('actions', None)
+        self.description = description
+        self.actions = actions
 
 
 class SecretObject(Model):
@@ -2724,7 +2965,7 @@ class SecretObject(Model):
      of the secret object has to be
      interpreted. Possible values include: 'Opaque', 'Vaultsecret'
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObjectType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SecretObjectType
     """
 
     _attribute_map = {
@@ -2732,10 +2973,10 @@ class SecretObject(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value: str=None, type=None, **kwargs) -> None:
         super(SecretObject, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.type = kwargs.get('type', None)
+        self.value = value
+        self.type = type
 
 
 class SetValue(Model):
@@ -2764,11 +3005,11 @@ class SetValue(Model):
         'is_secret': {'key': 'isSecret', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, value: str, is_secret: bool=False, **kwargs) -> None:
         super(SetValue, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
-        self.is_secret = kwargs.get('is_secret', False)
+        self.name = name
+        self.value = value
+        self.is_secret = is_secret
 
 
 class Sku(Model):
@@ -2783,11 +3024,11 @@ class Sku(Model):
      for registry creation. Possible values include: 'Classic', 'Basic',
      'Standard', 'Premium'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SkuName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuName
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
      'Classic', 'Basic', 'Standard', 'Premium'
     :vartype tier: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SkuTier
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuTier
     """
 
     _validation = {
@@ -2800,9 +3041,9 @@ class Sku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.tier = None
 
 
@@ -2824,10 +3065,10 @@ class Source(Model):
         'instance_id': {'key': 'instanceID', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, addr: str=None, instance_id: str=None, **kwargs) -> None:
         super(Source, self).__init__(**kwargs)
-        self.addr = kwargs.get('addr', None)
-        self.instance_id = kwargs.get('instance_id', None)
+        self.addr = addr
+        self.instance_id = instance_id
 
 
 class SourceProperties(Model):
@@ -2838,7 +3079,7 @@ class SourceProperties(Model):
     :param source_control_type: Required. The type of source control service.
      Possible values include: 'Github', 'VisualStudioTeamService'
     :type source_control_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceControlType
     :param repository_url: Required. The full URL to the source code
      repository
     :type repository_url: str
@@ -2848,7 +3089,7 @@ class SourceProperties(Model):
      accessing the source code repository and to set up
      webhooks for notifications.
     :type source_control_auth_properties:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AuthInfo
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AuthInfo
     """
 
     _validation = {
@@ -2863,12 +3104,12 @@ class SourceProperties(Model):
         'source_control_auth_properties': {'key': 'sourceControlAuthProperties', 'type': 'AuthInfo'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_control_type, repository_url: str, branch: str=None, source_control_auth_properties=None, **kwargs) -> None:
         super(SourceProperties, self).__init__(**kwargs)
-        self.source_control_type = kwargs.get('source_control_type', None)
-        self.repository_url = kwargs.get('repository_url', None)
-        self.branch = kwargs.get('branch', None)
-        self.source_control_auth_properties = kwargs.get('source_control_auth_properties', None)
+        self.source_control_type = source_control_type
+        self.repository_url = repository_url
+        self.branch = branch
+        self.source_control_auth_properties = source_control_auth_properties
 
 
 class SourceRegistryCredentials(Model):
@@ -2881,16 +3122,16 @@ class SourceRegistryCredentials(Model):
      the source registry during the run. Possible values include: 'None',
      'Default'
     :type login_mode: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceRegistryLoginMode
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceRegistryLoginMode
     """
 
     _attribute_map = {
         'login_mode': {'key': 'loginMode', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, login_mode=None, **kwargs) -> None:
         super(SourceRegistryCredentials, self).__init__(**kwargs)
-        self.login_mode = kwargs.get('login_mode', None)
+        self.login_mode = login_mode
 
 
 class SourceTrigger(Model):
@@ -2901,15 +3142,15 @@ class SourceTrigger(Model):
     :param source_repository: Required. The properties that describes the
      source(code) for the task.
     :type source_repository:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceProperties
     :param source_trigger_events: Required. The source event corresponding to
      the trigger.
     :type source_trigger_events: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerEvent]
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -2927,12 +3168,12 @@ class SourceTrigger(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_repository, source_trigger_events, name: str, status="Enabled", **kwargs) -> None:
         super(SourceTrigger, self).__init__(**kwargs)
-        self.source_repository = kwargs.get('source_repository', None)
-        self.source_trigger_events = kwargs.get('source_trigger_events', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+        self.source_repository = source_repository
+        self.source_trigger_events = source_trigger_events
+        self.status = status
+        self.name = name
 
 
 class SourceTriggerDescriptor(Model):
@@ -2964,15 +3205,15 @@ class SourceTriggerDescriptor(Model):
         'provider_type': {'key': 'providerType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, event_type: str=None, commit_id: str=None, pull_request_id: str=None, repository_url: str=None, branch_name: str=None, provider_type: str=None, **kwargs) -> None:
         super(SourceTriggerDescriptor, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.event_type = kwargs.get('event_type', None)
-        self.commit_id = kwargs.get('commit_id', None)
-        self.pull_request_id = kwargs.get('pull_request_id', None)
-        self.repository_url = kwargs.get('repository_url', None)
-        self.branch_name = kwargs.get('branch_name', None)
-        self.provider_type = kwargs.get('provider_type', None)
+        self.id = id
+        self.event_type = event_type
+        self.commit_id = commit_id
+        self.pull_request_id = pull_request_id
+        self.repository_url = repository_url
+        self.branch_name = branch_name
+        self.provider_type = provider_type
 
 
 class SourceTriggerUpdateParameters(Model):
@@ -2983,15 +3224,15 @@ class SourceTriggerUpdateParameters(Model):
     :param source_repository: The properties that describes the source(code)
      for the task.
     :type source_repository:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceUpdateParameters
     :param source_trigger_events: The source event corresponding to the
      trigger.
     :type source_trigger_events: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerEvent]
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -3007,12 +3248,12 @@ class SourceTriggerUpdateParameters(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, source_repository=None, source_trigger_events=None, status="Enabled", **kwargs) -> None:
         super(SourceTriggerUpdateParameters, self).__init__(**kwargs)
-        self.source_repository = kwargs.get('source_repository', None)
-        self.source_trigger_events = kwargs.get('source_trigger_events', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+        self.source_repository = source_repository
+        self.source_trigger_events = source_trigger_events
+        self.status = status
+        self.name = name
 
 
 class SourceUpdateParameters(Model):
@@ -3021,7 +3262,7 @@ class SourceUpdateParameters(Model):
     :param source_control_type: The type of source control service. Possible
      values include: 'Github', 'VisualStudioTeamService'
     :type source_control_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceControlType
     :param repository_url: The full URL to the source code repository
     :type repository_url: str
     :param branch: The branch name of the source code.
@@ -3030,7 +3271,7 @@ class SourceUpdateParameters(Model):
      accessing the source code repository and to set up
      webhooks for notifications.
     :type source_control_auth_properties:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AuthInfoUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AuthInfoUpdateParameters
     """
 
     _attribute_map = {
@@ -3040,12 +3281,12 @@ class SourceUpdateParameters(Model):
         'source_control_auth_properties': {'key': 'sourceControlAuthProperties', 'type': 'AuthInfoUpdateParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_control_type=None, repository_url: str=None, branch: str=None, source_control_auth_properties=None, **kwargs) -> None:
         super(SourceUpdateParameters, self).__init__(**kwargs)
-        self.source_control_type = kwargs.get('source_control_type', None)
-        self.repository_url = kwargs.get('repository_url', None)
-        self.branch = kwargs.get('branch', None)
-        self.source_control_auth_properties = kwargs.get('source_control_auth_properties', None)
+        self.source_control_type = source_control_type
+        self.repository_url = repository_url
+        self.branch = branch
+        self.source_control_auth_properties = source_control_auth_properties
 
 
 class SourceUploadDefinition(Model):
@@ -3063,13 +3304,13 @@ class SourceUploadDefinition(Model):
         'relative_path': {'key': 'relativePath', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, upload_url: str=None, relative_path: str=None, **kwargs) -> None:
         super(SourceUploadDefinition, self).__init__(**kwargs)
-        self.upload_url = kwargs.get('upload_url', None)
-        self.relative_path = kwargs.get('relative_path', None)
+        self.upload_url = upload_url
+        self.relative_path = relative_path
 
 
-class Status(Model):
+class Status1(Model):
     """The status of an Azure resource at the time the operation was called.
 
     Variables are only populated by the server, and will be ignored when
@@ -3097,8 +3338,8 @@ class Status(Model):
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
-        super(Status, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(Status1, self).__init__(**kwargs)
         self.display_status = None
         self.message = None
         self.timestamp = None
@@ -3122,9 +3363,9 @@ class StorageAccountProperties(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str, **kwargs) -> None:
         super(StorageAccountProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
 
 
 class Target(Model):
@@ -3163,17 +3404,17 @@ class Target(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, media_type: str=None, size: int=None, digest: str=None, length: int=None, repository: str=None, url: str=None, tag: str=None, name: str=None, version: str=None, **kwargs) -> None:
         super(Target, self).__init__(**kwargs)
-        self.media_type = kwargs.get('media_type', None)
-        self.size = kwargs.get('size', None)
-        self.digest = kwargs.get('digest', None)
-        self.length = kwargs.get('length', None)
-        self.repository = kwargs.get('repository', None)
-        self.url = kwargs.get('url', None)
-        self.tag = kwargs.get('tag', None)
-        self.name = kwargs.get('name', None)
-        self.version = kwargs.get('version', None)
+        self.media_type = media_type
+        self.size = size
+        self.digest = digest
+        self.length = length
+        self.repository = repository
+        self.url = url
+        self.tag = tag
+        self.name = name
+        self.version = version
 
 
 class Task(Resource):
@@ -3198,37 +3439,37 @@ class Task(Resource):
     :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar provisioning_state: The provisioning state of the task. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar creation_date: The creation date of task.
     :vartype creation_date: datetime
     :param status: The current status of task. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStatus
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param step: Required. The properties of a task step.
     :type step:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStepProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStepProperties
     :param trigger: The properties that describe all triggers for the task.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerProperties
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -3261,18 +3502,18 @@ class Task(Resource):
         'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, **kwargs):
-        super(Task, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
+    def __init__(self, *, location: str, platform, step, tags=None, identity=None, status=None, agent_configuration=None, timeout: int=3600, trigger=None, credentials=None, **kwargs) -> None:
+        super(Task, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.creation_date = None
-        self.status = kwargs.get('status', None)
-        self.platform = kwargs.get('platform', None)
-        self.agent_configuration = kwargs.get('agent_configuration', None)
-        self.timeout = kwargs.get('timeout', 3600)
-        self.step = kwargs.get('step', None)
-        self.trigger = kwargs.get('trigger', None)
-        self.credentials = kwargs.get('credentials', None)
+        self.status = status
+        self.platform = platform
+        self.agent_configuration = agent_configuration
+        self.timeout = timeout
+        self.step = step
+        self.trigger = trigger
+        self.credentials = credentials
 
 
 class TaskRun(Resource):
@@ -3297,18 +3538,18 @@ class TaskRun(Resource):
     :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar provisioning_state: The provisioning state of this task run.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param run_request: The request (parameters) for the run
     :type run_request:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunRequest
     :ivar run_result: The result of this task run
     :vartype run_result:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Run
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
@@ -3336,13 +3577,13 @@ class TaskRun(Resource):
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TaskRun, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
+    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, force_update_tag: str=None, **kwargs) -> None:
+        super(TaskRun, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
-        self.run_request = kwargs.get('run_request', None)
+        self.run_request = run_request
         self.run_result = None
-        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.force_update_tag = force_update_tag
 
 
 class TaskRunRequest(RunRequest):
@@ -3361,7 +3602,7 @@ class TaskRunRequest(RunRequest):
     :param override_task_step_properties: Set of overridable parameters that
      can be passed when running a Task.
     :type override_task_step_properties:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OverrideTaskStepProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OverrideTaskStepProperties
     """
 
     _validation = {
@@ -3376,10 +3617,10 @@ class TaskRunRequest(RunRequest):
         'override_task_step_properties': {'key': 'overrideTaskStepProperties', 'type': 'OverrideTaskStepProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(TaskRunRequest, self).__init__(**kwargs)
-        self.task_id = kwargs.get('task_id', None)
-        self.override_task_step_properties = kwargs.get('override_task_step_properties', None)
+    def __init__(self, *, task_id: str, is_archive_enabled: bool=False, override_task_step_properties=None, **kwargs) -> None:
+        super(TaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
+        self.task_id = task_id
+        self.override_task_step_properties = override_task_step_properties
         self.type = 'TaskRunRequest'
 
 
@@ -3388,10 +3629,10 @@ class TaskRunUpdateParameters(Model):
 
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param run_request: The request (parameters) for the new run
     :type run_request:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunRequest
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
@@ -3406,12 +3647,12 @@ class TaskRunUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, identity=None, run_request=None, force_update_tag: str=None, tags=None, **kwargs) -> None:
         super(TaskRunUpdateParameters, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.run_request = kwargs.get('run_request', None)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.tags = kwargs.get('tags', None)
+        self.identity = identity
+        self.run_request = run_request
+        self.force_update_tag = force_update_tag
+        self.tags = tags
 
 
 class TaskUpdateParameters(Model):
@@ -3419,30 +3660,30 @@ class TaskUpdateParameters(Model):
 
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param status: The current status of task. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStatus
     :param platform: The platform properties against which the run has to
      happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformUpdateParameters
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param timeout: Run timeout in seconds.
     :type timeout: int
     :param step: The properties for updating a task step.
     :type step:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStepUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStepUpdateParameters
     :param trigger: The properties for updating trigger properties.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerUpdateParameters
     :param credentials: The parameters that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
@@ -3459,17 +3700,17 @@ class TaskUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, identity=None, status=None, platform=None, agent_configuration=None, timeout: int=None, step=None, trigger=None, credentials=None, tags=None, **kwargs) -> None:
         super(TaskUpdateParameters, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.status = kwargs.get('status', None)
-        self.platform = kwargs.get('platform', None)
-        self.agent_configuration = kwargs.get('agent_configuration', None)
-        self.timeout = kwargs.get('timeout', None)
-        self.step = kwargs.get('step', None)
-        self.trigger = kwargs.get('trigger', None)
-        self.credentials = kwargs.get('credentials', None)
-        self.tags = kwargs.get('tags', None)
+        self.identity = identity
+        self.status = status
+        self.platform = platform
+        self.agent_configuration = agent_configuration
+        self.timeout = timeout
+        self.step = step
+        self.trigger = trigger
+        self.credentials = credentials
+        self.tags = tags
 
 
 class TimerTrigger(Model):
@@ -3482,7 +3723,7 @@ class TimerTrigger(Model):
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -3498,11 +3739,11 @@ class TimerTrigger(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, schedule: str, name: str, status="Enabled", **kwargs) -> None:
         super(TimerTrigger, self).__init__(**kwargs)
-        self.schedule = kwargs.get('schedule', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+        self.schedule = schedule
+        self.status = status
+        self.name = name
 
 
 class TimerTriggerDescriptor(Model):
@@ -3519,10 +3760,10 @@ class TimerTriggerDescriptor(Model):
         'schedule_occurrence': {'key': 'scheduleOccurrence', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, timer_trigger_name: str=None, schedule_occurrence: str=None, **kwargs) -> None:
         super(TimerTriggerDescriptor, self).__init__(**kwargs)
-        self.timer_trigger_name = kwargs.get('timer_trigger_name', None)
-        self.schedule_occurrence = kwargs.get('schedule_occurrence', None)
+        self.timer_trigger_name = timer_trigger_name
+        self.schedule_occurrence = schedule_occurrence
 
 
 class TimerTriggerUpdateParameters(Model):
@@ -3535,7 +3776,7 @@ class TimerTriggerUpdateParameters(Model):
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -3550,11 +3791,11 @@ class TimerTriggerUpdateParameters(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, schedule: str=None, status="Enabled", **kwargs) -> None:
         super(TimerTriggerUpdateParameters, self).__init__(**kwargs)
-        self.schedule = kwargs.get('schedule', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+        self.schedule = schedule
+        self.status = status
+        self.name = name
 
 
 class Token(ProxyResource):
@@ -3575,18 +3816,18 @@ class Token(ProxyResource):
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param scope_map_id: The resource ID of the scope map to which the token
      will be associated with.
     :type scope_map_id: str
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCredentialsProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCredentialsProperties
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenStatus
     """
 
     _validation = {
@@ -3608,13 +3849,13 @@ class Token(ProxyResource):
         'status': {'key': 'properties.status', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, scope_map_id: str=None, credentials=None, status=None, **kwargs) -> None:
         super(Token, self).__init__(**kwargs)
         self.creation_date = None
         self.provisioning_state = None
-        self.scope_map_id = kwargs.get('scope_map_id', None)
-        self.credentials = kwargs.get('credentials', None)
-        self.status = kwargs.get('status', None)
+        self.scope_map_id = scope_map_id
+        self.credentials = credentials
+        self.status = status
 
 
 class TokenCertificate(Model):
@@ -3622,7 +3863,7 @@ class TokenCertificate(Model):
 
     :param name: Possible values include: 'certificate1', 'certificate2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificateName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCertificateName
     :param expiry: The expiry datetime of the certificate.
     :type expiry: datetime
     :param thumbprint: The thumbprint of the certificate.
@@ -3639,12 +3880,12 @@ class TokenCertificate(Model):
         'encoded_pem_certificate': {'key': 'encodedPemCertificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name=None, expiry=None, thumbprint: str=None, encoded_pem_certificate: str=None, **kwargs) -> None:
         super(TokenCertificate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.thumbprint = kwargs.get('thumbprint', None)
-        self.encoded_pem_certificate = kwargs.get('encoded_pem_certificate', None)
+        self.name = name
+        self.expiry = expiry
+        self.thumbprint = thumbprint
+        self.encoded_pem_certificate = encoded_pem_certificate
 
 
 class TokenCredentialsProperties(Model):
@@ -3653,13 +3894,13 @@ class TokenCredentialsProperties(Model):
 
     :param active_directory_object:
     :type active_directory_object:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ActiveDirectoryObject
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActiveDirectoryObject
     :param certificates:
     :type certificates:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificate]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCertificate]
     :param passwords:
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPassword]
     """
 
     _attribute_map = {
@@ -3668,11 +3909,11 @@ class TokenCredentialsProperties(Model):
         'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, active_directory_object=None, certificates=None, passwords=None, **kwargs) -> None:
         super(TokenCredentialsProperties, self).__init__(**kwargs)
-        self.active_directory_object = kwargs.get('active_directory_object', None)
-        self.certificates = kwargs.get('certificates', None)
-        self.passwords = kwargs.get('passwords', None)
+        self.active_directory_object = active_directory_object
+        self.certificates = certificates
+        self.passwords = passwords
 
 
 class TokenPassword(Model):
@@ -3689,7 +3930,7 @@ class TokenPassword(Model):
     :param name: The password name "password1" or "password2". Possible values
      include: 'password1', 'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPasswordName
     :ivar value: The password value.
     :vartype value: str
     """
@@ -3705,11 +3946,11 @@ class TokenPassword(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, creation_time=None, expiry=None, name=None, **kwargs) -> None:
         super(TokenPassword, self).__init__(**kwargs)
-        self.creation_time = kwargs.get('creation_time', None)
-        self.expiry = kwargs.get('expiry', None)
-        self.name = kwargs.get('name', None)
+        self.creation_time = creation_time
+        self.expiry = expiry
+        self.name = name
         self.value = None
 
 
@@ -3722,11 +3963,11 @@ class TokenUpdateParameters(Model):
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenStatus
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCredentialsProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCredentialsProperties
     """
 
     _attribute_map = {
@@ -3735,11 +3976,11 @@ class TokenUpdateParameters(Model):
         'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, scope_map_id: str=None, status=None, credentials=None, **kwargs) -> None:
         super(TokenUpdateParameters, self).__init__(**kwargs)
-        self.scope_map_id = kwargs.get('scope_map_id', None)
-        self.status = kwargs.get('status', None)
-        self.credentials = kwargs.get('credentials', None)
+        self.scope_map_id = scope_map_id
+        self.status = status
+        self.credentials = credentials
 
 
 class TriggerProperties(Model):
@@ -3747,14 +3988,14 @@ class TriggerProperties(Model):
 
     :param timer_triggers: The collection of timer triggers.
     :type timer_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TimerTrigger]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TimerTrigger]
     :param source_triggers: The collection of triggers based on source code
      repository.
     :type source_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTrigger]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTrigger]
     :param base_image_trigger: The trigger based on base image dependencies.
     :type base_image_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTrigger
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTrigger
     """
 
     _attribute_map = {
@@ -3763,11 +4004,11 @@ class TriggerProperties(Model):
         'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'BaseImageTrigger'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, timer_triggers=None, source_triggers=None, base_image_trigger=None, **kwargs) -> None:
         super(TriggerProperties, self).__init__(**kwargs)
-        self.timer_triggers = kwargs.get('timer_triggers', None)
-        self.source_triggers = kwargs.get('source_triggers', None)
-        self.base_image_trigger = kwargs.get('base_image_trigger', None)
+        self.timer_triggers = timer_triggers
+        self.source_triggers = source_triggers
+        self.base_image_trigger = base_image_trigger
 
 
 class TriggerUpdateParameters(Model):
@@ -3775,14 +4016,14 @@ class TriggerUpdateParameters(Model):
 
     :param timer_triggers: The collection of timer triggers.
     :type timer_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TimerTriggerUpdateParameters]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TimerTriggerUpdateParameters]
     :param source_triggers: The collection of triggers based on source code
      repository.
     :type source_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerUpdateParameters]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerUpdateParameters]
     :param base_image_trigger: The trigger based on base image dependencies.
     :type base_image_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTriggerUpdateParameters
     """
 
     _attribute_map = {
@@ -3791,11 +4032,11 @@ class TriggerUpdateParameters(Model):
         'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'BaseImageTriggerUpdateParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, timer_triggers=None, source_triggers=None, base_image_trigger=None, **kwargs) -> None:
         super(TriggerUpdateParameters, self).__init__(**kwargs)
-        self.timer_triggers = kwargs.get('timer_triggers', None)
-        self.source_triggers = kwargs.get('source_triggers', None)
-        self.base_image_trigger = kwargs.get('base_image_trigger', None)
+        self.timer_triggers = timer_triggers
+        self.source_triggers = source_triggers
+        self.base_image_trigger = base_image_trigger
 
 
 class TrustPolicy(Model):
@@ -3804,12 +4045,12 @@ class TrustPolicy(Model):
     :param type: The type of trust policy. Possible values include: 'Notary'.
      Default value: "Notary" .
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TrustPolicyType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicyType
     :param status: The value that indicates whether the policy is enabled or
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -3817,10 +4058,10 @@ class TrustPolicy(Model):
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type="Notary", status="disabled", **kwargs) -> None:
         super(TrustPolicy, self).__init__(**kwargs)
-        self.type = kwargs.get('type', "Notary")
-        self.status = kwargs.get('status', "disabled")
+        self.type = type
+        self.status = status
 
 
 class UserIdentityProperties(Model):
@@ -3837,10 +4078,10 @@ class UserIdentityProperties(Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, principal_id: str=None, client_id: str=None, **kwargs) -> None:
         super(UserIdentityProperties, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.client_id = kwargs.get('client_id', None)
+        self.principal_id = principal_id
+        self.client_id = client_id
 
 
 class VirtualNetworkRule(Model):
@@ -3851,7 +4092,7 @@ class VirtualNetworkRule(Model):
     :param action: The action of virtual network rule. Possible values
      include: 'Allow'. Default value: "Allow" .
     :type action: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Action
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for
      example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
@@ -3867,10 +4108,10 @@ class VirtualNetworkRule(Model):
         'virtual_network_resource_id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, virtual_network_resource_id: str, action="Allow", **kwargs) -> None:
         super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.action = kwargs.get('action', "Allow")
-        self.virtual_network_resource_id = kwargs.get('virtual_network_resource_id', None)
+        self.action = action
+        self.virtual_network_resource_id = virtual_network_resource_id
 
 
 class Webhook(Resource):
@@ -3895,7 +4136,7 @@ class Webhook(Resource):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -3904,12 +4145,12 @@ class Webhook(Resource):
     :param actions: Required. The list of actions that trigger the webhook to
      post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -3933,11 +4174,11 @@ class Webhook(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Webhook, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.scope = kwargs.get('scope', None)
-        self.actions = kwargs.get('actions', None)
+    def __init__(self, *, location: str, actions, tags=None, status=None, scope: str=None, **kwargs) -> None:
+        super(Webhook, self).__init__(location=location, tags=tags, **kwargs)
+        self.status = status
+        self.scope = scope
+        self.actions = actions
         self.provisioning_state = None
 
 
@@ -3960,7 +4201,7 @@ class WebhookCreateParameters(Model):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -3969,7 +4210,7 @@ class WebhookCreateParameters(Model):
     :param actions: Required. The list of actions that trigger the webhook to
      post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     """
 
     _validation = {
@@ -3988,15 +4229,15 @@ class WebhookCreateParameters(Model):
         'actions': {'key': 'properties.actions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str, service_uri: str, actions, tags=None, custom_headers=None, status=None, scope: str=None, **kwargs) -> None:
         super(WebhookCreateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs.get('location', None)
-        self.service_uri = kwargs.get('service_uri', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
-        self.status = kwargs.get('status', None)
-        self.scope = kwargs.get('scope', None)
-        self.actions = kwargs.get('actions', None)
+        self.tags = tags
+        self.location = location
+        self.service_uri = service_uri
+        self.custom_headers = custom_headers
+        self.status = status
+        self.scope = scope
+        self.actions = actions
 
 
 class WebhookUpdateParameters(Model):
@@ -4012,7 +4253,7 @@ class WebhookUpdateParameters(Model):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -4021,7 +4262,7 @@ class WebhookUpdateParameters(Model):
     :param actions: The list of actions that trigger the webhook to post
      notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     """
 
     _attribute_map = {
@@ -4033,11 +4274,11 @@ class WebhookUpdateParameters(Model):
         'actions': {'key': 'properties.actions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, service_uri: str=None, custom_headers=None, status=None, scope: str=None, actions=None, **kwargs) -> None:
         super(WebhookUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.service_uri = kwargs.get('service_uri', None)
-        self.custom_headers = kwargs.get('custom_headers', None)
-        self.status = kwargs.get('status', None)
-        self.scope = kwargs.get('scope', None)
-        self.actions = kwargs.get('actions', None)
+        self.tags = tags
+        self.service_uri = service_uri
+        self.custom_headers = custom_headers
+        self.status = status
+        self.scope = scope
+        self.actions = actions

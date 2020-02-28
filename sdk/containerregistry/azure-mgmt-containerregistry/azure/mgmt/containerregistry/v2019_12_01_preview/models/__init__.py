@@ -28,6 +28,7 @@ try:
     from ._models_py3 import EncodedTaskRunRequest
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
+    from ._models_py3 import EncryptionProperty
     from ._models_py3 import Error
     from ._models_py3 import ErrorSchema, ErrorSchemaException
     from ._models_py3 import Event
@@ -47,6 +48,7 @@ try:
     from ._models_py3 import ImportSource
     from ._models_py3 import ImportSourceCredentials
     from ._models_py3 import IPRule
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import OperationDefinition
     from ._models_py3 import OperationDisplayDefinition
@@ -56,6 +58,10 @@ try:
     from ._models_py3 import PlatformProperties
     from ._models_py3 import PlatformUpdateParameters
     from ._models_py3 import Policies
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
     from ._models_py3 import QuarantinePolicy
     from ._models_py3 import RegenerateCredentialParameters
@@ -90,7 +96,7 @@ try:
     from ._models_py3 import SourceTriggerUpdateParameters
     from ._models_py3 import SourceUpdateParameters
     from ._models_py3 import SourceUploadDefinition
-    from ._models_py3 import Status
+    from ._models_py3 import Status1
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Task
@@ -135,6 +141,7 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskRunRequest
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
+    from ._models import EncryptionProperty
     from ._models import Error
     from ._models import ErrorSchema, ErrorSchemaException
     from ._models import Event
@@ -154,6 +161,7 @@ except (SyntaxError, ImportError):
     from ._models import ImportSource
     from ._models import ImportSourceCredentials
     from ._models import IPRule
+    from ._models import KeyVaultProperties
     from ._models import NetworkRuleSet
     from ._models import OperationDefinition
     from ._models import OperationDisplayDefinition
@@ -163,6 +171,10 @@ except (SyntaxError, ImportError):
     from ._models import PlatformProperties
     from ._models import PlatformUpdateParameters
     from ._models import Policies
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
     from ._models import QuarantinePolicy
     from ._models import RegenerateCredentialParameters
@@ -197,7 +209,7 @@ except (SyntaxError, ImportError):
     from ._models import SourceTriggerUpdateParameters
     from ._models import SourceUpdateParameters
     from ._models import SourceUploadDefinition
-    from ._models import Status
+    from ._models import Status1
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Task
@@ -225,6 +237,8 @@ except (SyntaxError, ImportError):
     from ._models import WebhookUpdateParameters
 from ._paged_models import EventPaged
 from ._paged_models import OperationDefinitionPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import RegistryPaged
 from ._paged_models import ReplicationPaged
 from ._paged_models import RunPaged
@@ -235,13 +249,17 @@ from ._paged_models import TokenPaged
 from ._paged_models import WebhookPaged
 from ._container_registry_management_client_enums import (
     ImportMode,
+    Status,
+    ActionsRequired,
+    ProvisioningState,
     SkuName,
     SkuTier,
-    ProvisioningState,
+    ResourceIdentityType,
     DefaultAction,
     Action,
     PolicyStatus,
     TrustPolicyType,
+    EncryptionStatus,
     PasswordName,
     RegistryUsageUnit,
     WebhookStatus,
@@ -251,7 +269,6 @@ from ._container_registry_management_client_enums import (
     OS,
     Architecture,
     Variant,
-    ResourceIdentityType,
     TaskStatus,
     BaseImageDependencyType,
     TriggerStatus,
@@ -286,6 +303,7 @@ __all__ = [
     'EncodedTaskRunRequest',
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
+    'EncryptionProperty',
     'Error',
     'ErrorSchema', 'ErrorSchemaException',
     'Event',
@@ -305,6 +323,7 @@ __all__ = [
     'ImportSource',
     'ImportSourceCredentials',
     'IPRule',
+    'KeyVaultProperties',
     'NetworkRuleSet',
     'OperationDefinition',
     'OperationDisplayDefinition',
@@ -314,6 +333,10 @@ __all__ = [
     'PlatformProperties',
     'PlatformUpdateParameters',
     'Policies',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkServiceConnectionState',
     'ProxyResource',
     'QuarantinePolicy',
     'RegenerateCredentialParameters',
@@ -348,7 +371,7 @@ __all__ = [
     'SourceTriggerUpdateParameters',
     'SourceUpdateParameters',
     'SourceUploadDefinition',
-    'Status',
+    'Status1',
     'StorageAccountProperties',
     'Target',
     'Task',
@@ -375,7 +398,9 @@ __all__ = [
     'WebhookCreateParameters',
     'WebhookUpdateParameters',
     'RegistryPaged',
+    'PrivateLinkResourcePaged',
     'OperationDefinitionPaged',
+    'PrivateEndpointConnectionPaged',
     'ReplicationPaged',
     'WebhookPaged',
     'EventPaged',
@@ -385,13 +410,17 @@ __all__ = [
     'ScopeMapPaged',
     'TokenPaged',
     'ImportMode',
+    'Status',
+    'ActionsRequired',
+    'ProvisioningState',
     'SkuName',
     'SkuTier',
-    'ProvisioningState',
+    'ResourceIdentityType',
     'DefaultAction',
     'Action',
     'PolicyStatus',
     'TrustPolicyType',
+    'EncryptionStatus',
     'PasswordName',
     'RegistryUsageUnit',
     'WebhookStatus',
@@ -401,7 +430,6 @@ __all__ = [
     'OS',
     'Architecture',
     'Variant',
-    'ResourceIdentityType',
     'TaskStatus',
     'BaseImageDependencyType',
     'TriggerStatus',
