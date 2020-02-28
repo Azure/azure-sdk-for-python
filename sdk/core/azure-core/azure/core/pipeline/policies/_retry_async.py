@@ -31,7 +31,7 @@ import logging
 import time
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, TimeoutError
+from azure.core.exceptions import AzureError, ClientAuthenticationError, RequestTimeoutError
 from ._base import HTTPPolicy
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicy
@@ -139,7 +139,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
             try:
                 start_time = time.time()
                 if absolute_timeout <= 0:
-                    raise TimeoutError('Operation timeout')
+                    raise RequestTimeoutError('Operation timeout')
                 request.context.options['connection_timeout'] = absolute_timeout
 
                 response = await self.next.send(request)
