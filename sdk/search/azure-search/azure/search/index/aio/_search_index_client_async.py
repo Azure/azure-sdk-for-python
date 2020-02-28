@@ -65,6 +65,15 @@ class _SearchDocumentsPagedAsync(AsyncPageIterator):
 class SearchIndexClient(object):
     """A client to interact with an existing Azure search index.
 
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_search_client_with_key_async]
+            :end-before: [END create_search_client_with_key_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the SearchIndexClient with an API key.
     """
 
     def __init__(self, search_service_name, index_name, credential, **kwargs):
@@ -96,6 +105,9 @@ class SearchIndexClient(object):
 
     async def close(self):
         # type: () -> None
+        """ Close the SearchIndexClient session
+
+        """
         return await self._client.close()
 
     @distributed_trace_async
@@ -111,6 +123,14 @@ class SearchIndexClient(object):
         # type: (str, List[str], **Any) -> dict
         """Retrieve a document from the Azure search index by its key.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_document_async.py
+                :start-after: [START get_document_async]
+                :end-before: [END get_document_async]
+                :language: python
+                :dedent: 4
+                :caption: Get a specific document from the search index.
         """
         result = await self._client.documents.get(
             key=key, selected_fields=selected_fields, **kwargs
@@ -122,6 +142,23 @@ class SearchIndexClient(object):
         # type: (Union[str, SearchQuery], **Any) -> AsyncItemPaged[dict]
         """Search the Azure search index for documents.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_simple_query_async.py
+                :start-after: [START simple_query_async]
+                :end-before: [END simple_query_async]
+                :language: python
+                :dedent: 4
+                :caption: Search on a simple text term.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_filter_query_async.py
+                :start-after: [START filter_query_async]
+                :end-before: [END filter_query_async]
+                :language: python
+                :dedent: 4
+                :caption: Filter and sort search results.
         """
         if isinstance(query, six.string_types):
             query = SearchQuery(search_text=query)
@@ -141,6 +178,14 @@ class SearchIndexClient(object):
         # type: (Union[str, SuggestQuery], **Any) -> List[dict]
         """Get search suggestion results from the Azure search index.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_suggestions_async.py
+                :start-after: [START suggest_query_async]
+                :end-before: [END suggest_query_async]
+                :language: python
+                :dedent: 4
+                :caption: Get search suggestions.
         """
         if not isinstance(query, SuggestQuery):
             raise TypeError(
@@ -158,6 +203,14 @@ class SearchIndexClient(object):
         # type: (Union[str, AutocompleteQuery], **Any) -> List[dict]
         """Get search auto-completion results from the Azure search index.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_autocomplete_async.py
+                :start-after: [START autocomplete_query_async]
+                :end-before: [END autocomplete_query_async]
+                :language: python
+                :dedent: 4
+                :caption: Get a auto-completions.
         """
         if not isinstance(query, AutocompleteQuery):
             raise TypeError(

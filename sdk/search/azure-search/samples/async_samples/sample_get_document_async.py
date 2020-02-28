@@ -30,7 +30,7 @@ index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 async def autocomplete_query():
-    # [START get_document]
+    # [START get_document_async]
     from azure.search.aio import SearchIndexClient
     from azure.search import SearchApiKeyCredential
 
@@ -44,7 +44,7 @@ async def autocomplete_query():
     print("    Category: {}".format(result["Category"]))
 
     await search_client.close()
-    # [END get_document]
+    # [END get_document_async]
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
