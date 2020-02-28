@@ -12,6 +12,5 @@ coverage==4.5.4
 codecov
 beautifulsoup4
 pkginfo
-idna
 ./tools/azure-devtools
 ./tools/azure-sdk-tools
