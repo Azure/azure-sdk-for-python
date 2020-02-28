@@ -180,8 +180,8 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
+                self.assertIsNotNone(entity.grapheme_offset)
+                self.assertIsNotNone(entity.grapheme_length)
                 self.assertIsNotNone(entity.score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -262,8 +262,8 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
+                self.assertIsNotNone(entity.grapheme_offset)
+                self.assertIsNotNone(entity.grapheme_length)
                 self.assertIsNotNone(entity.score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1187,3 +1187,12 @@ class TestBatchTextAnalyticsAsync(AsyncTextAnalyticsTest):
             language="es",
             raw_response_hook=callback2
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @AsyncTextAnalyticsTest.await_prepared_test
+    async def test_length_with_emoji_async(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        result = await text_analytics.recognize_pii_entities(["👩 SSN: 123-12-1234"])
+        self.assertEqual(result[0].entities[0].grapheme_offset, 7)
+        self.assertEqual(result[0].entities[0].grapheme_length, 11)
