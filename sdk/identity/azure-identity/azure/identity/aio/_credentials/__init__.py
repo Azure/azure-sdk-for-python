@@ -9,7 +9,7 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .client_credential import CertificateCredential, ClientSecretCredential
 from .shared_cache import SharedTokenCacheCredential
-from .cli_credential import AzureCliCredential
+from .azure_cli import AzureCliCredential
 
 
 __all__ = [
