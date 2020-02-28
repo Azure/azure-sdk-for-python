@@ -81,7 +81,7 @@ class RetryPolicy(HTTPPolicy):
 
     :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
 
-    :keyword int timeout: Timeout setting for the operation in seconds, default is 600s (10 minutes).
+    :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
     .. admonition:: Example:
 
@@ -108,7 +108,7 @@ class RetryPolicy(HTTPPolicy):
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
         self.retry_mode = kwargs.pop('retry_mode', RetryMode.Exponential)
-        self.timeout = kwargs.pop('timeout', 600)
+        self.timeout = kwargs.pop('timeout', 604800)
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
