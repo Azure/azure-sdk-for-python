@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, List, Union, TYPE_CHECKING
+from typing import Callable, Any, Dict, Optional, List, Union, Type, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,19 +37,19 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    'AzureError',
-    'ServiceRequestError',
-    'ServiceResponseError',
-    'HttpResponseError',
-    'DecodeError',
-    'ResourceExistsError',
-    'ResourceNotFoundError',
-    'ClientAuthenticationError',
-    'ResourceModifiedError',
-    'ResourceNotModifiedError',
-    'TooManyRedirectsError',
-    'ODataV4Format',
-    'ODataV4Error',
+    "AzureError",
+    "ServiceRequestError",
+    "ServiceResponseError",
+    "HttpResponseError",
+    "DecodeError",
+    "ResourceExistsError",
+    "ResourceNotFoundError",
+    "ClientAuthenticationError",
+    "ResourceModifiedError",
+    "ResourceNotModifiedError",
+    "TooManyRedirectsError",
+    "ODataV4Format",
+    "ODataV4Error",
 ]
 
 
@@ -62,7 +62,7 @@ def raise_with_traceback(exception, *args, **kwargs):
     :param args: Any additional args to be included with exception.
     :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
-    message = kwargs.pop('message', '')
+    message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
     # If not called inside a "except", exc_type will be None. Assume it will not happen
     exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)  # type: ignore
@@ -73,6 +73,7 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
+
 def map_error(status_code, response, error_map):
     if not error_map:
         return
@@ -81,6 +82,87 @@ def map_error(status_code, response, error_map):
         return
     error = error_type(response=response)
     raise error
+
+
+class ODataV4Format(object):
+    """Class to describe OData V4 error format.
+
+    http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
+
+    :param dict json_object: A Python dict representing a ODataV4 JSON
+    :ivar str ~.code: Its value is a service-defined error code.
+     This code serves as a sub-status for the HTTP error code specified in the response.
+    :ivar str message: Human-readable, language-dependent representation of the error.
+    :ivar str target: The target of the particular error (for example, the name of the property in error).
+     This field is optional and may be None.
+    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs
+     for code and message, and MAY contain a name/value pair for target, as described above.
+    :ivar dict innererror: An object. The contents of this object are service-defined.
+     Usually this object contains information that will help debug the service.
+    """
+    CODE_LABEL = "code"
+    MESSAGE_LABEL = "message"
+    TARGET_LABEL = "target"
+    DETAILS_LABEL = "details"
+    INNERERROR_LABEL = "innererror"
+
+    def __init__(self, json_object):
+        if "error" in json_object:
+            json_object = json_object["error"]
+        cls = self.__class__  # type: Type[ODataV4Format]
+
+        # Required fields, but assume they could be missing still to be robust
+        self.code = json_object.get(cls.CODE_LABEL)  # type: Optional[str]
+        self.message = json_object.get(cls.MESSAGE_LABEL)  # type: Optional[str]
+
+        if not (self.code or self.message):
+            raise ValueError("Impossible to extract code/message from received JSON:\n"+json.dumps(json_object))
+
+        # Optional fields
+        self.target = json_object.get(cls.TARGET_LABEL)  # type: Optional[str]
+
+        # details is recursive of this very format
+        self.details = [
+            self.__class__(detail_node)
+            for detail_node in json_object.get(cls.DETAILS_LABEL, [])
+        ]  # type: List[ODataV4Format]
+
+        self.innererror = json_object.get(cls.INNERERROR_LABEL, {})  # type: Dict[str, Any]
+
+    @property
+    def error(self):
+        import warnings
+
+        warnings.warn(
+            "error.error from azure exceptions is deprecated, just simply use 'error' once",
+            DeprecationWarning,
+        )
+        return self
+
+    def __str__(self):
+        return "({}) {}".format(self.code, self.message)
+
+    def message_details(self):
+        """Return a detailled string of the error.
+        """
+        # () -> str
+        error_str = "Code: {}".format(self.code)
+        error_str += "\nMessage: {}".format(self.message)
+        if self.target:
+            error_str += "\nTarget: {}".format(self.target)
+
+        if self.details:
+            error_str += "\nException Details:"
+            for error_obj in self.details:
+                # Indent for visibility
+                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
+
+        if self.innererror:
+            error_str += "\nInner error: {}".format(
+                json.dumps(self.innererror, indent=4)
+            )
+        return error_str
+
 
 class AzureError(Exception):
     """Base exception for all errors.
@@ -99,9 +181,11 @@ class AzureError(Exception):
     """
 
     def __init__(self, message, *args, **kwargs):
-        self.inner_exception = kwargs.get('error')
+        self.inner_exception = kwargs.get("error")
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
-        self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
+        self.exc_type = (
+            self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
+        )
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
         self.message = str(message)
         super(AzureError, self).__init__(self.message, *args)
@@ -143,6 +227,9 @@ class HttpResponseError(AzureError):
     """
 
     def __init__(self, message=None, response=None, **kwargs):
+        # Don't want to document this one yet.
+        error_format = kwargs.get("error_format", ODataV4Format)
+
         self.reason = None
         self.status_code = None
         self.response = response
@@ -150,22 +237,40 @@ class HttpResponseError(AzureError):
             self.reason = response.reason
             self.status_code = response.status_code
 
-        message = message or "Operation returned an invalid status '{}'".format(self.reason)
-        try:
-            try:
-                if self.error.error.code or self.error.error.message:
-                    message = "({}) {}".format(
-                        self.error.error.code,
-                        self.error.error.message)
-            except AttributeError:
-                if self.error.message: #pylint: disable=no-member
-                    message = self.error.message #pylint: disable=no-member
-        except AttributeError:
-            # Exception will only have an error if it has been deserialized from
-            # generated code. We should add the empty attribute if it's not present.
-            if not hasattr(self, 'error'):
-                self.error = None
+        # old autorest are setting "error" before calling __init__, so it might be there already
+        # transferring into self.model
+        model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
+        if model is not None:  # autorest v5
+            self.model = model
+        else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
+            self.model = getattr(
+                self, "error", None
+            )  # type: Optional[msrest.serialization.Model]
+        self.error = self._parse_odata_body(error_format, response)  # type: Optional[ODataV4Format]
+
+        # By priority, message is:
+        # - odatav4 message, OR
+        # - parameter "message", OR
+        # - generic meassage using "reason"
+        if self.error:
+            message = str(self.error)
+        else:
+            message = message or "Operation returned an invalid status '{}'".format(
+                self.reason
+            )
+
         super(HttpResponseError, self).__init__(message=message, **kwargs)
+
+    @staticmethod
+    def _parse_odata_body(error_format, response):
+        # type: (Type[ODataV4Format], _HttpResponseBase) -> Optional[ODataV4Format]
+        try:
+            odata_json = json.loads(response.text())
+            return error_format(odata_json)
+        except Exception:  # pylint: disable=broad-except
+            # If the body is not JSON valid, just stop now
+            pass
+        return None
 
 
 class DecodeError(HttpResponseError):
@@ -191,9 +296,11 @@ class ResourceModifiedError(HttpResponseError):
     """An error response with status code 4xx, typically 412 Conflict.
     This will not be raised directly by the Azure core pipeline."""
 
+
 class ResourceNotModifiedError(HttpResponseError):
     """An error response with status code 304.
     This will not be raised directly by the Azure core pipeline."""
+
 
 class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts."""
@@ -202,57 +309,6 @@ class TooManyRedirectsError(HttpResponseError):
         self.history = history
         message = "Reached maximum redirect attempts."
         super(TooManyRedirectsError, self).__init__(message, *args, **kwargs)
-
-class ODataV4Format(object):
-    """Class to describe OData V4 error format.
-
-    http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
-
-    :param dict json_object: A Python dict representing a ODataV4 JSON
-    :ivar str ~.code: Its value is a service-defined error code.
-     This code serves as a sub-status for the HTTP error code specified in the response.
-    :ivar str message: Human-readable, language-dependent representation of the error.
-    :ivar str target: The target of the particular error (for example, the name of the property in error).
-     This field is optional and may be None.
-    :ivar list[ODataV4Format] details: Array of ODataV4Format instances that MUST contain name/value pairs
-     for code and message, and MAY contain a name/value pair for target, as described above.
-    :ivar dict innererror: An object. The contents of this object are service-defined.
-     Usually this object contains information that will help debug the service.
-    """
-
-    def __init__(self, json_object):
-        # Required fields, but assume they could be missing still to be robust
-        self.code = json_object.get("code")  # type: Optional[str]
-        self.message = json_object.get("message")  # type: Optional[str]
-
-        # Optional fields
-        self.target = json_object.get("target", None)  # type: Optional[str]
-
-        # details is recursive of this very format
-        self.details = [
-            self.__class__(detail_node)
-            for detail_node in json_object.get("details", [])
-        ]  # type: List[ODataV4Format]
-
-        self.innererror = json_object.get("innererror", {})  # type: Dict[str, Any]
-
-    def __str__(self):
-        error_str = "Code: {}".format(self.code)
-        error_str += "\nMessage: {}".format(self.message)
-        if self.target:
-            error_str += "\nTarget: {}".format(self.target)
-
-        if self.details:
-            error_str += "\nException Details:"
-            for error_obj in self.details:
-                # Indent for visibility
-                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
-
-        if self.innererror:
-            error_str += "\nInner error: {}".format(
-                json.dumps(self.innererror, indent=4)
-            )
-        return error_str
 
 
 class ODataV4Error(HttpResponseError):
@@ -282,7 +338,7 @@ class ODataV4Error(HttpResponseError):
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
-        except Exception:  #pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             odata_message = None
 
@@ -309,9 +365,11 @@ class ODataV4Error(HttpResponseError):
                         if v is not None
                     }
                 )
-            except Exception:  #pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
-                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
+                self._error_format = "JSON was invalid for format " + str(
+                    self._ERROR_FORMAT
+                )
 
     def __str__(self):
         if self._error_format:

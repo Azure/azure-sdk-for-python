@@ -21,6 +21,8 @@ from common_tasks import (
     read_file,
     is_error_code_5_allowed,
     create_code_coverage_params,
+    find_whl,
+    parse_setup
 )
 
 from pkg_resources import parse_requirements, RequirementParseError
@@ -242,6 +244,25 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             f.write("\n".join(all_adjustments))
 
 
+def build_whl_for_req(req, package_path):
+    if ".." in req:
+        # Create temp path if it doesn't exist
+        temp_dir = os.path.join(package_path, ".tmp_whl_dir")
+        if not os.path.exists(temp_dir):
+            os.mkdir(temp_dir)
+
+        req_pkg_path = os.path.abspath(os.path.join(package_path, req.replace("\n", "")))
+        pkg_name, version, _, _ = parse_setup(req_pkg_path)
+        logging.info("Building wheel for package {}".format(pkg_name))
+        run_check_call([sys.executable, "setup.py", "bdist_wheel", "-d", temp_dir], req_pkg_path)
+
+        whl_path = find_whl(pkg_name, version, temp_dir)
+        logging.info("Wheel for package {0} is {1}".format(pkg_name, whl_path))
+        logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
+        return whl_path
+    else:
+        return req
+
 def replace_dev_reqs(file):
     adjusted_req_lines = []
 
@@ -255,6 +276,10 @@ def replace_dev_reqs(file):
             amended_line = " ".join(args)
             adjusted_req_lines.append(amended_line)
 
+    logging.info("Old dev requirements:{}".format(adjusted_req_lines))
+    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, os.path.dirname(file)), adjusted_req_lines))
+    logging.info("New dev requirements:{}".format(adjusted_req_lines))
+
     with open(file, "w") as f:
         # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
         # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
@@ -266,7 +291,7 @@ def execute_tox_serial(tox_command_tuples):
     return_code = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
-        tox_dir = os.path.join(cmd_tuple[1], "./.tox/")
+        tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
 
         logging.info(
             "Running tox for {}. {} of {}.".format(
@@ -306,6 +331,9 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         package_name = os.path.basename(package_dir)
         coverage_commands = create_code_coverage_params(parsed_args, package_name)
         local_options_array.extend(coverage_commands)
+
+        pkg_egg_info_name = "{}.egg-info".format(package_name.replace("-", "_"))
+        local_options_array.extend(["--ignore", pkg_egg_info_name])
 
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation

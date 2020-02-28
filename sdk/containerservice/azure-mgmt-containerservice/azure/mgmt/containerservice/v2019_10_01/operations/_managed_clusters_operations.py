@@ -449,7 +449,7 @@ class ManagedClustersOperations(object):
 
     def list_cluster_monitoring_user_credentials(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets cluster user credential of a managed cluster.
+        """Gets cluster monitoring user credential of a managed cluster.
 
         Gets cluster monitoring user credential of the managed cluster with a
         specified resource group and name.

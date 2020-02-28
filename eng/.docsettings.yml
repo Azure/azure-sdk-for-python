@@ -42,6 +42,7 @@ known_presence_issues:
 known_content_issues:
   # data plane. common issue filed to azure-sdk-for-python
   - ['README.rst', '#4554']
+  - ['sdk/synapse/azure-synapse/README.md', '#4554']
   - ['sdk/applicationinsights/azure-applicationinsights/README.md', '#4554']
   - ['sdk/batch/azure-batch/README.md', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-anomalydetector/README.md', '#4554']

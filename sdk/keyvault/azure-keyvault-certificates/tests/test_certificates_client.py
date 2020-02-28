@@ -2,17 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import itertools
-import time
-import hashlib
-import os
-import logging
+import functools
 import json
+import logging
+import os
+import time
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
 from azure.keyvault.certificates import (
     AdministratorContact,
+    CertificateClient,
     CertificateContact,
     CertificatePolicyAction,
     CertificatePolicy,
@@ -27,8 +27,12 @@ from azure.keyvault.certificates import (
 )
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
-from certificates_preparer import VaultClientPreparer
-from certificates_test_case import KeyVaultTestCase
+
+from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
+from _shared.test_case import KeyVaultTestCase
+
+# pre-apply the client_cls positional argument so it needn't be explicitly passed below
+KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, CertificateClient)
 
 
 class RetryAfterReplacer(RecordingProcessor):
@@ -176,10 +180,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_crud_operations(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_crud_operations(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
         cert_policy = CertificatePolicy(
@@ -230,11 +232,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_list(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    def test_list(self, client, **kwargs):
         max_certificates = self.list_test_size
         expected = {}
 
@@ -261,10 +260,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_list_certificate_versions(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_list_certificate_versions(self, client, **kwargs):
         cert_name = self.get_resource_name("certver")
 
         max_certificates = self.list_test_size
@@ -296,11 +293,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_crud_contacts(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    def test_crud_contacts(self, client, **kwargs):
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
@@ -328,11 +322,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_recover_and_purge(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    def test_recover_and_purge(self, client, **kwargs):
         certs = {}
         # create certificates to recover
         for i in range(self.list_test_size):
@@ -374,11 +365,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_async_request_cancellation_and_deletion(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    def test_async_request_cancellation_and_deletion(self, client, **kwargs):
         cert_name = "asyncCanceledDeletedCert"
         cert_policy = CertificatePolicy.get_default()
         # create certificate
@@ -429,10 +417,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_policy(self, vault_client, **kwargs):
-        client = vault_client.certificates
-
+    @KeyVaultClientPreparer()
+    def test_policy(self, client, **kwargs):
         cert_name = "policyCertificate"
         cert_policy = CertificatePolicy(
             issuer_name="Self",
@@ -467,10 +453,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_get_pending_certificate_signing_request(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_get_pending_certificate_signing_request(self, client, **kwargs):
         cert_name = "unknownIssuerCert"
 
         # get pending certificate signing request
@@ -482,12 +466,10 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
-    @VaultClientPreparer()
-    def test_backup_restore(self, vault_client, **kwargs):
+    @KeyVaultClientPreparer()
+    def test_backup_restore(self, client, **kwargs):
         policy = CertificatePolicy.get_default()
         policy._san_user_principal_names = ["john.doe@domain.com"]
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         # create certificate
         create_certificate_poller = client.begin_create_certificate(certificate_name=cert_name, policy=policy)
@@ -505,54 +487,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_merge_certificate(self, vault_client, **kwargs):
-        import base64
-        import os
-        from OpenSSL import crypto
-
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
-        cert_name = "mergeCertificate"
-        cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.unknown, subject="CN=MyCert", certificate_transparency=False
-        )
-        dirname = os.path.dirname(os.path.abspath(__file__))
-
-        with open(os.path.abspath(os.path.join(dirname, "ca.key")), "rt") as f:
-            pkey = crypto.load_privatekey(crypto.FILETYPE_PEM, f.read())
-        with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
-            ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
-
-        client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
-
-        csr = (
-            "-----BEGIN CERTIFICATE REQUEST-----\n"
-            + base64.b64encode(client.get_certificate_operation(certificate_name=cert_name).csr).decode()
-            + "\n-----END CERTIFICATE REQUEST-----"
-        )
-        req = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr)
-
-        cert = crypto.X509()
-        cert.set_serial_number(1)
-        cert.gmtime_adj_notBefore(0)
-        cert.gmtime_adj_notAfter(60)  # Testing certificates need not be long lived
-        cert.set_issuer(ca_cert.get_subject())
-        cert.set_subject(req.get_subject())
-        cert.set_pubkey(req.get_pubkey())
-        cert.sign(pkey, "sha256")
-        signed_certificate_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode().replace("\n", "")
-        signed_certificate_bytes = signed_certificate_bytes.lstrip("-----BEGIN CERTIFICATE-----")
-        signed_certificate_bytes = signed_certificate_bytes.rstrip("-----END CERTIFICATE-----")
-
-        client.merge_certificate(certificate_name=cert_name, x509_certificates=[signed_certificate_bytes.encode()])
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_crud_issuer(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_crud_issuer(self, client, **kwargs):
         issuer_name = "issuer"
         admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
@@ -629,9 +565,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer(client_kwargs={"logging_enable": True})
-    def test_logging_enabled(self, vault_client, **kwargs):
-        client = vault_client.certificates
+    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
+    def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -654,9 +589,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @VaultClientPreparer()
-    def test_logging_disabled(self, vault_client, **kwargs):
-        client = vault_client.certificates
+    @KeyVaultClientPreparer()
+    def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")

@@ -269,7 +269,7 @@ def test_raw_deserializer():
     raw_deserializer.on_request(request)
     raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
-    assert result == "é"
+    assert result == u"é"
     assert response.context["response_encoding"] == "utf-8"
     del request.context['response_encoding']
 
@@ -279,7 +279,7 @@ def test_raw_deserializer():
     raw_deserializer.on_request(request)
     raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
-    assert result == "é"
+    assert result == u"é"
     assert response.context["response_encoding"] == "utf-8"
     del request.context['response_encoding']
 
@@ -289,7 +289,7 @@ def test_raw_deserializer():
     raw_deserializer.on_request(request)
     raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
-    assert result == "é"
+    assert result == u"é"
     assert response.context["response_encoding"] == "utf-8-sig"
     del request.context['response_encoding']
 

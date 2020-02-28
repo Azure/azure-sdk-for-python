@@ -1,8 +1,11 @@
 # Release History
 
-## 12.0.0b8 (Unreleased)
+## 12.0.0 (Unreleased)
 **New Feature**
 - Added `get_root_directory_client` sync and async API.
+
+**Notes**
+- The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
 ## 12.0.0b7 (2020-02-12)
 **New Feature**
