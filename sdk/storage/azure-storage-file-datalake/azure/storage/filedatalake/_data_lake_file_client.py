@@ -425,12 +425,13 @@ class DataLakeFileClient(PathClient):
             return downloader.readinto(stream)
         return downloader.readall()
 
-    def rename_file(self, rename_destination, **kwargs):
+    def rename_file(self, new_name,  # type: str
+                    **kwargs):
         # type: (**Any) -> DataLakeFileClient
         """
         Rename the source file.
 
-        :param str rename_destination: the new file name the user want to rename to.
+        :param str new_name: the new file name the user want to rename to.
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}/{file}".
         :keyword source_lease: A lease ID for the source path. If specified,
          the source path must have an active lease and the leaase ID must
@@ -494,9 +495,9 @@ class DataLakeFileClient(PathClient):
             The timeout parameter is expressed in seconds.
         :return:
         """
-        rename_destination = rename_destination.strip('/')
-        new_file_system = rename_destination.split('/')[0]
-        path = rename_destination[len(new_file_system):]
+        new_name = new_name.strip('/')
+        new_file_system = new_name.split('/')[0]
+        path = new_name[len(new_file_system):]
 
         new_directory_client = DataLakeFileClient(
             self.url, new_file_system, file_path=path, credential=self._raw_credential,
