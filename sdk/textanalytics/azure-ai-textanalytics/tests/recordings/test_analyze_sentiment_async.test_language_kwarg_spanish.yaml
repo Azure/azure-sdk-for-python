@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '93'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"documentScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":35}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: e87d96d5-20e9-45ef-8814-0a4e2b64ff4c
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
+      date: Fri, 28 Feb 2020 04:13:40 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '66'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
+version: 1

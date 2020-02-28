@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "1", "text": "I had a wonderful experience! The rooms
-      were wonderful and the staff was helpful.", "countryHint": "US"}]}'
+    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
+      "language": "en"}]}'
     headers:
       Accept:
       - application/json
@@ -10,7 +10,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '142'
+      - '93'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -18,19 +18,19 @@ interactions:
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"documentScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":35}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - caabfb55-1ffa-4fb0-9c4e-8693d311e60b
+      - 4101d529-6e9e-4f23-8978-e289e13d37e1
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:14:18 GMT
+      - Fri, 28 Feb 2020 04:13:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '59'
     status:
       code: 200
       message: OK

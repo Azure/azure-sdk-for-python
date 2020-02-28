@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates.",
+      "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '94'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?model-version=old&showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
+        is incorrect. Allowed values are latest,2019-10-01,2020-02-01"}}'
+    headers:
+      apim-request-id: 663244f4-cccb-4d85-b317-c6c5f668532d
+      content-type: application/json; charset=utf-8
+      date: Fri, 28 Feb 2020 04:14:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '6'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/recognition/pii?model-version=old&showStats=false
+version: 1

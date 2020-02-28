@@ -1,0 +1,127 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 6a478e18-33e4-43c8-b0ba-6071c1045422
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Fri, 28 Feb 2020 04:13:36 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '85'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
+        key or wrong API endpoint. Make sure to provide a valid key for an active
+        subscription and use a correct regional API endpoint for your resource."}}'
+    headers:
+      content-length:
+      - '224'
+      date:
+      - Fri, 28 Feb 2020 04:13:36 GMT
+    status:
+      code: 401
+      message: PermissionDenied
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 51311328-1888-4a2b-bb1e-c467138ec794
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Fri, 28 Feb 2020 04:13:36 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '78'
+    status:
+      code: 200
+      message: OK
+version: 1

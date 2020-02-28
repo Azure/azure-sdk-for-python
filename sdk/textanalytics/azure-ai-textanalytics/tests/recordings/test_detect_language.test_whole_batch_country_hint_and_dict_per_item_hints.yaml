@@ -1,7 +1,9 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "1", "text": "I had a wonderful experience! The rooms
-      were wonderful and the staff was helpful.", "countryHint": "US"}]}'
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "US"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "CA"}]}'
     headers:
       Accept:
       - application/json
@@ -10,7 +12,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '142'
+      - '249'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -21,16 +23,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - caabfb55-1ffa-4fb0-9c4e-8693d311e60b
+      - b18ac2d5-9516-4cda-a9fd-4b68d8e819ca
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
+      - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:14:18 GMT
+      - Fri, 28 Feb 2020 04:13:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '5'
     status:
       code: 200
       message: OK

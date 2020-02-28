@@ -1,7 +1,10 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "1", "text": "I had a wonderful experience! The rooms
-      were wonderful and the staff was helpful.", "countryHint": "US"}]}'
+    body: '{"documents": [{"id": "1", "text": "I should take my cat to the veterinarian",
+      "language": "US"}, {"id": "2", "text": "Este es un document escrito en Espa\u00f1ol.",
+      "language": "US"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "language":
+      "US"}, {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
+      "language": "US"}]}'
     headers:
       Accept:
       - application/json
@@ -10,7 +13,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '142'
+      - '341'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -21,16 +24,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]},{"id":"4","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - caabfb55-1ffa-4fb0-9c4e-8693d311e60b
+      - 3f24c589-ac75-4ab3-925a-56ccae792fb8
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
+      - CognitiveServices.TextAnalytics.BatchScoring=4
       date:
-      - Fri, 28 Feb 2020 04:14:18 GMT
+      - Fri, 28 Feb 2020 04:13:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '6'
     status:
       code: 200
       message: OK

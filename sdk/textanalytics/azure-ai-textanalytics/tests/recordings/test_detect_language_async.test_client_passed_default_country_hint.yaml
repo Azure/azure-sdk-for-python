@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "CA"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 5311bc58-09a1-4b89-9086-c041012a53dd
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Fri, 28 Feb 2020 04:20:46 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '5'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "DE"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "DE"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "DE"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: df5bfcbd-815a-4da4-bc1a-204e14c94763
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Fri, 28 Feb 2020 04:20:46 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '5'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "CA"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id: 76bb5ce2-2e21-427e-ab09-5da0703e8433
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
+      date: Fri, 28 Feb 2020 04:20:46 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '6'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+version: 1

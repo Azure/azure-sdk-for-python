@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "Microsoft was founded by Bill Gates
+      and Paul Allen", "language": "en"}, {"id": "2", "text": "Microsoft fue fundado
+      por Bill Gates y Paul Allen", "language": "es"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '200'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=true
+  response:
+    body:
+      string: '{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":50,"transactionsCount":1}},{"id":"2","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - ba0dae86-fce0-4aa3-8911-676ddb6f4071
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=2
+      date:
+      - Fri, 28 Feb 2020 04:13:51 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5'
+    status:
+      code: 200
+      message: OK
+version: 1
