@@ -182,13 +182,14 @@ class BlobContainersOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_blob_container, 'BlobContainer')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_blob_container, 'BlobContainer')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -265,13 +266,14 @@ class BlobContainersOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_blob_container, 'BlobContainer')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_blob_container, 'BlobContainer')
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -466,13 +468,14 @@ class BlobContainersOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_legal_hold, 'LegalHold')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_legal_hold, 'LegalHold')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -541,13 +544,14 @@ class BlobContainersOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_legal_hold, 'LegalHold')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_legal_hold, 'LegalHold')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -568,8 +572,9 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        immutability_period_since_creation_in_days: int,
         if_match: Optional[str] = None,
+        immutability_period_since_creation_in_days: Optional[int] = None,
+        allow_protected_append_writes: Optional[bool] = None,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but not required for this operation.
@@ -586,13 +591,19 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number.
         :type container_name: str
-        :param immutability_period_since_creation_in_days: The immutability period for the blobs in the
-         container since the policy creation, in days.
-        :type immutability_period_since_creation_in_days: int
         :param if_match: The entity state (ETag) version of the immutability policy to update. A value
          of "*" can be used to apply the operation only if the immutability policy already exists. If
          omitted, this operation will always be applied.
         :type if_match: str
+        :param immutability_period_since_creation_in_days: The immutability period for the blobs in the
+         container since the policy creation, in days.
+        :type immutability_period_since_creation_in_days: int
+        :param allow_protected_append_writes: This property can only be changed for unlocked time-based
+         retention policies. When enabled, new blocks can be written to an append blob while maintaining
+         immutability protection and compliance. Only new blocks can be added and any existing blocks
+         cannot be modified or deleted. This property cannot be changed with ExtendImmutabilityPolicy
+         API.
+        :type allow_protected_append_writes: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
@@ -601,7 +612,7 @@ class BlobContainersOperations:
         cls: ClsType["models.ImmutabilityPolicy"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
-        _parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days)
+        _parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days, allow_protected_append_writes=allow_protected_append_writes)
         immutability_policy_name = "default"
         api_version = "2019-06-01"
 
@@ -625,16 +636,17 @@ class BlobContainersOperations:
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
-        # Construct body
+        # Construct and send request
+        body_content_kwargs = {}
         if _parameters is not None:
             body_content = self._serialize.body(_parameters, 'ImmutabilityPolicy')
         else:
             body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -882,7 +894,8 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        immutability_period_since_creation_in_days: int,
+        immutability_period_since_creation_in_days: Optional[int] = None,
+        allow_protected_append_writes: Optional[bool] = None,
         **kwargs
     ) -> "models.ImmutabilityPolicy":
         """Extends the immutabilityPeriodSinceCreationInDays of a locked immutabilityPolicy. The only action allowed on a Locked policy will be this action. ETag in If-Match is required for this operation.
@@ -906,6 +919,12 @@ class BlobContainersOperations:
         :param immutability_period_since_creation_in_days: The immutability period for the blobs in the
          container since the policy creation, in days.
         :type immutability_period_since_creation_in_days: int
+        :param allow_protected_append_writes: This property can only be changed for unlocked time-based
+         retention policies. When enabled, new blocks can be written to an append blob while maintaining
+         immutability protection and compliance. Only new blocks can be added and any existing blocks
+         cannot be modified or deleted. This property cannot be changed with ExtendImmutabilityPolicy
+         API.
+        :type allow_protected_append_writes: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
@@ -914,7 +933,7 @@ class BlobContainersOperations:
         cls: ClsType["models.ImmutabilityPolicy"] = kwargs.pop('cls', None)
         error_map = kwargs.pop('error_map', {})
 
-        _parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days)
+        _parameters = models.ImmutabilityPolicy(immutability_period_since_creation_in_days=immutability_period_since_creation_in_days, allow_protected_append_writes=allow_protected_append_writes)
         api_version = "2019-06-01"
 
         # Construct URL
@@ -935,16 +954,17 @@ class BlobContainersOperations:
         header_parameters: Dict[str, Any] = {}
         header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
-        # Construct body
+        # Construct and send request
+        body_content_kwargs = {}
         if _parameters is not None:
             body_content = self._serialize.body(_parameters, 'ImmutabilityPolicy')
         else:
             body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -1012,16 +1032,17 @@ class BlobContainersOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
-        # Construct body
+        # Construct and send request
+        body_content_kwargs = {}
         if parameters is not None:
             body_content = self._serialize.body(parameters, 'LeaseContainerRequest')
         else:
             body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

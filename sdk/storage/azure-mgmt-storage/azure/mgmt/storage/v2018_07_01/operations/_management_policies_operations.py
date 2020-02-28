@@ -63,7 +63,7 @@ class ManagementPoliciesOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageAccountManagementPolicies"]
         error_map = kwargs.pop('error_map', {})
-        api_version = "2018-07-01"
+        api_version = "2018-03-01-preview"
         management_policy_name = "default"
 
         # Construct URL
@@ -130,7 +130,7 @@ class ManagementPoliciesOperations(object):
         error_map = kwargs.pop('error_map', {})
 
         _properties = models.ManagementPoliciesRulesSetParameter(policy=policy)
-        api_version = "2018-07-01"
+        api_version = "2018-03-01-preview"
         management_policy_name = "default"
 
         # Construct URL
@@ -150,13 +150,14 @@ class ManagementPoliciesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_properties, 'ManagementPoliciesRulesSetParameter')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_properties, 'ManagementPoliciesRulesSetParameter')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -195,7 +196,7 @@ class ManagementPoliciesOperations(object):
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = kwargs.pop('error_map', {})
-        api_version = "2018-07-01"
+        api_version = "2018-03-01-preview"
         management_policy_name = "default"
 
         # Construct URL

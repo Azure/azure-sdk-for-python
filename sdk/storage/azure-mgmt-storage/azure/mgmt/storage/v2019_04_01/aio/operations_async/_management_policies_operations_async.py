@@ -116,7 +116,7 @@ class ManagementPoliciesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and lower-
          case letters only.
         :type account_name: str
-        :param policy: The Storage Account ManagementPolicies Rules. See more details in:
+        :param policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
          https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
         :type policy: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySchema
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -148,13 +148,14 @@ class ManagementPoliciesOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_properties, 'ManagementPolicy')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_properties, 'ManagementPolicy')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

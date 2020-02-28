@@ -114,7 +114,9 @@ class FileServicesOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and lower-
          case letters only.
         :type account_name: str
-        :param cors: Sets the CORS rules. You can include up to five CorsRule elements in the request.
+        :param cors: Specifies CORS rules for the File service. You can include up to five CorsRule
+         elements in the request. If no CorsRule elements are included in the request body, all CORS
+         rules will be deleted, and CORS will be disabled for the File service.
         :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileServiceProperties or the result of cls(response)
@@ -145,13 +147,14 @@ class FileServicesOperations:
         # Construct headers
         header_parameters: Dict[str, Any] = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json'
-
-        # Construct body
-        body_content = self._serialize.body(_parameters, 'FileServiceProperties')
+        header_parameters['Content-Type'] = kwargs.pop('content_type', 'application/json')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        body_content_kwargs = {}
+        body_content = self._serialize.body(_parameters, 'FileServiceProperties')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

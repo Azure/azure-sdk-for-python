@@ -151,7 +151,7 @@ class Encryption(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param services: A list of services that support encryption.
+    :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2016_12_01.models.EncryptionServices
     :ivar key_source: Required. The encryption keySource (provider). Possible values (case-
      insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage".
@@ -214,13 +214,13 @@ class EncryptionServices(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param blob: A service that allows server-side encryption to be used.
+    :param blob: The encryption function of the blob storage service.
     :type blob: ~azure.mgmt.storage.v2016_12_01.models.EncryptionService
-    :param file: A service that allows server-side encryption to be used.
+    :param file: The encryption function of the file storage service.
     :type file: ~azure.mgmt.storage.v2016_12_01.models.EncryptionService
-    :ivar table: A service that allows server-side encryption to be used.
+    :ivar table: The encryption function of the table storage service.
     :vartype table: ~azure.mgmt.storage.v2016_12_01.models.EncryptionService
-    :ivar queue: A service that allows server-side encryption to be used.
+    :ivar queue: The encryption function of the queue storage service.
     :vartype queue: ~azure.mgmt.storage.v2016_12_01.models.EncryptionService
     """
 
@@ -535,16 +535,16 @@ class StorageAccount(Resource):
     :param tags: A set of tags. Tags assigned to a resource; can be used for viewing and grouping a
      resource (across resource groups).
     :type tags: dict[str, str]
-    :ivar sku: The SKU of the storage account.
+    :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2016_12_01.models.Sku
-    :ivar kind: Required. Indicates the type of storage account. Possible values include:
-     'Storage', 'BlobStorage'.
+    :ivar kind: Gets the Kind. Possible values include: 'Storage', 'BlobStorage'.
     :vartype kind: str or ~azure.mgmt.storage.v2016_12_01.models.Kind
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
      called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2016_12_01.models.ProvisioningState
-    :ivar primary_endpoints: The URIs that are used to perform a retrieval of a public blob, queue,
-     or table object.
+    :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
+     endpoint.
     :vartype primary_endpoints: ~azure.mgmt.storage.v2016_12_01.models.Endpoints
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
@@ -559,19 +559,20 @@ class StorageAccount(Resource):
     :ivar secondary_location: Gets the location of the geo-replicated secondary for the storage
      account. Only available if the accountType is Standard_GRS or Standard_RAGRS.
     :vartype secondary_location: str
-    :ivar status_of_secondary: Gets the status indicating whether the primary location of the
-     storage account is available or unavailable. Possible values include: 'available',
-     'unavailable'.
+    :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
+     storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
+     Standard_RAGRS. Possible values include: 'available', 'unavailable'.
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2016_12_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
-    :ivar custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :ivar custom_domain: Gets the custom domain the user assigned to this storage account.
     :vartype custom_domain: ~azure.mgmt.storage.v2016_12_01.models.CustomDomain
-    :ivar secondary_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue, or table object.
+    :ivar secondary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object from the secondary location of the storage account. Only available if
+     the SKU name is Standard_RAGRS.
     :vartype secondary_endpoints: ~azure.mgmt.storage.v2016_12_01.models.Endpoints
-    :ivar encryption: The encryption settings on the storage account.
+    :ivar encryption: Gets the encryption settings on the account. If unspecified, the account is
+     unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2016_12_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
      for billing. Possible values include: 'Hot', 'Cool'.
@@ -683,7 +684,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sku: Required. The SKU of the storage account.
+    :param sku: Required. Required. Gets or sets the sku name.
     :type sku: ~azure.mgmt.storage.v2016_12_01.models.Sku
     :param kind: Required. Required. Indicates the type of storage account. Possible values
      include: 'Storage', 'BlobStorage'.
@@ -698,10 +699,12 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      maximum of 15 tags can be provided for a resource. Each tag must have a key with a length no
      greater than 128 characters and a value with a length no greater than 256 characters.
     :type tags: dict[str, str]
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+     Only one custom domain is supported per storage account at this time. To clear the existing
+     custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2016_12_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Provides the encryption settings on the account. If left unspecified the
+     account encryption settings will remain the same. The default setting is unencrypted.
     :type encryption: ~azure.mgmt.storage.v2016_12_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
@@ -837,8 +840,9 @@ class StorageAccountProperties(msrest.serialization.Model):
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
      called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2016_12_01.models.ProvisioningState
-    :ivar primary_endpoints: The URIs that are used to perform a retrieval of a public blob, queue,
-     or table object.
+    :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
+     endpoint.
     :vartype primary_endpoints: ~azure.mgmt.storage.v2016_12_01.models.Endpoints
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
@@ -853,19 +857,20 @@ class StorageAccountProperties(msrest.serialization.Model):
     :ivar secondary_location: Gets the location of the geo-replicated secondary for the storage
      account. Only available if the accountType is Standard_GRS or Standard_RAGRS.
     :vartype secondary_location: str
-    :ivar status_of_secondary: Gets the status indicating whether the primary location of the
-     storage account is available or unavailable. Possible values include: 'available',
-     'unavailable'.
+    :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
+     storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
+     Standard_RAGRS. Possible values include: 'available', 'unavailable'.
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2016_12_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
-    :ivar custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :ivar custom_domain: Gets the custom domain the user assigned to this storage account.
     :vartype custom_domain: ~azure.mgmt.storage.v2016_12_01.models.CustomDomain
-    :ivar secondary_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue, or table object.
+    :ivar secondary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object from the secondary location of the storage account. Only available if
+     the SKU name is Standard_RAGRS.
     :vartype secondary_endpoints: ~azure.mgmt.storage.v2016_12_01.models.Endpoints
-    :ivar encryption: The encryption settings on the storage account.
+    :ivar encryption: Gets the encryption settings on the account. If unspecified, the account is
+     unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2016_12_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
      for billing. Possible values include: 'Hot', 'Cool'.
@@ -928,10 +933,12 @@ class StorageAccountProperties(msrest.serialization.Model):
 class StorageAccountPropertiesCreateParameters(msrest.serialization.Model):
     """The parameters used to create the storage account.
 
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+     Only one custom domain is supported per storage account at this time. To clear the existing
+     custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2016_12_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Provides the encryption settings on the account. If left unspecified the
+     account encryption settings will remain the same. The default setting is unencrypted.
     :type encryption: ~azure.mgmt.storage.v2016_12_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
@@ -961,10 +968,12 @@ class StorageAccountPropertiesCreateParameters(msrest.serialization.Model):
 class StorageAccountPropertiesUpdateParameters(msrest.serialization.Model):
     """The parameters used when updating a storage account.
 
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: Custom domain assigned to the storage account by the user. Name is the
+     CNAME source. Only one custom domain is supported per storage account at this time. To clear
+     the existing custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2016_12_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Provides the encryption settings on the account. The default setting is
+     unencrypted.
     :type encryption: ~azure.mgmt.storage.v2016_12_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
@@ -1019,17 +1028,20 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
 class StorageAccountUpdateParameters(msrest.serialization.Model):
     """The parameters that can be provided when updating the storage account properties.
 
-    :param sku: The SKU of the storage account.
+    :param sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to Standard_ZRS
+     or Premium_LRS, nor can accounts of those sku names be updated to any other value.
     :type sku: ~azure.mgmt.storage.v2016_12_01.models.Sku
     :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater in
      length than 128 characters and a value no greater in length than 256 characters.
     :type tags: dict[str, str]
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: Custom domain assigned to the storage account by the user. Name is the
+     CNAME source. Only one custom domain is supported per storage account at this time. To clear
+     the existing custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2016_12_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Provides the encryption settings on the account. The default setting is
+     unencrypted.
     :type encryption: ~azure.mgmt.storage.v2016_12_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
@@ -1072,7 +1084,7 @@ class Usage(msrest.serialization.Model):
     :vartype current_value: int
     :ivar limit: Gets the maximum count of the resources that can be allocated in the subscription.
     :vartype limit: int
-    :ivar name: The usage names that can be used; currently limited to StorageAccount.
+    :ivar name: Gets the name of the type of usage.
     :vartype name: ~azure.mgmt.storage.v2016_12_01.models.UsageName
     """
 

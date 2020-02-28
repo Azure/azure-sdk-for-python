@@ -5,7 +5,7 @@
         "name": "StorageManagement",
         "filename": "_storage_management.py",
         "description": "The Azure Storage Management API.",
-        "has_subscription_id": false
+        "has_subscription_id": true
     },
     "config": {
         "credential": true,

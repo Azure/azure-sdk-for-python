@@ -180,12 +180,12 @@ class StorageAccount(Resource):
     :param provisioning_state: The status of the storage account at the time the operation was
      called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
     :type provisioning_state: str or ~azure.mgmt.storage.v2015_06_15.models.ProvisioningState
-    :param account_type: The sku name. Required for account creation; optional for update. Note
-     that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
+    :param account_type: The type of the storage account. Possible values include: 'Standard_LRS',
+     'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
-    :param primary_endpoints: The URIs that are used to perform a retrieval of a public blob, queue
-     or table object.
+    :param primary_endpoints: The URLs that are used to perform a retrieval of a public blob,
+     queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
+     endpoint.
     :type primary_endpoints: ~azure.mgmt.storage.v2015_06_15.models.Endpoints
     :param primary_location: The location of the primary data center for the storage account.
     :type primary_location: str
@@ -200,16 +200,17 @@ class StorageAccount(Resource):
     :param secondary_location: The location of the geo-replicated secondary for the storage
      account. Only available if the accountType is Standard_GRS or Standard_RAGRS.
     :type secondary_location: str
-    :param status_of_secondary: The status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: 'Available', 'Unavailable'.
+    :param status_of_secondary: The status indicating whether the secondary location of the storage
+     account is available or unavailable. Only available if the SKU name is Standard_GRS or
+     Standard_RAGRS. Possible values include: 'Available', 'Unavailable'.
     :type status_of_secondary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
     :param creation_time: The creation date and time of the storage account in UTC.
     :type creation_time: ~datetime.datetime
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: The custom domain the user assigned to this storage account.
     :type custom_domain: ~azure.mgmt.storage.v2015_06_15.models.CustomDomain
-    :param secondary_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue or table object.
+    :param secondary_endpoints: The URLs that are used to perform a retrieval of a public blob,
+     queue, or table object from the secondary location of the storage account. Only available if
+     the SKU name is Standard_RAGRS.
     :type secondary_endpoints: ~azure.mgmt.storage.v2015_06_15.models.Endpoints
     """
 
@@ -400,12 +401,12 @@ class StorageAccountProperties(msrest.serialization.Model):
     :param provisioning_state: The status of the storage account at the time the operation was
      called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
     :type provisioning_state: str or ~azure.mgmt.storage.v2015_06_15.models.ProvisioningState
-    :param account_type: The sku name. Required for account creation; optional for update. Note
-     that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
+    :param account_type: The type of the storage account. Possible values include: 'Standard_LRS',
+     'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
-    :param primary_endpoints: The URIs that are used to perform a retrieval of a public blob, queue
-     or table object.
+    :param primary_endpoints: The URLs that are used to perform a retrieval of a public blob,
+     queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
+     endpoint.
     :type primary_endpoints: ~azure.mgmt.storage.v2015_06_15.models.Endpoints
     :param primary_location: The location of the primary data center for the storage account.
     :type primary_location: str
@@ -420,16 +421,17 @@ class StorageAccountProperties(msrest.serialization.Model):
     :param secondary_location: The location of the geo-replicated secondary for the storage
      account. Only available if the accountType is Standard_GRS or Standard_RAGRS.
     :type secondary_location: str
-    :param status_of_secondary: The status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: 'Available', 'Unavailable'.
+    :param status_of_secondary: The status indicating whether the secondary location of the storage
+     account is available or unavailable. Only available if the SKU name is Standard_GRS or
+     Standard_RAGRS. Possible values include: 'Available', 'Unavailable'.
     :type status_of_secondary: str or ~azure.mgmt.storage.v2015_06_15.models.AccountStatus
     :param creation_time: The creation date and time of the storage account in UTC.
     :type creation_time: ~datetime.datetime
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: The custom domain the user assigned to this storage account.
     :type custom_domain: ~azure.mgmt.storage.v2015_06_15.models.CustomDomain
-    :param secondary_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue or table object.
+    :param secondary_endpoints: The URLs that are used to perform a retrieval of a public blob,
+     queue, or table object from the secondary location of the storage account. Only available if
+     the SKU name is Standard_RAGRS.
     :type secondary_endpoints: ~azure.mgmt.storage.v2015_06_15.models.Endpoints
     """
 
@@ -509,12 +511,14 @@ class StorageAccountPropertiesCreateParameters(msrest.serialization.Model):
 class StorageAccountPropertiesUpdateParameters(msrest.serialization.Model):
     """The parameters used when updating a storage account.
 
-    :param account_type: The sku name. Required for account creation; optional for update. Note
-     that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
+    :param account_type: The account type. Note that StandardZRS and PremiumLRS accounts cannot be
+     changed to other account types, and other account types cannot be changed to StandardZRS or
+     PremiumLRS. Possible values include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS',
+     'Standard_RAGRS', 'Premium_LRS'.
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+     Only one custom domain is supported per storage account at this time. To clear the existing
+     custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2015_06_15.models.CustomDomain
     """
 
@@ -567,12 +571,14 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
 
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param account_type: The sku name. Required for account creation; optional for update. Note
-     that in older versions, sku name was called accountType. Possible values include:
-     'Standard_LRS', 'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'.
+    :param account_type: The account type. Note that StandardZRS and PremiumLRS accounts cannot be
+     changed to other account types, and other account types cannot be changed to StandardZRS or
+     PremiumLRS. Possible values include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS',
+     'Standard_RAGRS', 'Premium_LRS'.
     :type account_type: str or ~azure.mgmt.storage.v2015_06_15.models.AccountType
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+     Only one custom domain is supported per storage account at this time. To clear the existing
+     custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2015_06_15.models.CustomDomain
     """
 
@@ -610,7 +616,7 @@ class Usage(msrest.serialization.Model):
     :param limit: Required. The maximum count of the resources that can be allocated in the
      subscription.
     :type limit: int
-    :param name: Required. The Usage Names.
+    :param name: Required. The name of the type of usage.
     :type name: ~azure.mgmt.storage.v2015_06_15.models.UsageName
     """
 

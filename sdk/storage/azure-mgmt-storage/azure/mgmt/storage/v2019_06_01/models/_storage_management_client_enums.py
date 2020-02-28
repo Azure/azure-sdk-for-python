@@ -196,13 +196,6 @@ class UsageUnit(str, Enum):
     counts_per_second = "CountsPerSecond"
     bytes_per_second = "BytesPerSecond"
 
-class Type(str, Enum):
-    """The type of resource, Microsoft.Storage/storageAccounts
-    """
-
-    microsoft_storage_accounts = "Microsoft.Storage/storageAccounts"
-    lifecycle = "Lifecycle"
-
 class EncryptionScopeSource(str, Enum):
     """The provider for the encryption scope. Possible values (case-insensitive):  Microsoft.Storage,
     Microsoft.KeyVault.

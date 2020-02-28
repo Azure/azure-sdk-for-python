@@ -183,7 +183,6 @@ from ._storage_management_client_enums import (
     SkuName,
     SkuTier,
     State,
-    Type,
     UsageUnit,
 )
 
@@ -288,6 +287,5 @@ __all__ = [
     'SkuName',
     'SkuTier',
     'State',
-    'Type',
     'UsageUnit',
 ]

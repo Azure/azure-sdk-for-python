@@ -230,7 +230,7 @@ class AzureFilesIdentityBasedAuthentication(msrest.serialization.Model):
      values include: 'None', 'AADDS', 'AD'.
     :type directory_service_options: str or
      ~azure.mgmt.storage.v2019_06_01.models.DirectoryServiceOptions
-    :param active_directory_properties: Settings properties for Active Directory (AD).
+    :param active_directory_properties: Required if choose AD.
     :type active_directory_properties:
      ~azure.mgmt.storage.v2019_06_01.models.ActiveDirectoryProperties
     """
@@ -287,10 +287,10 @@ class BlobContainer(AzureEntityResource):
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseDuration
     :param metadata: A name-value pair to associate with the container as metadata.
     :type metadata: dict[str, str]
-    :ivar immutability_policy: The properties of an ImmutabilityPolicy of a blob container.
+    :ivar immutability_policy: The ImmutabilityPolicy property of the container.
     :vartype immutability_policy:
      ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyProperties
-    :ivar legal_hold: The LegalHold property of a blob container.
+    :ivar legal_hold: The LegalHold property of the container.
     :vartype legal_hold: ~azure.mgmt.storage.v2019_06_01.models.LegalHoldProperties
     :ivar has_legal_hold: The hasLegalHold public property is set to true by SRP if there are at
      least one existing tag. The hasLegalHold public property is set to false by SRP if all existing
@@ -435,7 +435,7 @@ class BlobRestoreStatus(msrest.serialization.Model):
     :vartype failure_reason: str
     :ivar restore_id: Id for tracking blob restore request.
     :vartype restore_id: str
-    :ivar parameters: Blob restore parameters.
+    :ivar parameters: Blob restore request parameters.
     :vartype parameters: ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreParameters
     """
 
@@ -502,15 +502,17 @@ class BlobServiceProperties(Resource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar sku: The SKU of the storage account.
+    :ivar sku: Sku name and tier.
     :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
-    :param cors: Sets the CORS rules. You can include up to five CorsRule elements in the request.
+    :param cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the Blob service.
     :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
     :param default_service_version: DefaultServiceVersion indicates the default version to use for
      requests to the Blob service if an incoming request’s version is not specified. Possible values
      include version 2008-10-27 and all more recent versions.
     :type default_service_version: str
-    :param delete_retention_policy: The service properties for soft delete.
+    :param delete_retention_policy: The blob service properties for blob soft delete.
     :type delete_retention_policy: ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     :param is_versioning_enabled: Versioning is enabled if set to true.
     :type is_versioning_enabled: bool
@@ -520,6 +522,10 @@ class BlobServiceProperties(Resource):
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
     :param restore_policy: The blob service properties for blob restore policy.
     :type restore_policy: ~azure.mgmt.storage.v2019_06_01.models.RestorePolicyProperties
+    :param container_delete_retention_policy: The blob service properties for container soft
+     delete.
+    :type container_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -541,6 +547,7 @@ class BlobServiceProperties(Resource):
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
         'restore_policy': {'key': 'properties.restorePolicy', 'type': 'RestorePolicyProperties'},
+        'container_delete_retention_policy': {'key': 'properties.containerDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
     }
 
     def __init__(
@@ -553,6 +560,7 @@ class BlobServiceProperties(Resource):
         automatic_snapshot_policy_enabled: Optional[bool] = None,
         change_feed: Optional["ChangeFeed"] = None,
         restore_policy: Optional["RestorePolicyProperties"] = None,
+        container_delete_retention_policy: Optional["DeleteRetentionPolicy"] = None,
         **kwargs
     ):
         super(BlobServiceProperties, self).__init__(**kwargs)
@@ -564,6 +572,7 @@ class BlobServiceProperties(Resource):
         self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
         self.change_feed = change_feed
         self.restore_policy = restore_policy
+        self.container_delete_retention_policy = container_delete_retention_policy
 
 
 class ChangeFeed(msrest.serialization.Model):
@@ -686,10 +695,10 @@ class ContainerProperties(msrest.serialization.Model):
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseDuration
     :param metadata: A name-value pair to associate with the container as metadata.
     :type metadata: dict[str, str]
-    :ivar immutability_policy: The properties of an ImmutabilityPolicy of a blob container.
+    :ivar immutability_policy: The ImmutabilityPolicy property of the container.
     :vartype immutability_policy:
      ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyProperties
-    :ivar legal_hold: The LegalHold property of a blob container.
+    :ivar legal_hold: The LegalHold property of the container.
     :vartype legal_hold: ~azure.mgmt.storage.v2019_06_01.models.LegalHoldProperties
     :ivar has_legal_hold: The hasLegalHold public property is set to true by SRP if there are at
      least one existing tag. The hasLegalHold public property is set to false by SRP if all existing
@@ -977,13 +986,13 @@ class Encryption(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param services: A list of services that support encryption.
+    :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2019_06_01.models.EncryptionServices
     :param key_source: Required. The encryption keySource (provider). Possible values (case-
      insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
      'Microsoft.Storage', 'Microsoft.Keyvault'. Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2019_06_01.models.KeySource
-    :param key_vault_properties: Properties of key vault.
+    :param key_vault_properties: Properties provided by key vault.
     :type key_vault_properties: ~azure.mgmt.storage.v2019_06_01.models.KeyVaultProperties
     """
 
@@ -1227,13 +1236,13 @@ class EncryptionService(msrest.serialization.Model):
 class EncryptionServices(msrest.serialization.Model):
     """A list of services that support encryption.
 
-    :param blob: A service that allows server-side encryption to be used.
+    :param blob: The encryption function of the blob storage service.
     :type blob: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
-    :param file: A service that allows server-side encryption to be used.
+    :param file: The encryption function of the file storage service.
     :type file: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
-    :param table: A service that allows server-side encryption to be used.
+    :param table: The encryption function of the table storage service.
     :type table: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
-    :param queue: A service that allows server-side encryption to be used.
+    :param queue: The encryption function of the queue storage service.
     :type queue: ~azure.mgmt.storage.v2019_06_01.models.EncryptionService
     """
 
@@ -1277,12 +1286,10 @@ class Endpoints(msrest.serialization.Model):
     :vartype web: str
     :ivar dfs: Gets the dfs endpoint.
     :vartype dfs: str
-    :param microsoft_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue, table, web or dfs object via a microsoft routing endpoint.
+    :param microsoft_endpoints: Gets the microsoft routing storage endpoints.
     :type microsoft_endpoints:
      ~azure.mgmt.storage.v2019_06_01.models.StorageAccountMicrosoftEndpoints
-    :param internet_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     file, web or dfs object via a internet routing endpoint.
+    :param internet_endpoints: Gets the internet routing storage endpoints.
     :type internet_endpoints:
      ~azure.mgmt.storage.v2019_06_01.models.StorageAccountInternetEndpoints
     """
@@ -1417,11 +1424,13 @@ class FileServiceProperties(Resource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar sku: The SKU of the storage account.
+    :ivar sku: Sku name and tier.
     :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
-    :param cors: Sets the CORS rules. You can include up to five CorsRule elements in the request.
+    :param cors: Specifies CORS rules for the File service. You can include up to five CorsRule
+     elements in the request. If no CorsRule elements are included in the request body, all CORS
+     rules will be deleted, and CORS will be disabled for the File service.
     :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
-    :param share_delete_retention_policy: The service properties for soft delete.
+    :param share_delete_retention_policy: The file service properties for share soft delete.
     :type share_delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
@@ -1723,8 +1732,6 @@ class ImmutabilityPolicy(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -1735,12 +1742,18 @@ class ImmutabilityPolicy(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param immutability_period_since_creation_in_days: Required. The immutability period for the
-     blobs in the container since the policy creation, in days.
+    :param immutability_period_since_creation_in_days: The immutability period for the blobs in the
+     container since the policy creation, in days.
     :type immutability_period_since_creation_in_days: int
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
      and Unlocked. Possible values include: 'Locked', 'Unlocked'.
     :vartype state: str or ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyState
+    :param allow_protected_append_writes: This property can only be changed for unlocked time-based
+     retention policies. When enabled, new blocks can be written to an append blob while maintaining
+     immutability protection and compliance. Only new blocks can be added and any existing blocks
+     cannot be modified or deleted. This property cannot be changed with ExtendImmutabilityPolicy
+     API.
+    :type allow_protected_append_writes: bool
     """
 
     _validation = {
@@ -1748,7 +1761,6 @@ class ImmutabilityPolicy(AzureEntityResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
-        'immutability_period_since_creation_in_days': {'required': True},
         'state': {'readonly': True},
     }
 
@@ -1759,17 +1771,20 @@ class ImmutabilityPolicy(AzureEntityResource):
         'etag': {'key': 'etag', 'type': 'str'},
         'immutability_period_since_creation_in_days': {'key': 'properties.immutabilityPeriodSinceCreationInDays', 'type': 'int'},
         'state': {'key': 'properties.state', 'type': 'str'},
+        'allow_protected_append_writes': {'key': 'properties.allowProtectedAppendWrites', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        immutability_period_since_creation_in_days: int,
+        immutability_period_since_creation_in_days: Optional[int] = None,
+        allow_protected_append_writes: Optional[bool] = None,
         **kwargs
     ):
         super(ImmutabilityPolicy, self).__init__(**kwargs)
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
         self.state = None
+        self.allow_protected_append_writes = allow_protected_append_writes
 
 
 class ImmutabilityPolicyProperties(msrest.serialization.Model):
@@ -1787,6 +1802,12 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
      and Unlocked. Possible values include: 'Locked', 'Unlocked'.
     :vartype state: str or ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyState
+    :param allow_protected_append_writes: This property can only be changed for unlocked time-based
+     retention policies. When enabled, new blocks can be written to an append blob while maintaining
+     immutability protection and compliance. Only new blocks can be added and any existing blocks
+     cannot be modified or deleted. This property cannot be changed with ExtendImmutabilityPolicy
+     API.
+    :type allow_protected_append_writes: bool
     """
 
     _validation = {
@@ -1800,12 +1821,14 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
         'update_history': {'key': 'updateHistory', 'type': '[UpdateHistoryProperty]'},
         'immutability_period_since_creation_in_days': {'key': 'properties.immutabilityPeriodSinceCreationInDays', 'type': 'int'},
         'state': {'key': 'properties.state', 'type': 'str'},
+        'allow_protected_append_writes': {'key': 'properties.allowProtectedAppendWrites', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
         immutability_period_since_creation_in_days: Optional[int] = None,
+        allow_protected_append_writes: Optional[bool] = None,
         **kwargs
     ):
         super(ImmutabilityPolicyProperties, self).__init__(**kwargs)
@@ -1813,6 +1836,7 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
         self.update_history = None
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
         self.state = None
+        self.allow_protected_append_writes = allow_protected_append_writes
 
 
 class ImmutabilityPolicyProperty(msrest.serialization.Model):
@@ -1820,35 +1844,41 @@ class ImmutabilityPolicyProperty(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param immutability_period_since_creation_in_days: Required. The immutability period for the
-     blobs in the container since the policy creation, in days.
+    :param immutability_period_since_creation_in_days: The immutability period for the blobs in the
+     container since the policy creation, in days.
     :type immutability_period_since_creation_in_days: int
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
      and Unlocked. Possible values include: 'Locked', 'Unlocked'.
     :vartype state: str or ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyState
+    :param allow_protected_append_writes: This property can only be changed for unlocked time-based
+     retention policies. When enabled, new blocks can be written to an append blob while maintaining
+     immutability protection and compliance. Only new blocks can be added and any existing blocks
+     cannot be modified or deleted. This property cannot be changed with ExtendImmutabilityPolicy
+     API.
+    :type allow_protected_append_writes: bool
     """
 
     _validation = {
-        'immutability_period_since_creation_in_days': {'required': True},
         'state': {'readonly': True},
     }
 
     _attribute_map = {
         'immutability_period_since_creation_in_days': {'key': 'immutabilityPeriodSinceCreationInDays', 'type': 'int'},
         'state': {'key': 'state', 'type': 'str'},
+        'allow_protected_append_writes': {'key': 'allowProtectedAppendWrites', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        immutability_period_since_creation_in_days: int,
+        immutability_period_since_creation_in_days: Optional[int] = None,
+        allow_protected_append_writes: Optional[bool] = None,
         **kwargs
     ):
         super(ImmutabilityPolicyProperty, self).__init__(**kwargs)
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
         self.state = None
+        self.allow_protected_append_writes = allow_protected_append_writes
 
 
 class IPRule(msrest.serialization.Model):
@@ -1861,7 +1891,7 @@ class IPRule(msrest.serialization.Model):
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
     :type ip_address_or_range: str
-    :ivar action: The action of virtual network rule. Default value: "Allow".
+    :ivar action: The action of IP ACL rule. Default value: "Allow".
     :vartype action: str
     """
 
@@ -2124,10 +2154,10 @@ class ListContainerItem(AzureEntityResource):
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_06_01.models.LeaseDuration
     :param metadata: A name-value pair to associate with the container as metadata.
     :type metadata: dict[str, str]
-    :ivar immutability_policy: The properties of an ImmutabilityPolicy of a blob container.
+    :ivar immutability_policy: The ImmutabilityPolicy property of the container.
     :vartype immutability_policy:
      ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicyProperties
-    :ivar legal_hold: The LegalHold property of a blob container.
+    :ivar legal_hold: The LegalHold property of the container.
     :vartype legal_hold: ~azure.mgmt.storage.v2019_06_01.models.LegalHoldProperties
     :ivar has_legal_hold: The hasLegalHold public property is set to true by SRP if there are at
      least one existing tag. The hasLegalHold public property is set to false by SRP if all existing
@@ -2263,7 +2293,7 @@ class ManagementPolicy(Resource):
     :vartype type: str
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :param policy: The Storage Account ManagementPolicies Rules. See more details in:
+    :param policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
      https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicySchema
     """
@@ -2297,9 +2327,9 @@ class ManagementPolicy(Resource):
 class ManagementPolicyAction(msrest.serialization.Model):
     """Actions are applied to the filtered blobs when the execution condition is met.
 
-    :param base_blob: Management policy action for base blob.
+    :param base_blob: The management policy action for base blob.
     :type base_blob: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicyBaseBlob
-    :param snapshot: Management policy action for snapshot.
+    :param snapshot: The management policy action for snapshot.
     :type snapshot: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicySnapShot
     """
 
@@ -2323,11 +2353,13 @@ class ManagementPolicyAction(msrest.serialization.Model):
 class ManagementPolicyBaseBlob(msrest.serialization.Model):
     """Management policy action for base blob.
 
-    :param tier_to_cool: Object to define the number of days after last modification.
+    :param tier_to_cool: The function to tier blobs to cool storage. Support blobs currently at Hot
+     tier.
     :type tier_to_cool: ~azure.mgmt.storage.v2019_06_01.models.DateAfterModification
-    :param tier_to_archive: Object to define the number of days after last modification.
+    :param tier_to_archive: The function to tier blobs to archive storage. Support blobs currently
+     at Hot or Cool tier.
     :type tier_to_archive: ~azure.mgmt.storage.v2019_06_01.models.DateAfterModification
-    :param delete: Object to define the number of days after last modification.
+    :param delete: The function to delete the blob.
     :type delete: ~azure.mgmt.storage.v2019_06_01.models.DateAfterModification
     """
 
@@ -2356,11 +2388,9 @@ class ManagementPolicyDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param actions: Required. Actions are applied to the filtered blobs when the execution
-     condition is met.
+    :param actions: Required. An object that defines the action set.
     :type actions: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicyAction
-    :param filters: Filters limit rule actions to a subset of blobs within the storage account. If
-     multiple filters are defined, a logical AND is performed on all filters.
+    :param filters: An object that defines the filter set.
     :type filters: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicyFilter
     """
 
@@ -2426,8 +2456,8 @@ class ManagementPolicyProperties(msrest.serialization.Model):
 
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :param policy: Required. The Storage Account ManagementPolicies Rules. See more details in:
-     https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    :param policy: Required. The Storage Account ManagementPolicy, in JSON format. See more details
+     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicySchema
     """
 
@@ -2455,6 +2485,8 @@ class ManagementPolicyProperties(msrest.serialization.Model):
 class ManagementPolicyRule(msrest.serialization.Model):
     """An object that wraps the Lifecycle rule. Each rule is uniquely defined by name.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param enabled: Rule is enabled if set to true.
@@ -2462,17 +2494,15 @@ class ManagementPolicyRule(msrest.serialization.Model):
     :param name: Required. A rule name can contain any combination of alpha numeric characters.
      Rule name is case-sensitive. It must be unique within a policy.
     :type name: str
-    :param type: Required. The type of resource, Microsoft.Storage/storageAccounts. Possible values
-     include: 'Microsoft.Storage/storageAccounts', 'Lifecycle'.
-    :type type: str or ~azure.mgmt.storage.v2019_06_01.models.Type
-    :param definition: Required. An object that defines the Lifecycle rule. Each definition is made
-     up with a filters set and an actions set.
+    :ivar type: Required. The valid value is Lifecycle. Default value: "Lifecycle".
+    :vartype type: str
+    :param definition: Required. An object that defines the Lifecycle rule.
     :type definition: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicyDefinition
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True},
+        'type': {'required': True, 'constant': True},
         'definition': {'required': True},
     }
 
@@ -2483,11 +2513,12 @@ class ManagementPolicyRule(msrest.serialization.Model):
         'definition': {'key': 'definition', 'type': 'ManagementPolicyDefinition'},
     }
 
+    type = "Lifecycle"
+
     def __init__(
         self,
         *,
         name: str,
-        type: Union[str, "Type"],
         definition: "ManagementPolicyDefinition",
         enabled: Optional[bool] = None,
         **kwargs
@@ -2495,7 +2526,6 @@ class ManagementPolicyRule(msrest.serialization.Model):
         super(ManagementPolicyRule, self).__init__(**kwargs)
         self.enabled = enabled
         self.name = name
-        self.type = type
         self.definition = definition
 
 
@@ -2530,7 +2560,7 @@ class ManagementPolicySchema(msrest.serialization.Model):
 class ManagementPolicySnapShot(msrest.serialization.Model):
     """Management policy action for snapshot.
 
-    :param delete: Object to define the number of days after creation.
+    :param delete: The function to delete the blob snapshot.
     :type delete: ~azure.mgmt.storage.v2019_06_01.models.DateAfterCreation
     """
 
@@ -2807,14 +2837,14 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param private_endpoint: The Private Endpoint resource.
+    :param private_endpoint: The resource of private end point.
     :type private_endpoint: ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpoint
     :param private_link_service_connection_state: A collection of information about the state of
      the connection between service consumer and provider.
     :type private_link_service_connection_state:
      ~azure.mgmt.storage.v2019_06_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: The current provisioning state. Possible values include:
-     'Succeeded', 'Creating', 'Deleting', 'Failed'.
+    :param provisioning_state: The provisioning state of the private endpoint connection resource.
+     Possible values include: 'Succeeded', 'Creating', 'Deleting', 'Failed'.
     :type provisioning_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -2853,14 +2883,14 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param private_endpoint: The Private Endpoint resource.
+    :param private_endpoint: The resource of private end point.
     :type private_endpoint: ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpoint
     :param private_link_service_connection_state: Required. A collection of information about the
      state of the connection between service consumer and provider.
     :type private_link_service_connection_state:
      ~azure.mgmt.storage.v2019_06_01.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: The current provisioning state. Possible values include:
-     'Succeeded', 'Creating', 'Deleting', 'Failed'.
+    :param provisioning_state: The provisioning state of the private endpoint connection resource.
+     Possible values include: 'Succeeded', 'Creating', 'Deleting', 'Failed'.
     :type provisioning_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -2999,8 +3029,8 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
-    :param status: The private endpoint connection status. Possible values include: 'Pending',
-     'Approved', 'Rejected'.
+    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Possible values include: 'Pending', 'Approved', 'Rejected'.
     :type status: str or
      ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointServiceConnectionStatus
     :param description: The reason for approval/rejection of the connection.
@@ -3182,7 +3212,7 @@ class ServiceSasParameters(msrest.serialization.Model):
     :param resource: The signed services accessible with the service SAS. Possible values include:
      Blob (b), Container (c), File (f), Share (s). Possible values include: 'b', 'c', 'f', 's'.
     :type resource: str or ~azure.mgmt.storage.v2019_06_01.models.SignedResource
-    :param permissions: The signed permissions for the account SAS. Possible values include: Read
+    :param permissions: The signed permissions for the service SAS. Possible values include: Read
      (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Possible
      values include: 'r', 'd', 'w', 'l', 'a', 'c', 'u', 'p'.
     :type permissions: str or ~azure.mgmt.storage.v2019_06_01.models.Permissions
@@ -3514,18 +3544,19 @@ class StorageAccount(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
-    :ivar sku: The SKU of the storage account.
+    :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
-    :ivar kind: Indicates the type of storage account. Possible values include: 'Storage',
-     'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'.
+    :ivar kind: Gets the Kind. Possible values include: 'Storage', 'StorageV2', 'BlobStorage',
+     'FileStorage', 'BlockBlobStorage'.
     :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
-    :param identity: Identity for the resource.
+    :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.storage.v2019_06_01.models.Identity
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
      called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2019_06_01.models.ProvisioningState
-    :ivar primary_endpoints: The URIs that are used to perform a retrieval of a public blob, queue,
-     table, web or dfs object.
+    :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
+     endpoint.
     :vartype primary_endpoints: ~azure.mgmt.storage.v2019_06_01.models.Endpoints
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
@@ -3540,25 +3571,26 @@ class StorageAccount(TrackedResource):
     :ivar secondary_location: Gets the location of the geo-replicated secondary for the storage
      account. Only available if the accountType is Standard_GRS or Standard_RAGRS.
     :vartype secondary_location: str
-    :ivar status_of_secondary: Gets the status indicating whether the primary location of the
-     storage account is available or unavailable. Possible values include: 'available',
-     'unavailable'.
+    :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
+     storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
+     Standard_RAGRS. Possible values include: 'available', 'unavailable'.
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2019_06_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
-    :ivar custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :ivar custom_domain: Gets the custom domain the user assigned to this storage account.
     :vartype custom_domain: ~azure.mgmt.storage.v2019_06_01.models.CustomDomain
-    :ivar secondary_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue, table, web or dfs object.
+    :ivar secondary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object from the secondary location of the storage account. Only available if
+     the SKU name is Standard_RAGRS.
     :vartype secondary_endpoints: ~azure.mgmt.storage.v2019_06_01.models.Endpoints
-    :ivar encryption: The encryption settings on the storage account.
+    :ivar encryption: Gets the encryption settings on the account. If unspecified, the account is
+     unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
      for billing. Possible values include: 'Hot', 'Cool'.
     :vartype access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Settings for Azure Files identity based
-     authentication.
+    :param azure_files_identity_based_authentication: Provides the identity based authentication
+     settings for Azure Files.
     :type azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_06_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
@@ -3567,9 +3599,7 @@ class StorageAccount(TrackedResource):
     :vartype network_rule_set: ~azure.mgmt.storage.v2019_06_01.models.NetworkRuleSet
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
     :type is_hns_enabled: bool
-    :ivar geo_replication_stats: Statistics related to replication for storage account's Blob,
-     Table, Queue and File services. It is only available when geo-redundant replication is enabled
-     for the storage account.
+    :ivar geo_replication_stats: Geo Replication Stats.
     :vartype geo_replication_stats: ~azure.mgmt.storage.v2019_06_01.models.GeoReplicationStats
     :ivar failover_in_progress: If the failover is in progress, the value will be true, otherwise,
      it will be null.
@@ -3582,8 +3612,8 @@ class StorageAccount(TrackedResource):
      specified storage account.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection]
-    :param routing_preference: Routing preference defines the type of network, either microsoft or
-     internet routing to be used to deliver the user data, the default option is microsoft routing.
+    :param routing_preference: Maintains information about the network routing choice opted by the
+     user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     :ivar blob_restore_status: Blob restore status.
     :vartype blob_restore_status: ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreStatus
@@ -3692,18 +3722,20 @@ class StorageAccount(TrackedResource):
 class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
     """The parameters used to check the availability of the storage account name.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The storage account name.
     :type name: str
-    :param type: Required. The type of resource, Microsoft.Storage/storageAccounts. Possible values
-     include: 'Microsoft.Storage/storageAccounts', 'Lifecycle'.
-    :type type: str or ~azure.mgmt.storage.v2019_06_01.models.Type
+    :ivar type: Required. The type of resource, Microsoft.Storage/storageAccounts. Default value:
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -3711,16 +3743,16 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
+    type = "Microsoft.Storage/storageAccounts"
+
     def __init__(
         self,
         *,
         name: str,
-        type: Union[str, "Type"],
         **kwargs
     ):
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
-        self.type = type
 
 
 class StorageAccountCreateParameters(msrest.serialization.Model):
@@ -3728,10 +3760,10 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sku: Required. The SKU of the storage account.
+    :param sku: Required. Required. Gets or sets the SKU name.
     :type sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
-    :param kind: Required. Indicates the type of storage account. Possible values include:
-     'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'.
+    :param kind: Required. Required. Indicates the type of storage account. Possible values
+     include: 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'.
     :type kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
     :param location: Required. Required. Gets or sets the location of the resource. This will be
      one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
@@ -3743,20 +3775,22 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      maximum of 15 tags can be provided for a resource. Each tag must have a key with a length no
      greater than 128 characters and a value with a length no greater than 256 characters.
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
+    :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.storage.v2019_06_01.models.Identity
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+     Only one custom domain is supported per storage account at this time. To clear the existing
+     custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_06_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Not applicable. Azure Storage encryption is enabled for all storage accounts
+     and cannot be disabled.
     :type encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :param network_rule_set: Network rule set.
     :type network_rule_set: ~azure.mgmt.storage.v2019_06_01.models.NetworkRuleSet
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
     :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Settings for Azure Files identity based
-     authentication.
+    :param azure_files_identity_based_authentication: Provides the identity based authentication
+     settings for Azure Files.
     :type azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_06_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
@@ -3768,8 +3802,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
-    :param routing_preference: Routing preference defines the type of network, either microsoft or
-     internet routing to be used to deliver the user data, the default option is microsoft routing.
+    :param routing_preference: Maintains information about the network routing choice opted by the
+     user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
@@ -4023,8 +4057,9 @@ class StorageAccountProperties(msrest.serialization.Model):
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
      called. Possible values include: 'Creating', 'ResolvingDNS', 'Succeeded'.
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2019_06_01.models.ProvisioningState
-    :ivar primary_endpoints: The URIs that are used to perform a retrieval of a public blob, queue,
-     table, web or dfs object.
+    :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
+     endpoint.
     :vartype primary_endpoints: ~azure.mgmt.storage.v2019_06_01.models.Endpoints
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
@@ -4039,25 +4074,26 @@ class StorageAccountProperties(msrest.serialization.Model):
     :ivar secondary_location: Gets the location of the geo-replicated secondary for the storage
      account. Only available if the accountType is Standard_GRS or Standard_RAGRS.
     :vartype secondary_location: str
-    :ivar status_of_secondary: Gets the status indicating whether the primary location of the
-     storage account is available or unavailable. Possible values include: 'available',
-     'unavailable'.
+    :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
+     storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
+     Standard_RAGRS. Possible values include: 'available', 'unavailable'.
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2019_06_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
-    :ivar custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :ivar custom_domain: Gets the custom domain the user assigned to this storage account.
     :vartype custom_domain: ~azure.mgmt.storage.v2019_06_01.models.CustomDomain
-    :ivar secondary_endpoints: The URIs that are used to perform a retrieval of a public blob,
-     queue, table, web or dfs object.
+    :ivar secondary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
+     queue, or table object from the secondary location of the storage account. Only available if
+     the SKU name is Standard_RAGRS.
     :vartype secondary_endpoints: ~azure.mgmt.storage.v2019_06_01.models.Endpoints
-    :ivar encryption: The encryption settings on the storage account.
+    :ivar encryption: Gets the encryption settings on the account. If unspecified, the account is
+     unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
      for billing. Possible values include: 'Hot', 'Cool'.
     :vartype access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Settings for Azure Files identity based
-     authentication.
+    :param azure_files_identity_based_authentication: Provides the identity based authentication
+     settings for Azure Files.
     :type azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_06_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
@@ -4066,9 +4102,7 @@ class StorageAccountProperties(msrest.serialization.Model):
     :vartype network_rule_set: ~azure.mgmt.storage.v2019_06_01.models.NetworkRuleSet
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
     :type is_hns_enabled: bool
-    :ivar geo_replication_stats: Statistics related to replication for storage account's Blob,
-     Table, Queue and File services. It is only available when geo-redundant replication is enabled
-     for the storage account.
+    :ivar geo_replication_stats: Geo Replication Stats.
     :vartype geo_replication_stats: ~azure.mgmt.storage.v2019_06_01.models.GeoReplicationStats
     :ivar failover_in_progress: If the failover is in progress, the value will be true, otherwise,
      it will be null.
@@ -4081,8 +4115,8 @@ class StorageAccountProperties(msrest.serialization.Model):
      specified storage account.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection]
-    :param routing_preference: Routing preference defines the type of network, either microsoft or
-     internet routing to be used to deliver the user data, the default option is microsoft routing.
+    :param routing_preference: Maintains information about the network routing choice opted by the
+     user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     :ivar blob_restore_status: Blob restore status.
     :vartype blob_restore_status: ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreStatus
@@ -4171,18 +4205,20 @@ class StorageAccountProperties(msrest.serialization.Model):
 class StorageAccountPropertiesCreateParameters(msrest.serialization.Model):
     """The parameters used to create the storage account.
 
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+     Only one custom domain is supported per storage account at this time. To clear the existing
+     custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_06_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Not applicable. Azure Storage encryption is enabled for all storage accounts
+     and cannot be disabled.
     :type encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :param network_rule_set: Network rule set.
     :type network_rule_set: ~azure.mgmt.storage.v2019_06_01.models.NetworkRuleSet
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
     :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Settings for Azure Files identity based
-     authentication.
+    :param azure_files_identity_based_authentication: Provides the identity based authentication
+     settings for Azure Files.
     :type azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_06_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
@@ -4194,8 +4230,8 @@ class StorageAccountPropertiesCreateParameters(msrest.serialization.Model):
      disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
-    :param routing_preference: Routing preference defines the type of network, either microsoft or
-     internet routing to be used to deliver the user data, the default option is microsoft routing.
+    :param routing_preference: Maintains information about the network routing choice opted by the
+     user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
@@ -4240,16 +4276,18 @@ class StorageAccountPropertiesCreateParameters(msrest.serialization.Model):
 class StorageAccountPropertiesUpdateParameters(msrest.serialization.Model):
     """The parameters used when updating a storage account.
 
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: Custom domain assigned to the storage account by the user. Name is the
+     CNAME source. Only one custom domain is supported per storage account at this time. To clear
+     the existing custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_06_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Provides the encryption settings on the account. The default setting is
+     unencrypted.
     :type encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
     :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Settings for Azure Files identity based
-     authentication.
+    :param azure_files_identity_based_authentication: Provides the identity based authentication
+     settings for Azure Files.
     :type azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_06_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
@@ -4260,8 +4298,8 @@ class StorageAccountPropertiesUpdateParameters(msrest.serialization.Model):
      disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
-    :param routing_preference: Routing preference defines the type of network, either microsoft or
-     internet routing to be used to deliver the user data, the default option is microsoft routing.
+    :param routing_preference: Maintains information about the network routing choice opted by the
+     user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
@@ -4331,28 +4369,33 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
 class StorageAccountUpdateParameters(msrest.serialization.Model):
     """The parameters that can be provided when updating the storage account properties.
 
-    :param sku: The SKU of the storage account.
+    :param sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
+     Standard_ZRS, Premium_LRS or Premium_ZRS, nor can accounts of those SKU names be updated to any
+     other value.
     :type sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater in
      length than 128 characters and a value no greater in length than 256 characters.
     :type tags: dict[str, str]
-    :param identity: Identity for the resource.
+    :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.storage.v2019_06_01.models.Identity
-    :param kind: Indicates the type of storage account. Possible values include: 'Storage',
-     'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'.
+    :param kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
+     supported by server. Possible values include: 'Storage', 'StorageV2', 'BlobStorage',
+     'FileStorage', 'BlockBlobStorage'.
     :type kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
-    :param custom_domain: The custom domain assigned to this storage account. This can be set via
-     Update.
+    :param custom_domain: Custom domain assigned to the storage account by the user. Name is the
+     CNAME source. Only one custom domain is supported per storage account at this time. To clear
+     the existing custom domain, use an empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_06_01.models.CustomDomain
-    :param encryption: The encryption settings on the storage account.
+    :param encryption: Provides the encryption settings on the account. The default setting is
+     unencrypted.
     :type encryption: ~azure.mgmt.storage.v2019_06_01.models.Encryption
     :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
      used for billing. Possible values include: 'Hot', 'Cool'.
     :type access_tier: str or ~azure.mgmt.storage.v2019_06_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Settings for Azure Files identity based
-     authentication.
+    :param azure_files_identity_based_authentication: Provides the identity based authentication
+     settings for Azure Files.
     :type azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_06_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
@@ -4363,8 +4406,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      disabled once it is enabled. Possible values include: 'Disabled', 'Enabled'.
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
-    :param routing_preference: Routing preference defines the type of network, either microsoft or
-     internet routing to be used to deliver the user data, the default option is microsoft routing.
+    :param routing_preference: Maintains information about the network routing choice opted by the
+     user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
@@ -4550,7 +4593,7 @@ class Usage(msrest.serialization.Model):
     :vartype current_value: int
     :ivar limit: Gets the maximum count of the resources that can be allocated in the subscription.
     :vartype limit: int
-    :ivar name: The usage names that can be used; currently limited to StorageAccount.
+    :ivar name: Gets the name of the type of usage.
     :vartype name: ~azure.mgmt.storage.v2019_06_01.models.UsageName
     """
 
