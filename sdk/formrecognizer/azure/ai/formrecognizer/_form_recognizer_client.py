@@ -20,7 +20,8 @@ from ._base_client import FormRecognizerClientBase
 from ._response_handlers import (
     get_pipeline_response,
     prepare_receipt_result,
-    prepare_layout_result
+    prepare_layout_result,
+    prepare_training_result
 )
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
@@ -86,7 +87,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         with open(json_file_path, 'r') as j:
             result = json.loads(j.read())
         analyze_result = self._client._deserialize(AnalyzeOperationResult, result)
-        extracted_layout = prepare_layout_result(analyze_result, include_text_details)
+        extracted_layout = prepare_layout_result(analyze_result, include_raw=True)
         return extracted_layout
         # def callback(raw_response):
         #     analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -96,3 +97,25 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # poll_method = ARMPolling()
         # poller = LROPoller(self._client._client, response, callback, poll_method)
         # return poller
+
+    def begin_training(self, source, content_type, source_prefix_filter, include_sub_folders=False):
+        if isinstance(source, six.string_types):
+            source = {"source": source}
+
+        try:
+            response = self._client.train_custom_model_async(
+                train_request={"source": source, "source_filter": source_prefix_filter},
+                content_type=content_type,
+                cls=get_pipeline_response
+            )
+        except ErrorResponseException as err:
+            raise HttpResponseError(err)
+
+        def callback(raw_response):
+            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            custom_model = prepare_training_result(analyze_result)
+            return custom_model
+
+        poll_method = ARMPolling()
+        poller = LROPoller(self._client._client, response, callback, poll_method)
+        return poller

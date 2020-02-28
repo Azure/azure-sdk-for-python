@@ -169,13 +169,6 @@ class ExtractedLayoutPage(object):
         self.tables = kwargs.get("tables", None)
         self.page_number = kwargs.get("page_number", None)
 
-    @classmethod
-    def _from_generated(cls, page):
-        return cls(
-            tables=page,
-            page_number=page.page_number
-        )
-
 
 def Table(table):
     class ExtractedTable(type(table)):
@@ -205,7 +198,20 @@ class TableCell(object):
         self.raw_field = kwargs.get('raw_field', None)
 
     @classmethod
-    def _from_generated(cls, cell):
+    def _from_generated(cls, cell, read_result, include_raw):
+        if include_raw:
+            return cls(
+                text=cell.text,
+                row_index=cell.row_index,
+                column_index=cell.column_index,
+                row_span=cell.row_span or 1,
+                column_span=cell.column_span or 1,
+                bounding_box=cell.bounding_box,
+                confidence=cell.confidence,
+                is_header=cell.is_header,
+                is_footer=cell.is_footer,
+                raw_field=get_raw_field(cell, read_result)
+            )
         return cls(
             text=cell.text,
             row_index=cell.row_index,
@@ -216,5 +222,5 @@ class TableCell(object):
             confidence=cell.confidence,
             is_header=cell.is_header,
             is_footer=cell.is_footer,
-            raw_field=cell  # need to hook up raw field
+            raw_field=None
         )

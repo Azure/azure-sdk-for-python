@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table
+from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table, ExtractedLayoutPage
 
 
 def get_pipeline_response(pipeline_response, _, response_headers):
@@ -98,12 +98,18 @@ def prepare_receipt_result(response, include_raw):
 
 
 def prepare_layout_result(response, include_raw):
-    layouts = []
     pages = []
+
     for page in response.analyze_result.page_results:
+        result_page = ExtractedLayoutPage(page_number=page.page, tables=[])
         for table in page.tables:
             my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
             for cell in table.cells:
-                my_table[cell.row_index][cell.column_index] = TableCell._from_generated(cell)
-            layouts.append(Table(my_table))
-        pages.append(layouts)
+                my_table[cell.row_index][cell.column_index] = TableCell._from_generated(cell, response.analyze_result.read_results, include_raw)
+            result_page.tables.append(Table(my_table))
+        pages.append(result_page)
+    return pages
+
+
+def prepare_training_result(response):
+    pass
