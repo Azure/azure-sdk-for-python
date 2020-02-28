@@ -40,7 +40,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             kind=azure.mgmt.storage.models.Kind.storage,
             location=location,
         )
-        result_create = self.storage_client.storage_accounts.create(
+        result_create = self.storage_client.storage_accounts.begin_create(
             resource_group.name,
             account_name,
             params_create,
