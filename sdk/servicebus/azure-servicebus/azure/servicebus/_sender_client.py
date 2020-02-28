@@ -42,7 +42,6 @@ class ServiceBusSenderClient(ClientBase):
         self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
         self._error = None
         self._name = "SBReceiver-{}".format(uuid.uuid4())
-        self._create_handler()
 
     def _create_handler(self):
         auth = self._create_auth()
@@ -51,7 +50,7 @@ class ServiceBusSenderClient(ClientBase):
             self._entity_uri,
             auth=auth,
             debug=self._logging_enable,
-            properties= properties,
+            properties=properties,
             error_policy=self._error_policy,
             client_name=self._name,
             encoding=self._config.encoding
@@ -60,8 +59,10 @@ class ServiceBusSenderClient(ClientBase):
     def _open(self):
         if self._running:
             return
-        self._running = True
+        if self._handler:
+            self._handler.close()
         try:
+            self._create_handler()
             self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
@@ -69,8 +70,9 @@ class ServiceBusSenderClient(ClientBase):
             try:
                 self._handle_exception(e)
             except Exception:
-                self.running = False
+                self._running = False
                 raise
+        self._running = True
 
     def _reconnect(self):
         """Reconnect the handler.
@@ -101,6 +103,17 @@ class ServiceBusSenderClient(ClientBase):
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
         self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+
+    def _send(self, message, session_id=None, message_timeout=None):
+        self._open()
+        timeout_time = (time.time() + message_timeout) if message_timeout else None
+        self._set_msg_timeout(timeout_time)
+        if session_id and not message.properties.group_id:
+            message.properties.group_id = session_id
+        try:
+            self._handler.send_message(message.message)
+        except Exception as e:
+            raise MessageSendFailed(e)
 
     @classmethod
     def from_queue(
@@ -147,15 +160,11 @@ class ServiceBusSenderClient(ClientBase):
         )
         return cls(**constructor_args)
 
-    def send(self, message, session_id=None, timeout=None):
-        # type: (Union[Message, BatchMessage], str, float) -> None
-        self._open()
-        timeout_time = (time.time() + timeout) if timeout else None
-        self._set_msg_timeout(timeout_time)
-        if session_id and not message.properties.group_id:
-            message.properties.group_id = session_id
-
-        try:
-            self._handler.send_message(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+    def send(self, message, session_id=None, message_timeout=None):
+        # type: (Message, str, float) -> None
+        self._do_retryable_operation(
+            self._send,
+            message=message,
+            session_id=session_id,
+            message_timeout=message_timeout
+        )

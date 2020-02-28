@@ -108,11 +108,11 @@ class ServiceBusSharedKeyCredential(object):
 
 class ClientBase(object):
     def __init__(
-            self,
-            fully_qualified_namespace,
-            entity_name,
-            credential,
-            **kwargs
+        self,
+        fully_qualified_namespace,
+        entity_name,
+        credential,
+        **kwargs
     ):
         self.fully_qualified_namespace = fully_qualified_namespace
         self.entity_name = entity_name
@@ -168,9 +168,10 @@ class ClientBase(object):
         a retryable error - attempt to reconnect.
         This method will be called automatically for most retryable errors.
         """
-        self._handler.close()
+        if self._handler:
+            self._handler.close()
+            self._handler = None
         self._running = False
-        self._create_handler()
         self._open()
 
     def _handle_exception(self, exception):
@@ -223,8 +224,63 @@ class ClientBase(object):
         kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
         return kwargs
 
+    def _backoff(
+        self,
+        retried_times,
+        last_exception,
+        timeout_time=None,
+        entity_name=None
+    ):
+        # type: (int, Exception, Optional[int], Optional[str]) -> None
+        entity_name = entity_name or self._container_id
+        backoff = self._config.retry_backoff_factor * 2 ** retried_times
+        if backoff <= self._config.retry_backoff_max and (
+            timeout_time is None or time.time() + backoff <= timeout_time
+        ):  # pylint:disable=no-else-return
+            time.sleep(backoff)
+            _LOGGER.info(
+                "%r has an exception (%r). Retrying...",
+                format(entity_name),
+                last_exception,
+            )
+        else:
+            _LOGGER.info(
+                "%r operation has timed out. Last exception before timeout is (%r)",
+                entity_name,
+                last_exception,
+            )
+            raise last_exception
+
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        timeout_time = (time.time() + timeout) if timeout else None
+        retried_times = 0
+        last_exception = kwargs.pop("last_exception", None)
+        max_retries = self._config.retry_total
+
+        while retried_times <= max_retries:
+            try:
+                return operation(
+                    timeout_time=timeout_time,
+                    last_exception=last_exception,
+                    **kwargs
+                )
+            except Exception as exception:
+                last_exception = self._handle_exception(exception)
+                self._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    timeout_time=timeout_time
+                )
+                retried_times += 1
+
+        _LOGGER.info(
+            "%r operation has exhausted retry. Last exception: %r.",
+            self._container_id,
+            last_exception,
+        )
+        raise last_exception
+
     def close(self, exception=None):
-        self._running = False
         if self._error:
             return
         if isinstance(exception, ServiceBusError):
@@ -234,3 +290,4 @@ class ClientBase(object):
         else:
             self._error = ServiceBusError("This message handler is now closed.")
         self._handler.close()
+        self._running = False
