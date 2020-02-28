@@ -140,7 +140,12 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                 start_time = time.time()
                 if absolute_timeout <= 0:
                     raise RequestTimeoutError('Operation timeout')
-                request.context.options['connection_timeout'] = absolute_timeout
+                connection_timeout = request.context.options.get('connection_timeout')
+                if connection_timeout:
+                    req_timeout = min(connection_timeout, absolute_timeout)
+                else:
+                    req_timeout = absolute_timeout
+                request.context.options['connection_timeout'] = req_timeout
 
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
