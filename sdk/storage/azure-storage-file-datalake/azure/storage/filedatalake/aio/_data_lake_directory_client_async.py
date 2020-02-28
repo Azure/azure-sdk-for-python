@@ -191,12 +191,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         blob_properties = await self._get_path_properties(**kwargs)
         return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
-    async def rename_directory(self, rename_destination, **kwargs):
+    async def rename_directory(self, new_name,  # type: str
+                               **kwargs):
         # type: (**Any) -> DataLakeDirectoryClient
         """
         Rename the source directory.
 
-        :param str rename_destination:
+        :param str new_name:
             the new directory name the user want to rename to.
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}".
         :keyword source_lease:
@@ -264,9 +265,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient
         """
-        rename_destination = rename_destination.strip('/')
-        new_file_system = rename_destination.split('/')[0]
-        path = rename_destination[len(new_file_system):]
+        new_name = new_name.strip('/')
+        new_file_system = new_name.split('/')[0]
+        path = new_name[len(new_file_system):]
 
         new_directory_client = DataLakeDirectoryClient(
             self.url, new_file_system, directory_name=path, credential=self._raw_credential,
