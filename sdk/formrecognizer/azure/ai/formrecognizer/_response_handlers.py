@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table, ExtractedLayoutPage
+from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table, ExtractedLayoutPage, CustomModel, LabeledCustomModel
 
 
 def get_pipeline_response(pipeline_response, _, response_headers):
@@ -112,4 +112,12 @@ def prepare_layout_result(response, include_raw):
 
 
 def prepare_training_result(response):
+    return CustomModel._from_generated(response)
+
+
+def prepare_labeled_training_result(response):
+    return LabeledCustomModel._from_generated(response)
+
+
+def list_models_result(response):
     pass

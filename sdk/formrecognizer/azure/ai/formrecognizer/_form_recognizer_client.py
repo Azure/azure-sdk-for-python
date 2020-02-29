@@ -21,11 +21,12 @@ from ._response_handlers import (
     get_pipeline_response,
     prepare_receipt_result,
     prepare_layout_result,
-    prepare_training_result
+    prepare_training_result,
+    prepare_labeled_training_result
 )
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
-from ._generated.models import AnalyzeOperationResult
+from ._generated.models import AnalyzeOperationResult, Model
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 if TYPE_CHECKING:
@@ -70,15 +71,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # if isinstance(form, six.string_types):
         #     form = {"source": form}
         #
-        # try:
-        #     response = self._client.analyze_layout_async(
-        #         file_stream=form,
-        #         content_type=content_type,
-        #         include_text_details=include_text_details,
-        #         cls=get_pipeline_response
-        #     )
-        # except ErrorResponseException as err:
-        #     raise HttpResponseError(err)
+
 
         import json
 
@@ -98,24 +91,78 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # poller = LROPoller(self._client._client, response, callback, poll_method)
         # return poller
 
-    def begin_training(self, source, content_type, source_prefix_filter, include_sub_folders=False):
-        if isinstance(source, six.string_types):
-            source = {"source": source}
+    def begin_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False):
+        # try:
+        #     response = self._client.train_custom_model_async(
+        #         train_request={"source": source, "source_filter": source_prefix_filter},
+        #         content_type=content_type,
+        #         cls=get_pipeline_response
+        #     )
+        # except ErrorResponseException as err:
+        #     raise HttpResponseError(err)
 
+        import json
+
+        json_file_path = "../result_training_unlabeled.json"
+
+        with open(json_file_path, 'r') as j:
+            result = json.loads(j.read())
+
+        model = self._client._deserialize(Model, result)
+        custom_model = prepare_training_result(model)
+        return custom_model
+
+        # def callback(raw_response):
+        #     model = self._client._deserialize(Model, raw_response)
+        #     custom_model = prepare_training_result(model)
+        #     return custom_model
+        #
+        # poll_method = ARMPolling()
+        # poller = LROPoller(self._client._client, response, callback, poll_method)
+        # return poller
+
+    def begin_labeled_training(self, source, content_type, source_prefix_filter=None, include_sub_folders=False):
+        # try:
+        #     response = self._client.train_custom_model_async(
+        #         train_request={"source": source, "source_filter": source_prefix_filter},
+        #         content_type=content_type,
+        #         cls=get_pipeline_response
+        #     )
+        # except ErrorResponseException as err:
+        #     raise HttpResponseError(err)
+
+        import json
+
+        json_file_path = "../result_training_labeled.json"
+
+        with open(json_file_path, 'r') as j:
+            result = json.loads(j.read())
+
+        model = self._client._deserialize(Model, result)
+        custom_model = prepare_labeled_training_result(model)
+        return custom_model
+
+        # def callback(raw_response):
+        #     model = self._client._deserialize(Model, raw_response)
+        #     custom_model = prepare_training_result(model)
+        #     return custom_model
+        #
+        # poll_method = ARMPolling()
+        # poller = LROPoller(self._client._client, response, callback, poll_method)
+        # return poller
+
+
+    def delete_custom_model(self, model_id):
         try:
-            response = self._client.train_custom_model_async(
-                train_request={"source": source, "source_filter": source_prefix_filter},
-                content_type=content_type,
-                cls=get_pipeline_response
+            self._client.delete_custom_model(
+                model_id=model_id
             )
         except ErrorResponseException as err:
             raise HttpResponseError(err)
 
-        def callback(raw_response):
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
-            custom_model = prepare_training_result(analyze_result)
-            return custom_model
-
-        poll_method = ARMPolling()
-        poller = LROPoller(self._client._client, response, callback, poll_method)
-        return poller
+    def list_custom_models(self, op):
+        try:
+            return self._client.get_custom_models(op="full"
+            )
+        except ErrorResponseException as err:
+            raise HttpResponseError(err)

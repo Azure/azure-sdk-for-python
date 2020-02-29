@@ -12,7 +12,7 @@ def get_receipt_field_value(field):
     value = field.value_array or field.value_date or field.value_integer or field.value_number \
             or field.value_object or field.value_phone_number or field.value_string or field.value_time
 
-    if value is None:  # Could do this and return string value where value_number doesn't get returned
+    if value is None:  # Could do this and return string value where value_number doesn't get returned (Chris says this is probably a bug for Receipt item Quantity)
         return field.text
     return value
 
@@ -224,3 +224,129 @@ class TableCell(object):
             is_footer=cell.is_footer,
             raw_field=None
         )
+
+
+class CustomModel(object):
+    def __init__(self, **kwargs):
+        self.model_id = kwargs.get('model_id', None)
+        self.status = kwargs.get('status', None)
+        self.created_date_time = kwargs.get('created_date_time', None)
+        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+        self.form_clusters = kwargs.get('form_clusters', None)
+        self.train_result = kwargs.get('train_result', None)
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            model_id=model.model_info.model_id,
+            status=model.model_info.status,
+            created_date_time=model.model_info.created_date_time,
+            last_updated_date_time=model.model_info.last_updated_date_time,
+            form_clusters=model.keys,
+            train_result=TrainResult._from_generated(model.train_result)
+        )
+
+
+class TrainResult(object):
+    def __init__(self, **kwargs):
+        self.documents = kwargs.get('documents', None)
+        self.training_errors = kwargs.get('training_errors', None)
+
+    @classmethod
+    def _from_generated(cls, train):
+        return cls(
+            documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents],
+            training_errors=ErrorInformation._from_generated(train.errors)
+        )
+
+
+class TrainingDocumentInfo(object):
+
+    def __init__(self, **kwargs):
+        self.document_name = kwargs.get('document_name', None)
+        self.status = kwargs.get('status', None)
+        self.pages = kwargs.get('pages', None)
+        self.document_errors = kwargs.get('document_errors', None)
+
+    @classmethod
+    def _from_generated(cls, doc):
+        return cls(
+            document_name=doc.document_name,
+            status=doc.status,
+            pages=doc.pages,
+            document_errors=ErrorInformation._from_generated(doc.errors)
+        )
+
+
+class ErrorInformation(object):
+    def __init__(self, **kwargs):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+    @classmethod
+    def _from_generated(cls, err):
+        if err:
+            return [cls(
+                code=error.code,
+                message=error.message
+            ) for error in err.errors]
+        return []
+
+
+class LabeledCustomModel(object):
+    def __init__(self, **kwargs):
+        self.model_id = kwargs.get('model_id', None)
+        self.status = kwargs.get('status', None)
+        self.created_date_time = kwargs.get('created_date_time', None)
+        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+        self.train_result = kwargs.get('train_result', None)
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            model_id=model.model_info.model_id,
+            status=model.model_info.status,
+            created_date_time=model.model_info.created_date_time,
+            last_updated_date_time=model.model_info.last_updated_date_time,
+            train_result=LabeledTrainResult._from_generated(model.train_result)
+        )
+
+
+class LabeledTrainResult(object):
+    def __init__(self, **kwargs):
+        self.documents = kwargs.get('documents', None)
+        self.fields = kwargs.get('fields', None)
+        self.average_model_accuracy = kwargs.get('average_model_accuracy', None)
+        self.training_errors = kwargs.get('training_errors', None)
+
+    @classmethod
+    def _from_generated(cls, train):
+        return cls(
+            documents=[TrainingDocumentInfo._from_generated(doc) for doc in train.training_documents],
+            fields=FieldNames._from_generated(train.fields),
+            average_model_accuracy=train.average_model_accuracy,
+            training_errors=ErrorInformation._from_generated(train.errors)
+        )
+
+
+class FieldNames(object):
+    def __init__(self, **kwargs):
+        self.field_name = kwargs.get('field_name', None)
+        self.accuracy = kwargs.get('accuracy', None)
+
+    @classmethod
+    def _from_generated(cls, fields):
+        if fields:
+            return [cls(
+                field_name=field.field_name,
+                accuracy=field.accuracy
+            ) for field in fields]
+
+
+class ModelInfo(object):
+    def __init__(self, **kwargs):
+        self.model_id = kwargs.get('model_id', None)
+        self.status = kwargs.get('status', None)
+        self.created_date_time = kwargs.get('created_date_time', None)
+        self.last_updated_date_time = kwargs.get('last_updated_date_time', None)
+
