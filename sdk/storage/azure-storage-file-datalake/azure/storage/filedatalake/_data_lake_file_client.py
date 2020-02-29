@@ -310,6 +310,7 @@ class DataLakeFileClient(PathClient):
         return options
 
     def flush_data(self, offset,  # type: int
+                   content_settings=None,  # type: Optional[ContentSettings]
                    retain_uncommitted_data=False,   # type: Optional[bool]
                    **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -317,6 +318,8 @@ class DataLakeFileClient(PathClient):
 
         :param offset: offset is equal to the length of the file after commit the
             previous appended data.
+        :param ~azure.storage.filedatalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
         :param bool retain_uncommitted_data: Valid only for flush operations.  If
             "true", uncommitted data is retained after the flush operation
             completes; otherwise, the uncommitted data is deleted after the flush
@@ -359,6 +362,7 @@ class DataLakeFileClient(PathClient):
         """
         options = self._flush_data_options(
             offset,
+            content_settings=content_settings,
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return self._client.path.flush_data(**options)
