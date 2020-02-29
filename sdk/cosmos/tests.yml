@@ -33,5 +33,7 @@ jobs:
             --url-connection $(python-cosmos-live-account-host)
             --key $(python-cosmos-live-account-key)
           ignoreLASTEXITCODE: true
+          # Always clean up the database (works when a build is canceled)
+          condition: always()
           displayName: Cleanup test database
 
