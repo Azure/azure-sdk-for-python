@@ -90,10 +90,11 @@ class ServiceBusSenderClient(ClientBase):
         except Exception as e:  # pylint: disable=broad-except
             self._handle_exception(e)
 
-    def _set_msg_timeout(self, timeout_time, last_exception=None):
+    def _set_msg_timeout(self, timeout=None, last_exception=None):
         # type: (Optional[float], Optional[Exception]) -> None
-        if not timeout_time:
+        if not timeout:
             return
+        timeout_time = time.time() + timeout
         remaining_time = timeout_time - time.time()
         if remaining_time <= 0.0:
             if last_exception:
@@ -104,10 +105,9 @@ class ServiceBusSenderClient(ClientBase):
             raise error
         self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
 
-    def _send(self, message, session_id=None, message_timeout=None):
+    def _send(self, message, session_id=None, timeout=None, last_exception=None):
         self._open()
-        timeout_time = (time.time() + message_timeout) if message_timeout else None
-        self._set_msg_timeout(timeout_time)
+        self._set_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
         try:
@@ -166,5 +166,7 @@ class ServiceBusSenderClient(ClientBase):
             self._send,
             message=message,
             session_id=session_id,
-            message_timeout=message_timeout
+            timeout=message_timeout,
+            require_need_timeout=True,
+            require_last_exception=True
         )

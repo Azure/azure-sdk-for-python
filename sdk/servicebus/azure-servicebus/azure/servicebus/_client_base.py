@@ -121,6 +121,7 @@ class ClientBase(object):
         self._config = Configuration(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
         self._running = False
+        self._handler = None
 
     def __enter__(self):
         return self
@@ -176,7 +177,7 @@ class ClientBase(object):
 
     def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            if exception.action and exception.action.retry and self._auto_reconnect:
+            if exception.action and exception.action.retry and self._config.auto_reconnect:
                 _LOGGER.info("Handler detached. Attempting reconnect.")
                 self._reconnect()
             elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
@@ -190,7 +191,7 @@ class ClientBase(object):
                 self.close(exception=error)
                 raise error
         elif isinstance(exception, errors.MessageHandlerError):
-            if self._auto_reconnect:
+            if self._config.auto_reconnect:
                 _LOGGER.info("Handler error. Attempting reconnect.")
                 self._reconnect()
             else:
@@ -228,14 +229,14 @@ class ClientBase(object):
         self,
         retried_times,
         last_exception,
-        timeout_time=None,
+        timeout=None,
         entity_name=None
     ):
         # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
-            timeout_time is None or time.time() + backoff <= timeout_time
+            timeout is None or backoff <= timeout
         ):  # pylint:disable=no-else-return
             time.sleep(backoff)
             _LOGGER.info(
@@ -252,16 +253,20 @@ class ClientBase(object):
             raise last_exception
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        timeout_time = (time.time() + timeout) if timeout else None
+        require_last_exception = kwargs.pop("require_last_exception", False)
+        require_timeout = kwargs.pop("require_need_timeout", False)
         retried_times = 0
-        last_exception = kwargs.pop("last_exception", None)
+        last_exception = None
         max_retries = self._config.retry_total
 
         while retried_times <= max_retries:
             try:
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
+
+                if require_timeout:
+                    kwargs["timeout"] = timeout
                 return operation(
-                    timeout_time=timeout_time,
-                    last_exception=last_exception,
                     **kwargs
                 )
             except Exception as exception:
@@ -269,7 +274,7 @@ class ClientBase(object):
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    timeout_time=timeout_time
+                    timeout=timeout
                 )
                 retried_times += 1
 

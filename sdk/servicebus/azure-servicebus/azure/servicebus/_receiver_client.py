@@ -5,6 +5,7 @@
 import uuid
 import datetime
 import time
+import logging
 
 from uamqp import ReceiveClient, Source
 
@@ -16,11 +17,12 @@ from .common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER
 )
-
 from .common.errors import _ServiceBusErrorPolicy
-
 from .common.utils import create_properties
-from .common.message import ReceivedMessage
+from .common.message import Message
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ServiceBusReceiverClient(ClientBase):
@@ -62,7 +64,18 @@ class ServiceBusReceiverClient(ClientBase):
         return self
 
     def __next__(self):
-        pass
+        while True:
+            try:
+                self._open()
+                uamqp_message = next(self._message_iter)
+                message = self._build_message(uamqp_message)
+                return message
+            except StopIteration:
+                raise
+            except Exception as e:  # pylint: disable=broad-except
+                self._handle_exception(e)
+
+    next = __next__  # for python2.7
 
     def _get_source_for_session_entity(self):
         source = Source(self._entity_uri)
@@ -129,7 +142,7 @@ class ServiceBusReceiverClient(ClientBase):
         self._running = True
 
     def _build_message(self, received):
-        message = ReceivedMessage(None, message=received)
+        message = Message(None, message=received)
         message._receiver = self  # pylint: disable=protected-access
         self._last_received_sequenced_number = message.sequence_number
         return message
@@ -138,20 +151,16 @@ class ServiceBusReceiverClient(ClientBase):
         self._open()
         wrapped_batch = []
         max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
-        try:
-            timeout_ms = 1000 * timeout if timeout else 0
-            batch = self._handler.receive_message_batch(
-                max_batch_size=max_batch_size,
-                timeout=timeout_ms)
-            for received in batch:
-                message = self._build_message(received)
-                wrapped_batch.append(message)
-        except Exception as e:  # pylint: disable=broad-except
-            self._handle_exception(e)
-        return wrapped_batch
 
-    def next(self):
-        pass
+        timeout_ms = 1000 * timeout if timeout else 0
+        batch = self._handler.receive_message_batch(
+            max_batch_size=max_batch_size,
+            timeout=timeout_ms)
+        for received in batch:
+            message = self._build_message(received)
+            wrapped_batch.append(message)
+
+        return wrapped_batch
 
     def close(self, exception=None):
         if not self._running:
@@ -208,7 +217,12 @@ class ServiceBusReceiverClient(ClientBase):
 
     def receive(self, max_batch_size=None, timeout=None):
         # type: (int, float) -> List[ReceivedMessage]
-        return self._do_retryable_operation(max_batch_size=max_batch_size, timeout=timeout)
+        return self._do_retryable_operation(
+            self._receive,
+            max_batch_size=max_batch_size,
+            timeout=timeout,
+            require_need_timeout=True
+        )
 
 
 
