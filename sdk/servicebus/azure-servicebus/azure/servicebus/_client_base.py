@@ -7,6 +7,7 @@ import functools
 import logging
 import uuid
 import time
+import datetime
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING
 
@@ -17,18 +18,30 @@ except ImportError:
     from urllib.parse import urlparse, quote_plus
 
 
-from uamqp import authentication, utils, errors, constants
-
+from uamqp import (
+    authentication,
+    utils,
+    errors,
+    constants,
+    Source
+)
 from .common._configuration import Configuration
-from .common.constants import JWT_TOKEN_SCOPE, ReceiveSettleMode
 from .common.errors import (
     _ServiceBusErrorPolicy,
-    InvalidHandlerState,
     OperationTimeoutError,
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError
 )
+from .common.constants import (
+    ReceiveSettleMode,
+    NEXT_AVAILABLE,
+    SESSION_LOCKED_UNTIL,
+    DATETIMEOFFSET_EPOCH,
+    SESSION_FILTER,
+    JWT_TOKEN_SCOPE
+)
+from .common.message import Message
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -108,20 +121,6 @@ class ServiceBusSharedKeyCredential(object):
 
 
 class SenderReceiverMixin(object):
-    def _set_sender_msg_timeout(self, timeout=None, last_exception=None):
-        if not timeout:
-            return
-        timeout_time = time.time() + timeout
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError("Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
-
     def _create_attribute_for_sender(self, entity_name):
         self._entity_path = entity_name
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
@@ -146,6 +145,42 @@ class SenderReceiverMixin(object):
             is_session=(True if self._session_id else False)
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
+
+    def _receiver_build_message(self, received):
+        message = Message(None, message=received)
+        message._receiver = self  # pylint: disable=protected-access
+        self._last_received_sequenced_number = message.sequence_number
+        return message
+
+    def _sender_set_msg_timeout(self, timeout=None, last_exception=None):
+        if not timeout:
+            return
+        timeout_time = time.time() + timeout
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                error = last_exception
+            else:
+                error = OperationTimeoutError("Send operation timed out")
+            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
+            raise error
+        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+
+    def _receiver_get_source_for_session_entity(self):
+        source = Source(self._entity_uri)
+        session_filter = None if self._session == NEXT_AVAILABLE else self._session
+        source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
+        return source
+
+    def _receiver_on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
+        if str(source) == self.endpoint:
+            self.session_start = datetime.datetime.now()
+            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
+                self.locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+            session_filter = source.get_filter(name=SESSION_FILTER)
+            self.session_id = session_filter.decode(self.encoding)
 
 
 class ClientBase(object):

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import uuid
 import logging
 import time
 
@@ -10,7 +9,6 @@ from uamqp import SendClient
 
 from ._client_base import ClientBase, SenderReceiverMixin
 from .common.errors import (
-    _ServiceBusErrorPolicy,
     MessageSendFailed
 )
 from .common.utils import create_properties
@@ -77,7 +75,7 @@ class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
 
     def _send(self, message, session_id=None, timeout=None, last_exception=None):
         self._open()
-        self._set_sender_msg_timeout(timeout, last_exception)
+        self._sender_set_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
         try:

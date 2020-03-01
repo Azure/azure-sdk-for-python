@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import uuid
 import logging
-import time
 import asyncio
 
 from uamqp import SendClientAsync
@@ -12,8 +10,6 @@ from uamqp import SendClientAsync
 from .._client_base import SenderReceiverMixin
 from ._client_base_async import ClientBaseAsync
 from ..common.errors import (
-    _ServiceBusErrorPolicy,
-    OperationTimeoutError,
     MessageSendFailed
 )
 from ..common.utils import create_properties
@@ -49,15 +45,15 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
             encoding=self._config.encoding
         )
 
-    async def _open(self):
+    async def _open_async(self):
         if self._running:
             return
         if self._handler:
-            await self._handler.close()
+            await self._handler.close_async()
         try:
             auth = await self._create_auth_async()
             self._create_handler(auth)
-            await self._handler.open()
+            await self._handler.open_async()
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
         except Exception as e:  # pylint: disable=broad-except
@@ -77,9 +73,9 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
         except Exception as e:  # pylint: disable=broad-except
             await self._handle_exception_async(e)
 
-    async def _send(self, message, session_id=None, timeout=None, last_exception=None):
-        await self._open()
-        self._set_sender_msg_timeout(timeout, last_exception)
+    async def _send_async(self, message, session_id=None, timeout=None, last_exception=None):
+        await self._open_async()
+        self._sender_set_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
         try:
@@ -90,7 +86,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
     async def send(self, message, session_id=None, message_timeout=None):
         # type: (Message, str, float) -> None
         await self._do_retryable_operation_async(
-            self._send,
+            self._send_async,
             message=message,
             session_id=session_id,
             timeout=message_timeout,

@@ -12,16 +12,11 @@ from uamqp import (
     authentication,
     constants,
     errors,
-    compat,
-    Message,
-    AMQPClientAsync,
 )
 
 from .._client_base import ClientBase, _generate_sas_token
 from ..common.constants import JWT_TOKEN_SCOPE
 from ..common.errors import (
-    _ServiceBusErrorPolicy,
-    InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError
@@ -106,7 +101,7 @@ class ClientBaseAsync(ClientBase):
             await self._handler.close()
             self._handler = None
         self._running = False
-        await self._open()
+        await self._open_async()
 
     async def _handle_exception_async(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):

@@ -2,24 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import uuid
-import datetime
 import time
 import logging
 
-from uamqp import ReceiveClient, Source
+from uamqp import ReceiveClient, Message
 
 from ._client_base import ClientBase, SenderReceiverMixin
-from .common.constants import (
-    ReceiveSettleMode,
-    NEXT_AVAILABLE,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH,
-    SESSION_FILTER
-)
-from .common.errors import _ServiceBusErrorPolicy
 from .common.utils import create_properties
-from .common.message import Message
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -50,7 +39,7 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             try:
                 self._open()
                 uamqp_message = next(self._message_iter)
-                message = self._build_message(uamqp_message)
+                message = self._receiver_build_message(uamqp_message)
                 return message
             except StopIteration:
                 raise
@@ -58,22 +47,6 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
                 self._handle_exception(e)
 
     next = __next__  # for python2.7
-
-    def _get_source_for_session_entity(self):
-        source = Source(self._entity_uri)
-        session_filter = None if self._session == NEXT_AVAILABLE else self._session
-        source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
-        return source
-
-    def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
-        if str(source) == self.endpoint:
-            self.session_start = datetime.datetime.now()
-            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self.locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
-            session_filter = source.get_filter(name=SESSION_FILTER)
-            self.session_id = session_filter.decode(self.encoding)
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -91,13 +64,13 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             )
         else:
             self._handler = ReceiveClient(
-                self._get_source_for_session_entity(),
+                self._receiver_get_source_for_session_entity(),
                 auth=auth,
                 debug=self._config.logging_enable,
                 properties=properties,
                 error_policy=self._error_policy,
                 client_name=self._name,
-                on_attach=self._on_attach_for_session_entity,
+                on_attach=self._receiver_on_attach_for_session_entity,
                 auto_complete=False,
                 encoding=self._config.encoding,
                 receive_settle_mode=self._mode.value
@@ -123,12 +96,6 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
                 raise
         self._running = True
 
-    def _build_message(self, received):
-        message = Message(None, message=received)
-        message._receiver = self  # pylint: disable=protected-access
-        self._last_received_sequenced_number = message.sequence_number
-        return message
-
     def _receive(self, max_batch_size=None, timeout=None):
         self._open()
         wrapped_batch = []
@@ -137,9 +104,10 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
         timeout_ms = 1000 * timeout if timeout else 0
         batch = self._handler.receive_message_batch(
             max_batch_size=max_batch_size,
-            timeout=timeout_ms)
+            timeout=timeout_ms
+        )
         for received in batch:
-            message = self._build_message(received)
+            message = self._receiver_build_message(received)
             wrapped_batch.append(message)
 
         return wrapped_batch
@@ -205,7 +173,3 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             timeout=timeout,
             require_need_timeout=True
         )
-
-
-
-
