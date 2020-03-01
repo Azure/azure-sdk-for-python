@@ -20,10 +20,11 @@ except ImportError:
 from uamqp import authentication, utils, errors, constants
 
 from .common._configuration import Configuration
-from .common.constants import JWT_TOKEN_SCOPE
+from .common.constants import JWT_TOKEN_SCOPE, ReceiveSettleMode
 from .common.errors import (
     _ServiceBusErrorPolicy,
     InvalidHandlerState,
+    OperationTimeoutError,
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError
@@ -106,6 +107,47 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
+class SenderReceiverMixin(object):
+    def _set_sender_msg_timeout(self, timeout=None, last_exception=None):
+        if not timeout:
+            return
+        timeout_time = time.time() + timeout
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                error = last_exception
+            else:
+                error = OperationTimeoutError("Send operation timed out")
+            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
+            raise error
+        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+
+    def _create_attribute_for_sender(self, entity_name):
+        self._entity_path = entity_name
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
+        self._name = "SBSender-{}".format(uuid.uuid4())
+
+    def _create_attribute_for_receiver(self, entity_name, **kwargs):
+        if kwargs.get("subscription_name"):
+            self.subscription_name = kwargs.get("subscription_name")
+            self._is_subscription = True
+            self._entity_path = entity_name + "/Subscriptions/" + self.subscription_name
+        else:
+            self._entity_path = entity_name
+
+        self._session_id = kwargs.get("session_id")
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
+        self._error_policy = _ServiceBusErrorPolicy(
+            max_retries=self._config.retry_total,
+            is_session=(True if self._session_id else False)
+        )
+        self._name = "SBReceiver-{}".format(uuid.uuid4())
+
+
 class ClientBase(object):
     def __init__(
         self,
@@ -122,6 +164,7 @@ class ClientBase(object):
         self._idle_timeout = kwargs.get("idle_timeout", None)
         self._running = False
         self._handler = None
+        self._error = None
 
     def __enter__(self):
         return self
@@ -130,11 +173,6 @@ class ClientBase(object):
         self.close()
 
     def _create_auth(self):
-        # type: () -> authentication.JWTTokenAuth
-        """
-        Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
-        the session.
-        """
         try:
             # ignore mypy's warning because token_type is Optional
             token_type = self._credential.token_type    # type: ignore
@@ -263,12 +301,9 @@ class ClientBase(object):
             try:
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
-
                 if require_timeout:
                     kwargs["timeout"] = timeout
-                return operation(
-                    **kwargs
-                )
+                return operation(**kwargs)
             except Exception as exception:
                 last_exception = self._handle_exception(exception)
                 self._backoff(

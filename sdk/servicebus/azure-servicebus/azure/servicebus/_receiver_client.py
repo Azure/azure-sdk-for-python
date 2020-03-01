@@ -9,7 +9,7 @@ import logging
 
 from uamqp import ReceiveClient, Source
 
-from ._client_base import ClientBase
+from ._client_base import ClientBase, SenderReceiverMixin
 from .common.constants import (
     ReceiveSettleMode,
     NEXT_AVAILABLE,
@@ -25,7 +25,7 @@ from .common.message import Message
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiverClient(ClientBase):
+class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace,
@@ -40,25 +40,7 @@ class ServiceBusReceiverClient(ClientBase):
             entity_name=entity_name,
             **kwargs
         )
-
-        if kwargs.get("subscription_name"):
-            self.subscription_name = kwargs.get("subscription_name")
-            self._is_subscription = True
-            self._entity_path = entity_name + "/Subscriptions/" + self.subscription_name
-        else:
-            self._entity_path = entity_name
-
-        self._session_id = kwargs.get("session_id")
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._logging_enable = self._config.logging_enable
-        self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
-        self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total,
-            is_session=(True if self._session_id else False)
-        )
-        self._error = None
-        self._name = "SBReceiver-{}".format(uuid.uuid4())
+        self._create_attribute_for_receiver(entity_name, **kwargs)
 
     def __iter__(self):
         return self
@@ -93,14 +75,13 @@ class ServiceBusReceiverClient(ClientBase):
             session_filter = source.get_filter(name=SESSION_FILTER)
             self.session_id = session_filter.decode(self.encoding)
 
-    def _create_handler(self):
-        auth = self._create_auth()
+    def _create_handler(self, auth):
         properties = create_properties()
         if not self._session_id:
             self._handler = ReceiveClient(
                 self._entity_uri,
                 auth=auth,
-                debug=self._logging_enable,
+                debug=self._config.logging_enable,
                 properties=properties,
                 error_policy=self._error_policy,
                 client_name=self._name,
@@ -112,7 +93,7 @@ class ServiceBusReceiverClient(ClientBase):
             self._handler = ReceiveClient(
                 self._get_source_for_session_entity(),
                 auth=auth,
-                debug=self._logging_enable,
+                debug=self._config.logging_enable,
                 properties=properties,
                 error_policy=self._error_policy,
                 client_name=self._name,
@@ -128,7 +109,8 @@ class ServiceBusReceiverClient(ClientBase):
         if self._handler:
             self._handler.close()
         try:
-            self._create_handler()
+            auth = self._create_auth()
+            self._create_handler(auth)
             self._handler.open()
             self._message_iter = self._handler.receive_messages_iter()
             while not self._handler.client_ready():

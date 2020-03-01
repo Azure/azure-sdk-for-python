@@ -8,10 +8,9 @@ import time
 
 from uamqp import SendClient
 
-from ._client_base import ClientBase
+from ._client_base import ClientBase, SenderReceiverMixin
 from .common.errors import (
     _ServiceBusErrorPolicy,
-    OperationTimeoutError,
     MessageSendFailed
 )
 from .common.utils import create_properties
@@ -19,7 +18,7 @@ from .common.utils import create_properties
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSenderClient(ClientBase):
+class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace,
@@ -34,22 +33,14 @@ class ServiceBusSenderClient(ClientBase):
             entity_name=entity_name,
             **kwargs
         )
+        self._create_attribute_for_sender(entity_name)
 
-        self._entity_path = entity_name
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._logging_enable = self._config.logging_enable
-        self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
-        self._error = None
-        self._name = "SBReceiver-{}".format(uuid.uuid4())
-
-    def _create_handler(self):
-        auth = self._create_auth()
+    def _create_handler(self, auth):
         properties = create_properties()
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
-            debug=self._logging_enable,
+            debug=self._config.logging_enable,
             properties=properties,
             error_policy=self._error_policy,
             client_name=self._name,
@@ -62,7 +53,8 @@ class ServiceBusSenderClient(ClientBase):
         if self._handler:
             self._handler.close()
         try:
-            self._create_handler()
+            auth = self._create_auth()
+            self._create_handler(auth)
             self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
@@ -75,13 +67,6 @@ class ServiceBusSenderClient(ClientBase):
         self._running = True
 
     def _reconnect(self):
-        """Reconnect the handler.
-
-        If the handler was disconnected from the service with
-        a retryable error - attempt to reconnect.
-        This method will be called automatically for most retryable errors.
-        Also attempts to re-queue any messages that were pending before the reconnect.
-        """
         unsent_events = self._handler.pending_messages
         super(ServiceBusSenderClient, self)._reconnect()
         try:
@@ -90,24 +75,9 @@ class ServiceBusSenderClient(ClientBase):
         except Exception as e:  # pylint: disable=broad-except
             self._handle_exception(e)
 
-    def _set_msg_timeout(self, timeout=None, last_exception=None):
-        # type: (Optional[float], Optional[Exception]) -> None
-        if not timeout:
-            return
-        timeout_time = time.time() + timeout
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError("Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
-
     def _send(self, message, session_id=None, timeout=None, last_exception=None):
         self._open()
-        self._set_msg_timeout(timeout, last_exception)
+        self._set_sender_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
         try:
