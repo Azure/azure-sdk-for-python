@@ -385,7 +385,7 @@ class RetryPolicy(HTTPPolicy):
         if retry_settings['history']:
             context['history'] = retry_settings['history']
 
-    def send(self, request):    # pylint: disable=too-many-statements
+    def send(self, request):    # pylint: disable=too-many-statements, too-many-branches
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
         :param request: The PipelineRequest object
