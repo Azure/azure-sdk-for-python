@@ -18,12 +18,27 @@
 
 # current methods coverage: 20
 
+import datetime as dt
 import unittest
 
 import azure.mgmt.storage
+import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'westus'
+ZERO = dt.timedelta(0)
+
+class UTC(dt.tzinfo):
+    """UTC"""
+
+    def utcoffset(self, dt):
+        return ZERO
+
+    def tzname(self, dt):
+        return "UTC"
+
+    def dst(self, dt):
+        return ZERO
 
 class MgmtStorageTest(AzureMgmtTestCase):
 
@@ -32,23 +47,222 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.storage.StorageManagementClient
         )
+        self.network_client = self.create_mgmt_client(
+          azure.mgmt.network.NetworkManagementClient
+        )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_storage(self, resource_group):
 
         SERVICE_NAME = "myapimrndxyz"
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = "storageaccountxxyyzz"
         FILE_SERVICE_NAME = "fileservicexxyyzz"
+        SHARE_NAME = "filesharenamexxyyzz"
         BLOB_SERVICE_NAME = "blobservicexxyyzz"
+        CONTAINER_NAME = "containernamexxyyzz"
         ENCRYPTION_SCOPE_NAME = "encryptionscopexxyyzz"
+        IMMUTABILITY_POLICY_NAME = "immutabilitypolicynamexxyyzz"
+        VNET_NAME = "virualnetwork111"
+        SUB_NET = "subnet111"
+        LOAD_BALANCER = "loaderbalancer"
+        FIPCONFIG = "fipconfig123"
+        BAPOOL = "bapool123"
+        PROBES = "probe123"
+        PRIVATE_ENDPOINT_CONNECTION_NAME = "privateEndpointConnection"
+
+        """ TODO: set up for endpoint
+        # -- SET UP --
+        # Create VNet
+        async_vnet_creation = self.network_client.virtual_networks.create_or_update(
+            resource_group.name,
+            VNET_NAME,
+            {
+                'location': AZURE_LOCATION,
+                'address_space': {
+                    'address_prefixes': ['10.0.0.0/16']
+                }
+            }
+        )
+        async_vnet_creation.wait()
+
+        # Create Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            resource_group.name,
+            VNET_NAME,
+            SUB_NET,
+            {
+              'address_prefix': '10.0.0.0/24',
+               'private_link_service_network_policies': 'disabled',
+               'private_endpoint_network_policies': 'disabled'
+            }
+        )
+        subnet_info = async_subnet_creation.result()
+
+        # Create load balancer
+        BODY = {
+          "location": "westus",
+          "sku": {
+            "name": "Standard"
+          },
+          "properties": {
+            "frontendIPConfigurations": [
+              {
+                "name": FIPCONFIG,
+                "properties": {
+                  "subnet": {
+                    "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VNET_NAME + "/subnets/" + SUB_NET
+                  }
+                }
+              }
+            ],
+          }
+          #   "backendAddressPools": [
+          #     {
+          #       "name": "be-lb",
+          #       "properties": {}
+          #     }
+          #   ],
+          #   "loadBalancingRules": [
+          #     {
+          #       "name": "rulelb",
+          #       "properties": {
+          #         "frontendIPConfiguration": {
+          #           "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/frontendIPConfigurations/" + FIPCONFIG
+          #         },
+          #         "frontendPort": 80,
+          #         "backendPort": 80,
+          #         "enableFloatingIP": True,
+          #         "idleTimeoutInMinutes": 15,
+          #         "protocol": "Tcp",
+          #         "enableTcpReset": False,
+          #         "loadDistribution": "Default",
+          #         "backendAddressPool": {
+          #           "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/backendAddressPools/" + BAPOOL
+          #         },
+          #         "probe": {
+          #           "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/probes/" + PROBES
+          #         }
+          #       }
+          #     }
+          #   ],
+          #   "probes": [
+          #     {
+          #       "name": PROBES,
+          #       "properties": {
+          #         "protocol": "Http",
+          #         "port": 80,
+          #         "requestPath": "healthcheck.aspx",
+          #         "intervalInSeconds": 15,
+          #         "numberOfProbes": 2
+          #       }
+          #     }
+          #   ],
+          #   "inboundNatRules": [
+          #     # {
+          #     #   "name": "in-nat-rule",
+          #     #   "properties": {
+          #     #     "frontendIPConfiguration": {
+          #     #       "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/frontendIPConfigurations/" + FIPCONFIG
+          #     #     },
+          #     #     "frontendPort": 3389,
+          #     #     "backendPort": 3389,
+          #     #     "enableFloatingIP": True,
+          #     #     "idleTimeoutInMinutes": 15,
+          #     #     "protocol": "Tcp",
+          #     #     "enableTcpReset": False
+          #     #   }
+          #     # }
+          #   ],
+          #   "inboundNatPools": []
+          # }
+        }
+
+        result = self.network_client.load_balancers.create_or_update(resource_group.name, LOAD_BALANCER, BODY)
+        result.result()
+
+        # Create private link services
+        PRIVATE_LINK_SERVICES = "privatelinkservice"
+        BODY = {
+          "location": "westus",
+          "properties": {
+            "visibility": {
+              "subscriptions": [
+                SUBSCRIPTION_ID
+              ]
+            },
+            "autoApproval": {
+              "subscriptions": [
+                SUBSCRIPTION_ID
+              ]
+            },
+            "fqdns": [
+              # "fqdn1",
+              # "fqdn2",
+              # "fqdn3"
+            ],
+            "loadBalancerFrontendIpConfigurations": [
+              {
+                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/frontendIPConfigurations/" + FIPCONFIG,
+              }
+            ],
+            "ipConfigurations": [
+              {
+                "name": FIPCONFIG,
+                "properties": {
+                  "privateIPAddress": "10.0.0.5",
+                  "privateIPAllocationMethod": "Static",
+                  "privateIPAddressVersion": "IPv4",
+                  "subnet": {
+                    "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VNET_NAME + "/subnets/" + SUB_NET
+                  }
+                }
+              }
+            ]
+          }
+        }
+        result = self.network_client.private_link_services.create_or_update(resource_group.name, PRIVATE_LINK_SERVICES, BODY)
+
+        # Create private endpoint
+        PRIVATE_ENDPOINT = "privateendpoint"
+        BODY = {
+          "location": "westus",
+          "properties": {
+            "privateLinkServiceConnections": [
+              {
+                # "properties": {
+                "name": PRIVATE_LINK_SERVICES,  # TODO: This is needed, but was not showed in swagger.
+                "private_link_service_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/privateLinkServices/" + PRIVATE_LINK_SERVICES,
+                # "groupIds": [
+                #   # "groupIdFromResource"
+                # ],
+                # "requestMessage": "Please approve my connection."
+                # }
+              },
+              {
+                "name": PRIVATE_ENDPOINT_CONNECTION_NAME,
+                "private_link_service_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME
+              }
+            ],
+            "subnet": {
+              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VNET_NAME + "/subnets/" + SUB_NET
+            }
+          }
+        }
+        result = self.network_client.private_endpoints.create_or_update(resource_group.name, PRIVATE_ENDPOINT, BODY)
+
+        # -- SET UP END --
+        """
 
         # StorageAccountCreate[put]
         BODY = {
           "sku": {
             "name": "Standard_GRS"
           },
-          "kind": "Storage",
-          "location": "eastus",
+          # "kind": "Storage",
+          "kind": "StorageV2",  # Storage v2 support policy
+          "location": "westus",
 
           # TODO: The value 'True' is not allowed for property isHnsEnabled
           # "is_hns_enabled": True,
@@ -222,11 +436,11 @@ class MgmtStorageTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.blob_services.set_service_properties(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
+        # TODO: don't have encryption scopes
         # # StorageAccountPutEncryptionScope[put]
         # BODY = {}
         # result = self.mgmt_client.encryption_scopes.put(resource_group.name, STORAGE_ACCOUNT_NAME, ENCRYPTION_SCOPE_NAME, BODY)
 
-        """ Not Allow
         MANAGEMENT_POLICY_NAME = "managementPolicy"
         # StorageAccountSetManagementPolicies[put]
         BODY = {
@@ -267,16 +481,17 @@ class MgmtStorageTest(AzureMgmtTestCase):
           ]
         }
         result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-        """
 
-        # # PutShares[put]
-        # BODY = {}
-        # result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, FILE_SERVICE_NAME, SHARE_NAME, BODY)
+        # PutShares[put]
+        result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         """TODO: not found
-        PRIVATE_ENDPOINT_CONNECTION_NAME = "privateEndpointConnection"
+        # PRIVATE_ENDPOINT_CONNECTION_NAME = "privateEndpointConnection"
         # StorageAccountPutPrivateEndpointConnection[put]
         BODY = {
+          # "private_endpoint": {
+          #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/privateEndpoints/" + PRIVATE_ENDPOINT
+          # },
           "private_link_service_connection_state": {
             "status": "Approved",
             "description": "Auto-Approved"
@@ -285,39 +500,47 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.private_endpoint_connections.put(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME, BODY)
         """
 
-        """
         # PutContainers[put]
-        BODY = {}
-        result = self.mgmt_client.blob_containers.create(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, BODY)
+        result = self.mgmt_client.blob_containers.create(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
 
         # CreateOrUpdateImmutabilityPolicy[put]
-        BODY = {
-          "properties": {
-            "immutability_period_since_creation_in_days": "3",
-            "allow_protected_append_writes": True
-          }
-        }
-        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, IMMUTABILITY_POLICY_NAME, BODY)
+        # BODY = {
+        #   "properties": {
+        #     "immutability_period_since_creation_in_days": "3",
+        #     "allow_protected_append_writes": True
+        #   }
+        # }
+        DAYS = 3
+        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
+        ETAG = result.etag
+
+        # DeleteImmutabilityPolicy[delete]
+        result = self.mgmt_client.blob_containers.delete_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
+
+        # CreateOrUpdateImmutabilityPolicy[put] again
+        DAYS = 3
+        result = self.mgmt_client.blob_containers.create_or_update_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, DAYS)
+        ETAG = result.etag
 
         # GetImmutabilityPolicy[get]
-        result = self.mgmt_client.blob_containers.get_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, IMMUTABILITY_POLICY_NAME)
+        result = self.mgmt_client.blob_containers.get_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
 
         # GetContainers[get]
-        result = self.mgmt_client.blob_containers.get(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME)
-        """
+        result = self.mgmt_client.blob_containers.get(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
 
         # # StorageAccountGetPrivateEndpointConnection[get]
         # result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
-        # # GetShares[get]
-        # result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, FILE_SERVICE_NAME, SHARE_NAME)
+        # GetShares[get]
+        result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
-        # # StorageAccountGetManagementPolicies[get]
-        # result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # StorageAccountGetManagementPolicies[get]
+        result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME)
 
         # ListContainers[get]
         result = self.mgmt_client.blob_containers.list(resource_group.name, STORAGE_ACCOUNT_NAME)
 
+        # TODO: don't have encryption scopes
         # # StorageAccountGetEncryptionScope[get]
         # result = self.mgmt_client.encryption_scopes.get(resource_group.name, STORAGE_ACCOUNT_NAME, ENCRYPTION_SCOPE_NAME)
 
@@ -330,9 +553,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # GetFileServices[get]
         result = self.mgmt_client.file_services.get_service_properties(resource_group.name, STORAGE_ACCOUNT_NAME)
 
-        # # StorageAccountListPrivateLinkResources[get]
-        # result = self.mgmt_client.private_link_resources.list_by_storage_account(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # StorageAccountListPrivateLinkResources[get]
+        result = self.mgmt_client.private_link_resources.list_by_storage_account(resource_group.name, STORAGE_ACCOUNT_NAME)
 
+        # TODO: don't have encryption scopes
         # # StorageAccountEncryptionScopeList[get]
         # result = self.mgmt_client.encryption_scopes.list(resource_group.name, STORAGE_ACCOUNT_NAME)
 
@@ -348,7 +572,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # StorageAccountListByResourceGroup[get]
         result = self.mgmt_client.storage_accounts.list_by_resource_group(resource_group.name)
 
-        LOCATION_NAME = "eastus"
+        LOCATION_NAME = "westus"
         # UsageList[get]
         result = self.mgmt_client.usages.list_by_location(LOCATION_NAME)
 
@@ -361,74 +585,75 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # OperationsList[get]
         result = self.mgmt_client.operations.list()
 
-        # # ExtendImmutabilityPolicy[post]
+        # LockImmutabilityPolicy[post]
+        result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
+        ETAG = result.etag
+
+        # ExtendImmutabilityPolicy[post]
         # BODY = {
         #   "properties": {
         #     "immutability_period_since_creation_in_days": "100"
         #   }
         # }
-        # result = self.mgmt_client.blob_containers.extend_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, IMMUTABILITY_POLICY_NAME, BODY)
+        DAYS = 100
+        result = self.mgmt_client.blob_containers.extend_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG, DAYS)
+        ETAG = result.etag
 
-        # # LockImmutabilityPolicy[post]
-        # result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, IMMUTABILITY_POLICY_NAME)
-
-        # # ClearLegalHoldContainers[post]
-        # BODY = {
-        #   "tags": [
-        #     "tag1",
-        #     "tag2",
-        #     "tag3"
-        #   ]
-        # }
-        # result = self.mgmt_client.blob_containers.clear_legal_hold(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, BODY)
-
-        # # SetLegalHoldContainers[post]
-        # BODY = {
-        #   "tags": [
-        #     "tag1",
-        #     "tag2",
-        #     "tag3"
-        #   ]
-        # }
-        # result = self.mgmt_client.blob_containers.set_legal_hold(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, BODY)
-
-        """
-        # Break a lease on a container[post]
+        # SetLegalHoldContainers[post]
         BODY = {
-          "action": "Break",
-          "lease_id": "8698f513-fa75-44a1-b8eb-30ba336af27d"
+          "tags": [
+            "tag1",
+            "tag2",
+            "tag3"
+          ]
         }
-        result = self.mgmt_client.blob_containers.lease(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, BODY)
+        result = self.mgmt_client.blob_containers.set_legal_hold(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY)
+
+        # ClearLegalHoldContainers[post]
+        BODY = {
+          "tags": [
+            "tag1",
+            "tag2",
+            "tag3"
+          ]
+        }
+        result = self.mgmt_client.blob_containers.clear_legal_hold(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY)
 
         # Acquire a lease on a container[post]
         BODY = {
           "action": "Acquire",
           "lease_duration": "-1"
         }
-        result = self.mgmt_client.blob_containers.lease(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, BODY)
+        result = self.mgmt_client.blob_containers.lease(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY)
+        LEASE_ID = result.lease_id
+
+        # Break a lease on a container[post]
+        BODY = {
+          "action": "Break",
+          "lease_id": LEASE_ID
+        }
+        result = self.mgmt_client.blob_containers.lease(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY)
 
         # UpdateContainers[patch]
         BODY = {
+          "public_access": "Container",
+          "metadata": {
+            "metadata": "true"
+          }
+        }
+        result = self.mgmt_client.blob_containers.update(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, BODY["public_access"], BODY["metadata"])
+
+        # UpdateShares[patch]
+        BODY = {
           "properties": {
-            "public_access": "Container",
             "metadata": {
-              "metadata": "true"
+              "type": "image"
             }
           }
         }
-        result = self.mgmt_client.blob_containers.update(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, BODY)
-        """
+        result = self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
 
-        # # UpdateShares[patch]
-        # BODY = {
-        #   "properties": {
-        #     "metadata": {
-        #       "type": "image"
-        #     }
-        #   }
-        # }
-        # result = self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, FILE_SERVICE_NAME, SHARE_NAME, BODY)
-
+        # TODO: don't have encryption scopes
         # # StorageAccountPatchEncryptionScope[patch]
         # BODY = {
         #   "source": "Microsoft.KeyVault",
@@ -441,10 +666,11 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # StorageAccountRevokeUserDelegationKeys[post]
         result = self.mgmt_client.storage_accounts.revoke_user_delegation_keys(resource_group.name, STORAGE_ACCOUNT_NAME)
 
-        # TODO: FIX LATER
+        # TODO: FeatureUnavailableInLocation
         # # BlobRangesRestore[post]
+        # time_to_restore = (dt.datetime.now(tz=UTC()) - dt.timedelta(minutes=10)).isoformat()
         # BODY = {
-        #   "time_to_restore": "2019-04-20T15:30:00Z",
+        #   "time_to_restore": time_to_restore,
         #   "blob_ranges": [
         #     {
         #       "start_range": "container/blobpath1",
@@ -456,31 +682,33 @@ class MgmtStorageTest(AzureMgmtTestCase):
         #     }
         #   ]
         # }
-        # result = self.mgmt_client.storage_accounts.restore_blob_ranges(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        # result = self.mgmt_client.storage_accounts.restore_blob_ranges(resource_group.name, STORAGE_ACCOUNT_NAME, BODY["time_to_restore"], BODY["blob_ranges"])
         # result = result.result()
 
-        """ TODO: fix later
+        # # TODO: wrong case
         # StorageAccountListServiceSAS[post]
-        BODY = {
-          "canonicalized_resource": "/blob/sto1299/music",
-          "signed_resource": "c",
-          "signed_permission": "l",
-          "signed_expiry": "2017-05-24T11:32:48.8457197Z"
-        }
-        result = self.mgmt_client.storage_accounts.list_service_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        # signed_expiry = (dt.datetime.now(tz=UTC()) - dt.timedelta(days=2)).isoformat()
+        # BODY = {
+        #   "canonicalized_resource": "/blob/sto1299/music",
+        #   "signed_resource": "c",
+        #   "signed_permission": "l",
+        #   "signed_expiry": signed_expiry
+        # }
+        # result = self.mgmt_client.storage_accounts.list_service_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
-        # StorageAccountListAccountSAS[post]
-        BODY = {
-          "signed_services": "b",
-          "signed_resource_types": "s",
-          "signed_permission": "r",
-          "signed_protocol": "https,http",
-          "signed_start": "2017-05-24T10:42:03.1567373Z",
-          "signed_expiry": "2017-05-24T11:42:03.1567373Z",
-          "key_to_sign": "key1"
-        }
-        result = self.mgmt_client.storage_accounts.list_account_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-        """
+        # TODO: Wrong case
+        # # StorageAccountListAccountSAS[post]
+        # signed_start = dt.datetime.now(tz=UTC()).isoformat()
+        # BODY = {
+        #   "signed_services": "b",
+        #   "signed_resource_types": "s",
+        #   "signed_permission": "r",
+        #   "signed_protocol": "https,http",
+        #   "signed_start": signed_start,
+        #   "signed_expiry": signed_expiry,
+        #   "key_to_sign": "key1"
+        # }
+        # result = self.mgmt_client.storage_accounts.list_account_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
         # StorageAccountRegenerateKey[post]
         # BODY = {
@@ -496,10 +724,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # }
         KEY_NAME = "kerb2"
         result = self.mgmt_client.storage_accounts.regenerate_key(resource_group.name, STORAGE_ACCOUNT_NAME, KEY_NAME)
+        """
 
         # StorageAccountListKeys[post]
         result = self.mgmt_client.storage_accounts.list_keys(resource_group.name, STORAGE_ACCOUNT_NAME)
-        """
 
         """TODO: DELETE LATER
         # StorageAccountCreate[put]
@@ -508,7 +736,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             "name": "Standard_GRS"
           },
           "kind": "Storage",
-          "location": "eastus",
+          "location": "westus",
           "is_hns_enabled": True,
           "routing_preference": {
             "routing_choice": "MicrosoftRouting",
@@ -537,9 +765,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = result.result()
         """
 
-        """ TODO:
-        E           msrestazure.azure_exceptions.CloudError: Azure Error: FeatureUnavailableInLocation
-        E           Message: A feature was requested which is not yet available in this location.
+        """ TODO: FeatureUnavailableInLocation
         # StorageAccountEnableAD[patch]
         BODY = {
           "azure_files_identity_based_authentication": {
@@ -592,20 +818,17 @@ class MgmtStorageTest(AzureMgmtTestCase):
         NAME = "sto3363"
         result = self.mgmt_client.storage_accounts.check_name_availability(NAME)
 
-        # # DeleteImmutabilityPolicy[delete]
-        # result = self.mgmt_client.blob_containers.delete_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME, IMMUTABILITY_POLICY_NAME)
-
-        # # DeleteContainers[delete]
-        # result = self.mgmt_client.blob_containers.delete(resource_group.name, STORAGE_ACCOUNT_NAME, BLOB_SERVICE_NAME, CONTAINER_NAME)
+        # DeleteContainers[delete]
+        result = self.mgmt_client.blob_containers.delete(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME)
 
         # # StorageAccountDeletePrivateEndpointConnection[delete]
         # result = self.mgmt_client.private_endpoint_connections.delete(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
-        # # DeleteShares[delete]
-        # result = self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, FILE_SERVICE_NAME, SHARE_NAME)
+        # DeleteShares[delete]
+        result = self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
-        # # StorageAccountDeleteManagementPolicies[delete]
-        # result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # StorageAccountDeleteManagementPolicies[delete]
+        result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
 
         # StorageAccountDelete[delete]
         result = self.mgmt_client.storage_accounts.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
