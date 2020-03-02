@@ -5,8 +5,9 @@ class ServiceBusSenderClient:
     def __init__(
         self,
         fully_qualified_namespace : str,
-        entity_name : str,
-        credential : TokenCredential,
+        credential: TokenCredential,
+        queue_name: str = None,
+        topic_name: str = None,
         logging_enable: bool = False,
         http_proxy: dict = None,
         transport_type: TransportType = None,
@@ -15,27 +16,11 @@ class ServiceBusSenderClient:
         retry_backoff_maximum : int = 120  # cur_retry_backoff = retry_backoff_factor * (2^cur_retry_time)
         connection : ServiceBusConnection = None
     ) -> None:
-    @classmethod
-    def from_queue(
-        cls,
-        fully_qualified_namepsace : str,
-        queue_name : str,
-        credential : TokenCredential,
-        **kwargs
-    ) -> ServiceBusSenderClient:
-    @classmethod
-    def from_topic(
-        cls,
-        fully_qualified_namespace : str,
-        topic_name : str,
-        credential : TokenCredential,
-        **kwargs
-    ) -> ServiceBusSenderClient:
-    @classmethod
     def from_connection_string(
         cls,
         conn_str : str,
-        entity_name : str = None,
+        queue_name: str = None,
+        topic_name: str = None,
         **kwargs
     ) -> ServiceBusSenderClient:
 
@@ -72,8 +57,9 @@ class ServiceBusReceiverClient:
     def __init__(
         self,
         fully_qualified_namespace : str,
-        entity_name : str,
         credential: TokenCredential,
+        queue_name: str = None,
+        topic_name: str = None,
         subscription_name : str = None,
         session_id : str = None,
         mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
@@ -86,31 +72,11 @@ class ServiceBusReceiverClient:
         connection: Connection = None
     ) -> None:
     @classmethod
-    def from_queue(
-        cls,
-        fully_qualified_namespace : str,
-        queue_name : str,
-        credential : TokenCredential,
-        session_id: str = None,
-        mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
-        **kwargs
-    ) -> ServiceBusReceiverClient:
-    @classmethod
-    def from_topic_subscription(
-        cls,
-        fully_qualified_namespace : str,
-        topic_name : str,
-        subscription_name : str,
-        credential: TokenCredential,
-        session_id: str = None,
-        mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
-        **kwargs
-    ) -> ServiceBusReceiverClient:
-    @classmethod
     def from_connection_string(
         cls,
         conn_str : str,
-        entity_name : str = None,
+        queue_name: str = None,
+        topic_name: str = None,
         subscription_name : str = None,
         session_id: str = None,
         mode : ReceiveSettleMode = ReceiveSettleMode.PeekLock
