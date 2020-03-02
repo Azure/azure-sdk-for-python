@@ -1,5 +1,21 @@
 # Release History
 
+## 8.0.0 (2020-02-27)
+
+**Features**
+
+- Model ImmutabilityPolicyProperties has a new parameter allow_protected_append_writes
+- Model BlobServiceProperties has a new parameter container_delete_retention_policy
+- Model BlobServiceProperties has a new parameter is_versioning_enabled
+- Model ImmutabilityPolicy has a new parameter allow_protected_append_writes
+- Added operation group EncryptionScopesOperations
+
+**Breaking changes**
+
+- Operation BlobContainersOperations.create_or_update_immutability_policy has a new signature
+- Operation BlobContainersOperations.extend_immutability_policy has a new signature
+- Operation BlobContainersOperations.create_or_update_immutability_policy has a new signature
+
 ## 7.2.0 (2020-02-10)
 
 **Features**

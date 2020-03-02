@@ -14,6 +14,7 @@ from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob import ContentSettings as BlobContentSettings
 from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
+from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -443,6 +444,13 @@ class FileSasPermissions(BlobSasPermissions):
         )
 
 
+class AccessPolicy(BlobAccessPolicy):
+    def __init__(self, permission=None, start=None, expiry=None):
+        super(AccessPolicy, self).__init__(
+            permission=permission, start=start, expiry=expiry,
+        )
+
+
 class ResourceTypes(BlobResourceTypes):
     """
     Specifies the resource types that are accessible with the account SAS.
@@ -484,19 +492,22 @@ class UserDelegationKey(BlobUserDelegationKey):
     :ivar str value:
         The user delegation key.
     """
-    def _init(self):
-        super(UserDelegationKey, self).__init__()
+    @classmethod
+    def _from_generated(cls, generated):
+        delegation_key = cls()
+        delegation_key.signed_oid = generated.signed_oid
+        delegation_key.signed_tid = generated.signed_tid
+        delegation_key.signed_start = generated.signed_start
+        delegation_key.signed_expiry = generated.signed_expiry
+        delegation_key.signed_service = generated.signed_service
+        delegation_key.signed_version = generated.signed_version
+        delegation_key.value = None
+        return delegation_key
 
 
 class PublicAccess(str, Enum):
     """
     Specifies whether data in the file system may be accessed publicly and the level of access.
-    """
-
-    OFF = 'off'
-    """
-    Specifies that there is no public read access for both the file systems and files within the file system.
-    Clients cannot enumerate the file systems within the storage account as well as the files within the file system.
     """
 
     File = 'blob'
@@ -519,8 +530,7 @@ class PublicAccess(str, Enum):
             return cls.File
         elif public_access == "container":
             return cls.FileSystem
-        elif public_access == "off":
-            return cls.OFF
+
         return None
 
 

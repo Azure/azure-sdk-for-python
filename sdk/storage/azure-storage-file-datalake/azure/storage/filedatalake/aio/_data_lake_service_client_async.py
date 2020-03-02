@@ -97,8 +97,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             key_start_time=key_start_time,
             key_expiry_time=key_expiry_time,
             **kwargs)  # pylint: disable=protected-access
-        delegation_key._class_ = UserDelegationKey  # pylint: disable=protected-access
-        return delegation_key
+        return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
     def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
                           include_metadata=None,  # type: Optional[bool]
