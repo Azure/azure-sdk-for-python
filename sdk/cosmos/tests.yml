@@ -28,7 +28,7 @@ jobs:
           displayName: Set COSMOS_TEST_DATABASE_ID
       AfterTestSteps:
         - pwsh: >
-            az cosmosdb database delete
+            az cosmosdb sql database delete
             --db-name $env:COSMOS_TEST_DATABASE_ID
             --url-connection $(python-cosmos-live-account-host)
             --key $(python-cosmos-live-account-key)
