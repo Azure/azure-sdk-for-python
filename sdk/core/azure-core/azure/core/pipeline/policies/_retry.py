@@ -40,7 +40,8 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ServiceResponseError,
     ServiceRequestError,
-    RequestTimeoutError,
+    ServiceRequestTimeoutError,
+    ServiceResponseTimeoutError,
 )
 
 from ._base import HTTPPolicy, RequestHistory
@@ -421,12 +422,16 @@ class RetryPolicy(HTTPPolicy):
         retry_settings['file_positions'] = file_positions
 
         absolute_timeout = retry_settings['timeout']
+        is_response_error = True
 
         while retry_active:
             try:
                 start_time = time.time()
                 if absolute_timeout <= 0:
-                    raise RequestTimeoutError('Operation timeout')
+                    if is_response_error:
+                        raise ServiceResponseTimeoutError('Response timeout')
+                    else:
+                        raise ServiceRequestTimeoutError('Request timeout')
                 connection_timeout = request.context.options.get('connection_timeout')
                 if connection_timeout:
                     req_timeout = min(connection_timeout, absolute_timeout)
@@ -438,6 +443,7 @@ class RetryPolicy(HTTPPolicy):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport, response=response)
+                        is_response_error = True
                         continue
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise
@@ -449,6 +455,10 @@ class RetryPolicy(HTTPPolicy):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
+                        if isinstance(err, ServiceRequestError):
+                            is_response_error = False
+                        else:
+                            is_response_error = True
                         continue
                 raise err
             finally:

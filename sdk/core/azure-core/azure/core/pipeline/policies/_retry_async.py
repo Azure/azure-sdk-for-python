@@ -31,7 +31,13 @@ import logging
 import time
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, RequestTimeoutError
+from azure.core.exceptions import (
+    AzureError,
+    ClientAuthenticationError,
+    ServiceRequestError,
+    ServiceRequestTimeoutError,
+    ServiceResponseTimeoutError,
+)
 from ._base import HTTPPolicy
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicy
@@ -134,12 +140,16 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         retry_settings = self.configure_retries(request.context.options)
 
         absolute_timeout = retry_settings['timeout']
+        is_response_error = True
 
         while retry_active:
             try:
                 start_time = time.time()
                 if absolute_timeout <= 0:
-                    raise RequestTimeoutError('Operation timeout')
+                    if is_response_error:
+                        raise ServiceResponseTimeoutError('Response timeout')
+                    else:
+                        raise ServiceRequestTimeoutError('Request timeout')
                 connection_timeout = request.context.options.get('connection_timeout')
                 if connection_timeout:
                     req_timeout = min(connection_timeout, absolute_timeout)
@@ -152,6 +162,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport, response=response)
+                        is_response_error = True
                         continue
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise
@@ -163,6 +174,10 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
+                        if isinstance(err, ServiceRequestError):
+                            is_response_error = False
+                        else:
+                            is_response_error = True
                         continue
                 raise err
             finally:

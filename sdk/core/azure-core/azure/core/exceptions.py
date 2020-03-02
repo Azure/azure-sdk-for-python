@@ -209,7 +209,10 @@ class ServiceResponseError(AzureError):
     The connection may have timed out. These errors can be retried for idempotent or
     safe operations"""
 
-class RequestTimeoutError(AzureError):
+class ServiceRequestTimeoutError(ServiceRequestError):
+    """Error raised when timeout happens"""
+
+class ServiceResponseTimeoutError(ServiceResponseError):
     """Error raised when timeout happens"""
 
 class HttpResponseError(AzureError):
