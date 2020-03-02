@@ -2,73 +2,117 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import json
 
-from azure.identity import AzureCliCredential
+from azure.identity import AzureCliCredential, CredentialUnavailableError
+from azure.identity._credentials.azure_cli import CLI_NOT_FOUND
 from azure.core.exceptions import ClientAuthenticationError
 
-from subprocess import CompletedProcess
+import subprocess
 import pytest
-try:
-    from unittest.mock import Mock, patch
-except ImportError:
-    from mock import Mock, patch
+
+from helpers import mock
+
+CHECK_OUTPUT = AzureCliCredential.__module__ + ".subprocess.check_output"
+
+TEST_ERROR_OUTPUTS = (
+    '{"accessToken": "secret value',
+    '{"accessToken": "secret value"',
+    '{"accessToken": "secret value and some other nonsense"',
+    '{"accessToken": "secret value", some invalid json, "accessToken": "secret value"}',
+    '{"accessToken": "secret value"}',
+    '{"accessToken": "secret value", "subscription": "some-guid", "tenant": "some-guid", "tokenType": "Bearer"}',
+    "no secrets or json here",
+    "{}",
+)
 
 
-def test_cli_credential():
-    access_token = '***'
-    expires_on = '9999-1-1 00:00:00.1' 
-    mock_token = json.dumps({"accessToken" : access_token, "expiresOn" : expires_on})
-    mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
+def raise_called_process_error(return_code, output, cmd="..."):
+    error = subprocess.CalledProcessError(return_code, cmd=cmd, output=output)
+    return mock.Mock(side_effect=error)
 
-    with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-        cred = AzureCliCredential()
-        token = cred.get_token()
 
-        assert token.token == access_token
+def test_get_token():
+    """The credential should parse the CLI's output to an AccessToken"""
 
-def test_cli_installation():
-    mock_proc = CompletedProcess(args=None, stdout='', returncode=127, stderr='')
+    access_token = "access token"
+    valid_seconds = 42
+    successful_output = json.dumps(
+        {
+            # expiresOn is a naive datetime representing valid_seconds from the epoch
+            "expiresOn": datetime.fromtimestamp(valid_seconds).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "accessToken": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-            cred = AzureCliCredential()
-            token = cred.get_token()
+    with mock.patch(CHECK_OUTPUT, mock.Mock(return_value=successful_output)):
+        token = AzureCliCredential().get_token("scope")
 
-    assert ClientAuthenticationError == excinfo.type
-    assert AzureCliCredential._CLI_NOT_INSTALLED_ERR in str(excinfo.value)
+    assert token.token == access_token
+    assert type(token.expires_on) == int
+    assert token.expires_on == valid_seconds
 
-def test_cli_login():
-    mock_proc = CompletedProcess(args=None, stdout='', returncode=1, stderr='')
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-            cred = AzureCliCredential()
-            token = cred.get_token()
+def test_cli_not_installed_linux():
+    """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    assert ClientAuthenticationError == excinfo.type
-    assert AzureCliCredential._CLI_LOGIN_ERR in str(excinfo.value)
+    output = "/bin/sh: 1: az: not found"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, output)):
+        with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
+            AzureCliCredential().get_token("scope")
 
-def test_no_json():
-    mock_token = 'not a json'
-    mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-            cred = AzureCliCredential()
-            token = cred.get_token()
+def test_cli_not_installed_windows():
+    """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    assert ClientAuthenticationError == excinfo.type
-    assert 'JSONDecodeError' in str(excinfo.value)
+    output = "'az' is not recognized as an internal or external command, operable program or batch file."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+        with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
+            AzureCliCredential().get_token("scope")
 
-def test_bad_token():
-    mock_token = json.dumps({"foo" : "bar"})
-    mock_proc = CompletedProcess(args=None, stdout=mock_token, returncode=0, stderr='')
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('azure.identity._credentials.cli_credential.run', return_value=mock_proc):
-            cred = AzureCliCredential()
-            token = cred.get_token()
+@pytest.mark.parametrize("platform", ("darwin", "linux2", "win32"))
+def test_cannot_execute_shell(platform):
+    """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
-    assert ClientAuthenticationError == excinfo.type
-    assert 'KeyError' in str(excinfo.value)
+    with mock.patch(AzureCliCredential.__module__ + ".sys.platform", platform):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=OSError())):
+            with pytest.raises(CredentialUnavailableError):
+                AzureCliCredential().get_token("scope")
+
+
+def test_not_logged_in():
+    """When the CLI isn't logged in, the credential should raise an error containing the CLI's output"""
+
+    output = "ERROR: Please run 'az login' to setup account."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+        with pytest.raises(ClientAuthenticationError, match=output):
+            AzureCliCredential().get_token("scope")
+
+
+@pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
+def test_parsing_error_does_not_expose_token(output):
+    """Errors during CLI output parsing shouldn't expose access tokens in that output"""
+
+    with mock.patch(CHECK_OUTPUT, mock.Mock(return_value=output)):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            AzureCliCredential().get_token("scope")
+
+    assert "secret value" not in str(ex.value)
+    assert "secret value" not in repr(ex.value)
+
+
+@pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
+def test_subprocess_error_does_not_expose_token(output):
+    """Errors from the subprocess shouldn't expose access tokens in CLI output"""
+
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output=output)):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            AzureCliCredential().get_token("scope")
+
+    assert "secret value" not in str(ex.value)
+    assert "secret value" not in repr(ex.value)
