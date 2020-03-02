@@ -15,7 +15,6 @@ from msrest import Serializer, Deserializer
 from ._configuration import SqlManagementClientConfiguration
 from .operations import RecoverableDatabasesOperations
 from .operations import RestorableDroppedDatabasesOperations
-from .operations import ServersOperations
 from .operations import ServerConnectionPoliciesOperations
 from .operations import DatabaseThreatDetectionPoliciesOperations
 from .operations import DataMaskingPoliciesOperations
@@ -93,14 +92,16 @@ from .operations import ManagedDatabaseSensitivityLabelsOperations
 from .operations import InstancePoolsOperations
 from .operations import UsagesOperations
 from .operations import ManagedInstancesOperations
-from .operations import ManagedDatabaseRestoreDetailsOperations
-from .operations import ManagedDatabasesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
-from .operations import ServerAzureADAdministratorsOperations
+from .operations import ServersOperations
 from .operations import CapabilitiesOperations
+from .operations import LongTermRetentionManagedInstanceBackupsOperations
+from .operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from .operations import WorkloadGroupsOperations
 from .operations import WorkloadClassifiersOperations
+from .operations import ManagedDatabasesOperations
+from .operations import ServerAzureADAdministratorsOperations
 from . import models
 
 
@@ -114,8 +115,6 @@ class SqlManagementClient(SDKClient):
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
     :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
-    :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar server_connection_policies: ServerConnectionPolicies operations
     :vartype server_connection_policies: azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
     :ivar database_threat_detection_policies: DatabaseThreatDetectionPolicies operations
@@ -270,22 +269,26 @@ class SqlManagementClient(SDKClient):
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
     :ivar managed_instances: ManagedInstances operations
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
-    :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
-    :ivar managed_databases: ManagedDatabases operations
-    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
-    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
-    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
+    :ivar long_term_retention_managed_instance_backups: LongTermRetentionManagedInstanceBackups operations
+    :vartype long_term_retention_managed_instance_backups: azure.mgmt.sql.operations.LongTermRetentionManagedInstanceBackupsOperations
+    :ivar managed_instance_long_term_retention_policies: ManagedInstanceLongTermRetentionPolicies operations
+    :vartype managed_instance_long_term_retention_policies: azure.mgmt.sql.operations.ManagedInstanceLongTermRetentionPoliciesOperations
     :ivar workload_groups: WorkloadGroups operations
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
     :ivar workload_classifiers: WorkloadClassifiers operations
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
+    :ivar managed_databases: ManagedDatabases operations
+    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
+    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
+    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -309,8 +312,6 @@ class SqlManagementClient(SDKClient):
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_connection_policies = ServerConnectionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -466,19 +467,23 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instances = ManagedInstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_databases = ManagedDatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
+        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instance_long_term_retention_policies = ManagedInstanceLongTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workload_groups = WorkloadGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workload_classifiers = WorkloadClassifiersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_databases = ManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
