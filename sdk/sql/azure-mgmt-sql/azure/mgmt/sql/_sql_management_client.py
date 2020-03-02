@@ -100,6 +100,7 @@ from .operations import LongTermRetentionManagedInstanceBackupsOperations
 from .operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from .operations import WorkloadGroupsOperations
 from .operations import WorkloadClassifiersOperations
+from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import ServerAzureADAdministratorsOperations
 from . import models
@@ -285,6 +286,8 @@ class SqlManagementClient(SDKClient):
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
     :ivar workload_classifiers: WorkloadClassifiers operations
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
+    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
+    :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
@@ -482,6 +485,8 @@ class SqlManagementClient(SDKClient):
         self.workload_groups = WorkloadGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workload_classifiers = WorkloadClassifiersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)

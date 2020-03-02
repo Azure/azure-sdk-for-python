@@ -84,6 +84,7 @@ try:
     from ._models_py3 import LongTermRetentionBackup
     from ._models_py3 import ManagedBackupShortTermRetentionPolicy
     from ._models_py3 import ManagedDatabase
+    from ._models_py3 import ManagedDatabaseRestoreDetailsResult
     from ._models_py3 import ManagedDatabaseSecurityAlertPolicy
     from ._models_py3 import ManagedDatabaseUpdate
     from ._models_py3 import ManagedInstance
@@ -259,6 +260,7 @@ except (SyntaxError, ImportError):
     from ._models import LongTermRetentionBackup
     from ._models import ManagedBackupShortTermRetentionPolicy
     from ._models import ManagedDatabase
+    from ._models import ManagedDatabaseRestoreDetailsResult
     from ._models import ManagedDatabaseSecurityAlertPolicy
     from ._models import ManagedDatabaseUpdate
     from ._models import ManagedInstance
@@ -607,6 +609,7 @@ __all__ = [
     'LongTermRetentionBackup',
     'ManagedBackupShortTermRetentionPolicy',
     'ManagedDatabase',
+    'ManagedDatabaseRestoreDetailsResult',
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedDatabaseUpdate',
     'ManagedInstance',
