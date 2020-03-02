@@ -329,26 +329,8 @@ class CurrentQuotaLimit(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param limit: The quota limit.
-    :type limit: int
-    :ivar current_value: The current resource usages information.
-    :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
-     unit field provided in the Get quota response.
-    :type unit: str
-    :param name: Name of the resource provide by the resource Provider. Please
-     use this name property for quotaRequests.
-    :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :param resource_type: The Resource Type Name.
-    :type resource_type: object
-    :ivar quota_period: The quota period over which the usage values are
-     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
-     one second). This parameter is optional because, for some resources like
-     compute, the period doesn’t matter.
-    :vartype quota_period: str
-    :param properties: Additional properties for the specific resource
-     provider.
-    :type properties: object
+    :param properties: Quota properties for the resource.
+    :type properties: ~azure.mgmt.reservations.models.QuotaProperties
     :ivar provisioning_state: The quota request status.
     :vartype provisioning_state: object
     :ivar message: A user friendly message.
@@ -356,32 +338,18 @@ class CurrentQuotaLimit(Model):
     """
 
     _validation = {
-        'current_value': {'readonly': True},
-        'quota_period': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'quotaInformation.limit', 'type': 'int'},
-        'current_value': {'key': 'quotaInformation.currentValue', 'type': 'int'},
-        'unit': {'key': 'quotaInformation.unit', 'type': 'str'},
-        'name': {'key': 'quotaInformation.name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'quotaInformation.resourceType', 'type': 'object'},
-        'quota_period': {'key': 'quotaInformation.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'quotaInformation.properties', 'type': 'object'},
+        'properties': {'key': 'quotaInformation.properties', 'type': 'QuotaProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.message', 'type': 'str'},
     }
 
-    def __init__(self, *, limit: int=None, unit: str=None, name=None, resource_type=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(CurrentQuotaLimit, self).__init__(**kwargs)
-        self.limit = limit
-        self.current_value = None
-        self.unit = unit
-        self.name = name
-        self.resource_type = resource_type
-        self.quota_period = None
         self.properties = properties
         self.provisioning_state = None
         self.message = None
@@ -390,83 +358,17 @@ class CurrentQuotaLimit(Model):
 class CurrentQuotaLimitBase(Model):
     """Quota limits.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param limit: The quota limit.
-    :type limit: int
-    :ivar current_value: The current resource usages information.
-    :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
-     unit field provided in the Get quota response.
-    :type unit: str
-    :param name: Name of the resource provide by the resource Provider. Please
-     use this name property for quotaRequests.
-    :type name: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :param resource_type: The Resource Type Name.
-    :type resource_type: object
-    :ivar quota_period: The quota period over which the usage values are
-     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
-     one second). This parameter is optional because, for some resources like
-     compute, the period doesn’t matter.
-    :vartype quota_period: str
-    :param properties: Additional properties for the specific resource
-     provider.
-    :type properties: object
+    :param properties: Quota properties for the resource.
+    :type properties: ~azure.mgmt.reservations.models.QuotaProperties
     """
 
-    _validation = {
-        'current_value': {'readonly': True},
-        'quota_period': {'readonly': True},
-    }
-
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'int'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'resourceType', 'type': 'object'},
-        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'properties': {'key': 'properties', 'type': 'QuotaProperties'},
     }
 
-    def __init__(self, *, limit: int=None, unit: str=None, name=None, resource_type=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(CurrentQuotaLimitBase, self).__init__(**kwargs)
-        self.limit = limit
-        self.current_value = None
-        self.unit = unit
-        self.name = name
-        self.resource_type = resource_type
-        self.quota_period = None
         self.properties = properties
-
-
-class CurrentQuotaLimitBaseName(Model):
-    """Name of the resource provide by the resource Provider. Please use this name
-    property for quotaRequests.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param value: Resource name.
-    :type value: str
-    :ivar localized_value: Resource display name.
-    :vartype localized_value: str
-    """
-
-    _validation = {
-        'localized_value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-    }
-
-    def __init__(self, *, value: str=None, **kwargs) -> None:
-        super(CurrentQuotaLimitBaseName, self).__init__(**kwargs)
-        self.value = value
-        self.localized_value = None
 
 
 class EmailAction(Model):
@@ -488,7 +390,7 @@ class EmailAction(Model):
 class EmailActions(Model):
     """The email actions.
 
-    :param value: The list of actions based on the success or failure of
+    :param value: The list of email actions based on the success or failure of
      automatic quota increase action.
     :type value: list[~azure.mgmt.reservations.models.EmailAction]
     """
@@ -1013,6 +915,60 @@ class QuotaLimitsResponse(Model):
         self.next_link = next_link
 
 
+class QuotaProperties(Model):
+    """Resource quota properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param limit: The quota limit.
+    :type limit: int
+    :ivar current_value: The current resource usages information.
+    :vartype current_value: int
+    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
+     unit field provided in the Get quota response.
+    :type unit: str
+    :param name: Name of the resource provide by the resource Provider. Please
+     use this name property for quotaRequests.
+    :type name: ~azure.mgmt.reservations.models.ResourceName
+    :param resource_type: The Resource Type Name.
+    :type resource_type: object
+    :ivar quota_period: The quota period over which the usage values are
+     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
+     one second). This parameter is optional because, for some resources like
+     compute, the period doesn’t matter.
+    :vartype quota_period: str
+    :param properties: Additional properties for the specific resource
+     provider.
+    :type properties: object
+    """
+
+    _validation = {
+        'current_value': {'readonly': True},
+        'quota_period': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'limit': {'key': 'limit', 'type': 'int'},
+        'current_value': {'key': 'currentValue', 'type': 'int'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'ResourceName'},
+        'resource_type': {'key': 'resourceType', 'type': 'object'},
+        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
+    }
+
+    def __init__(self, *, limit: int=None, unit: str=None, name=None, resource_type=None, properties=None, **kwargs) -> None:
+        super(QuotaProperties, self).__init__(**kwargs)
+        self.limit = limit
+        self.current_value = None
+        self.unit = unit
+        self.name = name
+        self.resource_type = resource_type
+        self.quota_period = None
+        self.properties = properties
+
+
 class QuotaRequestDetails(Model):
     """The details of the quota Request.
 
@@ -1086,26 +1042,8 @@ class QuotaRequestOneResourceSubmitResponse(Model):
      conforms to the following format: yyyy-MM-ddTHH:mm:ssZ as specified by the
      ISO 8601 standard.
     :vartype request_submit_time: datetime
-    :param limit: The quota limit.
-    :type limit: int
-    :ivar current_value: The current resource usages information.
-    :vartype current_value: int
-    :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
-     unit field provided in the Get quota response.
-    :type unit: str
-    :param name1: Name of the resource provide by the resource Provider.
-     Please use this name property for quotaRequests.
-    :type name1: ~azure.mgmt.reservations.models.CurrentQuotaLimitBaseName
-    :param resource_type: The Resource Type Name.
-    :type resource_type: object
-    :ivar quota_period: The quota period over which the usage values are
-     summarized, such as - P1D (Per one day), PT1M (Per one minute), PT1S (Per
-     one second). This parameter is optional because, for some resources like
-     compute, the period doesn’t matter.
-    :vartype quota_period: str
-    :param properties: Additional properties for the specific resource
-     provider.
-    :type properties: object
+    :param properties: Quota properties for the resource.
+    :type properties: ~azure.mgmt.reservations.models.QuotaProperties
     """
 
     _validation = {
@@ -1115,8 +1053,6 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'provisioning_state': {'readonly': True},
         'message': {'readonly': True},
         'request_submit_time': {'readonly': True},
-        'current_value': {'readonly': True},
-        'quota_period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1126,16 +1062,10 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'object'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'limit': {'key': 'properties.properties.limit', 'type': 'int'},
-        'current_value': {'key': 'properties.properties.currentValue', 'type': 'int'},
-        'unit': {'key': 'properties.properties.unit', 'type': 'str'},
-        'name1': {'key': 'properties.properties.name', 'type': 'CurrentQuotaLimitBaseName'},
-        'resource_type': {'key': 'properties.properties.resourceType', 'type': 'object'},
-        'quota_period': {'key': 'properties.properties.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties.properties.properties', 'type': 'object'},
+        'properties': {'key': 'properties.properties.properties', 'type': 'QuotaProperties'},
     }
 
-    def __init__(self, *, limit: int=None, unit: str=None, name1=None, resource_type=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1143,12 +1073,6 @@ class QuotaRequestOneResourceSubmitResponse(Model):
         self.provisioning_state = None
         self.message = None
         self.request_submit_time = None
-        self.limit = limit
-        self.current_value = None
-        self.unit = unit
-        self.name1 = name1
-        self.resource_type = resource_type
-        self.quota_period = None
         self.properties = properties
 
 
@@ -1676,6 +1600,34 @@ class ReservationSplitProperties(Model):
         self.split_source = split_source
 
 
+class ResourceName(Model):
+    """Name of the resource provide by the resource Provider. Please use this name
+    property for quotaRequests.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param value: Resource name.
+    :type value: str
+    :ivar localized_value: Resource display name.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        'localized_value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, value: str=None, **kwargs) -> None:
+        super(ResourceName, self).__init__(**kwargs)
+        self.value = value
+        self.localized_value = None
+
+
 class ScopeProperties(Model):
     """ScopeProperties.
 
@@ -1849,7 +1801,7 @@ class SubRequest(Model):
     :ivar limit: The Resource limit.
     :vartype limit: int
     :param name: The Resource name.
-    :type name: ~azure.mgmt.reservations.models.SubRequestName
+    :type name: ~azure.mgmt.reservations.models.ResourceName
     :ivar resource_type: Resource type for which the quota check was made.
     :vartype resource_type: str
     :param unit:  The units of the limit, such as - Count, Bytes, etc. Use the
@@ -1872,7 +1824,7 @@ class SubRequest(Model):
 
     _attribute_map = {
         'limit': {'key': 'limit', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'SubRequestName'},
+        'name': {'key': 'name', 'type': 'ResourceName'},
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'object'},
@@ -1889,34 +1841,6 @@ class SubRequest(Model):
         self.provisioning_state = provisioning_state
         self.message = None
         self.sub_request_id = None
-
-
-class SubRequestName(Model):
-    """The Resource name.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar localized_value: Resource display name.
-    :vartype localized_value: str
-    :ivar value: Resource name.
-    :vartype value: str
-    """
-
-    _validation = {
-        'localized_value': {'readonly': True},
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(SubRequestName, self).__init__(**kwargs)
-        self.localized_value = None
-        self.value = None
 
 
 class SubscriptionScopeProperties(Model):

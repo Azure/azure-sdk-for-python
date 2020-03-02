@@ -42,7 +42,9 @@ class QuotaRequestOperations(object):
 
 
     def _create_initial(
-            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, if_match, properties=None, custom_headers=None, raw=False, **operation_config):
+        create_quota_request = models.CurrentQuotaLimitBase(properties=properties)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -93,20 +95,21 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def create(
-            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, if_match, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
         Submits Quota change request for a resource provider for the specified
         location for the specific resource in the parameter. To use, first make
-        a Get request to get quota information. This information consists of a
-        list of resources and information regarding those resources. For all
-        the resources in that list which require an update to their quotas,
-        update their limit fields in the response from the Get request to their
-        new values. Then, submit this updated JSON object to this quota request
-        API. This will update the quota to the values specified. The location
-        header in the response will be used to track the status of the quota
-        request. Please check the provisioningState field in the response.
+        a Get request to get quota information for the specific resource. This
+        information consists of information regarding that specific resources.
+        For the specific resource, if it requires an update to the quota,
+        update the limit field in the response from the Get request to the new
+        value of quota. Then, submit this updated JSON object to this quota
+        request API. This will update the quota to the value specified. The
+        location header in the response will be used to track the status of the
+        quota request. Please check the provisioningState field in the
+        response.
 
         :param subscription_id: Azure subscription id.
         :type subscription_id: str
@@ -118,13 +121,12 @@ class QuotaRequestOperations(object):
          provider, such as SKU name for Microsoft.Compute, pool for
          Microsoft.Batch.
         :type resource_name: str
-        :param create_quota_request: Quota requests payload.
-        :type create_quota_request:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
+        :param properties: Quota properties for the resource.
+        :type properties: ~azure.mgmt.reservations.models.QuotaProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -142,8 +144,8 @@ class QuotaRequestOperations(object):
             provider_id=provider_id,
             location=location,
             resource_name=resource_name,
-            create_quota_request=create_quota_request,
             if_match=if_match,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -169,7 +171,9 @@ class QuotaRequestOperations(object):
 
 
     def _update_initial(
-            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, if_match, properties=None, custom_headers=None, raw=False, **operation_config):
+        create_quota_request = models.CurrentQuotaLimitBase(properties=properties)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -220,20 +224,21 @@ class QuotaRequestOperations(object):
         return deserialized
 
     def update(
-            self, subscription_id, provider_id, location, resource_name, create_quota_request, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, subscription_id, provider_id, location, resource_name, if_match, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Submits a Quota Request for a resource provider at the specified
         location for the specific resource in the parameter.
 
         Submits Quota change request for a resource provider for the specified
         location for the specific resource in the parameter. To use, first make
-        a Get request to get quota information. This information consists of a
-        list of resources and information regarding those resources. For all
-        the resources in that list which require an update to their quotas,
-        update their limit fields in the response from the Get request to their
-        new values. Then, submit this updated JSON object to this quota request
-        API. This will update the quota to the values specified. The location
-        header in the response will be used to track the status of the quota
-        request. Please check the provisioningState field in the response.
+        a Get request to get quota information for the specific resource. This
+        information consists of information regarding that specific resources.
+        For the specific resource, if it requires an update to the quota,
+        update the limit field in the response from the Get request to the new
+        value of quota. Then, submit this updated JSON object to this quota
+        request API. This will update the quota to the value specified. The
+        location header in the response will be used to track the status of the
+        quota request. Please check the provisioningState field in the
+        response.
 
         :param subscription_id: Azure subscription id.
         :type subscription_id: str
@@ -245,13 +250,12 @@ class QuotaRequestOperations(object):
          provider, such as SKU name for Microsoft.Compute, pool for
          Microsoft.Batch.
         :type resource_name: str
-        :param create_quota_request: Quota requests payload.
-        :type create_quota_request:
-         ~azure.mgmt.reservations.models.CurrentQuotaLimitBase
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
+        :param properties: Quota properties for the resource.
+        :type properties: ~azure.mgmt.reservations.models.QuotaProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -269,8 +273,8 @@ class QuotaRequestOperations(object):
             provider_id=provider_id,
             location=location,
             resource_name=resource_name,
-            create_quota_request=create_quota_request,
             if_match=if_match,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

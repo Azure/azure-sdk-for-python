@@ -22,7 +22,6 @@ try:
     from ._models_py3 import CreateGenericQuotaRequestParameters
     from ._models_py3 import CurrentQuotaLimit
     from ._models_py3 import CurrentQuotaLimitBase
-    from ._models_py3 import CurrentQuotaLimitBaseName
     from ._models_py3 import EmailAction
     from ._models_py3 import EmailActions
     from ._models_py3 import Error, ErrorException
@@ -44,6 +43,7 @@ try:
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from ._models_py3 import QuotaLimitsResponse
+    from ._models_py3 import QuotaProperties
     from ._models_py3 import QuotaRequestDetails
     from ._models_py3 import QuotaRequestOneResourceSubmitResponse
     from ._models_py3 import QuotaRequestProperties
@@ -58,6 +58,7 @@ try:
     from ._models_py3 import ReservationProperties
     from ._models_py3 import ReservationResponse
     from ._models_py3 import ReservationSplitProperties
+    from ._models_py3 import ResourceName
     from ._models_py3 import ScopeProperties
     from ._models_py3 import ServiceError
     from ._models_py3 import ServiceErrorDetail
@@ -66,7 +67,6 @@ try:
     from ._models_py3 import SkuRestriction
     from ._models_py3 import SplitRequest
     from ._models_py3 import SubRequest
-    from ._models_py3 import SubRequestName
     from ._models_py3 import SubscriptionScopeProperties
     from ._models_py3 import SupportRequestAction
 except (SyntaxError, ImportError):
@@ -82,7 +82,6 @@ except (SyntaxError, ImportError):
     from ._models import CreateGenericQuotaRequestParameters
     from ._models import CurrentQuotaLimit
     from ._models import CurrentQuotaLimitBase
-    from ._models import CurrentQuotaLimitBaseName
     from ._models import EmailAction
     from ._models import EmailActions
     from ._models import Error, ErrorException
@@ -104,6 +103,7 @@ except (SyntaxError, ImportError):
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
     from ._models import QuotaLimitsResponse
+    from ._models import QuotaProperties
     from ._models import QuotaRequestDetails
     from ._models import QuotaRequestOneResourceSubmitResponse
     from ._models import QuotaRequestProperties
@@ -118,6 +118,7 @@ except (SyntaxError, ImportError):
     from ._models import ReservationProperties
     from ._models import ReservationResponse
     from ._models import ReservationSplitProperties
+    from ._models import ResourceName
     from ._models import ScopeProperties
     from ._models import ServiceError
     from ._models import ServiceErrorDetail
@@ -126,7 +127,6 @@ except (SyntaxError, ImportError):
     from ._models import SkuRestriction
     from ._models import SplitRequest
     from ._models import SubRequest
-    from ._models import SubRequestName
     from ._models import SubscriptionScopeProperties
     from ._models import SupportRequestAction
 from ._paged_models import CurrentQuotaLimitBasePaged
@@ -158,7 +158,6 @@ __all__ = [
     'CreateGenericQuotaRequestParameters',
     'CurrentQuotaLimit',
     'CurrentQuotaLimitBase',
-    'CurrentQuotaLimitBaseName',
     'EmailAction',
     'EmailActions',
     'Error', 'ErrorException',
@@ -180,6 +179,7 @@ __all__ = [
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
     'QuotaLimitsResponse',
+    'QuotaProperties',
     'QuotaRequestDetails',
     'QuotaRequestOneResourceSubmitResponse',
     'QuotaRequestProperties',
@@ -194,6 +194,7 @@ __all__ = [
     'ReservationProperties',
     'ReservationResponse',
     'ReservationSplitProperties',
+    'ResourceName',
     'ScopeProperties',
     'ServiceError',
     'ServiceErrorDetail',
@@ -202,7 +203,6 @@ __all__ = [
     'SkuRestriction',
     'SplitRequest',
     'SubRequest',
-    'SubRequestName',
     'SubscriptionScopeProperties',
     'SupportRequestAction',
     'CurrentQuotaLimitBasePaged',

@@ -43,8 +43,8 @@ class QuotaRequestsOperations(object):
         """Gets the Quota request status by requestId, for the specified resource
         provider at specified location.
 
-        Gets the QuotaRequest details and status by the quota requestId for the
-        resources for the resource provider at a specific location. The
+        Gets the QuotaRequest details and status by the quota request Id for
+        the resources for the resource provider at a specific location. The
         requestId is returned as response to the Put requests for
         serviceLimits.
 
