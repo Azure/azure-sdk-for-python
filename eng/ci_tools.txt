@@ -4,8 +4,9 @@ Jinja2
 packaging
 tox
 tox-monorepo
-pathlib
 twine
+importlib-resources==1.0.2
+pathlib
 readme-renderer[md]
 doc-warden==0.5.0
 coverage==4.5.4
