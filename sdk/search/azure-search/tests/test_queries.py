@@ -10,24 +10,28 @@ try:
 except ImportError:
     import mock
 
-from azure.search.index._generated.models import AutocompleteRequest, SearchRequest, SuggestRequest
+from azure.search.index._generated.models import (
+    AutocompleteRequest,
+    SearchRequest,
+    SuggestRequest,
+)
 
 from azure.search import AutocompleteQuery, SearchQuery, SuggestQuery
 
-class TestAutocompleteQuery(object):
 
+class TestAutocompleteQuery(object):
     def test_init(self):
         query = AutocompleteQuery()
         assert type(query.request) is AutocompleteRequest
         assert query.request.filter is None
 
-    @mock.patch('azure.search.AutocompleteQuery._request_type')
+    @mock.patch("azure.search.AutocompleteQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         AutocompleteQuery(foo=10, bar=20)
         assert mock_request.called
         assert mock_request.call_args[0] == ()
-        assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
+        assert mock_request.call_args[1] == {"foo": 10, "bar": 20}
 
     def test_repr(self):
         query = AutocompleteQuery()
@@ -36,7 +40,7 @@ class TestAutocompleteQuery(object):
         query = AutocompleteQuery(search_text="foo bar")
         assert repr(query) == "<AutocompleteQuery [foo bar]>"
 
-        query = AutocompleteQuery(search_text="aaaaabbbbb"*200)
+        query = AutocompleteQuery(search_text="aaaaabbbbb" * 200)
         assert len(repr(query)) == 1024
 
     def test_filter(self):
@@ -50,8 +54,8 @@ class TestAutocompleteQuery(object):
         query.filter("expr2")
         assert query.request.filter == "expr2"
 
-class TestSearchQuery(object):
 
+class TestSearchQuery(object):
     def test_init(self):
         query = SearchQuery()
         assert type(query.request) is SearchRequest
@@ -59,13 +63,13 @@ class TestSearchQuery(object):
         assert query.request.order_by is None
         assert query.request.select is None
 
-    @mock.patch('azure.search.SearchQuery._request_type')
+    @mock.patch("azure.search.SearchQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SearchQuery(foo=10, bar=20)
         assert mock_request.called
         assert mock_request.call_args[0] == ()
-        assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
+        assert mock_request.call_args[1] == {"foo": 10, "bar": 20}
 
     def test_repr(self):
         query = SearchQuery()
@@ -74,7 +78,7 @@ class TestSearchQuery(object):
         query = SearchQuery(search_text="foo bar")
         assert repr(query) == "<SearchQuery [foo bar]>"
 
-        query = SearchQuery(search_text="aaaaabbbbb"*200)
+        query = SearchQuery(search_text="aaaaabbbbb" * 200)
         assert len(repr(query)) == 1024
 
     def test_filter(self):
@@ -130,20 +134,20 @@ class TestSearchQuery(object):
             query.select()
             assert str(e) == "At least one field must be provided"
 
-class TestSuggestQuery(object):
 
+class TestSuggestQuery(object):
     def test_init(self):
         query = SuggestQuery()
         assert type(query.request) is SuggestRequest
         assert query.request.filter is None
 
-    @mock.patch('azure.search.SuggestQuery._request_type')
+    @mock.patch("azure.search.SuggestQuery._request_type")
     def test_kwargs_forwarded(self, mock_request):
         mock_request.return_value = None
         SuggestQuery(foo=10, bar=20)
         assert mock_request.called
         assert mock_request.call_args[0] == ()
-        assert mock_request.call_args[1] == {'foo': 10, 'bar': 20}
+        assert mock_request.call_args[1] == {"foo": 10, "bar": 20}
 
     def test_repr(self):
         query = SuggestQuery()
@@ -152,9 +156,8 @@ class TestSuggestQuery(object):
         query = SuggestQuery(search_text="foo bar")
         assert repr(query) == "<SuggestQuery [foo bar]>"
 
-        query = SuggestQuery(search_text="aaaaabbbbb"*200)
+        query = SuggestQuery(search_text="aaaaabbbbb" * 200)
         assert len(repr(query)) == 1024
-
 
     def test_filter(self):
         query = SuggestQuery()
