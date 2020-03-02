@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "US"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "CA"}]}'
     headers:
@@ -26,13 +26,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - b18ac2d5-9516-4cda-a9fd-4b68d8e819ca
+      - aac71820-0e29-42ee-9a01-5c30dbf4fcba
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:46 GMT
+      - Mon, 02 Mar 2020 19:31:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '6'
     status:
       code: 200
       message: OK

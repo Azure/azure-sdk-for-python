@@ -25,11 +25,11 @@ interactions:
         is incorrect. Allowed values are latest,2019-10-01,2020-02-01"}}'
     headers:
       apim-request-id:
-      - cf24cd9b-3db3-4392-ba2a-63d125498d0d
+      - 17267981-5f86-4c69-af38-30b19e16e7fa
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:14:13 GMT
+      - Mon, 02 Mar 2020 19:31:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

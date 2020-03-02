@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "language": ""}, {"id": "1", "text": "I did not like the hotel we stayed it.
+      "language": ""}, {"id": "1", "text": "I did not like the hotel we stayed at.
       It was too expensive.", "language": ""}, {"id": "2", "text": "The restaurant
       was not as good as I hoped.", "language": ""}]}'
     headers:
@@ -21,10 +21,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","entities":[]},{"id":"1","entities":[]},{"id":"2","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 5bb79410-8632-4bf0-a295-a95d8d202e52
+      apim-request-id: c4474584-08db-46a0-95b7-70c185b6278e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:12 GMT
+      date: Mon, 02 Mar 2020 19:31:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

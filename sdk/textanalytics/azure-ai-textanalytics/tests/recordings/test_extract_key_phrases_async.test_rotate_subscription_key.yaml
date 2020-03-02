@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -22,10 +22,10 @@ interactions:
       string: '{"documents":[{"id":"1","keyPhrases":["park"]},{"id":"2","keyPhrases":["hotel"]},{"id":"3","keyPhrases":["restaurant","good
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 990258bc-1445-4e64-b654-90586f155496
+      apim-request-id: 3b7c060c-5420-4569-b2d2-1b4986a43717
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:56 GMT
+      date: Mon, 02 Mar 2020 19:31:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -36,7 +36,7 @@ interactions:
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -59,14 +59,14 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       content-length: '224'
-      date: Fri, 28 Feb 2020 04:13:56 GMT
+      date: Mon, 02 Mar 2020 19:31:12 GMT
     status:
       code: 401
       message: PermissionDenied
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -87,14 +87,14 @@ interactions:
       string: '{"documents":[{"id":"1","keyPhrases":["park"]},{"id":"2","keyPhrases":["hotel"]},{"id":"3","keyPhrases":["restaurant","good
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 4fd6ef6a-5d76-4126-bbe2-dc30308a0c32
+      apim-request-id: b1be7882-4c24-4c4e-b5c5-50b3c2871128
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:56 GMT
+      date: Mon, 02 Mar 2020 19:31:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 200
       message: OK

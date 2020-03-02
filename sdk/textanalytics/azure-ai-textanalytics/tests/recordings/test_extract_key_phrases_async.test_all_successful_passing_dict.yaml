@@ -22,14 +22,14 @@ interactions:
         Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":50,"transactionsCount":1}},{"id":"2","keyPhrases":["Bill
         Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 75c1cd2f-a711-4b09-acde-79c6a744987e
+      apim-request-id: 0c08a17a-394a-4651-af4a-6c290f6a0f35
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
-      date: Fri, 28 Feb 2020 04:13:54 GMT
+      date: Mon, 02 Mar 2020 19:31:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK

@@ -22,14 +22,14 @@ interactions:
       string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"I should take my cat\",\"the
         veterinarian\"]},{\"id\":\"2\",\"keyPhrases\":[\"document escrito\",\"Espa\xF1ol\"]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"
     headers:
-      apim-request-id: 0f1ab941-0ac2-4c00-87ff-a7cd7e6c9103
+      apim-request-id: ac425c5f-acd0-4d0c-9888-083b85e77ef4
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:57 GMT
+      date: Mon, 02 Mar 2020 19:31:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 200
       message: OK

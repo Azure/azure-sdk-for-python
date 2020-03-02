@@ -27,13 +27,13 @@ interactions:
         language not supported. Pass in one of: da,de,en,es,fi,fr,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv"}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 2b6df2f9-e94b-4b15-b64b-63a53ed3d9b2
+      - 2ee77b80-e102-439c-aa0d-1ea55100d653
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:52 GMT
+      - Mon, 02 Mar 2020 19:31:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

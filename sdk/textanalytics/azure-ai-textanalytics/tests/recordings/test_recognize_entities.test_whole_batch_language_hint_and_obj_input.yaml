@@ -26,13 +26,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"4","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - c6506c6c-51e0-4a69-beac-5ebc03e3f593
+      - bed5ab52-6a22-4634-a562-8f2725e0d8b3
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:14:01 GMT
+      - Mon, 02 Mar 2020 19:31:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

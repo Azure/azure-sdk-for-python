@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -27,13 +27,13 @@ interactions:
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - fb825771-a201-42cc-beda-df9458062e38
+      - d38ca9ee-0407-4617-bc85-d54d7e45c3b6
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:52 GMT
+      - Mon, 02 Mar 2020 19:31:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,13 +41,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '215'
+      - '10'
     status:
       code: 200
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -76,13 +76,13 @@ interactions:
       content-length:
       - '224'
       date:
-      - Fri, 28 Feb 2020 04:13:52 GMT
+      - Mon, 02 Mar 2020 19:31:09 GMT
     status:
       code: 401
       message: PermissionDenied
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -108,13 +108,13 @@ interactions:
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - f427986f-d202-4843-8ebf-d1e4e9606e5e
+      - fdaf3961-e44b-442f-a1e4-8d356150434a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:52 GMT
+      - Mon, 02 Mar 2020 19:31:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -122,7 +122,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '5'
     status:
       code: 200
       message: OK

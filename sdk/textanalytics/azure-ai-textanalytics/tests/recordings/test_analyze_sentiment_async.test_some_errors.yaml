@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
-      "I did not like the hotel we stayed it. It was too expensive.", "language":
+      "I did not like the hotel we stayed at. It was too expensive.", "language":
       "english"}, {"id": "3", "text": "The restaurant had really good food. I recommend
       you try it.", "language": "en"}]}'
     headers:
@@ -25,14 +25,14 @@ interactions:
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 32b54ae5-238c-4e98-b740-b10ee3921be1
+      apim-request-id: 51c61a5b-2a8b-4852-a81f-2f0ae9f64ea8
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 28 Feb 2020 04:13:41 GMT
+      date: Mon, 02 Mar 2020 19:30:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '63'
+      x-envoy-upstream-service-time: '59'
     status:
       code: 200
       message: OK

@@ -186,7 +186,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
@@ -239,7 +239,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
         docs = [
             u"This was the best day of my life.",
-            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"I did not like the hotel we stayed at. It was too expensive.",
             u"The restaurant was not as good as I hoped."
         ]
 
@@ -257,7 +257,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
         docs = [
             u"This was the best day of my life.",
-            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"I did not like the hotel we stayed at. It was too expensive.",
             u"The restaurant was not as good as I hoped."
         ]
 
@@ -278,7 +278,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
 
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.recognize_pii_entities(docs, raw_response_hook=callback)
@@ -337,7 +337,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
 
         docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
-                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.recognize_pii_entities(docs, language="en", raw_response_hook=callback)
@@ -358,7 +358,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             self.assertEqual(language, 3)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.recognize_pii_entities(docs, raw_response_hook=callback)
@@ -372,7 +372,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.recognize_pii_entities(docs)
@@ -398,7 +398,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             )
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.recognize_pii_entities(docs, raw_response_hook=callback)
@@ -448,13 +448,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
+        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = await text_analytics.recognize_pii_entities(docs, model_version="bad")
@@ -471,7 +465,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             text += "x"
 
         docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
         doc_errors = await text_analytics.recognize_pii_entities(docs)
@@ -486,14 +480,6 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_missing_input_records(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         docs = []
         try:
             result = await text_analytics.recognize_pii_entities(docs)
@@ -505,17 +491,9 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_duplicate_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed it."}]
+                {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             result = await text_analytics.recognize_pii_entities(docs)
         except HttpResponseError as err:
@@ -526,14 +504,6 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
@@ -544,38 +514,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
-    async def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-
-        docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
-
-        response = await text_analytics.recognize_pii_entities(docs)
-        self.assertEqual(response[0].error.code, "invalidCountryHint")
-        self.assertIsNotNone(response[0].error.message)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-
-        def callback(response):
-            language_str = "\"language\": \"es\""
-            self.assertEqual(response.http_request.body.count(language_str), 1)
-            self.assertIsNotNone(response.model_version)
-            self.assertIsNotNone(response.statistics)
-
-        res = await text_analytics.recognize_pii_entities(
-            inputs=["Bill Gates is the CEO of Microsoft."],
-            model_version="latest",
-            show_stats=True,
-            language="es",
-            raw_response_hook=callback
-        )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_language_kwarg_english(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         def callback(response):

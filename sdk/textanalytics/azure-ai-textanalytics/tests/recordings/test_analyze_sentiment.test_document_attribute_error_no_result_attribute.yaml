@@ -25,11 +25,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 50ddccbd-0be9-452a-8bbc-e99ea003d27a
+      - 492513b5-5bc3-4f78-8eff-5021c4f46cca
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:13:34 GMT
+      - Mon, 02 Mar 2020 19:30:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK

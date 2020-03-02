@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      ""}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      ""}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       ""}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -19,16 +19,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.02,"neutral":0.41,"negative":0.57},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38}]},{"id":"3","sentiment":"positive","documentScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: bef732cb-9cb8-4007-800c-e6e96305616f
+      apim-request-id: 666eebdf-6b78-4f3b-9b7f-9ead52b4772a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:40 GMT
+      date: Mon, 02 Mar 2020 19:30:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '84'
+      x-envoy-upstream-service-time: '63'
     status:
       code: 200
       message: OK

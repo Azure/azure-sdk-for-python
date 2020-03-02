@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "CA"}]}'
     headers:
@@ -26,13 +26,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 022a1875-48d9-4fc7-8225-9794862ce6d7
+      - 9bdd8b97-e269-479c-9da9-3740ebc8f7c7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,13 +40,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '7'
     status:
       code: 200
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "DE"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "DE"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "DE"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "DE"}]}'
     headers:
@@ -71,13 +71,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 3127b6b0-cb9b-4c14-9f8a-ce1559a478a2
+      - 945c60e4-b5b4-4e31-b8c9-3232c2f3618b
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -85,13 +85,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '6'
     status:
       code: 200
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "CA"}]}'
     headers:
@@ -116,13 +116,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 4b0c6cc0-d70f-4342-b395-4ebca42a6292
+      - 1b92f715-2341-4b5c-8ac9-07110241ff56
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -130,7 +130,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '7'
     status:
       code: 200
       message: OK

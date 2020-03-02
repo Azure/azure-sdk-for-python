@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "US"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
@@ -26,13 +26,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - db929b8e-e0e8-4f46-926b-42fdc4c23b1e
+      - b2abfa6e-dbd7-4aea-8370-1b0a269836dd
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:45 GMT
+      - Mon, 02 Mar 2020 19:31:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -46,7 +46,7 @@ interactions:
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "US"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
@@ -75,13 +75,13 @@ interactions:
       content-length:
       - '224'
       date:
-      - Fri, 28 Feb 2020 04:13:45 GMT
+      - Mon, 02 Mar 2020 19:31:02 GMT
     status:
       code: 401
       message: PermissionDenied
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "US"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
@@ -106,13 +106,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 41f764d6-0426-4bd7-9d8b-1600a5971ac6
+      - ea19f199-88fc-4057-a3e1-f4d86690fe4a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:45 GMT
+      - Mon, 02 Mar 2020 19:31:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

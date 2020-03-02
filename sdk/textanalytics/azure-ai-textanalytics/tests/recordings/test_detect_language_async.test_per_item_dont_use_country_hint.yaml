@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      ""}, {"id": "2", "text": "I did not like the hotel we stayed it.", "countryHint":
+      ""}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       ""}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
@@ -21,10 +21,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 1b009e22-22b2-4f7a-bc20-4918b192bd61
+      apim-request-id: 8fe13242-6b93-40bf-a8e3-f95ab9f29cc9
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:20:47 GMT
+      date: Mon, 02 Mar 2020 19:31:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

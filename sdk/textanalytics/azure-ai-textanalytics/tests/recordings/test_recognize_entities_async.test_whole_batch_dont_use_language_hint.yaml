@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "language": ""}, {"id": "1", "text": "I did not like the hotel we stayed it.
+      "language": ""}, {"id": "1", "text": "I did not like the hotel we stayed at.
       It was too expensive.", "language": ""}, {"id": "2", "text": "The restaurant
       was not as good as I hoped.", "language": ""}]}'
     headers:
@@ -19,16 +19,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","entities":[]},{"id":"1","entities":[{"text":"hotel","type":"Location","offset":19,"length":5,"score":0.75}]},{"id":"2","entities":[{"text":"restaurant","type":"Location","offset":4,"length":10,"score":0.83}]}],"errors":[],"modelVersion":"2020-02-01"}'
+      string: '{"documents":[{"id":"0","entities":[]},{"id":"1","entities":[{"text":"hotel","type":"Location","offset":19,"length":5,"score":0.74}]},{"id":"2","entities":[{"text":"restaurant","type":"Location","offset":4,"length":10,"score":0.83}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 1eba5abd-a18d-40b4-925c-cf90aef59e19
+      apim-request-id: d0604d76-c213-4cfd-bf63-d7f7f0e057d1
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:05 GMT
+      date: Mon, 02 Mar 2020 19:31:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '72'
+      x-envoy-upstream-service-time: '80'
     status:
       code: 200
       message: OK

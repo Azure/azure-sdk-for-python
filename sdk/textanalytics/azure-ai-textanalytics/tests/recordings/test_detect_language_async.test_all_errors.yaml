@@ -30,14 +30,14 @@ interactions:
         document within the request was too large to be processed. Limit document
         size to: 5120"}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 1461746c-e0ef-4c25-82f7-276204a89bd2
+      apim-request-id: 4b9febd4-c07b-4a4f-b0ee-de75cdbc9812
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=0
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 200
       message: OK

@@ -25,14 +25,14 @@ interactions:
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: a207373b-109f-40d1-a561-b0d04744e601
+      apim-request-id: 24e72ce3-7313-44ce-ada8-3f7d82211fbf
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 28 Feb 2020 04:14:18 GMT
+      date: Mon, 02 Mar 2020 19:31:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '15'
     status:
       code: 200
       message: OK

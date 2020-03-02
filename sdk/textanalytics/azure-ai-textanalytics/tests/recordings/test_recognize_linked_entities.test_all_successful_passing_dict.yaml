@@ -33,13 +33,13 @@ interactions:
         Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.30594656354495253}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 1517ddd5-d5e6-466b-93e8-6e0cb8bc7fd8
+      - 6bddf578-0eae-4861-abf9-d8e860310920
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Fri, 28 Feb 2020 04:14:05 GMT
+      - Mon, 02 Mar 2020 19:31:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '20'
+      - '21'
     status:
       code: 200
       message: OK

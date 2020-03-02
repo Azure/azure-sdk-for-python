@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -21,14 +21,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 3dee3b42-9414-42ae-8e4f-1f0b7dda2022
+      apim-request-id: 8b8c66b9-9a61-4833-ba03-01a6af3d62be
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:18 GMT
+      date: Mon, 02 Mar 2020 19:31:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK

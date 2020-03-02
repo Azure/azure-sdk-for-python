@@ -28,10 +28,10 @@ interactions:
         Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"score":0.80318090811651288}],"language":"es","id":"Paul
         Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.30594656354495253}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: bfaee5c4-058d-4e9b-93cc-10ba7ed055df
+      apim-request-id: e0a7a706-0494-465f-81f9-2b2b9cffe58d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
-      date: Fri, 28 Feb 2020 04:14:08 GMT
+      date: Mon, 02 Mar 2020 19:31:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

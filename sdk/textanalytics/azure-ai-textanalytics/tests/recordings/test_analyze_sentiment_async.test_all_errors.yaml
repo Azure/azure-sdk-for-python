@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
-      "I did not like the hotel we stayed it. It was too expensive.", "language":
+      "I did not like the hotel we stayed at. It was too expensive.", "language":
       "english"}, {"id": "3", "text": "", "language": "en"}]}'
     headers:
       Accept:
@@ -26,13 +26,13 @@ interactions:
         document in request.","innerError":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: e6dee766-6d17-469c-a1ad-772d29d783bb
+      apim-request-id: f92c8d9c-7462-4f41-af67-60f58a173b44
       content-type: application/json; charset=utf-8
-      date: Fri, 28 Feb 2020 04:13:39 GMT
+      date: Mon, 02 Mar 2020 19:30:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 200
       message: OK

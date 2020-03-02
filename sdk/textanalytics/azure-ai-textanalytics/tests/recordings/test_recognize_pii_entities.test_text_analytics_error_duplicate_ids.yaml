@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
-      "1", "text": "I did not like the hotel we stayed it.", "language": "en"}]}'
+      "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
     headers:
       Accept:
       - application/json
@@ -25,11 +25,11 @@ interactions:
         contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
       apim-request-id:
-      - 97b54890-4788-42ff-a04b-6e6337f54abf
+      - 5b901d81-0cc2-410f-821b-879a0dd5d266
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:14:14 GMT
+      - Mon, 02 Mar 2020 19:31:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

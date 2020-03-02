@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -21,21 +21,21 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 973842f6-a857-4547-9657-7abb20112ac2
+      apim-request-id: 6d5a5873-7754-45a4-ae59-f95d80c3487b
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:02 GMT
+      date: Mon, 02 Mar 2020 19:31:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '13'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 200
       message: OK
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -55,21 +55,21 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[{"text":"park","type":"Location","offset":17,"length":4,"score":0.73}]},{"id":"2","entities":[{"text":"hotel","type":"Location","offset":19,"length":5,"score":0.75}]},{"id":"3","entities":[{"text":"restaurant","type":"Location","offset":4,"length":10,"score":0.83}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 205637dc-61c4-45bc-9b7f-0f3ab73f2713
+      apim-request-id: b077da55-b23b-4004-849e-765ca5965dd9
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:02 GMT
+      date: Mon, 02 Mar 2020 19:31:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '65'
+      x-envoy-upstream-service-time: '69'
     status:
       code: 200
       message: OK
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -89,14 +89,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 111dc23f-bf4a-4360-9554-c2530dddbcd1
+      apim-request-id: 95677d5d-d5b0-477a-8c1b-94006523de0d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:02 GMT
+      date: Mon, 02 Mar 2020 19:31:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '11'
+      x-envoy-upstream-service-time: '15'
     status:
       code: 200
       message: OK

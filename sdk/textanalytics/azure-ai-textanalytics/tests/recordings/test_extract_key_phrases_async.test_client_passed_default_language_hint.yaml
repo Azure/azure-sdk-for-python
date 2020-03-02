@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -20,13 +20,13 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
-        did not like the hotel we stayed it"]},{"id":"3","keyPhrases":["The restaurant
+        did not like the hotel we stayed at"]},{"id":"3","keyPhrases":["The restaurant
         had really good food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 4165c364-7a6e-428c-8626-c5fc646cd489
+      apim-request-id: 1d14050d-81fd-4412-920d-0a3f77c375bb
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:54 GMT
+      date: Mon, 02 Mar 2020 19:31:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -37,7 +37,7 @@ interactions:
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -58,21 +58,21 @@ interactions:
       string: '{"documents":[{"id":"1","keyPhrases":["park"]},{"id":"2","keyPhrases":["hotel"]},{"id":"3","keyPhrases":["restaurant","good
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 3382eaad-9588-43d7-9695-3a57125ff4bf
+      apim-request-id: 69dc15a8-3204-4019-b879-c45f1cbfe4c4
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:54 GMT
+      date: Mon, 02 Mar 2020 19:31:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 200
       message: OK
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -91,17 +91,17 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
-        did not like the hotel we stayed it"]},{"id":"3","keyPhrases":["The restaurant
+        did not like the hotel we stayed at"]},{"id":"3","keyPhrases":["The restaurant
         had really good food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 879a460a-4474-4c93-8d86-3c9f275345d8
+      apim-request-id: 7fb3843a-f5d8-4bd2-8bfb-257bacb43d53
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:54 GMT
+      date: Mon, 02 Mar 2020 19:31:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 200
       message: OK

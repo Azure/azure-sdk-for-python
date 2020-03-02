@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
-      "language": "en"}]}'
+      "language": "es"}]}'
     headers:
       Accept:
       - application/json
@@ -22,17 +22,19 @@ interactions:
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"name":"Bill
-        Gates","matches":[{"text":"Bill Gates","offset":0,"length":10,"score":0.40290622717677094}],"language":"en","id":"Bill
-        Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":25,"length":9,"score":0.34011428799231225}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2020-02-01"}'
+        Gates","matches":[{"text":"Bill Gates","offset":0,"length":10,"score":0.32285729110882921}],"language":"es","id":"Bill
+        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":25,"length":9,"score":0.24235412233423559}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"},{"name":"Director
+        ejecutivo","matches":[{"text":"CEO","offset":18,"length":3,"score":0.13690795466701777}],"language":"es","id":"Director
+        ejecutivo","url":"https://es.wikipedia.org/wiki/Director_ejecutivo","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - fdf6c32d-9e69-4c24-addd-16e4d5b0ecbb
+      - a55a928b-047c-42be-9ce2-0d2525b07aa7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:14:06 GMT
+      - Mon, 02 Mar 2020 19:31:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '19'
     status:
       code: 200
       message: OK

@@ -145,7 +145,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
@@ -195,7 +195,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
         docs = [
             u"This was the best day of my life.",
-            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"I did not like the hotel we stayed at. It was too expensive.",
             u"The restaurant was not as good as I hoped."
         ]
 
@@ -212,7 +212,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
         docs = [
             u"This was the best day of my life.",
-            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"I did not like the hotel we stayed at. It was too expensive.",
             u"The restaurant was not as good as I hoped."
         ]
 
@@ -232,7 +232,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
 
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.recognize_entities(docs, raw_response_hook=callback)
@@ -288,7 +288,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
 
         docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
-                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.recognize_entities(docs, language="en", raw_response_hook=callback)
@@ -308,7 +308,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
             self.assertEqual(language, 3)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.recognize_entities(docs, raw_response_hook=callback)
@@ -321,7 +321,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.recognize_entities(docs)
@@ -346,7 +346,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
             )
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = text_analytics.recognize_entities(docs, raw_response_hook=callback)
@@ -393,13 +393,8 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
+        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = text_analytics.recognize_entities(docs, model_version="bad")
@@ -415,7 +410,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
             text += "x"
 
         docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
         doc_errors = text_analytics.recognize_entities(docs)
@@ -429,14 +424,6 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     def test_text_analytics_error_missing_input_records(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         docs = []
         try:
             result = text_analytics.recognize_entities(docs)
@@ -447,17 +434,9 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     def test_text_analytics_error_duplicate_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed it."}]
+                {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             result = text_analytics.recognize_entities(docs)
         except HttpResponseError as err:
@@ -467,14 +446,6 @@ class TestRecognizeEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     def test_text_analytics_error_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         # Batch size over limit
         docs = [u"hello world"] * 1001
         try:
@@ -482,17 +453,6 @@ class TestRecognizeEntities(TextAnalyticsTest):
         except HttpResponseError as err:
             self.assertEqual(err.error_code, "InvalidDocumentBatch")
             self.assertIsNotNone(err.message)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
-    def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-
-        docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]
-
-        response = text_analytics.recognize_entities(docs)
-        self.assertEqual(response[0].error.code, "invalidCountryHint")
-        self.assertIsNotNone(response[0].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -509,23 +469,5 @@ class TestRecognizeEntities(TextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
-        )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    def test_language_kwarg_spanish(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-
-        def callback(response):
-            language_str = "\"language\": \"en\""
-            self.assertEqual(response.http_request.body.count(language_str), 1)
-            self.assertIsNotNone(response.model_version)
-            self.assertIsNotNone(response.statistics)
-
-        res = text_analytics.recognize_entities(
-            inputs=["Bill Gates is the CEO of Microsoft."],
-            model_version="latest",
-            show_stats=True,
-            language="en",
             raw_response_hook=callback
         )

@@ -27,13 +27,13 @@ interactions:
         Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - ba0dae86-fce0-4aa3-8911-676ddb6f4071
+      - cee32afe-bb05-4f6e-a594-2654ca9bbf0a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Fri, 28 Feb 2020 04:13:51 GMT
+      - Mon, 02 Mar 2020 19:31:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

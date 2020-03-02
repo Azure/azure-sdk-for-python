@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -21,21 +21,21 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 5d766fcc-00bc-471f-9cef-ce4e6f000249
+      apim-request-id: 2bd1577d-fe60-4a2d-ab60-f85e8395e068
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:17 GMT
+      date: Mon, 02 Mar 2020 19:31:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '16'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -58,14 +58,14 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       content-length: '224'
-      date: Fri, 28 Feb 2020 04:14:17 GMT
+      date: Mon, 02 Mar 2020 19:31:34 GMT
     status:
       code: 401
       message: PermissionDenied
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -85,14 +85,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 1f22bee7-b2e4-41a9-8415-b6624d0d9f74
+      apim-request-id: 3c69352d-d9b0-495b-969a-a1c77a3e67fd
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:17 GMT
+      date: Mon, 02 Mar 2020 19:31:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '18'
     status:
       code: 200
       message: OK

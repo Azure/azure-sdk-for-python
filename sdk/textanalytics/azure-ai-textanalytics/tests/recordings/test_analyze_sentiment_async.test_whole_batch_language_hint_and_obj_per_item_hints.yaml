@@ -21,14 +21,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.05,"neutral":0.94,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.05,"neutral":0.94,"negative":0.01},"offset":0,"length":41}]},{"id":"2","sentiment":"neutral","documentScores":{"positive":0.03,"neutral":0.92,"negative":0.05},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.03,"neutral":0.92,"negative":0.05},"offset":0,"length":39}]},{"id":"3","sentiment":"neutral","documentScores":{"positive":0.13,"neutral":0.81,"negative":0.06},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.13,"neutral":0.81,"negative":0.06},"offset":0,"length":4}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 7ac947f7-2e29-43c7-b4de-94a910588f1d
+      apim-request-id: 836a6f6a-65a6-4f65-be1b-ff7a54937b7c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:42 GMT
+      date: Mon, 02 Mar 2020 19:30:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
+      x-envoy-upstream-service-time: '75'
     status:
       code: 200
       message: OK

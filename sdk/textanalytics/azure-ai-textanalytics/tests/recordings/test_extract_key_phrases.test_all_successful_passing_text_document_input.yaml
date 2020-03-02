@@ -26,13 +26,13 @@ interactions:
         Gates","Paul Allen","Microsoft"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 24c2408d-ee46-407b-ac80-ab161cd363e3
+      - 1e1cdac6-6483-470b-9f35-4251eee630b3
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Fri, 28 Feb 2020 04:13:50 GMT
+      - Mon, 02 Mar 2020 19:31:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '9'
     status:
       code: 200
       message: OK

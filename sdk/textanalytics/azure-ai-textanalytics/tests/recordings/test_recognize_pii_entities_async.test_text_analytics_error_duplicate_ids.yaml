@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
-      "1", "text": "I did not like the hotel we stayed it.", "language": "en"}]}'
+      "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
     headers:
       Accept:
       - application/json
@@ -20,13 +20,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocument","message":"Request
         contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
-      apim-request-id: 7eb0f38e-26a0-4da0-9815-c9081ab6e2e4
+      apim-request-id: e060775d-8187-4d12-a2ac-10d678119105
       content-type: application/json; charset=utf-8
-      date: Fri, 28 Feb 2020 04:14:18 GMT
+      date: Mon, 02 Mar 2020 19:31:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request

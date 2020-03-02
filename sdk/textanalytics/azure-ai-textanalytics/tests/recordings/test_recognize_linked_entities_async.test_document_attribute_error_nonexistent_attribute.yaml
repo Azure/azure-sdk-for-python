@@ -20,13 +20,13 @@ interactions:
         document in request.","innerError":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: f32418b5-0789-4d36-99d9-8538d65b5f28
+      apim-request-id: 9812f183-f7d7-4812-a3fc-f14ce3a156c6
       content-type: application/json; charset=utf-8
-      date: Fri, 28 Feb 2020 04:14:10 GMT
+      date: Mon, 02 Mar 2020 19:31:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1'
+      x-envoy-upstream-service-time: '2'
     status:
       code: 200
       message: OK

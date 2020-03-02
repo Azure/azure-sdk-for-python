@@ -24,13 +24,13 @@ interactions:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 4fe586c1-faa6-4035-93af-af806120f018
+      - 3d297d40-8d89-48ca-a71b-7a5602a47f37
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK
@@ -67,13 +67,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 855480f2-afc3-4fa4-892e-47ffaf606701
+      - 147542dd-2b30-4b41-904e-eba2be75272f
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -81,7 +81,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK
@@ -110,13 +110,13 @@ interactions:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - c975f88c-c468-4e4f-8a4c-b82d81433db4
+      - 0e5e9635-01f1-4d5c-9e2d-1cbd5bb8f29c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -124,7 +124,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK
@@ -153,13 +153,13 @@ interactions:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - a598e7d4-3450-49cd-9c0e-d869bbbf79bf
+      - c530a014-67bb-4206-8691-5914861fa01c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:44 GMT
+      - Mon, 02 Mar 2020 19:31:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -23,14 +23,14 @@ interactions:
         to the veterinarian\"]},{\"id\":\"4\",\"keyPhrases\":[\"Espa\xF1ol\",\"Este\",\"un
         document escrito\"]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"
     headers:
-      apim-request-id: adde8a27-1cdd-45e4-b4f6-c8a24daca1b1
+      apim-request-id: 2b7de24f-0fd0-4b55-9640-40839ed4443a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:13:56 GMT
+      date: Mon, 02 Mar 2020 19:31:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK

@@ -21,10 +21,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"4","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 9413e5ae-86f4-4740-919b-2e9db5690b09
+      apim-request-id: 6cdf4564-8ea8-49a1-91bb-0b5fa3d2d46e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:04 GMT
+      date: Mon, 02 Mar 2020 19:31:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "language": "fr"}, {"id": "1", "text": "I did not like the hotel we stayed it.
+      "language": "fr"}, {"id": "1", "text": "I did not like the hotel we stayed at.
       It was too expensive.", "language": "fr"}, {"id": "2", "text": "The restaurant
       was not as good as I hoped.", "language": "fr"}]}'
     headers:
@@ -27,9 +27,9 @@ interactions:
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en,es"}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 204973fb-77b0-4440-ae02-69537f71cb33
+      apim-request-id: c9cfc81f-24c1-4ddf-b70f-2458c52209f7
       content-type: application/json; charset=utf-8
-      date: Fri, 28 Feb 2020 04:14:12 GMT
+      date: Mon, 02 Mar 2020 19:31:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -24,17 +24,17 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
-        did not like the hotel we stayed it"]},{"id":"3","keyPhrases":["restaurant","good
+        did not like the hotel we stayed at"]},{"id":"3","keyPhrases":["restaurant","good
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - ef5d0b37-3949-4bd4-ac23-5871b281f4d0
+      - 4a7943f1-c185-4319-b991-365858a6d605
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:54 GMT
+      - Mon, 02 Mar 2020 19:31:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

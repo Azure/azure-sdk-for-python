@@ -21,14 +21,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[{"text":"un","type":"Quantity","subtype":"Number","offset":8,"length":2,"score":0.8}]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 4c279c5d-7b74-4063-84d2-9defe8c1d874
+      apim-request-id: 992f2b4b-9107-441d-914a-20fe7a79f40e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:04 GMT
+      date: Mon, 02 Mar 2020 19:31:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '31'
+      x-envoy-upstream-service-time: '35'
     status:
       code: 200
       message: OK

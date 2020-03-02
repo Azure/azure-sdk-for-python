@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -21,10 +21,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: bb9224ad-350d-4cc7-8055-3451013d87e7
+      apim-request-id: aca8ab93-3c80-4cf2-b743-6b61dc637d3d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:09 GMT
+      date: Mon, 02 Mar 2020 19:31:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,7 +35,7 @@ interactions:
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -55,21 +55,21 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: a0aff52d-469f-4d53-8f45-93473e576644
+      apim-request-id: c2aabc43-3aec-45d2-90e7-a1595600b4c8
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:09 GMT
+      date: Mon, 02 Mar 2020 19:31:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/entities/linking?showStats=false
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -89,10 +89,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: a3fe3816-f8f7-4059-b9c2-939ab6ecba23
+      apim-request-id: 4ea9e19e-373c-476a-b256-177482c8682a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:09 GMT
+      date: Mon, 02 Mar 2020 19:31:26 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

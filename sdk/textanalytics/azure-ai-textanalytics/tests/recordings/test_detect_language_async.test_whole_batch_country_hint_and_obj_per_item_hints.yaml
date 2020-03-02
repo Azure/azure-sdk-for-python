@@ -21,14 +21,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"4","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 1685e06e-8df6-4ef7-8d01-b945e13a598f
+      apim-request-id: 546ce487-99ab-4a20-b46a-23973aaefe18
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:20:48 GMT
+      date: Mon, 02 Mar 2020 19:31:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK

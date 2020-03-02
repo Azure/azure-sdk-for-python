@@ -24,11 +24,11 @@ interactions:
         input records."}}}'
     headers:
       apim-request-id:
-      - b858cb2b-235d-4fb6-b3a9-c0b6b9838f73
+      - 3ac6235f-40fc-468b-905e-66233eb7427a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:14:14 GMT
+      - Mon, 02 Mar 2020 19:31:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '3'
     status:
       code: 400
       message: Bad Request

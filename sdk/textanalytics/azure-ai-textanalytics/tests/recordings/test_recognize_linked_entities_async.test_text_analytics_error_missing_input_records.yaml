@@ -19,13 +19,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innerError":{"code":"MissingInputRecords","message":"Missing
         input records."}}}'
     headers:
-      apim-request-id: ba8d81f2-487b-44c6-b401-67b844547321
+      apim-request-id: 462f43cf-343f-46f5-8e27-dde256ac39ef
       content-type: application/json; charset=utf-8
-      date: Fri, 28 Feb 2020 04:14:11 GMT
+      date: Mon, 02 Mar 2020 19:31:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request

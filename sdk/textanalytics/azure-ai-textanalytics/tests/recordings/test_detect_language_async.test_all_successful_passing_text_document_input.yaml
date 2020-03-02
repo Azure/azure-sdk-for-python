@@ -22,14 +22,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]},{"id":"4","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 686e8a9f-fde9-42f7-8102-793f0e433793
+      apim-request-id: f9515201-ca0c-4fbb-9687-921be4337f88
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '37'
     status:
       code: 200
       message: OK

@@ -24,10 +24,10 @@ interactions:
         Routing Number","offset":18,"length":9,"score":0.75}]},{"id":"3","statistics":{"charactersCount":44,"transactionsCount":1},"entities":[{"text":"998.214.865-68","type":"Brazil
         CPF Number","offset":3,"length":14,"score":0.85}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 31b40ec5-320f-4d37-b04d-62210389c4e7
+      apim-request-id: aa576ef8-fb86-4f75-9a4b-07df7e46e6b4
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 28 Feb 2020 04:14:16 GMT
+      date: Mon, 02 Mar 2020 19:31:32 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

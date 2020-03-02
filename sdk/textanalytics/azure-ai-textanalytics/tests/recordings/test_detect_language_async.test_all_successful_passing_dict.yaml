@@ -22,14 +22,14 @@ interactions:
     body:
       string: '{"statistics":{"documentsCount":4,"validDocumentsCount":4,"erroneousDocumentsCount":0,"transactionsCount":4},"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}],"statistics":{"charactersCount":41,"transactionsCount":1}},{"id":"2","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}],"statistics":{"charactersCount":39,"transactionsCount":1}},{"id":"3","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}],"statistics":{"charactersCount":4,"transactionsCount":1}},{"id":"4","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}],"statistics":{"charactersCount":46,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 0d2aaa93-19c0-4eb8-898d-ee426d709a78
+      apim-request-id: f3a996ab-9206-4bfd-99df-f1140895cb4c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK

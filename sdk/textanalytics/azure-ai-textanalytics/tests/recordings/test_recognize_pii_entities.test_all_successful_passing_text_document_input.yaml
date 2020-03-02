@@ -29,13 +29,13 @@ interactions:
         CPF Number","offset":3,"length":14,"score":0.85}]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - c8e897df-eedb-496b-9aa8-4f98d7fb2c04
+      - e7fb4a40-f483-4cfd-9336-13ff0023b1d1
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:14:13 GMT
+      - Mon, 02 Mar 2020 19:31:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '28'
     status:
       code: 200
       message: OK

@@ -27,13 +27,13 @@ interactions:
         veterinarian\"]},{\"id\":\"2\",\"keyPhrases\":[\"document escrito\",\"Espa\xF1ol\"]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"
     headers:
       apim-request-id:
-      - 44a2f494-2558-42f7-b475-31cbb676573a
+      - 98cd1b26-c4cf-4be1-a5c1-3dd8067cd8be
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:54 GMT
+      - Mon, 02 Mar 2020 19:31:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '6'
     status:
       code: 200
       message: OK

@@ -19,10 +19,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 484ee3e2-81b1-44cc-87b6-a3817025fbed
+      apim-request-id: a8e7c642-67dc-4b72-9637-f140933045d0
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -51,10 +51,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 61ed2ad1-617d-4dcb-8f27-9f2fe787163a
+      apim-request-id: e133753b-6ad4-4548-b275-d6c9c513380c
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -83,10 +83,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 42e00a60-4d32-48f6-a8b1-623fab561d71
+      apim-request-id: 344e409e-9b6c-47ea-ae78-3a7e1f8c0d8f
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -115,14 +115,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 2a8c0a3d-878a-4b12-861c-37df3d4d037c
+      apim-request-id: 0bcbb7b5-be66-450d-ba59-6b155ae5eb10
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 28 Feb 2020 04:20:46 GMT
+      date: Mon, 02 Mar 2020 19:31:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 200
       message: OK

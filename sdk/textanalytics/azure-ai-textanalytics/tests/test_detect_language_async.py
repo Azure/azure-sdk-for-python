@@ -192,7 +192,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
+            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
@@ -245,7 +245,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
         docs = [
             u"This was the best day of my life.",
-            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"I did not like the hotel we stayed at. It was too expensive.",
             u"The restaurant was not as good as I hoped."
         ]
 
@@ -263,7 +263,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
         docs = [
             u"This was the best day of my life.",
-            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"I did not like the hotel we stayed at. It was too expensive.",
             u"The restaurant was not as good as I hoped."
         ]
 
@@ -284,7 +284,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
 
         docs = [{"id": "1", "country_hint": "", "text": "I will go to the park."},
-                {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.detect_language(docs, raw_response_hook=callback)
@@ -318,7 +318,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             self.assertEqual(country, 3)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.detect_language(docs, country_hint="CA", raw_response_hook=callback)
@@ -358,7 +358,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             self.assertEqual(country, 2)
 
         docs = [{"id": "1", "country_hint": "US", "text": "I will go to the park."},
-                {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.detect_language(docs, country_hint="CA", raw_response_hook=callback)
@@ -379,7 +379,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             self.assertEqual(country, 3)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.detect_language(docs, raw_response_hook=callback)
@@ -393,7 +393,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
         text_analytics = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.detect_language(docs)
@@ -419,7 +419,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             )
 
         docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed it."},
+                {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = await text_analytics.detect_language(docs, raw_response_hook=callback)
@@ -469,13 +469,8 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
+        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = await text_analytics.detect_language(docs, model_version="bad")
@@ -504,14 +499,6 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_missing_input_records(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         docs = []
         try:
             result = await text_analytics.detect_language(docs)
@@ -523,17 +510,9 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_duplicate_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
-
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed it."}]
+                {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             result = await text_analytics.detect_language(docs)
         except HttpResponseError as err:
@@ -544,13 +523,6 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @AsyncTextAnalyticsTest.await_prepared_test
     async def test_text_analytics_error_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-        text = ""
-        for _ in range(5121):
-            text += "x"
-
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed it."},
-                {"id": "3", "text": text}]
 
         # Batch size over limit
         docs = [u"hello world"] * 1001
@@ -563,7 +535,7 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
     @pytest.mark.skip(reason="Service bug returns invalidDocument here. Unskip after v3.0-preview.2")
-    async def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_invalid_country_hint(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "country_hint": "United States", "text": "hello world"}]

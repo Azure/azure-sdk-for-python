@@ -2,7 +2,7 @@ interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
       "countryHint": "CA"}, {"id": "1", "text": "I did not like the hotel we stayed
-      it. It was too expensive.", "countryHint": "CA"}, {"id": "2", "text": "The restaurant
+      at. It was too expensive.", "countryHint": "CA"}, {"id": "2", "text": "The restaurant
       was not as good as I hoped.", "countryHint": "CA"}]}'
     headers:
       Accept:
@@ -26,13 +26,13 @@ interactions:
       string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 50e2d24f-8b88-435f-9794-b7f51b554dfd
+      - f94bae93-6a52-4335-b764-707ea371aebe
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:47 GMT
+      - Mon, 02 Mar 2020 19:31:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '6'
     status:
       code: 200
       message: OK

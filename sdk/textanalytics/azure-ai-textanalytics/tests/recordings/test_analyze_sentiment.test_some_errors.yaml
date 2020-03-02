@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "", "language": "en"}, {"id": "2", "text":
-      "I did not like the hotel we stayed it. It was too expensive.", "language":
+      "I did not like the hotel we stayed at. It was too expensive.", "language":
       "english"}, {"id": "3", "text": "The restaurant had really good food. I recommend
       you try it.", "language": "en"}]}'
     headers:
@@ -30,13 +30,13 @@ interactions:
         language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - c5c56e02-b3f5-41f5-82b6-47806a4f2434
+      - f689ae58-7b25-4dab-b2dd-d1584a4d322e
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:36 GMT
+      - Mon, 02 Mar 2020 19:30:52 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '79'
+      - '67'
     status:
       code: 200
       message: OK

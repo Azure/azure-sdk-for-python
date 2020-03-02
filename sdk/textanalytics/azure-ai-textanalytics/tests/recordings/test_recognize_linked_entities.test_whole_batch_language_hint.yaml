@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "This was the best day of my life.",
-      "language": "fr"}, {"id": "1", "text": "I did not like the hotel we stayed it.
+      "language": "fr"}, {"id": "1", "text": "I did not like the hotel we stayed at.
       It was too expensive.", "language": "fr"}, {"id": "2", "text": "The restaurant
       was not as good as I hoped.", "language": "fr"}]}'
     headers:
@@ -32,11 +32,11 @@ interactions:
         language not supported. Pass in one of: en,es"}}}],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 10ec6ee9-27b0-4c03-bafa-1a103d826ea0
+      - 64b53ee9-ef6e-4ca6-b3a0-936a21e9cec4
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:14:08 GMT
+      - Mon, 02 Mar 2020 19:31:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '208'
     status:
       code: 200
       message: OK

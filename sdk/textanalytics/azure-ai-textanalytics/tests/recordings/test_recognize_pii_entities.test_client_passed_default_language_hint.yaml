@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -32,11 +32,11 @@ interactions:
         language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 5a97029a-75b1-43d5-abf5-2b059b87a050
+      - 0792df87-8290-4de1-bd34-b5e7cd9088db
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:14:13 GMT
+      - Mon, 02 Mar 2020 19:31:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -50,7 +50,7 @@ interactions:
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -75,13 +75,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 38571c7d-44eb-44f4-bd28-e7fb71b5337f
+      - 4e749c7f-d499-483c-9397-eaaaae7381c7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:14:13 GMT
+      - Mon, 02 Mar 2020 19:31:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -89,13 +89,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '20'
     status:
       code: 200
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -126,11 +126,11 @@ interactions:
         language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 3c3acf0a-e9fc-4670-9008-a8cc67710c69
+      - b2bbbffb-1956-48be-9a06-30fe2837dd1e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 28 Feb 2020 04:14:13 GMT
+      - Mon, 02 Mar 2020 19:31:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

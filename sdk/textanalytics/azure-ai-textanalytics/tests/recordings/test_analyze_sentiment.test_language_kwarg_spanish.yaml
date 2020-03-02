@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
-      "language": "en"}]}'
+      "language": "es"}]}'
     headers:
       Accept:
       - application/json
@@ -21,16 +21,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"documentScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":35}]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"documentScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":35}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 4101d529-6e9e-4f23-8978-e289e13d37e1
+      - 6f339b1d-0a7c-4ee4-b22d-6f4a617d3e09
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 28 Feb 2020 04:13:35 GMT
+      - Mon, 02 Mar 2020 19:30:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '59'
+      - '86'
     status:
       code: 200
       message: OK

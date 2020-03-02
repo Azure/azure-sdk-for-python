@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -24,17 +24,17 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
-        did not like the hotel we stayed it"]},{"id":"3","keyPhrases":["The restaurant
+        did not like the hotel we stayed at"]},{"id":"3","keyPhrases":["The restaurant
         had really good food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - ad2e5f01-59d7-47cf-8902-e34f1c4bd85c
+      - 5e5cd44c-cd00-40c3-ba35-ddf77efa4ed9
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:51 GMT
+      - Mon, 02 Mar 2020 19:31:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,13 +42,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '6'
     status:
       code: 200
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "en"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
@@ -74,13 +74,13 @@ interactions:
         food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 552d3609-6f6a-4efe-ab92-41b9f63fee5c
+      - 6ed657c5-2052-4b5b-b634-8419c21275e1
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:51 GMT
+      - Mon, 02 Mar 2020 19:31:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -88,13 +88,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '5'
     status:
       code: 200
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
-      "es"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
@@ -117,17 +117,17 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
-        did not like the hotel we stayed it"]},{"id":"3","keyPhrases":["The restaurant
+        did not like the hotel we stayed at"]},{"id":"3","keyPhrases":["The restaurant
         had really good food"]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 787dd5a4-a820-46c8-aac8-24ef479b6f85
+      - 5ac6a984-48f7-4844-b840-abce5a675e77
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 28 Feb 2020 04:13:51 GMT
+      - Mon, 02 Mar 2020 19:31:08 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -135,7 +135,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '5'
     status:
       code: 200
       message: OK

@@ -20,9 +20,9 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Specified Model version
         is incorrect. Allowed values are latest,2019-10-01"}}'
     headers:
-      apim-request-id: 5b56ecbc-b3da-4b4e-961c-04ae4c77f7e7
+      apim-request-id: 3591694a-b843-454d-9619-64cc2513c5fa
       content-type: application/json; charset=utf-8
-      date: Fri, 28 Feb 2020 04:13:54 GMT
+      date: Mon, 02 Mar 2020 19:31:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
