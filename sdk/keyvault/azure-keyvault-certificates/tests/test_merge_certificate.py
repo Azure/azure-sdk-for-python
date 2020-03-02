@@ -9,6 +9,7 @@ from azure.keyvault.certificates import CertificateClient, CertificatePolicy, We
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from OpenSSL import crypto
 
+from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.preparer import KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
@@ -16,6 +17,7 @@ from _shared.test_case import KeyVaultTestCase
 class MergeCertificateTest(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
+        kwargs["custom_request_matchers"] = [json_attribute_matcher]
         super(MergeCertificateTest, self).__init__(*args, **kwargs)
 
     @ResourceGroupPreparer(random_name_enabled=True)

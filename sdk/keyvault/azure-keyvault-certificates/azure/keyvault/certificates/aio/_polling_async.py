@@ -32,7 +32,8 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
         try:
             while not self.finished():
                 await self._update_status()
-                await asyncio.sleep(self._polling_interval)
+                if not self.finished():
+                    await asyncio.sleep(self._polling_interval)
             if self._pending_certificate_op.status.lower() == "completed":
                 self._resource = await self._get_certificate_command()
             else:

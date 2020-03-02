@@ -10,6 +10,7 @@ resources:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
         AZURE_CLIENT_ID: $(python-identity-client-id)

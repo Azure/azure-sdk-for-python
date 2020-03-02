@@ -19,6 +19,7 @@ try:
     from ._models_py3 import EnvironmentCreateOrUpdateParameters
     from ._models_py3 import EnvironmentListResponse
     from ._models_py3 import EnvironmentResource
+    from ._models_py3 import EnvironmentResourceProperties
     from ._models_py3 import EnvironmentStateDetails
     from ._models_py3 import EnvironmentStatus
     from ._models_py3 import EnvironmentUpdateParameters
@@ -39,9 +40,14 @@ try:
     from ._models_py3 import IoTHubEventSourceUpdateParameters
     from ._models_py3 import LocalTimestamp
     from ._models_py3 import LocalTimestampTimeZoneOffset
+    from ._models_py3 import LongTermEnvironmentCreateOrUpdateParameters
+    from ._models_py3 import LongTermEnvironmentResource
+    from ._models_py3 import LongTermEnvironmentUpdateParameters
+    from ._models_py3 import LongTermStorageConfigurationInput
+    from ._models_py3 import LongTermStorageConfigurationMutableProperties
+    from ._models_py3 import LongTermStorageConfigurationOutput
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
-    from ._models_py3 import PartitionKeyProperty
     from ._models_py3 import ReferenceDataSetCreateOrUpdateParameters
     from ._models_py3 import ReferenceDataSetKeyProperty
     from ._models_py3 import ReferenceDataSetListResponse
@@ -50,7 +56,12 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import ResourceProperties
     from ._models_py3 import Sku
+    from ._models_py3 import StandardEnvironmentCreateOrUpdateParameters
+    from ._models_py3 import StandardEnvironmentResource
+    from ._models_py3 import StandardEnvironmentUpdateParameters
+    from ._models_py3 import TimeSeriesIdProperty
     from ._models_py3 import TrackedResource
+    from ._models_py3 import WarmStorageEnvironmentStatus
 except (SyntaxError, ImportError):
     from ._models import AccessPolicyCreateOrUpdateParameters
     from ._models import AccessPolicyListResponse
@@ -61,6 +72,7 @@ except (SyntaxError, ImportError):
     from ._models import EnvironmentCreateOrUpdateParameters
     from ._models import EnvironmentListResponse
     from ._models import EnvironmentResource
+    from ._models import EnvironmentResourceProperties
     from ._models import EnvironmentStateDetails
     from ._models import EnvironmentStatus
     from ._models import EnvironmentUpdateParameters
@@ -81,9 +93,14 @@ except (SyntaxError, ImportError):
     from ._models import IoTHubEventSourceUpdateParameters
     from ._models import LocalTimestamp
     from ._models import LocalTimestampTimeZoneOffset
+    from ._models import LongTermEnvironmentCreateOrUpdateParameters
+    from ._models import LongTermEnvironmentResource
+    from ._models import LongTermEnvironmentUpdateParameters
+    from ._models import LongTermStorageConfigurationInput
+    from ._models import LongTermStorageConfigurationMutableProperties
+    from ._models import LongTermStorageConfigurationOutput
     from ._models import Operation
     from ._models import OperationDisplay
-    from ._models import PartitionKeyProperty
     from ._models import ReferenceDataSetCreateOrUpdateParameters
     from ._models import ReferenceDataSetKeyProperty
     from ._models import ReferenceDataSetListResponse
@@ -92,7 +109,12 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import ResourceProperties
     from ._models import Sku
+    from ._models import StandardEnvironmentCreateOrUpdateParameters
+    from ._models import StandardEnvironmentResource
+    from ._models import StandardEnvironmentUpdateParameters
+    from ._models import TimeSeriesIdProperty
     from ._models import TrackedResource
+    from ._models import WarmStorageEnvironmentStatus
 from ._paged_models import OperationPaged
 from ._time_series_insights_client_enums import (
     ProvisioningState,
@@ -100,6 +122,7 @@ from ._time_series_insights_client_enums import (
     StorageLimitExceededBehavior,
     PropertyType,
     IngressState,
+    WarmStoragePropertiesState,
     LocalTimestampFormat,
     ReferenceDataKeyPropertyType,
     DataStringComparisonBehavior,
@@ -116,6 +139,7 @@ __all__ = [
     'EnvironmentCreateOrUpdateParameters',
     'EnvironmentListResponse',
     'EnvironmentResource',
+    'EnvironmentResourceProperties',
     'EnvironmentStateDetails',
     'EnvironmentStatus',
     'EnvironmentUpdateParameters',
@@ -136,9 +160,14 @@ __all__ = [
     'IoTHubEventSourceUpdateParameters',
     'LocalTimestamp',
     'LocalTimestampTimeZoneOffset',
+    'LongTermEnvironmentCreateOrUpdateParameters',
+    'LongTermEnvironmentResource',
+    'LongTermEnvironmentUpdateParameters',
+    'LongTermStorageConfigurationInput',
+    'LongTermStorageConfigurationMutableProperties',
+    'LongTermStorageConfigurationOutput',
     'Operation',
     'OperationDisplay',
-    'PartitionKeyProperty',
     'ReferenceDataSetCreateOrUpdateParameters',
     'ReferenceDataSetKeyProperty',
     'ReferenceDataSetListResponse',
@@ -147,13 +176,19 @@ __all__ = [
     'Resource',
     'ResourceProperties',
     'Sku',
+    'StandardEnvironmentCreateOrUpdateParameters',
+    'StandardEnvironmentResource',
+    'StandardEnvironmentUpdateParameters',
+    'TimeSeriesIdProperty',
     'TrackedResource',
+    'WarmStorageEnvironmentStatus',
     'OperationPaged',
     'ProvisioningState',
     'SkuName',
     'StorageLimitExceededBehavior',
     'PropertyType',
     'IngressState',
+    'WarmStoragePropertiesState',
     'LocalTimestampFormat',
     'ReferenceDataKeyPropertyType',
     'DataStringComparisonBehavior',
