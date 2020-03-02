@@ -5,7 +5,7 @@ packaging
 tox
 tox-monorepo
 twine
-importlib-resources-1.0.2
+importlib-resources==1.0.2
 pathlib
 readme-renderer[md]
 doc-warden==0.5.0
