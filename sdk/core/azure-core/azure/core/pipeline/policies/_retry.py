@@ -386,7 +386,6 @@ class RetryPolicy(HTTPPolicy):
             context['history'] = retry_settings['history']
 
     def _configure_timeout(self, request, absolute_timeout, is_response_error):
-        # type: (azure.core.pipeline.PipelineRequest, int, bool) -> Optional[AzureError]
         if absolute_timeout <= 0:
             if is_response_error:
                 raise ServiceResponseTimeoutError('Response timeout')
