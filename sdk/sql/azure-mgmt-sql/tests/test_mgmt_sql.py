@@ -17,7 +17,7 @@ from devtools_testutils import (
 
 def get_server_params(location):
     return {
-        'location': location, # "self.region" is 'west-us' by default
+        'location': 'westus2', #location, # "self.region" is 'west-us' by default
         'version': '12.0',
         'administrator_login': 'mysecretname',
         'administrator_login_password': 'HusH_Sec4et'
@@ -25,7 +25,7 @@ def get_server_params(location):
 
 
 class SqlServerPreparer(AzureMgmtPreparer):
-    def __init__(self, name_prefix='mypysqlserver'):
+    def __init__(self, name_prefix='mypysqlserverx'):
         super(SqlServerPreparer, self).__init__(name_prefix, 24)
 
     def create_resource(self, name, **kwargs):
@@ -54,7 +54,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_server(self, resource_group, location):
-        server_name = self.get_resource_name('tstpysqlserver')
+        server_name = self.get_resource_name('tstpysqlserverx')
 
         async_server_create = self.client.servers.create_or_update(
             resource_group.name, # Created by the framework
@@ -105,7 +105,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
             server.name,
             db_name,
             {
-                'location': location
+                'location': 'westus2' # location
             }
         )
         database = async_db_create.result() # Wait for completion and return created object
