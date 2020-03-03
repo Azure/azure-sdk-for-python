@@ -2,97 +2,130 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import json
+from unittest import mock
 
+from azure.identity import CredentialUnavailableError, AzureCliCredential as _SyncCredential
 from azure.identity.aio import AzureCliCredential
+from azure.identity._credentials.azure_cli import CLI_NOT_FOUND
 from azure.core.exceptions import ClientAuthenticationError
-
-from subprocess import CompletedProcess
 import pytest
-from unittest.mock import Mock, patch
 
-from helpers_async import get_completed_future
+from test_cli_credential import raise_called_process_error, TEST_ERROR_OUTPUTS
+
+CHECK_OUTPUT = _SyncCredential.__module__ + ".subprocess.check_output"
+
+
+@pytest.mark.asyncio
+async def test_close():
+    """the credential must define close, although it's a no-op because the credential has no transport"""
+
+    await AzureCliCredential().close()
 
 
 @pytest.mark.asyncio
-async def test_cli_credential():
-    access_token = '***'
-    expires_on = '9999-1-1 00:00:00.1' 
-    mock_token = json.dumps({"accessToken" : access_token, "expiresOn" : expires_on})
+async def test_context_manager():
+    """the credential must be a context manager, although it does nothing as one because it has no transport"""
 
-    mock_proc = Mock()
-    attrs = {
-        'returncode': 0,
-        'communicate.return_value': get_completed_future((mock_token, ''))}
-    mock_proc.configure_mock(**attrs)
+    async with AzureCliCredential():
+        pass
 
-    with patch('asyncio.create_subprocess_shell', return_value=get_completed_future(mock_proc)):
-        cred = AzureCliCredential()
-        token = await cred.get_token()
-
-        assert token.token == access_token
 
 @pytest.mark.asyncio
-async def test_cli_installation():
-    mock_proc = Mock()
-    attrs = {
-        'returncode': 127,
-        'communicate.return_value': get_completed_future(('', ''))}
-    mock_proc.configure_mock(**attrs)
+async def test_get_token():
+    """The credential should parse the CLI's output to an AccessToken"""
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('asyncio.create_subprocess_shell', return_value=get_completed_future(mock_proc)):
-            cred = AzureCliCredential()
-            token = await cred.get_token()
+    access_token = "access token"
+    valid_seconds = 42
+    successful_output = json.dumps(
+        {
+            # expiresOn is a naive datetime representing valid_seconds from the epoch
+            "expiresOn": datetime.fromtimestamp(valid_seconds).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "accessToken": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
 
-    assert ClientAuthenticationError == excinfo.type
-    assert AzureCliCredential._CLI_NOT_INSTALLED_ERR in str(excinfo.value)
+    with mock.patch(CHECK_OUTPUT, mock.Mock(return_value=successful_output)):
+        credential = AzureCliCredential()
+        token = await credential.get_token("scope")
 
-@pytest.mark.asyncio
-async def test_cli_login():
-    mock_proc = Mock()
-    attrs = {
-        'returncode': 1,
-        'communicate.return_value': get_completed_future(('', ''))}
-    mock_proc.configure_mock(**attrs)
+    assert token.token == access_token
+    assert type(token.expires_on) == int
+    assert token.expires_on == valid_seconds
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('asyncio.create_subprocess_shell', return_value=get_completed_future(mock_proc)):
-            cred = AzureCliCredential()
-            token = await cred.get_token()
-
-    assert ClientAuthenticationError == excinfo.type
-    assert AzureCliCredential._CLI_LOGIN_ERR in str(excinfo.value)
 
 @pytest.mark.asyncio
-async def test_no_json():
-    mock_proc = Mock()
-    attrs = {
-        'returncode': 0,
-        'communicate.return_value': get_completed_future(('Bad*Token',''))}
-    mock_proc.configure_mock(**attrs)
+async def test_cli_not_installed_linux():
+    """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('asyncio.create_subprocess_shell', return_value=get_completed_future(mock_proc)):
-            cred = AzureCliCredential()
-            token = await cred.get_token()
+    output = "/bin/sh: 1: az: not found"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, output)):
+        with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
 
-    assert ClientAuthenticationError == excinfo.type
-    assert "Azure CLI didn't provide an access token" in str(excinfo.value)
 
 @pytest.mark.asyncio
-async def test_bad_token():
-    bad_token = json.dumps({'foo': 'bar'})
-    mock_proc = Mock()
-    attrs = {
-        'returncode': 0,
-        'communicate.return_value': get_completed_future((bad_token, ''))}
-    mock_proc.configure_mock(**attrs)
+async def test_cli_not_installed_windows():
+    """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    with pytest.raises(ClientAuthenticationError) as excinfo:
-        with patch('asyncio.create_subprocess_shell', return_value=get_completed_future(mock_proc)):
-            cred = AzureCliCredential()
-            token = await cred.get_token()
+    output = "'az' is not recognized as an internal or external command, operable program or batch file."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+        with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
 
-    assert ClientAuthenticationError == excinfo.type
-    assert "Azure CLI didn't provide an access token" in str(excinfo.value)
+
+@pytest.mark.parametrize("platform", ("darwin", "linux2", "win32"))
+@pytest.mark.asyncio
+async def test_cannot_execute_shell(platform):
+    """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
+
+    with mock.patch(_SyncCredential.__module__ + ".sys.platform", platform):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=OSError())):
+            with pytest.raises(CredentialUnavailableError):
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
+
+
+@pytest.mark.asyncio
+async def test_not_logged_in():
+    """When the CLI isn't logged in, the credential should raise an error containing the CLI's output"""
+
+    output = "ERROR: Please run 'az login' to setup account."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+        with pytest.raises(ClientAuthenticationError, match=output):
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
+
+
+@pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
+@pytest.mark.asyncio
+async def test_parsing_error_does_not_expose_token(output):
+    """Errors during CLI output parsing shouldn't expose access tokens in that output"""
+
+    with mock.patch(CHECK_OUTPUT, mock.Mock(return_value=output)):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
+
+    assert "secret value" not in str(ex.value)
+    assert "secret value" not in repr(ex.value)
+
+
+@pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
+@pytest.mark.asyncio
+async def test_subprocess_error_does_not_expose_token(output):
+    """Errors from the subprocess shouldn't expose access tokens in CLI output"""
+
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output=output)):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            credential = AzureCliCredential()
+            await credential.get_token("scope")
+
+    assert "secret value" not in str(ex.value)
+    assert "secret value" not in repr(ex.value)
