@@ -24,10 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import json
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
 
 from azure.core.exceptions import DecodeError
 from azure.core.polling import PollingMethod
@@ -193,7 +189,8 @@ class OperationResourcePolling(LongRunningOperation):
 
         :rtype: bool
         """
-        return (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.request.method == 'POST') or self.request.method in {'PUT', 'PATCH'}
+        return (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.request.method == 'POST') or \
+            self.request.method in {'PUT', 'PATCH'}
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
@@ -351,7 +348,9 @@ class LROBasePolling(PollingMethod):
         ]
 
         self._timeout = timeout
+        self._client = None  # Will hold the Pipelineclient
         self._operation = None # Will hold an instance of LongRunningOperation
+        self._initial_response = None  # Will hold the initial response
         self._pipeline_response = None  # Will hold latest received response
         self._deserialization_callback = None  # Will hold the deserialization callback
         self._resource = None  # Will hold the final resource
@@ -378,6 +377,10 @@ class LROBasePolling(PollingMethod):
         """
         return self._resource
 
+    @property
+    def _transport(self):
+        return self._client._pipeline._transport  # pylint: disable=protected-access
+
     def initialize(self, client, initial_response, deserialization_callback):
         """Set the initial status of this LRO.
 
@@ -385,7 +388,6 @@ class LROBasePolling(PollingMethod):
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
         self._client = client
-        self._transport = self._client._pipeline._transport
         self._pipeline_response = self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
@@ -488,6 +490,9 @@ class LROBasePolling(PollingMethod):
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
+    def _get_request_id(self):
+        return self._pipeline_response.http_response.request.headers['x-ms-client-request-id']
+
     def request_status(self, status_link):
         """Do a simple GET to this status link.
 
@@ -498,5 +503,5 @@ class LROBasePolling(PollingMethod):
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if 'request_id' not in self._operation_config:
-            self._operation_config['request_id'] = self._pipeline_response.http_response.request.headers['x-ms-client-request-id']
-        return self._client._pipeline.run(request, stream=False, **self._operation_config)
+            self._operation_config['request_id'] = self._get_request_id()
+        return self._client._pipeline.run(request, stream=False, **self._operation_config)  # pylint: disable=protected-access

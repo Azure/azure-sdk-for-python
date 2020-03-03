@@ -115,5 +115,5 @@ class AsyncLROBasePolling(LROBasePolling):
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if 'request_id' not in self._operation_config:
-            self._operation_config['request_id'] = self._pipeline_response.http_response.request.headers['x-ms-client-request-id']
-        return (await self._client._pipeline.run(request, stream=False, **self._operation_config))
+            self._operation_config['request_id'] = self._get_request_id()
+        return await self._client._pipeline.run(request, stream=False, **self._operation_config)  # pylint: disable=protected-access
