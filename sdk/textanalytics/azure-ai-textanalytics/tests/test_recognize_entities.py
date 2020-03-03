@@ -160,6 +160,21 @@ class TestRecognizeEntities(TextAnalyticsTest):
             response = text_analytics.recognize_entities(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
+    def test_out_of_order_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
+
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "22", "text": ""},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        response = text_analytics.recognize_entities(docs)
+        in_order = ["56", "0", "22", "19", "1"]
+        for idx, resp in enumerate(response):
+            self.assertEqual(resp.id, in_order[idx])
+
+    @GlobalTextAnalyticsAccountPreparer()
     def test_show_stats_and_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
