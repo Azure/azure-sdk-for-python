@@ -55,8 +55,8 @@ from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
 exporter = ConsoleSpanExporter()
 
 trace.set_preferred_tracer_implementation(lambda T: TracerSource())
-tracer = trace.tracer_source()
-tracer.add_span_processor(
+tracer = trace.get_tracer(__name__)
+tracer.tracer_source().add_span_processor(
     SimpleExportSpanProcessor(exporter)
 )
 
