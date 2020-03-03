@@ -5,10 +5,9 @@ packaging
 tox
 tox-monorepo
 twine
-importlib-resources==1.0.2
-pathlib
+pathlib2
 readme-renderer[md]
-doc-warden==0.5.0
+doc-warden==0.5.3
 coverage==4.5.4
 codecov
 beautifulsoup4
