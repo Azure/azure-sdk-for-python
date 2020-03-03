@@ -1,6 +1,10 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.4.0b1 (Unreleased)
+- Added `AzureCliCredential`, which authenticates with the identity logged in
+to the Azure CLI. This credential is part of `DefaultAzureCredential` by
+default, but can be excluded with a keyword argument:
+`DefaultAzureCredential(exclude_cli_credential=True)`
 
 
 ## 1.3.0 (2020-02-11)
