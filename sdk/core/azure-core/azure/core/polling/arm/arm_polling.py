@@ -44,7 +44,6 @@ class BodyContentPolling(LongRunningOperation):
     """
 
     def __init__(self):
-        self.status = None
         self.initial_response = None
 
     def can_poll(self, pipeline_response):
@@ -66,9 +65,8 @@ class BodyContentPolling(LongRunningOperation):
         return False
 
     def set_initial_status(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> None
-        """Process first response after initiating long running
-        operation and set self.status attribute.
+        # type: (azure.core.pipeline.PipelineResponse) -> str
+        """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
@@ -77,17 +75,17 @@ class BodyContentPolling(LongRunningOperation):
         _raise_if_bad_http_status_and_method(response)
 
         if response.status_code == 202:
-            self.status = "InProgress"
-        elif response.status_code == 201:
+            return "InProgress"
+        if response.status_code == 201:
             status = self._get_provisioning_state(response)
-            self.status = status or "InProgress"
-        elif response.status_code == 200:
+            return status or "InProgress"
+        if response.status_code == 200:
             status = self._get_provisioning_state(response)
-            self.status = status or "Succeeded"
-        elif response.status_code == 204:
-            self.status = "Succeeded"
-        else:
-            raise OperationFailed("Invalid status found")
+            return status or "Succeeded"
+        if response.status_code == 204:
+            return "Succeeded"
+
+        raise OperationFailed("Invalid status found")
 
     def _get_provisioning_state(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
@@ -102,7 +100,7 @@ class BodyContentPolling(LongRunningOperation):
         return body.get("properties", {}).get("provisioningState")
 
     def get_status(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> None
+        # type: (azure.core.pipeline.PipelineResponse) -> str
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
@@ -117,7 +115,7 @@ class BodyContentPolling(LongRunningOperation):
             )
 
         status = self._get_provisioning_state(response)
-        self.status = status or "Succeeded"
+        return status or "Succeeded"
 
 
 class ARMPolling(LROBasePolling):

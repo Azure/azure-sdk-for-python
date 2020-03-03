@@ -68,7 +68,7 @@ class AsyncLROBasePolling(LROBasePolling):
             await self._delay()
             await self.update_status()
 
-        if failed(self._operation.status):
+        if failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         elif self._operation.should_do_final_get():
@@ -102,7 +102,7 @@ class AsyncLROBasePolling(LROBasePolling):
         """Update the current status of the LRO.
         """
         self._pipeline_response = await self.request_status(self._operation.get_polling_url())
-        self._operation.get_status(self._pipeline_response)
+        self._status = self._operation.get_status(self._pipeline_response)
 
     async def request_status(self, status_link):
         """Do a simple GET to this status link.
