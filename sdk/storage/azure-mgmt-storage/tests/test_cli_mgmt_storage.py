@@ -22,7 +22,7 @@ import datetime as dt
 import unittest
 
 import azure.mgmt.storage
-import azure.mgmt.network
+# import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'westeurope'
@@ -47,9 +47,9 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.storage.StorageManagementClient
         )
-        self.network_client = self.create_mgmt_client(
-          azure.mgmt.network.NetworkManagementClient
-        )
+        # self.network_client = self.create_mgmt_client(
+        #   azure.mgmt.network.NetworkManagementClient
+        # )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_storage(self, resource_group):
