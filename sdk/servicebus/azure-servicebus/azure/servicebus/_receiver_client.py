@@ -186,6 +186,17 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
 
         return wrapped_batch
 
+    def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
+        message = {
+            'disposition-status': settlement,
+            'lock-tokens': types.AMQPArray(lock_tokens)}
+        if dead_letter_details:
+            message.update(dead_letter_details)
+        return self._mgmt_request_response(
+            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+            message,
+            mgmt_handlers.default)
+
     def close(self, exception=None):
         if not self._running:
             return
@@ -218,17 +229,6 @@ class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
             timeout=timeout,
             require_timeout=True
         )
-
-    def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
-        message = {
-            'disposition-status': settlement,
-            'lock-tokens': types.AMQPArray(lock_tokens)}
-        if dead_letter_details:
-            message.update(dead_letter_details)
-        return self._mgmt_request_response(
-            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
-            message,
-            mgmt_handlers.default)
 
     def receive_deferred_messages(self, sequence_numbers):
         # type: (List[int]) -> List[DeferredMessage]
