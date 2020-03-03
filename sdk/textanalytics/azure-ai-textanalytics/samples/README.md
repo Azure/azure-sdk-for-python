@@ -1,17 +1,18 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
   - azure-ai-textanalytics
+urlFragment: 
 ---
 
 # Samples for Azure Text Analytics client library for Python
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations 
-with Text Analytics and require Python 3.5 or later. 
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
+with Text Analytics and require Python 3.5 or later.
 
 Authenticate the client with a Cognitive Services/Text Analytics subscription key or a token credential from [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity):
 * [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py))
