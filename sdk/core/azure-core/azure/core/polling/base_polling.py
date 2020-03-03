@@ -35,8 +35,6 @@ FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
 FAILED = frozenset(['canceled', 'failed'])
 SUCCEEDED = frozenset(['succeeded'])
 
-_AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
-_LOCATION_FINAL_STATE = "location"
 
 def finished(status):
     if hasattr(status, 'value'):
@@ -158,20 +156,13 @@ class LongRunningOperation(object):
 class OperationResourcePolling(LongRunningOperation):
     """Implements a operation resource polling, typically from Operation-Location.
     """
-    def __init__(self, header="Operation-Location", lro_options=None):
+    def __init__(self, header="Operation-Location"):
         self._header = header
 
         # Store the initial URLs
         self.async_url = None
         self.location_url = None
         self.request = None
-
-        if lro_options is None:
-            lro_options = {
-                'final-state-via': _AZURE_ASYNC_OPERATION_FINAL_STATE
-            }
-        self.lro_options = lro_options
-
 
     def can_poll(self, pipeline_response):
         """Answer if this polling method could be used.
@@ -189,8 +180,7 @@ class OperationResourcePolling(LongRunningOperation):
 
         :rtype: bool
         """
-        return (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.request.method == 'POST') or \
-            self.request.method in {'PUT', 'PATCH'}
+        return self.request.method in {'PUT', 'PATCH', 'POST'}
 
     def set_initial_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
@@ -342,7 +332,7 @@ class LROBasePolling(PollingMethod):
 
     def __init__(self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config):
         self._lro_algorithms = lro_algorithms or [
-            OperationResourcePolling(lro_options=lro_options),
+            OperationResourcePolling(),
             LocationPolling(),
             StatusCheckPolling(),
         ]

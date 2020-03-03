@@ -36,6 +36,31 @@ from azure.core.polling.base_polling import (
 )
 
 
+_AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
+_LOCATION_FINAL_STATE = "location"
+
+
+class AzureAsyncOperationPolling(OperationResourcePolling):
+    """Implements a operation resource polling, typically from Azure-AsyncOperation.
+    """
+    def __init__(self, lro_options=None):
+        super(AzureAsyncOperationPolling, self).__init__(header="azure-asyncoperation")
+
+        if lro_options is None:
+            lro_options = {
+                'final-state-via': _AZURE_ASYNC_OPERATION_FINAL_STATE
+            }
+        self.lro_options = lro_options
+
+    def should_do_final_get(self):
+        """Check whether the polling should end doing a final GET.
+
+        :rtype: bool
+        """
+        return (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.request.method == 'POST') or \
+            self.request.method in {'PUT', 'PATCH'}
+
+
 class BodyContentPolling(LongRunningOperation):
     """Poll based on the body content.
 
@@ -120,9 +145,7 @@ class ARMPolling(LROBasePolling):
         self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config
     ):
         lro_algorithms = lro_algorithms or [
-            OperationResourcePolling(
-                lro_options=lro_options, header="Azure-AsyncOperation"
-            ),
+            AzureAsyncOperationPolling(lro_options=lro_options),
             LocationPolling(),
             BodyContentPolling(),
             StatusCheckPolling(),
