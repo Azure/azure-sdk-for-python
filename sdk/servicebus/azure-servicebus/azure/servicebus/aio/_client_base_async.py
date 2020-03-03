@@ -8,15 +8,18 @@ import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
+import uamqp
 from uamqp import (
     authentication,
     constants,
     errors,
 )
+from uamqp.message import MessageProperties
 
 from .._client_base import ClientBase, _generate_sas_token
 from ..common.constants import JWT_TOKEN_SCOPE
 from ..common.errors import (
+    InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError
@@ -68,7 +71,7 @@ class ClientBaseAsync(ClientBase):
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _create_auth_async(self):
+    async def _create_auth(self):
         try:
             # ignore mypy's warning because token_type is Optional
             token_type = self._credential.token_type    # type: ignore
@@ -96,18 +99,18 @@ class ClientBaseAsync(ClientBase):
             transport_type=self._config.transport_type,
         )
 
-    async def _reconnect_async(self):
+    async def _reconnect(self):
         if self._handler:
             await self._handler.close_async()
             self._handler = None
         self._running = False
-        await self._open_async()
+        await self._open()
 
-    async def _handle_exception_async(self, exception):
+    async def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
             if exception.action and exception.action.retry and self._config.auto_reconnect:
                 _LOGGER.info("Handler detached. Attempting reconnect.")
-                await self._reconnect_async()
+                await self._reconnect()
             elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
                 _LOGGER.info("Handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
@@ -121,7 +124,7 @@ class ClientBaseAsync(ClientBase):
         elif isinstance(exception, errors.MessageHandlerError):
             if self._config.auto_reconnect:
                 _LOGGER.info("Handler error. Attempting reconnect.")
-                await self._reconnect_async()
+                await self._reconnect()
             else:
                 _LOGGER.info("Handler error. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
@@ -163,7 +166,7 @@ class ClientBaseAsync(ClientBase):
             )
             raise last_exception
 
-    async def _do_retryable_operation_async(self, operation, timeout=None, **kwargs):
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         require_last_exception = kwargs.pop("require_last_exception", False)
         require_timeout = kwargs.pop("require_timeout", False)
         retried_times = 0
@@ -192,6 +195,27 @@ class ClientBaseAsync(ClientBase):
             last_exception,
         )
         raise last_exception
+
+    async def _mgmt_request_response(self, operation, message, callback, **kwargs):
+        if not self._running:
+            raise InvalidHandlerState("Client connection is closed.")
+
+        mgmt_msg = uamqp.Message(
+            body=message,
+            properties=MessageProperties(
+                reply_to=self._mgmt_target,
+                encoding=self._config.encoding,
+                **kwargs))
+        try:
+            return await self._handler.mgmt_request_async(
+                mgmt_msg,
+                operation,
+                op_type=b"entity-mgmt",
+                node=self._mgmt_target.encode(self._config.encoding),
+                timeout=5000,
+                callback=callback)
+        except Exception as exp:  # pylint: disable=broad-except
+            raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):

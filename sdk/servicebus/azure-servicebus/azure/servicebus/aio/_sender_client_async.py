@@ -64,36 +64,36 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
             encoding=self._config.encoding
         )
 
-    async def _open_async(self):
+    async def _open(self):
         if self._running:
             return
         if self._handler:
             await self._handler.close_async()
         try:
-            auth = await self._create_auth_async()
+            auth = await self._create_auth()
             self._create_handler(auth)
             await self._handler.open_async()
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
         except Exception as e:  # pylint: disable=broad-except
             try:
-                await self._handle_exception_async(e)
+                await self._handle_exception(e)
             except Exception:
                 self._running = False
                 raise
         self._running = True
 
-    async def _reconnect_async(self):
+    async def _reconnect(self):
         unsent_events = self._handler.pending_messages
-        await super(ServiceBusSenderClient, self)._reconnect_async()
+        await super(ServiceBusSenderClient, self)._reconnect()
         try:
             self._handler.queue_message(*unsent_events)
             await self._handler.wait_async()
         except Exception as e:  # pylint: disable=broad-except
-            await self._handle_exception_async(e)
+            await self._handle_exception(e)
 
-    async def _send_async(self, message, session_id=None, timeout=None, last_exception=None):
-        await self._open_async()
+    async def _send(self, message, session_id=None, timeout=None, last_exception=None):
+        await self._open()
         self._set_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
@@ -116,8 +116,8 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
 
     async def send(self, message, session_id=None, message_timeout=None):
         # type: (Message, str, float) -> None
-        await self._do_retryable_operation_async(
-            self._send_async,
+        await self._do_retryable_operation(
+            self._send,
             message=message,
             session_id=session_id,
             timeout=message_timeout,
