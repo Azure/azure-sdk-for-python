@@ -148,8 +148,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                 if absolute_timeout <= 0:
                     if is_response_error:
                         raise ServiceResponseTimeoutError('Response timeout')
-                    else:
-                        raise ServiceRequestTimeoutError('Request timeout')
+                    raise ServiceRequestTimeoutError('Request timeout')
                 connection_timeout = request.context.options.get('connection_timeout')
                 if connection_timeout:
                     req_timeout = min(connection_timeout, absolute_timeout)
