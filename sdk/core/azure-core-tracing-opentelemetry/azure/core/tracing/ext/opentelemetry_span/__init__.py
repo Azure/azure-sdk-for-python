@@ -4,8 +4,9 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
 
+from opentelemetry import trace
 from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
-from opentelemetry.context import Context
+from opentelemetry.context import with_current_context
 from opentelemetry.propagators import extract, inject
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
@@ -208,7 +209,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
-        return Tracer.get_tracer()
+        return trace.get_tracer(__name__, __version__)
 
     @classmethod
     def change_context(cls, span):
@@ -244,4 +245,4 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param func: The function that will be run in the new context
         :return: The target the pass in instead of the function
         """
-        return Context.with_current_context(func)
+        return with_current_context(func)
