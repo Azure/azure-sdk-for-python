@@ -2,61 +2,31 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import json
-import time
-from datetime import datetime
-
-import asyncio
-from subprocess import Popen, PIPE
-
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
+from .._credentials.base import AsyncCredentialBase
+from ..._credentials import AzureCliCredential as _SyncAzureCliCredential
 
 
-class AzureCliCredential(object):
+class AzureCliCredential(AsyncCredentialBase):
+    """Authenticates by requesting a token from the Azure CLI.
 
-    _DEFAULT_PREFIX = "/.default"
-    _CLI_NOT_INSTALLED_ERR = "Azure CLI not installed"
-    _CLI_LOGIN_ERR = "ERROR: Please run 'az login' to setup account.\r\n"
+    This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+    """
 
-    async def get_token(self, *scopes, **kwargs): # pylint:disable=unused-argument
-        command = 'az account get-access-token'
-        
-        if scopes:
-            resource = scopes[0]
-            if resource.endswith(self._DEFAULT_PREFIX):
-                resource = resource[:-len(self._DEFAULT_PREFIX)]
+    async def get_token(self, *scopes, **kwargs):
+        """Request an access token for `scopes`.
 
-            command = ' '.join([command, '--resource', resource])
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        try:
-            get_access_token_stdout = await self._get_cli_access_token(command)
-            get_access_token_object = json.loads(get_access_token_stdout)
-            access_token = get_access_token_object['accessToken']
-        except ClientAuthenticationError:
-            raise
-        except Exception as e:
-            raise ClientAuthenticationError("Azure CLI didn't provide an access token")
-        
-        expires_on = int((
-            datetime.strptime(get_access_token_object['expiresOn'], '%Y-%m-%d %H:%M:%S.%f')
-                - datetime.now()
-            ).total_seconds() + time.time())
+        Only one scope is supported per request. This credential won't cache tokens. Every call invokes the Azure CLI.
 
-        return AccessToken(access_token, expires_on)
+        :param str scopes: desired scopes for the token. Only **one** scope is supported per call.
+        :rtype: :class:`azure.core.credentials.AccessToken`
 
-    async def _get_cli_access_token(self, command):
-        _proc = await asyncio.create_subprocess_shell(
-            command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            timeout=10)
-            
-        stdout, stderr = await _proc.communicate()
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
+          receive an access token.
+        """
+        return _SyncAzureCliCredential().get_token(*scopes, **kwargs)
 
-        if _proc.returncode == 127 or (_proc.returncode == 1 and 'not recognized as' in stderr):
-            raise ClientAuthenticationError(self._CLI_NOT_INSTALLED_ERR)
-        elif _proc.returncode == 1:
-            raise ClientAuthenticationError(self._CLI_LOGIN_ERR)
-
-        return stdout
+    async def close(self):
+        return
