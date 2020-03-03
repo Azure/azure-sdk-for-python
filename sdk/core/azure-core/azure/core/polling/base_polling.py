@@ -352,87 +352,6 @@ class LocationPolling(LongRunningOperation):
             self.status = 'Succeeded'
 
 
-class BodyContentPolling(LongRunningOperation):
-    """Poll based on the body content.
-
-    Implement a ARM resource poller (using provisioning state).
-    """
-    def __init__(self):
-        self.status = None
-        self.initial_response = None
-
-    def can_poll(self, pipeline_response):
-        """Answer if this polling method could be used.
-        """
-        response = pipeline_response.http_response
-        return response.request.method == "PUT"
-
-    def get_polling_url(self):
-        """Return the polling URL.
-        """
-        return self.initial_response.http_response.request.url
-
-    def should_do_final_get(self):
-        """Check whether the polling should end doing a final GET.
-
-        :rtype: bool
-        """
-        return False
-
-    def set_initial_status(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> None
-        """Process first response after initiating long running
-        operation and set self.status attribute.
-
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
-        """
-        self.initial_response = pipeline_response
-        response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
-
-        if response.status_code == 202:
-            self.status = 'InProgress'
-        elif response.status_code == 201:
-            status = self._get_provisioning_state(response)
-            self.status = status or 'InProgress'
-        elif response.status_code == 200:
-            status = self._get_provisioning_state(response)
-            self.status = status or 'Succeeded'
-        elif response.status_code == 204:
-            self.status = 'Succeeded'
-        else:
-            raise OperationFailed("Invalid status found")
-
-    def _get_provisioning_state(self, response):
-        # type: (azure.core.pipeline.transport.HttpResponse) -> None
-        """
-        Attempt to get provisioning state from resource.
-        :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
-        :returns: Status if found, else 'None'.
-        """
-        if _is_empty(response):
-            return None
-        body = _as_json(response)
-        return body.get("properties", {}).get("provisioningState")
-
-    def get_status(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> None
-        """Process the latest status update retrieved from the same URL as
-        the previous request.
-
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
-        :raises: BadResponse if status not 200 or 204.
-        """
-        response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
-        if _is_empty(response):
-            raise BadResponse('The response from long running operation '
-                              'does not contain a body.')
-
-        status = self._get_provisioning_state(response)
-        self.status = status or 'Succeeded'
-
-
 class StatusCheckPolling(LongRunningOperation):
     """Should be the fallback polling, that don't poll but exit successfully
     if not other polling are detected and status code is 2xx.
@@ -486,9 +405,7 @@ class LROBasePolling(PollingMethod):
     def __init__(self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config):
         self._lro_algorithms = lro_algorithms or [
             OperationResourcePolling(lro_options=lro_options),
-            OperationResourcePolling(lro_options=lro_options, header="Azure-AsyncOperation"),  # azure-mgmt-core (for sake of PR validation)
             LocationPolling(),
-            BodyContentPolling(),  # azure-mgmt-core (for sake of PR validation)
             StatusCheckPolling(),
         ]
 
