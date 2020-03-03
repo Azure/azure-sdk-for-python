@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from .auth_file import AuthFileCredential
 from .authorization_code import AuthorizationCodeCredential
 from .chained import ChainedTokenCredential
 from .default import DefaultAzureCredential
@@ -12,6 +13,7 @@ from .shared_cache import SharedTokenCacheCredential
 
 
 __all__ = [
+    "AuthFileCredential",
     "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
