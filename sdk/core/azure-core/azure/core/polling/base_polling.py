@@ -353,7 +353,6 @@ class LROBasePolling(PollingMethod):
         self._initial_response = None  # Will hold the initial response
         self._pipeline_response = None  # Will hold latest received response
         self._deserialization_callback = None  # Will hold the deserialization callback
-        self._resource = None  # Will hold the final resource
         self._operation_config = operation_config
         self._lro_options = lro_options
         self._status = None
@@ -375,7 +374,7 @@ class LROBasePolling(PollingMethod):
     def resource(self):
         """Return the built resource.
         """
-        return self._resource
+        return self._parse_resource(self._pipeline_response)
 
     @property
     def _transport(self):
@@ -401,8 +400,6 @@ class LROBasePolling(PollingMethod):
         try:
             _raise_if_bad_http_status_and_method(self._initial_response.http_response)
             self._status = self._operation.set_initial_status(initial_response)
-            if self.finished():
-                self._parse_resource(self._pipeline_response)
 
         except BadStatus as err:
             self._status = 'Failed'
@@ -455,18 +452,16 @@ class LROBasePolling(PollingMethod):
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-        self._parse_resource(self._pipeline_response)
-
     def _parse_resource(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> None
+        # type: (azure.core.pipeline.PipelineResponse) -> Optional[Any]
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
         """
         response = pipeline_response.http_response
         if not _is_empty(response):
-            self._resource = self._deserialization_callback(pipeline_response)
+            return self._deserialization_callback(pipeline_response)
         else:
-            self._resource = None
+            return None
 
     def _sleep(self, delay):
         self._transport.sleep(delay)
