@@ -91,6 +91,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = text_analytics.analyze_sentiment(docs)
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
+        self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
