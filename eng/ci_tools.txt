@@ -7,7 +7,7 @@ tox-monorepo
 twine
 pathlib2
 readme-renderer[md]
-doc-warden==0.5.2
+doc-warden==0.5.3
 coverage==4.5.4
 codecov
 beautifulsoup4
