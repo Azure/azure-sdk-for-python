@@ -203,7 +203,6 @@ class OperationResourcePolling(LongRunningOperation):
         """
         self.request = pipeline_response.http_response.request
         response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
 
         self._set_async_url_if_present(response)
 
@@ -230,7 +229,6 @@ class OperationResourcePolling(LongRunningOperation):
         :raises: BadResponse if response has no body, or body does not contain status.
         """
         response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
         if _is_empty(response):
             raise BadResponse('The response from long running operation does not contain a body.')
 
@@ -273,7 +271,6 @@ class LocationPolling(LongRunningOperation):
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
         response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
 
         self.location_url = response.headers['location']
 
@@ -290,8 +287,6 @@ class LocationPolling(LongRunningOperation):
         :raises: BadResponse if response has no body and not status 202.
         """
         response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
-
         if 'location' in response.headers:
             self.location_url = response.headers['location']
 
@@ -324,14 +319,10 @@ class StatusCheckPolling(LongRunningOperation):
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
-        response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
         return 'Succeeded'
 
     def get_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
-        response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
         return 'Succeeded'
 
     def should_do_final_get(self):
@@ -406,6 +397,7 @@ class LROBasePolling(PollingMethod):
             raise BadResponse("Unable to find status link for polling.")
 
         try:
+            _raise_if_bad_http_status_and_method(self._initial_response.http_response)
             self._status = self._operation.set_initial_status(initial_response)
             if self.finished():
                 self._parse_resource(self._pipeline_response)
@@ -493,6 +485,7 @@ class LROBasePolling(PollingMethod):
         """Update the current status of the LRO.
         """
         self._pipeline_response = self.request_status(self._operation.get_polling_url())
+        _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
     def request_status(self, status_link):

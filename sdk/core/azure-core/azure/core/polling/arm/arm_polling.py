@@ -33,7 +33,6 @@ from azure.core.polling.base_polling import (
     StatusCheckPolling,
     _as_json,
     _is_empty,
-    _raise_if_bad_http_status_and_method
 )
 
 
@@ -72,7 +71,6 @@ class BodyContentPolling(LongRunningOperation):
         """
         self.initial_response = pipeline_response
         response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
 
         if response.status_code == 202:
             return "InProgress"
@@ -108,10 +106,9 @@ class BodyContentPolling(LongRunningOperation):
         :raises: BadResponse if status not 200 or 204.
         """
         response = pipeline_response.http_response
-        _raise_if_bad_http_status_and_method(response)
         if _is_empty(response):
             raise BadResponse(
-                "The response from long running operation " "does not contain a body."
+                "The response from long running operation does not contain a body."
             )
 
         status = self._get_provisioning_state(response)

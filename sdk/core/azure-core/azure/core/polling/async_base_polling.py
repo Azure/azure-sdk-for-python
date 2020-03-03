@@ -102,6 +102,7 @@ class AsyncLROBasePolling(LROBasePolling):
         """Update the current status of the LRO.
         """
         self._pipeline_response = await self.request_status(self._operation.get_polling_url())
+        _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
     async def request_status(self, status_link):
