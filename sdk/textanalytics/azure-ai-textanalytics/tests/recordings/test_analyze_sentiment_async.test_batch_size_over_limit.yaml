@@ -747,32 +747,24 @@ interactions:
       "language": "en"}, {"id": "1048", "text": "hello world", "language": "en"},
       {"id": "1049", "text": "hello world", "language": "en"}]}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '58755'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Content-Length: ['58755']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
   response:
-    body:
-      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
-        request contains too many records. Max 1000 records are permitted."}}}'
-    headers:
-      apim-request-id: 17647076-8430-4015-abce-3961ebd0c83f
-      content-type: application/json; charset=utf-8
-      date: Mon, 02 Mar 2020 19:30:55 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
-    status:
-      code: 400
-      message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    body: {string: '{"error":{"code":"InvalidRequest","message":"Invalid document
+        in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 1000 records are permitted."}}}'}
+    headers: {apim-request-id: 343bfb6e-f2d6-43b0-8e3e-26ff1c16ba91, content-type: application/json;
+        charset=utf-8, date: 'Tue, 03 Mar 2020 18:33:25 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '9'}
+    status: {code: 400, message: Bad Request}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/sentiment, showStats=false, '']
 version: 1

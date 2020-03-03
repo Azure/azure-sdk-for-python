@@ -6,32 +6,23 @@ interactions:
       "The restaurant had really good food. I recommend you try it.", "language":
       "en"}]}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '315'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Content-Length: ['315']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.22,"negative":0.77},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23}]}],"errors":[],"modelVersion":"2019-10-01"}'
-    headers:
-      apim-request-id: 06b5cf9a-4e9e-471c-8941-5fc9ff2fa354
-      content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 02 Mar 2020 19:30:55 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '75'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    body: {string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51}]},{"id":"2","sentiment":"negative","documentScores":{"positive":0.01,"neutral":0.22,"negative":0.77},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.01,"neutral":0.45,"negative":0.54},"offset":0,"length":38},{"sentiment":"negative","sentenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":39,"length":21}]},{"id":"3","sentiment":"positive","documentScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23}]}],"errors":[],"modelVersion":"2019-10-01"}'}
+    headers: {apim-request-id: 114d270f-005f-486a-a260-275dfa944126, content-type: application/json;
+        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
+      date: 'Tue, 03 Mar 2020 18:33:24 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '65'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/sentiment, showStats=false, '']
 version: 1

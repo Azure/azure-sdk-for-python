@@ -5,141 +5,89 @@ interactions:
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '240'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
   response:
-    body:
-      string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+    body: {string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
-        language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'
+        language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'}
     headers:
-      apim-request-id:
-      - 0792df87-8290-4de1-bd34-b5e7cd9088db
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 02 Mar 2020 19:31:29 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '2'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [df76455f-951e-42df-b3dd-c66a8cdeafd4]
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 03 Mar 2020 18:34:09 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['2']
+    status: {code: 200, message: OK}
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '240'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+    body: {string: '{"documents":[{"id":"1","entities":[]},{"id":"2","entities":[]},{"id":"3","entities":[]}],"errors":[],"modelVersion":"2020-02-01"}'}
     headers:
-      apim-request-id:
-      - 4e749c7f-d499-483c-9397-eaaaae7381c7
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
-      date:
-      - Mon, 02 Mar 2020 19:31:30 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '20'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [42f5cf72-0299-4ddb-a065-097febe5f7dc]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=3]
+      date: ['Tue, 03 Mar 2020 18:34:09 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['22']
+    status: {code: 200, message: OK}
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "es"}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '240'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
   response:
-    body:
-      string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+    body: {string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
         language not supported. Pass in one of: en"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
-        language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'
+        language not supported. Pass in one of: en"}}}],"modelVersion":"2020-02-01"}'}
     headers:
-      apim-request-id:
-      - b2bbbffb-1956-48be-9a06-30fe2837dd1e
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 02 Mar 2020 19:31:30 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '2'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [b974f434-595d-4be2-98df-0e7917ac3d96]
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 03 Mar 2020 18:34:10 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['2']
+    status: {code: 200, message: OK}
 version: 1

@@ -5,96 +5,71 @@ interactions:
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '249'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Content-Length: ['249']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
-    headers:
-      apim-request-id: d413634b-4609-4f40-91bb-e4f5a5b07d30
-      content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 02 Mar 2020 19:31:06 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+    body: {string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'}
+    headers: {apim-request-id: 4547cfaf-c883-46d2-82fd-35440e600b11, content-type: application/json;
+        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
+      date: 'Tue, 03 Mar 2020 18:33:39 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '6'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/languages, showStats=false, '']
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
       "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '249'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Content-Length: ['249']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
-        key or wrong API endpoint. Make sure to provide a valid key for an active
-        subscription and use a correct regional API endpoint for your resource."}}'
-    headers:
-      content-length: '224'
-      date: Mon, 02 Mar 2020 19:31:06 GMT
-    status:
-      code: 401
-      message: PermissionDenied
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+    body: {string: '{"error":{"code":"401","message":"Access denied due to invalid
+        subscription key or wrong API endpoint. Make sure to provide a valid key for
+        an active subscription and use a correct regional API endpoint for your resource."}}'}
+    headers: {content-length: '224', date: 'Tue, 03 Mar 2020 18:33:39 GMT'}
+    status: {code: 401, message: PermissionDenied}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/languages, showStats=false, '']
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
       "US"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
       "US"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
       "US"}]}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '249'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Content-Length: ['249']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
-    headers:
-      apim-request-id: f7e3faa5-78cc-4787-8f6e-3816e33e6d88
-      content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 02 Mar 2020 19:31:06 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+    body: {string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'}
+    headers: {apim-request-id: 057b80d8-8dcd-4cfd-aa00-d6ae8be4fab1, content-type: application/json;
+        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
+      date: 'Tue, 03 Mar 2020 18:33:39 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '5'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/languages, showStats=false, '']
 version: 1

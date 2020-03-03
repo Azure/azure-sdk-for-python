@@ -5,34 +5,25 @@ interactions:
       "es"}, {"id": "3", "text": "The restaurant had really good food.", "language":
       "en"}]}'
     headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '240'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Content-Length: ['240']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
+    body: {string: '{"documents":[{"id":"1","keyPhrases":["the park","I will go"]},{"id":"2","keyPhrases":["I
         did not like the hotel we stayed at"]},{"id":"3","keyPhrases":["restaurant","good
-        food"]}],"errors":[],"modelVersion":"2019-10-01"}'
-    headers:
-      apim-request-id: 0973c94f-08ae-4a12-aec0-191499b3fd5b
-      content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Mon, 02 Mar 2020 19:31:13 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+        food"]}],"errors":[],"modelVersion":"2019-10-01"}'}
+    headers: {apim-request-id: 1ba763d4-df03-482e-a72f-85d6a0954eb9, content-type: application/json;
+        charset=utf-8, csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,
+      date: 'Tue, 03 Mar 2020 18:33:49 GMT', strict-transport-security: max-age=31536000;
+        includeSubDomains; preload, transfer-encoding: chunked, x-content-type-options: nosniff,
+      x-envoy-upstream-service-time: '5'}
+    status: {code: 200, message: OK}
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult [https, westus2.api.cognitive.microsoft.com,
+        //text/analytics/v3.0-preview.1/keyPhrases, showStats=false, '']
 version: 1

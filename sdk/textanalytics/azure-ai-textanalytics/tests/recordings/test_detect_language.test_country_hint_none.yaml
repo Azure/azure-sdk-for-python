@@ -3,172 +3,100 @@ interactions:
     body: '{"documents": [{"id": "0", "text": "This is written in English.", "countryHint":
       ""}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '86'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['86']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    body: {string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'}
     headers:
-      apim-request-id:
-      - 3d297d40-8d89-48ca-a71b-7a5602a47f37
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
-      date:
-      - Mon, 02 Mar 2020 19:31:01 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [6f8af9d6-5399-4f06-ba48-ea63879fbeb8]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=1]
+      date: ['Tue, 03 Mar 2020 18:33:32 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['3']
+    status: {code: 200, message: OK}
 - request:
     body: '{"documents": [{"id": "1", "text": "This is written in English.", "countryHint":
       ""}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '86'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['86']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    body: {string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'}
     headers:
-      apim-request-id:
-      - 147542dd-2b30-4b41-904e-eba2be75272f
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
-      date:
-      - Mon, 02 Mar 2020 19:31:01 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [1e3448d4-bb73-43cf-9d95-d709c57af30e]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=1]
+      date: ['Tue, 03 Mar 2020 18:33:32 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['3']
+    status: {code: 200, message: OK}
 - request:
     body: '{"documents": [{"id": "0", "text": "this is written in english", "countryHint":
       ""}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '85'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['85']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    body: {string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'}
     headers:
-      apim-request-id:
-      - 0e5e9635-01f1-4d5c-9e2d-1cbd5bb8f29c
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
-      date:
-      - Mon, 02 Mar 2020 19:31:01 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [fc095725-4857-472f-a97c-db968374b750]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=1]
+      date: ['Tue, 03 Mar 2020 18:33:32 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['3']
+    status: {code: 200, message: OK}
 - request:
     body: '{"documents": [{"id": "0", "text": "this is written in english", "countryHint":
       ""}]}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '85'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)
-      X-BingApis-SDK-Client:
-      - Python-SDK
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['85']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [azsdk-python-azure-ai-textanalytics/1.0.0b3 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
-    body:
-      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    body: {string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"2019-10-01"}'}
     headers:
-      apim-request-id:
-      - c530a014-67bb-4206-8691-5914861fa01c
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
-      date:
-      - Mon, 02 Mar 2020 19:31:00 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3'
-    status:
-      code: 200
-      message: OK
+      apim-request-id: [9c2b367d-907c-4346-a32f-306983e5338a]
+      content-type: [application/json; charset=utf-8]
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring=1]
+      date: ['Tue, 03 Mar 2020 18:33:33 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-content-type-options: [nosniff]
+      x-envoy-upstream-service-time: ['2']
+    status: {code: 200, message: OK}
 version: 1
