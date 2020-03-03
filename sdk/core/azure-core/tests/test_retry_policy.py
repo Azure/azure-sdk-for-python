@@ -177,13 +177,13 @@ def test_retry_timeout():
             self.count += 1
             if self.count > 2:
                 assert self.count <= 2
-            time.sleep(1)
+            time.sleep(0.5)
             raise ServiceResponseError('timeout')
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
-    http_retry = RetryPolicy(retry_total=10, timeout=2)
+    http_retry = RetryPolicy(retry_total=10, timeout=1)
     pipeline = Pipeline(MockTransport(), [http_retry])
     with pytest.raises(ServiceResponseTimeoutError):
         pipeline.run(http_request)
