@@ -139,7 +139,7 @@ class ClientBaseAsync(ClientBase):
             await self.close(exception=error)
             raise error
 
-    async def _backoff_async(
+    async def _backoff(
             self,
             retried_times,
             last_exception,
@@ -181,8 +181,8 @@ class ClientBaseAsync(ClientBase):
                     kwargs["timeout"] = timeout
                 return await operation(**kwargs)
             except Exception as exception:
-                last_exception = await self._handle_exception_async(exception)
-                await self._backoff_async(
+                last_exception = await self._handle_exception(exception)
+                await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout=timeout
