@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-core/1.2.3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit) azsdk-python-searchindexclient/unknown
+      api-key:
+      - B2BD87F574B37855473F3F7BDD31B713
+    method: GET
+    uri: https://test-service-name.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06
+  response:
+    body:
+      string: "\uFEFF10"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '5'
+      content-type:
+      - text/plain
+      date:
+      - Tue, 03 Mar 2020 22:40:19 GMT
+      elapsed-time:
+      - '184'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - f57f764e-5d9f-11ea-8a9a-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

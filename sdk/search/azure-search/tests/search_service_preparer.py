@@ -24,7 +24,7 @@ from consts import SERVICE_URL, TEST_SERVICE_NAME
 class SearchServicePreparer(AzureMgmtPreparer):
     def __init__(
         self,
-        schema=None,
+        schema,
         index_batch=None,
         name_prefix="search",
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -55,8 +55,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
+        schema = json.loads(self.schema)
         if not self.is_live:
-            return
+            return {"api_key": "api-key", "index_name": schema["name"]}
 
         group_name = self._get_resource_group(**kwargs).name
 
@@ -94,22 +95,20 @@ class SearchServicePreparer(AzureMgmtPreparer):
             group_name, TEST_SERVICE_NAME
         ).primary_key
 
-        # optionally create an index in the service
-        if self.schema:
-            response = requests.post(
-                SERVICE_URL,
-                headers={"Content-Type": "application/json", "api-key": api_key},
-                data=self.schema,
+
+        response = requests.post(
+            SERVICE_URL,
+            headers={"Content-Type": "application/json", "api-key": api_key},
+            data=self.schema,
+        )
+        if response.status_code != 201:
+            raise AzureTestError(
+                "Could not create a search index {}".format(response.status_code)
             )
-            if response.status_code != 201:
-                raise AzureTestError(
-                    "Could not create a search index {}".format(response.status_code)
-                )
-            schema = json.loads(self.schema)
-            self.index_name = schema["name"]
+        self.index_name = schema["name"]
 
         # optionally load data into the index
-        if self.schema and self.index_batch:
+        if self.index_batch:
             from azure.search import SearchIndexClient, SearchApiKeyCredential
             from azure.search.index._generated.models import IndexBatch
 
