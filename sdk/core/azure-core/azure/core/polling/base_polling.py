@@ -403,10 +403,10 @@ class LROBasePolling(PollingMethod):
                 self._parse_resource(self._pipeline_response)
 
         except BadStatus as err:
-            self._operation.status = 'Failed'
+            self._status = 'Failed'
             raise HttpResponseError(response=initial_response.http_response, error=err)
         except BadResponse as err:
-            self._operation.status = 'Failed'
+            self._status = 'Failed'
             raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err)
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
@@ -415,11 +415,11 @@ class LROBasePolling(PollingMethod):
         try:
             self._poll()
         except BadStatus as err:
-            self._operation.status = 'Failed'
+            self._status = 'Failed'
             raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
-            self._operation.status = 'Failed'
+            self._status = 'Failed'
             raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
 
         except OperationFailed as err:

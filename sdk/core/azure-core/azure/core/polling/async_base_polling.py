@@ -43,11 +43,11 @@ class AsyncLROBasePolling(LROBasePolling):
         try:
             await self._poll()
         except BadStatus as err:
-            self._operation.status = 'Failed'
+            self._status = 'Failed'
             raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
-            self._operation.status = 'Failed'
+            self._status = 'Failed'
             raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
 
         except OperationFailed as err:
