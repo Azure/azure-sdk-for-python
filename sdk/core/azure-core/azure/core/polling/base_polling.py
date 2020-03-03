@@ -71,33 +71,6 @@ class BadResponse(Exception):
 class OperationFailed(Exception):
     pass
 
-def _validate(url):
-    """Validate a url.
-
-    :param str url: Polling URL extracted from response header.
-    :raises: ValueError if URL has no scheme or host.
-    """
-    if url is None:
-        return
-    parsed = urlparse(url)
-    if not parsed.scheme or not parsed.netloc:
-        raise ValueError("Invalid URL header")
-
-def get_header_url(response, header_name):
-    # type: (azure.core.pipeline.transport.HttpResponse, str) -> Optional[str]
-    """Get a URL from a header requests.
-
-    :param requests.Response response: REST call response.
-    :param str header_name: Header name.
-    :returns: URL if not None AND valid, None otherwise
-    """
-    url = response.headers.get(header_name)
-    try:
-        _validate(url)
-    except ValueError:
-        return None
-    else:
-        return url
 
 def _as_json(response):
     # type: (azure.core.pipeline.transport.HttpResponse) -> None
@@ -107,10 +80,8 @@ def _as_json(response):
 
     :raises: DecodeError if response body contains invalid json data.
     """
-    # Assume ClientResponse has "body", and otherwise it's a requests.Response
-    content = response.text() if hasattr(response, "body") else response.text
     try:
-        return json.loads(content)
+        return json.loads(response.text())
     except ValueError:
         raise DecodeError(
             "Error occurred in deserializing the response body.")
@@ -136,8 +107,7 @@ def _is_empty(response):
     :rtype: bool
     :raises: DecodeError if response body contains invalid json data.
     """
-    # Assume ClientResponse has "body", and otherwise it's a requests.Response
-    content = response.text() if hasattr(response, "body") else response.text
+    content = response.text()
     if not content:
         return True
     try:
@@ -245,25 +215,13 @@ class OperationResourcePolling(LongRunningOperation):
 
     def _set_async_url_if_present(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
-        async_url = get_header_url(response, self._header)
+        async_url = response.headers.get(self._header)
         if async_url:
             self.async_url = async_url
-        location_url = get_header_url(response, 'location')
+
+        location_url = response.headers.get('location')
         if location_url:
             self.location_url = location_url
-
-    def _get_operation_resource_status(self, response):
-        # type: (azure.core.pipeline.transport.HttpResponse) -> None
-        """Attempt to find "status" info in response body.
-
-        :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
-        :rtype: str
-        :returns: Status if found, else 'None'.
-        """
-        if _is_empty(response):
-            return None
-        body = _as_json(response)
-        return body.get('status')
 
     def get_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> None
@@ -275,19 +233,12 @@ class OperationResourcePolling(LongRunningOperation):
         response = pipeline_response.http_response
         _raise_if_bad_http_status_and_method(response)
         if _is_empty(response):
-            raise BadResponse('The response from long running operation '
-                              'does not contain a body.')
+            raise BadResponse('The response from long running operation does not contain a body.')
 
-        self.status = self._get_operation_resource_status(response)
+        body = _as_json(response)
+        self.status = body.get('status')
         if not self.status:
             raise BadResponse("No status found in body")
-
-        # Status can contains information, see ARM spec:
-        # https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#operation-resource-format
-        # "properties": {
-        # /\* The resource provider can choose the values here, but it should only be
-        #   returned on a successful operation (status being "Succeeded"). \*/
-        #},
 
 
 class LocationPolling(LongRunningOperation):
@@ -512,14 +463,6 @@ class LROBasePolling(PollingMethod):
 
         self._parse_resource(self._pipeline_response)
 
-    def _deserialize(self, pipeline_response):
-        # type: (azure.core.pipeline.PipelineResponse) -> None
-        """Attempt to deserialize resource from response.
-
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
-        """
-        return self._deserialization_callback(pipeline_response)
-
     def _parse_resource(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> None
         """Assuming this response is a resource, use the deserialization callback to parse it.
@@ -527,7 +470,7 @@ class LROBasePolling(PollingMethod):
         """
         response = pipeline_response.http_response
         if not _is_empty(response):
-            self._resource = self._deserialize(pipeline_response)
+            self._resource = self._deserialization_callback(pipeline_response)
         else:
             self._resource = None
 
