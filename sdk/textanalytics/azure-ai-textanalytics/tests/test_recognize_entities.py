@@ -66,14 +66,6 @@ class TestRecognizeEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.score)
 
     @GlobalTextAnalyticsAccountPreparer()
-    def test_length_with_emoji(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
-
-        result = text_analytics.recognize_pii_entities(["👩 SSN: 123-12-1234"])
-        self.assertEqual(result[0].entities[0].grapheme_offset, 7)
-        self.assertEqual(result[0].entities[0].grapheme_length, 11)
-
-    @GlobalTextAnalyticsAccountPreparer()
     def test_passing_only_string(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
