@@ -113,7 +113,7 @@ class AuthInfo(Model):
     :param token_type: Required. The type of Auth token. Possible values
      include: 'PAT', 'OAuth'
     :type token_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenType
     :param token: Required. The access token used to access the source control
      provider.
     :type token: str
@@ -153,7 +153,7 @@ class AuthInfoUpdateParameters(Model):
     :param token_type: The type of Auth token. Possible values include: 'PAT',
      'OAuth'
     :type token_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenType
     :param token: The access token used to access the source control provider.
     :type token: str
     :param refresh_token: The refresh token used to refresh the access token.
@@ -187,7 +187,7 @@ class BaseImageDependency(Model):
     :param type: The type of the base image dependency. Possible values
      include: 'BuildTime', 'RunTime'
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependencyType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependencyType
     :param registry: The registry login server.
     :type registry: str
     :param repository: The repository name.
@@ -223,18 +223,18 @@ class BaseImageTrigger(Model):
     :param base_image_trigger_type: Required. The type of the auto trigger for
      base image dependency updates. Possible values include: 'All', 'Runtime'
     :type base_image_trigger_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTriggerType
     :param update_trigger_endpoint: The endpoint URL for receiving update
      triggers.
     :type update_trigger_endpoint: str
     :param update_trigger_payload_type: Type of Payload body for Base image
      update triggers. Possible values include: 'Default', 'Token'
     :type update_trigger_payload_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UpdateTriggerPayloadType
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -269,18 +269,18 @@ class BaseImageTriggerUpdateParameters(Model):
     :param base_image_trigger_type: The type of the auto trigger for base
      image dependency updates. Possible values include: 'All', 'Runtime'
     :type base_image_trigger_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTriggerType
     :param update_trigger_endpoint: The endpoint URL for receiving update
      triggers.
     :type update_trigger_endpoint: str
     :param update_trigger_payload_type: Type of Payload body for Base image
      update triggers. Possible values include: 'Default', 'Token'
     :type update_trigger_payload_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UpdateTriggerPayloadType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UpdateTriggerPayloadType
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -349,7 +349,7 @@ class Credentials(Model):
     :param source_registry: Describes the credential parameters for accessing
      the source registry.
     :type source_registry:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceRegistryCredentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceRegistryCredentials
     :param custom_registries: Describes the credential parameters for
      accessing other custom registries. The key
      for the dictionary item will be the registry login server
@@ -357,7 +357,7 @@ class Credentials(Model):
      the value of the item will be the registry credentials for accessing the
      registry.
     :type custom_registries: dict[str,
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.CustomRegistryCredentials]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.CustomRegistryCredentials]
     """
 
     _attribute_map = {
@@ -377,12 +377,12 @@ class CustomRegistryCredentials(Model):
 
     :param user_name: The username for logging into the custom registry.
     :type user_name:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObject
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SecretObject
     :param password: The password for logging into the custom registry. The
      password is a secret
      object that allows multiple ways of providing the value for it.
     :type password:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObject
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SecretObject
     :param identity: Indicates the managed identity assigned to the custom
      credential. If a user-assigned identity
      this value is the Client ID. If a system-assigned identity, the value will
@@ -470,16 +470,16 @@ class DockerBuildRequest(RunRequest):
     :param arguments: The collection of override arguments to be used when
      executing the run.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
      context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
@@ -488,7 +488,7 @@ class DockerBuildRequest(RunRequest):
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -543,7 +543,7 @@ class TaskStepProperties(Model):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -588,7 +588,7 @@ class DockerBuildStep(TaskStepProperties):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -614,7 +614,7 @@ class DockerBuildStep(TaskStepProperties):
     :param arguments: The collection of override arguments to be used when
      executing this build step.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     """
 
     _validation = {
@@ -715,7 +715,7 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
     :param arguments: The collection of override arguments to be used when
      executing this build step.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     :param target: The name of the target build stage for the docker build.
     :type target: str
     """
@@ -766,16 +766,16 @@ class EncodedTaskRunRequest(RunRequest):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
      context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
@@ -784,7 +784,7 @@ class EncodedTaskRunRequest(RunRequest):
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -830,7 +830,7 @@ class EncodedTaskStep(TaskStepProperties):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -848,7 +848,7 @@ class EncodedTaskStep(TaskStepProperties):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -897,7 +897,7 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -919,6 +919,29 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         self.encoded_values_content = kwargs.get('encoded_values_content', None)
         self.values = kwargs.get('values', None)
         self.type = 'EncodedTask'
+
+
+class EncryptionProperty(Model):
+    """EncryptionProperty.
+
+    :param status: Indicates whether or not the encryption is enabled for
+     container registry. Possible values include: 'enabled', 'disabled'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionStatus
+    :param key_vault_properties: Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.KeyVaultProperties
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
 
 
 class Error(Model):
@@ -953,7 +976,7 @@ class ErrorSchema(Model):
 
     :param error: Azure container registry build API error body.
     :type error:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Error
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Error
     """
 
     _attribute_map = {
@@ -1001,11 +1024,11 @@ class Event(EventInfo):
     :param event_request_message: The event request message sent to the
      service URI.
     :type event_request_message:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.EventRequestMessage
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventRequestMessage
     :param event_response_message: The event response message received from
      the service URI.
     :type event_response_message:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.EventResponseMessage
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventResponseMessage
     """
 
     _attribute_map = {
@@ -1031,18 +1054,18 @@ class EventContent(Model):
     :type action: str
     :param target: The target of the event.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Target
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Target
     :param request: The request that generated the event.
     :type request:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Request
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Request
     :param actor: The agent that initiated the event. For most situations,
      this could be from the authorization context of the request.
     :type actor:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Actor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Actor
     :param source: The registry node that generated the event. Put
      differently, while the actor initiates the event, the source generates it.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Source
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Source
     """
 
     _attribute_map = {
@@ -1071,7 +1094,7 @@ class EventRequestMessage(Model):
 
     :param content: The content of the event request message.
     :type content:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.EventContent
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventContent
     :param headers: The headers of the event request message.
     :type headers: dict[str, str]
     :param method: The HTTP method used to send the event request message.
@@ -1150,16 +1173,16 @@ class FileTaskRunRequest(RunRequest):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
      context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
@@ -1168,7 +1191,7 @@ class FileTaskRunRequest(RunRequest):
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -1214,7 +1237,7 @@ class FileTaskStep(TaskStepProperties):
 
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageDependency]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageDependency]
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
@@ -1232,7 +1255,7 @@ class FileTaskStep(TaskStepProperties):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -1281,7 +1304,7 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
     :param values: The collection of overridable values that can be passed
      when running a task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     """
 
     _validation = {
@@ -1319,7 +1342,7 @@ class GenerateCredentialsParameters(Model):
      any -- password1 or password2. Possible values include: 'password1',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPasswordName
     """
 
     _attribute_map = {
@@ -1342,7 +1365,7 @@ class GenerateCredentialsResult(Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPassword]
     """
 
     _attribute_map = {
@@ -1366,14 +1389,14 @@ class IdentityProperties(Model):
     :param type: The identity type. Possible values include: 'SystemAssigned',
      'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ResourceIdentityType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the resource. The user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
      providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.UserIdentityProperties]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UserIdentityProperties]
     """
 
     _attribute_map = {
@@ -1428,7 +1451,7 @@ class ImageUpdateTrigger(Model):
     :type timestamp: datetime
     :param images: The list of image updates that caused the build.
     :type images:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageDescriptor]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImageDescriptor]
     """
 
     _attribute_map = {
@@ -1451,7 +1474,7 @@ class ImportImageParameters(Model):
 
     :param source: Required. The source of the image.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImportSource
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSource
     :param target_tags: List of strings of the form repo[:tag]. When tag is
      omitted the source will be used (or 'latest' if source tag is also
      omitted).
@@ -1464,7 +1487,7 @@ class ImportImageParameters(Model):
      copying begins. Possible values include: 'NoForce', 'Force'. Default
      value: "NoForce" .
     :type mode: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImportMode
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportMode
     """
 
     _validation = {
@@ -1499,7 +1522,7 @@ class ImportSource(Model):
     :type registry_uri: str
     :param credentials: Credentials used when importing from a registry uri.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImportSourceCredentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSourceCredentials
     :param source_image: Required. Repository name of the source image.
      Specify an image by repository ('hello-world'). This will use the 'latest'
      tag.
@@ -1563,7 +1586,7 @@ class IPRule(Model):
     :param action: The action of IP ACL rule. Possible values include:
      'Allow'. Default value: "Allow" .
     :type action: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Action
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR
      format. Only IPV4 address is allowed.
     :type ip_address_or_range: str
@@ -1584,6 +1607,39 @@ class IPRule(Model):
         self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
 
 
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param key_identifier: Key vault uri to access the encryption key.
+    :type key_identifier: str
+    :ivar versioned_key_identifier: The fully qualified key identifier that
+     includes the version of the key that is actually used for encryption.
+    :vartype versioned_key_identifier: str
+    :param identity: The client id of the identity which will be used to
+     access key vault.
+    :type identity: str
+    """
+
+    _validation = {
+        'versioned_key_identifier': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'versioned_key_identifier': {'key': 'versionedKeyIdentifier', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = kwargs.get('key_identifier', None)
+        self.versioned_key_identifier = None
+        self.identity = kwargs.get('identity', None)
+
+
 class NetworkRuleSet(Model):
     """The network rule set for a container registry.
 
@@ -1593,13 +1649,13 @@ class NetworkRuleSet(Model):
      no other rules match. Possible values include: 'Allow', 'Deny'. Default
      value: "Allow" .
     :type default_action: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.DefaultAction
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.DefaultAction
     :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.VirtualNetworkRule]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.VirtualNetworkRule]
     :param ip_rules: The IP ACL rules.
     :type ip_rules:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.IPRule]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.IPRule]
     """
 
     _validation = {
@@ -1629,10 +1685,10 @@ class OperationDefinition(Model):
     :param display: The display information for the container registry
      operation.
     :type display:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OperationDisplayDefinition
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDisplayDefinition
     :param service_specification: The definition of Azure Monitoring service.
     :type service_specification:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OperationServiceSpecificationDefinition
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationServiceSpecificationDefinition
     """
 
     _attribute_map = {
@@ -1720,7 +1776,7 @@ class OperationServiceSpecificationDefinition(Model):
     :param metric_specifications: A list of Azure Monitoring metrics
      definition.
     :type metric_specifications:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.OperationMetricSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationMetricSpecificationDefinition]
     """
 
     _attribute_map = {
@@ -1744,13 +1800,13 @@ class OverrideTaskStepProperties(Model):
      used when
      executing a build step.
     :type arguments:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.Argument]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Argument]
     :param target: The name of the target build stage for the docker build.
     :type target: str
     :param values: The collection of overridable values that can be passed
      when running a Task.
     :type values:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SetValue]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SetValue]
     :param update_trigger_token: Base64 encoded update trigger token that will
      be attached with the base image trigger webhook.
     :type update_trigger_token: str
@@ -1783,15 +1839,15 @@ class PlatformProperties(Model):
     :param os: Required. The operating system type required for the run.
      Possible values include: 'Windows', 'Linux'
     :type os: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OS
     :param architecture: The OS architecture. Possible values include:
      'amd64', 'x86', '386', 'arm', 'arm64'
     :type architecture: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Architecture
     :param variant: Variant of the CPU. Possible values include: 'v6', 'v7',
      'v8'
     :type variant: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Variant
     """
 
     _validation = {
@@ -1817,15 +1873,15 @@ class PlatformUpdateParameters(Model):
     :param os: The operating system type required for the run. Possible values
      include: 'Windows', 'Linux'
     :type os: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OS
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OS
     :param architecture: The OS architecture. Possible values include:
      'amd64', 'x86', '386', 'arm', 'arm64'
     :type architecture: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Architecture
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Architecture
     :param variant: Variant of the CPU. Possible values include: 'v6', 'v7',
      'v8'
     :type variant: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Variant
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Variant
     """
 
     _attribute_map = {
@@ -1846,13 +1902,13 @@ class Policies(Model):
 
     :param quarantine_policy: The quarantine policy for a container registry.
     :type quarantine_policy:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.QuarantinePolicy
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.QuarantinePolicy
     :param trust_policy: The content trust policy for a container registry.
     :type trust_policy:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TrustPolicy
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicy
     :param retention_policy: The retention policy for a container registry.
     :type retention_policy:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RetentionPolicy
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RetentionPolicy
     """
 
     _attribute_map = {
@@ -1866,6 +1922,148 @@ class Policies(Model):
         self.quarantine_policy = kwargs.get('quarantine_policy', None)
         self.trust_policy = kwargs.get('trust_policy', None)
         self.retention_policy = kwargs.get('retention_policy', None)
+
+
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    :param id: This is private endpoint resource created with
+     Microsoft.Network resource provider.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateEndpointConnection(Model):
+    """An object that represents a private endpoint connection for a container
+    registry.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The resource type is private endpoint connection.
+    :vartype type: str
+    :param id: The resource ID.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param private_endpoint: The resource of private endpoint.
+    :type private_endpoint:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpoint
+    :param private_link_service_connection_state: A collection of information
+     about the state of the connection between service consumer and provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of private endpoint
+     connection resource. Possible values include: 'Creating', 'Updating',
+     'Deleting', 'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.type = None
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class PrivateLinkResource(Model):
+    """A resource that supports private link capabilities.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The resource type is private link resource.
+    :vartype type: str
+    :param id: The resource ID.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param group_id: The private link resource group id.
+    :type group_id: str
+    :param required_members: The private link resource required member names.
+    :type required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.type = None
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.required_members = kwargs.get('required_members', None)
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """The state of a private link service connection.
+
+    :param status: The private link service connection status. Possible values
+     include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :param description: The description for connection status. For example if
+     connection is rejected it can indicate reason for rejection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer. Possible values include:
+     'None', 'Recreate'
+    :type actions_required: str or
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActionsRequired
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
 
 
 class ProxyResource(Model):
@@ -1909,7 +2107,7 @@ class QuarantinePolicy(Model):
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -1930,7 +2128,7 @@ class RegenerateCredentialParameters(Model):
      regenerated -- password or password2. Possible values include: 'password',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
     """
 
     _validation = {
@@ -2011,7 +2209,10 @@ class Registry(Resource):
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
     :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
@@ -2022,24 +2223,37 @@ class Registry(Resource):
      at the time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar status: The status of the container registry at the time the
      operation was called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status1
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
      container registry. Only applicable to Classic SKU.
     :type storage_account:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.StorageAccountProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.StorageAccountProperties
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.NetworkRuleSet
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
     :type policies:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Policies
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :param encryption: The encryption settings of container registry.
+    :type encryption:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :param data_endpoint_enabled: Enable a single data endpoint per region for
+     serving data.
+    :type data_endpoint_enabled: bool
+    :ivar data_endpoint_host_names: List of host names that will serve data
+     when dataEndpointEnabled is true.
+    :vartype data_endpoint_host_names: list[str]
+    :ivar private_endpoint_connections: List of private endpoint connections
+     for a container registry.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -2052,6 +2266,8 @@ class Registry(Resource):
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
+        'data_endpoint_host_names': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2061,19 +2277,25 @@ class Registry(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status'},
+        'status': {'key': 'properties.status', 'type': 'Status1'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
+        'data_endpoint_host_names': {'key': 'properties.dataEndpointHostNames', 'type': '[str]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(self, **kwargs):
         super(Registry, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
@@ -2082,6 +2304,10 @@ class Registry(Resource):
         self.storage_account = kwargs.get('storage_account', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.policies = kwargs.get('policies', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
+        self.data_endpoint_host_names = None
+        self.private_endpoint_connections = None
 
 
 class RegistryListCredentialsResult(Model):
@@ -2091,7 +2317,7 @@ class RegistryListCredentialsResult(Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.RegistryPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -2171,7 +2397,7 @@ class RegistryPassword(Model):
     :param name: The password name. Possible values include: 'password',
      'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
     :param value: The password value.
     :type value: str
     """
@@ -2193,33 +2419,48 @@ class RegistryUpdateParameters(Model):
     :param tags: The tags for the container registry.
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled.
     :type admin_user_enabled: bool
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.NetworkRuleSet
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
     :type policies:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Policies
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :param encryption: The encryption settings of container registry.
+    :type encryption:
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :param data_endpoint_enabled: Enable a single data endpoint per region for
+     serving data.
+    :type data_endpoint_enabled: bool
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(RegistryUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.admin_user_enabled = kwargs.get('admin_user_enabled', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.policies = kwargs.get('policies', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
 
 
 class RegistryUsage(Model):
@@ -2234,7 +2475,7 @@ class RegistryUsage(Model):
     :param unit: The unit of measurement. Possible values include: 'Count',
      'Bytes'
     :type unit: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RegistryUsageUnit
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsageUnit
     """
 
     _attribute_map = {
@@ -2257,7 +2498,7 @@ class RegistryUsageListResult(Model):
 
     :param value: The list of container registry quota usages.
     :type value:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.RegistryUsage]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsage]
     """
 
     _attribute_map = {
@@ -2292,11 +2533,11 @@ class Replication(Resource):
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar status: The status of the replication at the time the operation was
      called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status1
     """
 
     _validation = {
@@ -2315,7 +2556,7 @@ class Replication(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status'},
+        'status': {'key': 'properties.status', 'type': 'Status1'},
     }
 
     def __init__(self, **kwargs):
@@ -2390,7 +2631,7 @@ class RetentionPolicy(Model):
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _validation = {
@@ -2428,13 +2669,13 @@ class Run(ProxyResource):
      'Queued', 'Started', 'Running', 'Succeeded', 'Failed', 'Canceled',
      'Error', 'Timeout'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunStatus
     :param last_updated_time: The last updated time for the run.
     :type last_updated_time: datetime
     :param run_type: The type of run. Possible values include: 'QuickBuild',
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunType
     :param create_time: The time the run was scheduled.
     :type create_time: datetime
     :param start_time: The time the run started.
@@ -2444,26 +2685,26 @@ class Run(ProxyResource):
     :param output_images: The list of all images that were generated from the
      run. This is applicable if the run generates base image dependencies.
     :type output_images:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageDescriptor]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImageDescriptor]
     :param task: The task against which run was scheduled.
     :type task: str
     :param image_update_trigger: The image update trigger that caused the run.
      This is applicable if the task has base image trigger configured.
     :type image_update_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ImageUpdateTrigger
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImageUpdateTrigger
     :param source_trigger: The source trigger that caused the run.
     :type source_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerDescriptor
     :param timer_trigger: The timer trigger that caused the run.
     :type timer_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TimerTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TimerTriggerDescriptor
     :param platform: The platform properties against which the run will
      happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param source_registry_auth: The scope of the credentials that were used
      to login to the source registry during this run.
     :type source_registry_auth: str
@@ -2479,7 +2720,7 @@ class Run(ProxyResource):
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :type provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not. Default value: False .
     :type is_archive_enabled: bool
@@ -2550,12 +2791,12 @@ class RunFilter(Model):
     :param run_type: The type of run. Possible values include: 'QuickBuild',
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunType
     :param status: The current status of the run. Possible values include:
      'Queued', 'Started', 'Running', 'Succeeded', 'Failed', 'Canceled',
      'Error', 'Timeout'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunStatus
     :param create_time: The create time for a run.
     :type create_time: datetime
     :param finish_time: The time the run finished.
@@ -2651,7 +2892,7 @@ class ScopeMap(ProxyResource):
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param actions: Required. The list of scoped permissions for registry
      artifacts.
      E.g. repositories/repository-name/content/read,
@@ -2724,7 +2965,7 @@ class SecretObject(Model):
      of the secret object has to be
      interpreted. Possible values include: 'Opaque', 'Vaultsecret'
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SecretObjectType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SecretObjectType
     """
 
     _attribute_map = {
@@ -2783,11 +3024,11 @@ class Sku(Model):
      for registry creation. Possible values include: 'Classic', 'Basic',
      'Standard', 'Premium'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SkuName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuName
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
      'Classic', 'Basic', 'Standard', 'Premium'
     :vartype tier: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SkuTier
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuTier
     """
 
     _validation = {
@@ -2838,7 +3079,7 @@ class SourceProperties(Model):
     :param source_control_type: Required. The type of source control service.
      Possible values include: 'Github', 'VisualStudioTeamService'
     :type source_control_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceControlType
     :param repository_url: Required. The full URL to the source code
      repository
     :type repository_url: str
@@ -2848,7 +3089,7 @@ class SourceProperties(Model):
      accessing the source code repository and to set up
      webhooks for notifications.
     :type source_control_auth_properties:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AuthInfo
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AuthInfo
     """
 
     _validation = {
@@ -2881,7 +3122,7 @@ class SourceRegistryCredentials(Model):
      the source registry during the run. Possible values include: 'None',
      'Default'
     :type login_mode: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceRegistryLoginMode
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceRegistryLoginMode
     """
 
     _attribute_map = {
@@ -2901,15 +3142,15 @@ class SourceTrigger(Model):
     :param source_repository: Required. The properties that describes the
      source(code) for the task.
     :type source_repository:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceProperties
     :param source_trigger_events: Required. The source event corresponding to
      the trigger.
     :type source_trigger_events: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerEvent]
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -2983,15 +3224,15 @@ class SourceTriggerUpdateParameters(Model):
     :param source_repository: The properties that describes the source(code)
      for the task.
     :type source_repository:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceUpdateParameters
     :param source_trigger_events: The source event corresponding to the
      trigger.
     :type source_trigger_events: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerEvent]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerEvent]
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -3021,7 +3262,7 @@ class SourceUpdateParameters(Model):
     :param source_control_type: The type of source control service. Possible
      values include: 'Github', 'VisualStudioTeamService'
     :type source_control_type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceControlType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceControlType
     :param repository_url: The full URL to the source code repository
     :type repository_url: str
     :param branch: The branch name of the source code.
@@ -3030,7 +3271,7 @@ class SourceUpdateParameters(Model):
      accessing the source code repository and to set up
      webhooks for notifications.
     :type source_control_auth_properties:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AuthInfoUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AuthInfoUpdateParameters
     """
 
     _attribute_map = {
@@ -3069,7 +3310,7 @@ class SourceUploadDefinition(Model):
         self.relative_path = kwargs.get('relative_path', None)
 
 
-class Status(Model):
+class Status1(Model):
     """The status of an Azure resource at the time the operation was called.
 
     Variables are only populated by the server, and will be ignored when
@@ -3098,7 +3339,7 @@ class Status(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Status, self).__init__(**kwargs)
+        super(Status1, self).__init__(**kwargs)
         self.display_status = None
         self.message = None
         self.timestamp = None
@@ -3198,37 +3439,37 @@ class Task(Resource):
     :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar provisioning_state: The provisioning state of the task. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :ivar creation_date: The creation date of task.
     :vartype creation_date: datetime
     :param status: The current status of task. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStatus
     :param platform: Required. The platform properties against which the run
      has to happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformProperties
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param timeout: Run timeout in seconds. Default value: 3600 .
     :type timeout: int
     :param step: Required. The properties of a task step.
     :type step:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStepProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStepProperties
     :param trigger: The properties that describe all triggers for the task.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerProperties
     :param credentials: The properties that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     """
 
     _validation = {
@@ -3297,18 +3538,18 @@ class TaskRun(Resource):
     :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :ivar provisioning_state: The provisioning state of this task run.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
      'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param run_request: The request (parameters) for the run
     :type run_request:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunRequest
     :ivar run_result: The result of this task run
     :vartype run_result:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Run
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
@@ -3361,7 +3602,7 @@ class TaskRunRequest(RunRequest):
     :param override_task_step_properties: Set of overridable parameters that
      can be passed when running a Task.
     :type override_task_step_properties:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.OverrideTaskStepProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OverrideTaskStepProperties
     """
 
     _validation = {
@@ -3388,10 +3629,10 @@ class TaskRunUpdateParameters(Model):
 
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param run_request: The request (parameters) for the new run
     :type run_request:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RunRequest
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
@@ -3419,30 +3660,30 @@ class TaskUpdateParameters(Model):
 
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
     :param status: The current status of task. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStatus
     :param platform: The platform properties against which the run has to
      happen.
     :type platform:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PlatformUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PlatformUpdateParameters
     :param agent_configuration: The machine configuration of the run agent.
     :type agent_configuration:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.AgentProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.AgentProperties
     :param timeout: Run timeout in seconds.
     :type timeout: int
     :param step: The properties for updating a task step.
     :type step:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskStepUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TaskStepUpdateParameters
     :param trigger: The properties for updating trigger properties.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerUpdateParameters
     :param credentials: The parameters that describes a set of credentials
      that will be used when this run is invoked.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Credentials
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Credentials
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
@@ -3482,7 +3723,7 @@ class TimerTrigger(Model):
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -3535,7 +3776,7 @@ class TimerTriggerUpdateParameters(Model):
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TriggerStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
     :param name: Required. The name of the trigger.
     :type name: str
     """
@@ -3575,18 +3816,18 @@ class Token(ProxyResource):
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     :param scope_map_id: The resource ID of the scope map to which the token
      will be associated with.
     :type scope_map_id: str
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCredentialsProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCredentialsProperties
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenStatus
     """
 
     _validation = {
@@ -3622,7 +3863,7 @@ class TokenCertificate(Model):
 
     :param name: Possible values include: 'certificate1', 'certificate2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificateName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCertificateName
     :param expiry: The expiry datetime of the certificate.
     :type expiry: datetime
     :param thumbprint: The thumbprint of the certificate.
@@ -3653,13 +3894,13 @@ class TokenCredentialsProperties(Model):
 
     :param active_directory_object:
     :type active_directory_object:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ActiveDirectoryObject
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActiveDirectoryObject
     :param certificates:
     :type certificates:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificate]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCertificate]
     :param passwords:
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPassword]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPassword]
     """
 
     _attribute_map = {
@@ -3689,7 +3930,7 @@ class TokenPassword(Model):
     :param name: The password name "password1" or "password2". Possible values
      include: 'password1', 'password2'
     :type name: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPasswordName
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenPasswordName
     :ivar value: The password value.
     :vartype value: str
     """
@@ -3722,11 +3963,11 @@ class TokenUpdateParameters(Model):
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenStatus
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCredentialsProperties
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TokenCredentialsProperties
     """
 
     _attribute_map = {
@@ -3747,14 +3988,14 @@ class TriggerProperties(Model):
 
     :param timer_triggers: The collection of timer triggers.
     :type timer_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TimerTrigger]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TimerTrigger]
     :param source_triggers: The collection of triggers based on source code
      repository.
     :type source_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTrigger]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTrigger]
     :param base_image_trigger: The trigger based on base image dependencies.
     :type base_image_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTrigger
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTrigger
     """
 
     _attribute_map = {
@@ -3775,14 +4016,14 @@ class TriggerUpdateParameters(Model):
 
     :param timer_triggers: The collection of timer triggers.
     :type timer_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TimerTriggerUpdateParameters]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.TimerTriggerUpdateParameters]
     :param source_triggers: The collection of triggers based on source code
      repository.
     :type source_triggers:
-     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.SourceTriggerUpdateParameters]
+     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.SourceTriggerUpdateParameters]
     :param base_image_trigger: The trigger based on base image dependencies.
     :type base_image_trigger:
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.BaseImageTriggerUpdateParameters
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.BaseImageTriggerUpdateParameters
     """
 
     _attribute_map = {
@@ -3804,12 +4045,12 @@ class TrustPolicy(Model):
     :param type: The type of trust policy. Possible values include: 'Notary'.
      Default value: "Notary" .
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TrustPolicyType
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicyType
     :param status: The value that indicates whether the policy is enabled or
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.PolicyStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -3851,7 +4092,7 @@ class VirtualNetworkRule(Model):
     :param action: The action of virtual network rule. Possible values
      include: 'Allow'. Default value: "Allow" .
     :type action: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Action
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for
      example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
@@ -3895,7 +4136,7 @@ class Webhook(Resource):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -3904,12 +4145,12 @@ class Webhook(Resource):
     :param actions: Required. The list of actions that trigger the webhook to
      post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -3960,7 +4201,7 @@ class WebhookCreateParameters(Model):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -3969,7 +4210,7 @@ class WebhookCreateParameters(Model):
     :param actions: Required. The list of actions that trigger the webhook to
      post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     """
 
     _validation = {
@@ -4012,7 +4253,7 @@ class WebhookUpdateParameters(Model):
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookStatus
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -4021,7 +4262,7 @@ class WebhookUpdateParameters(Model):
     :param actions: The list of actions that trigger the webhook to post
      notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
     """
 
     _attribute_map = {
