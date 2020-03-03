@@ -5,6 +5,7 @@
 import os
 
 from azure.identity import (
+    AzureCliCredential,
     DefaultAzureCredential,
     InteractiveBrowserCredential,
     KnownAuthorities,
@@ -100,6 +101,9 @@ def test_exclude_options():
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         assert_credentials_not_present(credential, SharedTokenCacheCredential)
+
+    credential = DefaultAzureCredential(exclude_cli_credential=True)
+    assert_credentials_not_present(credential, AzureCliCredential)
 
     # interactive auth is excluded by default
     credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
