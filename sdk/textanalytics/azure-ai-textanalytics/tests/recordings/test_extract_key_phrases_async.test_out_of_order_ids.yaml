@@ -1,14 +1,14 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "56", "text": ":)", "countryHint": "US"}, {"id":
-      "0", "text": ":(", "countryHint": "US"}, {"id": "22", "text": "", "countryHint":
-      "US"}, {"id": "19", "text": ":P", "countryHint": "US"}, {"id": "1", "text":
-      ":D", "countryHint": "US"}]}'
+    body: '{"documents": [{"id": "56", "text": ":)", "language": "en"}, {"id": "0",
+      "text": ":(", "language": "en"}, {"id": "22", "text": "", "language": "en"},
+      {"id": "19", "text": ":P", "language": "en"}, {"id": "1", "text": ":D", "language":
+      "en"}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '256'
+      - '241'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -16,23 +16,23 @@ interactions:
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"56","detectedLanguages":[{"name":"(Unknown)","iso6391Name":"(Unknown)","score":0.0}]},{"id":"0","detectedLanguages":[{"name":"(Unknown)","iso6391Name":"(Unknown)","score":0.0}]},{"id":"19","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"documents":[{"id":"56","keyPhrases":[]},{"id":"0","keyPhrases":[]},{"id":"19","keyPhrases":[]},{"id":"1","keyPhrases":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innerError":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 5c72908a-7fa3-4879-bb0b-e85aff8e5190
+      apim-request-id: 2cc2ecfa-a94f-4935-bbbd-39549f6687e3
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Tue, 03 Mar 2020 17:30:04 GMT
+      date: Tue, 03 Mar 2020 17:39:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
 version: 1

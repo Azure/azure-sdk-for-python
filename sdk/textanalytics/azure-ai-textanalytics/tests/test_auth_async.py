@@ -26,6 +26,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class TestAuth(AsyncTextAnalyticsTest):
     @pytest.mark.live_test_only
+    @AsyncTextAnalyticsTest.await_prepared_test
     async def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()

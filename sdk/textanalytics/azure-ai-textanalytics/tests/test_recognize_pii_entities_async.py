@@ -212,7 +212,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = await text_analytics.detect_language(docs)
+        response = await text_analytics.recognize_pii_entities(docs)
         in_order = ["56", "0", "22", "19", "1"]
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, in_order[idx])
