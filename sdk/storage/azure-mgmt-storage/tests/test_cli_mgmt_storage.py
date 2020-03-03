@@ -16,7 +16,7 @@
 # Coverage %      : 100
 # ----------------------
 
-# current methods coverage: 20
+# current methods coverage: 42
 
 import datetime as dt
 import unittest
@@ -25,7 +25,7 @@ import azure.mgmt.storage
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'westus'
+AZURE_LOCATION = 'westeurope'
 ZERO = dt.timedelta(0)
 
 class UTC(dt.tzinfo):
@@ -102,7 +102,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
         # Create load balancer
         BODY = {
-          "location": "westus",
+          "location": "westeurope",
           "sku": {
             "name": "Standard"
           },
@@ -118,65 +118,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
               }
             ],
           }
-          #   "backendAddressPools": [
-          #     {
-          #       "name": "be-lb",
-          #       "properties": {}
-          #     }
-          #   ],
-          #   "loadBalancingRules": [
-          #     {
-          #       "name": "rulelb",
-          #       "properties": {
-          #         "frontendIPConfiguration": {
-          #           "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/frontendIPConfigurations/" + FIPCONFIG
-          #         },
-          #         "frontendPort": 80,
-          #         "backendPort": 80,
-          #         "enableFloatingIP": True,
-          #         "idleTimeoutInMinutes": 15,
-          #         "protocol": "Tcp",
-          #         "enableTcpReset": False,
-          #         "loadDistribution": "Default",
-          #         "backendAddressPool": {
-          #           "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/backendAddressPools/" + BAPOOL
-          #         },
-          #         "probe": {
-          #           "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/probes/" + PROBES
-          #         }
-          #       }
-          #     }
-          #   ],
-          #   "probes": [
-          #     {
-          #       "name": PROBES,
-          #       "properties": {
-          #         "protocol": "Http",
-          #         "port": 80,
-          #         "requestPath": "healthcheck.aspx",
-          #         "intervalInSeconds": 15,
-          #         "numberOfProbes": 2
-          #       }
-          #     }
-          #   ],
-          #   "inboundNatRules": [
-          #     # {
-          #     #   "name": "in-nat-rule",
-          #     #   "properties": {
-          #     #     "frontendIPConfiguration": {
-          #     #       "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER + "/frontendIPConfigurations/" + FIPCONFIG
-          #     #     },
-          #     #     "frontendPort": 3389,
-          #     #     "backendPort": 3389,
-          #     #     "enableFloatingIP": True,
-          #     #     "idleTimeoutInMinutes": 15,
-          #     #     "protocol": "Tcp",
-          #     #     "enableTcpReset": False
-          #     #   }
-          #     # }
-          #   ],
-          #   "inboundNatPools": []
-          # }
         }
 
         result = self.network_client.load_balancers.create_or_update(resource_group.name, LOAD_BALANCER, BODY)
@@ -185,7 +126,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # Create private link services
         PRIVATE_LINK_SERVICES = "privatelinkservice"
         BODY = {
-          "location": "westus",
+          "location": "westeurope",
           "properties": {
             "visibility": {
               "subscriptions": [
@@ -227,22 +168,16 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # Create private endpoint
         PRIVATE_ENDPOINT = "privateendpoint"
         BODY = {
-          "location": "westus",
+          "location": "westeurope",
           "properties": {
             "privateLinkServiceConnections": [
               {
-                # "properties": {
                 "name": PRIVATE_LINK_SERVICES,  # TODO: This is needed, but was not showed in swagger.
                 "private_link_service_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/privateLinkServices/" + PRIVATE_LINK_SERVICES,
-                # "groupIds": [
-                #   # "groupIdFromResource"
-                # ],
-                # "requestMessage": "Please approve my connection."
-                # }
               },
               {
                 "name": PRIVATE_ENDPOINT_CONNECTION_NAME,
-                "private_link_service_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME
+                "private_link_service_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + ""
               }
             ],
             "subnet": {
@@ -251,7 +186,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
           }
         }
         result = self.network_client.private_endpoints.create_or_update(resource_group.name, PRIVATE_ENDPOINT, BODY)
-
         # -- SET UP END --
         """
 
@@ -262,7 +196,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
           },
           # "kind": "Storage",
           "kind": "StorageV2",  # Storage v2 support policy
-          "location": "westus",
+          "location": "westeurope",
 
           # TODO: The value 'True' is not allowed for property isHnsEnabled
           # "is_hns_enabled": True,
@@ -572,7 +506,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # StorageAccountListByResourceGroup[get]
         result = self.mgmt_client.storage_accounts.list_by_resource_group(resource_group.name)
 
-        LOCATION_NAME = "westus"
+        LOCATION_NAME = "westeurope"
         # UsageList[get]
         result = self.mgmt_client.usages.list_by_location(LOCATION_NAME)
 
@@ -585,19 +519,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # OperationsList[get]
         result = self.mgmt_client.operations.list()
 
-        # LockImmutabilityPolicy[post]
-        result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
-        ETAG = result.etag
-
-        # ExtendImmutabilityPolicy[post]
-        # BODY = {
-        #   "properties": {
-        #     "immutability_period_since_creation_in_days": "100"
-        #   }
-        # }
-        DAYS = 100
-        result = self.mgmt_client.blob_containers.extend_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG, DAYS)
-        ETAG = result.etag
+       
 
         # SetLegalHoldContainers[post]
         BODY = {
@@ -666,8 +588,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # StorageAccountRevokeUserDelegationKeys[post]
         result = self.mgmt_client.storage_accounts.revoke_user_delegation_keys(resource_group.name, STORAGE_ACCOUNT_NAME)
 
-        # TODO: FeatureUnavailableInLocation
-        # # BlobRangesRestore[post]
+        # # TODO: FeatureUnavailableInLocation
+        # # # BlobRangesRestore[post]
         # time_to_restore = (dt.datetime.now(tz=UTC()) - dt.timedelta(minutes=10)).isoformat()
         # BODY = {
         #   "time_to_restore": time_to_restore,
@@ -685,7 +607,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # result = self.mgmt_client.storage_accounts.restore_blob_ranges(resource_group.name, STORAGE_ACCOUNT_NAME, BODY["time_to_restore"], BODY["blob_ranges"])
         # result = result.result()
 
-        # # TODO: wrong case
+        # # TODO: Wrong parameters
         # StorageAccountListServiceSAS[post]
         # signed_expiry = (dt.datetime.now(tz=UTC()) - dt.timedelta(days=2)).isoformat()
         # BODY = {
@@ -696,7 +618,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # }
         # result = self.mgmt_client.storage_accounts.list_service_sas(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
-        # TODO: Wrong case
+        # TODO: Wrong parameters
         # # StorageAccountListAccountSAS[post]
         # signed_start = dt.datetime.now(tz=UTC()).isoformat()
         # BODY = {
@@ -729,59 +651,23 @@ class MgmtStorageTest(AzureMgmtTestCase):
         # StorageAccountListKeys[post]
         result = self.mgmt_client.storage_accounts.list_keys(resource_group.name, STORAGE_ACCOUNT_NAME)
 
-        """TODO: DELETE LATER
-        # StorageAccountCreate[put]
-        BODY = {
-          "sku": {
-            "name": "Standard_GRS"
-          },
-          "kind": "Storage",
-          "location": "westus",
-          "is_hns_enabled": True,
-          "routing_preference": {
-            "routing_choice": "MicrosoftRouting",
-            "publish_microsoft_endpoints": True,
-            "publish_internet_endpoints": True
-          },
-          "encryption": {
-            "services": {
-              "file": {
-                "key_type": "Account",
-                "enabled": True
-              },
-              "blob": {
-                "key_type": "Account",
-                "enabled": True
-              }
-            },
-            "key_source": "Microsoft.Storage"
-          },
-          "tags": {
-            "key1": "value1",
-            "key2": "value2"
-          }
-        }
-        result = self.mgmt_client.storage_accounts.create(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-        result = result.result()
-        """
-
-        """ TODO: FeatureUnavailableInLocation
-        # StorageAccountEnableAD[patch]
-        BODY = {
-          "azure_files_identity_based_authentication": {
-            "directory_service_options": "AD",
-            "active_directory_properties": {
-              "domain_name": "adtest.com",
-              "net_bios_domain_name": "adtest.com",
-              "forest_name": "adtest.com",
-              "domain_guid": "aebfc118-9fa9-4732-a21f-d98e41a77ae1",
-              "domain_sid": "S-1-5-21-2400535526-2334094090-2402026252",
-              "azure_storage_sid": "S-1-5-21-2400535526-2334094090-2402026252-0012"
-            }
-          }
-        }
-        result = self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
-        """
+        # """ TODO: FeatureUnavailableInLocation
+        # # StorageAccountEnableAD[patch]
+        # BODY = {
+        #   "azure_files_identity_based_authentication": {
+        #     "directory_service_options": "AD",
+        #     "active_directory_properties": {
+        #       "domain_name": "adtest.com",
+        #       "net_bios_domain_name": "adtest.com",
+        #       "forest_name": "adtest.com",
+        #       "domain_guid": "aebfc118-9fa9-4732-a21f-d98e41a77ae1",
+        #       "domain_sid": "S-1-5-21-2400535526-2334094090-2402026252",
+        #       "azure_storage_sid": "S-1-5-21-2400535526-2334094090-2402026252-0012"
+        #     }
+        #   }
+        # }
+        # result = self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        # """
 
         # StorageAccountUpdate[patch]
         BODY = {
@@ -809,6 +695,24 @@ class MgmtStorageTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+
+        # StorageAccountFailover
+        result = self.mgmt_client.storage_accounts.failover(resource_group.name, STORAGE_ACCOUNT_NAME)
+        result = result.result()
+
+        # LockImmutabilityPolicy[post]
+        result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)
+        ETAG = result.etag
+
+        # ExtendImmutabilityPolicy[post]
+        # BODY = {
+        #   "properties": {
+        #     "immutability_period_since_creation_in_days": "100"
+        #   }
+        # }
+        DAYS = 100
+        result = self.mgmt_client.blob_containers.extend_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG, DAYS)
+        ETAG = result.etag
 
         # StorageAccountCheckNameAvailability[post]
         # BODY = {
