@@ -9,7 +9,7 @@
 
 - Pinned opentelemetry-api to version 0.4a0
 
-## 1.0.0b1s
+## 1.0.0b1
 
 ### Features
 
