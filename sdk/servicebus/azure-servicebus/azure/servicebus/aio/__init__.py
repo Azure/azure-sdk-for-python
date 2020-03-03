@@ -4,6 +4,9 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from ._client_base_async import ServiceBusSharedKeyCredential
+from ._sender_client_async import ServiceBusSenderClient
+from ._receiver_client_async import ServiceBusReceiverClient
 from azure.servicebus.common.errors import (
     ServiceBusError,
     ServiceBusResourceNotFound,
@@ -49,4 +52,8 @@ __all__ = [
     'MessageLockExpired',
     'SessionLockExpired',
     'AutoLockRenewFailed',
-    'AutoLockRenewTimeout']
+    'AutoLockRenewTimeout',
+    'ServiceBusSenderClient',
+    'ServiceBusReceiverClient',
+    'ServiceBusSharedKeyCredential'
+]

@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubSharedKeyCredential(object):
+class ServiceBusSharedKeyCredential(object):
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -98,7 +98,7 @@ class ClientBaseAsync(ClientBase):
 
     async def _reconnect_async(self):
         if self._handler:
-            await self._handler.close()
+            await self._handler.close_async()
             self._handler = None
         self._running = False
         await self._open_async()
@@ -165,7 +165,7 @@ class ClientBaseAsync(ClientBase):
 
     async def _do_retryable_operation_async(self, operation, timeout=None, **kwargs):
         require_last_exception = kwargs.pop("require_last_exception", False)
-        require_timeout = kwargs.pop("require_need_timeout", False)
+        require_timeout = kwargs.pop("require_timeout", False)
         retried_times = 0
         last_exception = None
         max_retries = self._config.retry_total
@@ -193,6 +193,12 @@ class ClientBaseAsync(ClientBase):
         )
         raise last_exception
 
+    @staticmethod
+    def _from_connection_string(conn_str, **kwargs):
+        kwargs = ClientBase._from_connection_string(conn_str, **kwargs)
+        kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
+        return kwargs
+
     async def close(self, exception=None):
         if self._error:
             return
@@ -202,5 +208,5 @@ class ClientBaseAsync(ClientBase):
             self._error = ServiceBusError(str(exception))
         else:
             self._error = ServiceBusError("This message handler is now closed.")
-        await self._handler.close()
+        await self._handler.close_async()
         self._running = False

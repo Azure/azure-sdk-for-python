@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
+from typing import Any
 
 from uamqp import SendClientAsync
 
@@ -21,17 +22,31 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        entity_name: str,
         credential: "TokenCredential",
-        **kwargs
+        **kwargs: Any
     ):
-        super(ClientBaseAsync, self).__init__(
-            fully_qualified_namespace=fully_qualified_namespace,
-            credential=credential,
-            entity_name=entity_name,
-            **kwargs
-        )
-        self._create_attribute_for_sender(entity_name)
+        if kwargs.get("from_connection_str", False):
+            super(ServiceBusSenderClient, self).__init__(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
+                **kwargs
+            )
+        else:
+            queue_name = kwargs.get("queue_name")
+            topic_name = kwargs.get("topic_name")
+            if queue_name and topic_name:
+                raise ValueError("Queue/Topic name can not be specified simultaneously.")
+            if not (queue_name or topic_name):
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
+            entity_name = queue_name or topic_name
+            super(ServiceBusSenderClient, self).__init__(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
+                entity_name=entity_name,
+                **kwargs
+            )
+
+        self._create_attribute_for_sender()
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -83,6 +98,18 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
         except Exception as e:
             raise MessageSendFailed(e)
 
+    @classmethod
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        **kwargs: Any,
+    ) -> "ServiceBusSenderClient":
+        constructor_args = cls._from_connection_string(
+            conn_str,
+            **kwargs
+        )
+        return cls(**constructor_args)
+
     async def send(self, message, session_id=None, message_timeout=None):
         # type: (Message, str, float) -> None
         await self._do_retryable_operation_async(
@@ -90,6 +117,6 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
             message=message,
             session_id=session_id,
             timeout=message_timeout,
-            require_need_timeout=True,
+            require_timeout=True,
             require_last_exception=True
         )

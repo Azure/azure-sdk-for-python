@@ -5,7 +5,7 @@
 import time
 import logging
 
-from uamqp import ReceiveClient, Message
+from uamqp import ReceiveClient
 
 from ._client_base import ClientBase, SenderReceiverMixin
 from .common.utils import create_properties
