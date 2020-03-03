@@ -1,0 +1,649 @@
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
+import json
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
+from azure.core.exceptions import DecodeError
+from azure.core.polling import PollingMethod
+
+from ..exceptions import HttpResponseError
+
+
+FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
+FAILED = frozenset(['canceled', 'failed'])
+SUCCEEDED = frozenset(['succeeded'])
+
+_AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
+_LOCATION_FINAL_STATE = "location"
+
+def finished(status):
+    if hasattr(status, 'value'):
+        status = status.value
+    return str(status).lower() in FINISHED
+
+
+def failed(status):
+    if hasattr(status, 'value'):
+        status = status.value
+    return str(status).lower() in FAILED
+
+
+def succeeded(status):
+    if hasattr(status, 'value'):
+        status = status.value
+    return str(status).lower() in SUCCEEDED
+
+
+class BadStatus(Exception):
+    pass
+
+
+class BadResponse(Exception):
+    pass
+
+
+class OperationFailed(Exception):
+    pass
+
+def _validate(url):
+    """Validate a url.
+
+    :param str url: Polling URL extracted from response header.
+    :raises: ValueError if URL has no scheme or host.
+    """
+    if url is None:
+        return
+    parsed = urlparse(url)
+    if not parsed.scheme or not parsed.netloc:
+        raise ValueError("Invalid URL header")
+
+def get_header_url(response, header_name):
+    # type: (azure.core.pipeline.transport.HttpResponse, str) -> Optional[str]
+    """Get a URL from a header requests.
+
+    :param requests.Response response: REST call response.
+    :param str header_name: Header name.
+    :returns: URL if not None AND valid, None otherwise
+    """
+    url = response.headers.get(header_name)
+    try:
+        _validate(url)
+    except ValueError:
+        return None
+    else:
+        return url
+
+def _as_json(response):
+    # type: (azure.core.pipeline.transport.HttpResponse) -> None
+    """Assuming this is not empty, return the content as JSON.
+
+    Result/exceptions is not determined if you call this method without testing _is_empty.
+
+    :raises: DecodeError if response body contains invalid json data.
+    """
+    # Assume ClientResponse has "body", and otherwise it's a requests.Response
+    content = response.text() if hasattr(response, "body") else response.text
+    try:
+        return json.loads(content)
+    except ValueError:
+        raise DecodeError(
+            "Error occurred in deserializing the response body.")
+
+def _raise_if_bad_http_status_and_method(response):
+    # type: (azure.core.pipeline.transport.HttpResponse) -> None
+    """Check response status code is valid.
+
+    Must be 200, 201, 202, or 204.
+
+    :raises: BadStatus if invalid status.
+    """
+    code = response.status_code
+    if code in {200, 201, 202, 204}:
+        return
+    raise BadStatus(
+        "Invalid return status {!r} for {!r} operation".format(code, response.request.method))
+
+def _is_empty(response):
+    # type: (azure.core.pipeline.transport.HttpResponse) -> None
+    """Check if response body contains meaningful content.
+
+    :rtype: bool
+    :raises: DecodeError if response body contains invalid json data.
+    """
+    # Assume ClientResponse has "body", and otherwise it's a requests.Response
+    content = response.text() if hasattr(response, "body") else response.text
+    if not content:
+        return True
+    try:
+        return not json.loads(content)
+    except ValueError:
+        raise DecodeError(
+            "Error occurred in deserializing the response body.")
+
+
+class LongRunningOperation(object):
+    """LongRunningOperation
+    Provides default logic for interpreting operation responses
+    and status updates.
+
+    :param azure.core.pipeline.PipelineResponse response: The initial pipeline response.
+    :param callable deserialization_callback: The deserialization callaback.
+    :param dict lro_options: LRO options.
+    :param kwargs: Unused for now
+    """
+
+    def can_poll(self, pipeline_response):
+        """Answer if this polling method could be used.
+        """
+        raise NotImplementedError()
+
+    def get_polling_url(self):
+        """Return the polling URL.
+        """
+        raise NotImplementedError()
+
+    def set_initial_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process first response after initiating long running
+        operation and set self.status attribute.
+
+        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        """
+        raise NotImplementedError()
+
+    def get_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        raise NotImplementedError()
+
+    def should_do_final_get(self):
+        """Check whether the polling should end doing a final GET.
+
+        :rtype: bool
+        """
+        raise NotImplementedError()
+
+
+class OperationResourcePolling(LongRunningOperation):
+    """Implements a operation resource polling, typically from Operation-Location.
+    """
+    def __init__(self, header="Operation-Location", lro_options=None):
+        self._header = header
+
+        # Store the initial URLs
+        self.async_url = None
+        self.location_url = None
+        self.request = None
+
+        if lro_options is None:
+            lro_options = {
+                'final-state-via': _AZURE_ASYNC_OPERATION_FINAL_STATE
+            }
+        self.lro_options = lro_options
+
+
+    def can_poll(self, pipeline_response):
+        """Answer if this polling method could be used.
+        """
+        response = pipeline_response.http_response
+        return self._header in response.headers
+
+    def get_polling_url(self):
+        """Return the polling URL.
+        """
+        return self.async_url
+
+    def should_do_final_get(self):
+        """Check whether the polling should end doing a final GET.
+
+        :rtype: bool
+        """
+        return (self.lro_options['final-state-via'] == _LOCATION_FINAL_STATE and self.request.method == 'POST') or self.request.method in {'PUT', 'PATCH'}
+
+    def set_initial_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process first response after initiating long running
+        operation and set self.status attribute.
+
+        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        """
+        self.request = pipeline_response.http_response.request
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+
+        self._set_async_url_if_present(response)
+
+        if response.status_code in {200, 201, 202, 204} and self.async_url:
+            self.status = 'InProgress'
+        else:
+            raise OperationFailed("Operation failed or canceled")
+
+    def _set_async_url_if_present(self, response):
+        # type: (azure.core.pipeline.transport.HttpResponse) -> None
+        async_url = get_header_url(response, self._header)
+        if async_url:
+            self.async_url = async_url
+        location_url = get_header_url(response, 'location')
+        if location_url:
+            self.location_url = location_url
+
+    def _get_operation_resource_status(self, response):
+        # type: (azure.core.pipeline.transport.HttpResponse) -> None
+        """Attempt to find "status" info in response body.
+
+        :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
+        :rtype: str
+        :returns: Status if found, else 'None'.
+        """
+        if _is_empty(response):
+            return None
+        body = _as_json(response)
+        return body.get('status')
+
+    def get_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process the latest status update retrieved from an "Operation-Location" header.
+
+        :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
+        :raises: BadResponse if response has no body, or body does not contain status.
+        """
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+        if _is_empty(response):
+            raise BadResponse('The response from long running operation '
+                              'does not contain a body.')
+
+        self.status = self._get_operation_resource_status(response)
+        if not self.status:
+            raise BadResponse("No status found in body")
+
+        # Status can contains information, see ARM spec:
+        # https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#operation-resource-format
+        # "properties": {
+        # /\* The resource provider can choose the values here, but it should only be
+        #   returned on a successful operation (status being "Succeeded"). \*/
+        #},
+
+
+class LocationPolling(LongRunningOperation):
+    """Implements a Location polling.
+    """
+
+    def __init__(self):
+        self.location_url = None
+
+    def can_poll(self, pipeline_response):
+        """Answer if this polling method could be used.
+        """
+        response = pipeline_response.http_response
+        return 'location' in response.headers
+
+    def get_polling_url(self):
+        """Return the polling URL.
+        """
+        return self.location_url
+
+    def should_do_final_get(self):
+        """Check whether the polling should end doing a final GET.
+
+        :rtype: bool
+        """
+        return False
+
+    def set_initial_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process first response after initiating long running
+        operation and set self.status attribute.
+
+        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        """
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+
+        self.location_url = response.headers['location']
+
+        if response.status_code in {200, 201, 202, 204} and self.location_url:
+            self.status = 'InProgress'
+        else:
+            raise OperationFailed("Operation failed or canceled")
+
+    def get_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process the latest status update retrieved from a 'location' header.
+
+        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :raises: BadResponse if response has no body and not status 202.
+        """
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+
+        if 'location' in response.headers:
+            self.location_url = response.headers['location']
+
+        code = response.status_code
+        if code == 202:
+            self.status = "InProgress"
+        else:
+            self.status = 'Succeeded'
+
+
+class BodyContentPolling(LongRunningOperation):
+    """Poll based on the body content.
+
+    Implement a ARM resource poller (using provisioning state).
+    """
+    def __init__(self):
+        self.status = None
+        self.initial_response = None
+
+    def can_poll(self, pipeline_response):
+        """Answer if this polling method could be used.
+        """
+        response = pipeline_response.http_response
+        return response.request.method == "PUT"
+
+    def get_polling_url(self):
+        """Return the polling URL.
+        """
+        return self.initial_response.http_response.request.url
+
+    def should_do_final_get(self):
+        """Check whether the polling should end doing a final GET.
+
+        :rtype: bool
+        """
+        return False
+
+    def set_initial_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process first response after initiating long running
+        operation and set self.status attribute.
+
+        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        """
+        self.initial_response = pipeline_response
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+
+        if response.status_code == 202:
+            self.status = 'InProgress'
+        elif response.status_code == 201:
+            status = self._get_provisioning_state(response)
+            self.status = status or 'InProgress'
+        elif response.status_code == 200:
+            status = self._get_provisioning_state(response)
+            self.status = status or 'Succeeded'
+        elif response.status_code == 204:
+            self.status = 'Succeeded'
+        else:
+            raise OperationFailed("Invalid status found")
+
+    def _get_provisioning_state(self, response):
+        # type: (azure.core.pipeline.transport.HttpResponse) -> None
+        """
+        Attempt to get provisioning state from resource.
+        :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
+        :returns: Status if found, else 'None'.
+        """
+        if _is_empty(response):
+            return None
+        body = _as_json(response)
+        return body.get("properties", {}).get("provisioningState")
+
+    def get_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process the latest status update retrieved from the same URL as
+        the previous request.
+
+        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :raises: BadResponse if status not 200 or 204.
+        """
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+        if _is_empty(response):
+            raise BadResponse('The response from long running operation '
+                              'does not contain a body.')
+
+        status = self._get_provisioning_state(response)
+        self.status = status or 'Succeeded'
+
+
+class StatusCheckPolling(LongRunningOperation):
+    """Should be the fallback polling, that don't poll but exit successfully
+    if not other polling are detected and status code is 2xx.
+    """
+
+    def can_poll(self, pipeline_response):
+        """Answer if this polling method could be used.
+        """
+        return True
+
+    def get_polling_url(self):
+        """Return the polling URL.
+        """
+        raise ValueError("This polling doesn't support polling")
+
+    def set_initial_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Process first response after initiating long running
+        operation and set self.status attribute.
+
+        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        """
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+        self.status = 'Succeeded'
+
+    def get_status(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        response = pipeline_response.http_response
+        _raise_if_bad_http_status_and_method(response)
+        self.status = 'Succeeded'
+
+    def should_do_final_get(self):
+        """Check whether the polling should end doing a final GET.
+
+        :rtype: bool
+        """
+        return False
+
+class LROBasePolling(PollingMethod):
+    """A base LRO poller.
+
+    This assumes a basic flow:
+    - I analyze the response to decide the polling approach
+    - I poll
+    - I ask the final resource depending of the polling approach
+
+    If your polling need are more specific, you could implement a PollingMethod directly
+    """
+
+    def __init__(self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config):
+        self._lro_algorithms = lro_algorithms or [
+            OperationResourcePolling(lro_options=lro_options),
+            OperationResourcePolling(lro_options=lro_options, header="Azure-AsyncOperation"),  # azure-mgmt-core (for sake of PR validation)
+            LocationPolling(),
+            BodyContentPolling(),  # azure-mgmt-core (for sake of PR validation)
+            StatusCheckPolling(),
+        ]
+
+        self._timeout = timeout
+        self._operation = None # Will hold an instance of LongRunningOperation
+        self._pipeline_response = None  # Will hold latest received response
+        self._deserialization_callback = None  # Will hold the deserialization callback
+        self._resource = None  # Will hold the final resource
+        self._operation_config = operation_config
+        self._lro_options = lro_options
+
+    def status(self):
+        """Return the current status as a string.
+        :rtype: str
+        """
+        if not self._operation:
+            raise ValueError("set_initial_status was never called. Did you give this instance to a poller?")
+        return self._operation.status
+
+    def finished(self):
+        """Is this polling finished?
+        :rtype: bool
+        """
+        return finished(self.status())
+
+    def resource(self):
+        """Return the built resource.
+        """
+        return self._resource
+
+    def initialize(self, client, initial_response, deserialization_callback):
+        """Set the initial status of this LRO.
+
+        :param initial_response: The initial response of the poller
+        :raises: HttpResponseError if initial status is incorrect LRO state
+        """
+        self._client = client
+        self._transport = self._client._pipeline._transport
+        self._pipeline_response = self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
+
+        for operation in self._lro_algorithms:
+            if operation.can_poll(initial_response):
+                self._operation = operation
+                break
+        else:
+            raise BadResponse("Unable to find status link for polling.")
+
+        try:
+            self._operation.set_initial_status(initial_response)
+            if self.finished():
+                self._parse_resource(self._pipeline_response)
+
+        except BadStatus as err:
+            self._operation.status = 'Failed'
+            raise HttpResponseError(response=initial_response.http_response, error=err)
+        except BadResponse as err:
+            self._operation.status = 'Failed'
+            raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err)
+        except OperationFailed as err:
+            raise HttpResponseError(response=initial_response.http_response, error=err)
+
+    def run(self):
+        try:
+            self._poll()
+        except BadStatus as err:
+            self._operation.status = 'Failed'
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+
+        except BadResponse as err:
+            self._operation.status = 'Failed'
+            raise HttpResponseError(response=self._pipeline_response.http_response, message=str(err), error=err)
+
+        except OperationFailed as err:
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+
+    def _poll(self):
+        """Poll status of operation so long as operation is incomplete and
+        we have an endpoint to query.
+
+        :param callable update_cmd: The function to call to retrieve the
+         latest status of the long running operation.
+        :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
+        :raises: BadStatus if response status invalid.
+        :raises: BadResponse if response invalid.
+        """
+
+        while not self.finished():
+            self._delay()
+            self.update_status()
+
+        if failed(self._operation.status):
+            raise OperationFailed("Operation failed or canceled")
+
+        elif self._operation.should_do_final_get():
+            request = self._initial_response.http_response.request
+            if request.method == 'POST' and 'location' in self._initial_response.http_response.headers:
+                final_get_url = self._initial_response.http_response.headers['location']
+            else:
+                final_get_url = request.url
+
+            self._pipeline_response = self.request_status(final_get_url)
+            _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+
+        self._parse_resource(self._pipeline_response)
+
+    def _deserialize(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Attempt to deserialize resource from response.
+
+        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        """
+        return self._deserialization_callback(pipeline_response)
+
+    def _parse_resource(self, pipeline_response):
+        # type: (azure.core.pipeline.PipelineResponse) -> None
+        """Assuming this response is a resource, use the deserialization callback to parse it.
+        If body is empty, assuming no resource to return.
+        """
+        response = pipeline_response.http_response
+        if not _is_empty(response):
+            self._resource = self._deserialize(pipeline_response)
+        else:
+            self._resource = None
+
+    def _sleep(self, delay):
+        self._transport.sleep(delay)
+
+    def _delay(self):
+        """Check for a 'retry-after' header to set timeout,
+        otherwise use configured timeout.
+        """
+        if self._pipeline_response is None:
+            return
+        response = self._pipeline_response.http_response
+        if response.headers.get('retry-after'):
+            self._sleep(int(response.headers['retry-after']))
+        else:
+            self._sleep(self._timeout)
+
+    def update_status(self):
+        """Update the current status of the LRO.
+        """
+        self._pipeline_response = self.request_status(self._operation.get_polling_url())
+        self._operation.get_status(self._pipeline_response)
+
+    def request_status(self, status_link):
+        """Do a simple GET to this status link.
+
+        This method re-inject 'x-ms-client-request-id'.
+
+        :rtype: azure.core.pipeline.PipelineResponse
+        """
+        request = self._client.get(status_link)
+        # Re-inject 'x-ms-client-request-id' while polling
+        if 'request_id' not in self._operation_config:
+            self._operation_config['request_id'] = self._pipeline_response.http_response.request.headers['x-ms-client-request-id']
+        return self._client._pipeline.run(request, stream=False, **self._operation_config)
