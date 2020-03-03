@@ -17,7 +17,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse, quote_plus
 
-
+import uamqp
 from uamqp import (
     authentication,
     utils,
@@ -25,23 +25,21 @@ from uamqp import (
     constants,
     Source
 )
+from uamqp.message import MessageProperties
+from .common.message import Message
 from .common._configuration import Configuration
 from .common.errors import (
     _ServiceBusErrorPolicy,
     OperationTimeoutError,
+    InvalidHandlerState,
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError
 )
 from .common.constants import (
-    ReceiveSettleMode,
-    NEXT_AVAILABLE,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH,
-    SESSION_FILTER,
+
     JWT_TOKEN_SCOPE
 )
-from .common.message import Message
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -120,69 +118,6 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class SenderReceiverMixin(object):
-    def _create_attribute_for_sender(self):
-        self._entity_path = self._entity_name
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
-        self._name = "SBSender-{}".format(uuid.uuid4())
-
-    def _create_attribute_for_receiver(self, **kwargs):
-        if kwargs.get("subscription_name"):
-            self.subscription_name = kwargs.get("subscription_name")
-            self._is_subscription = True
-            self._entity_path = self._entity_name + "/Subscriptions/" + self.subscription_name
-        else:
-            self._entity_path = self._entity_name
-
-        self._session_id = kwargs.get("session_id")
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
-        self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
-        self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total,
-            is_session=(True if self._session_id else False)
-        )
-        self._name = "SBReceiver-{}".format(uuid.uuid4())
-
-    def _receiver_build_message(self, received, message_type=Message):
-        message = message_type(None, message=received)
-        message._receiver = self  # pylint: disable=protected-access
-        self._last_received_sequenced_number = message.sequence_number
-        return message
-
-    def _sender_set_msg_timeout(self, timeout=None, last_exception=None):
-        if not timeout:
-            return
-        timeout_time = time.time() + timeout
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError("Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
-
-    def _receiver_get_source_for_session_entity(self):
-        source = Source(self._entity_uri)
-        session_filter = None if self._session == NEXT_AVAILABLE else self._session
-        source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
-        return source
-
-    def _receiver_on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
-        if str(source) == self.endpoint:
-            self.session_start = datetime.datetime.now()
-            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
-                self.locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
-            session_filter = source.get_filter(name=SESSION_FILTER)
-            self.session_id = session_filter.decode(self.encoding)
-
-
 class ClientBase(object):
     def __init__(
         self,
@@ -193,6 +128,7 @@ class ClientBase(object):
     ):
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
+        self._mgmt_target = self._entity_name + "/$management"
         self._credential = credential
         self._container_id = "servicebus.pysdk-" + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
@@ -361,6 +297,30 @@ class ClientBase(object):
             last_exception,
         )
         raise last_exception
+
+    def _mgmt_request_response(self, operation, message, callback, **kwargs):
+        if not self._running:
+            raise InvalidHandlerState("Client connection is closed.")
+
+        mgmt_msg = uamqp.Message(
+            body=message,
+            properties=MessageProperties(
+                reply_to=self._mgmt_target,
+                encoding=self._config.encoding,
+                **kwargs
+            )
+        )
+        try:
+            return self._handler.mgmt_request(
+                mgmt_msg,
+                operation,
+                op_type=b"entity-mgmt",
+                node=self._mgmt_target.encode(self._config.encoding),
+                timeout=5000,
+                callback=callback
+            )
+        except Exception as exp:  # pylint: disable=broad-except
+            raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
     def close(self, exception=None):
         if self._error:

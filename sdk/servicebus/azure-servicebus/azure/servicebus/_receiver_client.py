@@ -3,18 +3,74 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import time
+import datetime
 import logging
+import functools
+import uuid
 
-from uamqp import ReceiveClient
+from uamqp import ReceiveClient, Source, types
 
-from ._client_base import ClientBase, SenderReceiverMixin
+from ._client_base import ClientBase
 from .common.utils import create_properties
-
+from .common.message import Message
+from .common.constants import (
+    REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+    REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+    ReceiveSettleMode,
+    NEXT_AVAILABLE,
+    SESSION_LOCKED_UNTIL,
+    DATETIMEOFFSET_EPOCH,
+    SESSION_FILTER,
+)
+from .common.errors import _ServiceBusErrorPolicy
+from .common import mgmt_handlers
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
+class ReceiverMixin(object):
+    def _create_attribute(self, **kwargs):
+        if kwargs.get("subscription_name"):
+            self.subscription_name = kwargs.get("subscription_name")
+            self._is_subscription = True
+            self._entity_path = self._entity_name + "/Subscriptions/" + self.subscription_name
+        else:
+            self._entity_path = self._entity_name
+
+        self._session_id = kwargs.get("session_id")
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
+        self._error_policy = _ServiceBusErrorPolicy(
+            max_retries=self._config.retry_total,
+            is_session=(True if self._session_id else False)
+        )
+        self._name = "SBReceiver-{}".format(uuid.uuid4())
+
+    def _build_message(self, received, message_type=Message):
+        message = message_type(None, message=received)
+        message._receiver = self  # pylint: disable=protected-access
+        self._last_received_sequenced_number = message.sequence_number
+        return message
+
+    def _get_source_for_session_entity(self):
+        source = Source(self._entity_uri)
+        session_filter = None if self._session_id == NEXT_AVAILABLE else self._session_id
+        source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
+        return source
+
+    def _on_attach_for_session_entity(self, source, target, properties, error):  # pylint: disable=unused-argument
+        if str(source) == self._entity_uri:
+            self._session_start = datetime.datetime.now()
+            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
+                self._locked_until = datetime.datetime.fromtimestamp(expiry_in_seconds)
+            session_filter = source.get_filter(name=SESSION_FILTER)
+            self._session_id = session_filter.decode(self._config.encoding)
+
+
+class ServiceBusReceiverClient(ClientBase, ReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace,
@@ -47,7 +103,7 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
                 entity_name=entity_name,
                 **kwargs
             )
-        self._create_attribute_for_receiver(**kwargs)
+        self._create_attribute(**kwargs)
 
     def __iter__(self):
         return self
@@ -57,7 +113,7 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             try:
                 self._open()
                 uamqp_message = next(self._message_iter)
-                message = self._receiver_build_message(uamqp_message)
+                message = self._build_message(uamqp_message)
                 return message
             except StopIteration:
                 raise
@@ -82,13 +138,13 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             )
         else:
             self._handler = ReceiveClient(
-                self._receiver_get_source_for_session_entity(),
+                self._get_source_for_session_entity(),
                 auth=auth,
                 debug=self._config.logging_enable,
                 properties=properties,
                 error_policy=self._error_policy,
                 client_name=self._name,
-                on_attach=self._receiver_on_attach_for_session_entity,
+                on_attach=self._on_attach_for_session_entity,
                 auto_complete=False,
                 encoding=self._config.encoding,
                 receive_settle_mode=self._mode.value
@@ -125,7 +181,7 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             timeout=timeout_ms
         )
         for received in batch:
-            message = self._receiver_build_message(received)
+            message = self._build_message(received)
             wrapped_batch.append(message)
 
         return wrapped_batch
@@ -162,3 +218,37 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             timeout=timeout,
             require_timeout=True
         )
+
+    def _settle_deferred(self, settlement, lock_tokens, dead_letter_details=None):
+        message = {
+            'disposition-status': settlement,
+            'lock-tokens': types.AMQPArray(lock_tokens)}
+        if dead_letter_details:
+            message.update(dead_letter_details)
+        return self._mgmt_request_response(
+            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+            message,
+            mgmt_handlers.default)
+
+    def receive_deferred_messages(self, sequence_numbers):
+        # type: (List[int]) -> List[DeferredMessage]
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
+        self._open()
+        try:
+            receive_mode = self._mode.value.value
+        except AttributeError:
+            receive_mode = int(self._mode)
+        message = {
+            'sequence-numbers': types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
+            'receiver-settle-mode': types.AMQPuInt(receive_mode),
+            'session-id': self._session_id
+        }
+        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=receive_mode)
+        messages = self._mgmt_request_response(
+            REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+            message,
+            handler)
+        for m in messages:
+            m._receiver = self  # pylint: disable=protected-access
+        return messages

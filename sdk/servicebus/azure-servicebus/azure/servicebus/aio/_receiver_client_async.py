@@ -5,20 +5,22 @@
 import asyncio
 import collections
 import logging
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from uamqp import ReceiveClientAsync
 
-from .._client_base import SenderReceiverMixin
+from .._receiver_client import ReceiverMixin
 from ._client_base_async import ClientBaseAsync
 from ..common.utils import create_properties
-from .async_message import Message as MessageAsync, DeferredMessage
+from .async_message import Message as MessageAsync
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, SenderReceiverMixin):
+class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, ReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -50,14 +52,14 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, S
                 entity_name=entity_name,
                 **kwargs
             )
-        self._create_attribute_for_receiver(**kwargs)
+        self._create_attribute(**kwargs)
 
     async def __anext__(self):
         while True:
             try:
                 await self._open_async()
                 uamqp_message = await self._message_iter.__anext__()
-                message = self._receiver_build_message(uamqp_message, MessageAsync)
+                message = self._build_message(uamqp_message, MessageAsync)
                 return message
             except StopAsyncIteration:
                 await self.close()
@@ -81,13 +83,13 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, S
             )
         else:
             self._handler = ReceiveClientAsync(
-                self._receiver_get_source_for_session_entity(),
+                self._get_source_for_session_entity(),
                 auth=auth,
                 debug=self._config.logging_enable,
                 properties=properties,
                 error_policy=self._error_policy,
                 client_name=self._name,
-                on_attach=self._receiver_on_attach_for_session_entity,
+                on_attach=self._on_attach_for_session_entity,
                 auto_complete=False,
                 encoding=self._config.encoding,
                 receive_settle_mode=self._mode.value
@@ -123,7 +125,7 @@ class ServiceBusReceiverClient(collections.abc.AsyncIterator, ClientBaseAsync, S
             max_batch_size=max_batch_size,
             timeout=timeout_ms)
         for received in batch:
-            message = self._receiver_build_message(received, MessageAsync)
+            message = self._build_message(received, MessageAsync)
             wrapped_batch.append(message)
 
         return wrapped_batch

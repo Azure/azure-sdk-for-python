@@ -4,21 +4,25 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from uamqp import SendClientAsync
 
-from .._client_base import SenderReceiverMixin
+from .._sender_client import SenderMixin
 from ._client_base_async import ClientBaseAsync
 from ..common.errors import (
     MessageSendFailed
 )
 from ..common.utils import create_properties
+from .async_message import Message
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
+class ServiceBusSenderClient(ClientBaseAsync, SenderMixin):
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -46,7 +50,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
                 **kwargs
             )
 
-        self._create_attribute_for_sender()
+        self._create_attribute()
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -90,7 +94,7 @@ class ServiceBusSenderClient(ClientBaseAsync, SenderReceiverMixin):
 
     async def _send_async(self, message, session_id=None, timeout=None, last_exception=None):
         await self._open_async()
-        self._sender_set_msg_timeout(timeout, last_exception)
+        self._set_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
         try:

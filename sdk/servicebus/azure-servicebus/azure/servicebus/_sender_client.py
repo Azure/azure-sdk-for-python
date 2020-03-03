@@ -4,19 +4,45 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import time
+import uuid
 
 from uamqp import SendClient
 
-from ._client_base import ClientBase, SenderReceiverMixin
+from ._client_base import ClientBase
 from .common.errors import (
-    MessageSendFailed
+    MessageSendFailed,
+    OperationTimeoutError,
+    _ServiceBusErrorPolicy
 )
 from .common.utils import create_properties
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
+class SenderMixin(object):
+    def _create_attribute(self):
+        self._entity_path = self._entity_name
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
+        self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
+        self._name = "SBSender-{}".format(uuid.uuid4())
+
+    def _set_msg_timeout(self, timeout=None, last_exception=None):
+        if not timeout:
+            return
+        timeout_time = time.time() + timeout
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                error = last_exception
+            else:
+                error = OperationTimeoutError("Send operation timed out")
+            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
+            raise error
+        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+
+
+class ServiceBusSenderClient(ClientBase, SenderMixin):
     def __init__(
         self,
         fully_qualified_namespace,
@@ -45,7 +71,7 @@ class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
                 **kwargs
             )
 
-        self._create_attribute_for_sender()
+        self._create_attribute()
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -89,7 +115,7 @@ class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
 
     def _send(self, message, session_id=None, timeout=None, last_exception=None):
         self._open()
-        self._sender_set_msg_timeout(timeout, last_exception)
+        self._set_msg_timeout(timeout, last_exception)
         if session_id and not message.properties.group_id:
             message.properties.group_id = session_id
         try:
