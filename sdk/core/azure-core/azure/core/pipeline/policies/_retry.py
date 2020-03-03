@@ -397,19 +397,7 @@ class RetryPolicy(HTTPPolicy):
             req_timeout = absolute_timeout
         request.context.options['connection_timeout'] = req_timeout
 
-    def send(self, request):    # pylint: disable=too-many-statements
-        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
-
-        :param request: The PipelineRequest object
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
-        :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
-        :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
-        """
-        retry_active = True
-        response = None
-        retry_settings = self.configure_retries(request.context.options)
+    def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
         if request.http_request.body and hasattr(request.http_request.body, 'read'):
@@ -432,6 +420,21 @@ class RetryPolicy(HTTPPolicy):
 
         retry_settings['body_position'] = body_position
         retry_settings['file_positions'] = file_positions
+
+    def send(self, request):
+        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
+        """
+        retry_active = True
+        response = None
+        retry_settings = self.configure_retries(request.context.options)
+        self._configure_positions(request, retry_settings)
 
         absolute_timeout = retry_settings['timeout']
         is_response_error = True
