@@ -22,13 +22,11 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
 
     This works by polling for the existence of the deleted or recovered resource. When a resource is deleted, Key Vault
     immediately removes it from its collection. However, the resource will not immediately appear in the deleted
-    collection. Key Vault will therefore respond 404 to GET requests for the deleted resource; when it responds 2xx
-    or 403, the resource exists in the deleted collection, i.e. its deletion is complete.
+    collection. Key Vault will therefore respond 404 to GET requests for the deleted resource; when it responds 2xx,
+    the resource exists in the deleted collection i.e. its deletion is complete.
 
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
-    resource; when it responds 2xx or 403, the resource exists in the non-deleted collection, i.e. its rec+
-    (403 indicates completion of these operations because Key Vault responds 403 when a resource exists but the client
-    lacks permission to access it.)
+    resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
     """
 
     def __init__(self, command, final_resource, finished, interval=2):
