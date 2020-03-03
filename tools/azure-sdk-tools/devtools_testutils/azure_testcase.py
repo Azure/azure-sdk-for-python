@@ -238,6 +238,16 @@ class AzureTestCase(ReplayableTest):
         """Alias to create_random_name for back compatibility."""
         return self.create_random_name(name)
 
+    def get_replayable_random_resource_name(self, name):
+        """In a replay scenario, (is not live) gives the static moniker.  In the random scenario, gives generated name."""
+        if self.is_live:
+            created_name = self.create_random_name(name)
+            self.scrubber.register_name_pair(
+                created_name,
+                name
+            )
+        return name
+
     def get_preparer_resource_name(self, prefix):
         """Random name generation for use by preparers.
 
