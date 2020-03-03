@@ -18,18 +18,36 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace,
-        entity_name,
         credential,
         **kwargs
     ):
-        # type: (str, str, TokenCredential, Any) -> None
-        super(ServiceBusReceiverClient, self).__init__(
-            fully_qualified_namespace=fully_qualified_namespace,
-            credential=credential,
-            entity_name=entity_name,
-            **kwargs
-        )
-        self._create_attribute_for_receiver(entity_name, **kwargs)
+        # type: (str, TokenCredential, Any) -> None
+        if kwargs.get("from_connection_str", False):
+            super(ServiceBusReceiverClient, self).__init__(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
+                **kwargs
+            )
+        else:
+            queue_name = kwargs.get("queue_name")
+            topic_name = kwargs.get("topic_name")
+            subscription_name = kwargs.get("subscription_name")
+            if queue_name and topic_name:
+                raise ValueError("Queue/Topic name can not be specified simultaneously.")
+            if not (queue_name or topic_name):
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
+            if topic_name and not subscription_name:
+                raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
+
+            entity_name = queue_name or topic_name
+
+            super(ServiceBusReceiverClient, self).__init__(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
+                entity_name=entity_name,
+                **kwargs
+            )
+        self._create_attribute_for_receiver(**kwargs)
 
     def __iter__(self):
         return self
@@ -119,40 +137,6 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
         super(ServiceBusReceiverClient, self).close(exception=exception)
 
     @classmethod
-    def from_queue(
-        cls,
-        fully_qualified_namespace,
-        queue_name,
-        credential,
-        **kwargs
-    ):
-        # type: (str, str, TokenCredential, Any) -> ServiceBusReceiverClient
-        return cls(
-            fully_qualified_namespace=fully_qualified_namespace,
-            entity_name=queue_name,
-            credential=credential,
-            **kwargs
-        )
-
-    @classmethod
-    def from_topic_subscription(
-        cls,
-        fully_qualified_namespace,
-        topic_name,
-        subscription_name,
-        credential,
-        **kwargs
-    ):
-        # type: (str, str, str, TokenCredential, Any) -> ServiceBusReceiverClient
-        return cls(
-            fully_qualified_namespace=fully_qualified_namespace,
-            entity_name=topic_name,
-            subscription_name=subscription_name,
-            credential=credential,
-            **kwargs
-        )
-
-    @classmethod
     def from_connection_string(
         cls,
         conn_str,
@@ -163,6 +147,11 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             conn_str,
             **kwargs
         )
+        if kwargs.get("queue_name") and kwargs.get("subscription_name"):
+            raise ValueError("Queue entity does not have subscription.")
+
+        if kwargs.get("topic_name") and not kwargs.get("subscription_name"):
+            raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
     def receive(self, max_batch_size=None, timeout=None):
@@ -171,5 +160,5 @@ class ServiceBusReceiverClient(ClientBase, SenderReceiverMixin):
             self._receive,
             max_batch_size=max_batch_size,
             timeout=timeout,
-            require_need_timeout=True
+            require_timeout=True
         )

@@ -8,6 +8,9 @@ from ._version import VERSION
 __version__ = VERSION
 
 
+from azure.servicebus._sender_client import ServiceBusSenderClient
+from azure.servicebus._receiver_client import ServiceBusReceiverClient
+from azure.servicebus._client_base import ServiceBusSharedKeyCredential
 from azure.servicebus.common.message import Message, BatchMessage, PeekMessage, DeferredMessage
 from azure.servicebus.servicebus_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
@@ -52,4 +55,8 @@ __all__ = [
     'MessageLockExpired',
     'SessionLockExpired',
     'AutoLockRenewFailed',
-    'AutoLockRenewTimeout']
+    'AutoLockRenewTimeout',
+    'ServiceBusReceiverClient',
+    'ServiceBusSenderClient',
+    'ServiceBusSharedKeyCredential'
+]

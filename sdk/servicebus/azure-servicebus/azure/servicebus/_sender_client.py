@@ -20,18 +20,32 @@ class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
     def __init__(
         self,
         fully_qualified_namespace,
-        entity_name,
         credential,
-        ** kwargs
+        **kwargs
     ):
-        # type: (str, str, TokenCredential, Any) -> None
-        super(ServiceBusSenderClient, self).__init__(
-            fully_qualified_namespace=fully_qualified_namespace,
-            credential=credential,
-            entity_name=entity_name,
-            **kwargs
-        )
-        self._create_attribute_for_sender(entity_name)
+        # type: (str, TokenCredential, Any) -> None
+        if kwargs.get("from_connection_str", False):
+            super(ServiceBusSenderClient, self).__init__(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
+                **kwargs
+            )
+        else:
+            queue_name = kwargs.get("queue_name")
+            topic_name = kwargs.get("topic_name")
+            if queue_name and topic_name:
+                raise ValueError("Queue/Topic name can not be specified simultaneously.")
+            if not (queue_name or topic_name):
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
+            entity_name = queue_name or topic_name
+            super(ServiceBusSenderClient, self).__init__(
+                fully_qualified_namespace=fully_qualified_namespace,
+                credential=credential,
+                entity_name=entity_name,
+                **kwargs
+            )
+
+        self._create_attribute_for_sender()
 
     def _create_handler(self, auth):
         properties = create_properties()
@@ -84,38 +98,6 @@ class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
             raise MessageSendFailed(e)
 
     @classmethod
-    def from_queue(
-        cls,
-        fully_qualified_namespace,
-        queue_name,
-        credential,
-        **kwargs
-    ):
-        # type: (str, str, TokenCredential, Any) -> ServiceBusSenderClient
-        return cls(
-            fully_qualified_namespace=fully_qualified_namespace,
-            entity_name=queue_name,
-            credential=credential,
-            **kwargs
-        )
-
-    @classmethod
-    def from_topic(
-        cls,
-        fully_qualified_namespace,
-        topic_name,
-        credential,
-        **kwargs
-    ):
-        # type: (str, str, TokenCredential, Any) -> ServiceBusSenderClient
-        return cls(
-            fully_qualified_namespace=fully_qualified_namespace,
-            entity_name=topic_name,
-            credential=credential,
-            **kwargs
-        )
-
-    @classmethod
     def from_connection_string(
         cls,
         conn_str,
@@ -135,6 +117,6 @@ class ServiceBusSenderClient(ClientBase, SenderReceiverMixin):
             message=message,
             session_id=session_id,
             timeout=message_timeout,
-            require_need_timeout=True,
+            require_timeout=True,
             require_last_exception=True
         )

@@ -121,20 +121,20 @@ class ServiceBusSharedKeyCredential(object):
 
 
 class SenderReceiverMixin(object):
-    def _create_attribute_for_sender(self, entity_name):
-        self._entity_path = entity_name
+    def _create_attribute_for_sender(self):
+        self._entity_path = self._entity_name
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
         self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
         self._name = "SBSender-{}".format(uuid.uuid4())
 
-    def _create_attribute_for_receiver(self, entity_name, **kwargs):
+    def _create_attribute_for_receiver(self, **kwargs):
         if kwargs.get("subscription_name"):
             self.subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True
-            self._entity_path = entity_name + "/Subscriptions/" + self.subscription_name
+            self._entity_path = self._entity_name + "/Subscriptions/" + self.subscription_name
         else:
-            self._entity_path = entity_name
+            self._entity_path = self._entity_name
 
         self._session_id = kwargs.get("session_id")
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_path)
@@ -146,8 +146,8 @@ class SenderReceiverMixin(object):
         )
         self._name = "SBReceiver-{}".format(uuid.uuid4())
 
-    def _receiver_build_message(self, received):
-        message = Message(None, message=received)
+    def _receiver_build_message(self, received, message_type=Message):
+        message = message_type(None, message=received)
         message._receiver = self  # pylint: disable=protected-access
         self._last_received_sequenced_number = message.sequence_number
         return message
@@ -192,7 +192,7 @@ class ClientBase(object):
         **kwargs
     ):
         self.fully_qualified_namespace = fully_qualified_namespace
-        self.entity_name = entity_name
+        self._entity_name = entity_name
         self._credential = credential
         self._container_id = "servicebus.pysdk-" + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
@@ -285,10 +285,16 @@ class ClientBase(object):
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
         host, policy, key, entity_in_conn_str = _parse_conn_str(conn_str)
-        entity_in_kwargs = kwargs.get("entity_name")
-        if not entity_in_conn_str and entity_in_kwargs is None:
-            raise ValueError("Entity name is missing from the connection string. Please specify entity name or"
-                             " use a connection string including the entity information.")
+        queue_name = kwargs.get("queue_name")
+        topic_name = kwargs.get("topic_name")
+        if not (queue_name or topic_name or entity_in_conn_str):
+            raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name"
+                             " or use a connection string including the entity information.")
+
+        if queue_name and topic_name:
+            raise ValueError("Queue/Topic name can not be specified simultaneously.")
+
+        entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
             raise ValueError("Entity names do not match, the entity name in connection string is {}; the"
                              " entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs))
@@ -296,6 +302,7 @@ class ClientBase(object):
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
         kwargs["credential"] = ServiceBusSharedKeyCredential(policy, key)
+        kwargs["from_connection_str"] = True
         return kwargs
 
     def _backoff(
@@ -327,7 +334,7 @@ class ClientBase(object):
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         require_last_exception = kwargs.pop("require_last_exception", False)
-        require_timeout = kwargs.pop("require_need_timeout", False)
+        require_timeout = kwargs.pop("require_timeout", False)
         retried_times = 0
         last_exception = None
         max_retries = self._config.retry_total
