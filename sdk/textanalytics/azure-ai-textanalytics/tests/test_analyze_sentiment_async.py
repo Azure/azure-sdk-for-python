@@ -101,7 +101,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_some_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_input_with_some_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -115,7 +115,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_input_with_all_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -463,7 +463,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_text_analytics_error_bad_model_version(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_bad_model_version_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -476,7 +476,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_text_analytics_error_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_document_errors(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         text = ""
         for _ in range(5121):
@@ -496,7 +496,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_text_analytics_error_missing_input_records(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_missing_input_records_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))\
 
         docs = []
@@ -508,7 +508,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_text_analytics_error_duplicate_ids(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_duplicate_ids_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
@@ -521,7 +521,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @AsyncTextAnalyticsTest.await_prepared_test
-    async def test_text_analytics_error_batch_size_over_limit(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    async def test_batch_size_over_limit_error(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics = TextAnalyticsClient(text_analytics_account, TextAnalyticsApiKeyCredential(text_analytics_account_key))
 
         # Batch size over limit
