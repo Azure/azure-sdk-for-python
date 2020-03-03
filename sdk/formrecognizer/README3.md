@@ -198,7 +198,7 @@ client.begin_labeled_training(
 ) -> LROPoller -> LabeledCustomModel
 
 client.begin_training(
-    source: str, source_prefix_filter: str, include_sub_folders: bool=False
+    source: str, source_prefix_filter: str, include_sub_folders: bool=False, include_keys: bool=False
 ) -> LROPoller -> CustomModel
 
 client.begin_extract_form(form: Any, model_id: str,) -> LROPoller -> List[ExtractedPage]
@@ -246,11 +246,11 @@ class ExtractedPage:
     cluster_id: int
 
 class ExtractedField:
-    name: TextValue
-    value: TextValue
+    name: ExtractedText
+    value: ExtractedText
     confidence: float
 
-class TextValue:
+class ExtractedText:
     text: str
     bounding_box: List[float]
     raw_field: List[ExtractedLine]

@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table, ExtractedLayoutPage, CustomModel, LabeledCustomModel
+from ._models import ExtractedReceipt, FieldValue, ReceiptFields, ReceiptItem, ReceiptItemField, TableCell, Table, ExtractedLayoutPage, CustomModel, LabeledCustomModel, ExtractedPage, ExtractedField, ExtractedLabel
 
 
 def get_pipeline_response(pipeline_response, _, response_headers):
@@ -15,6 +15,7 @@ def get_pipeline_response(pipeline_response, _, response_headers):
 def get_receipt_field_value(field):
     if field is None:
         return field
+    # FIXME: refactor this
     value = field.value_array or field.value_date or field.value_integer or field.value_number \
             or field.value_object or field.value_phone_number or field.value_string or field.value_time
     return value
@@ -105,7 +106,8 @@ def prepare_layout_result(response, include_raw):
         for table in page.tables:
             my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
             for cell in table.cells:
-                my_table[cell.row_index][cell.column_index] = TableCell._from_generated(cell, response.analyze_result.read_results, include_raw)
+                my_table[cell.row_index][cell.column_index] = \
+                    TableCell._from_generated(cell, response.analyze_result.read_results, include_raw)
             result_page.tables.append(Table(my_table))
         pages.append(result_page)
     return pages
@@ -121,3 +123,44 @@ def prepare_labeled_training_result(response):
 
 def list_models_result(response):
     pass
+
+
+def prepare_analyze_result(response, include_raw):
+    pages = []
+
+    for page in response.analyze_result.page_results:
+        result_page = ExtractedPage(page_number=page.page, tables=[], fields=[], cluster_id=page.cluster_id)
+        if page.tables:
+            for table in page.tables:
+                my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
+                for cell in table.cells:
+                    my_table[cell.row_index][cell.column_index] = \
+                        TableCell._from_generated(cell, response.analyze_result.read_results, include_raw)
+                result_page.tables.append(Table(my_table))
+        if page.key_value_pairs:
+            for item in page.key_value_pairs:
+                extracted_field = ExtractedField._from_generated(item, response.analyze_result.read_results, include_raw)
+                result_page.fields.append(extracted_field)
+        pages.append(result_page)
+    return pages
+
+
+def prepare_labeled_analyze_result(response, include_raw):
+    pages = []
+    read_result = response.analyze_result.read_results
+    for page in response.analyze_result.page_results:
+        result_page = ExtractedPage(page_number=page.page, tables=[], fields=[])
+        if page.tables:
+            for table in page.tables:
+                my_table = [[None for x in range(table.columns)] for y in range(table.rows)]
+                for cell in table.cells:
+                    my_table[cell.row_index][cell.column_index] = \
+                        TableCell._from_generated(cell, read_result, include_raw)
+                result_page.tables.append(Table(my_table))
+        pages.append(result_page)
+
+    for idx, page in enumerate(response.analyze_result.document_results):
+        if page.fields:
+            pages[idx].fields = [ExtractedLabel._from_generated((label, value), read_result, include_raw) for label, value in page.fields.items()]
+
+    return pages
