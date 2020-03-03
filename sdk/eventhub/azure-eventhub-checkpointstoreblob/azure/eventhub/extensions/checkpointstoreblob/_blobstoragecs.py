@@ -42,6 +42,23 @@ class BlobCheckpointStore(CheckpointStore):
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints that are
     defined in class azure.eventhub.aio.CheckpointStore of package azure-eventhub.
 
+    :param str account_url:
+        The URI to the storage account. In order to create a client given the full URI to the container,
+        use the :func:`from_container_url` classmethod.
+    :param container_name:
+        The name of the container for the blob.
+    :type container_name: str
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, an account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-07-07'.
+        Setting to an older version may result in reduced feature compatibility.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
+
     """
 
     def __init__(self, blob_account_url, container_name, credential=None, **kwargs):
@@ -57,6 +74,23 @@ class BlobCheckpointStore(CheckpointStore):
         cls, conn_str, container_name, credential=None, **kwargs
     ):
         # type: (str, str, Optional[Any], str) -> BlobCheckpointStore
+        """Create BlobCheckpointStore from a storage connection string.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param container_name:
+            The container name for the blob.
+        :type container_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account
+            shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        :returns: A blob checkpoint store.
+        :rtype: ~azure.eventhub.extensions.checkpointstoreblob.BlobCheckpointStore
+        """
+
         container_client = ContainerClient.from_connection_string(
             conn_str, container_name, credential=credential, **kwargs
         )
