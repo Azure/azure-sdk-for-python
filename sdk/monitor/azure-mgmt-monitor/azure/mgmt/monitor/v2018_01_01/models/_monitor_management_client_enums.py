@@ -23,6 +23,10 @@ class Unit(str, Enum):
     milli_seconds = "MilliSeconds"
     byte_seconds = "ByteSeconds"
     unspecified = "Unspecified"
+    cores = "Cores"
+    milli_cores = "MilliCores"
+    nano_cores = "NanoCores"
+    bits_per_second = "BitsPerSecond"
 
 
 class AggregationType(str, Enum):
