@@ -248,6 +248,14 @@ class SearchIndexClient(object):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Upload new documents to the Azure search index.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_crud_operations.py
+                :start-after: [START upload_document]
+                :end-before: [END upload_document]
+                :language: python
+                :dedent: 4
+                :caption: Upload new documents to an index
         """
         batch = IndexBatch()
         batch.add_upload_documents(documents)
@@ -258,6 +266,14 @@ class SearchIndexClient(object):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Delete documents from the Azure search index
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_crud_operations.py
+                :start-after: [START delete_document]
+                :end-before: [END delete_document]
+                :language: python
+                :dedent: 4
+                :caption: Delete existing documents to an index
         """
         batch = IndexBatch()
         batch.add_delete_documents(documents)
@@ -268,6 +284,14 @@ class SearchIndexClient(object):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_crud_operations.py
+                :start-after: [START merge_document]
+                :end-before: [END merge_document]
+                :language: python
+                :dedent: 4
+                :caption: Merge fields into existing documents to an index
         """
         batch = IndexBatch()
         batch.add_merge_documents(documents)

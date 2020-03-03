@@ -1,0 +1,73 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: sample_authentication.py
+DESCRIPTION:
+    This sample demonstrates how to authenticate with the Azure Congnitive Search
+    service with an API key. See more details about authentication here:
+    https://docs.microsoft.com/en-us/azure/search/search-security-api-keys
+USAGE:
+    python sample_authentication.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_SEARCH_SERVICE_NAME - the name of your Azure Cognitive Search service
+    2) AZURE_SEARCH_INDEX_NAME - the name of your search index (e.g. "hotels-sample-index")
+    3) AZURE_SEARCH_API_KEY - your search API key
+"""
+
+import os
+import asyncio
+
+service_name = os.getenv("AZURE_SEARCH_SERVICE_NAME")
+index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
+key = os.getenv("AZURE_SEARCH_API_KEY")
+
+from azure.search.aio import SearchIndexClient
+from azure.search import SearchApiKeyCredential, SearchQuery
+
+search_client = SearchIndexClient(service_name, index_name, SearchApiKeyCredential(key))
+
+async def upload_document():
+    # [START upload_document_async]
+    DOCUMENT = {
+        'Category': 'Hotel',
+        'HotelId': '1000',
+        'Rating': 4.0,
+        'Rooms': [],
+        'HotelName': 'Azure Inn',
+    }
+
+    result = await search_client.upload_documents(documents=[DOCUMENT])
+
+    print("Upload of new document succeeded: {}".format(result[0].succeeded))
+    # [END upload_document_async]
+
+async def merge_document():
+    # [START merge_document_async]
+    result = await search_client.upload_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
+
+    print("Merge into new document succeeded: {}".format(result[0].succeeded))
+    # [END merge_document_async]
+
+async def delete_document():
+    # [START delete_document_async]
+    result = await search_client.upload_documents(documents=[{"HotelId": "1000"}])
+
+    print("Delete new document succeeded: {}".format(result[0].succeeded))
+    # [END delete_document_async]
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.gather(
+        upload_document(),
+        merge_document(),
+        delete_document(),
+    ))
+    asyncio.run(search_client.close())
+
