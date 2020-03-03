@@ -35,8 +35,6 @@ from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
     ServiceRequestError,
-    ServiceRequestTimeoutError,
-    ServiceResponseTimeoutError,
 )
 from ._base import HTTPPolicy
 from ._base_async import AsyncHTTPPolicy
@@ -125,7 +123,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request):    # pylint: disable=too-many-statements
+    async def send(self, request):
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object
@@ -145,17 +143,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         while retry_active:
             try:
                 start_time = time.time()
-                if absolute_timeout <= 0:
-                    if is_response_error:
-                        raise ServiceResponseTimeoutError('Response timeout')
-                    raise ServiceRequestTimeoutError('Request timeout')
-                connection_timeout = request.context.options.get('connection_timeout')
-                if connection_timeout:
-                    req_timeout = min(connection_timeout, absolute_timeout)
-                else:
-                    req_timeout = absolute_timeout
-                request.context.options['connection_timeout'] = req_timeout
-
+                self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)

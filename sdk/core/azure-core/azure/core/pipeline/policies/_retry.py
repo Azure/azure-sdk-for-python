@@ -385,7 +385,20 @@ class RetryPolicy(HTTPPolicy):
         if retry_settings['history']:
             context['history'] = retry_settings['history']
 
-    def send(self, request):    # pylint: disable=too-many-statements, too-many-branches
+    def _configure_timeout(self, request, absolute_timeout, is_response_error):
+        # type: (azure.core.pipeline.PipelineRequest, int, bool) -> Optional[AzureError]
+        if absolute_timeout <= 0:
+            if is_response_error:
+                raise ServiceResponseTimeoutError('Response timeout')
+            raise ServiceRequestTimeoutError('Request timeout')
+        connection_timeout = request.context.options.get('connection_timeout')
+        if connection_timeout:
+            req_timeout = min(connection_timeout, absolute_timeout)
+        else:
+            req_timeout = absolute_timeout
+        request.context.options['connection_timeout'] = req_timeout
+
+    def send(self, request):    # pylint: disable=too-many-statements
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
         :param request: The PipelineRequest object
@@ -427,16 +440,7 @@ class RetryPolicy(HTTPPolicy):
         while retry_active:
             try:
                 start_time = time.time()
-                if absolute_timeout <= 0:
-                    if is_response_error:
-                        raise ServiceResponseTimeoutError('Response timeout')
-                    raise ServiceRequestTimeoutError('Request timeout')
-                connection_timeout = request.context.options.get('connection_timeout')
-                if connection_timeout:
-                    req_timeout = min(connection_timeout, absolute_timeout)
-                else:
-                    req_timeout = absolute_timeout
-                request.context.options['connection_timeout'] = req_timeout
+                self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
