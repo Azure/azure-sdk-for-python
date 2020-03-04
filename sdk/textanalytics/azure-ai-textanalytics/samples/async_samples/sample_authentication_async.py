@@ -10,11 +10,11 @@
 FILE: sample_authentication_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to authenticate with the text analytics service.
+    This sample demonstrates how to authenticate to the text analytics service.
 
     There are two supported methods of authentication:
     1) Use a cognitive services/text analytics API key with TextAnalyticsApiKeyCredential
-    2) Use a token credential to authenticate with Azure Active Directory
+    2) Use a token credential from azure-identity to authenticate with Azure Active Directory
 
     See more details about authentication here:
     https://docs.microsoft.com/azure/cognitive-services/authentication
@@ -37,6 +37,7 @@ import asyncio
 class AuthenticationSampleAsync(object):
 
     async def authentication_with_api_key_credential_async(self):
+        print("\n.. authentication_with_api_key_credential_async")
         # [START create_ta_client_with_key_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.ai.textanalytics import TextAnalyticsApiKeyCredential
@@ -54,9 +55,10 @@ class AuthenticationSampleAsync(object):
         print("Confidence score: {}".format(result[0].primary_language.score))
 
     async def authentication_with_azure_active_directory_async(self):
-        """DefaultAzureCredential will use the values from the environment
+        """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
+        print("\n.. authentication_with_azure_active_directory_async")
         # [START create_ta_client_with_aad_async]
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.identity.aio import DefaultAzureCredential
