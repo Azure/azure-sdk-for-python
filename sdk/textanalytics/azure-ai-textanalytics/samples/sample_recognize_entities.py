@@ -45,42 +45,10 @@ class RecognizeEntitiesSample(object):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
                 print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-                      "\tConfidence Score: \t", round(entity.score, 3))
+                      "\tConfidence Score: \t", entity.score)
         # [END batch_recognize_entities]
-
-    def alternative_scenario_recognize_entities(self):
-        """This sample demonstrates how to retrieve batch statistics, the
-        model version used, and the raw response returned from the service.
-
-        It additionally shows an alternative way to pass in the input documents
-        using a list[TextDocumentInput] and supplying your own IDs and language hints along
-        with the text.
-        """
-        from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiKeyCredential
-        text_analytics_client = TextAnalyticsClient(endpoint=self.endpoint, credential=TextAnalyticsApiKeyCredential(self.key))
-
-        documents = [
-            {"id": "0", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            {"id": "1", "language": "de", "text": "I had a wonderful trip to Seattle last week."},
-            {"id": "2", "language": "es", "text": "I visited the Space Needle 2 times."},
-        ]
-
-        extras = []
-
-        def callback(resp):
-            extras.append(resp.statistics)
-            extras.append(resp.model_version)
-            extras.append(resp.raw_response)
-
-        result = text_analytics_client.recognize_entities(
-            documents,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
-        )
 
 
 if __name__ == '__main__':
     sample = RecognizeEntitiesSample()
     sample.recognize_entities()
-    sample.alternative_scenario_recognize_entities()
