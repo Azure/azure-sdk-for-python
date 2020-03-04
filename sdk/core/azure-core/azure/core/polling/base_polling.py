@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import json
+from typing import Optional, Any
 
 from azure.core.exceptions import DecodeError
 from azure.core.polling import PollingMethod
@@ -67,7 +68,7 @@ class OperationFailed(Exception):
 
 
 def _as_json(response):
-    # type: (azure.core.pipeline.transport.HttpResponse) -> None
+    # type: (azure.core.pipeline.transport.HttpResponse) -> dict
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -95,7 +96,7 @@ def _raise_if_bad_http_status_and_method(response):
         "Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
 def _is_empty(response):
-    # type: (azure.core.pipeline.transport.HttpResponse) -> None
+    # type: (azure.core.pipeline.transport.HttpResponse) -> bool
     """Check if response body contains meaningful content.
 
     :rtype: bool
@@ -195,8 +196,7 @@ class OperationResourcePolling(LongRunningOperation):
 
         if response.status_code in {200, 201, 202, 204} and self.async_url:
             return 'InProgress'
-        else:
-            raise OperationFailed("Operation failed or canceled")
+        raise OperationFailed("Operation failed or canceled")
 
     def _set_async_url_if_present(self, response):
         # type: (azure.core.pipeline.transport.HttpResponse) -> None
@@ -263,8 +263,7 @@ class LocationPolling(LongRunningOperation):
 
         if response.status_code in {200, 201, 202, 204} and self.location_url:
             return 'InProgress'
-        else:
-            raise OperationFailed("Operation failed or canceled")
+        raise OperationFailed("Operation failed or canceled")
 
     def get_status(self, pipeline_response):
         # type: (azure.core.pipeline.PipelineResponse) -> str
@@ -277,11 +276,7 @@ class LocationPolling(LongRunningOperation):
         if 'location' in response.headers:
             self.location_url = response.headers['location']
 
-        code = response.status_code
-        if code == 202:
-            return "InProgress"
-        else:
-            return 'Succeeded'
+        return "InProgress" if response.status_code == 202 else 'Succeeded'
 
 
 class StatusCheckPolling(LongRunningOperation):
@@ -432,7 +427,7 @@ class LROBasePolling(PollingMethod):
         if failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        elif self._operation.should_do_final_get():
+        if self._operation.should_do_final_get():
             request = self._initial_response.http_response.request
             if request.method == 'POST' and 'location' in self._initial_response.http_response.headers:
                 final_get_url = self._initial_response.http_response.headers['location']
@@ -450,8 +445,7 @@ class LROBasePolling(PollingMethod):
         response = pipeline_response.http_response
         if not _is_empty(response):
             return self._deserialization_callback(pipeline_response)
-        else:
-            return None
+        return None
 
     def _sleep(self, delay):
         self._transport.sleep(delay)

@@ -71,7 +71,7 @@ class AsyncLROBasePolling(LROBasePolling):
         if failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        elif self._operation.should_do_final_get():
+        if self._operation.should_do_final_get():
             request = self._initial_response.http_response.request
             if request.method == 'POST' and 'location' in self._initial_response.http_response.headers:
                 final_get_url = self._initial_response.http_response.headers['location']

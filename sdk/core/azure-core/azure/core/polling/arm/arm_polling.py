@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Optional
+
 from azure.core.polling.base_polling import (
     LongRunningOperation,
     LROBasePolling,
@@ -110,8 +112,9 @@ class BodyContentPolling(LongRunningOperation):
 
         raise OperationFailed("Invalid status found")
 
-    def _get_provisioning_state(self, response):
-        # type: (azure.core.pipeline.transport.HttpResponse) -> None
+    @staticmethod
+    def _get_provisioning_state(response):
+        # type: (azure.core.pipeline.transport.HttpResponse) -> Optional[str]
         """
         Attempt to get provisioning state from resource.
         :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
