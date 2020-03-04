@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import abc
 import json
 from typing import TYPE_CHECKING, Optional, Any, Union
 
@@ -41,6 +42,12 @@ if TYPE_CHECKING:
 
     ResponseType = Union[HttpResponse, AsyncHttpResponse]
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+
+
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 
 FINISHED = frozenset(["succeeded", "canceled", "failed"])
@@ -126,7 +133,7 @@ def _is_empty(response):
         raise DecodeError("Error occurred in deserializing the response body.")
 
 
-class LongRunningOperation(object):
+class LongRunningOperation(ABC):
     """LongRunningOperation
     Provides default logic for interpreting operation responses
     and status updates.
@@ -137,17 +144,20 @@ class LongRunningOperation(object):
     :param kwargs: Unused for now
     """
 
+    @abc.abstractmethod
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
         """Answer if this polling method could be used.
         """
         raise NotImplementedError()
 
+    @abc.abstractmethod
     def get_polling_url(self):
         """Return the polling URL.
         """
         raise NotImplementedError()
 
+    @abc.abstractmethod
     def set_initial_status(self, pipeline_response):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
@@ -156,11 +166,13 @@ class LongRunningOperation(object):
         """
         raise NotImplementedError()
 
+    @abc.abstractmethod
     def get_status(self, pipeline_response):
         # type: (PipelineResponseType) -> str
         """Return the status string extracted from this response."""
         raise NotImplementedError()
 
+    @abc.abstractmethod
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
