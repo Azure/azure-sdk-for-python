@@ -7,7 +7,7 @@
 from ._version import VERSION
 __version__ = VERSION
 
-
+from uamqp import constants
 from azure.servicebus._sender_client import ServiceBusSenderClient
 from azure.servicebus._receiver_client import ServiceBusReceiverClient
 from azure.servicebus._client_base import ServiceBusSharedKeyCredential
@@ -30,6 +30,7 @@ from azure.servicebus.common.errors import (
     AutoLockRenewFailed,
     AutoLockRenewTimeout)
 
+TransportType = constants.TransportType
 
 __all__ = [
     'Message',
@@ -58,5 +59,6 @@ __all__ = [
     'AutoLockRenewTimeout',
     'ServiceBusReceiverClient',
     'ServiceBusSenderClient',
-    'ServiceBusSharedKeyCredential'
+    'ServiceBusSharedKeyCredential',
+    "TransportType",
 ]
