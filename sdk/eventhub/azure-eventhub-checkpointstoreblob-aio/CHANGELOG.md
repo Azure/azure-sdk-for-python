@@ -2,8 +2,7 @@
 
 ## 1.0.1 (Unreleased)
 
-**New features**
-- `BlobCheckpointStore` now supports Azure Storage Service API version "2017-11-07".
+This release has internal changes only. No feature changes.
 
 ## 1.0.0 (2020-01-13)
 Stable release. No new features or API changes.
